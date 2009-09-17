@@ -113,7 +113,8 @@ See [DIYBio/FAQ/Projects DIYBio FAQ: Projects]
 Retrosynthetic analysis is a method of beginning with a target compound that you wish to synthesize, and working backwards from some otherwise ridiculously hideous and expensive compound, to more simple elements and compounds that you may be more likely to have available. In 1990, [http://en.wikipedia.org/wiki/E.J._Corey E. J. Corey] won the Nobel Prize in Chemistry for his work in [http://en.wikipedia.org/wiki/Retrosynthetic_analysis retrosynthetic analysis]. While it is possible to manually generate a retrosynthesis tree, computational tools assist in this laborious task. At the moment, however, there are no [http://fsf.org/ free software] tools for retrosynthesis. The pydaylight library is a wrapper to the Daylight toolkit and might serve as a good start. Please contact [http://heybryan.org/ Bryan Bishop] if you want to collaborate on this software, or pester him for his already written code that isn't quite ready for release.
 
 = Are there any plans for a DIYbio-friendly, open source database system for biology protocols, how-tos and hardware/equipment construction? =
-Yes, absolutely. You should consider contacting [http://heybryan.org/ Bryan Bishop] about this. There is also a lot of reading material distributed throughout the web on this topic. 
+
+This is work in progress.   You should consider contacting [http://heybryan.org/ Bryan Bishop] about this.
 
 * [http://adl.serveftp.org/lab/presentations/updates-from-austin.pdf Updates from Austin, TX] related to diybio packaging standards (2009-08-13).
 * [http://heybryan.org/om.html An index of threads related to open manufacturing] and standardized packaging of open source hardware projects
@@ -122,6 +123,13 @@ Yes, absolutely. You should consider contacting [http://heybryan.org/ Bryan Bish
 * [http://groups.google.com/group/diybio/msg/de9db7503c48c5c2 More on recipe representation] (especially re: an [[Open Thermocycler|open thermocycler project]])
 * [http://groups.google.com/group/diybio/msg/ed52133e3c681100?dmode=source More on protocols and hardware packaging formats] (2009-04-15) (see also [http://groups.google.com/group/diybio/msg/4a7c4208682b9dfe?dmode=source Meredith's notes])
 * ''please expand this list''
+
+
+== Can the software tell me what equipment I need to run a particular experiment? ==
+
+
+This is work in progress.  This is known as dependency checking.  The handy "checktools" program hopes to do this. ((Note: the idea here is that once the pcr.xml file makes a few friends with other protocols, software can then be written to extract a list of tools from the standardized protocol format. But this doesn't exist yet, since we only have "pcr.xml".))
+
 
 
 
@@ -136,9 +144,6 @@ Yes, absolutely. You should consider contacting [http://heybryan.org/ Bryan Bish
 
 == How do you strain for DNA in a straw? ==
 "Easiest way to do that would be to use a stain that you add to the warm agarose before pouring, such as SYBR Safe or GR Safe (or ethidium bromide, but the cool kids don't use that anymore). I suppose you could slit the straw open with a razor blade if you wanted to use methylene blue, but that sounds like a huge pain in the ass." -- [http://groups.google.com/group/diybio/msg/09e4bcf12548501a Meredith]
-
-= What equipment do I need to perform experiment XYZ? =
-Just run it through the handy "checktools" program. ((Note: the idea here is that once the pcr.xml file makes a few friends with other protocols, software can then be written to extract a list of tools from the standardized protocol format. But this doesn't exist yet, since we only have "pcr.xml".))
 
 = DIY Genetic engineering = 
 * [http://groups.google.com/group/diybio/browse_frm/thread/0bc28b8116eb254c# Basic questions on genetic engineering]
