@@ -1,0 +1,218 @@
+
+This topic ''Equipment and Consumables'' is part of the 
+[http://openwetware.org/wiki/DIYbio/FAQ DIYBio FAQ] 
+
+: Please '''update this FAQ mercilessly with Q&A !'''
+
+
+
+= What equipment do I need to perform DIYBio-related projects? =
+
+* Basic biology equipment (see [http://adl.serveftp.org/skdb/doc/BOMs/pcr here] for PCR equipment, however much of the equipment isn't actually required)
+** or generic tools used in other projects, just use it for biology (see MacGyverisms below)
+* Basic computer equipment
+* Perhaps some open source software development tools
+
+== What equipment is in a basic biology lab ==
+.. and how can I make it?
+
+Would you like to contribute to an answer for this question? Run around a lab that you have access to and document all of the equipment that you see, or remember, etc. It's ok if some of the equipment is ridiculous (like 100k+ RPM centrifuges), because we can filter that out later and reduce the lists down to equipment in a basic biology lab.
+
+* [http://groups.google.com/group/diybio/browse_frm/thread/b014b25110c9922c/e9a22564708172df?#e9a22564708172df Using ebay to set up a molecular bio lab for less than $1k USD] (see also [http://www.boingboing.net/2009/04/09/howto-set-up-a-molec.html] and [http://scienceblogs.com/worldsfair/2009/04/using_ebay_to_set_up_a_molecul.php])
+
+== MacGyverisms ==
+* [http://groups.google.com/group/diybio/msg/048ce958697fe6ba Cheap technology for biology]
+* [http://groups.google.com/group/diybio/msg/a07ba5d01c61aa09 CO-2 rich environment in a ziplock baggie]
+* gel electrophoresis in a straw (keiki gels)
+** [http://groups.google.com/group/diybio/msg/03a955483651a05c one of the original 'idea posts']
+** [http://groups.google.com/group/diybio/browse_frm/thread/c77e9e5290e57383/4ab47e86c1eecc56?#4ab47e86c1eecc56 Keiki gels: Gel electrophoreis in a straw] (it works!)
+*** [http://www.boingboing.net/2009/02/06/crowdsourced-science.html boingboing'd]
+** [http://openwetware.org/wiki/DIYbio:Notebook/Keiki_Gels very basic protocol]
+* inkjet, laser printer, wax, ice-lithography, sharpie, or other forms of diy microfluidics
+* [http://www.instructables.com/id/5_minute_DNA_Extraction_in_a_Shot_Glass/ 5 minute DNA extraction in a shot glass]
+
+== Where can I find auctions for biotech? ==
+
+* [http://www.equipnet.com equipnet]
+* [http://ebay.com/ ebay]
+* [http://www.go-dove.com/ go-dove]
+* [http://labx.com/ labx]
+* ''please expand this list''
+
+== How can I make a spectrophotometer? ==
+* [http://openwetware.org/wiki/Citizen_Science/The_Urinomics_Project urinomics project] (the design might be a little broken at the moment)
+
+== How can I make an atomic force microscope (AFM)? ==
+* [http://groups.google.com/group/diybio/browse_thread/thread/e3ea9182fe618a71 How to use plastic printed parts to do a DIY AFM]
+* AFM != STM
+
+== How can I make a sterile environment? ==
+
+=== Using Ultraviolet (UV) for sterilization ===
+
+Here is a [http://www.uvp.com/pdf/ab-115.pdf table of how much UV exposure it takes to kill various organisms and bacteria]. Note units are in microwatt-seconds per cm2. Specs for UV lamps usually give emission as microwatts per cm2 measured at a distance of 1 m from the lamp.
+
+Do not leave UV lamps on for long periods of time because the bulbs "wear out".  Specifically, the amount of UV produced will decrease over time (see manufacturer spec sheets).  With extended use, it may seem that the bulb is creating a sterile environment when actually it is not producing enough UV.
+
+Warning:  UV spectrum of sterilization bulbs are bad for you.  Do not expose yourself to the UV.  If you build a UV "hood", add a switch which always turns the light off when the door is opened.
+
+
+== Chemicals and Reagents are expensive.  How can I make my own?  What can I substitute? ==
+
+=== Substitutes for Expensive Agarose ===
+
+==== Using Agar instead of Agarose ====
+
+:"We have recently attempted to find an inexpensive alternative to agarose  for analytical purposes. We observed that agar is an adequate support medium for gel electrophoresis (Fig 1).  [...] These included Difco Bacto-Agar (Detroit, U.S.A.), Merck Agar-Agar (Darmstadt, Germany), Oxoid agar (London, UK.), Biolab Agar (Halfway House, R.S.A.), Bitek Agar (Detroit, U.S.A.) and bulk agar obtained from New Zealand. All these agar formulations gave good separation of our DNA  ... Conclusion: ... agar can be used as a gel matrix in place of agarose in many instances. We do not recommend using agar if the DNA is to be purified from a gel. We have attempted experiments involving the southern blotting technique using agar as our gel matrix. Our results were, however, unsatisfactory. We therefore recommend that agar gels can be used as a cheap altelnative to agarose to check the purity, size and amount of DNA in a sample."
+:: From: AGAR, AN ALTERNATIVE TO AGAROSE IN ANALYTICAL GEL ELECTROPHORESIS, BIOTECHNOLOGY TECH, CD. Viljoen, B.D. Wingfield* and M.J. Wingfield Volume 7 No.10 (October 1993) pp723-726. DOI:10.1007/BF00152620
+
+:"The other option is to wash with two changes of EDTA (think it was 25mM) to remove divalent metals and sulfonated (non-gelling) agar. There is also a process based on alcohol washes - but can't find my reference to it." -- Abizar on DIYBio google group
+
+=== Using Other Substitutes for Agarose ===
+
+:Table lists starches & flours:
+:: [http://heybryan.org/books/papers/graph1_alternate_agar_formula.png Table: Alternate to Agar]
+
+:"Silica gel is another possible solidifying agent.  Likely totally inert, and stable at high temperatures for thermophiles. "  -- Tom Knight, diybio google group
+
+:"None of those (in the 'starches & flours' table) work (well).  Agar is clear and indigestable by bacteria, none of those replacements have those properties. Guar gum is the only substitue worth trying, but from what I understand it's a LOT harder to work with.  For the price of food grade agar it just isn't worth trying to save money.  Food grade works great for everything I've tried and you can get it pretty dang cheap online." -- Jake, diybio google group
+
+=== How do you purify agar? ===
+
+:"here is a good washed agar protocol, cleans up contaminants. It involves acetone, easy to find at home depot, but dont be smoking. Also the washed agar will gel at a lower concentration, 1% instead of 1.5% or 2%. As store bought stuff is less pure than Difco, it would certainly benefit more from cleaning. I have only done the second protocol."  http://www.fgsc.net/neurosporaprotocols/How%20to%20wash%20agar.pdf -- Tom on the diybio google group
+
+:"Soak agar shreds or granules in "several changes" of distilled water (DI).  Make a 4% gel, slice, dialyze or electrodialyze it, then use that to make a more dilute gel (no specified dilution) through reheating. Alternatively- dry and dissolve flakes later as needed.  Dissolve agar "in the solvent to be employed," and hot-filter through several layers of "lintless gauze, coarse filter paper, shredded paper or diatomaceous earth, or centrifuge at high speed (eg, 5000 g) for 10 mins in a rotor pre-heated to 80 C" (small volume technique: pull into 10 mL pipette with loose cotton plug. Remove plug and deliver to plate or slide).  Make agar gel from this, then chil, freeze, and thaw it to disrupt gel and "express the water and dissolved impurities." The reader is referred to Crowle 1961 (first edition of Immunodiffusion) for more detailed explanations."
+::From Crowe's "Immunodiffusion," 2nd ed., 1973
+:::-- AJ, diybio google group
+
+:Preparation of agarose with cetylpyridinium chloride "or other tertiary ammonium compounds." 
+::From Clausen in "Laboratory Techniques in Biochemistry and Molecular Biology" (volume 1, part 3, edited by Burdon and Knippenberg)
+:::-- AJ, diybio google group
+
+:"There was another text- it mostly consisted of making slabs of gel that are then allowed to sit in distilled water, which is changed every day for a week or more."
+:: Maybe from "Handbook of Immunoprecipitation-in-Gel Techniques," edited by Axelson (1983). 
+:::-- AJ, diybio google group
+
+
+
+* Much of the above is distilled from the thread: [http://groups.google.com/group/diybio/browse_thread/thread/3d7e7d6424e0d2a6/bbab3ffcb5b7913e agar purification recipes]
+
+=== How to Make Taq ===
+
+
+:*'''[[User:Jonathan Cline|jcline@ieee.org]] 10:38, 14 July 2009 (EDT)''': From the list:
+::Taq is super easy to purify, you don't need a column.   If you want Taq to use in PCR, you can just grow the plasmid with the DeltaTaq insert (available from ATCC), and heat the crude lysate. If you want to clean it up a bit more, for example for an enzymatic study, try this protocol: ''Rapid purification of high-activity Taq DNA polymerase Pluthero Nucl. Acids Res..1993; 21: 4850-4851'' -Stacy
+
+=== Retrosynthesis: how do I synthesize this chemical compound? ===
+Retrosynthetic analysis is a method of beginning with a target compound that you wish to synthesize, and working backwards from some otherwise ridiculously hideous and expensive compound, to more simple elements and compounds that you may be more likely to have available. In 1990, [http://en.wikipedia.org/wiki/E.J._Corey E. J. Corey] won the Nobel Prize in Chemistry for his work in [http://en.wikipedia.org/wiki/Retrosynthetic_analysis retrosynthetic analysis]. While it is possible to manually generate a retrosynthesis tree, computational tools assist in this laborious task. At the moment, however, there are no [http://fsf.org/ free software] tools for retrosynthesis. The pydaylight library is a wrapper to the Daylight toolkit and might serve as a good start. Please contact [http://heybryan.org/ Bryan Bishop] if you want to collaborate on this software, or pester him for his already written code that isn't quite ready for release.
+
+= Are there any plans for a DIYbio-friendly, open source database system for biology protocols, how-tos and hardware/equipment construction? =
+Yes, absolutely. You should consider contacting [http://heybryan.org/ Bryan Bishop] about this. There is also a lot of reading material distributed throughout the web on this topic. 
+
+* [http://adl.serveftp.org/lab/presentations/updates-from-austin.pdf Updates from Austin, TX] related to diybio packaging standards (2009-08-13).
+* [http://heybryan.org/om.html An index of threads related to open manufacturing] and standardized packaging of open source hardware projects
+* [http://groups.google.com/group/openmanufacturing/msg/1fc4fbbfd4a6fb23 Recipe representation]
+* [http://groups.google.com/group/diybio/browse_frm/thread/ada2289ebbc00fe0/6081750dd0eb5de1?lnk=gst&q=pcr.xml#6081750dd0eb5de1 Recipe representation as it concerns DIYbio]
+* [http://groups.google.com/group/diybio/msg/de9db7503c48c5c2 More on recipe representation] (especially re: an [[Open Thermocycler|open thermocycler project]])
+* [http://groups.google.com/group/diybio/msg/ed52133e3c681100?dmode=source More on protocols and hardware packaging formats] (2009-04-15) (see also [http://groups.google.com/group/diybio/msg/4a7c4208682b9dfe?dmode=source Meredith's notes])
+* ''please expand this list''
+
+
+
+= Keiki gels (gels-in-a-straw) MiniFAQ =
+* [http://groups.google.com/group/diybio/msg/03a955483651a05c one of the original 'idea posts']
+* [http://groups.google.com/group/diybio/browse_frm/thread/c77e9e5290e57383/4ab47e86c1eecc56?#4ab47e86c1eecc56 Keiki gels: Gel electrophoreis in a straw] (it works!)
+** [http://www.boingboing.net/2009/02/06/crowdsourced-science.html boingboing'd]
+* [http://openwetware.org/wiki/DIYbio:Notebook/Keiki_Gels very basic protocol]
+
+== Do all of the straws run at the same rate? ==
+"I think the key there will be making sure that all the straws are exactly the same length -- each straw behaves like a resistor, so just like any other resistive material, a greater amount of material will mean a higher resistance (and thus lower current at constant voltage)." -- [http://groups.google.com/group/diybio/msg/09e4bcf12548501a Meredith]
+
+== How do you strain for DNA in a straw? ==
+"Easiest way to do that would be to use a stain that you add to the warm agarose before pouring, such as SYBR Safe or GR Safe (or ethidium bromide, but the cool kids don't use that anymore). I suppose you could slit the straw open with a razor blade if you wanted to use methylene blue, but that sounds like a huge pain in the ass." -- [http://groups.google.com/group/diybio/msg/09e4bcf12548501a Meredith]
+
+= What equipment do I need to perform experiment XYZ? =
+Just run it through the handy "checktools" program. ((Note: the idea here is that once the pcr.xml file makes a few friends with other protocols, software can then be written to extract a list of tools from the standardized protocol format. But this doesn't exist yet, since we only have "pcr.xml".))
+
+= DIY Genetic engineering = 
+* [http://groups.google.com/group/diybio/browse_frm/thread/0bc28b8116eb254c# Basic questions on genetic engineering]
+* [http://groups.google.com/group/diybio/msg/284f254d52930b4c Notes on gene vectors and miRNAs (gene silencing)]
+* [http://groups.google.com/group/diybio/msg/35e5dce66a713308 Gene naming, homologous sequence similarity]
+* [http://groups.google.com/group/diybio/msg/7088d103c90e59c5 Genetic engineering (in general)]
+
+== Discussion of Organisms for DIY Genetic Engineering ==
+
+See the group discussions and the [http://groups.google.com/group/diybio/web/diybio-model-organisms diybio model organisms] list. 
+
+Candidates are:
+*Psychomitrella patens (a moss that is naturally competent)
+*Halobacterium  NRC1 (grows in very salty media)
+*Acinetobacter baylyi ADP1
+
+
+=== ADP1 ===
+
+ADP1 has been considered a good candidate for DIY Genetic Engineering 
+because it is naturally competent.
+
+: "I developed ADP1 as a model organism for simple genetic engineering while at Scripps. The paper appears under my name in Nucleic Acids Research (5780¿5790 Nucleic Acids Research, 2004, Vol. 32, No. 19 doi:10.1093/nar/gkh881). When I did the work, ADP1 was considered A.  calcoaceticus, and was given a clean bill of health (biosafetly level 1). Later, to my dismay, it was collapsed into A. baylyi, grouping it with nasty pathogens and making it thereby less accessible. My interpretation: they probably are all the same species, technically, but Acinetobacter's predisposition for collecting genes from outside sources (which is exactly what makes it so useful - read the paper), led some strains to collect a bunch of virulence factors and become superbugs, like the ones that plague hospitals. If you can get some ADP1, I would consider it as safe as Ec K-12, but be very careful with less well-characterized strains of this species, because it can and will pick up genes that offer an adaptive advantage in it's environment, so you never know what a wild-type Acinetobacter might be capable of."
+:: -- dmetzgar, diybio google group
+
+= DNA synthesis MiniFAQ =
+* [http://groups.google.com/group/diybio/msg/f2d636339a6e9c4d DIY DNA synthesis and bibliography]
+* [http://groups.google.com/group/diybio/msg/5f77c7fab381e5ed DLP projector based gene synthesizer proposal]
+* [http://groups.google.com/group/diybio/msg/6676a7ec80d37ef9 Some ranting notes on schemes for microfluidic DNA synthesizers]
+* [http://groups.google.com/group/diybio/msg/52b93a96a4927e45 Sequencing and synthesis predictions for 2010 from 2003]
+* [http://groups.google.com/group/diybio/msg/912e485da761b3c6 Synthesis of unnatural nucleic acids (like GNA)]
+* [http://groups.google.com/group/diybio/msg/70bea2b53b7716af Short bibliography of DIY-friendly DNA synthesis techniques]
+* [http://groups.google.com/group/diybio/msg/6feeeb29e4d5bc3a Notes towards DIY DNA synthesis and the synthesis of photolabile protecting groups from kitchen household products]
+* [http://heybryan.org/books/papers/phosphoramidites/origin_of_oligonucleotide_impurities_and_errors.txt Origins of oligonucleotide impurities and errors]
+
+== Can I order DNA over the internet? ==
+mrgene, e-oligos, geneoracle, etc.
+
+== What are oligonucleotides? ==
+[http://en.wikipedia.org/wiki/Oligonucleotides Wikipedia sez]: "An oligonucleotide is a short nucleic acid polymer, typically with twenty or fewer bases. Although they can be formed by bond cleavage of longer segments, they are now more commonly synthesized by polymerizing individual nucleotide precursors. Automated synthesizers allow the synthesis of oligonucleotides up to 160 to 200 bases. The length of the oligonucleotide is usually denoted by "mer" (from Greek meros, "part"). For example, a fragment of 25 bases would be called a 25-mer. Because oligonucleotides readily bind to their respective complementary nucleotide, they are often used as probes for detecting DNA or RNA. Examples of procedures that use oligonucleotides include DNA microarrays, Southern blots, ASO analysis, fluorescent in situ hybridization (FISH), and the synthesis of artificial genes. Oligonucleotides composed of DNA (deoxyoligonucleotides) are often used in the polymerase chain reaction, a procedure that can greatly amplify almost any small piece of DNA. There, the oligonucleotide is referred to as a primer, allowing DNA polymerase to extend the oligonucleotide and replicate the complementary strand."
+
+== How are oligonucleotides synthesized? ==
+
+Oligonucleotide synthesis is done via a cycle of four chemical reactions that are repeated until all desired bases have been added:
+
+*Step 1 - De-blocking (detritylation): The DMT is removed with an acid, such as [http://en.wikipedia.org/wiki/Trichloroacetic_acid TCA] ([http://www.sigmaaldrich.com/catalog/search/ProductDetail/SIAL/T4885 get it at Sigma-Aldrich]), and washed out, resulting in a free 5' hydroxyl group on the first base.
+*Step 2 - Base condensation (coupling): A '''phosphoramidite nucleotide (or a mix)''' ([http://www.csun.edu/~hcbio027/biotechnology/lec3/pitt8.html struct], [http://www.bhk-lab.com/publications/2003/69.pdf synthesis of phosphoramidite building blocks] [pdf]) is activated by [http://en.wikipedia.org/wiki/Tetrazole tetrazole] ([http://www.sigmaaldrich.com/catalog/search/ProductDetail/FLUKA/88185 get]) which removes the iPr2N group on the phosphate group. After addition, the deprotected 5' OH of the first base and the phosphate of the second base react to join the two bases together in a [http://en.wikipedia.org/wiki/Phosphite phosphite] linkage. These reactions are not done in water but in [http://en.wikipedia.org/wiki/Tetrahydrofuran tetrahydrofuran] ([http://www.sigmaaldrich.com/catalog/search/ProductDetail/ALDRICH/494461 get]) or in [http://en.wikipedia.org/wiki/Dimethyl_sulfoxide DMSO] ([http://www.sigmaaldrich.com/catalog/search/ProductDetail/SIGMA/D2438 get]). Unbound base and by-products are washed out.
+*Step 3 - Capping: About 1% of the 5' OH groups do not react with the new base and need to be blocked from further reaction to prevent the synthesis of oligonucleotides with an internal base deletion. This is done by adding a protective group in the form of [http://en.wikipedia.org/wiki/Acetic_anhydride acetic anhydride] ([http://www.sigmaaldrich.com/catalog/search/ProductDetail/SIAL/539996 get]) and [http://en.wikipedia.org/wiki/1-methylimidazole 1-methylimidazole] ([http://www.sigmaaldrich.com/catalog/search/ProductDetail/ALDRICH/336092 get])which react with the free 5' OH groups via [http://en.wikipedia.org/wiki/Acetylation acetylation]. Excess reagents are washed out.
+*Step 4 - Oxidation: The phosphite linkage between the first and second base needs to be stabilized by making the phosphate group pentavalent. This is achieved by adding iodine (go to local store) and water which leads to the [http://en.wikipedia.org/wiki/Oxidation oxidation] of the phosphite into [http://en.wikipedia.org/wiki/Phosphate phosphate]. This step can be substituted with a [http://en.wikipedia.org/wiki/Sulphorylation sulphorylation] step for [http://en.wikipedia.org/wiki/Thiophosphate_nucleotide thiophosphate nucleotides].
+
+
+(Note: [http://biosupport.licor.com/docs/whatsnew/DNASynth800Phos.pdf this] might be a good document to see how phosphoramidites can be ordered from suppliers.) Here are some [http://www.protocol-online.org/prot/Molecular_Biology/Oligonucleotide/ oligo synth protocols in molecbio]. [http://www.protocol-online.org/cgi-bin/prot/view_cache.cgi?ID=2932 Quantifying oligos from phosphoramadite synth]. Note that you may not have to actually purchase phosphoramadites to start off with, but instead begin with a purified solution of nucleic acid??
+
+== What are the origins of oligonucleotide impurities and errors? ==
+See [http://heybryan.org/mediawiki/index.php/DNA_synthesis#Origin_of_oligonucleotide_impurities_and_errors here].
+
+
+
+= Microfluidics MiniFAQ =
+
+== What are microfluidics? ==
+[http://en.wikipedia.org/wiki/Microfluidics Wikipedia sez]: Microfluidics deals with the behavior, precise control and manipulation of fluids that are geometrically constrained to a small, typically sub-millimeter, scale. Typically, micro means one of the following features: small volumes(nl, pl, fl); small size; low energy consumption; effects of the micro domain (i.e., [http://en.wikipedia.org/wiki/Laminar_flow laminar flows], [http://en.wikipedia.org/wiki/Surface_tension surface tension], [http://en.wikipedia.org/wiki/Diffusion diffusion], Marangoli forces, capillary forces, ...).
+
+=== Even more on 'what are microfluidics' ===
+
+See also: 
+* [http://heybryan.org/mediawiki/index.php/Microfluidcs Microfluidics]
+* [http://groups.google.com/group/diybio/msg/1197606e3c3dc439 the original sharpie microfluidics post to diybio]
+* [http://groups.google.com/group/diybio/browse_frm/thread/b3bb2d8b8a654fd4/1197606e3c3dc439?#1197606e3c3dc439 the rest of the thread].
+* [http://groups.google.com/group/diybio/msg/0e6ec2484dde6ea7 DIY microfluidics for continuous liquid flow using toner transfer (How To)]
+
+== An example of microfluidics ==
+
+The following is a run of the example microfluidics T-junction simulation in elmer, an open source CFD/FEM/FEA package. What you see here is the progression of an analyte due to electro-osmotic flow. There are two electric fields, three boundary conditions and a lot of wasted hours playing around with ElmerGUI and ElmerFront.
+
+<youtube align="left">sPY84NelFO4</youtube> <html><div style="clear:both;"></div></html>
+
+
+
+== What is a lab on a chip (LOC)? ==
+A '''lab-on-a-chip (LOC)''' is a device that integrates one or several laboratory functions on a single chip of only millimeters to a few square centimeters in size. LOCs deal with the handling of extremely small fluid volumes down to less than pico liters. Lab-on-a-chip devices are a subset of MEMS devices and often indicated by "'''Micro Total Analysis Systems'''" ('''µTAS''') as well. Microfluidics is a broader term that describes also mechanical flow control devices like pumps and valves or sensors like flowmeters and viscometers. However, strictly regarded "Lab-on-a-Chip" indicates '''generally the scaling of single or multiple lab processes down to chip-format''', whereas "µTAS" is dedicated to the integration of the total sequence of lab processes to perform chemical analysis. The term "Lab-on-a-Chip" was introduced later on when it turned out that µTAS technologies were more widely applicable than only for analysis purposes.
+
+Ultimately the idea is to have all of the typical components, procedures and processes of a laboratory available on a "chip", on a single perhaps disposable device, rather than having to build or purchase bulky equipment that sometimes tends to be hard to acquire or learn about.
