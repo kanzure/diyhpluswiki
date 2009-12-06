@@ -45,7 +45,7 @@ The following are project ideas (brainstorming) which have been discussed on DIY
 
 * The cheaposcope: development of a low cost fluorescence microscope for teaching.  We've exploited recent developments in LED technology, optical filters and cameras in an attempt to construct cheaper instruments for fluorescence microscopy and detection.   http://www.plantsci.cam.ac.uk/Haseloff/imaging/cheaposcope/cheaposcope.htm
 
-= Microfluidics and Controller Boards =
+= Microfluidics, Controller Boards, building Related Equipment =
 
 == Continuous Flow Microfluidics ==
 
@@ -59,6 +59,101 @@ http://thebigone.stanford.edu/foundry/technology/index_clip_image002_0000.jpg
 === Controllers ===
 
 * USB 24-Valve Controller Assembly Guide, Rafael Gómez-Sjöberg,  QuakeLab–Stanford University.  ""This document briefly describes the assembly of a USB-based controller for 24 solenoid pneumatic valves that can be used to drive a microfluidic chip fabricated by Multilayer Soft Lithography.  You can build a computer-based electronic valve controller to allow you to control the opening and closing of valves and pressure in the flow lines of your chip.  The controller is comprised of 1) an electronic controller box and 2) a set of electronic valves. ""   Project at http://thebigone.stanford.edu/foundry/testing/own_controller.html  and main page at http://thebigone.stanford.edu
+
+=== DIY Spin Coater ===
+
+  On Dec 3, 1:06 am, Nathan McCorkle <nmz...@gmail.com> wrote:
+  > I want to make a spin coater using a highly UNMODIFIED cd or dvd rom.
+  > Meaning I want to keep the laser mechanisms in place, and try to keep all
+  > the moving parts as free from nasty buildup and grime.
+  The electronics will have to be replaced or bypassed, for sure.  The
+  couple times I've seen spin coaters used, the dispensing didn't seem
+  critical (i.e. scoop polymer onto disc during spin up) and the
+  rotation seemed to even everything out.  Does your protocol require
+  baking the result, if so, better add some heat to the device right?
+  References:
+  Spin-Coating of Polystyrene Thin Films as an Advanced Undergraduate
+  Experiment
+  http://www.jce.divched.org/Journal/Issues/2003/Jul/abs806.html
+  Abstract
+  A simpler version of the well-established technique of spin-coating
+  thin polymer films on glass slides is described. Starting with simple
+  instrumentation and using an ordinary, commercially available cooling
+  fan (a "CPU cooler"), a method of spin-coating an expanded polystyrene
+  foam on glass slides is described. Making thin films of commercially
+  available polystyrene on glass slides is also included for comparison.
+  An interferometric technique is used to measure the film thickness
+  employing a UV¿vis spectrophotometer. FTIR spectroscopy is used to
+  verify the identity of the polymer on the glass slide. Using the Beer¿
+  Lambert law of absorbance, the film thickness is also calculated from
+  the FTIR spectra of films. A comparison is made between the
+  interferometric and FTIR methods for thickness measurements. An
+  organic dye is doped into a film and a UV¿vis spectrum is used to
+  identify the dye.
+  http://nathan.instras.com/projects/spin-coater/index.html
+  Spin Coater System
+  This was my attempt to build a low cost spin-coater system that does
+  both horizontal and vertical spin coating.  For about $70.00 dollars
+  in parts and some ingenuity, I was able to put together the system
+  shown below.  Ironically, we latter purchased a commercial spin-coater
+  for $5000.00, but I saw little difference in the sample prepared using
+  the one I built and it.  In my opinion, the only reason to even buy
+  one of those things is to get better control of the overall spinning
+  process.  However, most people just need something that goes around
+  fast. As you can see, it's basically just an aluminum base that holds
+  two small DC motors (RadioShack).  Power is supplied by a 1-10V DC
+  power supply.  CDR cases serve as the spin chamber.
+  http://dx.doi.org/10.1016/j.porgcoat.2006.05.004
+  Spin coater based on brushless dc motor of hard disk drivers
+  Abstract
+  We have developed a novel programmable, low cost, spin coater to be
+  used for applications where flat substrates are coated with an uniform
+  thin layer of a desirable material. The equipment is built with dc
+  brushless motor present in most of the hard disk drivers (HDDs). The
+  system offers manual control, wide speed range (from 0 to 10,000 rpm),
+  spin speed stability and compact size. The paper also describes the
+  use of such equipment for the fabrication of thin poly(o-
+  methoxyaniline) (POMA) films, which are of particular interest for
+  design organic electronic devices, such as diodes, transistor, sensors
+  and displays.
+  http://www.chemistry-blog.com/2007/01/13/pimp-my-spin-coater/
+  Pimp My Spin Coater
+  If you're going to start making your own lab equipment you might as
+  well trick out the new hardware. In that spirit, my spin coater has 3
+  light emitting diodes: a green one, a red one, and a blue one. I can
+  vary the revolution per minute from ~500rpm to ~2500rpm by varying the
+  voltage I supply to the spin coater. The sample is mounted in the
+  center and is stuck to the spin coater by Velcro, this can be more
+  easily seen in the next photo. As can also be seen in the photo, my
+  spin coater is just a regular pc fan I bought at CompUSA this past
+  Wednesday. I monitor the speed of the spin coater with a laser mounted
+  above the spin-coater that shines through the fan's blades and strikes
+  one of our group's alpha detectors. The nice thing about the alpha
+  detector is that I don't even have to supply any power to it. There is
+  enough current generated, I presume by the photoelectric effect, to
+  carry a signal to an oscilloscope which I can use to monitor the fan's
+  speed. A picture of the laser, which is my boss's laser pointer he
+  uses for talks, is seen in the next photo at the top of our group's
+  only non-radioactive chemistry hood. It took me 2 days to build my
+  spin coater, Wednesday and Thursday, and one more day to make sure it
+  calibrates properly, Friday. The total amount in extra costs was $20
+  for the spin-coater(pc fan) all the rest of the equipment we had lying
+  around.
+  http://docs.google.com/viewer?a=v&q=cache:R929V8Bup34J:www.ccmr.corne...
+  Title: Engineering Organic Light-Emitting Devices
+  Appropriate Level: High School Regents Chemistry, or any advanced high
+  school
+  Chemistry course
+  Using a spin coater is the ideal method for applying this ruthenium
+  layer.  A simple
+  device can be made using an 80mm fan and simple circuitry.  If a spin
+  coater is not
+  available, Q-tips and a heat gun can work to a certain degree:
+  Use a Q-tip to apply some of the Ruthenium-tris(2,2¿-bipyridyl)
+  tetrafluoroborate to the glass slide and then dry with a heat gun for
+  3-5 minutes. 
+
+:: -- Jonathan Cline, on DIYbio google group
 
 = Fermentors, Bioreactors, Photo Bioreactors =
 
