@@ -1,22 +1,47 @@
-Hello! You should read this FAQ if you're interested in CAD-- especially open source CAD.
+Hello! You should read this FAQ if you're interested in CAD-- especially open source CAD. When we talk about CAD, we mean parametric solid modeling. Today that means boundary representations (b-rep) and non-uniform rational b-splines (NURBS), but it also somewhat includes Constructive Solid Geometry (CSG)-- you'll learn about both shortly.
 
-# CAD FAQ
-## What is the difference between CAD and 3D modeling?
-## What is solid geometry?
-## What is boundary representation (b-rep)?
-## What is Constructive Solid Geometry (CSG)?
-## What is a mesh?
-## Why not just use blender?
-## Can't you modify blender to become a CAD tool?
+# Why not just use blender for CAD?
+All 3D modeling software render 3D objects through a graphics card (cringe). For instance, Blender and Solidworks both use OpenGL. What this means is that the model is either already a collection of points and triangles or it is in some other format and is then converted to triangles, which the graphics card then renders. So ultimately all data representations lead to visualization when it comes to 3D modeling (so that you can see it).
+
+The subject of CAD is not the 3D object that you see on screen but rather the design specification. There is a different language or representation internal to CAD tools. When it is time to show the user what the changes he has made do to the model, the internal representation is tesselated into a collection of triangles which is then rendered on screen. In the case of Solidworks, for instance, this conversion is nearly instanteous.
+
+So why not just fix Blender and make it use a parametric solid geometry kernel under the hood? This would involve rewriting Blender completely. And if you're doing that, then you're not really working on Blender, now are you.
+
+# Can't you modify blender to become a CAD tool?
+# What is the difference between CAD and 3D modeling?
+# What is solid geometry?
+# What is Constructive Solid Geometry (CSG)?
+# What is boundary representation (b-rep)?
+# What is a non-uniform rational b-spline (NURBS curve)?
+# What is a mesh?
+# But IGES and STEP can store triangles!
+# Can't you just convert meshes to solid models?
+ha ha ha don't get me started :(
 # todo
-## solidworks
-## autocad
-## pro/e
-## blender
-## google sketchup
-## heekscad
-## opencascade
-## openscad
+## Solidworks
+## CATIA
+## Unigraphics
+## AutoCAD (and other AutoDesk stuff)
+## Pro/E
+## OpenCASCADE
+## HeeksCAD
+## FreeCAD
 ## BRLCAD
-## freecad
-## povray
+## openscad
+## Blender
+## Google Sketchup
+## POVRAY
+## BeagleCAD
+## pythonCAD
+## AlibreCAD
+# file formats
+## STEP (ISO 10303-21) (.step, .stp)
+## IGES (.iges, .igs)
+http://www.iges5x.org/
+## parasolid (.xt)
+## brep (OpenCASCADE)
+# parametric solid modeling engines
+## OpenCASCADE
+## ACIS
+
+
