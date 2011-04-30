@@ -1,0 +1,512 @@
+
+Model-Based Exploration of System Architectures
+
+Dr. Chris Paredis Associate Professor G. W. Woodruff School of Mechanical
+Engineering Georgia Tech
+
+Due to rapid advances in mechatronic and networked, distributed systems, a
+braod range of competing system architectures is often available. From this
+broad range, systems designers need to select the most promising architectures
+for further exploration and refinement, but they are lacking the detailed
+knowledge and experience to guide them in this effort. In this presentation, we
+will explore a systematic, model-based approach towards the exploration of a
+space of system architectures. The approach builds on recent advances in
+Model-Based Systems Engineering (MBSE). Rather than capturing information and
+knowledge in unstructured text-based documents, as used to be common practice
+in traditional systems engineering approaches, MBSE advocates capturing
+knowledge in semantically rich, structured models. Support for MBSE is provided
+by the Systems Modeling Language (OMG SysML), which includes basic language
+constructs for semantically rich modeling of requirements, functions, logical
+and physical components, logical and physical behavior, etc. I will provide an
+overview of how SysML can be augmented with domain specific models to support
+the exploration of system architectures. Examples focus on the capture and use
+of synthesis and analysis knowledge for hydraulic systems design.
+
+Dr. Paredis is an Associate Professor in the G.W. Woodruff School of Mechanical
+Engineering at Georgia Tech. He received his M.S. degree in Mechanical
+Engineering from the Catholic University of Leuven (Belgium) in 1988, and his
+M.S. and Ph.D. in Electrical and Computer Engineering from Carnegie Mellon
+University in 1990 and 1996, respectively. From 1996 to 2002, he was a Research
+Scientist at the Institute for Complex Engineered Systems at Carnegie Mellon
+University. Dr. Paredis has a broad, multidisciplinary background. In his
+research, he combines aspect of information and knowledge management,
+simulation, and systems theory in support of model-based systems engineering.
+He focuses in particular on decision making under uncertainty in conceptual
+design and on efficient exploration of systems architectures. In these areas,
+he has published more that 80 refereed journal articles and conference papers.
+Dr. Paredis received the 2007 CETL/BP Junior Faculty Teaching Excellence Award,
+the 2007 SAE Ralph R. Teetor Educational Award, and a Distinguished Visiting
+Fellowship from the British Royal Academy of Engineering to visit the
+University of Bath in 2009. In 2007-2009, he was the Chair of the ASME
+Computers and Information in Engineering (CIE) Division.
+
+Systems Realization Laboratory Product and Systems Lifecycle Management Center
+
+Without necessarily going in depth in one particular topic, in the hopes that
+we might use this as a starting point for further discussion, not necessarily
+today but in the future, and see if there are opportunities to collaborate. The
+title is "model-based exploration of system-architectures". There will be
+several projects in this talk, themes around this idea of how do we use
+modeling, not just simulation but formal modeling. How do we use these models
+to explore large spaces of systems architecture? This is closely related to
+systems engineering and engineering design. Not so much focused on the part
+level, or individual component level, but how do we architect and build large
+systems. Aircraft, cars, spacecraft. How do we think about the definition of
+such systems?
+
+The example I will use is that of a hydraulic system. This is a relatively
+simple problem. Consider an excavator. We're only going to focus on the
+hydraulic. We'll assume the mechanical structure to be fixed. From a systems
+perspective, how are we going to connect the prime mover, the "diesel engine"
+that is most likely going to drive this engine; how do we connect this diesel
+engine to all of the hydraulics of the excavator. We have an engine, hydraulic
+components, how do we combine all of these with a system architecture with good
+tradeoffs that we care about? Cost, performance, efficiency. How do we
+stsructure this system. This is what we mean by defining the system
+architecture. It is not an easy problem.
+
+There are many competing objectives involved. Cost, performance, reliability,
+all of these "ilities", like "availability". We need to define a careful
+tradeoff among those. We need to find the system architecture to then allows us
+to meet or find the system architecture that is most preferred to us. Since we
+have multiple objectives, we need multiple models to predict performance of a
+particular system performs to some objective. To go ahead and develop the
+models, "the model" for your system architect, doesn't wrok. Every time you
+have a different systems architecture, the models that represent this. To model
+your system once and for all up front, it becomes impossible.
+
+What does systems architecture mean? It means from a systems perspective, what
+are the different subsystems, what are the specifications of the individual
+subsystems? if it was a hydrualic cylinder of a different size would be a
+"sizing problem". The systems architecture depends on connectivity or topology
+of the different parts. If the topology of the connectivity graph changes,
+you're definitely dealing with a different system architecture. You need to
+worry about the sizes of the individual components in the architecture. If you
+choose a good architecture, but the wrong component sizes, well, you might
+conclude that it is poor, not because the architecture is poor, but because you
+chose the wrong component sizes. But what if you controlled the system poorly,
+but the sizes are good? You might claim that there is poor performance. So,
+choosing a systems architecture kind of subsumes the individual problems of
+sizing and controlling. Otherwise you cannot judge the performance of a systems
+architecture.
+
+Why is this a hard problem? How can we use formal models to guide us
+sufficiently to near-optimal systems architecture? Optimality is a four-letter
+word at Georgia Tech. We can go into more details as to why there are
+theoretical foundations as to why optimality is not a good thing to persue.
+Before I go into the details, I would like to frame it into the larger context
+of my research. It's modeling and simulation in design in general. In modeling
+and simulation, you can only do research considering the context. The models
+and simulation must be used to provide information to make better decisions.
+Models and decisions are never perfect. Decisions need to be made under
+uncertainty. At the same time, underneath "modeling and simulation", there's a
+support infrastructure that helps us develop the models and the simulations.
+The better the support structure, the more opportunities we have to use
+different models or better models in support of the decision making. It comes
+down in the end to creating value. We can think of this in two different ways.
+We can increase the benefit of models and simulations by using the models to
+effectively support decision-making. We can decrease cost and thus create
+value. This deals more with model management. If we make it less expensive to
+create and use models, we can move to more complex models that are more
+accurate and lead to better decisions. Decreasing cost can help make value.
+
+So let's see. You can think of these three topics here. A very simple model of
+design. It's an optimization problem. Well, we start off with some requirements
+and objectives. We generate system alternatives. We need to model these and
+predict basically through analysis or simulation, how well these alternatives
+perform. We optimize and may go back and update the alternatives that we are
+considering. A very simple model. The parts that I will be focusing on here
+relate to sythesis and analysis. The top two here relate to reducing cost, how
+do we generate plausible system architectures cheaply, how do we analyze these
+in a cost effective way without human involvement, and thirdly how do we choose
+the right model for the phase of optimization that we are in. Models of
+different fidelity. All of these models are formally represented in SysML, in
+the systems modeling language. It's related to the Unified Modeling Language
+(UML) in the software engineering community. It has been extended fairly
+recently in the last two years to be used to describe systems in general. It
+goes actually beyond this a little bit where we are not only modeling formally
+these different types of system representations, but we also model the
+transformations between them, like requirements for a system alternative. The
+transformation itself, we can look at that as a model. The model
+transformations themselves are first class models. So let's see. We're going to
+be focusing on how we generate plausible system architectures by going through
+a model transformation from requirements and objectives to system alternatives.
+This is the first topic.
+
+The approach that we are taking to generating system architectures is a
+model-based approach. We're defining a language for fluid-power circuits, in
+the context of the fluid-power circuits we talked about earlier. We're going to
+define a language. A language is another model, that defines how you can
+express models. Basically, a language allows us to describe what valid
+fluid-power circuits can look like. In software engineering, we would call this
+"domain specific language". We are encoding into that language, knowledge about
+a specific domain (fluid-power circuits). The instances of the language are
+domain-specific-models. We describe the language by a meta-model. Besides the
+language itself, we have the actual vocabulary that is used in that language.
+There is a library of model components. What are some of the characteristics
+and behaviors? A model library with static (analysis) knowledge. The generation
+of analysis libraries will be using this later. This is a library of possible
+components to be used in fluid-power circuits. There is a set of generative
+model transformations, knowledge about how these components can be combined
+into valid fluid-power circuits. It's not so that by going through and
+generating a fluid-power model that you will end up with the perfect solution.
+If you think back to the days of expert systems, the expert system would
+actually generate one solution that would be "best suited" for a given-set of
+requirements. Our approach is broader. Let's create plausible solutions, and
+then use analysis to identify among the set, which ones are the most promising
+given the requirements and objectives? These are not going to generate the
+best, but rather plausible solutions.
+
+These kind of diagrams? This is one level up from SysML, we call it MOF. This
+is the type of diagram that you use to define SysML as a language. And since we
+are defining a language, this actually fits in at the same level as the
+definition of SysML, so rather than saying this is a SysML model, well, this is
+actually extending the definition of SysML. "Are you just defining properties?
+Are these candidate components in your architecture? Are you defining extra
+properties?" Within an ontology, within a certain domain of discourse, what are
+the concepts that we care about, and what are the relationships between them?
+Here we are defining fluid power, a circuit, a "circuit" is a type of fluid
+power element. The circuit here has multiple components. Not all of the
+relationships are shown in this particular diagram. It's a partial diagram.
+Some of the constraints and relationships have been left off. The white arrows
+are special cases of a fluid poewr element. We've basically constructed a set
+of concepts that allow us to define or model fluid power circuits. This is not
+a model of a fluid power circuit. This is a model of a language to be used to
+make.... This is a model of a model. And therefore it's called a "meta-model".
+Don't confuse this with "meta-modeling" as is often used in the design
+community. You're better calling the "meta-model" that you're familiar with as
+a "surrogate model". "How would this be similar to function structures? Where
+you connect components to previously and pre-defined types of slows that are
+between functions? Transfer, convert, it sounds like this does a little bit of
+the same thing. The component must have these parts, within it." Let me try to
+establish the connection. "Functions" themselves are a description of circuits.
+You can look at a system from different perspectives. What you are referring to
+is a functional perspective, how a system is built up from different functions
+and sub-functions. This is a descriptive model that describes a structure of a
+system. It is going to be such that one of the physical components in a system
+will most likely implement a particular function. There is a relationship from
+different perspectives. If you were to capture functions in this formalism, you
+would capture a second language, a second "meta-model" geared towards
+functions. I am working on this with Christie Sh.. from Munich. We're trying to
+formulate a SysML profile. A functional language. "So currently your language
+is more oriented towards your simulation models are properly used?" This is
+only physical architecture. How do the physical components connect together?
+From that we can go to the behavioral perspective and how this system is going
+to behave (the identification of). We're going to construct a lot of different
+languages. One language for each perspective, one language for each level of
+abstraction. Different many different languages, and then have transformations
+between the languages to map back and forth.
+
+In addition to the concepts, and the constraints betwene htem, we can be more
+precise about what a fluid poewr component might be. We can build up a
+taxonomy. These become the words within our grammar. We have words, grammars,
+this makes up a language, from which we can then generate models. I'll come
+back to that later. How does this lead to analysis models? So then the last
+part, the "meta-model", the model library that provides the vocabulary, the
+last part is the set of rules that defines the grammar. We use a formalism
+called a storyboard. It's been developed by Endy Shur from the Univ.
+Darnsmarscht. It's typical of a modeling approach in software engineering to
+model transformations between different languages. This here is a set of two
+model transformation rules. The formalism of this storyboard is, "you usually
+have a precondition and post condition". Here, both of these pre and post
+conditions are included in the same graphical representation by using different
+colors. Anything shown in black needs to be matched for the rule to be applied.
+If it doesn't apply, then you use this branch, and once it does apply,
+everything shown in green will get added. If there's something shown in red,
+then that will get deleted. So this is one graph transformation rule, and
+that's actually pretty easy to read. If you find a circuit that contains a
+cylinder, and the cylinder that has 2 ports, but these ports are not connected
+to anything. A cross-out means a negative match. Find a circuit that contains a
+cylinder that is unconnected. If you find this, then add a directional valve
+and move on to the next step. Take this directional valve added to the circuit,
+and connect it to the ports of the cylinder. Graphically, we can build up a
+simple rule here that says find an unconnected cylinder and connect it to a
+directional valve. It's fairly straight forward to read. With the graphical
+editors that come with this, it's pretty easy to define such rules. This is
+created in a tool called MOFLON. This is still at the "meta-model" level. So
+MOFLON is the tool. The tool MOFLON is a meta-CASE tool. CASE stands for
+"computer-aided software engineering tool". This allows you to model different
+software structures. This is a meta-CASE tool, so instead of modeling
+structures, you now model the languages in which these structures are defined.
+Meta-CASE.
+
+Once we have defined them, we can combine them into an activity diagram. That
+rule was called "add directional valve". We have rules for adding pumps, adding
+tanks, we can combine these in our activity diagrams. This is the initial node,
+you add a new cylinder, you then add this, you can traverse through these sets
+of rules. The rules are not deterministic. We have some branches here that are
+actually probabilistic. If the probability is different, the implicit tree.
+These are the probabilities that you would take a particular branch over
+another branch. I need to be somewhat careful. It may be that it says "try to
+add another cylinder". If that happens, then you're not really changing the
+structure of the system itself, but you're basically trying to and fail to
+perform that rule. So what it comes down to is the following. Our
+"requirements" in this simple example are that we started from some "prime
+mover", and we identified what types of loads and how many loads need to be
+driven from this prime mover. Here's an engine that needs to be connected by a
+translational load. Through this sequence of grammar rules that we have
+defined, we will automatically generate a circuit how the engine is connected
+through the fluid power circuit through the load. This is generated
+automatically. If you generate it automatically by applying the same rule
+twice, it ... There are different architectures that you may end up with. This
+is impossible to read, I recognize that, but there are four loads in this one,
+and automatically we fill in the remaining components. It can turn into fairly
+complex systems. Even though the rules were simple. We can have a large variety
+of different architectures. Maybe I can make these slides available if you want
+to look at the rest of the slides, if you have questions contact me. Alright.
+So. Let's see. 
+
+The tool that we use is called MOFLON. In German there is some mountain goat
+called "mooflon", so they used it even though it has nothing to do with it. All
+of these tools have some name of animal associated with it. Moflon, mooflon,
+they really wanted to have "MOF" in there because it's at the meta level. All
+of these things that I have described so far, I cheated a little bit because I
+showed UML diagrams, but the problem is that we cannot generate UML systems
+diagrams automatically. The overhead is too large. We define all the rules, in
+some kind of abstract language that is simple and very domain specific. To go
+to SysML back and forth, we define an additional mapping. And those kinds of
+mappings, where you are mapping one-to-one, one concept goes to some other
+SysML concept, MOFLON captures these mappings very well. This is using a
+<b>triple graph grammar</b>, where you have at a very high level, where you
+have a way to define in the meta-model, what the correspondence is. And the
+nice thing is that you don't need to write any code because this MOFLON tool,
+if you define what the correspondence is, it will generate the Java code
+automatically, which becomes a plugin with 20 lines of code that you need to
+write yourself. You can then implement this transformation automatically within
+existing UML tools. Let's not go into the details here. Okay. This is the part
+here on the approach that we're taking within SysML to generate different
+systems architectures. We have now generated one of these here. We then take
+the system description and convert it into a behavioral description. This is a
+description of the structure of the system, and now we are going to generate
+behaviors from that. The approach that we are using is "composition". We go
+back to the library of the components that we have defined. For each of the
+components in our library, we are going to associate with that, a behavioral
+model. Here, in a fixed displacement pump, this is a structural model that we
+referred to previously when we created the model. Now we are going to associate
+a behavioral model. This model here is defined as a Modelica model. That's what
+we've been working with so far. Basically it means we're capturing that this
+particular model is a good description of this pump. In addition, we actually
+define the connections between the interfaces of the behavioral model and the
+interface of the pump. A pump here has two fluid pumps and two mechanical
+pumps. The behavioral model in Modelica has a similar interface. And we're
+defining the interaction between the two. Once we have correspondences between
+structure and behavior, we can use this in SysML in the following way. If we
+were to model from a description perspective for a log splitter, this can be
+represented not only in this fluid power schematic but also equivalently in
+SysML. This is one of the draw backs in SysML. This looks like blocks with
+lines between them. Just like the previous diagram. Everything looks similar.
+You can make it look fancier, but it takes a lot longer. This is in ISO 1219,
+the traditional approach for representing fluid power circuits. The individual
+components are represented in SysML, and they correspond to connections between
+flow ports in SysML. Anything with flows and components and connections can
+easily be represented with an internal block diagram (IBD) in SysML. We're
+going to focus on the power subsystem. How can we generate for this power
+subsystem a corresponding behavioral model? There's a structure, we want to
+create a behavior with it. Fore ach component in the descriptive model, we
+found in the library the corresponding descriptive model, and the associated
+behavioral model. In the library now, we've established now, there is a
+correspondence between the components in the fluid power circuit, and we end up
+in the behavioral model. How do we identify how the connections between the
+structure map to the corresponding connections in the behavioral model? We have
+encoded these as model transformation rules. We have a sequence of model
+transformation rules that will identify for each of the components, what the
+corresponding beahvioral model is, by going through the library, and then
+connecting the behavioral models in the right way. Each of these blocks,
+internally, contains equations that describe the behaviors of these components.
+That's actually one of the efforts that I am involved in with OMG. We are
+turning that into a formal specification that will be standardized. This
+representation of Modelica models in SysML, next year around this time. It'll
+be a standard. Through a model transformation, we can create the corresponding
+Modelica code, which we then simulate inside a Modelica tool. Okay. That was a
+quick overview of how we go from "here to here". <b>Dymola</b> for simulations.
+The idea is that once we generate behavioral models, we can simulate these
+models in Dymola. Take the results to guide the generation of improved systems
+architecture. We haven't finished this loop yet, it's on going work. My
+student, Roaxxane has been working on this. Which behavioral models are best
+suited to guide this overall process? We call this the "designer's dilemma". We
+are working with models of different levels of fidelity. Not all of these
+levels of fidelity are equally suitable. If you are trying to explore different
+design alternatives. Given a certain level of effort, you're kind of restricted
+in this space from where you can go. You can spend all of your level of effort
+on the exploration and optimization. But if you do that, well then there are
+consequences. The level of fidelity in your models that you use must be very
+low. It's expensive. If you want to use the models very many times, then they
+can't be very expensive otherwise you will run out of resources. I will only
+want two or three alternatives, and then I can spend a lot of resources
+modeling. Neither one is a good option. We should be somewhere else, to stretch
+where we go with our resources-- have broad exploration, but high simulation
+fidelity. Is this possible? Maybe we can use the same resources more sparsely
+to stretch how far we can go. So, another way to think about this is the
+following. Let's assume we have formulated this problem in a cost minimization.
+Here's a cost minimization function. It's expensive to compute. We could
+actually have a model for this minimization function that is not accurate.
+There is a lot of uncertainity. The further we are away from the optimum, the
+broader the uncertainity. If we are far away from the optimum, then I don't
+care how far we are. If we are far away, we only need to know which direction
+we need to move in, but I don't need to know how terrible my objective function
+is. As long as I know that I can get it closer to zero, then I'm happy. Far
+away from the optimum we can be very inaccurate and get away with it. When we
+are closer to the optimum, we need to be very accurate, otherwise you can't
+distinguish between the best and the good. The approach that we have taken is
+to use two levels of fidelity, only two levels. Start of f by exploring the
+objective function with a low fidelity model. If the low fidelity model gives
+you a value below a certain threshold, then you must be pretty close, and then
+you run in addition a high fidelity model. If you are far away from the
+optimum, then you run the fast low fidelity model. Once you get close, use the
+fidelity. How do you know what to set the threshold up? Shouldn't you look at
+the slope of the objective funcftion? Another student of mine is looking at
+"value of information" as a metric. If you use value of information, then you
+can ask "how much should I be willing to pay to improve the accuracy of my
+simulation?" For a given state of your optimization problem, you can calculate
+whether or not it's worthwhile to compute one model or a more accurate model.
+The value of information is too small to warrant a high fidelity model when you
+are very far away from the optimum. If you are very close to the best solution
+found so far, then it is worthwhile to perform this high fidelity simulation.
+We're looking at approaches theoretically that build on value of information
+theory, which helps us decide when to use which model. At this point, we just
+"pick a threshold", as if we have some prior knowledge. It's not perfect, but
+it's a first step. 
+
+There's actually a second advantage of doing that. You first start off with the
+low fidelity model. If it's below the threshold, you return the low fidelity
+value. If it's below you know it's close (er, so if you're above threshold, you
+return the low fidelity model). With the high fidelity models, well, they are
+brittle if your parameters suck. In simulation terms, they may become "stiff".
+If you have a system that is poorly balanced in sizes, you will often get
+"stiff systems", and they will fail. Your backup is the low fidelity algebraic
+model that is very inexpensive. My student Roaxanne implemented this.
+Minimizing operating costs. We call this an "influence diagram" proposed by
+Howard and Mathison. It's an easy way to capture what the design problem is
+that we are looking at. We're looking at different trajectories for the
+excavator, and the different models determining ultimately what the trench cost
+is. This is a way of summarizing the design problem. It lets us capture how the
+high fidelity model is different from the low fidelity model. We include fuel
+efficiency and fuel cost. These are fairly preliminary results. If we plot low
+fidelity versus high fidelity. As you get close to the best possible solution,
+you use the high fidelity model. The low fidelity is usually close to one
+second, compared to the high fidelity models. By using this simple two-tiered
+scheme, we save about 25% CPU time when solving a design or optimization
+problem. I was disappointed by this, because the time difference between 60 or
+70 seconds for a high fidelity simulation, and only 1 to 2 seconds for the low
+fidelity simulation, would seem to indicate a factor of 30, but it turns out
+that the simulation or optimization would do a broad exploration quickly, and
+then it gets close to the optimum, and then from there on out, you always run
+the high fidelity simulation. Overall, you can still broadly explore. We use a
+genetic algorithm to do this. It does a very broad exploration, fairly
+inexpensively, but then when you get close, the savings drop to zero.
+
+In summary, I've gone over three different aspects here of what it takes to
+explore different systems architectures. What I would like you to remember is
+that you can do this with a very formal model-based approach. I really
+encourage you to look carefully at the tools and methodologies that have been
+developed in the software engineering model, where they are moving towards a
+completely model-based approach. For systems engineering, there are fantastic
+opportunities to apply these tools to this context also. It will increase
+benefits, reduce costs, and very importantly to me, everything is a model. Our
+slogan is "model everything". Model structure, function, behavior, and model
+the model transformations, they are first class citizens also. Model
+everything.
+
+Any questions?
+
+"You put a threshold. Back to Ben's question when you pick to high fidelity. We
+were scheduling the fidelity to a temperature in simulated annealing. Early in
+the optimization, you use high fidelity. At the end, you use low fidelity,
+regardless of the value of the objective function. It's a threshold in time.
+You switch from low to high fidelity at particular moments or particular
+iterations, regardless of the quality of the candidate. It could do that in a
+GA too, you could say the first 25 low fidelity, the second 25 fidelity."
+Assuming you are converging, switching with respect to time, and switching with
+respect to candidate quality, might be related. If you come to a solution that
+is really off the mark. ... "The way you could say is that, you are comparing
+at a particular time, is A better than B, so in order to compare you want them
+to be on the same.." The direction that we are thinking is, this will require a
+leap in the way simulation. We need to move towards "predictive modeling" where
+you don't just run a model or a simulation and get a model. You need to
+characterize the uncertainty with this. If you end up with a situation where
+you already have one point, and you come across one point, even if the
+uncertainty is very broad, if you compare the distributions that one will
+dominate, is virtually zero, then there is no point in moving towards more
+detailed analysis. If you can characterize in predictive modeling, then you can
+guide these processes in a more directed fashion. At the moment we do not have
+the capability. It mostly depends on the quality of the models. It's hard to
+judge whether we should go to a more detailed model or not.
+
+"A large thing that doesn't really convince me is the focus on graphical
+language to describe your model. Are there tools to describe SysML not using
+blocks and arrows?" Very good point. I glossed over this. Let's pick this SysML
+model here. What shows up here as blocks and connections between blocks, or
+ports even, this is just a typical SysML model. It's really a "diagram". The
+"diagram" is not a model. A "diagram" is a visualization of the model. So in
+computer science we refer to this as "concrete syntax". In addition to the
+concrete syntax, there is a "abstract syntax model" that defines the concepts
+and the relationships between them. When we manipulate this model, we're not
+saying "look at the pixel", we're actually looking at the abstract syntax
+model. SysML is no different if you look at the abstract syntax, then if you
+look at any other model. In addition to the abstract syntax, there is a
+graphical concrete syntax. If-then statement. But that's exactly if you use a
+model transformation framework. If there is something connected, that means "if
+the model contains this pattern, then perform this operation". The big
+difference between describing it in that way, rather than describing it in
+code, you could do more in code, or even more in assembly code. It's pretty
+darn hard. So if we raise the level of abstraction at which we would like to
+see happen, then it makes our life easier. The level of abstraction has been
+rbought up here to a "declarative model". You say, "find this pattern, and
+transform it into this". This is a declarative modeling approach. There are
+declarative programming languages, but most of them are imperative. And, people
+feel that declarative modeling, I'm one of those people, is a higher level of
+abstraction and is easier to work with and maintain, rather than working at the
+code level.
+
+"How hard would it be to use some of these techniques on a different system,
+like heat exhcangers and different things like that? How hard would it be to
+take it and go to a different domain." At this point, starting from scratch
+would be very hard. Just getting familiar with all of the terminology and tools
+is non-trivial. The vision that I would like to see pursued within the
+engineering design community is that we start encoding, from the bottom up,
+some of the knowledge, related to formalisms such as functional behavior,
+structural, but also according to domains. Fluid power, mechatronics, pick any
+domain and say, hey, let's encode our knowledge about that particular domain
+about function, behavior, etc., and let's start building this up from the
+bottom up. If people start contributing, we will have a lot of knowledge in a
+formal representation, so that we can exchange it and share it with others. The
+idea is that once you have something defined in a formal language, describing
+it, extracting information from it, or describing it in another language, is
+really easy. People have said OWL, why not use it? Yes, you could do that. It's
+easy to write a mapping between SysML and OWL. If you prefer working in OWL,
+then let's just translate it back and forth. The expressiveness is very
+similar. You can do some things in OWL not easily done in SysML. All of these
+languages are converging. People are building translators. It's more of a style
+or a preference for what language is better suited for what you are doing.
+
+"How do you combine the hydraulics language, and your structure language? Doing
+all of those things at the same time with a single model?" Hydraulics versus
+structural is straight-forward because there are certain interfaces that allow
+you to go  from one domain to another. In order t ogo from hydraulic to
+structural, you need to have a sensor or an actuator, that relates it to
+concepts in the other domain. Now, thermal versus hydraulic, you may say, well,
+both need to be considered simultaneously. Well, then it becomes more
+difficult. If these two are coupled, coupling is significant, then you may need
+to move towards a thermal-fluids domain, rather than saying here's my thermal
+perspective, I might need to combine them to capture the coupling efficiently.
+What's the level of abstraction that we need to go to? We need to be focused on
+the fluid part, or do we need to be concerned with both?
+
+"Are your architectures limited to standardized connections? In your
+fluid-power system,s you can run a cable with fluid under pressure. Versus a
+more abstract or generic architecture. Where am I going to put the pub or other
+components? Are you putting more focus on fluid connections?" Well, we need to
+start somewhere, so we focused on something simple. The architecture is
+connectivit,y and we don't have interference of parts, nesting, or anything in
+a more generic architecture." We actually have control over how well suited
+this formalism is for what we're doing. If you ask that same question to a
+systems engineer, the person who thinks at the systems architecture level, then
+the problems that you run into with coffee makers are not very common, ebcause
+if you think at the systems architecture level, you allocate functions to
+components, and the intermingling of functionality to different components is
+not that common at the systems architecture level. If we architect systems, we
+tend to choose systems that are easily decomposable. This is a way of managing
+complexity that we choose. If we decide and often that it is the case that at
+the lower levels that you are better off combining the functions in a varfiety
+of ways, then these languages may fall apart. 
+
