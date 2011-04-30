@@ -1,0 +1,520 @@
+
+A relatively informal visit. We'll have a wonderful seminar here. Afterwards,
+folks should feel free to hang around and talk with Paul, and at one point he
+will head on over to MBB I think so he can look around and talk some more, and
+go eat and drink that's up to him. Grant Wilson. Grant's been pestering me
+forever to get Paul Rothemund here. Paul has been out with the semitech people
+this morning. Greg. Paul Pastella. Semi-independent. So, he does DNA crystal
+stuff. 
+
+Beyond Watson and Crick, 
+
+
+I came here for the semiconductor industry but then wanted to visit everyone
+here. It's a mixed bag of left over other talks, so bare with me. I was talking
+to semiconductor industry about things towards integrated DNA self-assembly,
+artificial DNA self-assembly with nanoelectronics using this idea of
+programming DNA self-assembling. I come loosely from this field of DNA
+nanotechnology. I just want to give a real brief background of the elements of
+that field and a little bit about what I am interested in. I also want to
+entertain any discussion about anything here. Let's just have an open questions
+and discussion, and at the end, more towards biology and biochemistry type
+applications that you might see in the talk. Today might actually help single
+molecule biophysics. I might be able to hand wave about that to stimulate
+discussions.
+
+There are is programming versus Programming. To (p)rogram means merely to
+"specify", this is what a chemist means by programming binding interactions. To
+a computer scientist, Programming means embedding a real computer algorithm, to
+embed something that has arbitrary computation in a molecular situation.
+Programs from molecules. Specify what the molecules do. There might be no
+computation in a formal sense. The reason I am bringing this up is that lately
+people in DNA computation have re-branded themselves as molecular programmers.
+Their related friends in syunthetic biology. Synthetic biologists nicely let us
+hang out with them. This is just what the effort is. We're trying to take
+molecules, principles from biology, and turn them towards our own purposes that
+might not be biological purposes. Synthetic biologists start with cells.
+Molecular programmers start with molecules. Some of them are (p)rogrammers,
+others are (P)rogrammers. The far most proponent of that has been Erik Winfree.
+Ron Weiss has interests in big piece stuff. Tom Knight is a big P kind of
+person. Drew to a certain extent. A lot of people are little (p) type. That has
+to do with philosophy, not any sort of value.
+
+The field of DNA nanotech has three strains. The little (p) of programming
+structure. Ned Seeman started the field roughly thirty years ago. Over the
+course of thirty years, they used DNA as lego, and build any structure we might
+want. They laid out the structural motifs, making junctions, the things that
+were thermodynamically and kinetically stable. Ned had origins in
+crystallography, he tried and succeeded to make rationally designed 3D crystals
+for DNA. One is this programming functions in Dynamics. Bernie Yurke and Andrew
+Turberfield. Non-equilibrium DNA structures. DNA hybridization is not
+two-state. We can make little DNA tweezers, little DNA walkers, none of these
+dynamic things are as good as your protein motors. We're making them more
+autonomous. In 10, 20 years, we might catch up with the structural guys and
+have the dynamics and functions we expect. You're familiar with other functions
+of nucleic acids that are not just structural. This is very active.
+
+Finally, Len Adleman started experimental DNA computation in 1994. Putting
+actual computation in molecules. I won't go into this today. The idea here is
+to put computation in molecules, but not to compete with electronic computers.
+Thermodynamics, kinetic error rates, cost, scaling would not allow us to
+compete with electronic computers. These can control other molecular systems.
+They can build shapes, structures. A little computation to determine what
+structures. Or computation to figure out GRNs, to turn genes on and off. Do a
+set of computation on biochemical inputs. Does this cell have a particular
+disease state? These are small and compact. A few dozen gates. Never the less,
+they are computations. If you put a little computation into molecules there may
+be many many things you can do. There are strains of structure, function and
+computation. This is the kind of place the field is going. We want to
+recapitulate what the living systems are doing. Along the way, we'll use the
+things we come up with, and put them into applications.
+
+What was the original impact of Len? I view them as two different intellectual
+efforts. For construction tasks, Erik visualized this thing as not computation,
+but.. this is an aperiodic DNA crystal. These are little DNA monomers, grey and
+white bodies are 12 nanometers by 4 nanometers, that has the beginning of this
+fractal pattern. It's binary addition modulo two. It was about figuring out a
+complex pattern. The tie between computation and pattern formation was
+immediate, not just "explicitly doing computation". The argument is if Len had
+never existed, I was doing DNA computing before Len, if Len hadn't ... Len's
+implementation, which is being pursued in eastern Europe, the reason I bring it
+up, is that we don't have lots of things. What leads you to believe, "we're
+going to program with a big P, Len's big P isn't going to go anywhere, if we
+bring on these fast time cells, what you're learning now will help later?". One
+answer to that question is that independent of what we're learning now, I can
+give a whole talk on it, if you pick this one subfield, this has all the
+richness of computer programs, all the Kalgoromov complexity rolled into it, in
+non-trivial ways. It's the only implementation of computation in DNA, as far as
+I'm concerned, captures all of the interesting stuff in computer science, in a
+way that makes sense, all plays out in whether or not you can build something.
+If you just carve off one thing, whether or not it's practical is a different
+issue. There are particular subsets of this particular domain, that could
+capture all of the interesting things in this domain. 
+
+But, making structures towards things we might do with nanoelectronics. The
+first real successes with DNA nanostuff was periodic structures. Cubes. And
+tetrahedrons. This is a DNA tube. It's made of similar DNA motifs. They are
+made by 4 by 12 nm. They make this crystal. They have a curvature when they
+bind, so they make a tube, it's not a model for a microtubule. It's a
+crystalline tube. It's not too interesting of a periodic pattern. Purdue made
+these where they have these little 5-connected objects. 17 plane symmetry.
+Periodic pattern when symmetry breaks. We can make any periodic pattern you
+want. We can make any periodic pattern in the plane with any symmetry. That's
+great if you want to make a regular structure like computer memory, but what if
+you have the greatest amount of arbitrary and unique things in a finite
+structure. Arbitrary color pixels and make whatever pattern. A grad student
+posed this question to me, so I came up with DNA origami. This is a process
+where we take a long strand of DNA, 7k nt single stranded DNA, take a very long
+ssDNA and fold it into a desired shape or pattern. The basic way this is done
+is via DNA staples. In the real implementation they are 20 to 30 nt. Each
+staple conceptually has a left half, and that left half binds that long black
+scaffold strand. The right half doesn't have a continuous complementary. The
+right and left sides are complementary in other areas. You have to design this.
+It folds this into some shape or pattern. You have to respect the geometry of
+DNA. The idea is that these colored staple strands fold this long strand into
+this path where it makes a rectangle. The black hash marks make the hydrogen
+bonds. The blue ones bind here, 8 bases here, here by 16, these things are more
+complicated than what I described before, each one binds the scaffold together
+in different places. It's shocking and somewhat confusing that this works at
+all. This was a video by Shawn Douglas from William Shih's group at Harvard. We
+can't make decent movies of stuff that happens with molecules. It gives you
+some feeling of what must happen for these things to come together. These
+staples are binding together, falling off, being invaded, etc. etc. The
+molecuiles are wigling. You can heat it up to almost boiling. A double helical
+character emerges. The whole thing is composed of things composed of double
+helices. This is not a simulation. There are no kinetics. This is a movie.
+Nothing is moving. This was made in a time-reversed way. 
+
+Have you found issues with knot formation? That's been most rigorously explored
+by Shih because things in 2D are easier than things in 3D. You have these
+double helical axises held together by these crosslinks, where a staple strand
+winds around one hnelices and then reverses directions. One of these crosslinks
+enforces the other crosslink. It's kind of flike in homologous recombination,
+but not quite. There are no unbaired bases. These are just drawn to show you.
+There is a gap between helices, but not between helixes jump.
+
+In each of these linkers, you have to worry about if a sequence in the linker
+chain is an exact match in the seven thousand .. by design, each staple has an
+exact match, it has domains that match exactly. Many things are wrong. The long
+strand itself can have self-complementary to itself. The short strands can have
+complementary to each other, complementarity to places they are not supposed to
+bind. In DNA nanotech, we typically use computers to design these sequences. We
+design the hell out of these sequences to avoid these problems. Here I used a
+natural scaffold from the M13 virus. You're stuck with the sequence of the
+virus. You're effectively stuck with the sequence of the staples because they
+are somewhat induced by the virus. You have no choice. I just close my eyes and
+get lucky. There are reasons you get lucky in this setting. In DNA
+self-assembly, Burnie Yurkie on non-equilibrium DNA stuff, exact matches have a
+mechanism- biochemists knew this for years- mechanisms by which they can
+displace incorrect matches. If they mismatched by a length of 10 here, if
+there's a guy who matches by 16, the other one can bind by four on the end, and
+through a random rock can get there. The reason why this doesn't get trapped in
+a billion different wrong ways, well, DNA hybridization is not two-state. The
+10-mer binding domain, if you had to wait off, you don't have to wait centuries
+to drop off, well, there's this milliseconds mechanism before step. Without
+this mechanism, this would be dead probably. It's not just a difference in
+equilibrium constant. It has to be able to "walk off" bad things that occur. If
+you have something that matches inappropriately, and nobody will compete him
+off, you will have some garbage stuck there. Now since you can synthesize that,
+is it worthwhile to design a perfect scaffold for folding origamis? There have
+been no pathologies so far. Shih and others are going up to 50 kb. The address
+space gets more cramped. It might get worthwhile to design very carefully. The
+answer is that I don't know when it becomes necessary. Did you ever actually
+write some program that would ensure some tearing between the stitching in the
+molecules? I didn't have choices about the sequences. The virus induces those
+sequences. I had to close my eyes, disregard my best practices, and do it on a
+small scale. But I did do the following: I checked this thing for self-binding,
+it has a biologically important 20 nt hairpin. That hairpin is really
+thermodynamically stable, so I only folded the molecule, except that really
+important molecular hairpin. That's the pin that hangs off in everything. Shih
+will fold through that section sometimes. Oour ability to test if something is
+screwed up is not that great. Depending on what strands are bridging that
+hairpin, and whether or not they are overlapping enough, that's where you
+figure it out. Secondary structure can screw you up. Ned wrote algorithms very
+early. Absolutely. Oversequences of this length, you can totally get rid of it.
+
+I made a variety of structures early on. Once I had basic geometry under
+control, I just wanted to fold in any way I wanted. So this was a scaffold
+path. Start up, make a turn around, fold over, fold back down, and be back
+here, and leave the little pin down here and out of the way. I wanted to do
+this to show that I could make structures with mechanically stable holes. I
+designed staples to do this. To give you a sense of scale, I had this 100 nm in
+both directions, within 6 nm in one direction, 3 nm in the other. To compare
+its size to a red blood cell, there's the smiley face guy. 70 of these can fit
+across a red blood cell. It's slightly smaller than lithography. The line
+widths are 5 to 10 times smaller than modern photolithography. Is there some
+reason why it needs to be continguous? You think it would cause pins. You could
+leave these structures as gaps, and the DNA helices stack across gaps. There
+are staples across the gaps. In this design, there are DNA strands that go
+across this gap and suture things with stability. It has problems with
+stability elsewhere, but not there. Can you make a multi-layered structure if
+you wanted to fold it? William Shih has been doing that.
+
+Atomic force microscopy is where you have a micromachined sharp tip, you
+measure the deflection with a laser beam bounced off of it and build up an
+image one scanline at a time. You're not taking a picture, you're physically
+dragging a tip, or tapping a tip, interacting strongly with a sample. This is
+how we're going to visualize this structure. You design one, you send an email
+to IDT, you get 250 strands back, you do it in a magnesium buffer so that they
+form, then you're stuck with a hundred billions of these things in 100 micro
+liters, you pour them over a surface. The DNAs are negatively charged. The
+surface is negatively charged. You have magnesium in the buffer that serves to
+stick the DNA to the surface. They stick strongly enough so that you can take
+the AFM image and see a bunch of DNA origami like this. You can see that among
+other things, they aggregate. Some number of them are broken, some of them are
+fragmented. In this particular prep, 70% of them had the recognizable shape.
+You can zoom in and see the fine structure. here's the fine structure. Here's
+the fine structure of this thing. They take 4 to 8 minutes to image. Getting a
+tip that is sufficiently sharp. In the past, you could sit there, it could take
+two or three days, throwing away needles, changing the needle on your record
+player until it sounds good. If you make a structure much more rigid, the
+apparent yield rises. These triangles, which have, these are the schematics,
+they have DNA helices in all directions. It doesn't have just a few helices..
+it has greater than 95% yield. The yield of these, the gross morphology of each
+staple, the gross morphology down to the 5 or 10 nm length scale, is dictated
+merely by the purity of the scaffold. The better the purity of the scaffold,
+when you break the structures, it's not hydrolyzed, you get the yielded
+structures. But it's not staple-dependent? You can pick multiple sets of
+staples to make the same structure. So there are some rectangles with no
+apparent yield.. it's not measured in a fine way. We don't try to optimize the
+yield. That 90% robustness is from different set of staples. It's shockingly
+robust. The fine detail works out. 
+
+A year after I did this, I got this picture in an email, Lulu Qian. Lulu is now
+a postdoc at Winfree's lab. What a job application. So she sends me this thing
+in an email. I was amazed that she did this on her own. She just wrote her own
+code to do it, screw this guy, she designed this really great fold. She has
+taiwan sitting right there. She has taiwan on the world's shortest leash. So
+this goes to show that this can be reconpitulated by reading supplemental
+materials. It's not rocket science. Layered structures. Shih has got 3D
+structures of several times. Nature, 2009. Douglas et al. He has used one where
+he uses DNA helices on a honeycomb lattice. On like a rectangular grid. I would
+want to do a rectangular grid if I went to 3D. You can do hexagonal grid. These
+are negative stained TM images. He has girders, interpenetrating structures,
+all kind of stuff. These are three origami at once. Chains of origami. All of
+these things have reasons. Everyone in the lab has different reasons for these
+structures. The whole idea behind this stuff for biology is to make custom
+instruments for biology. William Shih has a background in motor proteins. You
+can ask hypothesis like, they take these steps, they walk along a protein
+filament, you can ask, how does it know to release the backleg? The hypothesis
+might be that the back leg is released when under tension. I want to test that
+by varying the spaces of my track, maybe if I increase the step length, maybe
+it walks faster. The probability of a walk might be less with shorter steps.
+You can't engineer protein filaments. You can't change the step size on a
+microtubule. This will be a substrate for motor proteins to work along. You can
+do the DNA part and make it great, but the whole is meant to accept an active
+tetramer. Getting that right will be the hardest part. At least we can think
+about building custom instruments for biology. For little expense, you can
+design a custom instrument. The interpenetrating barbel. Imagine machining that
+thing. Andy's question about folding difficulties. To get these things to fold.
+The 2D structures that I make, and 3D shells, fold quickly in 2 hours and
+you're fine. To get these interpentrating bars, you have to let them fold for a
+week. If you are clever you might do long staples on the inside, so they fold
+first at higher temperatures, but nobody has been that detailed yet. Annealing
+schedule. Staple length. You can get these things to fold. Several groups are
+trying to get dense 3D structures. They made this structure or something. They
+tried to make this structure, but they didn't let it fold in a week. The yield
+of the interpenetrating bars after a week is 50%, for what they consider to be
+"well formed". What's the definition? Well, it's at least better than 1% yield.
+This is the point that Ned harps on, are these molecular and really all the
+same? So that's fine. So you can assemble multiple pieces. They have little
+extra DNA strands. They purify, they mix them together. The same for the
+polymers on the top? There are many ways to string these together. They are
+exploring that, a different one, if I have time for that. 
+
+Hendrick Dietz, William Shih, 2009.
+
+Are they flat? I don't know. If you make a 3D structure or a DNA tube, with a
+total curvature, the mica might catalyze them open. I don't know if the smiley
+faces are flat. I designed them with symmetries that would tend to take out,
+would take out bowing in x or y, so according to the symmetries they might be
+taken out.. so that same structure is completely compatible with trust. Shih
+said that my structures are twisted. I went back two days later and realized I
+screwed up. You have to nail the inner spacings between the cross-overs. It's
+10 bp/turn. If you don't compensate for it, your twist will have this super
+twist, not gentle at all. If you make a rectangle, it might be twisted from 90
+to 180 degrees. They are twisted like pretzels in solutions. Everything I made
+was really twisted. He actually, this just came out in nature, he had these
+rectangles either left-hand twisted, right-hand twisted, or straight. We
+reconpitulated this with our stuff, it really helps. Things were twisted, if
+you know what to look for in the AFM. The long chains can also fragment.
+Hendrick Dietz was the one who thought about this. Bending and twisting based
+on this can lead to curved structures. Boomarang structures. They figure out
+the model, they can nail it. Gears, they can make curved 3D stuff. This was
+made before anyone was making this. This thing, if you look at the
+reconstruction, it suffers from the same twist and deconstruction (the boxes).
+Ebbe Andersen 3D box from 2D surfaces, Nature 2009. Rectilinear style. You can
+make everything.
+
+caDNano open source software
+
+For the purposes of patterning, if you want to arrange stuff, every staple goes
+to a unique position. The orange strand lands exactly there. In principle, you
+have to put chemical functionalizations. For the paper on this, I didn't put
+interesting functionalizations, just hairpins and bumps, which has been done in
+DNA forever. With 6 nm resolution you can do North America, snowflakes, two
+words of DNA with a continuous helix from one flake to another. There's a piece
+missing from this D. It's the case that you're trying to figure out how many
+functional groups you have. You can only visualize 94% of them. The AFM
+actually knocks them off, they disappear while you're sitting there. If you're
+trying to functionalize this thing. You need other techniques to try to nail
+this to yield the functionalization of this technique. But if it all works out,
+you want to put some active elements on some staples, for example, make a
+circuit, and once it formed, you wash the thing away, and you have some
+functioning nano circuit.
+
+The design of a biochip of a self-assembling molecular scale memory device.
+Robinson & Seeman. Protein Engineering 1 (4) 295-300. 1987. Nealey Lab, Ruiz,
+have been using copolymers for 2D lithography and data storage. We get a little
+amount of money from the semiconductor industry through the semiconductor
+consortium. It has focused my thinking about what are the actual challenges to
+nanoelectronics integration and how to surpass them. This chart was made by
+people in this organiszation. Benchamrking Table for Nanopatterning
+Technologies. Here's DNA nanotechnology. The things that are in this column
+that might be a problem in yellow, and really definitely a problem in red. What
+kind of devices and how to make them compatible with DNA? Higher order
+structures? And foremost, registering them with underlying features on a
+surface. Here's this problem. Here's this problem of DNA origami on solution,
+and they go everywhere. We have FENA sponsored projects to address this
+problem. Yield, defect rates, scanning, compatibility. CNT cross junctions.
+And, in those projects, maybe some of these things, maybe the registration is
+more yellow than red, and anyway. So.
+
+We have a collaboration at caltech, and everyone has graduated. This involved
+Siping Han, Robert Barish, Hareem Tariq, Marc Bockroth, Bill Goddard, Erik
+Winfree. These students did everything. There's a history of DNA plus CNTs to
+make devices. But there hasn't been any use of DNA self-assembly to assemble
+anything other than a one-dimensional device. You can combine DNA with CNTs,
+there's a nice paper by Keren et al. 2003. You might have a single CNT along
+its length that might be functionalized different, like for attaching
+electrodes, and the entire thing is gated by this carbon backing. It has a
+symmetry breaking in some sort of mild way. You don't have anything that
+approximates a two dimensional device. You have this same substrate-backing.
+It's this whole giant device. We wanted to organize this thing in 2D, and have
+2D devices. There are many ways to functionalize DNA to CNTs, you can sonicate
+CNTs to DNA. Otherwise the CNTs won't go into aqueous solutions. Addressing the
+compatibility of CNTs and DNA origami. You can combine some components to the
+CNTs. As far as yield is concerned, the DNA is usually binding things later,
+but those things can also bind to the CNTs. So, they will bind and be partially
+accessible. So they stick DNA in hydrocellulose. Some stuff is bound, some
+stuff is not. What the students did is took a note from Bernie and put
+protecting groups on the strands. These little DNA sequences that are exposed
+are very short. We haven't measured this rigorously. The protecting groups have
+more available. This kind of tricks appears to have really helped us in
+organizing these things. We took two different sequences orthogonally to each
+other, made two kinds of CNTs with protecting groups on them. These protecting
+groups only release if and only if these things start to bind with this toehold
+with the appropriate DNA sequence. They wanted to make cross bars. If we used
+random mixtures with metallilc and one semiconducting one you in principle get
+transistors. One semiconducting, one metallic, they relied on random chance.
+Maybe they don't make.. they got crosses. You can deposit them on silicon, wire
+them up with electrodes. We got a few FETs, one of them was sort of stable.
+
+Two dimensional organization of CNTs on DNA origami.
+
+What drives the interactions of DNA and CNTs? It's not completely
+characterized. The best way to separate CNTs. Metallic CNTs are semiconducting.
+They have different chirality. You can close them and get chickenwire with
+different chirality. You can exquisitely separate the CNTs with different
+populations. It's fricking amazing. They had a paper in Nature in the last
+couple of months, where they can do this massive screen over short DNA
+sequences and selectively find 12 different types of CNTs. They proposed it to
+be a DNA "beta sheet". They see the pyrimidines specifically binding between.
+Once the tubes are put together, once you've directed the crossover, are there
+tubes to each other, will the tubes remain stuck? There is this origami in
+between them. They have no directions between them. This guy binds to this guy.
+The DNA origami works. You could imagine aligning things on the CNTs such that
+you have your toeholds and protecting groups. Breaking symmetry on CNTs is a
+bitch. You can functionalize the ends more than the internals. You broke
+symmetries, when you broke the CNTs, the whole tube is the whole thing. We're
+not talking about bands. The whole tube has a particular chicken wire
+structure. There are some CNTs that have heterogenerity between two structures.
+Nobody knows how to grow CNTs to grow one chirality and switch. What I was
+getting at was that, it's great to think towards this nanoelectronics era
+driven by DNA, and then thinking that this is the world's most expensive tech
+for this scale. But what if it was catalytic? As far as cost is concerned, if
+we could organize things, we could paint a Boeing for pennies. In the grand
+scheme in things, I haven't figured it out very precisely, you can paint large
+areas with this stuff relatively cheaply. I think I am much more worried about
+working with any yield whatsoever. That will stop it much longer than the cost.
+The yields that we want are appropriate. They organized these crosses. What's a
+metric for how well they actually did? We had CNTs that can bind either the
+horizontal or vertical stripe. How many bind that and how well? 50% of the
+tubes bind within 15 degrees. We didn't give them that long of a run to bind.
+If we give them a longer binding stripe, this is an objective measure of how
+well we actually did. There are some that are 90 degrees off from the desired
+orientation. They might be binding only by one DNA, they are still floppy,
+well, these are the distributions we get. Let's say we really make great
+crosses. Even if you make great crosses, you have to find them. You have to use
+ultramicroscopy to find them. You have deposition and aggregation. You try
+increasing the yield, say you have not many crosses and not many DNA molecules
+are binding to tubes, well, these CNTs are long. You get more aggregation, but
+at the end of the day after you find them, you have to use lithography to go
+down to these guys. A grad student is going blind trying to hook these things
+up but it's not fun. What can you do about this? Under the FENA research. Grant
+is gone? Looks like he ran off. Anyay, so this is a collaboration I have with
+IBM Research Almaden. Ryan Kershner, Luisa Bozano, CHristine Micheel, Albert
+Hung, Anne Fornoff, Charles Rettner, Marco Bersani, Jennifer Cha, Jane Frommer,
+Greg Wallraff.
+
+The largest length scale is the smallest length scale we can do with electron
+beam lithography. The top-down length scale matches the bottom-up length scale.
+So we're going to make locks that are sticky-patches for shape-patched origami.
+Here's the idea. Ryan Kershner spearheaded one chemistry. Another two did
+another chemistry. Everyone was really important. Someone did all the
+lithography. The solution with the triangles, which are nice and rigid. Silicon
+dioxide or a silicon substrate. So pattern a template layer over it. Pattern a
+photoresist, use e-beam, transfer to the template layer using an oxygen plasma.
+This is a dry etch, you impinge it on the template layer, you oxidize it and
+change its chemical layer, you strip off the .. and in principle you get DNA
+binding sites. Magnesium is what binds these things to a MICA surface. The
+degree to which Mg will regulate this will depend on a few different factors.
+For the conditions of the materials we had, we had 10 nM Mg to make it, but you
+bind it in 100 nN Mg. If they haven't discoverred this, the whole thing
+wouldn't have happened. We have a couple differentchemistries. Syline on a
+straight dioxide surface. TMS/SiO2. We can do it on a diamond-like carbon
+surface (DLC/DLC on Si). We've done this with two systems. This is DNA
+triangles on diamond carbon. These have columns of up and down triangles. You
+can score this very tediously and show that the diamond like carbon, you have 2
+populations, and guys are usually 60% oriented in the correct direction. They
+are oriented plus or minus 10 degrees. This is under buffer. Here, origami
+triangles are being ripped off by AFM tip. If you do this under the buffer,
+then you will necessarily rip them. If you dewett and get rid of the water, you
+have to dry in a way that doesn't get them off, and some people are doing that.
+This is the best data we could get. This data could be cleaned up. These are
+20% off or something horrible. This is the random distribution, it would be +
+or - 30 degrees. We tried to bind them into shape features. This is not the
+route to getting th e organization of origami in features. Thsis is a movie
+that shows the size dependence of the binding. This is all under AFM. These
+things are binding and unbinding. For the small things, they have the highest
+residence time. They are about 127 nm. The best alignment and binding in the
+size-matched features. The important thing to know is that, if this binding
+were not reversible, we would not get the results we get. One of the good
+things about the noncovalent binding, the streptavidin would be stripped too
+fast.. The triangles have a chance to settle down. So that's a key feature if
+you're going to try this binding and alignment. So this is just some frames
+from that movie. This shows the salt dependence. In too high binding, the DNA
+itself actually overcharges, so it now, the DNA itself is nominally positively
+charged and won't bind to the surface. If you're a biochemist and think of DNA
+condensation, well, that's what this is, with a polycovalent cation. It doesn't
+mediate the binding. If it does overcharge, the DNA falls apart. Leave one
+strand on a triangle to be able to hybridize to another triangle. That's a
+different project. There's a whole, so here we want individual triangles that
+are not spaced, but then what if we have the triangles talk with substrands,
+let them have molecular precision with their interactions. We want asymmetric
+shapes. So that the origami goes down on the surface, all points north, a
+triangle can go down with 6 different orientations. Place the shapes then add
+the components. The components wouldn't cause the origami to aggregate in
+solution. The student wouldn't have to do this crazy ultramicroscopy to figure
+out where they are. Aggregation and finding the structures in one shot, using
+this registration technology. In the next couple of years, high orientation of
+the shapes, placing distinct shapes. I am seeking postdocs for this. IBM Albert
+Hung, Jennifer Cha, now at UCSD. Gold triplets of nanoparticles on these
+surfaces using DNA origami. They did however, they didn't want to do it on a
+surface, the yield of the coupling was too low. They got some aggregation, but
+they lucked out a lot, the triangle has this nice feature such that they
+dimerize or trimerize, they bind and are oriented, there's a monomer, they got
+lucky, but it's great stuff anyway. So anyway. There's lots of stuff to talk
+about, so I'll end there.
+
+Before the origami, did everyone build a FET out of CNTs? With randomly
+spraying CNTs on a surface, you can find the crosses. The first one, where you
+explicitly use molecular self-assembly to do it. Otherwise we don't achieve a
+better yield than any of these other things. Are the behavior of these FETs,
+their capacitance is very tiny? We didn't explore how fast they switch. You'd
+be surprised. The number of devices that you can compare to the device that we
+can make, is like 2. People abandoned messing around with these FET CNTs. So
+everyone moved on because it was so hard. You can try to make 60 devices, we
+got one. But we didn't do any better than people who did it before. We did it
+in a different method, one in principle gives you 2D organization with
+self-organization. When we combine with other stuff, do you see ways in getting
+rid of building, getting some semiconductor straight out of it? Pulling a
+semiconductor into a sandwich. I am not a big fan of CNTs. A lot of the things
+we might go back and revisit, but organizing or functionalizing, pulling down
+semiconductor quantum dots or silver wires, will probably be the next steps.
+Even if you have 95% yield, how do you identify the things that work? How can
+you purify the devices for those that work? In each stage where there is less
+than 99.99% yield, what's the issue at that stage? The one point of
+intervention is purity of the scaffold. There is a funnier purification in
+things that are like impartial triangles don't bind to this site, so there's
+some purification that happens there. At every step of the way you have to
+figure out what you're going to do to maximize yield. I don't know how to say
+it. You'll work out some system and say, this is the device, this is the
+system, blah. When only exploring this, I don't care about yield. The way we
+approach lithography now is that you can imagine a self-healing device. You can
+build checksums like "hey look, I'm totally wrong", send a bunch of power, melt
+me, re-anneal, and try again. Self-healing crystals that have those kinds of
+properties, where the defects fall out and the thing can re-grow. The challenge
+is figuring out an end-to-end process that works with the devices. A lot of the
+concepts in this thing, when we actualyl build things, you're dry, the DNA is
+dead, imagining a way where the self-assembly with later stuff, it could be
+done, it's done in our bodies, but how you put that all together requires 50
+years of cleverness. How do we adapt DNA nanotech to the wants of the
+electronic industry? Well. Maybe. That's the thing. Is there a fundamental
+incompatibility? We have error rates that are still too high. We have lots of
+problems that we have to optimize and debug. I don't think so, if you look,
+there are steps that are in the making of certain devices. There's this outfit
+called Alien Technologies and they make RFID chips and whatever and what they
+have are certain processes in the semicodncutor industry, RF subsets versus
+whatever, are just incompatible. They have this big machine that makes this
+surface, they make offline in another process, these little circuits. They pour
+over a billion of them, they slot down in their holes, they have a defect rate
+is low enough. It's a fluidic self-assembly process. That kind of existence
+proof shows me that we could get there. I don't feel like it's fundamentally
+incompatible. 
+
+Tethering components to study molecular interactions. Shih is going in that
+direction. The goal is 5 years from now to have 5 biophysical lab, and 5
+physical sciences labs, to do some experiment they couldn't otherwise do
+without this tech. Single molecule guys now, take some protein, or some protein
+DNA complex, spray it, have a fluorphore or two, there is low signal, it looks
+like noise, you get these blips. If you look at those on a grid, you could
+forget everything except 1 or 2 microns on center. Orientation, position. Right
+now, if you want to put a single molecule on a spot, you could spot it. You get
+a Poisson number of molecules in each hole. That's great, you can assay him.
+The bioscience guys have a big array, a polymerase in each hole. They can do
+sequencing really fast. What if you want to study proteins in a group? By the
+time you take Poisson statistics to the fourth pattern, the number of guys with
+that, is very small. With DNA origami, you have 99.9% with those four guys, and
+95% of the holes filled. Is anyone trying to do next gen sequencing. Tethering
+single molecules on sheets?
