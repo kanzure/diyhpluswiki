@@ -41,6 +41,69 @@ The following are project ideas (brainstorming) which have been discussed on DIY
 
 * ''add your project ideas here''
 
+== Technology Platforms (Microcontrollers, etc) == 
+
+  The following product is from Microchip.  Microchip has grown in
+  interesting ways: they now have a cross-platform software development
+  environment (Win, Mac, Linux) based on NetBeans (called MPLAB X).  The
+  original MPLAB is one of the best microcontroller dev environments,
+  especially for the cost (free), though previously limited to Windows.
+  They are moving to the GNU compiler for their 32 bit
+  microcontrollers.  They have an iPhone dev kit (which requires an
+  Apple hardware license, since Apple is closed hardware, which some
+  here don't like) and now recently announced an Android dev kit: with
+  "Arduino footprint compatible for prototyping", even.  I don't want to
+  stir up a big hooplah between microcontroller choice, but I will say
+  that Arduino using AVR is a more expensive choice any time I've looked
+  at it.  A typical microcontroller + board + periphery should not cost
+  more than $60 for wired internet-capable designs and within $10-30 for
+  standalone designs.
+  This kit below (quite new, so docs still forthcoming) might satisfy
+  some people's needs. Who here is designing smartphone-biotech-related
+  devices?  Why have a lab device if it can't connect to a smart phone,
+  that's my thought.  The smart phone app is the new user interface;
+  don't waste $ or time building user interface LCD/touch screen/buttons
+  into a lab equipment box (unless there are clean-room restrictions).
+   http://www.microchip.com and search for DM240415
+  Approach to Develop Android¿ Accessories ($79.99)
+  * Buy the PIC24F Accessory Development Starter Kit for Android 
+  ($79.99)
+  * Download the no-fee, royalty-free licensed software library
+  * Contact androidsupp...@microchip.com for additional support
+  PIC24F Accessory Development Starter Kit for Android  (DM240415)
+  * PIC24F 16-bit PIC® MCU with USB OTG
+  * Type A USB connector
+  * User interface buttons
+  * LEDs and potentiometer
+  * Device charger circuitry up to 500mA
+  * Arduino footprint compatible for prototyping 
+  Perhaps compare to a CUI32 PIC32MX Development Stick ($40):
+  http://www.sparkfun.com/products/9645
+  or to Ethernet Mini-Web PIC18 Development Board ($42)
+  http://www.sparkfun.com/products/7829
+  To do that on Arduino, you'd need the main board plus ethernet shield
+  board ($30 + $45.00 at Adafruit).
+  I've played with a Teensy board (AVR, was $20, but not
+  Arduino) and it's cheap and useful as a USB device (not USB
+  host).  It is comparable but less scalable than the USB Bit
+  Whacker - 18F2553 Development Board ($25),
+  http://www.sparkfun.com/products/762 
+:: Jonathan Cline on DIYbio google group
+
+  I was at the Google I/O conference all day yesterday.
+  One of the featured talks was about the new Android Open
+  Accessory Development Kit, that allows hardware hackers to
+  attach microcontrollers to the USB port and controll them with
+  the phone:
+  http://developer.android.com/guide/topics/usb/adk.html
+  I will be connecting my Droid to one of these:
+  http://focus.ti.com/docs/toolsw/folders/print/ez430-t2012.html
+:: Simon Quellen Field on DIYbio google group
+
+  Take a look at some low cost boards not Arduino branded by John Luciani.
+  http://wiblocks.luciani.org/ZB1/index.html 
+:: John Griessen on DIYbio google group
+
 = Human Biology Projects =
 
 "The Experimental Man" and similar ideas are based on the recent availability and affordability of personalized medical tests which expose and quantify one's own health factors.  Some biohackers are monitoring these themselves, far beyond the scope of traditional modern medicine.  Based on quantitative measurements, these biohackers are modifying their own biology using diet, vitamins, etc.
