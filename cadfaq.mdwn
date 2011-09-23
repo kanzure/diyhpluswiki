@@ -1,11 +1,15 @@
 Hello! You should read this FAQ if you're interested in CAD-- especially open source CAD. When we talk about CAD, we mean parametric solid modeling. Today that means boundary representations (b-rep) and non-uniform rational b-splines (NURBS), but it also somewhat includes Constructive Solid Geometry (CSG)-- you'll learn about both shortly.
 
-# Why not just use blender for CAD?
-All 3D modeling software render 3D objects through a graphics card (cringe). For instance, Blender and Solidworks both use OpenGL. What this means is that the model is either already a collection of points and triangles or it is in some other format and is then converted to triangles, which the graphics card then renders. So ultimately all data representations lead to visualization when it comes to 3D modeling (so that you can see it).
+# What is CAD?
 
-The subject of CAD is not the 3D object that you see on screen but rather the design specification. There is a different language or representation internal to CAD tools. When it is time to show the user what the changes he has made do to the model, the internal representation is tesselated into a collection of triangles which is then rendered on screen. In the case of Solidworks, for instance, this conversion is nearly instanteous.
+# Why not just use blender for CAD?
+All 3D modeling software render 3D objects through a graphics card*. For instance, Blender and Solidworks both use OpenGL. What this means is that the model is either already a collection of points and triangles or it is in some other format and is then converted to triangles, which the graphics card then renders. So ultimately all data representations lead to visualization when it comes to 3D modeling (so that you can see it).
+
+The subject of CAD is not the 3D object that you see on screen but rather the design specification. There is a different language or representation internal to CAD tools. When it is time to show the user what the changes he has made do to the model, the internal representation is tesselated into a collection of triangles which is then rendered on screen. In the case of Solidworks, for instance, this conversion is nearly instanteous. The underlying data representation in Blender is, in fact, that tessellation or collecton of triangles- it's a mesh editor, so it doesn't even have to convert the data in the first place. One exception to this is the NURBS modeling in Blender. 
 
 So why not just fix Blender and make it use a parametric solid geometry kernel under the hood? This would involve rewriting Blender completely. And if you're doing that, then you're not really working on Blender, now are you.
+
+\* rendering methods exist that do not involve graphics cards
 
 # Can't you modify blender to become a CAD tool?
 # What is the difference between CAD and 3D modeling?
@@ -19,16 +23,22 @@ So why not just fix Blender and make it use a parametric solid geometry kernel u
 ha ha ha don't get me started :(
 # todo
 ## Solidworks
+http://solidworks.com/
 ## CATIA
 ## Unigraphics
 ## AutoCAD (and other AutoDesk stuff)
 ## Pro/E
 ## OpenCASCADE
+http://opencascade.org/
 ## HeeksCAD
+https://github.com/Heeks/heekscad
 ## FreeCAD
 ## BRLCAD
+http://brlcad.org/
 ## openscad
+http://openscad.org/
 ## Blender
+http://blender.org/
 ## Google Sketchup
 ## POVRAY
 ## BeagleCAD
