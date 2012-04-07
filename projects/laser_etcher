@@ -1,7 +1,33 @@
 parts procurement
 ----------------
 
+gantry:
+  rail, 1, $99.00 http://www.vxb.com/Merchant2/merchant.mvc?Screen=PROD&Store_Code=bearings&Product_Code=Kit8279&Category_Code=12mmLinearMotionSystems
+  trucks, 6, $9.95, http://www.vxb.com/Merchant2/merchant.mvc?Screen=PROD&Store_Code=bearings&Product_Code=Kit8512&Category_Code=12mmLinearMotionSystems
+  thrust bearing 8mm ID x2, 2, $14, http://www.vxb.com/page/bearings/PROD/Thrust/Kit7153
+  ball bearing 8mm ID 16mm OD, 2, $1, http://www.vxb.com/page/bearings/PROD/8mm/688ZZ-1
+  bearing block, 2, $10, http://www.vxb.com/page/bearings/PROD/kit7136
+  3/8-40 acme wear-compensating nut, 2, $35.03, mcmaster 6350K213
+  3/8-40 acme threaded rod, 1, $157.36, mcmaster 6350K137
 
-anti-backlash nuts:
-http://www.haydonkerk.com/LinearMotionProducts/LeadScrewsAndNuts/Nuts/WDGSeriesNuts/tabid/256/Default.aspx
+  spring washer (wave washer, for thrust bearing preload), 2, 
+  helical coupler, 2, 
+  stepper, 2, 
 
+
+
+design
+------
+
+bearings are needed to prevent the screw from whipping around, as it will be rotating at about 1000rpm. instead of 
+making bearing blocks we can(?) buy shaft holders from vxb, sized to fit the OD of the bearing. then, two thrust 
+bearings go on either side of the shaft block, constraining the leadscrew in the axial direction. the leadscrew ends 
+are machined to have a shoulder and a capture nut. the stepper motor drives the other end of the screw with a helical 
+coupler or diaphragm joint and prevents it from whipping around. (?)
+
+
+grouted construction (moglice epoxy to bed components)
+
+shims to align components vertically
+
+granite or mic-6 plate, as most convenient
