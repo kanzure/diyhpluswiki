@@ -1,4 +1,4 @@
-deg=pi/180;
+deg=1;
 
 //vxb linear motion rail
 // http://www.vxb.com/page/bearings/PROD/12mmLinearMotionSystems/Kit8279
@@ -22,8 +22,8 @@ linear_extrude (height = l){
     union() {
         translate([-j/2, 0]) square([j, k]); //rail mount body
         translate([-w/2,0])  square([w, t]); //rail mount base
-        translate([0,f]) rotate(180*deg-theta) translate([-h1/2]) square([h1, f-t]); //should do this with a polygon instead
-        translate([0,f]) rotate(180*deg+theta) translate([-h1/2]) square([h1, f-t]); //mirror doesnt work?
+        translate([0,f]) rotate(180*deg-theta) translate([-h1/2]) square([h1, f-t], center=true); //should do this with a polygon instead
+        translate([0,f]) rotate(180*deg+theta) translate([-h1/2]) square([h1, f-t], center=true); //mirror doesnt work?
         translate([0, h]) circle(d/2); 
 	
     }
