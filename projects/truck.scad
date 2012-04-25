@@ -42,7 +42,7 @@ module truck(){
     y=F*sin(Angle/2);
 
     union(){
-        color(Aluminum) difference(){
+        color(Aluminum) render() difference(){
             translate([-E, -(F-h), -L/2]) 
                 linear_extrude(height=L) difference(){
                     square([W,F]);
@@ -54,7 +54,6 @@ module truck(){
                 }
             rotate(a=[-90,0,0]) union() {
                 //mounting screw holes
-                //maybe i'll get rid of this, it messes up the CSG
                 translate([+B/2,+C/2,h-hole_depth]) cylinder(h=hole_depth+1, r=S/2);
                 translate([-B/2,+C/2,h-hole_depth]) cylinder(h=hole_depth+1, r=S/2);
                 translate([+B/2,-C/2,h-hole_depth]) cylinder(h=hole_depth+1, r=S/2);
