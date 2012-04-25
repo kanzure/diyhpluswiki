@@ -34,17 +34,17 @@ module truck(){
     Angle=80;
     B=30.5;
     C=26;
-    S=M5;
-    hole_depth=5;
+    S=5;
+    hole_depth=10;
 
     //keyhole polygon, Angle is the included angle
     x=F*cos(Angle/2);
     y=F*sin(Angle/2);
 
     union(){
-        difference(){
+        color(Aluminum) difference(){
             translate([-E, -(F-h), -L/2]) 
-                color(Aluminum) linear_extrude(height=L) difference(){
+                linear_extrude(height=L) difference(){
                     square([W,F]);
                     translate([E,F-h])
                         union() { 
@@ -52,12 +52,14 @@ module truck(){
                             rotate(-90) polygon(points=[[0,0], [x,-y], [x, y]]);
                         }
                 }
-            //mounting screw holes
-            //maybe i'll get rid of this, it messes up the CSG
-            rotate(a=[-90]) translate([B/2,C/2,h-hole_depth]) cylinder(h=hole_depth+1, r=5/2);
-            rotate(a=[-90]) translate([-B/2,C/2,h-hole_depth]) cylinder(h=hole_depth+1, r=5/2);
-            rotate(a=[-90]) translate([B/2,-C/2,h-hole_depth]) cylinder(h=hole_depth+1, r=5/2);
-            rotate(a=[-90]) translate([-B/2,-C/2,h-hole_depth]) cylinder(h=hole_depth+1, r=5/2);
+            rotate(a=[-90,0,0]) union() {
+                //mounting screw holes
+                //maybe i'll get rid of this, it messes up the CSG
+                translate([+B/2,+C/2,h-hole_depth]) cylinder(h=hole_depth+1, r=S/2);
+                translate([-B/2,+C/2,h-hole_depth]) cylinder(h=hole_depth+1, r=S/2);
+                translate([+B/2,-C/2,h-hole_depth]) cylinder(h=hole_depth+1, r=S/2);
+                translate([-B/2,-C/2,h-hole_depth]) cylinder(h=hole_depth+1, r=S/2);
+            }
         }
         
         //bearing insert
