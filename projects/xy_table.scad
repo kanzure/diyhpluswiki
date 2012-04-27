@@ -2,14 +2,14 @@ use <rail.scad>;
 use <truck.scad>
 inch = 25.4;
 
-plate_width=300;
-plate_length=200;
+plate_width=200;
+plate_length=300;
 plate_thickness=1/4*inch;
 rail_width=34; //get this from rail.scad ... sigh.
 rail_center_height=20.46; //this too
 truck_length=36;  //sigh. is introspection too much to ask?
-y_carriage_width = plate_length/2;
-x_carriage_width = plate_width/2;
+y_carriage_width = max(plate_length/2, truck_length*3+2);
+x_carriage_width = max(plate_width/2, truck_length*3+2);
 
 module slide(length, carriage_length, trucks=2){union(){
     rail(length);
