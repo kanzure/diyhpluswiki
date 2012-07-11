@@ -1,0 +1,68 @@
+BOOLE-1.1 notes
+
+# general algorithm:
+
+1. compute the intersection curve between two solids
+2. merge the intersection curves within each patch
+3. merge curves between patches in each of the two solids
+4. traverse each solid's topological graph to generate "partitions" using the merged intersection curves
+5. compute IN/OUT for each partition and apply this state to each patch in that partition
+6. for each component that will be included in the new solid, stitch the trim patches together
+7. construct a graph of connectivity/adjacency between components/partitions to keep track of the "face/patch map", etc.
+
+# perform_CSG algorithm:
+
+1. CalculateImplicit for each solid -- convert from the parameterized nurbs or bezier surface to the implicit representation.
+    bernSteinToPowerBasis(tpPatch0) //tensor patch 0
+    implicitize(tpPatch0, ndet) //paper explains this, it's just some fancy substitution
+    moveFactoredToFinalDeterminant
+    return nDetImplicit, lame pointer stuff
+
+2. findXsectionCurve for each of the two given solids - returns intersection curves
+    for each patch in the solid, compute bounding boxes
+    find all overlapping bounding boxes
+    magic goes here to further reduce the number of possible intersections to check
+    for each patch pair,
+        doLoopDetection
+        if loop, HandleLoopCase
+        else,
+            GetInsidePointsUV
+            Param_1_in_Imp_0
+            //complicated spline merging goes here, OR Merge2DLists to just use a linear piecewise approximation of the intersection curve
+    Now project each curve of the second patch boundary on the domain of the first patch. (use ProjectPath)
+        return_st_end_in_p2d // returns the start and end points of a merged curve
+        FillXscArray
+    Now project each curve of the first patch boundary on the domain of the second patch.. (repeat)
+
+3. Merge intersection curves further
+
+4. CheckIntersectionCurves -- check that the curves in each solid form a closed loop on the surface, if not die immediately. After this it gets funky?
+
+5. PartitionSplinegon for each trim portion in each tensor patch on each solid,
+then set AdjInfo after calling GetAdjacentPartn (for the adjacency graph later)
+
+6. For every patch of secnod_solid that overlaps with the first_solid on the same_side, assign portions of the boundary that actually lie inside the first solid the same_solid value 0. Inside of this loop, call AdjustTrimCurves.
+
+7. Now split some trim curves if the same_solid flag is 0. This is because the curve being cut on the other side belongs to the other solid, so the curve must be an intersection curve. If I split an intersection curve, I must do it on both sides to get proper adjacencies. This calls SubdivideTrimCurve and then GetAdjacentPartn.
+
+SubdivideTrimCurve - takes a UVspline and a XYZspline and splits them into (n+1) curves given n param values
+
+for first_solid:
+
+8. ObtainNewGlobalGraph - takes the new partitioned regions of a solid and assigns each region a unique global component number.
+9. DetermineXsectionsforSolid - classifies each component of a solid as IN/OUT
+
+for second_solid:
+
+8. ObtainNewGlobalGraph - takes the new partitioned regions of a solid and assigns each region a unique global component number.
+9. DetermineXsectionsforSolid - classifies each component of a solid as IN/OUT
+
+10. ObtainFinalPiecesofSolid(first_solid)
+11. ObtainFinalPiecesofSolid(second_solid)
+12. SplitIntoNewRegions(second_solid)
+
+then copy lots of data around
+
+then free lots of memory
+
+then destroy the moon.
