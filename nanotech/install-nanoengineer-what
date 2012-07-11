@@ -1,0 +1,24 @@
+git clone git://diyhpl.us/nanoengineer.git
+cd nanoengineer
+./bootstrap
+./configure
+make
+
+comment out line 1051, 1052 in sim/src/newtables.c
+
+cd cad
+./main.py
+
+note: KNOWN_MMPFORMAT_VERSIONS contains more recent versions than the one we're writing by default, '080327 required; 080529 preferred'
+Segmentation fault
+see cad/src/files/mmp/mmpformat_versions.py
+
+./main.py
+segfault near looking for /usr/bin/iconengines/.
+sudo apt-get install libqt4-designer
+
+python-pyqt4
+requires PyQt4 version 4.2
+
+
+
