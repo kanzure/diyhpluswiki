@@ -1,0 +1,37 @@
+Out of the many possibilities in DIY gene modding, myostatin inhibition to augment muscle growth is the most immediately doable. For a thorough and current review on the topic, I highly recommend S.J. Lee's recent paper, available at http://www.jhu.edu/sejinlee/downloads/Lee%20IEMAMC%202010.pdf .
+
+If you don't feel like reading that first, here's a brief overview: myostatin is a protein which, in skeletal muscle, is part of the network that negatively regulates muscle mass. By inhibiting myostatin and/or its related proteins, up to a quadrupling of muscle mass has been observed in transgenic mice, with naturally inhibiting mutations in the gene leading to the â€œdouble-muscledâ€ phenotype found in certain breeds of dogs, cattle, and that one kid in Germany you may have read about.
+
+My hope is to express a protein called follistatin in muscle tissue, as follistatin is a highly potent inhibitor of myostatin. Currently, follistatin is receiving much interest for treating muscular dystrophy; a clinical trial starts this month, based on research that culminated in this paper:http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2852878/ . Basically, they're doing what I plan to do, although they will be using a viral vector.
+
+Since viral vectors require a great deal of expense to produce, as well as a regimen of immuno-suppressive drugs, they don't really work for the DIY approach right now. Among the non-viral vectors, plasmid electrotransfer (or electroporation) is the most powerful, and, as a bonus, it requires no reagents other than electricity.
+
+The plasmid backbone is fairly simple: standard CMV promoter, synthetic 5' intron, SV40 polyA and enhancer, all to increase expression of the follistatin transgene as much as possible. Beyond that, I'm thinking a couple of short S/MAR insulators flanking the antibiotic resistance gene, which should be CpG-depleted to prevent chromatin condensation.
+
+Anyway, I'm not too good at writing long and coherent statements, so the rest of this is some of my notes detailing the execution of the project. I welcome any comments and critiques.
+
+On the topic of which gene to express, a few alternatives to follistatin do exist:
+
+Anti-myostatin monoclonal antibody (developed by Wyeth), perhaps the simplest method, from the old â€œraise an antibody against itâ€ school of thought. Made it to clinical trials, but was not pursued as it caused skin rashes.
+
+Fusion of a mutant myostatin propeptide to an antibody Fc region (fusion to increase the half-life at least 100-fold). The propeptide normally gets produced with myostatin, and blocks its acivity until cleaved at a later point, which â€œactivatesâ€ the mature myostatin; the mutant propeptide is resistant to said cleavage, and sequesters myostatin. Showed some efficacy in a canine model, but has not yet been pursued.
+
+ACVR2B solubilized receptor (Acceleron Pharma and Amgen), again fused to Fc for half-life extension like the propeptide above. ACVR2B is the â€œmainâ€ receptor for myostatin in muscle, so the soluble extracellular receptor was intended to soak up circulating myostatin, similar to the previous two approaches. This worked incredibly well in mice, but triggered an increase in hematocrit in human trials (due to its non-muscle effects), so it got shelved.
+
+All of these options were pursued by injecting recombinant proteins into the bloodstream, rather than a gene therapy approach. This means that off-target effects on organs other than muscle must be carefully controlled. With gene therapy, the transgene can be targeted to a specific location, where expression will occur along the length of the muscle fiber, but not spread to the heart, skin, gonads, etc. This also opens up a number of other possibilities, including intracellular protein expression or RNA interference, which would not be possible with a protein-injection-based therapy. For example:
+
+The ACVR2B soluble receptor comes a close second to follistatin as a choice of transgene. One simply removes the intracellular kinase domain, with which the receptor would normally transmit the myostatin signal. The extracellular myostatin-binding domain is all that remains, which then soaks up myostatin. Note that this would retain the transmembrane anchoring region, safely limiting it to the injected muscle. Unlike the Fc fusion protein mentioned above, this should not affect RBC count.
+
+Please note that I say 'myostatin' here, but ACVR2B and follistatin appear to bind additional muscle-limiting ligands beyond myostatin. Myostatin-knockout mice still exhibit increased muscle growth with administration of either transgene, indicating at least one other factor at play.
+
+# Plasmid production
+
+Plasmids can be grown in a standard e. coli culture, and purified either with the commercial endofree giga-prep kits (Qiagen or a cheaper competitor) or, with some investment but a lower $/mg cost, column chromatography: standard alkaline lysis protocols, followed by a Triton-X114 precipitation (to remove endotoxin), and a DEAE + hydrophobic interaction column setup should give acceptable purity of plasmid for injection.
+
+# Electroporator
+
+The parameters for large mammals haven't really been nailed down yet, so I'd like one with variable settings that cover the range of the previous experimental techniques. This would be a unipolar square-wave generator capable of 20-200 volts, 0.1-0.5 amps, with pulses of 10-50 milliseconds in duration, with a variable number and spacing of said pulses. Optimal settings for humans are hard to pin down due to the difficult in assaying a reporter gene in humans, so I am aiming for the maximum tolerable settings that do not produce unnecessary tissue damage.
+
+My favorite applicator so far is a carriage enclosing two 1mL needles, which simultaneously inserts the needles while depressing the plunger, ensuring an even distribution of plasmid along the length of the needle. Once injection is complete, the needles act as the electrodes.
+
+The only other modern technique in practice involves multiple electrodes positioned around an injection needle, which then fire in different combinations. This is seen in most clinically available electroporation devices, and while I prefer the two-needle technique, the pulse generator should be easily adaptable to an arbitrary arrangement of needles.
