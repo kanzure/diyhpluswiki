@@ -1,0 +1,132 @@
+openeeg - http://openeeg.sourceforge.net/
+biosig - an open source library for BCI research
+brainbay - an open source biosignal project
+    http://www.shifz.org/brainbay/
+    Christoph Veigl
+    Jeremy Wilkerson
+
+OpenEEG
+ModularEEG
+MonolithEEG
+
+Boosting bit rates and error detection for the classification of fast-paced motor commands based on single-trial EEG analysis
+    2 taps/second
+    15 bits/minute (6..10 bits/minute)
+    2% false positives
+
+Single-trial EEG source reconstruction for Brain-Computer Interface
+    effective bit rate
+        artifact removal
+        feature extraction
+        classification
+        increase the number of choices [8]
+
+        For example, a change in frequency band power can be tracked using autoregressive modelling [9], wavelet transform [10]-[12], or pseudotaper method [13]. For example, common spatial pattern (CSP) [14] or common subspace decomposition (CSSD) [15] techniques can extract new time series from the signal that contain more discriminative information. 
+
+    [8] G. Dornhege, B. Blankertz, G. Curio, and K.-R. Muller, "Boosting bit rates in noninvasive EEG single-trial classifications by features combination and multiclass paradigms" (2004)
+
+EEG "motor imagery" classification
+Hand movement direction decoded from MEG and EEG
+    Brain activity can be used as a control signal for brainâ€“machine interfaces (BMIs). A powerful and widely acknowledged BMI approach, so far only applied in invasive recording techniques, uses neuronal signals related to limb movements for equivalent, multidimensional control of an external effector. Here, we investigated whether this approach is also applicable for noninvasive recording techniques. To this end, we recorded whole-head MEG during center-out movements with the hand and found significant power modulation of MEG activity between rest and movement in three frequency bands: an increase for â‰¤7 Hz (low-frequency band) and 62â€“87 Hz (high-{gamma} band) and a decrease for 10â€“30 Hz (Î² band) during movement. Movement directions could be inferred on a single-trial basis from the low-pass filtered MEG activity as well as from power modulations in the low-frequency band, but not from the Î² and high-{gamma} bands. Using sensors above the motor area, we obtained a surprisingly high decoding accuracy of 67% on average across subjects. Decoding accuracy started to rise significantly above chance level before movement onset. Based on simultaneous MEG and EEG recordings, we show that the inference of movement direction works equally well for both recording techniques. In summary, our results show that neuronal activity associated with different movements of the same effector can be distinguished by means of noninvasive recordings and might, thus, be used to drive a noninvasive BMI. 
+EEG-based two-dimensional cursor control
+
+A high-performance Brain Computer Interface based on visual attention
+    120 bits/min
+
+Brain-computer interface in paralysis
+     in healthy individuals and patients with amyotrophic lateral sclerosis or stroke can transmit up to 80 bits/min of
+
+bits/min
+bits/decision
+EEG "bits/min"
+EEG "touch typing"
+interkeypress intervals (IKI)
+"skilled typists"
+"average typing speed"
+"finger tapping speed"
+
+
+bits/min    commands
+2           4
+4           16
+8           256
+16          65536
+32          4294967296
+64          18446744073709551616
+
+Altered Finger Representations in Sensorimotor Cortex of Musicians with Focal Dystonia: Precentral Cortex 
+    Abstract  Using functional magnetic resonance imaging (fMRI), finger representations were characterized in the precentral cortex of 11 normal musicians and 14 musicians with focal task-specific dystonia. Finger representations were identified from differential activation during repetitive movements of each finger relative to others. Despite group similarities in topography, abnormalities in representations of affected fingers were identified. For the finger showing chronic flexion (primary dystonic finger or PDF), the cortical â€œdisparityâ€ from its normal location and the distance to the adjacent finger were increased. By contrast, representational characteristics of the finger showing chronic extension (primary compensatory finger or PCF) did not differ significantly from the control group, but did differ from those of the PDF. Regardless of whether either finger's representation differed substantively from normal, the PCF consistently showed greater volume of activation than the PDF or other fingers. These findings reflect dysfunctional interactions between at least two fingers and their cortical representations. 
+
+What's new in neuroimaging methods? (2009)
+    http://www.ncbi.nlm.nih.gov.ezproxy.lib.utexas.edu/pmc/articles/PMC2716071/
+    The rapid advancement of neuroimaging methodology and availability has transformed neuroscience research. The answers to many questions that we ask about how the brain is organized depend on the quality of data that we are able to obtain about the locations, dynamics, fluctuations, magnitudes, and types of brain activity and structural changes. In this review, an attempt is made to take a snapshot of the cutting edge of a small component of the very rapidly evolving field of neuroimaging. For each area covered, a brief context is provided along with a summary of a few of the current developments and issues. Then, several outstanding papers, published in the past year or so, are described, providing an example of the directions in which each area is progressing. The areas covered include functional MRI (fMRI), voxel based morphometry (VBM), diffusion tensor imaging (DTI), electroencephalography (EEG), magnetoencephalography (MEG), optical imaging, and positron emission tomography (PET). More detail is included on fMRI, as subsections include: functional MRI interpretation, new functional MRI contrasts, MRI technology, MRI paradigms and processing, and endogenous oscillations in functional MRI.
+
+Probabilistic methods to predict muscle activity
+    functional electrical stimulation (FES)
+    http://www.iop.org.ezproxy.lib.utexas.edu/EJ/abstract/1741-2552/6/5/055008
+    Evaluation of probabilistic methods to predict muscle activity: implications for neuroprosthetics
+    Abstract. Functional electrical stimulation (FES) involves artificial activation of muscles with surface or implanted electrodes to restore motor function in paralyzed individuals. Currently, FES-based prostheses produce only a limited range of movements due to the difficulty associated with identifying patterns of muscle activity needed to evoke more complex behaviour. Here we test three probability-based models (Bayesian density estimation, polynomial curve fitting and dynamic neural network) that use the trajectory of the hand to predict the electromyographic (EMG) activities of 12 arm muscles during complex two- and three-dimensional movements. Across most conditions, the neural network model yielded the best predictions of muscle activity. For three-dimensional movements, the predicted patterns of muscle activity using the neural network accounted for 40% of the variance in the actual EMG signals and were associated with an average root-mean-squared error of 6%. These results suggest that such probabilistic models could be used effectively to predict patterns of muscle stimulation needed to produce complex movements with an FES-based neuroprosthetic.
+
+Decoding flexion of individual fingers using electrocorticographic signals in humans
+    Abstract. Brain signals can provide the basis for a non-muscular communication and control system, a brainâ€“computer interface (BCI), for people with motor disabilities. A common approach to creating BCI devices is to decode kinematic parameters of movements using signals recorded by intracortical microelectrodes. Recent studies have shown that kinematic parameters of hand movements can also be accurately decoded from signals recorded by electrodes placed on the surface of the brain (electrocorticography (ECoG)). In the present study, we extend these results by demonstrating that it is also possible to decode the time course of the flexion of individual fingers using ECoG signals in humans, and by showing that these flexion time courses are highly specific to the moving finger. These results provide additional support for the hypothesis that ECoG could be the basis for powerful clinically practical BCI systems, and also indicate that ECoG is useful for studying cortical dynamics related to motor function.
+
+A high-performance brain computer interface (2006)
+    EEG BCI is still slower than eye movements (for typing)
+        invasive electrodes also still slow
+    monkey dorsal premotor cortex
+    96 electrodes (cyberkinetics system)
+    6.5 bits/sec or 15 wpm
+
+wpm         cpm         cps             bits per minute
+10 wpm      50 cpm      0.83 cps        350
+20 wpm      100 cpm     1.66 cps        700
+40 wpm      200 cpm     3.33 cps        1400
+80 wpm      400 cpm     6.66 cps        2800
+100 wpm     500 cpm     8.33 cps        3500
+110 wpm     550 cpm     9.16 cps        3850
+120 wpm     600 cpm     10.00 cps       4200
+150 wpm     750 cpm     12.50 cps       5250
+200 wpm     1000 cpm    16.66 cps       7000
+500 wpm
+1k wpm      5000 cpm    83 cps          35000
+10k wpm     50k cpm     833 cps         350000
+
+key selection system
+neuroenhancement
+cosmetic neurology
+
+the working principles of neuronal networks and their function. For example, with a
+technique they call â€œlinear decoding,â€ researchers at the University California,
+Berkeley, were able to reconstruct actual moving images from electrophysiological
+recordings by means of electrodes placed in a cat's lateral geniculate ganglion, a
+neural structure connected to the cat's optic system [12]. They have also shown that it
+is possible to map non-linear neuronal responses to visual stimuli in the visual
+cortex.
+
+
+----------------------------------------
+2010-01-10
+
+16:02 <thesnark> I don't think typing with an EEG is realistic right now
+16:03 <thesnark> the physical extension of the VR stuff would be replacement or 
+                 extra limbs
+16:03 <thesnark> controlling things by thought
+16:03 <thesnark> which _is_ doable
+
+16:07 <thesnark> it would make more sense to me to take a ML approach - certain 
+                 arbitrary patterns start as "words" and the user corrects the 
+                 computer if it makes an error
+
+16:09 <kanzure> also it would be fucking awesome to say "hey look this gives me 
+                a 50 wpm increase"
+16:09 <kanzure> i type at 120wpm on a good day, and 150wpm on a great day
+16:09 <kanzure> but hitting upper limits of human performance is not fun
+
+----------------------------------------
+
+motor imagery as a way to get information out of the brain
+
+
+
+http://wiki.seedea.org/Content/Concepttreefmri
+
