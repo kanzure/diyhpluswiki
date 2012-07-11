@@ -1,0 +1,209 @@
+<html>
+    <head>
+        <title>DNA Synthesis notes</title>
+
+        <style type="text/css">
+            /* grr stop interfering with my line heights */
+            sup {
+                vertical-align: super;
+                line-height: 0;
+            }
+
+            sub {
+                line-height: 0;
+            }
+
+            #acidbaseactivator_table {
+                margin-left: auto;
+                margin-right: auto;
+            }
+        </style>
+    </head>
+    <body>
+
+<a name="toc" />
+<h1>Table of Contents</h1>
+        <table id="table_of_contents">
+            <tr><td><a href="#michelsonandtodd55">Preparation of a dithymidinyl nucleotide (Michelson and Todd, 1955)</a></td></tr>
+            <tr><td><a href="#khorana1">On/off protection scheme</a></td></tr>
+            <tr><td><a href="#khorana2">The phosphodiester method of oligonucleotide synthesis</a></td></tr>
+            <tr><td><a href="#exocyclic-amine-protecting-groups-section">Exocyclic amine protecting groups</a></td></tr>
+            <tr><td><a href="#letsingerepoch">Letsinger Lab</a></td></tr>
+            <tr><td><a href="#letsinger-solid-phase-synthesis">Solid Phase Synthesis (Letsinger)</a></td></tr>
+            <tr><td><a href="#letsinger-phosphotriester-chemistry">Phosphotriester chemistry (Letsinger)</a></td></tr>
+            <tr><td><a href="#letsinger-phosphite-triester-chemistry">Phosphite-triester chemistry (Letsinger)</a></td></tr>
+            <tr><td><a href="#activators">Acid/base activators in phosphoramidite oligonucleotide synthesis</a></td></tr>
+        </table>
+
+        <p><img id="scheme1" src="http://diyhpl.us/~bryan/papers2/DNA/phosphoramidite_synthesis_diagram.png" /></p>
+
+<a name="michelsonandtodd55" />
+<h1>Preparation of a dithymidinyl nucleotide (Michelson and Todd, 1955)</h1>
+        <p>The first published account of the directed chemical synthesis of an oligonucleotide occurred in 1955 when Michelson and Todd reported the preparation of a dithymidinyl nucleotide (Michelson and Todd, 1955).</p>
+        <p>In their report, the phosphate link between two thymidine nucleosides was made by first preparing the 3' phosphoryl chloride of a 5' benzoyl protected thymidine, using phenylphosphoryl dichloride. This was then reacted with the 5' hydroxyl of a 3' protected thymidine. The chemistry worked reasonably well, albeit slowly. Additionally, the phosphoryl chloride intermediate was not stable, being susceptible to hydrolysis.</p>
+        <p><img id="michelsonandtodd55img" src="http://diyhpl.us/~bryan/papers2/DNA/michelsonandtodd55.png" /></p>
+
+<a name="khorana1" />
+<h1>On/off protection scheme</h1>
+    <p>Khorana introduced two concepts to the field that made possible the convenient synthesis of oligonucleotides more than just a few bases long. One concept, the on-off protection scheme necessary for sequential oligonucleotide synthesis, is still widely used today by oligonucleotide chemists, virtually unmodified from Khorana's initial publications (Schaller, et. al., 1963; Smith, et. al., 1961).</p>
+
+<a name="khorana2" />
+<h1>The phosphodiester method of oligonucleotide synthesis</h1>
+        <p><img id="khorana-phosphodiester-coupling-method" src="http://diyhpl.us/~bryan/papers2/DNA/khorana-phosphodiester-coupling-method.png" /></p>
+        <p>The other was the first use of a stable phosphorylated nucleoside that coupled to the desired nucleoside when actiated (Khorana, et. al., 1956). This protocol is the same cyclic scheme used today with the exception of the addition of one step, oxidation. In place of the hydrolysable phosphoryl chloride, he prepared 3' phosphates of the 5' protected nucleoside using phosphorochloridates that then hydrolyzed to the phosphomonoester. These 5' protected nucleoside 3' phosphates were subsequently activated using a condensation reagant, such as dicyclohexyl carbodiimide (DCC), to couple to the 5' hydroxyl of another 3'-protected nucleoside. This method was revolutionary at the time and produced a truly remarkable feat: the synthesis of an active 72-mer tRNA molecule, which was published in Nature (Khorana, 1970).</p>
+        <p>Like most archetypes, the method did have shortcomings. Because the phosphate itself was not protected, branching at the internucleotide phosphate linkages o the previous couplings was a major problem. As a result, it was necessary to follow a very arduous multi-step purification process in which the branched contaminants were removed. However, as the oligonucleotide length increased, the percentage of branching also increased, making purification even more challenging. The solution phase chemistry made the process very slow, because the oligonucleotide had to be purified or precipitated between steps to remove excess reagents. When one considers the magnitude of the task, the accomplishment of preparing an active tRNA molecule becomes even more remarkable.</p>
+        <p>Khorana's most lasting contribution, however, was in the area of nucleoside protecting groups. The key to developing an efficient, cyclic, step-wise synthesis is a good protecting group scheme that allows the selective removal of a specific protecting group at the desired time. To make matters more challenging, the protecting groups must be removable almost quantitatively. Otherwise, the yield of desired product will be low and the product itself may be irresolvable from contaminants. To raise the bar even further, purines are susceptible to depurination under mildly to moderately acidic conditions (pH 4-5 for extended periods, pH 1-3 for fairly short periods), so strong acids should be avoided.</p>
+        <p>The solution Khorana offered for 5' hydroxyl protection, the dimethoxytrityl (DMT) protecting group (Smith, et. al., 1961), is ubiquitous in oligonucleotide chemistry today. The combination of good general stability and easy removal with mild acid has been unbeatable. Several options are available, such as leuvenyl and FMOC, but none are as popular as the unique trityl family.</p>
+        <p>The reason this triphenyl methyl ether cleaves so readily under acidic conditions lies in the fact it is one of the few molecules that actually likes to form a carbocation. The back bonding of the pi electron cloud system formed by the three phenyl groups is sufficient to allow the mehtly carbon to remain stable as a positively charged species under very mildly acidic conditions. Like many carbocations, the trityls have a distinctive color when ionized, which has turned into an extremely useful diagnostic tool. The dimethoxytrityl (DMT) carbocation has a very strong orange color in mild acid that has a high extinction coefficient, which means that even at very low concentrations it can still be accurately measured optically. The monomethoxytrityl (MMT) carbocation has a yellow color, while the parent trityl (Tr) itself is deep red (<a href="#tritylabsorbance">see #tritylabsorbance</a>). The efficiency of each cycle of nucleoside addition can be allowed by measuring the absorbance of the released DMT and comparing it to the previous step.</p>
+        <a name="tritylabsorbance" />
+        <p><img id="tritylabsorbance" src="http://diyhpl.us/~bryan/papers2/DNA/tritylabsorbance.png" /></p>
+
+<a name="exocyclic-amine-protecting-groups-section" />
+<h1>Exocyclic amine protecting groups</h1>
+        <p>Khorana also introduced the protecting groups for the nucleosidyl exocyclic amines that are today known as the standard protecting groups; isobutyryl for guanosine and benzoyl for adenosine and cytidine (Schaller, et. al., 1963; Brown, et. al., 1979) (see <a href="#exocyclic-amine-protecting-groups">#exocyclic-amine-protecting-groups</a>). Although others exist, these are the most commonly used groups today, with the possible exception of acetyl-protected cytidine, which is more readily removed compared to benzoyl.</p>
+        <a name="exocyclic-amine-protecting-groups" />
+        <p><img id="exocyclic-amine-protecting-groups" src="http://diyhpl.us/~bryan/papers2/DNA/exocyclic-amine-protecting-groups.png" /></p>
+        <p>Professor Khorana influenced many with his work, both through his publications and through his labs, where many of the great names in oligonucleotide chemistry passed as graduate students, post-docs, or visiting scholars. Those names include Marvin Caruthers, and Robert Letsinger, who worked nearby at Northwestern University and developed two important steps in the field: solid phase synthesis and phosphite-triester chemistry.</p>
+
+<a name="letsinger-epoch">
+<h1>Letsinger Lab</h1>
+        <p>Letsinger began his career at Northwestern University in the late 1940s as a boron chemist. He was a significant player in that field, but in the early 1960s he turned his sights onto biomacromolecule synthesis. At that time, the target was peptide synthesis. However, a twist of fate moved Letsinger from peptide to oligonucleotide chemistry in the mid-1960s.</p>
+        <p>Letsinger was developing a peptide synthesis scheme using soldi phase chemistry that had originated mainly for the support of catalysis. Letsinger utilized flow-through technology with a cyclic chemistry scheme of adding units sequentially. When applied to peptide synthesis, it added an internal filtering system that proved to be an incredibly important step forward. However, he wasn't the only researcher following this lead. Another scientist, Bob Merrifield, was also investigating the synthesis of peptides using solid phase technology. At the time they were neck and neck in the process of discovery and struggling to publish their findings as soon as possible. Bob Merrifield submitted his seminal paper describing the solid phase synthesis of peptides first and eventually won the Nobel Prize for his work. This unexpected scoop prompted Letsinger to regroupa nd focus his attention on another nascent chemistry: oligonucleotide synthesis. He rapidly converted his method using solid phase synthesis for peptides to the improvement of the oligonucleotide synthesis procedures taught by Khorana, thus converting a stroke of hard luck into scientific advancements that benefited an entier industry.</p>
+        <p>Letsinger made three major contributions to the field. First, he introduced solid phase chemistry as stated above. Secondly, he introduced the phosphotriester method of synthesis, an important improvement on Khorana's phosphodiester method. Finally, he introduced a radical departure, the P(III) based phosphite-triester method, which is the root of Marvin Caruthers' phosphoramidite method.</p>
+
+<a name="letsinger-solid-phase-synthesis" />
+<h1>Solid Phase Synthesis (Letsinger)</h1>
+        <p>Letsinger's first support for peptide synthesis was described in papers published in 1963 and 1964 (Letsinger and Kornet, 1963; Letsinger, et. al., 1964). The support consisted of what was called a "popcorn" polymer, a styrene-divinylbenzene polymer that had the unfortunate property of swelling in some solvents. In 1965 he published the first paper describing the solid-phase synthesis of dimer and trimer oligonucleotides using the same support (Letsinger and Mahadevan, 1965). In the initial report, 2' deoxycytidine (dC) was attached through the amine at the 4 position of the base itself to acid chloride modified support and forming an amide bond that was cleaved with ammonium hydroxide. The 3' hydroxyl of the dC was protected with a benzoyl group and the 5' position with a DMT group. The DMT group was then removed with mild acid to prepare teh support bound nucleoside for oligonucleotide synthesis. The attachment was made to the support, which was activated to an acid chloride, thus forming an amide bond that was cleavable with base (see <a href="#coupling-of-dC-to-polymer-support">#coupling-of-dC-to-polymer-support</a>).</p>
+        <a name="coupling-of-dC-to-polymer-support" />
+        <p><img id="coupling-of-dC-to-polymer-support" src="http://diyhpl.us/~bryan/papers2/DNA/coupling-of-dC-to-polymer-support.png" /></p>
+        <p>Through the 1960s he continued to explore the solid phase synthesis technique. He quickly determined that the best approach to solid phase synthesis was to attach the 3' hydroxyl to the support, as is done today. In fact, the graduate student instrumental in that work was Marvin Caruthers. Letsinger explored a number of polymer formulations, but never found a solution to the problem of swelling that was so detrimental to the chemistry. That role fell to his former student, Caruthers.</p>
+
+<a name="letsinger-phosphotriester-chemistry" />
+<h1>Phosphotriester chemistry (Letsinger)</h1>
+        <p><img id="phosphotriester-approach" src="http://diyhpl.us/~bryan/papers2/DNA/phosphotriester-approach.png" /></p>
+        <p>In the late 1960s, Letsinger published the first paper on the phosphotriester method of oligonucleotide synthesis (Letsinger, et. al., 1969). The key advance of this method was the protection of the phosphate group to prevent the branching that plagued the phosphodiester approach. The protecting group most commonly used was the &beta;-cyanoethyl group that is easily removed with ammonium hydroxide (Letsinger and Ogilvie, 1969). An o-chlorophenyl was also used but it required a more complicated deprotection mixture. It turned out, however, that the key to pushing the efficiency of the reaction, which reached levels in excess of 95% per step, was the selection of a proper activator. Mesityl sulfonyl chloride (MSCI) and mesityl sulfonyl nitrotriazole (MSNT) were by far the most popular (Devine and Reese, 1986; Letsinger and Ogilvie, 1969).</p>
+        <p>This was the first chemistry that was simple enough to reproduce successfully in many labs. The combination of a chemistry that worked relatively easily with solid phase methodology led to the creation of the first viable automated and semi-automated DNA synthesizers, exemplified by the early instruments developed by Vega Biotechnologies. Another early entrant was Ron Cook and his company Biosearch. He introduced the SAM I in the late 1970s, which was based on phosphotriester chemistry and was the most popular instrument of its era. These instruments allowed non-chemists to prepare simple oligonucleotides, and created the ability to probe genes with radio-labeled oligonucleotides prepared with the exact sequence desired. Thus equipped, the industry was primed for the emerging techniques of gene mapping, PCR, and target validation.</p>
+        <p>However, the phosphotriester chemistry still suffered from critical drawbacks. Among them was the fact that despite the years of work by a number of research groups, the average step-wise efficiency could never reproducibly be raised above 97%, and often failed to reach 95%. This limited the method to the routine synthesis of oligonucleotides less than 20 bases in length. Another problem was the extensive coupling time, which resulted in cycle times that commonly ran longer than an hour and a half.</p>
+
+<a name="letsinger-phosphite-triester-chemistry" />
+<h1>Phosphite-triester chemistry (Letsinger)</h1>
+        <p><img id="phosphite-triester-method" src="http://diyhpl.us/~bryan/papers2/DNA/phosphite-triester-method.png" /></p>
+        <p>In the mid-1970s, Letsinger published the first papers describing the phosphite-triester method of oligonucleotide chemistry (Letsinger, et. al., 1975; Letsinger and Lunsford, 1976) (see figure). This chemistry is based on the use of reactive phosphorus in the P(III) state, instead of the classic P(V) phosphoryl chemistry. The scheme required an additional step in the synthesis cycle, oxidation, in order to prepare the natural P(V) backbone. The major advantage of this chemistry was the significant reduction in time required for coupling due to the highly reactive nature of the nucleoside phosphomonochloridite intermediate.</p>
+        <p>The fact that the P(III) intermediate is more reactive than the P(V) species is not intuitive. one would suspect, in the absence of data, that because of the doubly bonded oxygen, the P(V) would be more reactive to attack by a nucleophile based on it's enhanced electronegativity. However, the determining factor of the reaction rate turns out to be the difference in the energy of formations for the transitional intermediates of the P(III) species versus P(V). As shown in <a href="#trigonal-bipyrimidal-intermediate">#trigonal-bipyrimidal-intermediate</a>, a trigonal bipyrimidal intermediate is formed. The doubly bonded oxygen hinders the transition from the tetrahedron configuration into the planar much more than the lone pair of electrons.</p>
+        <a name="trigonal-bipyrimidal-intermediate" />
+        <p><img id="trigonal-bipyrimidal-intermediate" src="http://diyhpl.us/~bryan/papers2/DNA/trigonal-bipyrimidal-intermediate.png" /></p>
+        <p>Oxidation of the phosphite-triester intermediate into a phosphotriester was needed in order to stabilize the backbone. This oxidation was required at each step of the cycle beause of the instability of the phosphite-triester intermediate to the acid required to remove the DMT group. Fortunately, a very simple mixture of iodine, water and some base very efficiently and quantitatively oxidizes phosphorus within seconds.</p>
+        <p>The research community was quick to accept this new chemistry as a significant step forward. Not only could standard DNA be prepared faster, but the door was opened for the investigation into a variety of backbone modified oligonucleotides. Biologics, a company partially comprised of former Letsinger students, marketed an automated synthesizer based on this chemistry and another was in development by Vega Biotechnologies. However, the early form of the phosphite-triester chemistry did indeed have major drawbacks.</p>
+        <p>The most significant problem was the highly reactive nature of the nucleoside phosphomonochloridite intermediate. It was very susceptible to hydrolysis. The intermediate was not easy to store and therefore was best made just prior to each coupling. Another issue was that the formation of active intermediate was very tricky. The phosphodichloridite activating reagent had to be added to the 5' protected nucleoside in such a manner as to maximize the formation of desired intermediate while reducing teh formation of 3'-3' dimer (fig9). The formation of this side-product did double damage in that it reduced the amount of desired material and increased the amount of unused phosphodichloridite that remained in solution. This unused reagent would very efficiently cap off the growing chain before the desired intermediate had time to couple. That was the reason that an excess of the reagent could not be used to reduce formation of the 3'-3' adduct. Using too few equivalents of the phosphodichloridite had a like-wise harmful effect in that too much 3'-3' adduct would be formed, reducing the concentration of active nucleoside reagent below a critical threshold. Increasing the concentration of the reagents to combat that only led to the opposite effect and an even less controllable reaction.</p>
+        <a name="3-3-adduct" />
+        <p><img id="3-3-adduct" src="http://diyhpl.us/~bryan/papers2/DNA/3-3-adduct.png" /></p>
+        <p>The protocols designed to optimize this reaction called for the slow addition of a very slight excess of solubilized 5' protected nucleoside to a solution of RO-PCI<sub>2</sub> at extremely cold temperatures (-78&deg; C). As it turned out, the combination of the requirement for preparing the active reagent just prior to each coupling, and the need for arduous conditions during this activation, removed nearly all of the advantages brought about by the faster coupling time.</p>
+        <p>This problem was not solved until the early 1980s. A serendipitous discovery was made by a graduate student that showed if there was a rapid introduction of the phosphodichloridite reagent to the nucleoside at room temperature, it formed a useful active reagent without making too much of the 3'-3' adduct or leaving too much phosphodichloridite in the mix (Hogrefe, 1987). This improved method was later coupled with a scavenger system involving trityl alcohol that selectively removed any excess RO-PCI<sub>2</sub> from the reaction mixture. It was this new protocol, which finally allowed the development of a practical automated DNA synthesizer with coupling times of 15 minutes or less. This instrument was also developed by Vega Biotechnologies in collaboration with Letsinger. Althuogh this particular instrument was a significant improvement over the phosphotriester instruments described earlier, it was never sold. The phosphodichloridite method was soon eclipsed by a new chemistry discovered by Marvin Caruthers, the phosphoramidite method. It solved many of the problems that clouded the entry of the phosphodichloridite method into the market.</p>
+
+<a name="caruthers" />
+<h1>Caruthers Lab</h1>
+        <p>stuff?</p>
+
+<a name="activators" />
+<h1>Acid/base activators in phosphoramidite oligonucleotide synthesis</h1>
+
+        <p>The nucleotide to be coupled to the growing oligomer is often presented as a phosphoramidite containing a diisopropylamine leaving group and cyanoethyl and 4,4&prime;-dimethoxytrityl (DMTr) as P&ndash;O and 5&prime; hydroxyl protecting groups.</p>
+
+        <p>The phosphoramidite coupling reaction is often incorrectly referred to as phosphorylation rather than phosphitylation. The phosphoramidite coupling reaction is the nucleophilic substitution of the amine moiety of the nucleosidic phosphoramidite by the 5&prime; hydroxy function of the solid support bound nucleoside. This reaction must be in the presence of a suitable acid/base activator because the reactants are otherwise inert.</p>
+
+        <p>Although it has been suggested that protonation of the phosphoramidite occurs on phosphorous,<sup>18,21,23,24</sup> it seems likely that for a reaction to occur, nitrogen protonation is required.<sup>21,25,26</sup> Evidence supporting this has been reported by Korkin and Tvetkov<sup>27,28</sup> who showed, by molecular modelling of H<sub>2</sub>P&ndash;NH<sub>2</sub>, that protonation on nitrogen lengthens and weakens the phosphorous nitrogen bond, whereas phosphorous protonation shortens and strengthens the phosphorous nitrogen bond. Nurminen<sup>21,22</sup> has claimed that phosphorous protonation could be achieved with strong acids, although subsequent nucleophilic substitution of the amine was much slower than with the corresponding nitrogen protonated species.</p>
+
+    <table id="acidbaseactivator_table">
+        <tr>
+            <th>activator</th>
+            <th>ref</th>
+        </tr><tr>
+            <td>1H-tetrazole</td>
+            <td><ul>
+                <li>M. D. Matteucci and M. H. Caruthers, <i>J. Am. Chem. Soc.</i>, 1981, <b>103</b>, 3185.</li>
+                <li>S. L. Beaucage and M. H. Caruthers, <i>Tetrahedron Lett.</i>, 1981, <b>22</b>, 1859.</li>
+                <li>B. H. Dahl, J. Nielsen and O. Dahl, <i>Nucleic Acids Res.</i>, 1987, <b>15</b>, 1729.</li>
+                <li>E. J. Nurminen, J. K. Mattinen and H. Lonnberg, <i>J. Chem. Soc., Perkin Trans. 2</i>, 1998, 1621.</li>
+                <li>E. J. Nurminen, J. K. Mattinen and H. Lonnberg, <i>J. Chem. Soc., Perkin Trans. 2</i>, 1999, 2551.</li>
+                <li>E. J. Nurminen, J. K. Mattinen and H. Lonnberg, <i>J. Chem. Soc., Perkin Trans. 2</i>, 2000, 2238.</li>
+                <li>E. J. Nurminen, J. K. Mattinen and H. Lonnberg, <i>J. Chem. Soc., Perkin Trans. 2</i>, 2001, 2159.</li>
+            <ul>
+
+            <p>Firstly, 1H-tetrazole (this activator) acts as an acid to protonate the nitrogen of the amine leaving group. Secondly, it acts as a nucleophile to displace isopropylamine from the protonated amidite to form a highly reactive tetrazolide intermediate. The tetrazolide intermediate then undergoes nucleophilic attack by the nucleosidic alcohol to produce the phosphite product, one equivalent of amine and tetrazole. The difference in pK<sub>a</sub> between the departing amine and tetrazole means that the final acid base products react to generate a salt (Scheme 2).</p>
+            <p><img id="scheme2" src="http://diyhpl.us/~bryan/papers2/DNA/1h-tetrazole-scheme.png" /></p>
+            <p>Efficient activation requires an acid to protonate the phosphoramidite and a base to act as both a good nucleophile, to facilitate rapid conversion to the activated intermediate, and as a good leaving group to enable formation of the phosphite triester. HX type activators, such as 1H-tetrazole, do not meet this requirements of strong acid and good nucleophile; as a strong acid is likely to generate a weakly nucleophilic conjugate base whereas a strong nucleophile is likely to be derived from a weak acid.<sup>5,29,30</sup> There have been a number of studies undertaken to find alternative activators to these HX types with salts of strong acids and nucleophilic bases showing great potential as effective promoters of phosphitylation, including: salts of benzimidazole with trifluoroacetic acid, tetrafluoroboric acid, hexafluorophosphoric acid and trifluoromethansoulfronic acid, imidazolium triflate, <i>N</i>-methylimidazolium triflate, salts of 4-dimethylaminopyridine with 5-(<i>o</i>-nitrophenyl)tetrazole and 5-(<i>p</i>-nitrophenyl) tetrazole, pyridinium trifluoroacetate, <i>N</i>methylimidazolium triflate and trifluoroacetate, <i>N</i>-methylbenzoimidazolium triflate, and <i>N</i>-phenylimidazolium triflate.
+            </td>
+        </tr><tr>
+            <td>2,4-dinitrophenol</td>
+            <td><ul>
+                <li>W. Dabkowski, I. Tworowska, J. Michalski and F. Cramer, <i>Tetrahedron Lett.</i>, 2000, <b>41</b>, 7535.</li>
+            </ul></td>
+        </tr><tr>
+            <td>2-bromo-4,5-dicyanoimidazole</td>
+            <td><ul>
+                <li>Y. Jin and G. Just, <i>J. Org. Chem.</i>, 1998, <b>63</b>, 3647.</li>
+            </ul></td>
+        </tr><tr>
+            <td>various carboxylic acids</td>
+            <td><ul>
+                <li>Y. Hayakawa, T. Iwase, E. J. Nurminen, M. Tsukamoto and M. Kataoka, <i>Tetrahedron</i>, 2005, <b>61</b>, 2203.</li>
+            </ul></td>
+        </tr><tr>
+            <td>4,5-dicyanoimidazole</td>
+            <td><ul>
+                <li>C. Vargeese, J. Carter, J. Yegge, S. Krivjansky, A. Settle, E. Kropp, K. Peterson and W. Pieken, <i>Nucleic Acids Res.</i>, 1998, <b>26</b>, 1046.</li>
+            </ul></td>
+        </tr><tr>
+            <td>5-phenyltetrazole</td>
+            <td><ul>
+                <li>B. C. Froehler and M. D. Matteucci, <i>Tetrahedron Lett.</i>, 1983, <b>24</b>, 3171.</li>
+            </ul></td>
+        </tr><tr>
+            <td>arylsulfonyl-tetrazoles</td>
+            <td><ul>
+                <li>J. Stawinski, T. Hozumi, S. A. Narang, C. P. Bahl and R. Wu, <i>Nucleic Acids Res.</i>, 1977, <b>4</b>, 353.</li>
+            </ul></td>
+        </tr><tr>
+            <td>salts of benzimidazole with trifluoracetic acid, tetrafluoroboric acid, hexafluorophosphoric acid and trifluoromethansulfonic acid</td>
+            <td><ul>
+                <li>Y. Hayakawa, M. Kataoka and R. Noyori, <i>J. Org. Chem.</i>, 1996, <b>61</b>, 7996.</li>
+                <li>Y. Hayakawa, R. Kawai, A. Hirata, J. I. Sugimoto, M. Kataoka, A. Sakakura, M. Hirose and R. Noyori, <i>J. Am. Chem. Soc.</i>, 2001, <b>123</b>, 8165.</li>
+            </ul></td>
+        </tr><tr>
+            <td>imidazolium triflate</td>
+            <td><ul>
+                <li>Y. Hayakawa and M. Kataoka, <i>J. Am. Chem. Soc.</i>, 1998, <b>120</b>, 12395.</li>
+            </ul></td>
+        </tr><tr>
+            <td><i>N</i>-methylimidazolium triflate</td>
+            <td><ul>
+                <li>A. Eleuteri, D. C. Capaldi, A. H. Krotz, D. L. Cole and V. T. Ravikumar, <i>Org. Process Res. Dev.</i>, 2000, <b>4</b>, 182.</li>
+            </ul></td>
+        </tr><tr>
+            <td>salts of 4-dimethylaminopyridine with 5-(<i>o</i>-nitrophenyl)tetrazole and 5-(<i>p</i>-nitrophenyl) tetrazole</td>
+            <td><ul>
+                <li>R. T. Pon, <i>Tetrahedron Lett.</i>, 1987, <b>28</b>, 3643.</li>
+            </ul></td>
+        </tr><tr>
+            <td>pyridinium trifluoroacetate</td>
+            <td><ul>
+                <li>Y. S. Sanghvi, Z. Guo, H. M. Pfundheller and A. Converso, <i>Org. Process Res. Dev.</i>, 2000, <b>4</b>, 175.</li>
+            </ul></td>
+        </tr><tr>
+            <td><i>N</i>-methylimidazolium triflate and trifluoroacetate</td>
+            <td />
+        </tr><tr>
+            <td><i>N</i>-methylbenzoimidazolium triflate</td>
+            <td />
+        </tr><tr>
+            <td><i>N</i>-phenylimidazolium triflate</td>
+            <td><ul>
+                <li>C. Xie, M. A. Staszak, J. T. Quatroche, C. D. Sturgill, V. V. Khau and M. J. Martinelli, <i>Org. Process Res. Dev.</i>, 2005, <b>9</b>, 730.</i>
+            </ul></td>
+        </tr>
+    </table>
+
+    <p>"Herein we report mechanistic studies on the phosphitylation of nucleosidic species in acetonitrile using saccharin and <i>N</i>-methylimidazole as an activator, which is currently used as part of the manufacture of oligonucleotides on an industrial scale." [<a href="http://diyhpl.us/~bryan/papers2/DNA/The%20mechanism%20of%20the%20phosphoramidite%20synthesis%20of%20polynucleotides.pdf">pdf</a>]</p>
+
+    </body>
+</html>
