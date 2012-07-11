@@ -1,0 +1,143 @@
+http://www.molecularassembler.com/Papers/PathDiamMolMfg.htm
+http://www.molecularassembler.com/Papers/PathDiamMolMfg.htm#FreitasProcess
+http://www.rfreitas.com/Nano/DimerTool.htm
+http://www.molecularassembler.com/Papers/MinToolset.pdf
+http://nextbigfuture.com/2010/04/robert-freitas-awarded-historic-first.html
+
+---------------------------
+A simple tool for positional diamond mechanosynthesis
+
+Freitas process, a 4-step manufacturing process to build the first DMS tool
+1) Synthesize capped tooltip molecule
+2) Attach tooltip molecule to deposition surface w/ correct orientation
+3) Attach handle structure to tooltip molecule
+4) Separate finished tool from deposition surface 
+
+Freitas process, a 4-step manufacturing process to build the first DMS tool
+    1) Synthesize capped tooltip molecule (iceane; DCB6Ge-I2)
+    2) Attach tooltip molecule to deposition surface w/ correct orientation
+        tooltip attachment methods:
+            1) ion bombardment in vacuo
+            2) surface decapping in vacuo
+            3) surface chemistry (see Giraud group work)
+    3) Attach handle structure to tooltip molecule
+        1) Nanocrystal growth
+        2) Direct handle bonding
+    4) Separate finished tool from deposition surface 
+
+
+A) Some sort of electrically-charged method of depositing atoms?
+B) Grow nanocrystal handle first on top of tooltip, attach nanocrystal+tooltip to MEMS arm or AFM head, attach tooltip+handle to deposition surface
+    11:30 < kanzure> in step 3 he does CVD to grow crystals around the tooltip molecule so that in step 4 he can mechanically remove the crystal+tooltip by force
+    11:30 < kanzure> but why not just grow the crystal on the tooltip molecule in the first place while you are synthesizing it in step 1
+    11:31 < kanzure> then you attach the tooltip+handle to an AFM cantilever beam, then move it to the correct location
+    11:32 < kanzure> maybe he's worried that if you use an AFM cantilever to press it against the surface that you won't only be using the dimer at the bottom of the tooltip as the surface intersection
+    11:33 < kanzure> aren't AFM tips supposed to be single atom diameters in some instances?
+        --> single-walled CNT tips (1.8nm diameter) http://alice.berkeley.edu/content/pubs/Lengthcontrolandsharpening.pdf
+        --> atomic wires
+        --> nanowires
+        --> Singleâ€atom point contact devices fabricated with an atomic force microscope
+        --> (1-2nm diameter W/tungsten) High-resolution nanowire atomic force microscope probe grown by a field-emission induced process
+            http://kleindiek.com/fileadmin/public/publications/2004-apl-84.pdf
+        --> Nanowire Probes for High Resolution Combined Scanning Electrochemical Microscopyâˆ’ Atomic Force Microscopy
+        --> AFM fabrication of sub-10-nanometer metal-oxide devices with in situ control of electrical properties
+
+    - single atom positional accuracy??
+
+C) is there a vacuum inside of CNTs? or oxygen atoms? -> use a CNT on an AFM probe tip as a vacuum, pick up a single atom at a time, deposit it somewhere else by modulating the vacuum within the tube.
+
+--------------------------
+Freitas process (in depth)
+
+1) synthesis of capped tooltip molecule
+    
+    uncapped DCB6-Ge (tooltip molecule)
+    iodine-capped DCB6-Ge
+    DCB6Ge-I2 (tooltip capped with two iodine atoms)
+
+    Adamantane molecules already synthesized (examples):
+        diamantane
+        divinyladamantane
+        iceane
+        triamantane
+        anti-tetramantane
+
+    "Iceane is the twinned 30-atom core structure of our tooltip molecule, and was first synthesized 30 years ago."
+
+2) attach tooltip molecule to deposition surface in preferred orientation
+
+    Attach a small number of tooltip molecules to an appropriate deposition surface in tip-down orientation, with the tooltip-bound dimer bonded to the deposition surface.
+
+    Criteria for choosing optimum deposition surface:
+        1) melting point higher than temperature required for diamond growth
+        2) maximum possible thermal expansion mismatch
+        3) maximum possible crystal lattice mismatch
+        4) resists or prohibits carbide formation
+        5) dimer binds tooltip stronger than deposition surface
+    Best deposition surfaces: Ge, Au, Cu, sapphire, graphene
+    
+    The purpose here is to grow isolated micron-scale crystals over tooltip molecule nucleation sites, rather than a continuous diamond film. So the deposition surface should minimize the number of natural nucleation sites. The selection criteria (listed above) are satisfied by "carbide exclusion" materials like Germanium, Gold, Copper, and Sapphire. Graphene sheets, like Graphite or Carbon Nanotubes, could also be used with nonhydrogenic CVD processes. Having chosen a deposition surface, at least three tooltip attachmetn methods can be identified.
+
+    Tooltip attachment methods:
+        1) ion bombardment in vacuo
+            Capped tooltip molecules are directed as a beam in a scanning pattern across the deposition surface. Upon striking the surface, some fraction of the tooltip molecule ions, perhaps as few as 1%, partially fragment with the release of the capping group, producing dangling bonds at the C2 dimer which can then insert into the deposition surface in the desired orientation, creating a low density of preferred diamond nucleation sites.
+            There are also many unwanted outcomes, like where only one atom of the capping pair is released, binding the tooltip molecule to the surface with just one bond through the C2 dimer. If beam energy is too high, impact bonding through the tooltip molecule base could occur, with migration or release of 1 or 2 hydrogen atoms. The harm from unwanted attachments is avoided by inspection or by post-process surface editing.
+
+        2) surface decapping in vacuo
+            Tooltip molecules are bonded to the deposition surface by non-impact dispersal and weak physisorption onto the deposition surface. This is followed by tooltip molecule decapping in vacuum via targeted energy input, producing dangling bonds at the C2 dimer which bond into the deposition surface, thus affixing the tooltip molecule to the surface in the desired tip-down orientation and again in creating a low density of preferred diamond nucleation sites. STM-mediated positionally-controlled single-molecule dissociation of an iodine atom from individual molecules of diiodobenzene physisorbed on copper surface was demonstrated experimentally in 2000.
+            The energetics of the bond-by-bond decapping process for an iodine-capped DCB6Ge tooltip molecule on a 3x3 unit-cell graphite surface can be tentatively estimated, using AM1. After each capping atom is removed, the conversion of the dangling C2 dimer bond to a new covalent bond between dimer and deposition surface appears to be energetically favored by 1.6 eV for the first bond and by 1.3 eV for the second bond. The presence of stray H or I ions can poison this reaction, so effort must be made to exclude them. Many other unwanted reactions can occur, like a tooltip molecule with one bond to the surface through the C2 dimer that loses one H atom from the side position of the base, as at lower right. Again, the harm from these unwanted states can be avoided by inspection or by surface editing, and their occurrence may be minimized by keeping the highest quality vacuum.
+
+        3) surface chemistry
+            Tooltip molecules are bonded to the deposition surface in the desired orientation using conventional solution-phase chemistry. For instance, the deposition surface could be functionalized with an appropriate molecular group, here labeled "X". The tooltip cap combines with the functionalization group, leaving the tooltip molecule chemically bound to the deposition surface with 2 bonds through the dimer, crudely analogous to esterification.
+
+            another surface chemistry approach:
+                Attaching Giraud's molecule
+                L. Giraud, V. Huber, T. Jenny, "2,2-Divinyladamantane: a new substrate for the modification of silicon surfaces," Tetrahedron 54(1998):11899-11906.
+
+                the 1998 synthesis by the Giraud group of divinyladamantane, a single-cage adamantane with two vinyl groups bonded to the same carbon atom in the cage, and subsequent dispersal of this molecule onto a polished hydrogen-terminated Silicon (111) surface. After exposure to UV irradiation, photochemical double hydrosilylation occurred, tethering the adamantane molecules to the surface through two -C-C- covalent bonds with minimal steric strain, and always in the same geometric orientation.
+
+3) attach handle structure to tooltip molecule
+        note: tooltip molecules are attached to deposition surface, and positioned with their diamondoid bases pointed upwards
+
+        1) Nanocrystal growth
+            grow new diamond on to the tooltip molecule base using chemical vapor deposition
+            
+            The adamantane or diamondoid nanocrystal base of each bound tooltip molecule serves as a nucleation seed from which a large diamond crystal will grow outward, in preference to growth on areas of the deposition surface where tooltip nucleation seed molecules are absent.
+
+            CVD should proceed until enough bulk diamond crystal has grown, outward and around each of the tooltip molecule seeds, that the tooltip and its newly grown handle can be securely grasped by a MEMS-scale manipulator mechanism [there's a movie/animation of this somewhere]. Deposition is halted well before adjacent growing crystals can merge into a single film. (when?)
+            citation: Giraud group (1998-2001)
+            Slide99.GIF
+
+            We know this Method will work because it has already been done. The first successful demonstration of surface-tethered adamantane molecules serving as nucleation seeds for diamond CVD was achieved by the Giraud group starting in 1998. In their control run, divinyladamantane seed molecules were dispersed onto an H-terminated Silicon (111) surface, then CVD was done, yielding barely one hundred diamond grains per square millimeter. But in their experimental run, the seed-dispersed surface was additionally exposed to UV irradiation prior to CVD, tethering the seed molecules to the surface. Subsequent CVD produced the image at right, a yield of hundreds of thousands of diamond grains per square millimeter â€“ and all of a very uniform 2-micron size, indicating essentially all adamantane-based nucleations. Admittedly, the core of our tooltip molecule is iceane, the unit cage of hexagonal diamond or lonsdaleite, not pure adamantane as in conventional cubic diamond crystal, but lonsdaleite can also be grown experimentally via CVD.
+
+        2) Direct handle bonding (Slide100.GIF)
+            SPM-manipulated dehydrogenated diamond shard is brought down vertically onto a surface upon which tooltip molecules are already tethered. The shard's dangling bonds attach it to the tooltip base. Retraction of the shard breaks the dimer bonds to the surface and pulls off teh tooltip molecule, yielding a tool for diamond mechanosynthesis with an active C2 dimer exposed at the tip. This method produces an inferior tool because the position, orientation, number and stiffness of attached tooltip molecules is poorly controlled. Still, this method (instead of nanocrystal growth) is much easier from an experimental standpoint, so it may be possible to manufacture early, though less capable, mechanosynthetic tools in this manner - and without as much positional accuracy.
+
+4) separate finished tool from deposition surface
+    Mechanically grasp and break away the diamond crystal-handled tool from the deposition surface, in vacuum.
+
+    The covalent bonds between the tooltip, through the C2 dimer, and the deposition surface will mechanically break when pulled. This yields either the desired mechanosynthetic tool having a naked carbon dimer attached, most probable according to preliminary AM1 analysis, or else a tool with no dimer attached, essentially a â€œdischargedâ€ tool requiring recharge. The tool will be securely grasped by, or bonded to, a conventional SPM tip, a MEMS robotic end-effector, or other similarly rigid and well-controlled microscale manipulation device.
+
+-------------
+
+The smaller the workspace the longer we can extend the working life of an active tool.
+    Once the completed mechanosynthetic tool is detached from the deposition surface, the exposed C2 dimer radical is extremely chemically active. A typical UHV vacuum on the order of 1 nano-torr should give the experimenter, on average, more than 1000 seconds after tool detachment before tooltip poisoning is likely to occur due to impingement of stray atoms, ions, and molecules. Note that a vacuum of 1 nano-torr inside an enclosed 10,000 cubic micron box (Slide 104) contains, on average, far less than one contaminant molecule â€“ usually making, in effect, a perfect vacuum. So the smaller we can miniaturize our workspace, the longer we can extend the working life of an active tool.
+
+VASP-based simulation and validation of an entire assembly sequence
+    Are these diamond nanostructures stable throughout their entire construction?
+
+Add a mechanosynthetic tool recharge cycle.
+    Design tooltips that can be used, recharged, and returned to service, instead of thrown away after each use.
+
+    recharge a tooltip w/ acetylene; then the hydrogens are removed using an abstraction process, restoring an active carbon dimer at the tip.
+
+    DCB6Ge-Xtip
+
+Pathway from demonstration of diamond mechanosynthesis to molecular manufacturing of useful systems
+
+    build primitive diamond mechanosynthesis (DMS) tool
+    -> build better DMS tool -> build recyclable DMS tools -> build DMS tool arrays
+    -> build actuated diamond tools and nanoparts
+    -> build nanoparts manipulation / transport mechanisms
+    -> construct first simple molecular manufacturing module
+    -> nanofactory or molecular assembly unit
