@@ -1,0 +1,458 @@
+
+stability window for Taq polymerase
+
+pH
+ionic strength
+size
+isoelectric point (pI)
+hydrophobicity
+solubility
+
+* temperature stability - need to work rapidly at lowered temperature
+* pH stability - selection of buffers for extraction and purification; selection of conditions for ion exchange, affinity or reversed phase chromatography
+* organic solvents stability - selection of conditions for reverse phase chromatography
+* detergent requirement - consider effects on chromatographic steps and the need for detergent removal. consider choice of detergent.
+* salt (ionic strength) - selection of conditions for precipitation techniques and hydrophobic interaction chromatography
+* cofactors for stability and activity - selelection of additives, pH, salts, buffers
+* protease sensitivity - need for fast removal of proteases or addition of inhibitors
+* sensitivity to metal ions - need to add EDTA or EGTA in buffers
+* redox sensitivity - need to add reducing agents
+* molecular weight - selection of gel filtration media
+* charge properties - selection of ion exchange conditions
+* biospecific affinity - selection of ligand for affinity medium
+* post translational modifications - selection of group specific affinity medium
+* hydrophobicity - selection of medium for hydrophobic interaction chromatography
+
+
+
+
+protein properties used during purification
+
+* charge - ion exchange (IEX)
+* size - gel filtration (GF)
+* hydrophobicity - hydrophobic interaction (HIC), reversed phase (RPC)
+* biorecognition (ligand specifity) - affinity (AC)
+* charge, ligand specificity or hydrophobicity - expanded bed adsorption (EBA) follows the principles of AC, IEX or HIC
+
+
+
+suitability of purification techniques for the Three Phase Purification Strategy:
+
+IEX:
+    main features:
+        - high resolution
+        - high capacity
+        - high speed
+    capture: 3stars
+    intermediate: 3stars
+    polish: 3stars
+    sample start condition:
+        - low ionic strength
+        - sample volume
+        - not limiting
+    sample end condition:
+        - high ionic strength or pH change
+        - concentrated sample
+HIC:
+    main features:
+        - good resolution
+        - good capacity
+        - high speed
+    capture: 2stars
+    intermediate: 3stars
+    polish: 1stars
+    sample start condition:
+        - high ionic strength
+        - sample volume
+        - not limiting
+    sample end condition:
+        - low ionic strength
+        - concentrated sample
+AC (affinity chromatography):
+    main features:
+        - high resolution
+        - high capacity
+        - high speed
+    capture: 3stars
+    intermediate: 3stars
+    polish: 2stars
+    sample start condition:
+        - specific binding conditions
+        - sample volume
+        - not limiting
+    sample end condition:
+        - specific elution conditions
+        - concentrated sample
+GF (gel filtration):
+    main features:
+        - high resolution
+        - using Superdex(TM) media
+    intermediate: 1stars
+    polish: 3stars
+    sample start condition:
+        - limited sample volume (<5% total column volume)
+        - limited flow rate range
+    sample end condition:
+        - buffer exchanged (if required)
+        - diluted sample
+RPC:
+    main features:
+        - high resolution
+    intermediate: 1stars
+    polish: 3stars
+    sample start condition:
+        - requires organic solvents
+    sample end condition:
+        - in organic solvent
+        - risk loss of biological activity
+
+
+
+"Ammonium sulphate precipitation is a common sample clarification and concentration step at laboratory scale and in this situation HlC (which requires high salt to enhance binding to the media) is ideal as the capture step. The salt concentration and the total sample volume will be significantly reduced after elution from the HlC column. Dilution of the fractionated sample or rapid buffer exchange using a Sephadex G-25 desalting column will prepare it for the next IEX or AC step."
+
+"GF is well suited for use after any of the concentrating techniques (IEX, HlC, AC, EBA) since the target protein will be eluted in a reduced volume and the components from the elution buffer will not affect the gel filtration separation (gel filtration is a non-binding technique with limited volume capacity and unaffected by buffer conditions)."
+
+
+
+Logical combinations of chromatographic steps
+
+crude sample -> GF (desalt mode) -> AC -> ___ -> GF
+crude sample -> GF (desalt mode) -> IEX -> ___ -> GF
+crude sample -> Hlc (dilution may be needed) -> IEX -> GF
+crude sample -> GF (desalt mode) -> IEX -> HlC -> GF
+
+clear or very dilute samples -> AC -> GF or RPC
+clear or very dilute samples -> IEX -> GF or RPC
+clear or very dilute samples -> IEX -> HlC -> GF
+clear or very dilute samples -> precipitation (e.g., in high ionic strength) -> resolubilise -> treat as for sample in high salt concentration
+
+"A sample is purified using a combination of techniques and alternative selectivities. For example, in an IEX-HlC-GF Three Phase Strategy the capture step selects according to differences in charge (IEX), the intermediate purification step according to differences in hydrophobicity (HlC) and the final polishing step according to differences in size (GF)."
+
+IEX-HlC-GF is regarded as the standard if you know nothing about the proteins.
+
+
+RPC = reversed phase chromatography
+
+
+
+Purification step                 Media                                Quantity   Code No.
+Capture                           STREAMLINE SP                        300 ml     17-0993-01
+Capture                           STREAMLINE DEAE                      300 ml     17-0994-01
+Capture                           HiPrepTM 16/10 SP XL                  1 column   17-5093-01
+Capture                           HiPrep 16/10 Q XL                    1 column   17-5092-01
+Intermediate purification         HiPrep Phenyl (high sub)             1 column   17-5095-01
+Polishing                         HiLoadTM 16/60 Superdex 75 prep grade 1 column   17-1068-01
+Polishing                         HiLoad 16/60 Superdex 200 prep grade 1 column   17-1069-01
+Sample clarification/conditioning Pre-packed PD-10 Column              30 columns 17-0851-01
+Sample clarification/conditioning HiTrap Desalting                     5 columns  17-1408-01
+Sample clarification/conditioning HiPrep 26/10 Desalting               1 column   17-5087-01
+
+
+
+Pre-packed column        Sample volume   Sample volume    Code No.
+                         loading per run recovery per run
+HiPrep Desalting 26/10   2.5 -15 ml      7.5 - 20 ml      17-5087-01
+HiTrap Desalting         0.25 - 1.5 ml   1.0 - 2.0 ml     17-1408-01
+Fast Desalting PC 3.2/10 0.05 - 0.2 ml   0.2 - 0.3 ml     17-0774-01
+PD-10 Desalting          1.5 - 2.5 ml    2.5 - 3.5 ml     17-0851-01
+
+
+Table 6. Recommended HiTrap affinity columns for laboratory scale separation.
+                                           Code No.   Quantity/                Approximate
+Application              HiTrap column
+                                                      components               binding capaci-
+                                                                               ty per ml gel
+                                           17-5079-01 5 x 1 ml                 human
+Isolation of             HiTrap rProtein A
+                                           17-5080-01 1 x 5 ml                 IgG 50 mg/ml
+immunoglobulins
+                                           17-5029-02 2 x 1 ml
+IgG classes, fragments
+and subclasses
+                                           17-0402-01 5 x 1 ml                 human
+IgG classes, fragments   HiTrap Protein A
+                                           17-0402-03 2 x 1 ml                 IgG 20 mg/ml
+and subclasses
+                                           17-0403-01 1 x 5 ml
+                                           17-0404-01 5 x 1 ml                 human
+IgG classes, fragments   HiTrap Protein G
+                                           17-0404-03 2 x 1 ml                 IgG 25 mg/ml
+and subclasses
+                                           17-0405-01 1 x 5 ml
+including human IgG3
+strong affinity
+to monoclonal mouse
+IgG1 and rat IgG
+Monoclonal and poly-     MAbTrapTM GII      17-1128-01 HiTrap Protein G         as above
+clonal IgG from ascites                               column (1 ml),
+fluid, serum and cell                                 accessories, pre-made
+culture supernatant                                   buffers for 10 purifica-
+                                                      tions
+Mouse recombinant        RPAS Purification 17-1362-01 HiTrap Anti-E column,    0.17 mg
+Single chain antibody    Module                       accessories, pre-made    ScFv/5 ml
+Fragment variable                                     buffers for 20 purifica-
+(ScFv) produced in                                    tions
+E.Coli
+IgY antibodies from      HiTrap IgY        17-5111-01 1 x 5 ml                 IgY 20 mg/ml
+egg yolk                 Purification
+IgM                      HiTrap IgM        17-5110-01 5 x 1 ml                 IgM 5 mg/ml
+                         Purification
+Group Specific Media:    HiTrap Con A      17-5105-01 5 x 1 ml                 transferrin
+Glycoproteins or                                                               4 mg/ml
+polysaccharides
+Specificity: branched
+mannoses,
+carbohydrates
+withterminal mannose
+or glucose(a Man>
+a Glc> GlcNAc)
+Specificity:             HiTrap Lentil     17-5106-01 5 x 1 ml                 thyroglobulin
+branched mannoses        Lectin                                                4 mg/ml
+with fucose linked
+a(1,6) to the N- acetyl-
+glucosamine,
+(a Man> a Glc>
+GlcNAc) N- acetyl-
+glucosamine binding
+lectins
+
+
+                           HiTrap column        Code No.        Quantity/             Approximate
+Application
+                                                                components            binding capa-
+                                                                                      city per ml gel
+                           HiTrap Peanut        17-5108-01      5 x 1 ml              asialofetuin
+Specificity: Terminal ÃŸ
+                           Lectin                                                     3 mg/ml
+-galactose, (Gal ÃŸ 1,3
+GalNAc > a and ÃŸ Gal)
+                           HiTrap Wheat         17-5107-01      5 x 1 ml              ovomuroid
+Specificity: chitobiose
+                           Germ Lectin                                                4 mg /ml
+core of N-linked oligo-
+saccharides, [GlcNAc
+(ÃŸ 1,4GlcNAc) 1- 2 >
+ÃŸ GlcNAc]
+                           HiTrap Lectin Test   17-5109-01      4 x 1 ml columns of   as listed above
+Specificity: as listed for
+                           Kit                                  HiTrap Con A
+each column
+                                                                HiTrap Lentil Lectin
+                                                                HiTrap Peanut Lectin
+                                                                HiTrap Wheat Germ
+                                                                Lectin
+Group Specific Media       HiTrap Blue          17-0412-01      5 x 1 ml              HSA 20 mg/ml
+Various Nucleotide-                             17-0413-01      1 x 5 ml
+requiring enzymes,
+coagulation factors,
+DNA binding proteins,
+a2-macro-globulin
+Proteins and peptides      HiTrap Chelating     17-0408-01      5 x 1 ml              (His)6-tagged
+with exposed amino                              17-0409-01      1 x 5 ml              protein (27.6
+acids: His (Cys, Trp)                                                                 kD) 12 mg /ml
+e.g. a-2-macro-globu-
+lin and interferon
+Histidine-tagged fusion    HisTrapTM             17-1880-01      HiTrap Chelating      as above
+proteins                                                        column (1 ml), acces-
+                                                                sories, pre-made
+                                                                buffers
+Biotin and biotinylated    HiTrap               17-5112-01      5 x 1 ml              biotinylated
+substances                 Streptavidin                                               BSA 6 mg/ml
+Coagulation factors,       HiTrap Heparin       17-0406-01      5 x 1 ml              ATIII (bovine)
+lipoprotein lipases,                            17-0407-01      1 x 5 ml              3 mg/ml
+steroid receptors,
+hormones, DNA
+binding proteins,
+interferon, protein
+syntheses factors
+Matrix for prepara-        HiTrap               17-0716-01      5 x 1 ml              ligand specific
+tion of affinity media     NHS-activated        17-0717-01      1 x 5 ml
+Coupling of primary
+amines
+Recommended separation conditions
+All HiTrap columns are supplied with a detailed protocol to ensure optimum results
+Maximum flow rates: HiTrap 1 ml column: up to 4 ml/min
+HiTrap 5 ml column: up to 20 ml/min
+
+
+Table 7. Volatile buffer systems.
+               Volatile buffer systems used in ion exchange chromatography
+pH range       Buffer system                          Counter-ion    pK-values for buffering ions
+2.0            Formic acid                            H+             3.75
+2.3-3.5        Pyridine/formic acid                   HCOO-          3.75; 5.25
+3.0-5.0        Trimethylamine/formic acid             HCOO-          3.75; 9.25
+3.0-6.0        Pyridine/acetic acid                   CH3COO-        4.76; 5.25
+4.0-6.0        Trimethylamine/acetic acid             CH3COO-        4.76; 9.25
+6.8-8.8        Trimethylamine/HCl                     Cl-            9.25
+7.0-8.5        Ammonia/formic acid                    HCOO-          3.75; 9.25
+8.5-10.0       Ammonia/acetic acid                    CH3COO-        4.76; 9.25
+7.0-12.0       Trimethylamine/carbonate               CO32-          6.50; 9.25
+7.9            Ammonium bicarbonate                   HCO3-          6.50; 9.25
+8.0-9.5        Ammonium carbonate/ammonia             CO32-          6.50; 9.25
+8.5-10.5       Ethanolamine/HCl                       Cl-            10.0
+8.5            Ammonium carbonate                     CO32-          6.50; 9.25
+
+
+
+Extraction process           Typical conditions           Protein source             Comment
+Gentle                                                    erythrocytes E.coli
+                             2 volumes water to                                      lower product yield but
+                             1 volume packed              periplasm: intracellular   reduced protease
+Cell lysis (osmotic shock)   pre-washed cells             proteins                   release
+Enzymatic digestion          lysozyme 0.2 mg/ml,          bacteria: intracellular    lab scale only, often
+                             37 Â°C, 15 mins.              proteins                   combined with
+                                                                                     mechanical disruption
+Hand homogenisation          follow equipment             liver tissue
+                             instructions
+Mincing (grinding)           "                            muscle
+Moderate                     follow equipment             muscle tissue, most
+                             instructions                 animal tissues, plant
+Blade homogeniser                                         tissues
+Grinding with abrasive       "                            bacteria, plant tissues
+e.g. sand
+Vigorous                     follow equipment             cell suspensions:          small scale, release of
+Ultrasonication              instructions                 intracellular proteins in  nucleic acids may cause
+or                                                        cytoplasm, periplasm,      viscosity problems
+bead milling                                              inclusion bodies           inclusion
+                                                                                     bodies must be
+                                                                                     resolubilised
+Manton-Gaulin                follow equipment             cell suspensions           large scale only
+homogeniser                  instructions
+French press                 follow equipment             bacteria, plant cells
+                             instructions
+Fractional precipitation     see section on fractional    extracellular: secreted    precipitates must be
+                             precipitation                recombinants,              resolubilised
+                                                          monoclonal antibodies,
+                                                          cell lysates
+Details from Protein Purification, Principles and Practice, R.K. Scopes and other sources.
+
+
+Table 9. Common substances used in sample preparation.
+                                     Typical conditions for use         Purpose
+Buffer components                    20 mM, pH7.4                       maintain pH minimise
+Tris                                                                    acidification caused by
+                                                                        lysosomal disruption
+NaCl                                 100 mM                             maintain ionic strength of
+                                                                        medium
+EDTA                                 10 mM                              reduce oxidation damage,
+                                                                        chelate metal ions
+Sucrose or glucose                   25 mM                              stabilise lysosomal membra-
+                                                                        nes, reduce protease release
+Detergents                           See Table 10                       extraction and purification of
+lonic or non-ionic detergents                                           integral membrane proteins
+                                                                        solubilisation of poorly soluble
+                                                                        proteins
+DNAse and RNAse                      1 Î¼g/ml                            degradation of nucleic acids,
+                                                                        reduce viscosity of sample
+                                                                        solution
+Protease inhibitors*                                                    Inhibits
+                                     0.5 - 1 mM
+PMSF                                                                    serine proteases
+                                     0.4 - 4 mM
+APMSF                                                                   serine proteases
+                                     0.2 mM
+Benzamidine-HCl                                                         serine proteases
+                                     1 Î¼M
+Pepstatin                                                               aspartic proteases
+                                     10 - 100 Î¼M
+Leupeptin                                                               cysteine and serine proteases
+                                     10 - 100 Î¼M
+Chymostatin                                                             chymotrypsin, papain,
+                                                                        cysteine proteases
+                                     1 - 100 Î¼M
+Antipain-HCl                                                            papain, cysteine and serine
+                                                                        proteases
+                                     2 - 10 mM
+EDTA                                                                    metal dependent proteases,
+                                                                        zinc and iron
+                                     2 - 10 mM
+EGTA                                                                    metal dependent proteases
+                                                                        e.g. calcium
+Reducing agents                      1 - 10 mM                          keep cysteine residues
+1, 4 dithiothreitol, DTT                                                reduced
+                                     1 - 10 mM
+1, 4 dithioerythritol, DTE
+                                                                        "
+                                     0.05%
+Mercaptoethanol
+                                                                        "
+Others                               5 - 10%                            for stabilisation, up to 50% can
+Glycerol                                                                be used if required
+PMSF - Phenylmethylsulfonyl fluoride
+APMSF - 4-Aminophenyl-methylsulfonyl fluoride
+PMSF is a hazardous chemical. Half-life time in aqueous solution is 35 min. PMSF is usually stored
+as 10 mM or 100 mM stock solution (1.74 or 17.4 mg/ml in isopropanol) at - 20Â° C.
+* Protease inhibitors are available in pre-made mixes from several suppliers.
+Details taken from Protein Purification, Principles and Practice, R.K. Scopes. 1994, Springer.,
+Protein Purification, Principles, High Resolution Methods and Applications, J-C. Janson and L.
+RydÃ©n, 1998, 2nd ed. Wiley Inc. and other sources.
+
+
+Table 10. Examples of ionic and non-ionic detergents.
+Sodium dodecyl sulphate            0.1 - 0.5%                 denatures proteins, used for SDS-PAGE
+                                                              use non-ionic detergents to avoid
+                                                              denaturation
+Triton-X-100                       0.1 %                      non-ionic detergent for membrane
+                                                              solubilisation.
+                                                              Note: may absorb strongly at 280 nm!
+Nonidet-P-40                       0.05 - 2%                  "
+Dodecyl b D maltoside              1%                         "
+Octyl b D glucoside                1 - 1.5%                   "
+For further information on detergents: Protein Purification, Principles, High Resolution Methods and
+Applications, J-C. Janson and L. RydÃ©n, 1998, 2nd ed. Wiley Inc.
+
+
+Pre-packed column        Sample volume   Sample volume    Code No.
+                         loading per run recovery per run
+HiPrep Desalting 26/10   2.5 -15 ml      7.5 - 20 ml      17-5087-01
+HiTrap Desalting         0.25 - 1.5 ml   1.0 - 2.0 ml     17-1408-01
+Fast Desalting PC 3.2/10 0.05 - 0.2 ml   0.2 - 0.3 ml     17-0774-01
+PD-10 Desalting          1.5 - 2.5 ml    2.5 - 3.5 ml     17-0851-01
+
+
+Precipitation agent       Typical conditions for use     Sample type             Comment
+Ammonium sulphate         as described                   >1mg/ml proteins        stabilizes proteins, no
+                                                         especially immuno-      denaturation, super-
+                                                         globulins               natant can go directly
+                                                                                 to HIC
+Dextran sulphate          as described                   samples with high       precipitates lipoprotein
+                                                         levels of lipoprotein
+                                                         e.g ascites
+Polyvinylpyrrolidine      Add 3% (w/v), stir 4 hours,                            alternative to dextran
+                                                         "
+                          centrifuge, discard pellet                             sulphate
+Polyethylene glycol       up to 20% wt/vol               plasma proteins         no denaturation super-
+(PEG, M.W. >4000)                                                                natant goes direct to
+                                                                                 IEX or AC. Complete
+                                                                                 removal may be difficult
+Acetone                   up to 80% vol/vol at 0 Â°C      useful for peptide      may denature protein
+                                                         precipitation or con-   irreversibly
+                                                         centration of sample
+                                                         for electrophoresis
+Polyethyleneimine         0.1% w/v                                               precipitates aggregated
+                                                                                 nucleoproteins
+Protamine sulphate        1%
+                                                                                 "
+Streptomycin sulphate     1%                                                     precipitation of nucleic
+                                                                                 acids
+Details taken from Protein Purification, Principles and Practice, R.K. Scopes. 1994, Springer.,
+Protein Purification, Principles, High Resolution Methods and Applications, J-C. Janson and L.
+RydÃ©n, 1998, 2nd ed. Wiley Inc.and other sources
+
+
+Table 13. Examples of denaturing agents.
+Denaturing agent                Typical conditions for use     Removal/comment
+Urea                            2 - 8M                         remove using Sephadex G25
+Guanidine hydrochloride         3 - 8M                         remove using Sephadex G25 or
+                                                               during IEX
+Triton X-100 with               2%                             â€
+ Sarcosyl                       1.5%                           â€
+N-octyl glucoside               2%                             â€
+Sodium dodecyl sulphate         0.1 - 0.5%                     exchange for non-ionic detergent during
+                                                               first chromatographic step, avoid anion
+                                                               exchange chromatography
+alkaline pH                     > pH 9, NaOH                   may need to adjust pH during
+                                                               chromatography to maintain solubility
+Details taken from Protein Purification, Principles and Practice, R.K. Scopes. 1994, Springer.,
+Protein Purification, Principles, High Resolution Methods and Applications, J-C. Janson and
+L. RydÃ©n, 1998, 2nd ed. Wiley Inc.and other sources
