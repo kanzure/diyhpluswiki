@@ -123,4 +123,19 @@ http://kingkong.me.berkeley.edu/~adarsh/Papers/TVCG09.pdf
 
 TVCG09 uses the GPU and textures to compute a marching bounding box approximation of intersection curves. The intersection points are computed by a triangle approximation and then stitched together into polylines.
 
+# Watertight NURBS
+
+from a conversation in \#brlcad with the military...
+
+13:44 < starseeker> kanzure: if that "Watertight Trimmed NURBS" paper is right, it's actually impossible to get exact curve solutions in general without being willing to distort the NURBS surfaces in the neighborhood of the intersection
+13:45 < kanzure> but what about from a mechanical engineering perspective: approximations of shape intersections leads to bad modeling results, doesn't it?
+13:46 < starseeker> my guess is that would depend on the exact definition of "approximations" and "bad results"
+13:48 < starseeker> kanzure: do any existing CAD systems claim to solve intersections exactly?  (Sounds like ACIS at least doesn't, from what you were saying)
+13:50 < kanzure> some academic papers claim to solve intersections in an exact/algebraic manner
+13:50 < kanzure> caveat: please don't take my word as an exhaustive survey :P
+13:50 < starseeker> usually with a considerable (as in prohibitive) performance hit though
+
+14:39 < kanzure> i suppose as long as the values are within the tolerances i previously configured, i don't really care what the intersection of two shapes looks like
+14:40 <@jblake> arguably, you should be aiming for within the square of the tolerance or some such smaller limit in order to avoid magnification of errors from the interactions between approximated surfaces
+
 
