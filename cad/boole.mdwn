@@ -47,15 +47,17 @@ then set AdjInfo after calling GetAdjacentPartn (for the adjacency graph later)
 
 SubdivideTrimCurve - takes a UVspline and a XYZspline and splits them into (n+1) curves given n param values
 
-for first_solid:
+next steps for first_solid:
 
-8. ObtainNewGlobalGraph - takes the new partitioned regions of a solid and assigns each region a unique global component number.
-9. DetermineXsectionsforSolid - classifies each component of a solid as IN/OUT
+    8. ObtainNewGlobalGraph - takes the new partitioned regions of a solid and assigns each region a unique global component number.
+    9. DetermineXsectionsforSolid - classifies each component of a solid as IN/OUT
 
-for second_solid:
+next steps for second_solid:
 
-8. ObtainNewGlobalGraph - takes the new partitioned regions of a solid and assigns each region a unique global component number.
-9. DetermineXsectionsforSolid - classifies each component of a solid as IN/OUT
+    8. ObtainNewGlobalGraph - takes the new partitioned regions of a solid and assigns each region a unique global component number.
+    9. DetermineXsectionsforSolid - classifies each component of a solid as IN/OUT
+
+Then continue with these steps:
 
 10. ObtainFinalPiecesofSolid(first_solid)
 11. ObtainFinalPiecesofSolid(second_solid)
