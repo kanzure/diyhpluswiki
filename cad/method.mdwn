@@ -1,0 +1,117 @@
+
+# General algorithms required
+
+1. curve/curve intersections
+
+2. curve/surface intersections
+
+3. surface/surface intersections
+
+# Types of surface intersection algorithms
+
+1. subdivision -- if subdivision is stopped too early, this method can miss small loops or lead to incorrect connectivity in the presence of singularities. Synder 1992 improved this method by using an algebraic representation and using interval arithmetic.
+
+2. lattice evaluation -- these methods decompose the problem into smaller low-dimensional geometric complexity problems such as curve-surface intersections (Rossignac and Requicha 1987). This is followed by connecting the discrete points into curves. Determining the discrete step size is hard and can miss finding all of the small loops and singularities in a problem.
+
+3. analytic methods -- these methods are usually limited to very specific intersection scenarios.
+
+4. marching methods -- the idea behind marching methods is to do an analytic formulation of intersection curves, determination of a starting point on each component, and the use of local geometry to trace out the curve. The intersection curve can be defined implicitly as an algebraic set based on the surface equations, as a curve of zero distance between the two surfaces, or as a vector field (Hoffmann 1990; Kriezis et al. 1990b; Cheng 1989). Tracing can be done on the intersection curve in higher dimensions or on its projection in the plane. According to Hoffmann [1990], the projection results in a high-degree formulation and its computation can be inefficient and numerically unreliable. To circumvent these problems, a representation based on an unevaluated determinant was introduced in Manocha and Canny [1991].
+
+The components of an intersection curve consist of boundary segments
+and closed loops. Start points on the boundary segments are obtained by
+curve-surface intersections [Sederberg and Nishita 1991]. Many techniques
+have appeared over the last few years to detect closed loops on the
+intersection curve.2 They are based on bounds on Gauss maps, and subdi-
+vide each surface until sufficient conditions for the nonexistence of loops
+are satisfied. These algorithms work very well to isolate cases with no loops
+only if the surfaces are relatively flat. However, in the presence of small
+loops or singularities, the algorithm becomes slow.
+
+Most algorithms use the local geometry of the curve coupled with
+quasi-Newton methods [Bajaj et al. 1988; Barnhill and Kersey 1990] for
+tracing. These methods do not converge well sometimes [Field and Field
+1992], and many issues related to choice of step size to prevent component
+jumping are still open. Therefore, most implementations use very conserva-
+tive step sizes for tracing and this slows down the algorithm. Overall,
+current tracing algorithms are not considered robust [Snyder 1992].
+
+The singularities on the intersection curve can be classified in terms of
+solutions of algebraic equations. However, no methods are known in the
+literature that can efficiently compute them for high degree surfaces (such
+as bicubic patches) and classify the curve branches in their neighborhood.
+
+??? boolean operations using polyhedral approximations
+
+# An efficient surface intersection algorithm based on lower-dimensional formulation
+
+Our algorithm formulates the intersection problem algebraically, computes
+the projection of the intersection curve as an algebraic plane curve, and
+evaluates it. The projection is represented as the singular set of a bivariate
+matrix polynomial and the algorithm uses matrix computations to trace the
+curve. Tracing is a geometric operation and evaluating the curve in the
+plane reduces its geometric complexity. The loops of the intersection curve
+are characterized algebraically and computed using curve–surface intersec-
+tions followed by complex tracing. The tracing algorithm employs domain
+decomposition and the use of inverse power iterations. Domain decomposi-
+tion provides a natural procedure to compute the step size and prevent
+component jumping. This is a major advantage of our tracing algorithm
+since incorrect connectivity of the various curve components was considered
+a flaw in traditional marching methods.
+
+The rest of the article is organized in the following manner. We review
+the problem formulation and the representation of the intersection curve in
+terms of matrices in Section 2. The special case handling of parameteriza-
+tions with base points is discussed in Section 3. Section 4 describes
+algorithms to compute start points on every curve component including
+loops. The tracing algorithm using domain decomposition is presented in
+Section 5. Methods for identification of singularities on the intersection
+curve are given both in Sections 5 and 6. Section 7 outlines the main issues
+concerning robustness and efficiency, and the contributions of our algo-
+rithm. Application of our intersection algorithm to large-sized models is
+presented in Section 8. This is followed by a discussion on the performance
+of our algorithm on these models in Section 9. We finally conclude in
+Section 10.
+
+
+# Glossary
+
+intersection curve
+
+b-splines
+
+NURBS - non-uniform rational b-splines
+
+# Marching bounding boxes
+
+http://kingkong.me.berkeley.edu/~adarsh/Papers/TVCG09.pdf
+
+# CATIA
+
+"CATIA uses polyhedral approximations for intersection and boundary computations. These methods suffer from from incorrect results and data proliferation."
+
+# "Exact" (Krishna)
+
+http://www2.research.att.com/~krishnas/MY_PAPERS/exact.pdf
+
+1. Intersection curve computation (for each pair of patches):
+
+1.1. Obtain the intersection curve(s) between the two patches.
+
+1.2. Find the points where the intersection curve meets the patch boundary.
+
+1.3. Decompose the intersection curve into a set of monotonic curves.
+
+1.4. Find the points where the intersection curve meets the trimming boundary and subdivide the trimming and intersection curves.
+
+1.5. Compute adjacency information for remaining intersection curves.
+
+2. Curve merging and boundary computation (for each patch):
+
+2.1. Merge intersection curves together in each patch to partition the patch domain.
+
+2.2. Compute the adjacency graph and components separated by intersection curves.
+
+2.3. Shoot rays from one solid to the other solid to classify components as inside or outside the solid.
+
+2.4. Propogate the information from the previous step in the adjacency graph to find the final solid.
+
