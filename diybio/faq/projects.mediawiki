@@ -1,0 +1,963 @@
+{{DIYbio:Top}}
+
+This topic ''DIYBio Projects'' is part of the 
+[http://openwetware.org/wiki/DIYbio/FAQ DIYBio FAQ] 
+
+
+
+= IMPORTANT FAQ = 
+
+* '''Regardless of whatever article you've read in Wired magazine, or other publication, written by journalists who don't do proper fact checking and who sensationalize, most of the questions regarding engineering "new living organisms" or "replacement organs" or what have you, is currently not possible (and won't be for decades).  Sorry to have to point out the obvious. ''' -- Jonathan Cline on the DIYbio google group
+
+Due to continual hype by the media regarding technologies which aren't yet accessible (or don't even exist), and reported without proper journalistic objectivity, resulting in subsequent FAQ'ing on the DIYbio group, the following FAQ answer is offered:
+
+  > is it possible to use (organovo or any companies) bioprinter to print
+  > living organisms that are visible to the naked eye (that doesn't mean
+  > it has a brain and moves around and everything, just be alive)?
+  Depends on your definition of 'naked eye'.   For example, you
+  could spray pigmented/glowing bacteria as graffiti, which
+  eventually grow and create a portrait.  Or using a larger
+  liquid handling device you might be able to spray plant cells
+  onto a substrate which then grow into moss, etc.    
+  Organisms, no.  A single organ, yes: can be printed, that's
+  the current limit of today's technology.
+  "Ink jet printer spray" of bacteria has previously been
+  discussed on this group so check the archives. 
+-- Jonathan Cline on the DIYbio google group
+
+= External Links =
+
+* [http://openwetware.org/wiki/Diybio OpenWetWare DIYBio main topic Projects section]
+* [http://diybio.org/projects/ DIYbio web page, selected project summaries]
+* ''add your external project link here''
+
+= Project Ideas =
+
+The following are project ideas (brainstorming) which have been discussed on DIYbio google group.  Research papers or existing products similar to these ideas can be found, with the DIYbio aspect of lowering the cost, open sourcing the design, and allowing latest technology (such as USB or network, for electronics devices) to be added as enhancements.
+
+* Comparing various inexpensive reagents to the purified commercial counterparts; for example, food-grade agar-agars to commercial agaroses.
+
+* Using LEDs as spectrophotometer, colorimeter, etc.  Some projects already exist around the web.
+
+* Using USB/networkable microcontrollers for thermocyclers.
+
+* Fabricating microfluidic devices and using USB microcontrollers for microfluidics (pump/valve/syringe) control.
+
+* Printing, patterning, synthesizing various substances or microbes with inkjet printers.  Modifying gene expression with inkjet dispensing.
+** Several other fields are also very engaged in modifying inkjet printers:  for making electronics circuit boards (inkjet PCB); for making physical objects (inkjet fabrication), for printing on objects (inkjet handhelds).   Check these projects for how to modify inkjet printers for Bio projects as well.
+
+* Making a spin coater (from DC motors or computer drives) - which can be used for building microfluidics, etc
+
+* Making Taq - See http://openwetware.org/wiki/DIYbio/FAQ/Methods#Homebrew_Taq
+
+* Imaging system for Electrophoresis Agarose Gels (or Gel Box that includes the imaging system built-in)
+
+* Modifying one's own biology through diet, and quantifying medical change by common and/or special medical tests, as compared to prior results and standardized results.
+
+* Distributed testing foods sold in grocery stores or restaurants by genetic sequencing or low-cost field tests, and publishing results based on geographic region.
+
+* Distributed Sample collection and sequencing system + protocols, with long-term archival and open source database.
+
+* "You could use Agrobacterium to bioengineer a peanut: http://www.rombio.eu/rbl5vol14/5.pdf "
+
+* Bioengineering (Metabolic Engineering) of a microbe for harvesting organic solar voltaic panel conductors and printed with a future RepRap model. -- Giovanni Lostumbo on the DIYbio google group
+
+* "Try some slime-mold like the plasmobot... http://www.nanowerk.com/news/newsid=12477.php .  NIH had a different slime-mold under it's model organisms http://www.nih.gov/science/models/d_discoideum/ . There are apparently some gfp lines available for research.   I'm trying to work up a small SOP for my cell culture hw, and I'm impressed at the simplicity I'm reading about, as well it's utility.  This kit from Carolina looks like a fun start: http://www.carolina.com/product/living+organisms/protists/slime+mold+kits/slime+mold+growing+kit.do?sortby=ourPicks " -- General Oya on the DIYbio google group
+
+
+
+== Computing Technology (Microcontrollers, etc) == 
+
+  The following product is from Microchip.  Microchip has grown in
+  interesting ways: they now have a cross-platform software development
+  environment (Win, Mac, Linux) based on NetBeans (called MPLAB X).  The
+  original MPLAB is one of the best microcontroller dev environments,
+  especially for the cost (free), though previously limited to Windows.
+  They are moving to the GNU compiler for their 32 bit
+  microcontrollers.  They have an iPhone dev kit (which requires an
+  Apple hardware license, since Apple is closed hardware, which some
+  here don't like) and now recently announced an Android dev kit: with
+  "Arduino footprint compatible for prototyping", even.  I don't want to
+  stir up a big hooplah between microcontroller choice, but I will say
+  that Arduino using AVR is a more expensive choice any time I've looked
+  at it.  A typical microcontroller + board + periphery should not cost
+  more than $60 for wired internet-capable designs and within $10-30 for
+  standalone designs.
+  This kit below (quite new, so docs still forthcoming) might satisfy
+  some people's needs. Who here is designing smartphone-biotech-related
+  devices?  Why have a lab device if it can't connect to a smart phone,
+  that's my thought.  The smart phone app is the new user interface;
+  don't waste $ or time building user interface LCD/touch screen/buttons
+  into a lab equipment box (unless there are clean-room restrictions).
+   http://www.microchip.com and search for DM240415
+  ""Approach to Develop Android Accessories ($79.99)
+  * Buy the PIC24F Accessory Development Starter Kit for Android 
+  ($79.99)
+  * Download the no-fee, royalty-free licensed software library
+  * Contact androidsupp...@microchip.com for additional support
+  PIC24F Accessory Development Starter Kit for Android  (DM240415)
+  * PIC24F 16-bit PIC® MCU with USB OTG
+  * Type A USB connector
+  * User interface buttons
+  * LEDs and potentiometer
+  * Device charger circuitry up to 500mA
+  * Arduino footprint compatible for prototyping"" 
+  Perhaps compare to a CUI32 PIC32MX Development Stick ($40):
+  http://www.sparkfun.com/products/9645
+  or to Ethernet Mini-Web PIC18 Development Board ($42)
+  http://www.sparkfun.com/products/7829
+  To do that on Arduino, you'd need the main board plus ethernet shield
+  board ($30 + $45.00 at Adafruit).
+  I've played with a Teensy board (AVR, was $20, but not
+  Arduino) and it's cheap and useful as a USB device (not USB
+  host).  It is comparable but less scalable than the USB Bit
+  Whacker - 18F2553 Development Board ($25),
+  http://www.sparkfun.com/products/762 
+:: Jonathan Cline on DIYbio google group
+
+  I was at the Google I/O conference all day yesterday.
+  One of the featured talks was about the new Android Open
+  Accessory Development Kit, that allows hardware hackers to
+  attach microcontrollers to the USB port and controll them with
+  the phone:
+  http://developer.android.com/guide/topics/usb/adk.html
+  I will be connecting my Droid to one of these:
+  http://focus.ti.com/docs/toolsw/folders/print/ez430-t2012.html
+:: Simon Quellen Field on DIYbio google group
+
+  Take a look at some low cost boards not Arduino branded by John Luciani.
+  http://wiblocks.luciani.org/ZB1/index.html 
+:: John Griessen on DIYbio google group
+
+= Human Biology Projects =
+
+"The Experimental Man" and similar ideas are based on the recent availability and affordability of personalized medical tests which expose and quantify one's own health factors.  Some biohackers are monitoring these themselves, far beyond the scope of traditional modern medicine.  Based on quantitative measurements, these biohackers are modifying their own biology using diet, vitamins, etc.
+
+'''These related topics, especially diet, are highly controversial and it is generally not a good idea to attempt to convince others that you're "on to something."'''
+
+== Personal Medical Monitoring ==
+
+  If I want to completely measure my biology, this is the list of
+  everything I can think of which can be measured (non-invasively), on a
+  daily basis, for uploading to a PC with a smart measurement device and
+  tracking/logging. Are there others?  Listed in no particular order..
+  * Body mass - with typical weight scale
+  * Body temperature - probably using ear thermometer
+  * Body fat - this would use calipers; not sure if there's an
+  electronic method.
+  * Height - though this shouldn't change normally
+  * Blood pressure
+  * Heart rate
+  * Cholesterol test - LDL, HDL, triglycerides, uses pin prick (also
+  quite pricey, and painful, for every day testing).  If pin prick is
+  done for this, then should test ketone levels at the same time.
+  * Walking cadence / Pedometer
+  * Standing weight distribution - using smart body weight scale,
+  similar to Wii Fit module, detect center of gravity from standing on
+  the sensor, to detect structural imbalances
+  * Hearing - with simple audio test
+  * Blood glucose - more important for diabetics, of course
+  * Breath analysis - chemical sensing: read ketones for diet
+  monitoring.  Read nitric oxide to detect inflammation (I haven't
+  checked if this test is low-cost-able, these are very expensive
+  units).
+  Other detectors are summarized here:
+  http://www.chestnet.org/accp/pccsu/medical-applications-exhaled-breat...
+  * Respiration - breathing flow, with a peak flow meter
+  * Mental ability - a while back the experiment used simple math
+  problems with a timed computer quiz, with the same math questions
+  every time, to judge some aspect of mental ability.
+  * Brain activity - SoCal DIYbio is actively doing this with EEG.  Not
+  sure what kind of "daily health metric" might be possible to generate.
+  * Sympathetic nervous system state - from galvanic response (as I
+  posted previously, and FYI, Cornell has a great project write-up with
+  software here, although the "professor's preference" of using Begin
+  and End statements in C is something from outer space:
+  http://instruct1.cit.cornell.edu/courses/ee476/FinalProjects/s2006/hm...
+  * Voice recording - Although simple to record voice, I'm not sure
+  there's any information which can be extracted from this. 
+:: -- Jonathan Cline on DIYbio google group
+
+Others: 
+ pH
+ typing ability
+ blood oxygen saturation level via a cheap Pulse Oximeter 
+ (which uses a cool/clever optical sensing mechanism); 
+ http://en.wikipedia.org/wiki/Pulse_oximeter 
+ For vision, intraocular pressure: 
+ http://en.wikipedia.org/wiki/Tonometer 
+ Use GE's InBody Unit. It measures percent body fat using 
+ electrical impedance ... tells you the fat, muscle, and water 
+ composition of your torso and each limb. 
+ Grip strength ; well correlated with all sorts of things: 
+ http://www.fightaging.org/archives/2010/12/age-accumulation-correlates-with-a-common-measure-of-frailty.php
+
+== Brain Wave Measurement ==
+
+: "DIY electrophysiology Brain Recording Kits"   http://www.backyardbrains.com/
+
+
+=== Brain-Computer Interfacing ===
+
+  Subject: Brain computer interface experience
+  After last year workshop in Paris and London, this sunday at
+  Macval (museum of contemporary art at Vitry/Seine near Paris),
+  La Paillasse presents a brain computer interface experience.
+  Thanks to a simple headset your brainwaves will be captured
+  and rendered in color and sound spaces.  In the light
+  spectrum, red stands for a very low mental activitity, (up to)
+  purple for an high activity mental state.  At the same time a
+  generative music translate mental acitvity by using different
+  octaves.
+  As technology moves to non contact EEG sensors, this
+  experience allows to see others mental activity and raise
+  questions about intimacy and everyone's control of it.
+  Between knowledge and fun experience, "Mind processing" is
+  also a start to ask what use of biotech you want.
+  The code of "Mental processing" is open source and available
+  on github : tmpbci
+  Sam @La paillasse
+: -- Samynosor on the DIYbio google group
+
+  Subject: Re: Brain computer interface experience
+  Any of the tinkerers here can manage this for themselves with
+  the Neurosky SDK, and some combination of arduino/iPhone and
+  one of the headsets to use the Neurosky chips. The Brainwave
+  Analyzer tech demo that comes with the headset kit is a nice
+  tech demonstration, but I've found the hardware to be very
+  flaky, however - the manufacturing side of the technology
+  needs a couple of years to bake more, and the presently
+  leading companies need to find their feet to a point at which
+  they can fix their SDKs to require less groundwork to use.
+: -- Reason on the DIYbio google group
+
+  Subject: Re: Brain computer interface experience
+  ... or you can just use OpenViBE and stop making things 
+  hard for yourself. 
+: -- Bryan Bishop on DIYbio google group
+
+== Diet and Food ==
+
+  Please contribute to this section.
+
+* See '''Calorie Restriction''' below.
+
+=== Measure Food Effects or Quality ===
+
+* "Traditional chicken soup was prepared according to a family recipe, which will be referred to as "Grandma's soup"".  Chicken Soup Inhibits Neutrophil Chemotaxis In Vitro, http://chestjournal.chestpubs.org/content/118/4/1150.long
+
+=== Edibles and Medicines: Yeasts, Kombucha, Tea, Mushrooms, Others ===
+
+  Kitchen only -> play with yeast.  Make bread by hand.  Make
+  cheese by hand.  Make beer (with a simple kit).  Make kimchi.
+  Easily doable and is the basis for microbial biology.  Exotic
+  stuff such as tempeh is simple as well.  Kombucha is also
+  interesting.  I haven't found red yeast for purple pork, still
+  looking for it.  The anti-bacterial effects of some of these
+  foods is under scientific investigation and also they're very
+  tasty.  Studies of chinese medicine were prominently featured
+  at the last synthetic biology conference in Hong Kong.
+  By the way, if you brew your own beer or Kombucha, you will
+  suddenly find that you have a lot of friends.  That's more of
+  a sociology experiment at that point.  :-D 
+:: -- Jonathan Cline on the DIYbio google group
+
+  Kombucha is interesting stuff, definitely an acquired taste.
+  Big thing to bear in mind though is that Kombucha *needs* that
+  30C growth temperature, moreso than most cultures. If you have
+  pure yeast, perhaps they'll be ok at cooler temperatures and
+  just grow more slowly. But Kombucha is a mix of up to 7
+  species, and if the temperature is wrong some species will
+  dominate more than normal, making for a bizarre and
+  potentially disgusting brew.
+  Interesting tidbit: I was researching Gluconacetobacter
+  xylinum, the species that produces the most prodigious amounts
+  of microbial cellulose in culture, and found that the highest
+  quality cellulose to be isolated so far appears to have been
+  from a strain of G.xylinum isolated from... Kombucha. Because,
+  Kombucha has been selected for boyant, homogenous "SCOBY"
+  pancakes of cellulose for generations, so we've effectively
+  domesticated the strain to make the perfect cellulose. I
+  imagine if you were to play with the mix of yeasts and
+  G.xylinum, and feed them a bland sugar-nutrient mix to avoid
+  colours, you could make some great premium paper! :) 
+:: -- Cathal Garvey on the DIYbio google group
+
+  
+  Have tried making kombucha on both fruit juices and herbal 
+  teas, so it doesn't have to be  Camellia sinensis extract 
+  to work.
+:: -- Rikke Rasmussen on the DIYbio google group
+
+  I did see some mention of caffeine being an antifungal.
+  Specifically inhibiting the growth of Aspergillus, which is
+  known to be one of the potentially more toxic contaminants
+  when brewing Kombucha.
+  So black tea may actually be a safer starting material for
+  brewing Kombucha than juice or plain sugar water, given the
+  same amount of sugar and the same pH. Interesting...
+  I still wonder about the concentration of caffeine before and
+  after though. It's also possible that a more diverse SCOBY may
+  have caffeine- metabolizing organisms, even if the minimal
+  combination of G.xylinum and S.cereviciae used in commercial
+  Kombucha doesn't. 
+:: -- Patrik on the DIYbio google group
+
+* "New Bacteria Lives on Caffeine", Scientific American, http://www.scientificamerican.com/blog/post.cfm?id=new-bacteria-lives-on-caffeine-2011-05-24
+
+== Longevity ==
+  
+  Please contribute to this section.
+
+
+: ''DIYbio - Growing movement takes on aging'': http://hplusmagazine.com/articles/bio/diy-bio-growing-movement-takes-aging
+
+: ''Add Years to Your Life: What the anti-aging experts are doing now to live longer, better'' http://www.methuselahfoundation.org/files/newsletters/february2010/topstory.html   '''Please note this is controversial research not yet quantitatively proven.'''
+
+=== Longevity Research ===
+
+  The Campaign Against Aging is interested in condensing and simplifying
+  the vast amount of information that exists about the biology of aging
+  and the work being done to combat age related damage.
+  Below is a list of books that we think may be useful.  If you can add
+  to the list, please do.  http://www.campaignagainstaging.org/
+  Aging at the Molecular Level (Biology of Aging and its Modulation)
+  Modulating Aging and Longevity (Biology of Aging and its Modulation)
+  Aging of Cells In and Outside the Body (Biology of Aging and its
+  Modulation)
+  Aging of the Organs and Systems (Biology of Aging and its Modulation)
+  Molecular Biology of Aging, Guarente
+  Cellular Aging and Cell Death (Modern Cell Biology)
+  Biology of Aging: Observations and Principles, Arking
+  Biogerontology:  Mechanisms and Interventions 
+:: -- Anonymous Poster on DIYbio google group
+
+
+  Open Cures, a volunteer initiative to build a bridge between laboratory
+  biotechnologies demonstrated to slow or repair aspects of aging and the
+  developers who can bring this new medicine to the clinic. You can read about
+  our aims at the Open Cures website: overview, background, and roadmap for
+  future development: https://www.opencures.org 
+:: -- Reason on DIYbio google group
+
+=== Calorie Restriction ===
+
+* Modifying one's diet to maximize nutrient intake while reducing total calories consumed. http://en.wikipedia.org/wiki/Calorie_restriction
+** '''Has not yet been replicated in human trials.'''
+
+
+== Extracting, Growing Human Tissue Cells ==
+
+No, you can't.
+
+  Subject: How to extract living cells from my skin?
+  > I would like to know how to extract living cells from my own skin to
+  > culture them.
+  That's the easy part--large gauge needle, razor blade, etc.
+  > I would also like to know what equipment do I need to grow human
+  > tissue.
+  Basically you can't and shouldn't.  It requires quite a lot of
+  dedicated equipment for sterile handling, cell growth, and autoclaving
+  waste.  The cells are maintained in media with buffers, antibiotics,
+  and growth factors and require regular attention, every day or three.
+  If you tried it, you would go $20k+ in getting set up and still mostly
+  grow mold and bacteria.  It's not DIY biology this decade.
+
+: -- Jim Lund on the DIYbio google group
+
+
+  Subject: How to extract living cells from my skin?
+  Also, just so you know, it has been suggested that any human cell cultures
+  be handled as BSL levels 2 or greater. In order to work with them you should
+  gain a knowledge of asceptic technique and familiarity with Biological
+  safety cabinets, and antibiotics.
+: -- General Oya on the DIYbio google group
+
+= Plants, Fungi =
+
+Grow plants and fungi for fun.
+
+== Fungi ==
+
+* The Glow Fungi Project.  Panellus stipticus is a non edible bioluminescent fungus, naturally occurring in Europe and North America. http://www.glowfungi.com/
+
+* Panellus stipticus : Luminescent Panellus Culture Syringe.  http://sporeworks.com/Panellus-stipticus-Luminescent-Panellus-Culture-Syringe.html
+
+* "Fungi would be a good fun project to get into, you could easily learn how to clone these guys...  http://en.wikipedia.org/wiki/Panellus_stipticus " - Nathan McCorkle on DIYbio google group
+
+
+= Microscopes, Colorimeters, Spectrophotometers, "Cheaposcopes" =
+
+== Spectrophotometers ==
+
+* Open Spectrophotometer Project.  To provide a open source hardware LED-based spectrophotometer.  http://openwetware.org/wiki/Citizen_Science/Open_Spectrophotometer_Project
+
+
+== Cheaposcope ==
+
+* The cheaposcope: development of a low cost fluorescence microscope for teaching.  We've exploited recent developments in LED technology, optical filters and cameras in an attempt to construct cheaper instruments for fluorescence microscopy and detection.   http://www.plantsci.cam.ac.uk/Haseloff/imaging/cheaposcope/cheaposcope.htm
+
+== Laser Projection Microscope ==
+
+"Basically, they are just pointing a laser through a drop of water suspended from the tip of a syringe."
+* Make a webcam into a microscope, then use a laser and a drop of culture media.  
+** http://hackaday.com/2010/08/21/laser-microscope-projection/ 
+** http://hackaday.com/2011/03/02/a-different-take-on-a-laser-projection-microscope/
+
+
+== Microscope Heater ==
+
+: Objective heater.  http://www.instructables.com/id/Objective-heater/
+
+= Microfluidics, Controller Boards, building Related Equipment =
+
+== Introduction to Microfluidics ==
+
+=== Using Jell-O for Hands-On Microfluidics chips ===
+
+  Yes, store-bought Jello.  "Lemon-flavored Jell-O jelly powder was used
+  because it
+  produced chips with the best optical transparency."
+  Yes, microfluidics.
+  Yes, a good DIYbio introductory-to-microfluidics project.
+  Open access article!   http://pubs.acs.org/doi/full/10.1021/ac902926x
+  Anal. Chem., 2010, 82 (13), pp 5408¿5414
+  DOI: 10.1021/ac902926x
+  Cheng Wei T. Yang, Eric Ouellet and Eric T. Lagally
+  University of British Columbia (Canada)
+  Publication Date (Web): May 25, 2010
+  Copyright © 2010 American Chemical Society
+  "Using the Jell-O fabrication technique, microfluidics may be more
+  easily demonstrated in a hands-on approach to convey current research
+  topics to younger students and the general public. Our experience is
+  that when students learn about science at a young age, they will
+  become more attracted to pursuing an engineering or science degree in
+  their post-secondary education. To encourage this process, three types
+  of Jell-O chips have been fabricated: a ¿JELLO¿ chip, a Y-channel
+  chip, and a pH sensor chip. Using these demonstrations, elementary and
+  high school students, as well as the general public can learn about
+  how microfluidic chips are made; learn microfluidics concepts,
+  including dimensionless scaling factors, diffusion coefficients, and
+  pH sensing; make the connection to current microfluidics research; and
+  become excited about scientific research.
+  The fabrication method is fast, simple, and inexpensive, allowing Jell-
+  O chip demonstrations to enter a wide variety of learning environments
+  not accessible to current microfluidics methods. Other types of chips
+  (including bubble and droplet generators, not shown) can also be
+  fabricated, suggesting that this technique possesses an enormous
+  educational potential. Experiments with other naturally-occurring gels
+  also indicate that this method could be extended to developing regions
+  of the world to provide microfluidic technology both for education and
+  diagnostics. Finally, we are also currently developing fabrication
+  techniques for bonded and functional multilayer Jell-O chips to
+  further extend the applications of this fabrication method. We hope
+  that this work will serve as a model for future educational endeavors
+  in science."
+  Figure 1. Scheme for producing Jell-O chips using soft lithography.
+  (A) A negative mold is made with desired features. (B) Liquid chip
+  material is poured onto the mold. (C) Mold with liquid material is
+  cured. (D) Solidified chip is peeled off and (E) placed on a rigid
+  substrate for experiments.
+  Figure 2. General workflow for producing Jell-O chips using soft
+  lithography approach. (A) Foam plate and wooden coffee stirrers are
+  starting materials for making the mold. (B) A negative mold is made
+  with desired features using double-sided tape. (C) Jell-O and gelatin
+  liquid mixture is poured onto the mold. (D) The molds with liquid
+  material are left to cure in a 4 °C refrigerator. Solidified chips are
+  peeled off and placed on aluminum pans for experiments at room
+  temperature.
+  Figure 4. (A) A Jell-O Y-channel chip with a Reynolds number of 30.
+  The injection of colored water to one inlet and clear water to the
+  second results in the classic laminar flow profile, in which both
+  streams remain separate and mix solely by diffusion along the length
+  of the channel. (B) Diagram of laminar flow diffusive mixing occurring
+  at the interface between two different fluids along the channel
+  length. This phenomenon is governed by the Pclet number (adapted from
+  Kamholz).(25)
+  Figure 5. Dual Jell-O chip pH sensor. (A) Two different pH sensing
+  regions per channel can be used to detect different solutions. (B) The
+  addition of either acidic or basic solutions to each channel results
+  in a distinct pattern of color change visible to the naked eye. (C) pH
+  indicator chart for reference (adapted from EM-Reagents).
+  "SUPPORTING INFORMATION
+  Detailed Chip Fabrication Protocol
+  List of Materials Required for Jell-O® Chip Fabrication
+  * Two 85g boxes of lemon-flavored Jell-O jelly powder (Kraft Canada)
+  * One pouch (7g) of unflavoured (the Original) Knox Gelatine
+  (Associated Brands
+  LP)
+  * 2 beakers of 120mL of purified water for dissolving Jell-O® and Knox
+  Gelatine
+  * Six 6¿ foam plates, round (Safeway Limited Canada)
+  * One drinking straw, round (Safeway Limited Canada)
+  * PAM® Original no-stick cooking spray (ConAgra Foods Canada Inc.)
+  * Several 7¿ wooden coffee stirrers (Starbucks Coffee Company Canada)
+  * Food-grade colour dye, green (McCormick Canada)
+  * Single- and double-sided tape (3M Canada)
+  * Six 5¿ aluminum weighing pan (Cat No. 12175-001, VWR International)
+  Sources of Chemicals and Materials
+  Lemon-flavored Jell-O Jelly Powder, unflavoured gelatin, round foam
+  plates (6),
+  drinking straws, no-stick cooking spray, wooden coffee stirrers (7),
+  food-grade colour
+  dyes, and single- and double-sided tape were obtained from local
+  convenience stores."
+
+
+
+== Continuous Flow Microfluidics ==
+
+=== Microfluidic Flow Device ===
+
+http://thebigone.stanford.edu/foundry/technology/index_clip_image002_0000.jpg
+
+* ""Soft Lithography is a microfabrication process in which a soft polymer (such as polydimethylsiloxane (PDMS) ) is cast onto a mold that contains a microfabricated relief or engraved pattern. Using this technique, membrane microvalves can be produced. To design your own microfluidic device, please follow the Basic Design Rules and Mask Design Rules and make use of all the design information and reference articles provided on our website.  ""  http://thebigone.stanford.edu/foundry/services/designyourown.html
+
+
+=== Controllers ===
+
+* USB 24-Valve Controller Assembly Guide, Rafael Gómez-Sjöberg,  QuakeLab–Stanford University.  ""This document briefly describes the assembly of a USB-based controller for 24 solenoid pneumatic valves that can be used to drive a microfluidic chip fabricated by Multilayer Soft Lithography.  You can build a computer-based electronic valve controller to allow you to control the opening and closing of valves and pressure in the flow lines of your chip.  The controller is comprised of 1) an electronic controller box and 2) a set of electronic valves. ""   Project at http://thebigone.stanford.edu/foundry/testing/own_controller.html  and main page at http://thebigone.stanford.edu
+
+=== DIY Spin Coater ===
+
+  On Dec 3, 1:06 am, Nathan McCorkle <nmz...@gmail.com> wrote:
+  > I want to make a spin coater using a highly UNMODIFIED cd or dvd rom.
+  > Meaning I want to keep the laser mechanisms in place, and try to keep all
+  > the moving parts as free from nasty buildup and grime.
+  The electronics will have to be replaced or bypassed, for sure.  The
+  couple times I've seen spin coaters used, the dispensing didn't seem
+  critical (i.e. scoop polymer onto disc during spin up) and the
+  rotation seemed to even everything out.  Does your protocol require
+  baking the result, if so, better add some heat to the device right?
+  References:
+  Spin-Coating of Polystyrene Thin Films as an Advanced Undergraduate
+  Experiment
+  http://www.jce.divched.org/Journal/Issues/2003/Jul/abs806.html
+  Abstract
+  A simpler version of the well-established technique of spin-coating
+  thin polymer films on glass slides is described. Starting with simple
+  instrumentation and using an ordinary, commercially available cooling
+  fan (a "CPU cooler"), a method of spin-coating an expanded polystyrene
+  foam on glass slides is described. Making thin films of commercially
+  available polystyrene on glass slides is also included for comparison.
+  An interferometric technique is used to measure the film thickness
+  employing a UV¿vis spectrophotometer. FTIR spectroscopy is used to
+  verify the identity of the polymer on the glass slide. Using the Beer¿
+  Lambert law of absorbance, the film thickness is also calculated from
+  the FTIR spectra of films. A comparison is made between the
+  interferometric and FTIR methods for thickness measurements. An
+  organic dye is doped into a film and a UV¿vis spectrum is used to
+  identify the dye.
+  http://nathan.instras.com/projects/spin-coater/index.html
+  Spin Coater System
+  This was my attempt to build a low cost spin-coater system that does
+  both horizontal and vertical spin coating.  For about $70.00 dollars
+  in parts and some ingenuity, I was able to put together the system
+  shown below.  Ironically, we latter purchased a commercial spin-coater
+  for $5000.00, but I saw little difference in the sample prepared using
+  the one I built and it.  In my opinion, the only reason to even buy
+  one of those things is to get better control of the overall spinning
+  process.  However, most people just need something that goes around
+  fast. As you can see, it's basically just an aluminum base that holds
+  two small DC motors (RadioShack).  Power is supplied by a 1-10V DC
+  power supply.  CDR cases serve as the spin chamber.
+  http://dx.doi.org/10.1016/j.porgcoat.2006.05.004
+  Spin coater based on brushless dc motor of hard disk drivers
+  Abstract
+  We have developed a novel programmable, low cost, spin coater to be
+  used for applications where flat substrates are coated with an uniform
+  thin layer of a desirable material. The equipment is built with dc
+  brushless motor present in most of the hard disk drivers (HDDs). The
+  system offers manual control, wide speed range (from 0 to 10,000 rpm),
+  spin speed stability and compact size. The paper also describes the
+  use of such equipment for the fabrication of thin poly(o-
+  methoxyaniline) (POMA) films, which are of particular interest for
+  design organic electronic devices, such as diodes, transistor, sensors
+  and displays.
+  http://www.chemistry-blog.com/2007/01/13/pimp-my-spin-coater/
+  Pimp My Spin Coater
+  If you're going to start making your own lab equipment you might as
+  well trick out the new hardware. In that spirit, my spin coater has 3
+  light emitting diodes: a green one, a red one, and a blue one. I can
+  vary the revolution per minute from ~500rpm to ~2500rpm by varying the
+  voltage I supply to the spin coater. The sample is mounted in the
+  center and is stuck to the spin coater by Velcro, this can be more
+  easily seen in the next photo. As can also be seen in the photo, my
+  spin coater is just a regular pc fan I bought at CompUSA this past
+  Wednesday. I monitor the speed of the spin coater with a laser mounted
+  above the spin-coater that shines through the fan's blades and strikes
+  one of our group's alpha detectors. The nice thing about the alpha
+  detector is that I don't even have to supply any power to it. There is
+  enough current generated, I presume by the photoelectric effect, to
+  carry a signal to an oscilloscope which I can use to monitor the fan's
+  speed. A picture of the laser, which is my boss's laser pointer he
+  uses for talks, is seen in the next photo at the top of our group's
+  only non-radioactive chemistry hood. It took me 2 days to build my
+  spin coater, Wednesday and Thursday, and one more day to make sure it
+  calibrates properly, Friday. The total amount in extra costs was $20
+  for the spin-coater(pc fan) all the rest of the equipment we had lying
+  around.
+  http://docs.google.com/viewer?a=v&q=cache:R929V8Bup34J:www.ccmr.corne...
+  Title: Engineering Organic Light-Emitting Devices
+  Appropriate Level: High School Regents Chemistry, or any advanced high
+  school
+  Chemistry course
+  Using a spin coater is the ideal method for applying this ruthenium
+  layer.  A simple
+  device can be made using an 80mm fan and simple circuitry.  If a spin
+  coater is not
+  available, Q-tips and a heat gun can work to a certain degree:
+  Use a Q-tip to apply some of the Ruthenium-tris(2,2¿-bipyridyl)
+  tetrafluoroborate to the glass slide and then dry with a heat gun for
+  3-5 minutes. 
+
+:: -- Jonathan Cline, on DIYbio google group
+
+= Fermentors, Bioreactors, Photo Bioreactors =
+
+* An automated home-built low-cost fermenter suitable for large-scale bacterial expression of proteins in Escherichia coli.  We have developed an automated fermentation system for cost-efficient upscaling of protein expression in bacteria. The system, built for use by nonbiotechnologists, can be assembled mostly from standard laboratory equipment and allows a largely unattended growth of bacteria to OD 25 (at 600 nm) in a 12 L vessel.  http://www.ncbi.nlm.nih.gov/entrez/utils/fref.fcgi?PrId=6660&itool=Abstract-def&uid=18687068&nlmid=8306785&db=pubmed&url=http://www.biotechniques.com/article/000112830
+
+*"Biosynthesis of organic conductors provides an alternative route for renewable energy that would not require a fuel as a carrier for kinetic energy, where instead, electricity could be directly transferred to organic batteries/capacitors through solar voltaic panels allowing for passive energy generation and storage." -Giovanni Lostumbo  
+
+== For Yeast ==
+
+* DIY CO2 Injection: The Yeast Method.  This article gives instructions for a cheap Do-It-Yourself CO2 injection system. The CO2 is produced by a mixture of sugar, yeast and water, and the setup is constructed entirely from cheap and readily available materials.   http://www.thekrib.com/Plants/CO2/co2-narten.html
+
+
+
+== For Algae ==
+
+* A Photo Bio Reactor (PBR)  is a system that provides an artificial environment for photosynthetic organisms (Algae) to perform a chemical conversion. Scientists and engineers have been developing several types of photo-bio reactors (PBR’s) over the past fifty years to grow microorganisms that are used in a wide variety of applications. Cultivated algae cultures can be used to produce human food, animal feed, health food, therapeutics, chemicals, fuel, hormones, and fertilizer.  A prototype PBR was built at SDSU in 1998 that had a reactor capacity of 1 gallon.  The prototype was inoculated with algae obtain from Argonne National Laboratory and produced an algae biomass in excess of 25g.  The success of the prototype led to the decision to scale up the prototype PBR to capacity of 500 gallons.  The 500 gallon PBR is large enough to study the feasibility of commercial production algae.  In the summer of 2000 research was initiated to evaluate the feasibility of scaling up the prototype PBR.  Research revealed that little is known quantitatively about how the different subsystems interact and affect algal biomass production in PBR.  The scaled up PBR design was then modified to allow for the testing of the effect the different subsystems have on algal biomass production independently as well as interactions of the subsystems.   Test variables may be light type (wavelength), intensity of light, mixing intensity, nutrient requirements, control strategies, etc.  http://abe.sdstate.edu/faculty/garyanderson/website/pbr_home.html
+
+* An Algae Bioreactor from Recycled Water Bottles.  In this instructable, we describe how to build a photo-bioreactor that uses algae to convert carbon dioxide and sunlight into energy. The energy that is produced is in the form of algae biomass. The photo-bioreactor is built from plastic recycled water bottles. By designing the apparatus to be compartmentalized, we are able to do many experiments in parallel.  http://www.instructables.com/id/An_Algae_Bioreactor_from_Recycled_Water_Bottles/
+
+
+* How To Make an Algae Test Photo Bioreactor...Part One.  This gives a step-by-step instructions on making an algae test photo bioreactor. This can be used in any application that calls for testing and/or growing algae, to determine maximum growth rates, best nutrients, etc., such as... Making algae biodiesel, Animal feed, Organic fertilizer, Cosmetics, Health food supplements and many more.  http://www.instructables.com/id/How-To-Make-an-Algae-Photo-BioreactorPart-One/
+
+* Inventgeek Photo Bio Reactor Array V.1   http://inventgeek.com/Projects/photo-bio-reactor/overview.aspx
+
+* Inventgeek Photo Bio Reactor V.2  This design has many improvements that make it far more sustainable and practical for long-term use. I really focused on making it highly modular and insuring it was rugged for prolonged outdoor use that is easier to fill and harvest from. While the array is smaller for this project it can be scaled to any size or requirement.http://inventgeek.com/Projects/Photo-Bio-reactor-V2/overview.aspx
+
+* I got interested in the idea of growing Spirulina at home after I obtained a breeding pair of Bristlenose Pleco’s.  What better food source than fresh Spirulina, I thought to myself.  I wondered around Google for days, which turned into weeks, then months.  No where could I find a single source that could easily explain how to grow Spirulina at home.  If you are interested in growing Spirulina at home, I hope you find this method useful. I’ll give you a quick run down of my version of “Growing Tubes”, both in expensive and easy to build in a day.  I went to Home Depot....   http://gpasi.org/forums/index.php?topic=64.0
+
+* In-Home Photosynthetic Bioreactor - 1997-98. Invented by Lee Robinson, the founder of the British biotechnological company Biotechna, the Biocoil is a "photosynthetic bioreactor that provides an environment for biological organism to grow in a controlled manner."   The frame is built and clear PVC tubing is wrapped around it to form a circular model so that it is easier for photosynthesis to occur. Sunlight or artificial light is then put in at an angle to shine on the tubing while the algae flows through. Chlorella algae was used in the Sewage Sister Biocoil to remove nutrients from the sewage flowing along with the algae. The tubing of the Biocoil consists of several sections of tubing rather than one piece wrapped all of the way around. Compressed air pumps are used to push the algae and water through the Biocoil and to prevent anoxic conditions in the water. http://web.archive.org/web/20071009122237/http://advbio.cascadeschools.org/97-98/minicoil.html
+:: The Biocoil Operations Manual (The Trip From the Algae's Point of View).  The Biocoil is a tertiary sewage treatment system which utilizes light and algae to remove phosphates and nitrates from secondary effluent. The Biocoil is a round unit eight feet tall and six of those feet are surrounded by 1600 feet of clear one inch inside diameter food grade tubing. This tubing is exposed to light 24 hours a day, either by natural sunlight or artificial light. The inside of the Biocoil is composed of three tanks, the contact, holding, and settling tank. The manifold which distributes water from the tanks to the tubes is also located inside the Biocoil.  http://web.archive.org/web/20070520071350/advbio.cascadeschools.org/95-96/biomanual.html  
+:: The Biocoil Project - 1994-95 http://web.archive.org/web/20080330070953/advbio.cascadeschools.org/94-95/biocoil.html 
+:: The Biocoil Project - 1996-97 http://web.archive.org/web/20080314163104/advbio.cascadeschools.org/96-97/biocoil.html
+:: The Biocoil Project - 1997-98 http://web.archive.org/web/20080216032605/advbio.cascadeschools.org/97-98/biocoil.html
+::: Images http://web.archive.org/web/20070207033743/advbio.cascadeschools.org/97-98/images/morepic2.html
+
+
+
+=== Basics of Growing Algae ===
+
+"How to get started growing algae at home."
+
+Needed:
+
+*a space that can be easily heated or cooled depending on the weather.
+*cool white flourescent lights 35-40 watts.
+*aquarium aereation pump. tubing, and airstones... tees(all this from walmart.)
+*shelves depending on how many cultures you want to grow
+*glass jars one quart, and one gallon for as  many cultures as you plan to grow
+*aquarium sea salts (Instant ocean) I cup per gallon of distilled water.
+*dial thermometers
+*graduated measuring cups
+*Ph. papers
+*Nutrient solution
+*algae cultures( often come in 50 ml tubes )
+*growing instructions come with the cultures.
+
+Setup:
+
+*when you receive the culture add the contents of the tube to 250 ml of water (salt or fresh)
+*keep lights on 24/7
+*keep aereation on 24/7
+*once the 250 ml turns green add another 250 ml and so on untill you have a liter of green algae
+*take the green  liter and add it to a gallonglass jar,
+* once you have a gallon you can seed a ten gallon aquarium or you can add the gallon to larger tanks or  to  a closed loop ecosystem
+*and in  two weeks, voila! youll have algae growing.
+*unenclosed ponds are unstable and prone to contamination by outside influences such as acid rain, water fowl that carry  wild algae on thier feathers , animals , temperature variations.windbourne pollutants. night time temperature variations.etc
+
+::The above is from http://www.ecogenicsresearchcenter.org/biodiesel.htm  (lots of pictures there)
+
+= Stirrer, Hot Plate =
+
+: "DIY Stirrer/Hot Plate". http://www.instructables.com/id/DIY-StirrerHot-Plate with video http://www.youtube.com/watch?v=YKWimlx2_44
+
+
+
+
+= Incubator, Shaking Incubator =
+
+* BUILD YOUR OWN INCUBATOR. Here's how to turn your flock's extra eggs into a whole new generation of omelet providers, including detailed diagrams, temperature, humidity, movement and ten tips.  http://www.motherearthnews.com/Do-It-Yourself/1982-03-01/Build-Your-Own-Incubator.aspx
+
+
+  You can make a 30C incubator really easily using
+  pet-shop-bought thermostats and heat mats designed for
+  reptiles, and a polystyrene box. Not all species will thrive
+  at 30C, but for me it works great with B.subtilis. They grow
+  more slowly, but according to the literature they retain their
+  competence for longer at this temperature rather than 37,
+  anyway.  A battery-powered mini-fan or some such would
+  probably even out the temperature nicely
+:: -- Cathal Garvey on the DIYbio google group
+
+
+== Bob Horton's Shaking Incubator ==
+
+Note the date on this project.
+
+* Bob Horton horto005 at maroon.tc.umn.edu
+* Wed Mar 6 11:06:24 EST 1996
+
+Bob's Homemade Shaking Incubator Design
+
+----------------------------------------------------------------------------
+
+This is my design for an easy-to-build and inexpensive laboratory
+shaker/shaking incubator. It will undoubtedly remind many readers of
+something they may have built for the Science Fair in the 5th grade, but
+as far as I know, the use of record-player power and the hanging
+platform are original. And, hey, you can't argue with the price.
+
+Three figures are attached. The attachments are MIME-encoded, and should
+be decodable with any MIME-compliant newsreader, including the one built
+into NetScape 2.0. The figures are small, black and white drawings in
+GIF format, and should be viewable from any web browser, once they are
+decoded.  
+
+Figure 1: Parts for the Home-Made Shaker.
+
+http://iubio.bio.indiana.edu/bionet/mm/methods/attachments/19960306/73d4d331/shake1.gif
+
+Figure 2: Additional Parts for the Shaking Incubator.
+
+http://iubio.bio.indiana.edu/bionet/mm/methods/attachments/19960306/73d4d331/shake2.gif
+
+Figure 3: Portrait of the Final Product.
+
+http://iubio.bio.indiana.edu/bionet/mm/methods/attachments/19960306/73d4d331/shake3.gif
+
+----------------------------------------------------------------------------
+
+The shaking platform is cut from a particleboard sheet the same size as
+the top of the box; the rest of the sheet is used to reinforce the top
+of the box. The platform is suspended from the edge of the top opening
+with strings. Slipknots are used in the strings to make them easy to
+adjust until the platform is more-or-less level. Then the knots are
+secured in place with tape. The strings and holes are arranged so that
+the strings hang as vertically (i.e., parallel to one another) as
+possible. This way the platform will remain essentially level as it
+swings around in a circle.
+
+A bolt is mounted on the turntable, and passed through a hole in the
+platform, so that when the turntable spins, the shaker moves in an
+orbital motion. Note that it takes very little work on the part of the
+record palyer motor to move the platform in a horizontal circle, even if
+it carries significant weight.
+
+The heat source (light bulb), fan, and thermostat are mounted on a
+particleboard base, and wired so that the fan is always on, but the
+light bulb is turned on and off by the thermostat in classic Jr. High
+School Science Fair fashion. The whole heat-control unit is placed in
+the incubator box, and a thermometer is used to calibrate the
+thermostat. The thermostat I use keeps the box somewhere 35 and 38
+degrees centigrade. I think a regular home thermostat would work better,
+but the bugs don't seem to mind.
+
+The fan blows air around fast enough that air in the whole box is very
+close to the same temperature. But I put the thermostat probe behind the
+fan so it would not detect radiant heat, and the light is below the
+platform so it doesn't shine right on the cultures.
+
+I covered the areas of the cardboard walls and the portion of the bottom
+of the platform that come close to the light bulb with foil, to reflect
+some heat so they wouldn't be quite as likely to catch fire. If you fold
+several thicknesses of slightly wrinkled foil together, they make a nice
+shield against radiant heating (this was the suggestion of Mike Herron,
+from the lab across the hall).
+
+The box is sealed with masking tape, except for the top opening. A lid
+(not shown) is made of an additional cardboard sheet, edged with soft
+foam weather stripping. This type of flat lid limits the height of
+culture flasks to the distance between the shaking platform and the top
+of the box; alternatively, a raised lid made of a second box would allow
+more room.
+
+This shaker has three speeds; 33, 45, and 78 rpm. The fastest setting is
+still somewhat slower than typical bacterial culture conditions, but it
+works OK if you leave plenty of air in your flasks. A faster motor could
+be substituted for the record player, but it wouldn't be as cute.
+
+The heating unit and the record player can both be plugged into a power
+strip, so a single convenient switch can be used to turn the whole thing
+on and off.
+
+The tools required are fairly simple:
+
+* wrench, pliers, screwdriver, etc. to remove any parts of the record
+player that stick up too high.
+
+* drill to mount the bolt on the turntable, and make holes for the
+strings.
+
+* knife to cut cardboard and strip insulation on the wires.
+
+* jigsaw to cut the platform from the particleboard.
+
+My estimate of the cost of materials is as follows:
+
+* cardboard box, string, tape, etc.: $0.00
+
+* record player: $0.75 (yes, I can get them in Minneapolis for 75 cents
+at the "Digger's Delight" behind Goodwill on Como Avenue near Highway
+280. Otherwise they may run you 5 bucks apiece at a garage sale).
+
+* thermostat: $3.50 from AxMan surplus, University Ave., St. Paul. At a
+hardware store, these cost about $12.
+
+* fan: $7.50. I used a 120V AC box fan, about 4 inches in diameter
+(AxMan Surplus). I couldn't find one the right size at Digger's, but
+keep your eyes peeled.
+
+* light socket: $0.85 (hardware store)
+
+* weather stripping: ~$3
+
+* power strip: ~$3.50 (only used for the Shaker Deluxe). 
+
+* thermometer: $1.19
+
+*I scrounged the light bulb and the particleboard. (Retail ~$3?)  
+
+So I have over $20 invested in my shaking incubator, and it could easily cost over $23 if you had to buy particleboard and stuff. Old record players also make great sample rotators, if you set them at a steep angle, or they can be used to wash gels and blots, if you put your pan on the turntable and slightly raise one end of the record player. The only shaking incubator I have in my current lab is of this design (serial number 00000001). I have used it to grow 50 ml E. coli cultures in LB, in regular 500ml Erlenmeyers, and 1.5ml cultures in TB in 15 ml snap-cap tubes. I have recently used this incubator to clone a cDNA sequence for a novel human neurotransmitter receptor subunit. But I'll try not to let Real Science interfere too much with inventin' stuff. :)
+
+Happy shakin'!
+
+Bob Horton
+
+= DNA =
+
+== Simple DNA Extraction ==
+
+: Extract DNA from your Halloween pumpkin!  http://sci-toys.com/scitoys/scitoys/biology/pumpkin_dna/halloween.html
+
+: HOW TO EXTRACT DNA FROM ANYTHING LIVING!  http://learn.genetics.utah.edu/content/labs/extraction/howto/
+
+: How to Extract DNA From Human Cheek Cells!  http://biology.about.com/c/ht/00/07/How_Extract_DNA_Human0962932481.htm
+
+== Thermocycler / PCR ==
+
+: Light Bulb PCR - http://vimeo.com/18827627 
+
+
+== Laser Tools ==
+
+: Inexpensive laser shutters using common electronics!
+
+:: "DIY Laser Shutter" http://www.instructables.com/id/DIY-Laser-Shutter/
+
+:: Pranav's air freshener laser shutter.  http://openwetware.org/wiki/User:Pranav_Rathi/Notebook/OT/2010/10/31/Laser_Shutter_.1
+
+: Laser Tweezer Enclosure
+
+:: http://openwetware.org/wiki/User:Anthony_Salvagno/Notebook/Research/2010/09/17/Tweezer_Enclosure_Creation
+
+== Gene Gun ==
+
+  You can make your own gene gun using either a modified pellet
+  gun, or by turning a diaphragm valve on a lathe and pulsing a
+  low-density high-pressure gas to a small aperture, or by
+  shooting a prepped wall of a vacuum chamber to disperse a
+  prepared nug of DNA coated fine metal particles with a small
+  arm (don't do this).
+  Here's a video that'll give you a good idea of how they can be
+  used, they're good for transforming most things.
+  Also be aware the video contains a rat brain being autopsied.
+  http://www.jove.com/details.php?id=675 
+  The manufacture of the ammunition is the tricky part, it
+  involves engineering the DNA payload and binding it to very
+  small tungsten or gold particles. The process is outlined in
+  the video, note the part where the plastic tube is filled with
+  dried metal-bound dna and cut up to make bullets. 
+
+-- Forrest Flanagan on the DIYbio google group
+
+= Homebrew Centrifuge =
+
+'''Warning: Building a high speed device is dangerous.  Take appropriate measures to ensure safety.'''
+
+== Physics ==
+
+: Jonathan Cline: ''A basic equation of physics, for those out there building their own centrifuges: What are RPM, RCF, and g force and how do I convert between them?   The magnitude of the radial force generated in a centrifuge is expressed relative to the earth’s gravitational force (g force) and known as the RCF (relative centrifugal field).  RCF values are denoted by a numerical number in “g” (ex. 1,000 x g).  It is dependent on the speed of the rotor in revolutions per minute (RPM) and the radius of rotation.  Most centrifuges are set to display RPM but have the option to change the readout to RCF.  To convert between the two by hand, use the following equation:  RCF  =  11.18 (rcm) (rpm/1000)^2  Where rcm = the radius of the rotor in centimeters.''  http://88proof.com/synthetic_biology/blog/archives/380
+
+== Dremelfuge ==
+
+Cathal Garvey has designed a simple centrifuge using open source hardware technology, and you can order one yourself!   '''Dremelfuge''' is a rotor designed to fit standard lab microcentrifuge tubes and miniprep/purification columns, to be spun by either a powerdrill or other chuck-loading machine or by a popular rotary tool. Dremelfuge features an easy click-in loading system which holds tubes parallel to the plane of rotation for optimum pelleting and delivery of force. Intended basic applications of Dremelfuge include column purification (tested to work with miniprep columns) and bacterial/cell debris pelleting (under testing). With standard microcentrifuge tubes, the average rotary distance is 4cms. Results are shown with the Dremelfuge used to pellet E. Coli samples.  Dremelfuge is open-source hardware. Source files are available on Thingiverse, linked from the items on Shapeways. The Creative Commons license used entitles copying, sharing and remixing for any non commercial purpose. Please consider that professional printing services qualify as commercial use. 
+:'''Two editions of Dremelfuge are available for purchase at http://www.shapeways.com/shops/labsfromfabs'''
+
+= Open Source Gel Boxes =
+
+
+* Hosted on OpenWetWare, [http://openwetware.org/wiki/DIYbio:Notebook/Open_Gel_Box_2.0 Open Gel Box 2.0] is now available to buy; includes transilluminator.  Contact Tito.
+
+* DIY $25 Gel Box.  We constructed a functional Gel Electrophoresis Chamber in a span of a day using [...]   http://hackteria.org/wiki/index.php/DIY_$25_Gel_Box  
+
+* Developing low-cost alternatives to existing hardware: Electrophoresis Apparatus.  http://2010.igem.org/Team:Baltimore_US/Notebook/EPInstructions
+
+
+== Electrophoresis Gel Box Power Supply ==
+
+* See Open Gel Box 2.0 Power Supply on OpenWetWare.  Working unit has been constructed.
+
+
+== 3D Printed Gel Boat and Comb Set ==
+
+<pre>
+To: DIYBio google group
+From: Cathal <cathalgar...@gmail.com>
+Date: Sep 17, 10:07 am
+
+I've just published my first designs on Shapeways, for a $100 Gel Boat
+and Comb set.
+Sit these into a plastic container with some graphite electrodes at
+either end, and you have a complete gel electrophoresis kit.
+I intend to make more designs and share them both on this shop and
+with the open-source community in the near future!
+
+http://www.shapeways.com/shops/labsfromfabs
+
+The designs are open source, and are available on Thingiverse.com for
+those with access to a 3D printer.. just be sure and let me know the
+results please! I'm awaiting my own 3D printer right now so I'm
+itching to see results.
+
+Note: Because of the opaque nature of the printed plastic, UV
+visualisation will have to be Top-down.
+
+</pre>
+
+== Gel Box from Tupperware or other ==
+
+
+* THE MACGYVER PROJECT: GENOMIC DNA EXTRACTION AND GEL ELECTROPHORESIS EXPERIMENTS USING EVERYDAY MATERIALS.  By Yas Shirazu, Donna Lee, and Esther Abd-Elmessih.  DNA extraction and separation by agarose gel electrophoresis is a simple and exciting process that anyone can perform. However, the high cost of specialized equipment and chemicals often hinder such an experiment from being carried by members of the high school community. Here, we describe a cost effective way of extracting and electrophoresing DNA under a prescribed MacGyver limitation – that is using only materials available from a grocery store or shopping mall.  http://www.scq.ubc.ca/the-macgyver-project-genomic-dna-extraction-and-gel-electrophoresis-experiments-using-everyday-materials/
+
+* ''add your gel box project here''
+
+= Inkjet Printer Hacking for Bio Projects =
+
+Many papers over the years involve using either EPSON inkjet printers (piezoelectric print head) or HP/etc inkjet printers (thermal print head) to dispense very small amounts of biomaterial or biochemicals.
+
+== EPSON Printers ==
+
+Epson is the only brand which uses piezoelectric print heads.  Epson printers also have CD-printing, which provides a mechanical method to feed larger objects into the printer.
+
+* Epson R280
+** Open Access research paper:  "This paper presents a low-cost inkjet dosing system capable of continuous, two-dimensional spatiotemporal regulation of gene expression via delivery of diffusible regulators to a custom-mounted gel culture of E. coli. A consumer-grade, inkjet printer was adapted for chemical printing; E. coli cultures were grown on 750 µm thick agar embedded in micro-wells machined into commercial compact discs. Spatio-temporal regulation of the lac operon was demonstrated via the printing of patterns of lactose and glucose directly into the cultures; X-Gal blue patterns were used for visual feedback. We demonstrate how the bistable nature of the lac operon's feedback, when perturbed by patterning lactose (inducer) and glucose (inhibitor), can lead to coordination of cell expression patterns across a field in ways that mimic motifs seen in developmental biology."  
+::  Cohen DJ,  Morfino RC,  Maharbiz MM, 2009 ''A Modified Consumer Inkjet for Spatiotemporal Control of Gene Expression.'' PLoS ONE 4(9): e7086. doi:10.1371/journal.pone.0007086    http://www.plosone.org/article/info%3Adoi%2F10.1371%2Fjournal.pone.0007086
+:: As discussed on the DIYbio google group:  http://groups.google.com/group/diybio/browse_thread/thread/8d3462454d81611e/96541b1fde01225d?lnk=gst&q=DIY-bioprinting
+
+== HP, Canon, .... Printers ==
+
+* ''Add inkjet printer projects here''
