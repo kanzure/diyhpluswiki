@@ -1,11 +1,24 @@
 [[!map pages="* and ! */* and ! ikiwiki and ! favicon.ico and ! *.css and ! shortcuts and ! sandbox and ! templates and ! recentchanges"]]
 
-* [[germline-genetic-modifications]]
+<a name="editing" />
+# Editing this wiki
 
-[register to edit here](http://diyhpl.us/piny-commands/newuser/) and [see other commands](http://diyhpl.us/piny-commands/)
+[Register to edit here](http://diyhpl.us/piny-commands/newuser/) and [see other commands](http://diyhpl.us/piny-commands/). You can also clone this wiki with git and push changes back:
+
+    git clone git://diyhpl.us/diyhpluswiki.git
+
+Note to push changes you must push with your registered account:
+
+    git push username@diyhpl.us:/srv/git/diyhpluswiki.git master
+
+You can make this easier by updating the remotes:
+
+    git remote set-url origin username@diyhpl.us:/srv/git/diyhpluswiki.git
+
+Now "git push" should work without debilitating complaint.
 
 [browse wiki history on cgit](http://diyhpl.us/cgit/diyhpluswiki)
 
-    git clone git://diyhpl.us/diyhpluswiki.git
+# Other
 
 Also there's a [laser_etcher for microfluidics](http://diyhpl.us/laser_etcher/) project (see [cgit](http://diyhpl.us/cgit/laser_etcher)).
