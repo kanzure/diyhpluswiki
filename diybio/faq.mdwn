@@ -306,6 +306,7 @@ See [[diybio/faq/projects]].
 
 <i>Please add your own project info to the [[diybio/faq/projects]] page.</i>
 
+<a name="editing" /><a name="contributing" />
 # Contributing to this document
 
 Edit your contributions to this wiki over the web like a regular wiki. [Register to edit here](http://diyhpl.us/piny-commands/newuser/) and [see other commands](http://diyhpl.us/piny-commands/). You must register prior to editing. When editing, please remember to include commit messages to describe your changes to onlookers.
@@ -313,6 +314,16 @@ Edit your contributions to this wiki over the web like a regular wiki. [Register
 You can also email your contributions to <a href="mailto:kanzure@gmail.com">Bryan Bishop</a>, <a href="mailto:jcline@ieee.org">Jonathan Cline</a>, or the <a href="http://groups.google.com/group/diybio">DIYbio mailing list</a> (<a href="mailto:diybio@googlegroups.com">diybio@googlegroups.com</a>). You can also optionally use git to edit this wiki:
 
     git clone git://diyhpl.us/diyhpluswiki.git
+
+Note to push changes you must push with your registered account:
+
+    git push username@diyhpl.us:/srv/git/diyhpluswiki.git master
+
+You can make this easier by updating the remotes:
+
+    git remote set-url origin username@diyhpl.us:/srv/git/diyhpluswiki.git
+
+Now "git push" should work without debilitating complaint.
 
 There is a historical copy on [OpenWetWare](http://openwetware.org/wiki/DIYbio/FAQ). However, unlike a traditional wiki, users must be registered and approved by a system administrator. Some individuals [have complained about this](https://groups.google.com/forum/?fromgroups#!topic/diybio/50U54BYu9Rw) in the past. Also, the revision history is likely to diverge since the markup formatting is different. But, since nobody has kept that version up to date, it doesn't seem to be a big deal anyway.
 
