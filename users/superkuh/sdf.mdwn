@@ -2,7 +2,7 @@ Science Defense Force
 
 A collection of (potentially) anti-science copyright enforcement IP ranges you may want to ban.
 
-copyrightinfringementportal.com
+copyrightinfringementportal.com / ScanSafe London
 
     iptables -I INPUT -s 80.254.145.1/255.255.255.0 -j DROP
     iptables -I INPUT -s 80.254.146.1/255.255.255.0 -j DROP
@@ -18,12 +18,19 @@ fairshare.cc
     iptables -I INPUT -s 64.41.145.0/255.255.255.0 -j DROP
     iptables -I INPUT -s 209.249.53.0/255.255.255.0 -j DROP
 
-Intellectual propery bot (?)
+Intellectual property bot (?)
 
     iptables -I INPUT -s 50.31.96.0/28 -j DROP 
 
-CHINANET Beijing province network (?)
+CHINANET Beijing province network (?, political docs)
 
     iptables -I FORWARD -s 220.181.0.0/255.255.0.0 -j DROP
     iptables -I FORWARD -s 123.112.0.0/255.255.0.0 -j DROP
 
+BrandDimensions
+
+    iptables -I FORWARD -s 72.14.164.147 -j DROP
+
+Chinese spider looking for political docs
+
+    iptables -I INPUT -s 180.166.96.142 -j DROP
