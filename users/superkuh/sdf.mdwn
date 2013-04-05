@@ -31,7 +31,7 @@ Intellectual property bot (?, unknown)
 
 Intellectual property bot (?, unknown)
 
-   iptables -I INPUT -s 208.75.57.30 - DROP
+    iptables -I INPUT -s 208.75.57.30 - DROP
 
 CHINANET Beijing province network (?, political docs)
 
@@ -51,10 +51,4 @@ Chinese spider looking for political docs
 
 Additionally a modified nginx configuration entry like the below might be useful. 
 
-location ~* ^/library/.+(\.pdf|\.epub|\.djvu|\.chm|\.txt|\.lit|\.doc|\.ps|\.ppt|\.html|\.rar|\.zip|\.tar\.gz|\.mov|\.mpg|\.mpeg|\.avi|\.flv|\.sgf|\.cab|\.dat)$ {
-
-	if ($http_user_agent ~* (PaperLiBot|Lightspeedsystems|Slurp|Googlebot|bingbot|Baiduspider|YandexBot|msnbot|facebookexternalhit|FairShare|Gee.Bit|yacybot|SISTRIX|Mediapartners-Google|aboundex|WBSearchBot|360spider) ) {
-		return 403;
-		set $limit_rate 1k;
-	}
-}
+$http_user_agent ~* (PaperLiBot|Lightspeedsystems|Slurp|Googlebot|bingbot|Baiduspider|YandexBot|msnbot|facebookexternalhit|FairShare|Gee.Bit|yacybot|SISTRIX|Mediapartners-Google|aboundex|WBSearchBot|360spider)
