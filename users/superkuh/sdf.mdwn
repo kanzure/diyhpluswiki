@@ -1,0 +1,29 @@
+Science Defense Force
+
+A collection of (potentially) anti-science copyright enforcement IP ranges you may want to ban.
+
+copyrightinfringementportal.com
+
+    iptables -I INPUT -s 80.254.145.1/255.255.255.0 -j DROP
+    iptables -I INPUT -s 80.254.146.1/255.255.255.0 -j DROP
+    iptables -I INPUT -s 80.254.147.1/255.255.255.0 -j DROP
+    iptables -I INPUT -s 80.254.158.1/255.255.255.0 -j DROP
+
+Lightspeed Systems
+
+    iptables -I INPUT -s 69.84.207.128/255.255.255.128 -j DROP
+
+fairshare.cc
+
+    iptables -I INPUT -s 64.41.145.0/255.255.255.0 -j DROP
+    iptables -I INPUT -s 209.249.53.0/255.255.255.0 -j DROP
+
+Intellectual propery bot (?)
+
+    iptables -I INPUT -s 50.31.96.0/28 -j DROP 
+
+CHINANET Beijing province network (?)
+
+    iptables -I FORWARD -s 220.181.0.0/255.255.0.0 -j DROP
+    iptables -I FORWARD -s 123.112.0.0/255.255.0.0 -j DROP
+
