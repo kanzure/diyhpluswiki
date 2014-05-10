@@ -1,0 +1,51 @@
+<http://code.google.com/p/homecmos/wiki/Si2DLithoProcess>
+
+# purpose
+
+This process is used for patterning a silicon substrate by wet etching with KOH or TMAH. Instead of LPCVD Si3N4 the hardmask is Ta2O5 deposited by a sol-gel process. This hardmask is patterned by wet etching with HF through a copper hardmask.
+
+Sidewalls of the etch are vertical for <110> and approximately 54.7 degrees to the surface for <100>. There is no significant etching of <111> planes.
+
+# status
+
+Under active development, no good yields yet. Check lab notes for latest status.
+
+# materials
+
+* Suitable substrate (<100> or <110> Si)
+* Tantalumfilm (16% wt. Ta2Cl10 in ethanol/methanol)
+* Distilled water (DI preferred)
+* KOH flakes (Other literature suggests TMAH may be substituted if K+ contamination is a concern, such as for CMOS. We currently have little information on the properties of TMAH, details are welcome.)
+* 3% HF
+* Copper wire
+* Chromium wire
+* Filament evaporator
+* Acetone
+* Compressed air, N2, duster spray, or equivalent
+* Lab oven
+* Lint-free swabs
+* Hot plate
+* Spin coater
+* Plastic centrifuge tubes
+* Concentrated HCl
+* 3% hydrogen peroxide
+
+# process
+
+* Thoroughly clean substrate. A full RCA clean is not necessary however it is critical it be as free from particulates as possible.
+* Place substrate on spin coater. Apply one drop of Tantalumfilm and immediately spin (optimal parameters still being determined).
+* Bake in air at 200C for 60 minutes.
+* Evaporate 5-10nm Cr adhesion layer followed by 100-200nm of Cu.
+* Spin coat with 50% dilution of SP24 photoresist in acetone, soft bake
+* Expose positive mask using standard photolithography process, develop
+* Prepare dilute SC2 etch: 0.1 ml conc. HCl, 0.5 ml 3% H2O2, 5 ml water.
+* Wet etch metal layers in dilute SC2 until Ta2O5 is exposed.
+* Place substrate in centrifuge tube, add 1 ml 3% HF.
+* Place tube in water bath at 60C and etch 5 mins or until Ta2O5 layer is penetrated
+* Remove tube from heat, suction HF.
+* Distilled water rinse.
+* Prepare solution of 30% by weight KOH in distilled water.
+* Heat KOH solution to 85C on hot plate.
+* Etch substrate in KOH until desired etch depth is achieved (TODO: link to etch rate chart).
+* Optional dilute HCl rinse to ensure non-alkaline pH.
+* Distilled water rinse.
