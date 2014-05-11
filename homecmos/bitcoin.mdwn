@@ -1,0 +1,36 @@
+Use homebrew semiconductor manufacturing to build ASICs for bitcoin mining.
+
+# transistor size
+
+As transistor size goes down, the switching frequency goes up. The original transistors could be described as taking up approximately the area of a circle with a diameter of 2.5 mm, like in [the original semiconductor photolithography patent US2890395](https://www.google.com/patents/US2890395).
+
+What's the switching time of a 2.5 mm diameter p-n-p transistor? Although it's slower than a fancy 45 nm transistor, you could possibly get the manufacturing costs down low enough such that you could manufacture significantly more millimeter-scale or micron-scale transistors for SHA256 mining.
+
+# estimation
+
+Is it cost effective to personally manufacture bitcoin mining ASICs, even if the transistors are larger? This means giving up computational efficiency in exchange for cost effectiveness. Since computational efficiency is lower, production would have to go up in order to compensate (make more units).
+
+# performance of other bitcoin mining asics
+
+type words and put them here
+
+# direct-couple transistor logic
+
+<http://en.wikipedia.org/wiki/Direct-coupled_transistor_logic>
+
+A special type of resistor–transistor logic (RTL), a direct-coupled transistor logic or DCTL gate is one wherein the bases of the transistors are connected directly to inputs without any base resistors. Without the base resistors, DCTL gates are more economical and simpler to fabricate onto integrated circuits than RTL gates with base resistors. Unfortunately, DCTL has a high susceptibility to ground noise and requires consistent transistor characteristics.
+
+* Roehr, William, ed. (1963), Switching Transistor Handbook, Motorola, Inc.
+
+# history
+
+see <http://www.computerhistory.org/semiconductor/timeline.html#1950s>
+
+* shift registers and logic gates (torkel wallmark, sanford marcus) (1950s)
+* four-stage counter for telephone applications (arthur d'asaro, ian ross of bell labs)
+* a counter using a double-base diode structure (joe logue, rick dill of ibm)
+* cryotron, an integrated superconducting element (dudley buck, mit)
+* germanium mesa p-n-p transistor slices etched to form transistor, capacitor, resistor (jack kilby, texas instruments). Using fine gold "flying-wires" he connected the separate elements into an oscillator circuit. One week later he demonstrated an amplifier. T.I. announced Kilby's "solid circuit" concept in March 1959 and introduced its first commercial device in March 1960, the Type 502 Binary Flip-Flop priced at $450 each. However the flying-wire interconnections were not a practical production technique. In October 1961, T.I. introduced the Series 51 DCTL "fully-integrated circuit" family using deposited-metal planar technology.
+* other stuff here...
+* Robert Kerwin, Donald Klein and John Sarace at Bell Labs improved the speed, reliability, and packing density of MOS transistors by replacing the aluminum metal gate electrode with a polycrystalline layer of silicon in 1967.
+* Faggin then redesigned an existing p-channel metal-gate 8-channel analog multiplexer circuit using the new technology and in 1968 Fairchild introduced the first silicon-gate IC, the 3708.
