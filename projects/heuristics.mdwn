@@ -22,6 +22,24 @@ The cost of automating a task is usually greater than manually doing a task. The
 
 # number of bugs
 
+# fail fast
+
+So there's this well-known thing in quality engineering where getting bugs out earlier is easier, and this other well-known thing in programming where doing projects beginning-to-end gives you foresight about kinds of problems that might happen and makes the earlier designs bug-free and more efficient and such.
+
+The right way to think about how projects get completed is as a dependency graph. A useful heuristic here is "How would I prove this is impossible as quickly as possible?".
+
+You want to prove the total task will work even if the subtasks fail, and otherwise abandon it. Then you want to prove each subtask is impossible, and replace it appropriately and re-plan integration as quickly as possible (etc etc). It's not as big a deal to structure things perfectly if you have infinite resources and can parallelize everything, which is how the space shuttle and particle colliders are built.
+
+The big danger is doing the non-failfast steps first with one person. If one component has a major problem, that means one node is unexpectedly big. In practice, people replace that component with another component rather than delay, or engineer around it, or just accept the delay. But the overall delay is not due to delay along a specific path--it's due to multiple delays, some on every critical path.
+
+<pre>
+20:45 < za3k> my made-up common wisdom (i swear this is a valid thing to do!) is that you shouldn't expect a single unexpected failure point where something takes longer than expected, because of statistics and critical paths.
+20:46 < za3k> rather, there's some inflationary procedure that experts in the field already know
+20:46 < za3k> and the combination of all the major subparts works pretty much in the expected way
+20:46 < za3k> uh, you might look at what large building construction projects do if there's a lot of cross-discipline integration and it's impossible for any people to understand the whole thing.
+20:47 < za3k> integration in general is something small organizations do \*not\* understand, and NASA does
+</pre>
+
 # transaction costs
 
 "The people pushing micropayments believe that the dollar cost of goods is the thing most responsible for deflecting readers from buying content, and that a reduction in price to micropayment levels will allow creators to begin charging for their work without deflecting readers. This strategy doesn't work, because the act of buying anything, even if the price is very small, creates what Nick Szabo calls mental transaction costs, the energy required to decide whether something is worth buying or not, regardless of price. The only business model that delivers money from sender to receiver with no mental transaction costs is theft, and in many ways, theft is the unspoken inspiration for micropayment systems. Like the salami slicing exploit in computer crime, micropayment believers imagine that such tiny amounts of money can be extracted from the user that they will not notice, while the overall volume will cause these payments to add up to something significant for the recipient. But of course the users do notice, because they are being asked to buy something. Mental transaction costs create a minimum level of inconvenience that cannot be removed simply by lowering the dollar cost of goods."
