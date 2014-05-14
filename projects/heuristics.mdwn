@@ -2,7 +2,7 @@ Here are some words about general constraints in projects.
 
 # build vs buy
 
-When should the part be locally built versus when should the part be bought and shipped? Note that there are shipping time constraints.
+When should the part be locally built versus when should the part be bought and shipped? Note that there are shipping time and shipping cost constraints.
 
 # prototyping
 
@@ -36,9 +36,44 @@ The big danger is doing the non-failfast steps first with one person. If one com
 
 # yak shaving
 
+<http://sethgodin.typepad.com/seths_blog/2005/03/dont_shave_that.html> "And the next thing you know, you're at the zoo, shaving a yak, all so you can wax your car." The minute you start walking down a path toward a yak shaving party, you should evaluate other possible paths and choose one of the shorter ones.
+
 The more distant you are from the original task, the more likely your yak shaving decisions or dependency graph is going to lead to weak links and wrong necessity calculations. Baking an apple pie from scratch is entirely possible as long as you make up reasonable bounds for what "from scratch" means; otherwise you'll end up investigating high energy particle physics for how to create new universes for your scratch-built apple pie which is not usually what people mean when they say "from scratch".
 
 Yak shaving is doing all the stuff you have to do before you can do the task you were assigned. These tasks may look unnecessary, but they are in fact necessary. The unnecessary tasks that resemble yak shaving are simply unnecessary and wrong. Instead of calling wrong necessity calculation links "yak shaving", call them junk dependencies or unnecessary dependencies.
+
+see also <http://c2.com/cgi/wiki?PushDownGoalStack>
+
+*Situation*: You have a push-down stack for all your goals. When you hit an obstacle, you push "remove the obstacle" onto the stack. Then, when the obstacle is cleared, you pop the stack, and you are back at your original problem.
+
+*Problem*: For some reason, the problems you push onto the stack keep getting bigger and bigger and bigger, dwarfing the original problem, each one dwarfing the one before it.
+
+Forces that seem to make this problem necessary or inevitable:
+
+* A stack is easier to understand and use than some more complicated goal structure. And, goals seem to be hierarchical. Stacks are good for traversing hierarchies.
+* The bigger problems, if solved, will make a number of other problems easier, not necessarily just the one you originally wanted to solve. They may have value in their own right. They are worth solving thoroughly.
+* The goal inflation is not infinite; it seems that the goals shrink down again to something reasonable after the stack gets to a depth of about seven or so.
+* If you're just having fun, you might have fun exploring all these different things.
+* But you've only got so much time, and you don't want to give up your original goal, nor do you want to delay it for years and years. You feel like you are working on the irrelevant.
+
+<pre>
+ priority queue q = new priority queue
+   sorted by "importance-units per complexity-unit"
+   so greatest will be removed first;
+ insert initial goal into q;
+ while (q is not empty)
+ { remove goal r from q;
+   if r is not worth doing, break the while loop;
+   if r is simple, do r, else
+   { (r is complex)
+     write a simple, bare-bones, end-to-end version of the solution to goal r
+       which omits many features;
+     insert all omitted features back into q;
+   }
+ }
+ stop;
+</pre>
+
 
 # transaction costs
 
