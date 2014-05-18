@@ -430,8 +430,6 @@ also see:
 * Adaptor3d
 * AdvApp2Var
 * AdvApprox
-* AIS
-* APIHeaderSection
 * AppBlend
 * AppCont
 * AppDef
@@ -479,29 +477,19 @@ also see:
 * BRepPrimAPI
 * BRepProj
 * BRepSweep
-* BRepToIGES
-* BRepToIGESBRep
 * BRepTools
 * BRepTopAdaptor
 * BSplCLib
 * BSplSLib
-* CDF - database related maybe?
-* ChFi2d
-* ChFi3d
-* ChFiDS
-* ChFiKPart
-* Contap
-* Convert
+* ChFi2d - algorithms to build fillets or chamfers on planar wire
+* ChFi3d - creation of spatial fillets on a solid
+* ChFiDS - fillet and chamfers data structure
+* ChFiKPart - Fonctions de remplissage pour une SurfData, dans les cas particulers de conges/chanfreins suivants: cylindre/plan entre 2 surfaces planes; tore/sphere/cone entre un plan et un cylindre othogonal; tore/sphere/cone entre un plan et un cone othogonal; tore/sphere/cone entre un plan et un tore othogonal; tore/cone entre un plan et une sphere.
+* Contap - contour generation, arc functions, surface tool, topology tool, surface function, contour tool generator, etc.
+* Convert - algorithms to convert the following into a BSpline curve or surface: (1) a bounded curve based on an elementary 2D curve (line, circle or conic) from the gp package; (2) a bounded surface based on an elementary surface (cylinder, cone, sphere or torus) from the gp package; (3) a series of adjacent 2D or 3D Bezier curves defined by their poles. These algorithms compute the data needed to define the resulting BSpline curve or surface. This elementary data (degrees, periodic characteristics, poles and weights, knots and multiplicities) may then be used directly in an algorithm, or can be used to construct the curve or the surface by calling the appropriate constructor provided by the classes Geom2d\_BSplineCurve, Geom\_BSplineCurve or Geom\_BSplineSurface.
 * CPnts - definition of geometric algorithms to compute characteristic points on parametrized curves in 3d or 2d space. This package defines the external geometric entities, with their requirements, used in the algorithms.
 * CSLib - implements functions for basis geometric computation on curves and surfaces. The tolerance criterions used in this package are Resolution from package gp and RealEpsilon from class Real of package Standard. (JCV Decembre 1991)
-* DBRep
-* DPrsStd
-* Draft
-* Draw
-* DrawDim
-* DrawFairCurve
-* DrawResources
-* DrawTrSurf
+* Draft - Returns the draft angle of the face F using the direction Direction, the method is valid for plane faces, cylindrical or conic faces, when the direction of the axis of the surface is colinear with the direction. Otherwise, the exception DomainError is raised.
 * ElCLib
 * ElSLib
 * Expr
@@ -530,7 +518,6 @@ also see:
 * Geom2dHatch
 * Geom2dInt
 * Geom2dLProp
-* Geom2dToIGES
 * GeomAbs
 * GeomAdaptor
 * GeomAPI
@@ -538,18 +525,13 @@ also see:
 * GeomFill
 * GeomInt
 * GeomLib
-* GeomLProp
-* GeomPlate
-* GeomProjLib
-* GeomToIGES
+* GeomLProp - compute the degree of continuity of a 3D curve built by concatenation of two other curves (or portions of curves) at their junction point.
+* GeomProjLib - projection of a curve on a surface
 * GeomTools
 * GeomToStep
 * gp
 * GProp
-* Graphic3d
 * Hermit - This is used to reparameterize rational bspline curves so that we can concatenate them later to build C1 curves. It builds and 1D-reparameterizing function starting from an Hermite interpolation and adding knots and modifying poles of the 1D BSpline obtained that way. The goal is to build a(u) so that if we consider a BSpline curve f(u) = N(u) / D(u) the function a(u)D(u) has value 1 at the umin and umax and has 0.0e0 derivative value a umin and umax. The details of the computation occuring in this package can be found by reading: "Etude sur la concatenation de NURBS en vue du balayage de surfaces" PFE n S85 Ensam Lille.
-* Image
-* IncludeLibrary
 * IntAna
 * IntAna2d
 * IntCurve
@@ -573,76 +555,49 @@ also see:
 * LibCtl
 * LocalAnalysis
 * LocOpe
-* LProp
-* LProp3d
+* LProp - Given a curve and a parameter value, the following computations are available: point, derivatives, tangent, normal, curvature, center of curvature, locals curvature's extremas, points of inflection; Given a surface and 2 parameters the following computations are available: for each parameters (derivatives, tangent line, center of curvature), also point, normal line, maximum and minimum curvatures, principal directions of curvature, mean curvature, Gaussian curvature.
+* LProp3d - handles local properties of curves and surfaces from the package Adaptor3d. This originates from BRepLProp being abstracted from BRep.
 * MAT - algorithm of bisecting locus
 * MAT2d - computation of Bisector locus on a set of geometries from Geom2d
-* Materials
-* math
-* MeshVS
-* Message - basic tools for progress indication
-* MoniTool
-* NLPlate
-* OS - some tcl code?
-* PCDM
-* PCDMShape
-* Plate
-* PLib
-* Plugin
-* Poly
-* Precision
-* Primitives
-* ProjLib
-* Quantity
-* Resource
-* Shaders
-* ShapeAlgo
-* ShapeAnalysis
-* ShapeBuild
-* ShapeConstruct
-* ShapeCustom
-* ShapeExtend
-* ShapeFix
-* ShapeProcess
-* ShapeProcessAPI
-* ShapeSchema
-* ShapeUpgrade
-* SHMessage
-* SortTools
-* Storage
-* Sweep
-* Textures
-* TopAbs
-* TopBas
-* TopClass
-* TopCnx
-* TopExp
-* TopLoc
-* TopoDS
-* TopoDSToStep
+* Poly - handle 3D triangular polyhedrons, 3D polygons, 2D polygons. Also, tools to dump, save and restore those objects.
+* Primitives - algorithms to build topological primitives. Algorithm to build rotational primitives. The wedge algorithm builds boxes and wedges. Uses only gp.
+* ProjLib - projection of curves on a plane along a given direction. The result will be a 3D curve. Also, projections of curves on surfaces to compute the curve in the parameteric space. It is assumed that the curve is on the surface. Easiest cases: line, circle, ellipse, parabola, hyperbola on a plane; line, circle on cylinder; line, circle on cone. General case of: plane, cylinder, cone, sphere, torus; and a generic class to handle a curve from Adaptor3d on a Surface from Adaptor3d.
+* ShapeConstruct - Algorithms for constructing new geometrical objects and topological shapes, like for: projecting curves on surface, adjusting curve to have given start and end points.
+* ShapeCustom - Intended to convert geometrical objects and topological shapes. The modifications of one geometrical object to another (one) geometrical object are provided. The supported modifications are as follows: (1) conversion of BSpline and Bezier surfaces to analytical form; (2) conversion of indirect elementary surfaces (with left-handed coordinate systems) into direct ones; (3) conversion of elementary surfaces to surfaces of revolution; (4) conversion of surface of linear extrusion, revolution, offset surface to bspline; (5) modification of parameterization, degree, number of segments of bspline surfaces, scale the shape.
+* ShapeExtend - General tools and data structures common for other packages in SHAPEWORKS and CAS.CADE, including: (1) enumeration status used for coding status flags in methods inside the SHAPEWORKS; (2) enumeration parameterization used for setting global parameterization on the composite surface; (3) class CompositeSurface representing a composite surface made of a grid of surface patches; (4) class WireData representing a wire in the form of ordered list of edges; (5) class MsgRegistrator for attaching messages to the objects; (6) tools for exploring the shapes; (7) tools for creating new shapes.
+* ShapeUpgrade - Tools for splitting and converting shapes by some critera. Topological object splitting or conversion. High level API classes which perform: (1) converting geometry of shapes up to a given continuity; (2) splitting revolutions by U to segments less than given value; (3) converting to beziers; (4) splitting closed faces.
+* TopAbs - Topology data structure, topological algorithms. Describes a ShapeEnum for different topological shapes. Orientation enumeration to describe the orientation of a topological shape. State numeration to describe the position of a point relative to a Shape. Methods to manage the enumerations.
+* Sweep - create swept 3D primitives, based on TopAbs
+* TopBas - Data structure for topological algorithms. Interference list: an interference is the topological representation of an intersection.
+* TopClass - classification algorithms, used to compute if a point is inside, outside or on the boundary of a Shape. Uses gp, TopTrans, TopAbs, TopoDS, IntRes2d, IntCurveSurface, TopExp.
+* TopCnx - This algorithm provides algorithms to compute transitions when many interferences occurs at the same place on a shape. An interference is an intersection on a shape (i.e. a vertex on an edge or an edge on a face) with data about the transition (how the shape is crossing the boundary where the intersection occurs). There are three algorithms to process interferences: (1) EdgeFaceTransition, to process intereferences on an edge crossing other edges on the boundary of a face; (2) EdgeSolidTransition, to process interferences on an edge crossing faces and edges on the boundary of a solid; (3) FaceSolidTransition, to process interferences on a face crossing other faces on the boundary of a solid. This package relies on the TopTrans package for the geometric computations.
+* TopExp - tools for exploring topological data structures. Explorer: a tool to find all subshapes of a given type, such as all faces of a solid. Package methods to map subshapes of a shape.
+* TopLoc - handle 3D local coordinate systems (called Locations). A Location is a composition of elementary coordinate systems, each one is called a Datum. The Location keeps track of this composition.
+* TopoDS - Provides methods to cast objects of class TopoDS\_Shape to be objects of more specialized types. TopoDS types here: Builder, Compound, Compound, CompSolid, Edge, Face, HShape, Iterator, Shape, Shell, Solid, TCompound, TCompSolid, TEdge, TFace, TShape, TShell, TSolid, TVertex, TWire, Vertex, Wire.
 * TopOpeBRep
 * TopOpeBRepBuild
 * TopOpeBRepDS
 * TopOpeBRepTool
-* TopTools
-* TopTrans
-* Transfer
-* TransferBRep
-* Units
-* UnitsAPI
-* UnitsMethods
-* WNT
-* XBRepMesh
-* XCAFApp
-* XCAFDoc
-* XCAFDrivers
-* XCAFPrs
-* XCAFSchema
-* XSAlgo
-* XSControl
-* XSMessage
-* XSTEPResource
-* Xw
+* TopTools - utilities for topological data structures. ShapeMapHasher, OrientedShapeMapHasher, Instantiations of TCollection for Shapes (MapOfShape, IndexedMapOfShape, DataMapOfShapeReal, etc.). Dump will dump the topological of a Shape.
+* TopTrans - This package provides algorithms to compute complex transitions. A transition is the status of geometry near the boundary of a shape. An example is the intersection of a curve and a surface enclosing a solid, the transition tells if the parts of the curve just before and just after the intersection are inside, outside or on the boundary of the solid. The difficulty with transitions arise when dealing with trimmed geometries like edges and faces. When the geometric intersections are inside the trimmed geometry and the transition is usually computed by the intersection algorithms as the trimming can be safely ignored. If the intersection falls on the trimming boundaries one must consider the neighboring entities. Consider as an example the intersection of a curve and a solid, if the intersection falls on an edge of the solid it does not fall inside the two faces adjacent to the edge, a complex transition occurs. This package provides two classes: (1) CurveTransition, which is used to compute complex transitions with another curve; (2) SurfaceTransition, which is used to compute complex transitions in 3D space. The curves and surfaces are given by a first or second order approximation around the intersection point. For a curve, the tangent vector or the osculating circle. For a surface, the normal vector or the osculating quadric.
+* Transfer - Defines general transfer engine, which provides tools and workframe for all kinds of file (non-direct) interfaces. Works on the basis of data provided by package Interface (especially InterfaceModel). 
+* TransferBRep - read files and convert them to shapes from CasCade. It can be used in conjunction with purely CasCade software.
+* XBRepMesh - one single function called "Discret" that runs BRepMesh\_IncrementalMesh on a TopoDS\_Shape and an angle and a deflection.
+
+basic math:
+
+* math - random numbers, Gauss, GaussLeastSquare, SVD, DirectPolynomialRoots, FunctionRoots, BissecNewton, FunctionRoot, NewtonFunctionRoot, BracketedRoot, FunctionSetRoot, NewtonFunctionSetRoot, BracketMinimum, BrentMinimum, Powell, FRPR, BFGS, NewtonMinimum, Jacobi, GaussSingleIntegration, GaussMultipleIntegration, GaussSetIntegration, RealRandom, FunctionSample, FunctionAllRoots, Householder, Crout, Uzawa, TrigonometricFunctionRoots, KronrodSingleIntegration (Kronrod method implementation), ComputeGaussPointsAndWeights, ComputeKronrodPointsAndWeights, QuickSortOfValueAndWeight, OrderedGaussPointsAndWeights, etc.
+* PLib - polynomial functions library. JacobiPolynomial, HermitJacobi, DoubleJacobiPolynomial, RationalDerivative, binomials, EvalLagrange, JacobiParameters.
+
+shape healing:
+
+* ShapeAnalysis - Analyze geometrical objects and topological shapes. Analysis domain includes both exploring geometrical and topological properties of shapes and checking their conformance to OpenCASCADE requirements. The directions of analysis provided by tools of this package are: computing quantities of subshapes; computing parameters of points on curve and surface; computing surface singularities; checking edge and wire consistency; checking edges order in the wire; checking face bounds orientation; checking small faces; analyzing shape tolerances; analyzing free bounds of the shape.
+* ShapeBuild - basic building tools for other packages in ShapeHealing, internal stuff
+* ShapeFix - Shape healing, algorithms for fixing problematic (violating OpenCASCADE requirements) shapes. Tools from package ShapeAnalysis are used for detecting the problems. The detecting and fixing is done taking in account various criteria implemented in BRepCheck package. Each class of package ShapeFix deals with one certain type of shapes or with some family of problems.
+* ShapeProcess - customizable sequence of shape healing operators. The customization is implemented via user-editable resource file which defines sequence of operators to be executed and their parameters.
+* ShapeProcessAPI - (description is probably wrong, see name) tools for converting shapes for data exchange between various systems (CATIA, EUCLID3, etc.)
+* SHMessage - shape healing messages
+* MoniTool - monitor data exchange and shape healing, timers for measuring performance
 
 hatching:
 
@@ -656,6 +611,12 @@ hidden lines removal algorithms:
 * HLRBRep - Hidden Lines Removal algorithms on the BRep DataStructure. The class PolyAlgo is used to remove hidden lines on Shapes with Triangulations.
 * HLRTopoBRep - This package provides some topological reconstruction services needed by the hidden line removal algorithms using OutLine and IsoLine facilities, applied to an object represented by a BRep data structure.
 
+plates and constraints (not sure):
+
+* Plate - something about constraints? see online documentation
+* NLPlate - more constraint stuff? not much
+* GeomPlate - plate constraint stuff again?
+
 STL stuff:
 
 * RWStl
@@ -665,6 +626,7 @@ STL stuff:
 
 STEP stuff:
 
+* TopoDSToStep - This package implements the mapping between CAS.CAD Shape representation and AP214 Shape Representation. The target schema is pms\_c4 (a subset of AP214). Some of the entry points are: MakeManifoldSolidBrep, MakeBrepWithVoids, MakeFacetedBrep, MakeFacetedBrepAndBrepWithVoids, MakeShellBasedSurfaceModel. Each of these classes calls the Builder.
 * StepAP203 - Contains implementation of STEP entities specific for AP203
 * StepAP209 - Basic tool for working with AP209 model
 * StepAP214 - Complete AP214 CC1 , Revision 4. Upgrading from Revision 2 to Revision 4 : 26 Mar 1997. Splitting in sub-schemas : 5 Nov 1997.
@@ -686,6 +648,11 @@ STEP stuff:
 * StepToGeom - Creation des entites geometriques de Geom a partir du schema StepGeom (Part42, geometric)
 * StepToTopoDS - Implements the mapping between AP214 Shape representation and  CAS.CAD Shape Representation. The source schema is Part42 (which is included in AP214).
 * StepVisual - Collects definitions of STEP entities for visual presentations from Part 46 of ISO 10303
+* APIHeaderSection - access the header of a STEP model
+
+* XSAlgo - Provides initerface to the algorithms from Shape Healing and others for XSTEP processors.
+* XSMessage - error message translation for IGES and STEP
+* XSTEPResource - resource files for data exchange
 
 * RWHeaderSection
 * RWStepAP203
@@ -701,6 +668,11 @@ STEP stuff:
 
 IGES stuff:
 
+* BRepToIGES - Provides tools in order to transfer CAS.CADE entities to IGES.
+* IGESToBRep
+* BRepToIGESBRep - Provides tools in order to transfer CAS.CADE entities to IGESBRep.
+* GeomToIGES - Creation des entites geometriques de IGES a partir des entites de Geom.
+* Geom2dToIGES - Creation des entites geometriques de IGES a partir des entites de Geom2d.
 * IGESAppli
 * IGESBasic
 * IGESCAFControl
@@ -711,11 +683,10 @@ IGES stuff:
 * IGESDimen
 * IGESDraw
 * IGESFile
-* IGESGeom
+* IGESGeom - B-Rep and CSG Solid entities
 * IGESGraph
 * IGESSelect
 * IGESSolid
-* IGESToBRep
 
 XML stuff:
 
@@ -741,6 +712,14 @@ VRML stuff:
 * VrmlConverter
 * VrmlData
 
+DECAF or XCAF file format stuff(?):
+
+* XCAFApp - defines application for DECAF document and provides application-specific tools
+* XCAFDoc - definition of DECAF document and how to work with it
+* XCAFDrivers - various drivers
+* XCAFPrs - Presentation (visualiation, selection etc.) tools for DECAF documents
+* XCAFSchema - dunno
+
 transient data structures:
 
 * TColGeom
@@ -761,6 +740,8 @@ transient data structures:
 
 persistence and database related packages:
 
+* ShapeSchema - inheritance and persistence basic tools
+* Storage - read and write persistent objects
 * Dynamic - abstract persistent classes
 * MDataStd
 * MDataXtd
@@ -922,13 +903,6 @@ QA related:
 * QANewDBRepNaming
 * QANewModTopOpe
 
-visualization:
-
-* V3d - 3D visualizer stuff, complementary to Visual3d
-* Visual3d - implementation of commands for the 3d visualizer
-* Voxel - Data structuire and visualization engine for voxel modeling.
-* OpenGl
-
 basic types:
 
 * MMgt - The package MMgt provides single class TShared which is second in hierarchy of inheritance from Standard\_Transient, kept for historic reasons.
@@ -950,12 +924,17 @@ basic types:
 * Prs3d - display related
 * PrsMgr - manages display, see AIS
 
+* Message - basic tools for progress indication
+* SortTools
+
 selection of objects in 3d:
 
 * Select3D
 * SelectBasics
 * SelectMgr
 * StdSelect - selection modes for topological shapes
+* AIS - Application Interactive Services to provide links between application GUI viewer and the packages which are used to manage selection and presentation
+* DPrsStd - commands for presentation based on AIS
 
 graph related:
 
@@ -963,17 +942,47 @@ graph related:
 * GraphTools
 * IFGraph - Provides tools to operate on an InterfaceModel and its Entities as on a Graph. These Tools are based on classes Graph and GraphContent from Interface. Uses Interface, GraphTools, TColStd, Standard.
 * IFSelect
+* XSControl - complements to IFSelect & Co for control of a session
+
+units:
+
+* Units - Create and question a dictionary of units, and also manipulate measurements which are real values with units.
+* UnitsAPI - convert a value from any unit into another unit. Conversion is executed among three unit systems: (1) SI system, (2) user's local system, (3) the user's current system. The MDTV system corresponds to the SI international standard but the length unit and all its derivatives use the millimeter instead of the meters.
+* UnitsMethods - degree2radians, radians2degree, other functions
+* Quantity - mathematical and physical quantities; MagneticFluxDensity, ElectricCapacitance, Enthalpy, SpecificHeatCapacity, Volume, etc.
+* Precision - it is not advisable to use floating number equality
+* Materials - apply physical properties to objects
+
+visualization:
+
+* Graphic3d - create 3d graphic objects in a visualizer
+* V3d - 3D visualizer stuff, complementary to Visual3d
+* Visual3d - implementation of commands for the 3d visualizer
+* Voxel - Data structure and visualization engine for voxel modeling.
+* OpenGl
+* Shaders
+* Textures - rgb files
+* Draw - Drawable3D stuff?
+* DrawDim - drawable dimensions, like PlanarDimension
+* DrawFairCurve - Batten and MVC to display
+* DrawResources - some tcl stuff, other things?
+* DrawTrSurf - Supports the display of parametric curves and surfaces. The Drawable deferred classes is inherited from the Drawable3D class from the package Draw, it adds methods to draw 3D curves and curves on 3D surfaces. The classes Curve, Curve2D and Surface are drawable and can be used to draw a single curve from packages Geom or Geom2d or a surface from Geom. Triangulation and Polygon from the package Poly are also supported.
+* DBRep - Used to display BRep objects  using the DrawTrSurf package. The DrawableShape is a Display object build from a Shape. Provides methods to manage a directory of named shapes. Provides a set of Draw commands for Shapes.
+* MeshVS - presentation stuff; displaying of mesh; colors, vectors, texts; selection of mesh entities (except hidden ones)
 
 operating system related:
 
 * OSD - operating system dependent tools
 * Cocoa - Objective C stuff
+* Xw - X11 stuff? windowing
+* WNT - common Windows NT graphics interface
 
 other:
 
 * Font - system font stuff, also a brep font
 * UTL - file handling?
 * FSD - file stream stuff
+* Image - image manipulation for pixmaps
 
 no idea:
 
@@ -983,3 +992,11 @@ no idea:
 * DBC
 * DNaming
 * NIS
+* OS - some tcl code?
+* Plugin - load a plugin
+* ShapeAlgo - something about an AlgoContainer?
+* Resource - A RESOURCE is a parameter saved on a file and used to initialize a variable.
+* IncludeLibrary
+* CDF - database related maybe?
+* PCDM - probably related to document management?
+* PCDMShape - something about a document
