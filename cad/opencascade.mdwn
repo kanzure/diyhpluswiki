@@ -467,11 +467,6 @@ also see:
 * BRepTopAdaptor
 * BSplCLib
 * BSplSLib
-* ChFi2d - algorithms to build fillets or chamfers on planar wire
-* ChFi3d - creation of spatial fillets on a solid
-* ChFiDS - fillet and chamfers data structure
-* FilletSurf - API giving only geometric information about fillets for Toyota Project UV4. TwoExtremityOnEdge, OneExtremityOnEdge, NoExtremityOnEdge, etc.
-* ChFiKPart - Fonctions de remplissage pour une SurfData, dans les cas particulers de conges/chanfreins suivants: cylindre/plan entre 2 surfaces planes; tore/sphere/cone entre un plan et un cylindre othogonal; tore/sphere/cone entre un plan et un cone othogonal; tore/sphere/cone entre un plan et un tore othogonal; tore/cone entre un plan et une sphere.
 * Contap - contour generation, arc functions, surface tool, topology tool, surface function, contour tool generator, etc.
 * Convert - algorithms to convert the following into a BSpline curve or surface: (1) a bounded curve based on an elementary 2D curve (line, circle or conic) from the gp package; (2) a bounded surface based on an elementary surface (cylinder, cone, sphere or torus) from the gp package; (3) a series of adjacent 2D or 3D Bezier curves defined by their poles. These algorithms compute the data needed to define the resulting BSpline curve or surface. This elementary data (degrees, periodic characteristics, poles and weights, knots and multiplicities) may then be used directly in an algorithm, or can be used to construct the curve or the surface by calling the appropriate constructor provided by the classes Geom2d\_BSplineCurve, Geom\_BSplineCurve or Geom\_BSplineSurface.
 * CPnts - definition of geometric algorithms to compute characteristic points on parametrized curves in 3d or 2d space. This package defines the external geometric entities, with their requirements, used in the algorithms.
@@ -504,32 +499,13 @@ also see:
 * GeomToStep - Creation des entites geometriques du schema PmsAp2Demo3d a partir des entites de Geom ou de gp. Update: mise a jour pour traiter le schema StepGeom, pour demo de 94.
 * GProp - algorithms to compute the global properties of a set of points, a curve, a surface, a solid (non infinite region of space delimited with geometric entities), a compound geometric system (heterogenous composition of the previous entities). Global properties are: length, area, volume, centre of mass, axis of inertia, moments of inertia, radius of gyration. It also provides a class to compile the average point or line of a set of points.
 * Hermit - This is used to reparameterize rational bspline curves so that we can concatenate them later to build C1 curves. It builds and 1D-reparameterizing function starting from an Hermite interpolation and adding knots and modifying poles of the 1D BSpline obtained that way. The goal is to build a(u) so that if we consider a BSpline curve f(u) = N(u) / D(u) the function a(u)D(u) has value 1 at the umin and umax and has 0.0e0 derivative value a umin and umax. The details of the computation occuring in this package can be found by reading: "Etude sur la concatenation de NURBS en vue du balayage de surfaces" PFE n S85 Ensam Lille.
-* IntAna
-* IntAna2d
-* IntCurve
-* IntCurvesFace
-* IntCurveSurface
-* Interface
-* InterfaceGraphic
-* Intf
-* IntImp
-* IntImpParGen
-* IntPatch
-* IntPolyh
-* IntRes2d
-* Intrv
-* IntStart
-* IntSurf
-* IntTools
-* IntWalk
+* Intrv - intervals; defines enumeration Position (Before, JustBefore, OverlappingAtStart, JustEnclosingAtEnd, Enclosing, JustOverlappingAtStart, Similar, JustEnclosingAtStart, Inside, JustOverlappingAtEnd, OverlappingAtEnd, JustAfter, After). Also defines an Interval, Intervals, SequenceOfInterval.
 * Law - 1d functions, like BSpline, Interpolate, Constant, Linear, BSpFunc, Interpol, Composite, BSplineKnotSplitting, MixBnd, MixTgt, Scale, ScaleCub, etc.
 * LocalAnalysis - check the local continuity between two points situated on two curves or two surfaces
 * LocOpe - local topological operations on a shape. Splitshape, ProjectedWires, WiresOnShape, Spliter, Generator, GluedShape, Prism, Revol, Pipe, DPrism, LinearForm, RevolutionForm, Gluer, FindEdges, FindEdgesInFace, PntFace, CurveShapeIntersector, BuildShape, SequenceOfCirc, TgtFaces, Closed, IsInside, etc.
 * LProp - Given a curve and a parameter value, the following computations are available: point, derivatives, tangent, normal, curvature, center of curvature, locals curvature's extremas, points of inflection; Given a surface and 2 parameters the following computations are available: for each parameters (derivatives, tangent line, center of curvature), also point, normal line, maximum and minimum curvatures, principal directions of curvature, mean curvature, Gaussian curvature.
 * Geom2dLProp - handles local properties of curves and surfaces from the packages Geom and Geom2d, see package LProp
 * LProp3d - handles local properties of curves and surfaces from the package Adaptor3d. This originates from BRepLProp being abstracted from BRep.
-* MAT - algorithm of bisecting locus
-* MAT2d - computation of Bisector locus on a set of geometries from Geom2d
 * Poly - handle 3D triangular polyhedrons, 3D polygons, 2D polygons. Also, tools to dump, save and restore those objects.
 * Primitives - algorithms to build topological primitives. Algorithm to build rotational primitives. The wedge algorithm builds boxes and wedges. Uses only gp.
 * ProjLib - projection of curves on a plane along a given direction. The result will be a 3D curve. Also, projections of curves on surfaces to compute the curve in the parameteric space. It is assumed that the curve is on the surface. Easiest cases: line, circle, ellipse, parabola, hyperbola on a plane; line, circle on cylinder; line, circle on cone. General case of: plane, cylinder, cone, sphere, torus; and a generic class to handle a curve from Adaptor3d on a Surface from Adaptor3d.
@@ -551,7 +527,6 @@ also see:
 * TopOpeBRepTool - used by TopOpeBRep to perform topological operations on the BRep data structure. ShapeExplorer, ShapeClassifier, various indexes and maps, makeTransition, PurgeInternaledges, PurgeClosingEdges, FuseEdges, MakeFaces, Regularize, RegularizeWires, RegularizeFace, RegularizeShells, etc.
 * TopTools - utilities for topological data structures. ShapeMapHasher, OrientedShapeMapHasher, Instantiations of TCollection for Shapes (MapOfShape, IndexedMapOfShape, DataMapOfShapeReal, etc.). Dump will dump the topological of a Shape.
 * TopTrans - This package provides algorithms to compute complex transitions. A transition is the status of geometry near the boundary of a shape. An example is the intersection of a curve and a surface enclosing a solid, the transition tells if the parts of the curve just before and just after the intersection are inside, outside or on the boundary of the solid. The difficulty with transitions arise when dealing with trimmed geometries like edges and faces. When the geometric intersections are inside the trimmed geometry and the transition is usually computed by the intersection algorithms as the trimming can be safely ignored. If the intersection falls on the trimming boundaries one must consider the neighboring entities. Consider as an example the intersection of a curve and a solid, if the intersection falls on an edge of the solid it does not fall inside the two faces adjacent to the edge, a complex transition occurs. This package provides two classes: (1) CurveTransition, which is used to compute complex transitions with another curve; (2) SurfaceTransition, which is used to compute complex transitions in 3D space. The curves and surfaces are given by a first or second order approximation around the intersection point. For a curve, the tangent vector or the osculating circle. For a surface, the normal vector or the osculating quadric.
-* Transfer - Defines general transfer engine, which provides tools and workframe for all kinds of file (non-direct) interfaces. Works on the basis of data provided by package Interface (especially InterfaceModel). 
 * TransferBRep - read files and convert them to shapes from CasCade. It can be used in conjunction with purely CasCade software.
 * XBRepMesh - one single function called "Discret" that runs BRepMesh\_IncrementalMesh on a TopoDS\_Shape and an angle and a deflection.
 
@@ -581,7 +556,12 @@ basic geometry:
 * GC - Constructions of 3d geometrical elements from Geom. Constructions of planes from Geom. Construction of surfaces from Geom. Constructions of transformation from Geom.
 * Adaptor2d - helper for reusable geometric algorithms that can be used on curves and surfaces. Type compatibility. Especially use with Geom and Geom2d.
 * Adaptor3d - helper for reusable geometric algorithms that can be used on curves and surfaces, like Curve2d, Curve, Surface. Especially use with Geom and Geom2d.
+
+geometric bisecting:
+
 * Bisector - bisecting line between two geometric elements (such as circles, lines or points), bisecting line between a point and a curve, bisecting line between two curves, bisecting line trimmed by a point.
+* MAT - algorithm of bisecting locus
+* MAT2d - computation of Bisector locus on a set of geometries from Geom2d
 
 geometric constraints and constraint solving:
 
@@ -603,6 +583,24 @@ approximation:
 * AppDef - classes for approximating points in Bezier curves used by the AppParCurves package. The points of the same range for the approximation are organized in MultiPointConstraints. These MultiPointConstraints are organized in a MultiLine. The corresponding result of a MultiLine approximation is a MultiCurve (set of Bezier curves) which has the same structure as a MultiLine: the MultiCurve is a set of MultiPoint. A point of a MultiLine can have many significations: the approximation curve can go through this point or not, can have a given tangency, or can have a given curvature. Note that a CurvaturePoint is also a PassPoint and a TangencyPoint. A TangencyPoint is also a PassPoint.
 * AppParCurves - parallel approximation in n curves, algorithms to approximate a MultiLine described by the tool MLineTool. The result of the approximation will be a MultiCurve (from AppDef?).
 
+intersections:
+
+* IntAna - compute the intersections between (1) natural quadrics when the result is a conic (QuadQuadGeo); (2) a natural quadric and a quadric defined by its coefficients (IntQuadQuad); (3) 3 Pln (Int3Pln); (4) a Line and a Torus (IntLinTorus); (5) a Conic from gp and a Quadric defined by its coefficients (IntConicQuad).
+* IntAna2d - compute the intersection between two Geometric Processor (gp) types (Line, Circle, Ellipse, Parabola, and Hyperbola. One of these elements is known with his real type, the other one is known by an implicit quadratic equation (see class Conic). A particular case has been made for the intersection between two Lin2d, two Circ2d, a Lin2d and a Circ2d.
+* IntCurve - compute the intersections between 2D curves, with domains. Use IntConicConic for an algorithm to intersect 2 conics from gp with domains. Use IntConicCurveGen for an algorithm to intersect a conic from gp, and a parameterized curve. The parameterized Curve can not be a Composite curve and can not be a conic. Use IntCurveCurveGen for an algorithm to intersect 2 curves. Use UserIntConicCurveGen for an algorithm to intersect a Conic from gp and a parameterized curve, either a composite curve or a conic.
+* IntCurvesFace - compute the intersection points between a Face (a Shape) and a set of curves (the face (shape) is loaded, then for each curve is given to compute the intersection). Intersector (ShapeIntersector) can be used when the caller has to intersect more than one curve with the face (the shape). If there is only one curve, or if the face has no restrictions, some other algorithm can be called. See also the BRepIntCurveSurface package (for one curve and one shape) or the IntCurveSurface package (for one curve and one surface).
+* IntCurveSurface - compute the intersection between a curve and a surface.
+* IntImp - compute the intersection between a curve and a surface with a close point; ZerCSParFunc for the intersection between a 3d curve and a surface; ZerCOnSSParFunc for the intersection between a curve on surface and another surface
+* IntImpParGen - algorithm to intersect implicit curves and bounded parametric curves
+* IntPatch - compute the intersection between two patches, the class PatchIntersection implements the intersection algorithms and the results of the algorithms are described by IntPoint, PointOnDomain, Line, ILin, etc.
+* IntRes2d - defines the results of the intersection between 2D curves, also includes the definition of a domain on a 2D curve.
+* IntSurf - resources for all the packages concerning intersection between surfaces. Uses gp and GeomAbs. Provides: PntOn2S, LineOn2S, Quadric, QuadricTool, PathPoint, SequenceOfPathPoint, PathPointTool, InteriorPoint, Transition, MakeTransition, etc. enumeration Situation is Inside, Outside, Unknown.
+* IntTools - classification of intersections. Range, CommonPrt, Root, Compare, CompareRange, EdgeEdge, EdgeFace, FClass2d (classification of a point in a face), LineConstructor (post-processing of results of surfaces intersection), MarkedRangeSet, PntOnFace, PntOn2Faces, QuickSortRange (from SortTools), Length (of an edge), RemoveIdenticalRoots, SortRoots, FindRootStates, GetRadius, etc.
+* IntStart - algorithms to find points on boundaries and points inside a surface used as starting points for marching algorithms. Uses TopAbs, GeomAbs, gp, IntSurf and math.
+* IntWalk - "walking" (marching) algorithms for the intersection between two surfaces. One of the surfaces is parametric. If the other surface is an implicit surface then the IWalking class will be used. If both surfaces are parametric then the PWalking class will be used.
+* Intf - compute interference between polygons, lines and polyhedra with only triangular facets. These objects are polygonal representations of complex curves and triangulated representations of complex surfaces. See also IntPolyh.
+* IntPolyh - algorithm to compute starting points for the surface-surface intersection packages. Those starting points are used if the two surfaces are bi-parametric surfaces (bezier, nurbs, algorithm surfaces, ...). This package provides methods to: (1) compute meshes on the two surfaces, a major improvement to the Intf package which gives the same kind of resources. (2) to intersect the two meshes. (3) to give approximated starting-points. Those points are organized in lines, when the points belong to a same section line, or returned as isolated oints when they can neither define a new line nor be linked to an existing line. A starting-point contains 3d information, parametric information and quality criterion (i.e., X,Y,Z, U1,V1, U2,V2, Incidence). Incidence is a real which gives an estimated angle between the two surfaces near the intersection point.
+
 topology api:
 
 This is according to the [documentation](http://dev.opencascade.org/doc/overview/html/occt_user_guides__modeling_algos.html#occt_modalg_1_2) on "the topology API".
@@ -613,6 +611,14 @@ This is according to the [documentation](http://dev.opencascade.org/doc/overview
 * BRepFeat
 * BRepOffsetAPI
 * BRepPrimAPI
+
+chamfers and fillets:
+
+* ChFi2d - algorithms to build fillets or chamfers on planar wire
+* ChFi3d - creation of spatial fillets on a solid
+* ChFiDS - fillet and chamfers data structure
+* FilletSurf - API giving only geometric information about fillets for Toyota Project UV4. TwoExtremityOnEdge, OneExtremityOnEdge, NoExtremityOnEdge, etc.
+* ChFiKPart - Fonctions de remplissage pour une SurfData, dans les cas particulers de conges/chanfreins suivants: cylindre/plan entre 2 surfaces planes; tore/sphere/cone entre un plan et un cylindre othogonal; tore/sphere/cone entre un plan et un cone othogonal; tore/sphere/cone entre un plan et un tore othogonal; tore/cone entre un plan et une sphere.
 
 shape healing:
 
@@ -949,6 +955,8 @@ basic types:
 
 * Prs3d - display related
 * PrsMgr - manages display, see AIS
+* Transfer - Defines general transfer engine, which provides tools and workframe for all kinds of file (non-direct) interfaces. Works on the basis of data provided by package Interface (especially InterfaceModel). 
+* Interface - data interfacing, file transfering, see package Transfer
 
 * Message - basic tools for progress indication
 * SortTools
@@ -996,6 +1004,7 @@ visualization:
 * DrawTrSurf - Supports the display of parametric curves and surfaces. The Drawable deferred classes is inherited from the Drawable3D class from the package Draw, it adds methods to draw 3D curves and curves on 3D surfaces. The classes Curve, Curve2D and Surface are drawable and can be used to draw a single curve from packages Geom or Geom2d or a surface from Geom. Triangulation and Polygon from the package Poly are also supported.
 * DBRep - Used to display BRep objects  using the DrawTrSurf package. The DrawableShape is a Display object build from a Shape. Provides methods to manage a directory of named shapes. Provides a set of Draw commands for Shapes.
 * MeshVS - presentation stuff; displaying of mesh; colors, vectors, texts; selection of mesh entities (except hidden ones)
+* InterfaceGraphic - dunno, has some Windows NT stuff, has some X11 stuff, XWD stuff, Visual3d things, etc..
 
 operating system related:
 
