@@ -428,22 +428,9 @@ also see:
 
 # packages
 
-* Adaptor2d
-* Adaptor3d
-* AdvApp2Var
-* AdvApprox
-* AppBlend
-* AppCont
-* AppDef
-* AppParCurves
-* Approx
-* ApproxInt
-* Bisector - bisecting line between two geometric elements
 * BiTgte - create a filler rolling on an edge; curve on edge; curve on vertex; DataMapOfShapeBox
 * Blend - SurfRstFunction, SurfPointFuncInv, SurfCurvFuncInv, RstRstFunction, CurvPointFuncInv, DecrochStatus, etc.
 * BlendFunc - compute blendings between two surfaces (constant radius, evolutive radius, ruled surface). Ruled, RuledInv, EvolRad, EvolRadInv, Corde, Chamfer, ChamfInv, ChAsym, ChAsymInv, Tensor, Knots, Mults, GetMinimalWeights, ComputeNormal, ComputeDNormal, etc.
-* Bnd - bounding volumes, used to bound a shape to optimizing algorithms. If a point is outside the bounding volume of a shape it is also outside the shape. The contrary is not necessarily true. In 3d there is Box and BoundSortBox. In 2d there is Box2d and BoundSortBox2d. (bounding boxes?)
-* BndLib - Package to compute the bounding boxes for elementary objects from gp in 2d and 3d. Functions to add a geometric primitive to a bounding box. Note that these functions work with gp objects, optionally limited by parameter values. Compute the bounding box for a curve in 2 dimensions. Compute the bounding box for a curve in 3 dimensions. Compute the bounding box of a surface. The surface is defined by a tool for the geometry and another tool for the topology (only the edges in 2 dimensions). etc.
 * BOPAlgo
 * BOPCol
 * BOPDS
@@ -483,6 +470,7 @@ also see:
 * ChFi2d - algorithms to build fillets or chamfers on planar wire
 * ChFi3d - creation of spatial fillets on a solid
 * ChFiDS - fillet and chamfers data structure
+* FilletSurf - API giving only geometric information about fillets for Toyota Project UV4. TwoExtremityOnEdge, OneExtremityOnEdge, NoExtremityOnEdge, etc.
 * ChFiKPart - Fonctions de remplissage pour une SurfData, dans les cas particulers de conges/chanfreins suivants: cylindre/plan entre 2 surfaces planes; tore/sphere/cone entre un plan et un cylindre othogonal; tore/sphere/cone entre un plan et un cone othogonal; tore/sphere/cone entre un plan et un tore othogonal; tore/cone entre un plan et une sphere.
 * Contap - contour generation, arc functions, surface tool, topology tool, surface function, contour tool generator, etc.
 * Convert - algorithms to convert the following into a BSpline curve or surface: (1) a bounded curve based on an elementary 2D curve (line, circle or conic) from the gp package; (2) a bounded surface based on an elementary surface (cylinder, cone, sphere or torus) from the gp package; (3) a series of adjacent 2D or 3D Bezier curves defined by their poles. These algorithms compute the data needed to define the resulting BSpline curve or surface. This elementary data (degrees, periodic characteristics, poles and weights, knots and multiplicities) may then be used directly in an algorithm, or can be used to construct the curve or the surface by calling the appropriate constructor provided by the classes Geom2d\_BSplineCurve, Geom\_BSplineCurve or Geom\_BSplineSurface.
@@ -494,29 +482,14 @@ also see:
 * Extrema - calculate the distance between points, curves and surfaces. In the general case, the algorithm to find the distances is a minimization algorithm of a function of variables: F(X). It is stopped when for X1=X+Dx, F(X) and F(X1) are the same. The value of Dx can be calculated for all the algorithms. Generic classes for point-curve extremas, point-surface extremas, curve-curve extremas, curve-surface extremas, surface-surface extremas, lots of others.
 * FairCurve - make a "FairCurve" by no linear optimization. Batten. Curve with MinimalVariation of curvature or "MVC". To deal with the different results in the computation of curvatures. FairCurve\_InfiniteSliding describes the case where sliding is infinite, and, consequently, computation stops. The solution is to use an imposed sliding value. FairCurve\_NullHeight describes the case where no matter is left at one of the ends of the curve, and as a result, computation stops. The solution is to change (increase or reduce) the slope value by increasing or decreasing it.
 * FEmTool - finite element methods; LinearTension, LinearFlexion, LinearJerk, SparseMatrix, Curve, ProfileMatrix, some others.
-* FilletSurf - API giving only geometric information about fillets for Toyota Project UV4. TwoExtremityOnEdge, OneExtremityOnEdge, NoExtremityOnEdge, etc.
-* GC - Constructions of 3d geometrical elements from Geom. Constructions of planes from Geom. Construction of surfaces from Geom. Constructions of transformation from Geom.
-* GccAna - create lines and circles from constraints, based on objects from gp; see also Geom2dGcc. Analytical algorithms, can only be used for geometries of lines and circles, both the input and output types are gp objects (qualified curves for tangency are provided by GccEnt); also maybe GccInt is used or it may be a typo for GccEnt.
-* GccEnt - implementation of the qualified entities useful to create 2d entities with geometric constraints. The qualifier explains which subfamily of solutions we want to obtain. It uses the following law: the matter/the interior side is at the left of the line, if we go from the beginning to the end. The qualifiers are: (1) enclosing - the solution(s) must enclose the argument; (2) enclosed - the solution(s) must be enclosed in the argument; (3) outside - both the solution(s) and the argument must be outside to each other; (4) unqualified - the position is undefined, so give all the solutions. The use of a qualifier is always required if such subfamilies exist. For example, it is not used for a point. Note that the interior of a curve is defined as the left-hand side of the curve in relation to its orientation.
-* GccGeo - implementation of analytic algorithms (using only non-persistent entities) used to create 2d lines or circles with geometric constraints.
-* GccInt - implementation of algorithm needed by Gcc to use curves other than lines or circles. This package is also used for intersections and bisecting curves.
-* GccIter - implementation of analytic algorithms (using only non-persistent entities) used to create 2d lines or circles with geometric constraints.
-* gce - make things from gp, like: dir2d, lin2d, circ2d, hypr2d, elips2d, parab2d, translation transformation, symmetry transformation, rotation transformation, scaling transformation, scalar product between two vectors, cross product, dot cross, line, circle, hyperbola, ellipse, parabola, plane, cylinder, cone.
-* GCE2d - make things from a Geom2d: line, circle, hyperbola, ellipse, parabola, segment of line, arc of circle, arc of ellipse, arc of parabola, arc of hyperbola, translation transformation, symmetry/mirror transformation, rotation transformation, scaling transformation.
 * GCPnts - geometric algorithms used to compute characteristic points on parameterized curves. They are high level algorithms based on the low level algorithms in CPnts, including: AbscissaPoint, UniformAbscissa, UniformDeflection, QuasiUniformDeflection, QuasiUniformAbscissa, TangentialDeflection.
-* Geom - definition of the geometric objects such as point, vector, axis placement, curves, surfaces, and the description of geometric transformations available for these objects. All of these entities are defined in 3D space. This package enables creating and modifying geometric objects. This package uses the package gp (Geometric Processor) which describes non-persistent objects for algebraic calculus and basic analytic geometry. The purpose of this package is to create persistent geometric objects and to read geometric information about these objects. Complexes geometric algorithms are not described in this package. At construction time, elementary verifications are done to verify that the objects are coherent, but some verifications which require complex algorithms (for example, to check that a curve has not null length or does not self-intersect) must be done before the construction of the geometric objects.
-* Geom2d - definition of the geometric objects such as point, vector, axis placement, curves and the description of the geometric transformations available for these objects. All of these entities are defined in 2D space. This package enables creating and modifying geometric objects. Uses gp (Geometric Processor). See also the Geom package.
-* Geom2dAdaptor - geometric definition of 2d curves compatible with the Adaptor package templates.
 * Geom2dAPI - project point on curve, extrema curve curve (distance between points and curves, and distance between curves and curves), PointsToBSpline (evaluate a curve passing through an array of points), Interpolate, InterCurveCurve (algorithm to evaluate an intersection between two 2d curves).
 * Geom2dConvert - algorithms to convert between equivalent geometric entities from package Geom2d. It can be used to obtain the B-spline representation of bounded curves; to split a B-spline curve into several B-spline curves with some constraints of continuity; to convert a B-spline curve into several Bezier curves or surfaces. All the geometric entities used in this package are bounded.
 * * Generating the Bezier Points of B-spline curves and surfaces (Wolfgang Bohm) CAGD volume 13 number 6 november 1981
 * * On NURBS: A Survey  (Leslie Piegl) IEEE Computer Graphics and Application January 1991
 * * Curve and surface construction using rational B-splines (Leslie Piegl and Wayne Tiller) CAD Volume 19 number 9 November 1997
 * * A survey of curve and surface methods in CAGD (Wolfgang BOHM) CAGD 1 1984
-* Geom2dGcc - create lines and circles from constraints, based on objects from Geom2d; see also GccAna. Automatically selects an algorithm for the problem, inputs are Geom2d objects and the computed solutions are gp objects (qualified curves for tangency can be provided by Geom2dGcc). The Geom2dGcc package solves geometric constructions of lines and circles expressed by constraints such as tangency or parallelism, that is, a constraint expressed in geometric terms.
 * Geom2dInt - intersection between two curves from Geom2dAdaptor. Classes Geom2dCurveTool, CurveTool, IntCurveCurveGen, IntCurve.
-* GeomAbs - enumerations for geometry types: CurveType, SurfaceType, Shape, CurveForm, SurfaceForm, BSplKnotDistribution enumeration to describe the repartition of set of knots, UVSense enumeration to describe the orientation of the parametric surface.
-* GeomAdaptor - geometric definition of curve and surface necessary to use algorithms
 * GeomAPI - algorithms to evaluate the distance between points, curves and surfaces; algorithms to evaluate a curve or a surface passing through an array of points; algorithms to intersect two surfaces and to intersect a curve and a surface; algorithms to switch between 3d and 2d curves (To2d, To3d).
 * GeomConvert - convert classical Geom curves into BSpline curves; segmenting BSpline curves, particularly at knots; converting classical Geom surfaces into BSpline surfaces;
 * * Generating the Bezier Points of B-spline curves and surfaces (Wolfgang Bohm) CAGD volume 13 number 6 november 1981
@@ -528,9 +501,7 @@ also see:
 * GeomLib - Geom and Geom2d basic geometric entity computation library. Use Interpolate to compute the poles of a curve given some parameters, points to interpolate and boundary conditions in 3d. Use DenominatorMultiplier to get an evaluator for a function of 2 variables that will be used by CancelDenominatorDerivative in one direction. Use CheckBSplineCurve to check for end tangents, whether or not those are reversed regarding the third or n-3rd control. ExtendSurfByLength, AxeOfInertia, RemovePointsFromArray, DensifyArray1Ofreal, TensorialProduct, NormEstim, Inertia, etc.
 * GeomLProp - compute the degree of continuity of a 3D curve built by concatenation of two other curves (or portions of curves) at their junction point.
 * GeomProjLib - projection of a curve on a surface
-* GeomTools - utilities for goemetry, like SurfaceSet, CurveSet, Curve2dSet which are tools used for dumping, writing and reading. Methods to dump, write, read curves and surfaces.
 * GeomToStep - Creation des entites geometriques du schema PmsAp2Demo3d a partir des entites de Geom ou de gp. Update: mise a jour pour traiter le schema StepGeom, pour demo de 94.
-* gp - Geometric Processor; implementation of entities for algebraic calculations such as "XYZ" coordinates, "Mat" matrix; for basic analytic geometry such as transformations, point, vector, line, plane, axis placement, conics, and elementary surfaces. These entities are defined in 2d and 3d space. Pnt, Vec, Dir, Ax1, Ax2, Ax3, Lin, Circ, Elips, Hypr, Parab, Pln, Cylinder, Sphere, Torus, Cone, XY, Mat2d, Trsf2d, GTrsf2d, Pnt2d, Vec2d, Dir2d, Ax2d, Ax22d, Lin2d, Circ2d, Elips2d, Hypr2d, Parab2d, etc.
 * GProp - algorithms to compute the global properties of a set of points, a curve, a surface, a solid (non infinite region of space delimited with geometric entities), a compound geometric system (heterogenous composition of the previous entities). Global properties are: length, area, volume, centre of mass, axis of inertia, moments of inertia, radius of gyration. It also provides a class to compile the average point or line of a set of points.
 * Hermit - This is used to reparameterize rational bspline curves so that we can concatenate them later to build C1 curves. It builds and 1D-reparameterizing function starting from an Hermite interpolation and adding knots and modifying poles of the 1D BSpline obtained that way. The goal is to build a(u) so that if we consider a BSpline curve f(u) = N(u) / D(u) the function a(u)D(u) has value 1 at the umin and umax and has 0.0e0 derivative value a umin and umax. The details of the computation occuring in this package can be found by reading: "Etude sur la concatenation de NURBS en vue du balayage de surfaces" PFE n S85 Ensam Lille.
 * IntAna
@@ -590,6 +561,47 @@ basic math:
 * PLib - polynomial functions library. JacobiPolynomial, HermitJacobi, DoubleJacobiPolynomial, RationalDerivative, binomials, EvalLagrange, JacobiParameters.
 * Expr - data structure of any expression, relation or function used in mathematics. Describes the assignment of variables. Standard mathematical functions are implemented such as trigonometrics, hyperbolics, and log functions. ArcCosine, ArcSine, ArcTangent, ArgCosh, ArgSinh, ArgTanh, Cosh, Cosine, Exponential, LogOfe, LogOf10, Sign, Sine, Sinh, Square, SquareRoot, Tangent, Tanh, UnaryFunction, UnaryMinus, BinaryFunction, Difference, Division, PolyExpression, Different, Equal, GreaterThan, LessThan, etc.
 * ExprIntrp - yacc/lex files, describes an interpreter for GeneralExpressions, GeneralFunctions, and GeneralRelations defined in package Expr.
+
+bounding boxes:
+
+* Bnd - bounding volumes, used to bound a shape to optimizing algorithms. If a point is outside the bounding volume of a shape it is also outside the shape. The contrary is not necessarily true. In 3d there is Box and BoundSortBox. In 2d there is Box2d and BoundSortBox2d. (bounding boxes?)
+* BndLib - Package to compute the bounding boxes for elementary objects from gp in 2d and 3d. Functions to add a geometric primitive to a bounding box. Note that these functions work with gp objects, optionally limited by parameter values. Compute the bounding box for a curve in 2 dimensions. Compute the bounding box for a curve in 3 dimensions. Compute the bounding box of a surface. The surface is defined by a tool for the geometry and another tool for the topology (only the edges in 2 dimensions). etc.
+
+basic geometry:
+
+* gp - Geometric Processor; implementation of entities for algebraic calculations such as "XYZ" coordinates, "Mat" matrix; for basic analytic geometry such as transformations, point, vector, line, plane, axis placement, conics, and elementary surfaces. These entities are defined in 2d and 3d space. Pnt, Vec, Dir, Ax1, Ax2, Ax3, Lin, Circ, Elips, Hypr, Parab, Pln, Cylinder, Sphere, Torus, Cone, XY, Mat2d, Trsf2d, GTrsf2d, Pnt2d, Vec2d, Dir2d, Ax2d, Ax22d, Lin2d, Circ2d, Elips2d, Hypr2d, Parab2d, etc.
+* Geom - definition of the geometric objects such as point, vector, axis placement, curves, surfaces, and the description of geometric transformations available for these objects. All of these entities are defined in 3D space. This package enables creating and modifying geometric objects. This package uses the package gp (Geometric Processor) which describes non-persistent objects for algebraic calculus and basic analytic geometry. The purpose of this package is to create persistent geometric objects and to read geometric information about these objects. Complexes geometric algorithms are not described in this package. At construction time, elementary verifications are done to verify that the objects are coherent, but some verifications which require complex algorithms (for example, to check that a curve has not null length or does not self-intersect) must be done before the construction of the geometric objects.
+* Geom2d - definition of the geometric objects such as point, vector, axis placement, curves and the description of the geometric transformations available for these objects. All of these entities are defined in 2D space. This package enables creating and modifying geometric objects. Uses gp (Geometric Processor). See also the Geom package.
+* Geom2dAdaptor - geometric definition of 2d curves compatible with the Adaptor package templates.
+* GeomAbs - enumerations for geometry types: CurveType, SurfaceType, Shape, CurveForm, SurfaceForm, BSplKnotDistribution enumeration to describe the repartition of set of knots, UVSense enumeration to describe the orientation of the parametric surface.
+* GeomAdaptor - geometric definition of curve and surface necessary to use algorithms
+* gce - make things from gp, like: dir2d, lin2d, circ2d, hypr2d, elips2d, parab2d, translation transformation, symmetry transformation, rotation transformation, scaling transformation, scalar product between two vectors, cross product, dot cross, line, circle, hyperbola, ellipse, parabola, plane, cylinder, cone.
+* GCE2d - make things from a Geom2d: line, circle, hyperbola, ellipse, parabola, segment of line, arc of circle, arc of ellipse, arc of parabola, arc of hyperbola, translation transformation, symmetry/mirror transformation, rotation transformation, scaling transformation.
+* GeomTools - utilities for goemetry, like SurfaceSet, CurveSet, Curve2dSet which are tools used for dumping, writing and reading. Methods to dump, write, read curves and surfaces.
+* GC - Constructions of 3d geometrical elements from Geom. Constructions of planes from Geom. Construction of surfaces from Geom. Constructions of transformation from Geom.
+* Adaptor2d - helper for reusable geometric algorithms that can be used on curves and surfaces. Type compatibility. Especially use with Geom and Geom2d.
+* Adaptor3d - helper for reusable geometric algorithms that can be used on curves and surfaces, like Curve2d, Curve, Surface. Especially use with Geom and Geom2d.
+* Bisector - bisecting line between two geometric elements (such as circles, lines or points), bisecting line between a point and a curve, bisecting line between two curves, bisecting line trimmed by a point.
+
+geometric constraints and constraint solving:
+
+* GccAna - create lines and circles from constraints, based on objects from gp; see also Geom2dGcc. Analytical algorithms, can only be used for geometries of lines and circles, both the input and output types are gp objects (qualified curves for tangency are provided by GccEnt); also maybe GccInt is used or it may be a typo for GccEnt.
+* GccEnt - implementation of the qualified entities useful to create 2d entities with geometric constraints. The qualifier explains which subfamily of solutions we want to obtain. It uses the following law: the matter/the interior side is at the left of the line, if we go from the beginning to the end. The qualifiers are: (1) enclosing - the solution(s) must enclose the argument; (2) enclosed - the solution(s) must be enclosed in the argument; (3) outside - both the solution(s) and the argument must be outside to each other; (4) unqualified - the position is undefined, so give all the solutions. The use of a qualifier is always required if such subfamilies exist. For example, it is not used for a point. Note that the interior of a curve is defined as the left-hand side of the curve in relation to its orientation.
+* GccGeo - implementation of analytic algorithms (using only non-persistent entities) used to create 2d lines or circles with geometric constraints.
+* GccInt - implementation of algorithm needed by Gcc to use curves other than lines or circles. This package is also used for intersections and bisecting curves.
+* GccIter - implementation of analytic algorithms (using only non-persistent entities) used to create 2d lines or circles with geometric constraints.
+* Geom2dGcc - create lines and circles from constraints, based on objects from Geom2d; see also GccAna. Automatically selects an algorithm for the problem, inputs are Geom2d objects and the computed solutions are gp objects (qualified curves for tangency can be provided by Geom2dGcc). The Geom2dGcc package solves geometric constructions of lines and circles expressed by constraints such as tangency or parallelism, that is, a constraint expressed in geometric terms.
+
+approximation:
+
+* AdvApp2Var - algorithms to approximate a function of 2 variables that can be multidimensional, the result is a BSpline function with the required continuity. Only one 3D BSpline at the moment. Iso, Patch, Strip, SequenceOfNode, SequenceOfPatch, SequenceOfStrip. Iso is used to store constraints on a line U = Ui or V = Vj. Patch is used to store results on a domain. Strip is used as a set of constraints along a same type of Iso on the same level.
+* AdvApprox - algorithms to approximate a function that can be multidimensional, the result is a BSpline function with the required continuity. Cutting, DichoCutting, PrefCutting, PrefAndRec.w
+* Approx - algorithms approximating a set of points or curves with the possibility of dividing into one or many bezier curves. Also approximates a continuous function f(t) into one or many curves. Uses math, gp, GeomAbs, Geom, Geom2d, Adaptor3d, Adaptor2d, etc.
+* ApproxInt - dunno, probably more approximation stuff? uses Approx.
+* AppBlend - dunno, has a few classes like Approx, AppSurf, Debug, Line, SectionGenerator.
+* AppCont - least square algorithm for approximating a set of continuous curves or a continuous surface. Also FittingCurve2d.
+* AppDef - classes for approximating points in Bezier curves used by the AppParCurves package. The points of the same range for the approximation are organized in MultiPointConstraints. These MultiPointConstraints are organized in a MultiLine. The corresponding result of a MultiLine approximation is a MultiCurve (set of Bezier curves) which has the same structure as a MultiLine: the MultiCurve is a set of MultiPoint. A point of a MultiLine can have many significations: the approximation curve can go through this point or not, can have a given tangency, or can have a given curvature. Note that a CurvaturePoint is also a PassPoint and a TangencyPoint. A TangencyPoint is also a PassPoint.
+* AppParCurves - parallel approximation in n curves, algorithms to approximate a MultiLine described by the tool MLineTool. The result of the approximation will be a MultiCurve (from AppDef?).
 
 topology api:
 
