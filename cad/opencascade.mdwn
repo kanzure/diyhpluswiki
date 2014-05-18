@@ -25,6 +25,7 @@ See the [documentation](http://dev.opencascade.org/doc/overview/html/technical_o
 * TK(name) - toolkit, has only the following files: EXTERNLIB, FILES, PACKAGES; this was probably their attempt at making the code more accessible?
 * QA(name) - hardcoded bug-specific regression testing code for "quality assurance"
 * Test - dunno, maybe relatied to regression testing?
+* (name)DS - probably about data structures, classes, objects, models, definitions
 
 ## geometry
 
@@ -431,42 +432,34 @@ also see:
 * BiTgte - create a filler rolling on an edge; curve on edge; curve on vertex; DataMapOfShapeBox
 * Blend - SurfRstFunction, SurfPointFuncInv, SurfCurvFuncInv, RstRstFunction, CurvPointFuncInv, DecrochStatus, etc.
 * BlendFunc - compute blendings between two surfaces (constant radius, evolutive radius, ruled surface). Ruled, RuledInv, EvolRad, EvolRadInv, Corde, Chamfer, ChamfInv, ChAsym, ChAsymInv, Tensor, Knots, Mults, GetMinimalWeights, ComputeNormal, ComputeDNormal, etc.
-* BOPAlgo
-* BOPCol
-* BOPDS
-* BOPInt
-* BOPTools
-* BRep
-* BRepAdaptor
-* BRepAlgo
-* BRepAlgoAPI
-* BRepApprox
-* BRepBlend
-* BRepBndLib
-* BRepBuilderAPI
-* BRepCheck
-* BRepClass
-* BRepClass3d
-* BRepExtrema
-* BRepFeat
-* BRepFill
-* BRepFilletAPI
-* BRepGProp
-* BRepIntCurveSurface
-* BRepLib
-* BRepLProp
-* BRepMAT2d
-* BRepMesh
-* BRepOffset
-* BRepOffsetAPI
-* BRepPrim
-* BRepPrimAPI
-* BRepProj
-* BRepSweep
-* BRepTools
-* BRepTopAdaptor
-* BSplCLib
-* BSplSLib
+* BRep - boundary representation data structure inherited from the abstract topology defined in the TopoDS package. The geometric data are provided by the Geom and Geom2d packages. Face, Edge, CurveRepresentation, Curve3D, GCurve, CurveOnSurface, CurveOnClosedSurface, PolygonOnTriangulation, PolygonOnClosedTriangulation, PolygonOnSurface, PolygonOnClosedSurface, CurveOn2Surfaces, PointOnCurve, PointsOnSurface, PointOnCurveOnSurface, PointOnSurface, etc.
+* BRepAdaptor - adaptor compatibility classes to access the geometry of the BRep models. Surface, Curve, Curve2d.
+* BRepAlgo - deprecated boolean operations, see BrepAlgoAPI instead.
+* BRepProj - cylindrical and conical projections, moved out of BRepAlgo because of a cyclic dependency with BRepFill. Provides conical and cylindrical projections of Edge or Wire on a Shape from TopoDS. The result will be an Edge or Wire from TopoDS.
+* BRepAlgoAPI - algorithms for boolean operations for shape arguments that are defined in the BRep data structure. The new algorithm is based on an approach to operations with interfered shapes. It can handle two solids with shared entities (in terms of TopoDS\_Shape::IsSame()), two faces that have shared edges and so on. Also, there's a general treatment of same-domain faces. Two faces that share the same domain are processed according to the common rule even if the underlying surfaces are of different types. This allows the proper execution of boolean operations for the same domain faces. Also it works on solids and shells that have the same domain faces. It is quite frequent that two faces share the same domain. Degenerated edges are handled, although there are still some difficulties processing faces in areas close to degenerated edges. For arguments with the same shape type (ex: SOLID and SOLID), the type of the resulting shape will be a COMPOUND, containing shapes of this type. For arguments with different shape types (ex: SHELL and SOLID), the type of the resulting shape will be a COMPOUND, containing shapes of the type that is the same as that of the lowest type of the argument, like if SHELL and SOLID then the result is a COMPOUND of SHELLs. For arguments with different shape types some boolean operations cannot be achieved with the default implementation because of a non-manifold type of the result, like the FUSE operation for SHELL and SOLID can't be done, but the CUT operation can be done, where SHELL is the object and SOLID is the tool.
+* BRepPrim - like the Primitives package, except for BRep topology. OneAxis, Wedge. Rotational primitives inherited from OneAxis including revolution of a cylinder, cone, sphere, torus. FaceBuilder is a tool to build a face from a Geom surface.
+* BRepBuilderAPI - create vertices, edges, faces, solids, sweeps, boolean operations, sweeping operations, global properties computation. For tolerances a default precision is used which can be changed by the Precision function. MakeEdge, MakeEdge2d, MakeFace, MakePolygon, MakeShape, MakeShell, MakeSolid, MakeVertex, MakeWire, ModifyShape, NurbsConvert, Sewing, Transform, VertexInspector, etc. See also BRepFilletAPI for fillets and chamfers. See also BRepPrimAPI for MakeBox, MakeCylinder, MakeSphere, MakeTorus, MakePrism, etc.
+* BRepPrimAPI - some extra stuff that BRepBuilderAPI was missing, like MakeBox, MakeWedge, MakeCylinder, MakeCone, MakeSphere, MakeTorus, MakeRevolution, MakePrism, MakeRevol. Uses BRepPrim.
+* BRepCheck - validity checking of BRep, checks for things like self intersection, also has a Status enumeration
+* BRepClass - BRep topology classification algorithms. Uses TopClass. Edge, Intersector, FacePassiveClassifier, FaceExplorer, FClassifier, FaceClassifier.
+* BRepClass3d - BRep topology classification algorithms, for solids. Intersector3d, SolidExplorer, SolidPassiveClassifier, SClassifier, SolidClassifier, OuterShell.
+* BRepExtrema - compute extrema between shapes from BRep. DistanceShapeShape.
+* BRepFeat - creation and manipulation of form features and mechanical features in BRep. Form features can be depressions or protrusions and includes the types Cylinde,r Draft Prism, Prism, Revolved feature, Pipe. (more description in the cdl file)
+* BRepFill - algorithm to build a face from either a set of edges defining the bounds of the face and some constraints the surface of the face has to satisfy, or a set of edges and points defining some constraints the support surface has to satisfy, or an initial surface to deform for satisfying the constraints, or a set of parameters to control the constraints. Compute a topological surface (a shell) using generating wires, where the face of the shell will be ruled surfaces through the wires, and the wires must have the same number of edges. Has sweeped, evolved, draft law, edge3d law, multiline tool, pipe, PipeShell, ShapwLaw, TrimEdgeTool, TrimShellCorner, TrimSurfaceTool. Other stuff. ApproxSeewing.
+* BRepGProp - compute a shape's global properties for lines, surfaces or volumes. The global properties computed for a system are its mass, center of mass, matrix of inertia, moment about an axis, radius of gyration about an axis, and its principal properties of inertia such as principal axis, principal moments, principal radius of gyration.
+* BRepLProp - compute the degree of continuity of a curve built by concatenation of two edges at their junction point. Uses gp, BrepAdaptor, GeomAbs, LProp.
+* BRepLib - general BRep utilities, like FindSurface to compute a surface through a set of edges, and compute missing 3d curve on an edge. EdgeError, WireError, FaceError, ShellError, ShapeModification, MakeShape, MakeVertex, MakeEdge, MakeEdge2d, MakePolygon, MakeFace, MakeWire, MakeShell, MakeSolid, FindSurface (find a surface in a set of edges), FuseEdges, BuildCurve3d, BuildCurves3d, UpdateEdgeTolerance, UpdateTolerances, OrientClosedSolid, SortFaces, EncodeRegularity, etc.
+* BRepMesh - mesh algorithms and triangulation algorithm. Has a mesh factory. Algorithm to mesh a shape with respect to the frontier the deflection and by option the shared components. Algorithm to mesh a face.
+* BRepOffset - dunno, some intersection stuff, BRepOffset\_Skin describes the offset along the surface of a solid, used to obtain a manifold topological space; BRepOffset\_Pipe describes the offset of a curve, used to obtain a pre-surce; BRepOffset\_RectoVerso describes the offset of a given surface shell along both sides of the surface.
+* BRepOffsetAPI - dunno, does some BRepBuilderAPI stuff
+* BRepTools - utilities for BRep stuff. WireExplorer, for exploring the topology of a wire in the order of the edges. UVBounds, methods to compute the limits of the boundary of a face, a wire, or an edge in the parametric space of a face. Compare two edges, two vertices. OuterWire, a method to find the outer wire of a face. Dump, a method to dump a BRep object. Quilt, a tool to glue shapes on edges, for example to glue faces to make a shell. Sewing, to assemble contiguous shapes into one shape, identify contiguous boundaries (for control of continuity: C0, C1, ...).
+* BSplCLib - bspline curve library. Methods to process knots and multiplicities. Multi-dimensional spline methods, particularly BSpline methods where the poles have an arbitrary number of dimensions, these methods are divided into two groups: (1) global methods modifying the whole set of poles. The poles are described by an array of reals and a dimension, like for inserting knots. (2) Local methods computing points and derivatives. The poles are described by a pointer on a local array of reals and a dimension. The local array is modified. Also, 2d and 3d spline curves methods, both rational and not ratoinal curves. Note that the bspline surface methods found in the BSplSLib package uses the same structure and relies on BSplCLib. Uses math, gp and GeomAbs.
+* * A survey of curves and surfaces methods in CADG Wolfgang BOHM CADG 1 (1984)
+* * On de Boor-like algorithms and blossoming Wolfgang BOEHM cagd 5 (1988) (typo?)
+* * Blossoming and knot insertion algorithms for B-spline curves (Ronald N. GOLDMAN)
+* * Modelisation des surfaces en CAO, Henri GIAUME Peugeot SA
+* * Curves and Surfaces for Computer Aided Geometric Design, a practical guide (Gerald Farin)
+* BSplSLib - bspline surface library. See also BSplCLib.
 * Contap - contour generation, arc functions, surface tool, topology tool, surface function, contour tool generator, etc.
 * Convert - algorithms to convert the following into a BSpline curve or surface: (1) a bounded curve based on an elementary 2D curve (line, circle or conic) from the gp package; (2) a bounded surface based on an elementary surface (cylinder, cone, sphere or torus) from the gp package; (3) a series of adjacent 2D or 3D Bezier curves defined by their poles. These algorithms compute the data needed to define the resulting BSpline curve or surface. This elementary data (degrees, periodic characteristics, poles and weights, knots and multiplicities) may then be used directly in an algorithm, or can be used to construct the curve or the surface by calling the appropriate constructor provided by the classes Geom2d\_BSplineCurve, Geom\_BSplineCurve or Geom\_BSplineSurface.
 * CPnts - definition of geometric algorithms to compute characteristic points on parametrized curves in 3d or 2d space. This package defines the external geometric entities, with their requirements, used in the algorithms.
@@ -515,8 +508,10 @@ also see:
 * ShapeUpgrade - Tools for splitting and converting shapes by some critera. Topological object splitting or conversion. High level API classes which perform: (1) converting geometry of shapes up to a given continuity; (2) splitting revolutions by U to segments less than given value; (3) converting to beziers; (4) splitting closed faces.
 * TopAbs - Topology data structure, topological algorithms. Describes a ShapeEnum for different topological shapes. Orientation enumeration to describe the orientation of a topological shape. State numeration to describe the position of a point relative to a Shape. Methods to manage the enumerations.
 * Sweep - create swept 3D primitives, based on TopAbs
+* BRepSweep - same thing as the Sweep package, except for the BRep data structure. Translation, Rotation, Prism, Revol. Simple methods to build prism, to build Revol. NumLinearRegularSweep. Also uses TopoDS.
 * TopBas - Data structure for topological algorithms. Interference list: an interference is the topological representation of an intersection.
 * TopClass - classification algorithms, used to compute if a point is inside, outside or on the boundary of a Shape. Uses gp, TopTrans, TopAbs, TopoDS, IntRes2d, IntCurveSurface, TopExp.
+* BRepTopAdaptor - some classification stuff?
 * TopCnx - This algorithm provides algorithms to compute transitions when many interferences occurs at the same place on a shape. An interference is an intersection on a shape (i.e. a vertex on an edge or an edge on a face) with data about the transition (how the shape is crossing the boundary where the intersection occurs). There are three algorithms to process interferences: (1) EdgeFaceTransition, to process intereferences on an edge crossing other edges on the boundary of a face; (2) EdgeSolidTransition, to process interferences on an edge crossing faces and edges on the boundary of a solid; (3) FaceSolidTransition, to process interferences on a face crossing other faces on the boundary of a solid. This package relies on the TopTrans package for the geometric computations.
 * TopExp - tools for exploring topological data structures. Explorer: a tool to find all subshapes of a given type, such as all faces of a solid. Package methods to map subshapes of a shape.
 * TopLoc - handle 3D local coordinate systems (called Locations). A Location is a composition of elementary coordinate systems, each one is called a Datum. The Location keeps track of this composition.
@@ -541,6 +536,7 @@ bounding boxes:
 
 * Bnd - bounding volumes, used to bound a shape to optimizing algorithms. If a point is outside the bounding volume of a shape it is also outside the shape. The contrary is not necessarily true. In 3d there is Box and BoundSortBox. In 2d there is Box2d and BoundSortBox2d. (bounding boxes?)
 * BndLib - Package to compute the bounding boxes for elementary objects from gp in 2d and 3d. Functions to add a geometric primitive to a bounding box. Note that these functions work with gp objects, optionally limited by parameter values. Compute the bounding box for a curve in 2 dimensions. Compute the bounding box for a curve in 3 dimensions. Compute the bounding box of a surface. The surface is defined by a tool for the geometry and another tool for the topology (only the edges in 2 dimensions). etc.
+* BRepBndLib - bounding boxes for curves and surfaces from BRepAdaptor. Functions to add a topological shape to a bounding box.
 
 basic geometry:
 
@@ -562,6 +558,7 @@ geometric bisecting:
 * Bisector - bisecting line between two geometric elements (such as circles, lines or points), bisecting line between a point and a curve, bisecting line between two curves, bisecting line trimmed by a point.
 * MAT - algorithm of bisecting locus
 * MAT2d - computation of Bisector locus on a set of geometries from Geom2d
+* BRepMAT2d - BRep bisection stuff, map/collection classes
 
 geometric constraints and constraint solving:
 
@@ -582,14 +579,17 @@ approximation:
 * AppCont - least square algorithm for approximating a set of continuous curves or a continuous surface. Also FittingCurve2d.
 * AppDef - classes for approximating points in Bezier curves used by the AppParCurves package. The points of the same range for the approximation are organized in MultiPointConstraints. These MultiPointConstraints are organized in a MultiLine. The corresponding result of a MultiLine approximation is a MultiCurve (set of Bezier curves) which has the same structure as a MultiLine: the MultiCurve is a set of MultiPoint. A point of a MultiLine can have many significations: the approximation curve can go through this point or not, can have a given tangency, or can have a given curvature. Note that a CurvaturePoint is also a PassPoint and a TangencyPoint. A TangencyPoint is also a PassPoint.
 * AppParCurves - parallel approximation in n curves, algorithms to approximate a MultiLine described by the tool MLineTool. The result of the approximation will be a MultiCurve (from AppDef?).
+* BRepBlend - some surface approximation stuff, points on curves, dunno
 
 intersections:
 
+* BRepApprox - algorithms for the approximation of intersection curves for BRep objects
 * IntAna - compute the intersections between (1) natural quadrics when the result is a conic (QuadQuadGeo); (2) a natural quadric and a quadric defined by its coefficients (IntQuadQuad); (3) 3 Pln (Int3Pln); (4) a Line and a Torus (IntLinTorus); (5) a Conic from gp and a Quadric defined by its coefficients (IntConicQuad).
 * IntAna2d - compute the intersection between two Geometric Processor (gp) types (Line, Circle, Ellipse, Parabola, and Hyperbola. One of these elements is known with his real type, the other one is known by an implicit quadratic equation (see class Conic). A particular case has been made for the intersection between two Lin2d, two Circ2d, a Lin2d and a Circ2d.
 * IntCurve - compute the intersections between 2D curves, with domains. Use IntConicConic for an algorithm to intersect 2 conics from gp with domains. Use IntConicCurveGen for an algorithm to intersect a conic from gp, and a parameterized curve. The parameterized Curve can not be a Composite curve and can not be a conic. Use IntCurveCurveGen for an algorithm to intersect 2 curves. Use UserIntConicCurveGen for an algorithm to intersect a Conic from gp and a parameterized curve, either a composite curve or a conic.
 * IntCurvesFace - compute the intersection points between a Face (a Shape) and a set of curves (the face (shape) is loaded, then for each curve is given to compute the intersection). Intersector (ShapeIntersector) can be used when the caller has to intersect more than one curve with the face (the shape). If there is only one curve, or if the face has no restrictions, some other algorithm can be called. See also the BRepIntCurveSurface package (for one curve and one shape) or the IntCurveSurface package (for one curve and one surface).
 * IntCurveSurface - compute the intersection between a curve and a surface.
+* BRepIntCurveSurface - instantiates IntCurveSurface with surfaces from BRep and curves from Adaptor. Intersection between a BRepAdaptor surface and a GeomAdaptor curve, or a Shape and a GeomAdaptor curve. Only the points which are inside the surface are returned.
 * IntImp - compute the intersection between a curve and a surface with a close point; ZerCSParFunc for the intersection between a 3d curve and a surface; ZerCOnSSParFunc for the intersection between a curve on surface and another surface
 * IntImpParGen - algorithm to intersect implicit curves and bounded parametric curves
 * IntPatch - compute the intersection between two patches, the class PatchIntersection implements the intersection algorithms and the results of the algorithms are described by IntPoint, PointOnDomain, Line, ILin, etc.
@@ -612,6 +612,14 @@ This is according to the [documentation](http://dev.opencascade.org/doc/overview
 * BRepOffsetAPI
 * BRepPrimAPI
 
+probably related to boolean operations, but not sure what these are:
+
+* BOPAlgo - no description. Classes: BuilderShape, PaveFiller, Builder, BOP, BuilderFace, WireEdgeSet, WireSplitter, ShellSplitter, BuilderArea, BuilderSolid, enumeration Operation is COMMON, FUSE, CUT, CUT21, SECTION, UNKNOWN; enumeration CheckStatus is CheckUnknown, BadType, SelfIntersect, TooSmallEdge, NonRecoverableFace, IncompatibilityOfVertex, IncompatibilityOfEdge, IncompatibilityOfFace,, OperationAborted, NotValid, etc.
+* BOPDS - data structures for general fuse and boolean operation algorithms, like: Iterator, Pave, PaveBlock, SubIterator, Point, Curve, FaceInfo, Interf, InterfVV, INterfVE, INterfVF, InterfEE, InterfEF, InterFF, InterfVZ, InterfEZ, InterfFZ, InterfZZ, VectorOfInterfVV, VectorOfInterfVE, VectorOfInterfVF, etc.
+* BOPCol - collection classes used by the partition and boolean operation algorithms, lots of ListOfList and sequences and maps and indexes and MapOfShape etc..
+* BOPTools - no description, various MapShapes, probably collections-related?
+* BOPInt - no description, provides class Range and ShrunkRange. IsOnPave1. IsInRange - checks if two ranges interfere with each other. ShrunkRange computes a working (shrunk) range of \[t1, t2\] for the 3D curve of the edge.
+
 chamfers and fillets:
 
 * ChFi2d - algorithms to build fillets or chamfers on planar wire
@@ -619,6 +627,7 @@ chamfers and fillets:
 * ChFiDS - fillet and chamfers data structure
 * FilletSurf - API giving only geometric information about fillets for Toyota Project UV4. TwoExtremityOnEdge, OneExtremityOnEdge, NoExtremityOnEdge, etc.
 * ChFiKPart - Fonctions de remplissage pour une SurfData, dans les cas particulers de conges/chanfreins suivants: cylindre/plan entre 2 surfaces planes; tore/sphere/cone entre un plan et un cylindre othogonal; tore/sphere/cone entre un plan et un cone othogonal; tore/sphere/cone entre un plan et un tore othogonal; tore/cone entre un plan et une sphere.
+* BRepFilletAPI - MakeFillet, MakeChamfer, MakeFillet2d, see also BRepBuilderAPI.
 
 shape healing:
 
