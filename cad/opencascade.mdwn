@@ -1,0 +1,423 @@
+# opencascade
+
+The [opencascade](http://opencascade.org/) [source code](https://github.com/tpaviot/oce) is written in a combination of Russian, French and English since the late 1980s starting at Matra Datavision. [Upstream](http://dev.opencascade.org/) has a Mantis [bug tracker](http://tracker.dev.opencascade.org/view_all_bug_page.php).
+
+* <http://opencascade.org/>
+* <http://dev.opencascade.org/>
+* <https://github.com/tpaviot/oce> ("opencascade community edition")
+* <http://tracker.dev.opencascade.org/view_all_bug_page.php>
+
+also:
+* <http://dev.opencascade.org/doc/overview/html/occt_user_guides__modeling_algos.html>
+* <http://dev.opencascade.org/doc/overview/html/occt_user_guides__boolean_operations.html>
+
+# overview
+
+See the [documentation](http://dev.opencascade.org/doc/overview/html/technical_overview.html).
+
+## package naming conventions
+
+* P(name) - persistence models, for storing to file or database
+* Mgt(name) - helpers for converting between persisted and non-persisted classes
+* Test - command wrappers to expose access to functions for DRAWEXE
+* TK(name) - toolkit, has only the following files: EXTERNLIB, FILES, PACKAGES; this was probably their attempt at making the code more accessible?
+* QA(name) - hardcoded bug-specific regression testing code for "quality assurance"
+
+## geometry
+
+* Convert provides:
+* * a bounded curve based on an elementary 2D curve (line, circle or conic) from the gp package,
+* * a bounded surface based on an elementary surface (cylinder, cone, sphere or torus) from the gp package,
+* * a series of adjacent 2D or 3D Bezier curves defined by their poles.
+
+* Geom2dConvert provides:
+* * a global function which is used to construct a BSpline curve from a bounded curve based on a 2D curve from the Geom2d package,
+* * a splitting algorithm which computes the points at which a 2D BSpline curve should be cut in order to obtain arcs with the same degree of continuity,
+* * global functions used to construct the BSpline curves created by this splitting algorithm, or by other types of segmentation of the BSpline curve,
+* * an algorithm which converts a 2D BSpline curve into a series of adjacent Bezier curves.
+
+* GeomConvert provides:
+* * a global function used to construct a BSpline curve from a bounded curve based on a curve from the Geom package,
+* * a splitting algorithm, which computes the points at which a BSpline curve should be cut in order to obtain arcs with the same degree of continuity,
+* * global functions to construct BSpline curves created by this splitting algorithm, or by other types of BSpline curve segmentation,
+* * an algorithm, which converts a BSpline curve into a series of adjacent Bezier curves,
+* * a global function to construct a BSpline surface from a bounded surface based on a surface from the Geom package,
+* * a splitting algorithm, which determines the curves along which a BSpline surface should be cut in order to obtain patches with the same degree of continuity,
+* * global functions to construct BSpline surfaces created by this splitting algorithm, or by other types of BSpline surface segmentation,
+* * an algorithm, which converts a BSpline surface into a series of adjacent Bezier surfaces,
+* * an algorithm, which converts a grid of adjacent Bezier surfaces into a BSpline surface.
+
+## topology
+
+Topology defines the relationship between simple geometric entities, which can thus be linked together to represent complex shapes.
+
+### primitives
+
+* 0D entities such as points;
+* 1D entities such as curves;
+* 2D entities such as surfaces;
+* 3D entities such as volumes.
+
+which consist of:
+
+* Vertex - a zero-dimensional shape corresponding to a point in geometry;
+* Edge - a shape corresponding to a curve, and bound by a vertex at each extremity;
+* Wire - a sequence of edges connected by their vertices;
+* Face - part of a plane (in 2D geometry) or a surface (in 3D geometry) bounded by a closed wire;
+* Shell - a collection of faces connected by some edges of their wire boundaries;
+* Solid - a part of 3D space bound by a shell;
+* Compound solid - a collection of solids.
+
+A face with 3D underlying geometry may also refer to a collection of connected triangles that approximate the underlying surface. The surfaces can be undefined leaving the faces represented by triangles only. If so, the model is purely polyhedral.
+
+### topology packages
+
+* TopAbs - topological shape, orientation and state
+* TopLoc - 3D local coordinate systems (Datum3D and Location); Datum3D describes an elementary coordinate system, while Location comprises a series of elementary coordinate systems.
+* TopoDS - data structures for modeling (see also TopExp); you will often use TopoDS\_Shape
+
+There are some other topology-related packages that build on top of TopAbs, TopLoc and TopoDS:
+
+* TopTools - basic tools
+* TopExp - classes to explore and manipulate the topological data structures described in the TopoDS package
+* BRepTools - classes to explore, manipulate, read and write BRep data structures. These more complex data structures combine topological descriptions with additional geometric information, and include rules for evaluating equivalence of different possible representations of the same object, for example, a point.
+
+## algorithms
+
+Algorithms are classified into the following categories in opencascade:
+
+* analytic algorithms, where solutions are obtained by the resolution of an equation, such algorithms are used when the geometries which are worked on (tangency arguments, position of the center, etc.) are points, lines or circles;
+* geometric algorithms, where the solution is generally obtained by calculating the intersection of parallel or bisecting curves built from geometric arguments;
+* iterative algorithms, where the solution is obtained by a process of iteration.
+
+For geometric construction of a constrained line or constrained circle, the following packages compute all solutions (except for those solutions that can only be found by the iterative algorithms):
+
+* Geom2dGcc - automatically selects an algorithm for the problem, inputs are Geom2d objects and the computed solutions are gp objects (qualified curves for tangency can be provided by Geom2dGcc)
+* GccAna - analytical algorithms, can only be used for geometries of lines and circles, both the input and output types are gp objects (qualified curves for tangency are provided by GccEnt); also maybe GccInt is used or it may be a typo for GccEnt
+
+Iterative algorithms compute only one solution, closest to an initial position:
+
+* to build a circle, when an argument is more complex than a line or a circle, and where the radius is not known or difficult to determine: this is the case for a circle tangential to three geometric elements, or tangential to two geometric elements and centered on a curve;
+* to build a line, when a tangency argument is more complex than a line or a circle.
+
+Curves used by GccAna algorithms to define the geometric problem to be solved, are 2D lines or circles from the gp package: they are not explicitly parameterized. However, these lines or circles retain an implicit parameterization, corresponding to that which they induce on equivalent Geom2d objects. This induced parameterization is the one used when returning parameter values on such curves, for instance with the functions Tangency1, Tangency2, Tangency3, Intersection2 and CenterOn3 provided by construction algorithms from the GccAna or Geom2dGcc packages.
+
+## topological tools
+
+This is the BRepBuilderAPI package. This library provides algorithms to:
+
+* Tessellate shapes
+* Validate shapes
+* Determine the local properties of shapes
+* Determine the global properties of shapes
+* Perform geometric transformations
+* Find planes in which edges are located
+* Convert shapes to NURBS geometry.
+
+It can create the following topological objects (perhaps using the original topology definitions from the other packages?):
+
+* Vertices
+* Edges
+* Faces
+* Wires
+* Polygonal wires
+* Shells
+* Solids
+
+Use the BRepPrimAPI package to construct primitives such as:
+
+* boxes
+* cones
+* cylinders
+* prisms
+* construction by sweeping along a profile (linear and rotational (through an angle of rotation))
+
+Sweeps are objects obtained by sweeping a profile along a path. The profile can be any topology and the path is usually a curve or a wire. The profile generates objects according to the following rules:
+
+* Vertices generate Edges
+* Edges generate Faces.
+* Wires generate Shells.
+* Faces generate Solids.
+* Shells generate Composite Solids.
+
+It is not allowed to sweep Solids and Composite Solids. Swept constructions along complex profiles such as BSpline curves also available in the BRepOffsetAPI package. This API provides simple, high level calls for the most common operations.
+
+## boolean operations
+
+Boolean operations allow creating new shapes from old ones by using:
+
+* Common
+* Cut
+* Fuse
+* Section
+
+From the viewpoint of Topology these are topological operations followed by blending (putting fillets onto edges created after the topological operation). Topological operations are the most convenient way to create real industrial parts, as most industrial parts consist of several simple elements such as gear wheels, arms, holes, ribs, tubes and pipes. It is usually easy to create those elements separately and then to combine them by Boolean operations in the whole final part.
+
+There exist two libraries providing Boolean Operations:
+
+* Old Boolean Operations (BOA) provided by BRepAlgo package designed and developed in Open CASCADE 6x in 2000; its architecture and content are out of date.
+* New Boolean Operations (NBOA) provided by BRepAlgoAPI package designed and developed in 2001 and completely revised in 2013.
+
+New Boolean Operations provide the following major benefits:
+
+* The NBOA have an expandable architecture of inner sub-algorithms based on the provided general algorithm(s?).
+* The architecture of NBOA is history-based. The implementation of NBOA internally sets up a correspondence between any sub-shape of the argument and its image in the result. The history is not imposed and thus it is not error-prone as it was in BOA. The fact allows direct and safely usage of the algorithm in parametric modeling.
+* The implementation of NBOA is based on NCollection classes. The usage of opportunities given by local memory allocators (NCollection\_IncAllocator) allows improving memory management and saving memory resources.
+* NBOA use modern algorithms of OCC as auxiliary tools. For e.g. the algorithm of unbalanced binary tree of overlapped bounding boxes (NCollection\_UBTree). The usage of the algorithm allows to improve the performance of NBOA if there is a big number of sub-shapes in the arguments.
+
+Boolean Operations have the following types of the arguments and produce the following results:
+
+* For arguments having the same shape type (e.g. SOLID / SOLID) the type of the resulting shape will be a COMPOUND, containing shapes of this type.
+* For arguments having different shape types (e.g. SHELL / SOLID) the type of the resulting shape will be a COMPOUND, containing shapes of the type that is the same as that of the low type of the argument. Example: For SHELL/SOLID the result is a COMPOUND of SHELLs.
+* For arguments with different shape types some of Boolean Operations can not be done using the default implementation, because of a non-manifold type of the result. Example: the FUSE operation for SHELL and SOLID can not be done, but the CUT operation can be done, where SHELL is the object and SOLID is the tool.
+* It is possible to perform Boolean Operations on arguments of the COMPOUND shape type. In this case each compound must not be heterogeneous, i.e. it must contain equidimensional shapes (EDGEs or/and WIREs, FACEs or/and SHELLs, SOLIDs). SOLIDs inside the COMPOUND must not contact (intersect or touch) each other. The same condition should be respected for SHELLs or FACEs, WIREs or EDGEs.
+* Boolean Operations for COMPSOLID type of shape are not supported.
+
+Packages:
+
+* BOPAlgo\_Builder - General Fuse Algorithm (GFA)
+* BOPAlgo\_BOP - for the Boolean Operation Algorithm (BOA).
+
+diagram: BOPAlgo\_Bop -> BOPAlgo\_Builder -> BOPAlgo\_BuilderShape -> BOPAlgo\_Algo
+
+The class BOPAlgo\_Algo provides the base interface for all algorithms, including error status, warning status, checking data, result checking, memory allocator.
+
+The class BOPAlgo\_BuilderShape provides the interface for algorithms that have a shape as the result and history information (generated, modified, IsDeleted).
+
+Read up on [modeling algorithms](http://dev.opencascade.org/doc/overview/html/occt_user_guides__modeling_algos.html) and [boolean operations](http://dev.opencascade.org/doc/overview/html/occt_user_guides__boolean_operations.html).
+
+## splitting and gluing
+
+* Split shape allows defining particular faces in a shape and new edges which should split that faces. Upon completion the algorithm gives the part of the shape which is situated on the left side of the line composed from new edges. In combination with the Section algorithm it is a powerful tool for partitioning shapes.
+* Glue shapes allows to defining pairs of faces and pairs of edges of two neighboring shapes to glue. Upon completion the algorithm gives the glued shape with cut out parts of faces inside the shape.
+
+## sewing
+
+Sewing allows creation of connected topology (shells and wires) from a set of separate topological elements (faces and edges). For example, Sewing can be used to create of shell from a compound of separate faces. It is important to distinguish between sewing and other procedures, which modify the geometry, such as filling holes or gaps, gluing, bending curves and surfaces, etc. Sewing does not change geometrical representation of the shapes. Sewing applies to topological elements (faces, edges) which are not connected but can be connected because they are geometrically coincident: it adds the information about topological connectivity. Already connected elements are left untouched in case of manifold sewing.
+
+Let us define several terms:
+
+* Floating edges do not belong to any face;
+* Free boundaries belong to one face only;
+* Shared edges belong to several faces, (i.e. two faces in a manifold topology).
+* Sewn faces should have edges shared with each other.
+* Sewn edges should have vertices shared with each other.
+
+### sewing algorithms
+
+* BRepAlgo\_Sewing (standard sewing algorithm)
+* ShapeUpgrade\_Sewing (a subclass of BRepAlgo\_Sewing) (a more advanced algorithm)
+
+The only difference between them is that Advanced sewing performs some additional fixes provided by Shape Healing (use of ShapeFix\_Shape) and improves some particular cases, such as closed surfaces. The principle and architecture of the algorithm itself remain the same.
+
+Class BRepAlgo\_Sewing provides methods implementing sewing algorithms:
+
+* loading initial data for global or local sewing;
+* setting customization parameters, such as special operation modes, tolerances and output results;
+* applying analysis methods that can be used to obtain connectivity data required by external algorithms;
+* sewing of the loaded shapes.
+
+Sewing supports working mode with big value tolerance. It is not necessary to repeat sewing step by step while smoothly increasing tolerance.
+
+It is also possible to sew edges to wire and to sew locally separate faces and edges from a shape.
+
+The Sewing algorithm can be subdivided into several independent stages, some of which can be turned on or off using Boolean or other flags. In brief, the algorithm should find a find a set of merge candidates for each free boundary, filter them according to certain criteria, and finally merge the found candidates and build the resulting sewn shape. Each stage of the algorithm or the whole algorithm can be adjusted with the following parameters:
+
+* Working tolerance defines the maximal distance between topological elements which can be sewn. It is not ultimate that such elements will be actually sewn as many other criteria are applied to make the final decision.
+* Minimal tolerance defines the size of the smallest element (edge) in the resulting shape. It is declared that no edges with size less than this value are created after sewing. If encountered, such topology becomes degenerated.
+* Non-manifold mode enables sewing of non-manifold topology.
+
+There are details in the opencascade documentation for tolerance management during sewing, manifold and non-manifold sewing, and local sewing.
+
+## shape healing
+
+geometry and topology debugging, user-guided fixing, etc.
+
+## test harness
+
+DRAWEXE is the "draw test harness". You type tcl into it and it does things. Type "pload ALL" to load all modules (all commands provided by the the Test\* packages). Also it does basic visualization.
+
+## debugging
+
+[debugging hints](http://dev.opencascade.org/doc/overview/html/occt_dev_guides__debug.html)
+
+## boolean operations diagnostics
+
+In real-world applications modeling operations are often performed in a long sequence, while the user sees only the final result of the whole sequence. If the final result is wrong, the first debug step is to identify the offending operation to be debugged further. Boolean operation algorithm in OCCT provides a self-diagnostic feature which can help to do that step.
+
+This feature can be activated by defining environment variable CSF\_DEBUG\_BOP, which should specify an existing writeable directory.
+
+The diagnostic code checks validity of the input arguments and the result of each Boolean operation. When an invalid situation is detected, the report consisting of argument shapes and a DRAW script to reproduce the problematic operation is saved to the directory pointed by CSF\_DEBUG\_BOP.
+
+# hints
+
+## How to extract the underlying geometry from shapes
+
+* BRep\_Tool::Surface to get the geometric surface from a face.
+* BRep\_Tool::Curve to get the 3d geometric curve from an edge.
+* BRep\_Tool::CurveOnSurface to get the 2d geometric curve of an edge, defined in the parametric space of a face.
+* BRep\_Tool::Pnt to get the 3D point from a vertex.
+
+## How to get the coordinates of a vertex
+
+To recover the UV coordinates of vertices, use BRep\_Tool::Parameters(const TopoDS\_Vertex& V, const TopoDS\_Face& F), which returns the U and V parameters of the vertex V on the face F as a gp\_Pnt2d.
+
+## How to explore a wire
+
+A wire is a sequence of edges, so wire exploration will return individual edges. Use BRepTools\_WireExplorer.
+
+<pre>
+TopoDS_Wire myWire = ...
+BRepTools_WireExplorer Ex;
+for (Ex.Init(myWire); Ex.More(); Ex.Next()) {
+TopoDS_Edge currentedge = Ex.Current();
+// Process current edge
+}
+</pre>
+
+## How to merge bspline curves
+
+* GeomConvert::ConcatG1 concatenates according to tangency continuity along the curve.
+* GeomConvert::ConcatC1 concatenates according to first derivative continuity along the curve.
+* using class GeomConvert\_CompCurveToBSplineCurve which provides methods to concatenate several restricted curves to a bspline curve. Non-bspline curves are converted to bspline before concatenation. To add a new curve, use the GeomConvert\_CompCurveToBSplineCurve::Add method. Tolerance is used to check the continuity and decrease the Multiplicity at the common Knot until MinM . If MinM = 0 , the common Knot can be removed. The method to get a result is Handle(Geom\_BSplineCurve) GeomConvert\_CompCurveToBSplineCurve::BSplineCurve() const.
+
+# interesting stuff
+
+* <https://github.com/tpaviot/oce/blob/master/src/BRepAlgo/BRepAlgo_BooleanOperation.cxx>
+
+# dealing with legacy code
+
+* use clang/clang++ and llvm opt to generate graphviz dot files of the call graph, then calculate the most popular functions for pruning the graph or begin clustering
+* stack tracing
+* logging
+* comment out chunks of code, compile, run a routine again
+* DRAWEXE
+* remove unnecessary chunks of code
+
+## callgraphs
+
+[opencascade callgraphs](http://diyhpl.us/~bryan/irc/opencascade/callgraphs.tar.xz) (6 MB tarbomb, 2 json files) based on <https://github.com/tpaviot/oce> commit 9a97b1638c48e80d73c791a563cf5af8ad10096b (2014-05-09).
+
+## largest files
+
+* [AppCont/AppCont_ContMatrices_4.cxx](https://github.com/tpaviot/oce/tree/master/src/AppCont/AppCont_ContMatrices_4.cxx)
+* [RWStepAP214/RWStepAP214_ReadWriteModule.cxx](https://github.com/tpaviot/oce/tree/master/src/RWStepAP214/RWStepAP214_ReadWriteModule.cxx)
+* [AdvApp2Var/AdvApp2Var_Data_2.cxx](https://github.com/tpaviot/oce/tree/master/src/AdvApp2Var/AdvApp2Var_Data_2.cxx)
+* [AdvApp2Var/AdvApp2Var_MathBase.cxx](https://github.com/tpaviot/oce/tree/master/src/AdvApp2Var/AdvApp2Var_MathBase.cxx)
+* [AdvApp2Var/AdvApp2Var_ApproxF2var.cxx](https://github.com/tpaviot/oce/tree/master/src/AdvApp2Var/AdvApp2Var_ApproxF2var.cxx)
+* [AdvApp2Var/AdvApp2Var_Data_4.cxx](https://github.com/tpaviot/oce/tree/master/src/AdvApp2Var/AdvApp2Var_Data_4.cxx)
+* [AdvApp2Var/AdvApp2Var_Data_5.cxx](https://github.com/tpaviot/oce/tree/master/src/AdvApp2Var/AdvApp2Var_Data_5.cxx)
+* [ViewerTest/ViewerTest_ViewerCommands.cxx](https://github.com/tpaviot/oce/tree/master/src/ViewerTest/ViewerTest_ViewerCommands.cxx)
+* [AppCont/AppCont_ContMatrices_2.cxx](https://github.com/tpaviot/oce/tree/master/src/AppCont/AppCont_ContMatrices_2.cxx)
+* [RWStepAP214/RWStepAP214_GeneralModule.cxx](https://github.com/tpaviot/oce/tree/master/src/RWStepAP214/RWStepAP214_GeneralModule.cxx)
+* [AdvApp2Var/AdvApp2Var_Data_6.cxx](https://github.com/tpaviot/oce/tree/master/src/AdvApp2Var/AdvApp2Var_Data_6.cxx)
+* [AdvApp2Var/AdvApp2Var_Data_7.cxx](https://github.com/tpaviot/oce/tree/master/src/AdvApp2Var/AdvApp2Var_Data_7.cxx)
+* [ViewerTest/ViewerTest_ObjectCommands.cxx](https://github.com/tpaviot/oce/tree/master/src/ViewerTest/ViewerTest_ObjectCommands.cxx)
+* [QABugs/QABugs_11.cxx](https://github.com/tpaviot/oce/tree/master/src/QABugs/QABugs_11.cxx)
+* [IntTools/IntTools_FaceFace.cxx](https://github.com/tpaviot/oce/tree/master/src/IntTools/IntTools_FaceFace.cxx)
+* [ChFi3d/ChFi3d_Builder_0.cxx](https://github.com/tpaviot/oce/tree/master/src/ChFi3d/ChFi3d_Builder_0.cxx)
+* [BRepBuilderAPI/BRepBuilderAPI_Sewing.cxx](https://github.com/tpaviot/oce/tree/master/src/BRepBuilderAPI/BRepBuilderAPI_Sewing.cxx)
+* [math/math_Kronrod.cxx](https://github.com/tpaviot/oce/tree/master/src/math/math_Kronrod.cxx)
+* [ChFi3d/ChFi3d_Builder_C1.cxx](https://github.com/tpaviot/oce/tree/master/src/ChFi3d/ChFi3d_Builder_C1.cxx)
+* [AppCont/AppCont_ContMatrices_1.cxx](https://github.com/tpaviot/oce/tree/master/src/AppCont/AppCont_ContMatrices_1.cxx)
+* [IntPolyh/IntPolyh_MaillageAffinage.cxx](https://github.com/tpaviot/oce/tree/master/src/IntPolyh/IntPolyh_MaillageAffinage.cxx)
+* [Visual3d/Visual3d_View.cxx](https://github.com/tpaviot/oce/tree/master/src/Visual3d/Visual3d_View.cxx)
+* [IntPatch/IntPatch_PrmPrmIntersection.cxx](https://github.com/tpaviot/oce/tree/master/src/IntPatch/IntPatch_PrmPrmIntersection.cxx)
+* [AppCont/AppCont_ContMatrices.cxx](https://github.com/tpaviot/oce/tree/master/src/AppCont/AppCont_ContMatrices.cxx)
+* [IFSelect/IFSelect_WorkSession.cxx](https://github.com/tpaviot/oce/tree/master/src/IFSelect/IFSelect_WorkSession.cxx)
+* [HLRBRep/HLRBRep_PolyAlgo.cxx](https://github.com/tpaviot/oce/tree/master/src/HLRBRep/HLRBRep_PolyAlgo.cxx)
+* [ViewerTest/ViewerTest.cxx](https://github.com/tpaviot/oce/tree/master/src/ViewerTest/ViewerTest.cxx)
+* [ShapeFix/ShapeFix_Wire.cxx](https://github.com/tpaviot/oce/tree/master/src/ShapeFix/ShapeFix_Wire.cxx)
+* [BRepOffset/BRepOffset_Tool.cxx](https://github.com/tpaviot/oce/tree/master/src/BRepOffset/BRepOffset_Tool.cxx)
+* [TopOpeBRepDS/TopOpeBRepDS_EXPORT.cxx](https://github.com/tpaviot/oce/tree/master/src/TopOpeBRepDS/TopOpeBRepDS_EXPORT.cxx)
+* [Quantity/Quantity_Color.cxx](https://github.com/tpaviot/oce/tree/master/src/Quantity/Quantity_Color.cxx)
+* [BSplCLib/BSplCLib.cxx](https://github.com/tpaviot/oce/tree/master/src/BSplCLib/BSplCLib.cxx)
+* [BRepOffset/BRepOffset_MakeOffset.cxx](https://github.com/tpaviot/oce/tree/master/src/BRepOffset/BRepOffset_MakeOffset.cxx)
+* [AppCont/AppCont_ContMatrices_3.cxx](https://github.com/tpaviot/oce/tree/master/src/AppCont/AppCont_ContMatrices_3.cxx)
+* [IFSelect/IFSelect_Functions.cxx](https://github.com/tpaviot/oce/tree/master/src/IFSelect/IFSelect_Functions.cxx)
+* [ChFi3d/ChFi3d_Builder_CnCrn.cxx](https://github.com/tpaviot/oce/tree/master/src/ChFi3d/ChFi3d_Builder_CnCrn.cxx)
+* [V3d/V3d_View.cxx](https://github.com/tpaviot/oce/tree/master/src/V3d/V3d_View.cxx)
+* [STEPCAFControl/STEPCAFControl_Writer.cxx](https://github.com/tpaviot/oce/tree/master/src/STEPCAFControl/STEPCAFControl_Writer.cxx)
+* [ShapeFix/ShapeFix_ComposeShell.cxx](https://github.com/tpaviot/oce/tree/master/src/ShapeFix/ShapeFix_ComposeShell.cxx)
+* [ChFi3d/ChFi3d_Builder_2.cxx](https://github.com/tpaviot/oce/tree/master/src/ChFi3d/ChFi3d_Builder_2.cxx)
+* [BSplSLib/BSplSLib.cxx](https://github.com/tpaviot/oce/tree/master/src/BSplSLib/BSplSLib.cxx)
+* [BRepFill/BRepFill_Evolved.cxx](https://github.com/tpaviot/oce/tree/master/src/BRepFill/BRepFill_Evolved.cxx)
+* [DDataStd/DDataStd_BasicCommands.cxx](https://github.com/tpaviot/oce/tree/master/src/DDataStd/DDataStd_BasicCommands.cxx)
+* [BRepFill/BRepFill_Sweep.cxx](https://github.com/tpaviot/oce/tree/master/src/BRepFill/BRepFill_Sweep.cxx)
+* [STEPCAFControl/STEPCAFControl_Reader.cxx](https://github.com/tpaviot/oce/tree/master/src/STEPCAFControl/STEPCAFControl_Reader.cxx)
+* [ViewerTest/ViewerTest_RelationCommands.cxx](https://github.com/tpaviot/oce/tree/master/src/ViewerTest/ViewerTest_RelationCommands.cxx)
+* [ShapeFix/ShapeFix_Face.cxx](https://github.com/tpaviot/oce/tree/master/src/ShapeFix/ShapeFix_Face.cxx)
+* [PLib/PLib.cxx](https://github.com/tpaviot/oce/tree/master/src/PLib/PLib.cxx)
+* [AIS/AIS_InteractiveContext.cxx](https://github.com/tpaviot/oce/tree/master/src/AIS/AIS_InteractiveContext.cxx)
+* [AdvApp2Var/AdvApp2Var_SysBase.cxx](https://github.com/tpaviot/oce/tree/master/src/AdvApp2Var/AdvApp2Var_SysBase.cxx)
+* [GeomPlate/GeomPlate_BuildPlateSurface.cxx](https://github.com/tpaviot/oce/tree/master/src/GeomPlate/GeomPlate_BuildPlateSurface.cxx)
+* [OpenGl/OpenGl_Workspace_Raytrace.cxx](https://github.com/tpaviot/oce/tree/master/src/OpenGl/OpenGl_Workspace_Raytrace.cxx)
+* [math/math.cxx](https://github.com/tpaviot/oce/tree/master/src/math/math.cxx)
+* [IntTools/IntTools_BeanFaceIntersector.cxx](https://github.com/tpaviot/oce/tree/master/src/IntTools/IntTools_BeanFaceIntersector.cxx)
+* [Graphic3d/Graphic3d_Structure.cxx](https://github.com/tpaviot/oce/tree/master/src/Graphic3d/Graphic3d_Structure.cxx)
+* [BRepMesh/BRepMesh_Delaun.cxx](https://github.com/tpaviot/oce/tree/master/src/BRepMesh/BRepMesh_Delaun.cxx)
+* [BiTgte/BiTgte_Blend.cxx](https://github.com/tpaviot/oce/tree/master/src/BiTgte/BiTgte_Blend.cxx)
+* [ShapeFix/ShapeFix_IntersectionTool.cxx](https://github.com/tpaviot/oce/tree/master/src/ShapeFix/ShapeFix_IntersectionTool.cxx)
+* [HLRBRep/HLRBRep_Data.cxx](https://github.com/tpaviot/oce/tree/master/src/HLRBRep/HLRBRep_Data.cxx)
+* [DNaming/DNaming_ModelingCommands.cxx](https://github.com/tpaviot/oce/tree/master/src/DNaming/DNaming_ModelingCommands.cxx)
+* [BRepFill/BRepFill_TrimShellCorner.cxx](https://github.com/tpaviot/oce/tree/master/src/BRepFill/BRepFill_TrimShellCorner.cxx)
+* [BRepFeat/BRepFeat_RibSlot.cxx](https://github.com/tpaviot/oce/tree/master/src/BRepFeat/BRepFeat_RibSlot.cxx)
+* [AdvApp2Var/AdvApp2Var_Data_1.cxx](https://github.com/tpaviot/oce/tree/master/src/AdvApp2Var/AdvApp2Var_Data_1.cxx)
+* [TopOpeBRepBuild/TopOpeBRepBuild_KPart.cxx](https://github.com/tpaviot/oce/tree/master/src/TopOpeBRepBuild/TopOpeBRepBuild_KPart.cxx)
+* [StepData/StepData_StepReaderData.cxx](https://github.com/tpaviot/oce/tree/master/src/StepData/StepData_StepReaderData.cxx)
+* [STEPControl/STEPControl_ActorRead.cxx](https://github.com/tpaviot/oce/tree/master/src/STEPControl/STEPControl_ActorRead.cxx)
+* [IntPatch/IntPatch_ImpPrmIntersection.cxx](https://github.com/tpaviot/oce/tree/master/src/IntPatch/IntPatch_ImpPrmIntersection.cxx)
+* [IntAna/IntAna_QuadQuadGeo.cxx](https://github.com/tpaviot/oce/tree/master/src/IntAna/IntAna_QuadQuadGeo.cxx)
+* [GeomLib/GeomLib.cxx](https://github.com/tpaviot/oce/tree/master/src/GeomLib/GeomLib.cxx)
+* [BRepFill/BRepFill_OffsetWire.cxx](https://github.com/tpaviot/oce/tree/master/src/BRepFill/BRepFill_OffsetWire.cxx)
+* [TopOpeBRepBuild/TopOpeBRepBuild_BuilderON.cxx](https://github.com/tpaviot/oce/tree/master/src/TopOpeBRepBuild/TopOpeBRepBuild_BuilderON.cxx)
+* [TNaming/TNaming_Naming.cxx](https://github.com/tpaviot/oce/tree/master/src/TNaming/TNaming_Naming.cxx)
+* [TNaming/TNaming_Name.cxx](https://github.com/tpaviot/oce/tree/master/src/TNaming/TNaming_Name.cxx)
+* [StepAP214/StepAP214_Protocol.cxx](https://github.com/tpaviot/oce/tree/master/src/StepAP214/StepAP214_Protocol.cxx)
+* [ShapeAnalysis/ShapeAnalysis_Wire.cxx](https://github.com/tpaviot/oce/tree/master/src/ShapeAnalysis/ShapeAnalysis_Wire.cxx)
+* [IntCurve/IntCurve_IntConicConic_1.cxx](https://github.com/tpaviot/oce/tree/master/src/IntCurve/IntCurve_IntConicConic_1.cxx)
+* [GeomInt/GeomInt_IntSS_1.cxx](https://github.com/tpaviot/oce/tree/master/src/GeomInt/GeomInt_IntSS_1.cxx)
+* [ChFi3d/ChFi3d_FilBuilder.cxx](https://github.com/tpaviot/oce/tree/master/src/ChFi3d/ChFi3d_FilBuilder.cxx)
+* [ChFi3d/ChFi3d_ChBuilder.cxx](https://github.com/tpaviot/oce/tree/master/src/ChFi3d/ChFi3d_ChBuilder.cxx)
+* [ChFi3d/ChFi3d_Builder_6.cxx](https://github.com/tpaviot/oce/tree/master/src/ChFi3d/ChFi3d_Builder_6.cxx)
+* [StepAP209/StepAP209_Construct.cxx](https://github.com/tpaviot/oce/tree/master/src/StepAP209/StepAP209_Construct.cxx)
+* [QABugs/QABugs_19.cxx](https://github.com/tpaviot/oce/tree/master/src/QABugs/QABugs_19.cxx)
+* [OSD/OSD_File.cxx](https://github.com/tpaviot/oce/tree/master/src/OSD/OSD_File.cxx)
+* [Geom/Geom_BSplineSurface_1.cxx](https://github.com/tpaviot/oce/tree/master/src/Geom/Geom_BSplineSurface_1.cxx)
+* [Geom/Geom_BezierSurface.cxx](https://github.com/tpaviot/oce/tree/master/src/Geom/Geom_BezierSurface.cxx)
+* [Draw/Draw_Window.cxx](https://github.com/tpaviot/oce/tree/master/src/Draw/Draw_Window.cxx)
+* [Draft/Draft_Modification_1.cxx](https://github.com/tpaviot/oce/tree/master/src/Draft/Draft_Modification_1.cxx)
+* [TPrsStd/TPrsStd_ConstraintTools.cxx](https://github.com/tpaviot/oce/tree/master/src/TPrsStd/TPrsStd_ConstraintTools.cxx)
+* [TopOpeBRepBuild/TopOpeBRepBuild_Builder1.cxx](https://github.com/tpaviot/oce/tree/master/src/TopOpeBRepBuild/TopOpeBRepBuild_Builder1.cxx)
+* [NIS/NIS_Triangulated.cxx](https://github.com/tpaviot/oce/tree/master/src/NIS/NIS_Triangulated.cxx)
+* [Geom/Geom_OffsetSurface.cxx](https://github.com/tpaviot/oce/tree/master/src/Geom/Geom_OffsetSurface.cxx)
+* [BRepFill/BRepFill_CompatibleWires.cxx](https://github.com/tpaviot/oce/tree/master/src/BRepFill/BRepFill_CompatibleWires.cxx)
+* [BOPAlgo/BOPAlgo_PaveFiller_6.cxx](https://github.com/tpaviot/oce/tree/master/src/BOPAlgo/BOPAlgo_PaveFiller_6.cxx)
+* [TopOpeBRepDS/TopOpeBRepDS_BuildTool.cxx](https://github.com/tpaviot/oce/tree/master/src/TopOpeBRepDS/TopOpeBRepDS_BuildTool.cxx)
+* [TopOpeBRepBuild/TopOpeBRepBuild_GridSS.cxx](https://github.com/tpaviot/oce/tree/master/src/TopOpeBRepBuild/TopOpeBRepBuild_GridSS.cxx)
+* [STEPControl/STEPControl_ActorWrite.cxx](https://github.com/tpaviot/oce/tree/master/src/STEPControl/STEPControl_ActorWrite.cxx)
+* [ShapeCustom/ShapeCustom_BSplineRestriction.cxx](https://github.com/tpaviot/oce/tree/master/src/ShapeCustom/ShapeCustom_BSplineRestriction.cxx)
+* [QABugs/QABugs_3.cxx](https://github.com/tpaviot/oce/tree/master/src/QABugs/QABugs_3.cxx)
+* [QABugs/QABugs_17.cxx](https://github.com/tpaviot/oce/tree/master/src/QABugs/QABugs_17.cxx)
+* [IntPatch/IntPatch_LineConstructor.cxx](https://github.com/tpaviot/oce/tree/master/src/IntPatch/IntPatch_LineConstructor.cxx)
+
+# questions
+
+## is a 2d circle represented as a bezier curve spline in opencascade?
+
+## if you extrude a circle, then fuse with a nurbs surface, what happens to the original circle object or the result of the circle-extrusion?
+
+## where is the source code for curve-curve, curve-surface, and surface-surface nurbs intersection?
+
+partial answer: <https://github.com/tpaviot/oce/blob/master/src/BRepAlgo/BRepAlgo_BooleanOperation.cxx>
+
+also see:
+* <http://dev.opencascade.org/doc/overview/html/occt_user_guides__modeling_algos.html>
+* <http://dev.opencascade.org/doc/overview/html/occt_user_guides__boolean_operations.html>
+
+## what do these packages do?
+
+* GeomLProp - local properties on 3D curves and surfaces
+* Geom2dLProp - allows computing Derivative and Tangent vectors (normal and curvature) of a parametric point on a 2D curve
+* BRepLProp - algorithms computing various local properties on edges and faces in a BRep model
+* LProp - an enumeration used to characterize a particular point on a 2D curve
