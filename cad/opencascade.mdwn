@@ -438,15 +438,12 @@ also see:
 * AppParCurves
 * Approx
 * ApproxInt
-* AppStd
-* AppStdL
-* Aspect
 * Bisector - bisecting line between two geometric elements
 * BiTgte - create a filler rolling on an edge; curve on edge; curve on vertex; DataMapOfShapeBox
-* Blend
-* BlendFunc
-* Bnd
-* BndLib
+* Blend - SurfRstFunction, SurfPointFuncInv, SurfCurvFuncInv, RstRstFunction, CurvPointFuncInv, DecrochStatus, etc.
+* BlendFunc - compute blendings between two surfaces (constant radius, evolutive radius, ruled surface). Ruled, RuledInv, EvolRad, EvolRadInv, Corde, Chamfer, ChamfInv, ChAsym, ChAsymInv, Tensor, Knots, Mults, GetMinimalWeights, ComputeNormal, ComputeDNormal, etc.
+* Bnd - bounding volumes, used to bound a shape to optimizing algorithms. If a point is outside the bounding volume of a shape it is also outside the shape. The contrary is not necessarily true. In 3d there is Box and BoundSortBox. In 2d there is Box2d and BoundSortBox2d. (bounding boxes?)
+* BndLib - Package to compute the bounding boxes for elementary objects from gp in 2d and 3d. Functions to add a geometric primitive to a bounding box. Note that these functions work with gp objects, optionally limited by parameter values. Compute the bounding box for a curve in 2 dimensions. Compute the bounding box for a curve in 3 dimensions. Compute the bounding box of a surface. The surface is defined by a tool for the geometry and another tool for the topology (only the edges in 2 dimensions). etc.
 * BOPAlgo
 * BOPCol
 * BOPDS
@@ -492,16 +489,12 @@ also see:
 * CPnts - definition of geometric algorithms to compute characteristic points on parametrized curves in 3d or 2d space. This package defines the external geometric entities, with their requirements, used in the algorithms.
 * CSLib - implements functions for basis geometric computation on curves and surfaces. The tolerance criterions used in this package are Resolution from package gp and RealEpsilon from class Real of package Standard. (JCV Decembre 1991)
 * Draft - Returns the draft angle of the face F using the direction Direction, the method is valid for plane faces, cylindrical or conic faces, when the direction of the axis of the surface is colinear with the direction. Otherwise, the exception DomainError is raised.
-* ElCLib
-* ElSLib
-* Expr
-* ExprIntrp
-* Extrema
-* FairCurve
-* FEmTool
-* FilletSurf
-* FWOSDriver
-* FWOSPlugin
+* ElCLib - Elementary curves library; geometric computations on elementary curves such as conics and lines in 2D and 3D space. This includes: calculation of a point or derived vector on a 2D or 3D curve where the curve is provided by the gp package or defined in reference form (as in the gp package), and the point is defined by a parameter, also including various elementary computations which allow you to position parameterized values within the period of a curve. If the curves provided by the gp package are not explicitly parameterized, they still have an implicit parameterization, analogous to that which they infer for the equivalent Geom or Geom2d curves.
+* ElSLib - Elementary surfaces library; geometric computations on elementary surfaces. This includes: calculation of a point or derived vector on a surface where the surface is provided by the gp package or defined in canonical form (as in the gp package) and the point is definied with a parameter, also including evaluation of the parameters corresponding to a point on an elementary surface from gp, also including calculation of isoparametric curves on an elementary surface defined in canonical form (as in the gp package).
+* Extrema - calculate the distance between points, curves and surfaces. In the general case, the algorithm to find the distances is a minimization algorithm of a function of variables: F(X). It is stopped when for X1=X+Dx, F(X) and F(X1) are the same. The value of Dx can be calculated for all the algorithms. Generic classes for point-curve extremas, point-surface extremas, curve-curve extremas, curve-surface extremas, surface-surface extremas, lots of others.
+* FairCurve - make a "FairCurve" by no linear optimization. Batten. Curve with MinimalVariation of curvature or "MVC". To deal with the different results in the computation of curvatures. FairCurve\_InfiniteSliding describes the case where sliding is infinite, and, consequently, computation stops. The solution is to use an imposed sliding value. FairCurve\_NullHeight describes the case where no matter is left at one of the ends of the curve, and as a result, computation stops. The solution is to change (increase or reduce) the slope value by increasing or decreasing it.
+* FEmTool - finite element methods; LinearTension, LinearFlexion, LinearJerk, SparseMatrix, Curve, ProfileMatrix, some others.
+* FilletSurf - API giving only geometric information about fillets for Toyota Project UV4. TwoExtremityOnEdge, OneExtremityOnEdge, NoExtremityOnEdge, etc.
 * GC - Constructions of 3d geometrical elements from Geom. Constructions of planes from Geom. Construction of surfaces from Geom. Constructions of transformation from Geom.
 * GccAna - create lines and circles from constraints, based on objects from gp; see also Geom2dGcc. Analytical algorithms, can only be used for geometries of lines and circles, both the input and output types are gp objects (qualified curves for tangency are provided by GccEnt); also maybe GccInt is used or it may be a typo for GccEnt.
 * GccEnt - implementation of the qualified entities useful to create 2d entities with geometric constraints. The qualifier explains which subfamily of solutions we want to obtain. It uses the following law: the matter/the interior side is at the left of the line, if we go from the beginning to the end. The qualifiers are: (1) enclosing - the solution(s) must enclose the argument; (2) enclosed - the solution(s) must be enclosed in the argument; (3) outside - both the solution(s) and the argument must be outside to each other; (4) unqualified - the position is undefined, so give all the solutions. The use of a qualifier is always required if such subfamilies exist. For example, it is not used for a point. Note that the interior of a curve is defined as the left-hand side of the curve in relation to its orientation.
@@ -558,11 +551,9 @@ also see:
 * IntSurf
 * IntTools
 * IntWalk
-* Law
-* LDOM
-* LibCtl
-* LocalAnalysis
-* LocOpe
+* Law - 1d functions, like BSpline, Interpolate, Constant, Linear, BSpFunc, Interpol, Composite, BSplineKnotSplitting, MixBnd, MixTgt, Scale, ScaleCub, etc.
+* LocalAnalysis - check the local continuity between two points situated on two curves or two surfaces
+* LocOpe - local topological operations on a shape. Splitshape, ProjectedWires, WiresOnShape, Spliter, Generator, GluedShape, Prism, Revol, Pipe, DPrism, LinearForm, RevolutionForm, Gluer, FindEdges, FindEdgesInFace, PntFace, CurveShapeIntersector, BuildShape, SequenceOfCirc, TgtFaces, Closed, IsInside, etc.
 * LProp - Given a curve and a parameter value, the following computations are available: point, derivatives, tangent, normal, curvature, center of curvature, locals curvature's extremas, points of inflection; Given a surface and 2 parameters the following computations are available: for each parameters (derivatives, tangent line, center of curvature), also point, normal line, maximum and minimum curvatures, principal directions of curvature, mean curvature, Gaussian curvature.
 * Geom2dLProp - handles local properties of curves and surfaces from the packages Geom and Geom2d, see package LProp
 * LProp3d - handles local properties of curves and surfaces from the package Adaptor3d. This originates from BRepLProp being abstracted from BRep.
@@ -583,10 +574,10 @@ also see:
 * TopExp - tools for exploring topological data structures. Explorer: a tool to find all subshapes of a given type, such as all faces of a solid. Package methods to map subshapes of a shape.
 * TopLoc - handle 3D local coordinate systems (called Locations). A Location is a composition of elementary coordinate systems, each one is called a Datum. The Location keeps track of this composition.
 * TopoDS - Provides methods to cast objects of class TopoDS\_Shape to be objects of more specialized types. TopoDS types here: Builder, Compound, Compound, CompSolid, Edge, Face, HShape, Iterator, Shape, Shell, Solid, TCompound, TCompSolid, TEdge, TFace, TShape, TShell, TSolid, TVertex, TWire, Vertex, Wire.
-* TopOpeBRep
-* TopOpeBRepBuild
-* TopOpeBRepDS
-* TopOpeBRepTool
+* TopOpeBRep - topological operations on the BRep data structure. PointClassifier, FacesINtersector, ShapeScanner, ShapeIntersector, ShapeIntersector2d, EdgesFiller, FaceEdgeFiller, DSFiller, etc.
+* TopOpeBRepBuild - algorithms for topological operation on BRep shapes. These builders work on a data structure that must have been previously filled (by a "filler") according to topological operation rules defined in class DataStructure from TopOpeBRepDS. The DSFiller must be considered as a "linking" tool dealing with geometric data as an input and a DS as an output. These geometric data may be seen as the result of 3D intersection between BRep shapes. AreaBuilder, Pave, ListOfPave, PaveSet, PaveClassifier, EdgeBuiler, FaceBuilder, SolidBuilder, WireToFace, ShellToSolid, FuseFace, CorrectFace2d, Tools2d, IndexedDataMapOfShapeVertexInfo, etc.
+* TopOpeBRepDS - used by TopOpeBRepBuild, performing topological operations on the BRep data structure. Interference, ListOfInterference, InterferenceIterator, DataMapOfInterferenceShape, CurvePointInterference, SurfaceCurveInterference, SolidSurfaceInterference, ShapeShapeInterference, EdgeVertexInterference, FaceEdgeInterference, Surface, Curve, Point, GeometryData, SurfaceData, PointData, CurveData, ShapeData, ShapeSurface, SurfaceIterator, CurveIterator, PointIterator, SurfaceExplorer, CurveExplorer, PointExplorer, Dumper, EdgeInterferenceTool, Edge3dInterferenceTool, FaceInterferenceTool, IsGeometry, IsTopology, KindToShape, ShapeToKind, etc.
+* TopOpeBRepTool - used by TopOpeBRep to perform topological operations on the BRep data structure. ShapeExplorer, ShapeClassifier, various indexes and maps, makeTransition, PurgeInternaledges, PurgeClosingEdges, FuseEdges, MakeFaces, Regularize, RegularizeWires, RegularizeFace, RegularizeShells, etc.
 * TopTools - utilities for topological data structures. ShapeMapHasher, OrientedShapeMapHasher, Instantiations of TCollection for Shapes (MapOfShape, IndexedMapOfShape, DataMapOfShapeReal, etc.). Dump will dump the topological of a Shape.
 * TopTrans - This package provides algorithms to compute complex transitions. A transition is the status of geometry near the boundary of a shape. An example is the intersection of a curve and a surface enclosing a solid, the transition tells if the parts of the curve just before and just after the intersection are inside, outside or on the boundary of the solid. The difficulty with transitions arise when dealing with trimmed geometries like edges and faces. When the geometric intersections are inside the trimmed geometry and the transition is usually computed by the intersection algorithms as the trimming can be safely ignored. If the intersection falls on the trimming boundaries one must consider the neighboring entities. Consider as an example the intersection of a curve and a solid, if the intersection falls on an edge of the solid it does not fall inside the two faces adjacent to the edge, a complex transition occurs. This package provides two classes: (1) CurveTransition, which is used to compute complex transitions with another curve; (2) SurfaceTransition, which is used to compute complex transitions in 3D space. The curves and surfaces are given by a first or second order approximation around the intersection point. For a curve, the tangent vector or the osculating circle. For a surface, the normal vector or the osculating quadric.
 * Transfer - Defines general transfer engine, which provides tools and workframe for all kinds of file (non-direct) interfaces. Works on the basis of data provided by package Interface (especially InterfaceModel). 
@@ -597,6 +588,8 @@ basic math:
 
 * math - random numbers, Gauss, GaussLeastSquare, SVD, DirectPolynomialRoots, FunctionRoots, BissecNewton, FunctionRoot, NewtonFunctionRoot, BracketedRoot, FunctionSetRoot, NewtonFunctionSetRoot, BracketMinimum, BrentMinimum, Powell, FRPR, BFGS, NewtonMinimum, Jacobi, GaussSingleIntegration, GaussMultipleIntegration, GaussSetIntegration, RealRandom, FunctionSample, FunctionAllRoots, Householder, Crout, Uzawa, TrigonometricFunctionRoots, KronrodSingleIntegration (Kronrod method implementation), ComputeGaussPointsAndWeights, ComputeKronrodPointsAndWeights, QuickSortOfValueAndWeight, OrderedGaussPointsAndWeights, etc.
 * PLib - polynomial functions library. JacobiPolynomial, HermitJacobi, DoubleJacobiPolynomial, RationalDerivative, binomials, EvalLagrange, JacobiParameters.
+* Expr - data structure of any expression, relation or function used in mathematics. Describes the assignment of variables. Standard mathematical functions are implemented such as trigonometrics, hyperbolics, and log functions. ArcCosine, ArcSine, ArcTangent, ArgCosh, ArgSinh, ArgTanh, Cosh, Cosine, Exponential, LogOfe, LogOf10, Sign, Sine, Sinh, Square, SquareRoot, Tangent, Tanh, UnaryFunction, UnaryMinus, BinaryFunction, Difference, Division, PolyExpression, Different, Equal, GreaterThan, LessThan, etc.
+* ExprIntrp - yacc/lex files, describes an interpreter for GeneralExpressions, GeneralFunctions, and GeneralRelations defined in package Expr.
 
 topology api:
 
@@ -976,6 +969,7 @@ units:
 
 visualization:
 
+* Aspect - graphic elements for visualizers
 * Graphic3d - create 3d graphic objects in a visualizer
 * V3d - 3D visualizer stuff, complementary to Visual3d
 * Visual3d - implementation of commands for the 3d visualizer
@@ -1021,3 +1015,9 @@ no idea:
 * CDF - database related maybe?
 * PCDM - probably related to document management?
 * PCDMShape - something about a document
+* LDOM
+* LibCtl
+* FWOSDriver
+* FWOSPlugin
+* AppStd - just has one thing ("Application")
+* AppStdL - same as AppStd?
