@@ -296,15 +296,22 @@ Things worth keeping?
 <div id="BRepAlgo_BOP" />
 # BRepAlgo\_BOP
 
+The best way to figure out the BRepAlgo\_BOP boolean operation stuff is to look at it in reverse. The final result of boolean operations is to update an instance variable known as "myShape". So look for where myShape is assigned, and that's basically the last place of the algorithms. The "myRC" and corresponding BuildRC() function might be enough to complete the operation, but if not the BuildShape function will do further things to get to the final "myShape".
+
 The boolean operation algorithms can be manually executed using DRAWEXE by using the BOPTest module (bfuse, bcommon, etc). Also note there are a number of commands to dump BReps to file if necessary.
 
 <https://github.com/tpaviot/oce/tree/master/src/BRepAlgo/BRepAlgo_BOP.cxx>
 
 * BRepAlgoAPI is just a wrapper that passes arguments into BRepAlgo\_BOP, eventually calling BRepAlgo\_BOP::PerformInternal where the magic happens.
-* why use a BOPAlgo\_PaveFiller as the input to this function?
+* why use a BOPAlgo\_PaveFiller as the input to this function? Looks like BOPAlgo\_PaveFiller has vertex-vertex and vertex-edge (and lots of other) methods for performing the algorithm. The PaveFiller input is used to setup the myContext and myDS variables.
+* * myContext doesn't show up in all the numbered PaveFiller files in this directory (it shows up in some, but not all)
+* * myDS shows up in the numbered files in the directory, so maybe myDS is what's getting used by PaveFiller somehow?
+* * BOPAlgo\_BOP::PerformInternal is called by Perform, but Perform is actually defined in BOPAlgo\_Builder because BOPAlgo\_BOP is a subclass of BOPAlgo\_Builder. It is BOPAlgo\_Builder::Perform that uses PaveFiller and calls PaveFiller::Perform.
+* BOPAlgo\_BOP::BuildShape calls BuildRC() which makes clever calls to an instance of BRep\_Builder::Add() based on the current shapes. This function (BuildRC) is called in all situations for InternalPerform().
 
 The method is as follows:
 
+* (BOPAlgo\_Builder::Perform has already called PaveFiller perform things)
 * BOPAlgo\_PaveFiller::PDS()
 * BOPAlgo\_BOP::CheckData()
 * BOPAlgo\_BOP::Prepare()
@@ -335,13 +342,14 @@ The method is as follows:
 * next handle compounds:
 * * BOPAlgo\_BOP::FillImagesCompounds()
 * * BOPAlgo\_Builder::BuildResult(TopAbs\_COMPOUND)
-* BOPAlgo\_BOP::BuildShape()
+* BOPAlgo\_BOP::BuildShape() which calls BuildRC(), and in the case of BOPAlgo\_FUSE it will also call BuildSolid()
 * BOPAlgo\_BOP::PrepareHistory()
 * BOPAlgo\_BOP::PostTreat()
 
 The BOPAlgo\_Builder::BuildResult method is [defined in BOPAlgo\_Builder\_1.cxx](https://github.com/tpaviot/oce/tree/master/src/BOPAlgo/BOPAlgo_Builder_1.cxx). It seems to just add shapes to a BRep\_Builder object.
 
-## difference between PerformInternal in BOPAlgo\_Builder and BOPAlgo\_BOP?
+<div id="BuildShape" />
+## BuildShape
 
 PerformInternal is basically the same in these two files, why?
 
@@ -351,6 +359,28 @@ PerformInternal is basically the same in these two files, why?
 A few differences...
 
 * BOPAlgo\_BOP::PerformInternal has a call to BuildShape() that BOPAlgo\_Builder lacks
+
+PaveFiller is where the really-really-real magic happens? PaveFiller calls the vertex-edge, vertex-vertex, edge-edge, and other object-object functions (often involving something about interference).
+
+Depth and relevancy based tree of function calls:
+
+* BOPAlgo\_BOP::PerformInternal (entry point, except for BRepAlgoAPI wrapper stuff)
+* BOPAlgo\_BOP::BuildShape
+* BOPAlgo\_BOP::BuildRC
+* BOPAlgo\_BOP::BuildSolid (for BOPAlgo\_FUSE only) (this is the only one that uses the PaveFiller myContext thing, passed into the "aSB" variable (BOPAlgo\_BuilderSolid))
+* BOPAlgo\_BuilderSolid::Perform (after SetContext and SetShape from BOPAlgo\_BOP::BuildSolid of course). SetShapes() passes a list of shapes, so Perform is operating on these shapes. But also, Areas() returns a list of shapes in a few moments.
+* back in BOPAlgo\_BOP::BuildSolid after BOPAlgo\_BuilderSolid::Perform there is a call to BuilderSolid's Areas() then it iterates over those TopoDS\_Shape objects and adds them to the "aBB" object (BRep\_Builder instance). Note that the "aBB" (BRep\_Builder instance) object is modifying "aRC" which gets assigned to "myShape" (just like all the other paths, they all lead to "aRC", "myRC", and especially "myShape").
+* back in BOPAlgo\_BOP::BuildSolid, myShape is finally set to the end result
+
+Obvious next functions to read:
+
+* BRep\_Builder::Add (what is it actually doing?)
+* BOPAlgo\_BuilderSolid::Perform
+
+<div id="PaveFiller" />
+## PaveFiller
+
+What is a pave, why are there pave blocks, and what is a PaveFiller? None of the CDL files describe what these classes are for. There are pave-related data structures in the BOPDS package and the PaveFiller stuff is in the BOPAlgo package. PaveFiller things are executed as the very first step of BOPAlgo\_Builder::Perform and also BOPAlgo\_BOP::Perform (because it's a subclass of BOPAlgo\_Builder and doesn't override the Perform method).
 
 # dealing with legacy code
 
@@ -483,6 +513,7 @@ also see:
 * <http://dev.opencascade.org/doc/overview/html/occt_user_guides__modeling_algos.html>
 * <http://dev.opencascade.org/doc/overview/html/occt_user_guides__boolean_operations.html>
 
+<div id="packages" />
 # packages
 
 basic math:
