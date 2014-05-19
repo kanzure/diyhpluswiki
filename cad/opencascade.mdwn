@@ -179,8 +179,8 @@ Boolean Operations have the following types of the arguments and produce the fol
 
 Packages:
 
-* BOPAlgo\_Builder - General Fuse Algorithm (GFA)
-* BOPAlgo\_BOP - for the Boolean Operation Algorithm (BOA).
+* BOPAlgo\_Builder - General Fuse Algorithm (GFA), see PerformInternal
+* BOPAlgo\_BOP - for the Boolean Operation Algorithm (BOA). see PerformInternal
 
 diagram: BOPAlgo\_Bop -> BOPAlgo\_Builder -> BOPAlgo\_BuilderShape -> BOPAlgo\_Algo
 
@@ -287,7 +287,70 @@ TopoDS_Edge currentedge = Ex.Current();
 
 # interesting stuff
 
-* <https://github.com/tpaviot/oce/blob/master/src/BRepAlgo/BRepAlgo_BooleanOperation.cxx>
+Things worth keeping?
+
+* intersection algorithms for both 2d and 3d objects
+* boolean operations (the general method is implemented in BRepAlgo\_BOP and the "general fuse algorithm" is implemented in BRepAlgo\_Builder both in the PerformInternal method)
+* deprecated boolean operations code: <https://github.com/tpaviot/oce/blob/master/src/BRepAlgo/BRepAlgo_BooleanOperation.cxx>
+
+<div id="BRepAlgo_BOP" />
+# BRepAlgo\_BOP
+
+The boolean operation algorithms can be manually executed using DRAWEXE by using the BOPTest module (bfuse, bcommon, etc). Also note there are a number of commands to dump BReps to file if necessary.
+
+<https://github.com/tpaviot/oce/tree/master/src/BRepAlgo/BRepAlgo_BOP.cxx>
+
+* BRepAlgoAPI is just a wrapper that passes arguments into BRepAlgo\_BOP, eventually calling BRepAlgo\_BOP::PerformInternal where the magic happens.
+* why use a BOPAlgo\_PaveFiller as the input to this function?
+
+The method is as follows:
+
+* BOPAlgo\_PaveFiller::PDS()
+* BOPAlgo\_BOP::CheckData()
+* BOPAlgo\_BOP::Prepare()
+* BOPAlgo\_BOP::FillImagesVertices()
+* BOPAlgo\_Builder::BuildResult(TopAbs\_VERTEX)
+* BOPAlgo\_BOP::FillImagesEdges()
+* BOPAlgo\_Builder::BuildResult(TopAbs\_EDGE)
+* if BOPAlgo\_SECTION, then:
+* * BOPAlgo\_BOP::BuildSection()
+* * BOPAlgo\_BOP::PrepareHistory()
+* * BOPAlgo\_BOP::PostTreat()
+* * quit algorithm
+* next handle wires:
+* * BOPAlgo\_BOP::FillImagesContainers(TopAbs\_WIRE)
+* * BOPAlgo\_Builder::BuildResult(TopAbs\_WIRE)
+* next handle faces:
+* * BOPAlgo\_BOP::FillImagesFaces()
+* * BOPAlgo\_Builder::BuildResult(TopAbs\_FACE)
+* next handle shells:
+* * BOPAlgo\_BOP::FillImagesContainers(TopAbs\_SHELL)
+* * BOPAlgo\_Builder::BuildResult(TopAbs\_SHELL)
+* next handle solids:
+* * BOPAlgo\_BOP::FillImagesSolids()
+* * BOPAlgo\_Builder::BuildResult(TopAbs\_SOLID)
+* next handle composite solids:
+* * BOPAlgo\_BOP::FillImagesContainers(TopAbs\_COMPSOLID)
+* * BOPAlgo\_Builder::BuildResult(TopAbs\_COMPSOLID)
+* next handle compounds:
+* * BOPAlgo\_BOP::FillImagesCompounds()
+* * BOPAlgo\_Builder::BuildResult(TopAbs\_COMPOUND)
+* BOPAlgo\_BOP::BuildShape()
+* BOPAlgo\_BOP::PrepareHistory()
+* BOPAlgo\_BOP::PostTreat()
+
+The BOPAlgo\_Builder::BuildResult method is [defined in BOPAlgo\_Builder\_1.cxx](https://github.com/tpaviot/oce/tree/master/src/BOPAlgo/BOPAlgo_Builder_1.cxx). It seems to just add shapes to a BRep\_Builder object.
+
+## difference between PerformInternal in BOPAlgo\_Builder and BOPAlgo\_BOP?
+
+PerformInternal is basically the same in these two files, why?
+
+* <https://github.com/tpaviot/oce/tree/master/src/BOPAlgo/BOPAlgo_Builder.cxx>
+* <https://github.com/tpaviot/oce/tree/master/src/BOPAlgo/BOPAlgo_BOP.cxx>
+
+A few differences...
+
+* BOPAlgo\_BOP::PerformInternal has a call to BuildShape() that BOPAlgo\_Builder lacks
 
 # dealing with legacy code
 
@@ -419,13 +482,6 @@ also see:
 
 * <http://dev.opencascade.org/doc/overview/html/occt_user_guides__modeling_algos.html>
 * <http://dev.opencascade.org/doc/overview/html/occt_user_guides__boolean_operations.html>
-
-## what do these packages do?
-
-* GeomLProp - local properties on 3D curves and surfaces
-* Geom2dLProp - allows computing Derivative and Tangent vectors (normal and curvature) of a parametric point on a 2D curve
-* BRepLProp - algorithms computing various local properties on edges and faces in a BRep model
-* LProp - an enumeration used to characterize a particular point on a 2D curve
 
 # packages
 
