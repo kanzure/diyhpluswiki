@@ -380,7 +380,33 @@ Obvious next functions to read:
 <div id="PaveFiller" />
 ## PaveFiller
 
-What is a pave, why are there pave blocks, and what is a PaveFiller? None of the CDL files describe what these classes are for. There are pave-related data structures in the BOPDS package and the PaveFiller stuff is in the BOPAlgo package. PaveFiller things are executed as the very first step of BOPAlgo\_Builder::Perform and also BOPAlgo\_BOP::Perform (because it's a subclass of BOPAlgo\_Builder and doesn't override the Perform method).
+A description of paves and pave blocks can be found in [General fuse algorithm, partition algorithm, and the boolean operations algorithm](http://docs.salome-platform.org/salome_7_3_0/gui/GEOM/SALOME_BOA_PA.pdf).
+
+The result of interferences of the type Vertex/Edge, Edge/Edge, Edge/Face in a number of cases is a vertex (new or old) lying on the edge. The result of interferences of the type Face/Face in a number of cases is one or more intersection curves. These curves go through the vertices lying on the faces.
+
+A pave (PV) is a data structure that contains a vertex from a curve and the parameter of the 3D point of the vertex on the curve. The curve can be a 2D or 3D curve. Two paves (PV1, PV2) on the same curve can be compared using the parameter value (t1, t2) such that PV1 > PV2 if t1 > t2.
+
+"The usage of paves allows making the difference between the one vertex V shared between arbitrary number of edes E1, E2, ... Ei. The usage of paves allows to bind the vertex to the curve (or any structure that contains a curve: edge, intersection curve)."
+
+A pave block is a set of paves that can be sorted by the parameter value (t). A pave block only contains paves based on the same curve. A pave block is a part of the object (edge, intersection curve) between neighboring paves. Any finite source edge E has the one bounding pave block that contains two paves.
+
+Each of the tolerance spheres of a vertex can reduce the parametric range of the pave block to \[t1S, t2S\]. The rane \[t1S, t2S\] is the "shrunk range" of the pave block. The shrunk range of the pave block is the part of 3D curve that can interfere with other shapes.
+
+Common blocks (common parts) can be produced by the interferences between Edge/Edge and Edge/Face. In the case of Edge/Edge interference, the common parts are pave blocks having different edges as a base. If the set of pave blocks have the same bounding vertices and they geometrically coincide, the pave blocks form common block CB. In the case of Edge/Face interference the common parts are pave block lying on a face(s). If the pave blocks geometrically coincide with a face Fj, the pave block form common block CB.
+
+In the general case, a common block CB contains (1) pave blocks (all of them? some of them?), (2) a set of faces F (all of them? some of them?).
+
+Interfering shapes can produce connexity chains. This includes interfering vertices. For a set of interfering vertices that form a connexity chain, each connexity chain can be used to create a new vertex. Interfering edges can have coincided pave blocks. Interfering faces can also produce connexity chains.
+
+A connexity chain contains shapes that are Same Domain Shapes (same domain vertices, same domain edges, same domain faces).
+
+Split edges: a set of pave blocks for the edge E is used to build split edges (Spi where i is incremented for each of the pave blocks).
+
+Section edges: the set of pave blocks for the intersection curve C is used to build section edges (Sci where i is incremented for each of the pave blocks).
+
+* pave: data structure that contains a vertex from a curve and the parameter of the 3D point of the vertex on the curve
+* pave block: set of paves
+* what is a pave filler?
 
 # dealing with legacy code
 
