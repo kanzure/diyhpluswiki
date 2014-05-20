@@ -488,6 +488,8 @@ Section edges: the set of pave blocks for the intersection curve C is used to bu
 * DRAWEXE
 * remove unnecessary chunks of code
 
+* Find the functions that have the greatest call tree depth. These are the functions that call other functions that call other functions the most (and so on). So, for example, the functions in the gp package are probably not going to have the greatest call tree depth, namely because almost everything else uses the gp functions and thus has a greater call tree depth than gp functions themselves. This information can be used to find the most "high level" code or most dependent code in the project.
+
 ## callgraphs
 
 [opencascade callgraphs](http://diyhpl.us/~bryan/irc/opencascade/callgraphs.tar.xz) (6 MB tarbomb, 2 json files) based on <https://github.com/tpaviot/oce> commit 9a97b1638c48e80d73c791a563cf5af8ad10096b (2014-05-09).
