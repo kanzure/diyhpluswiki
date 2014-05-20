@@ -860,7 +860,7 @@ plates and constraints (not sure):
 meshing:
 
 * Poly - handle 3D triangular polyhedrons, 3D polygons, 2D polygons. Also, tools to dump, save and restore those objects.
-* BRepMesh - mesh algorithms and triangulation algorithm. Has a mesh factory. Algorithm to mesh a shape with respect to the frontier the deflection and by option the shared components. Algorithm to mesh a face.
+* BRepMesh - mesh algorithms and triangulation algorithm. Has a mesh factory. Algorithm to mesh a shape with respect to the frontier the deflection and by option the shared components. Algorithm to mesh a face. Create mesh approximations of shapes.
 * XBRepMesh - one single function called "Discret" that runs BRepMesh\_IncrementalMesh on a TopoDS\_Shape and an angle and a deflection.
 
 STL stuff:
@@ -1259,3 +1259,16 @@ no idea:
 * AppStd - just has one thing ("Application")
 * AppStdL - same as AppStd?
 * FEmTool - finite element methods; LinearTension, LinearFlexion, LinearJerk, SparseMatrix, Curve, ProfileMatrix, some others.
+
+## gc vs gce
+
+Both packages contain functions to create curves, surfaces and transformations using nontrivial definitions. For example, you can create a circle through 3 points. They both provide a method to create a plane from a normal:
+
+<pre>
+GC_MakePlane (const gp_Pnt &P, const gp_Dir &V)
+gce_MakePln (const gp_Pnt &P, const gp_Dir &V)
+</pre>
+
+The difference is that while GC creates passed-around-by-reference objects from the Geom package, gce creates equivalent passed-around-by-value objects from the gc package. The GC functions for creating 2d primitives are residing in the GCE2d package.
+
+
