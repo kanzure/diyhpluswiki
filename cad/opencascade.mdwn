@@ -616,6 +616,21 @@ Section edges: the set of pave blocks for the intersection curve C is used to bu
 * [QABugs/QABugs\_17.cxx](https://github.com/tpaviot/oce/tree/master/src/QABugs/QABugs_17.cxx)
 * [IntPatch/IntPatch\_LineConstructor.cxx](https://github.com/tpaviot/oce/tree/master/src/IntPatch/IntPatch_LineConstructor.cxx)
 
+## timeline
+
+A rough approximation of a timeline of development can be achieved by looking at the copyright headers. Usually the first year that is mentioned is the first year that the source code existed. Not all of the files were started in the same year. Some parts of the source code are older than others.
+
+<http://diyhpl.us/~bryan/irc/opencascade/filetimeline.yaml>
+
+Some observations:
+
+* BRepAlgo started around 1993-10-04 (other source code began in 1990)
+* "pave" stuff happened before BRepAlgo, namely:
+* * TopOpeBRepBuild/TopOpeBRepBuild\_PaveSet.cxx
+* * TopOpeBRepBuild/TopOpeBRepBuild\_PaveClassifier.cxx
+* .. but "Pave.cxx" happened in 1994,
+* * TopOpeBRepBuild/TopOpeBRepBuild\_Pave.cxx
+
 # questions
 
 ## is a 2d circle represented as a bezier curve spline in opencascade?
