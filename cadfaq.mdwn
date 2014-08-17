@@ -2,6 +2,12 @@ Hello! You should read this FAQ if you're interested in CAD-- especially open so
 
 # What is CAD?
 
+# Why not use triangulated meshes for all CAD?
+
+The memory requirements of triangulated meshes increases dramatically faster than the memory requirements for nurbs representation of curved surfaces.
+
+Model transfer: 100 GB of triangles versus 5 MB of nurbs makes a huge difference when transmitting models into manufacturing equipment. Triangle enthusiasts will of course say that you could just transmit the definition of the model, such as transmitting source code, and then have the destination render or tessellate the final model. However, this is problematic because not all destinations are able to process a few hundred gigs of triangles. And in some cases the machines may not be able to compile or interpret those instructions for rendering anyway, so you can't get away with 'dirty triangle" strategies where you only render or compute just a segment of the file, unless you are using lots of really funky compiler heuristics that probably don't belong in CAD software anyway.
+
 # Why not just use blender for CAD?
 All 3D modeling software render 3D objects through a graphics card*. For instance, Blender and Solidworks both use OpenGL. What this means is that the model is either already a collection of points and triangles or it is in some other format and is then converted to triangles, which the graphics card then renders. So ultimately all data representations lead to visualization when it comes to 3D modeling (so that you can see it).
 
