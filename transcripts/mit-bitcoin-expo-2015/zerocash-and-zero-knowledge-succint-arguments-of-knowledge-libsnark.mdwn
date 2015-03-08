@@ -34,9 +34,9 @@ You can imagine a virtual accountant in Alice's head that she presents all trans
 
 From a high level, this is what zerocash does. We can produce public transactions with zero knowledge proofs. But what kind of proof do we need? There are many crypyographic proof system.
 
-There must be proof. We also want this to be zero knowledge. Bob must not learn a nything about Alice's transaction history b yexamining the proof. It must be non-interactive, which means that Bob can verify the correctness without interacting with any accountant digital or real. It must be posted on the ledger. It must be succint. Small and easy to verify. Finally, we want the cryptographic property known as proof-of-knowledge. We want to ensure that Alice knows the secret behind the transaction. What does it mean that there exists a signature? We want to know that Alice knows the signing key for such a signature.
+There must be proof. We also want this to be zero knowledge. Bob must not learn a nything about Alice's transaction history b yexamining the proof. It must be non-interactive, which means that Bob can verify the correctness without interacting with any accountant digital or real. It must be posted on the ledger. It must be succinct. Small and easy to verify. Finally, we want the cryptographic property known as proof-of-knowledge. We want to ensure that Alice knows the secret behind the transaction. What does it mean that there exists a signature? We want to know that Alice knows the signing key for such a signature.
 
-All of those properties when taken together are actually impossible. So we relax this from being a proof to being an argument. It holds if cryptography is not broken. If you take all of them together now, a succint non-interactive proof of knowledge, called snark. This is call zkSNARK when put together.
+All of those properties when taken together are actually impossible. So we relax this from being a proof to being an argument. It holds if cryptography is not broken. If you take all of them together now, a succinct non-interactive proof of knowledge, called snark. This is call zkSNARK when put together.
 
 Having identified what we want, can we get it? In a eautiful line of early work by Killian92 and Mical92, Mical00, they are iefficient enough to be implemented.
 
