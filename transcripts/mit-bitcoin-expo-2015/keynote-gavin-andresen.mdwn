@@ -130,7 +130,16 @@ Q: Is it voting?
 
 A: No, it does not come down to a vote. Yes, the five core developers agree that this should happen in the Core Reference Client. Or at least that none of them viscerally disagree....
 
-Q: 
+Q: I am interested in what was described in the paper that was mentioned yesterday (amiller's). In March 2013, I think there was an upgrade and then a lot of perhaps the miners did not upgrade. Could you explain a little bit about how the upgrade is propagated through the systme to prevent something like that happening again?
 
+A: So the chain fork in March 2013 was triggered by an upgrade. That would have happened soone ror later even if nobody had upgraded. That particular bug, and it was a bug, it would cause two computers urnning the same older code to disagree about what the valid blockchain was. Two computers running different code kind of exposed the bug quicker. Rolling out a new change to the consensus code, or not even a change to the consensus code... openssl "upgraded" their code and anyone running Bitcoin Core that was linked dynamically against the openssl library got forked off the network because openssl changed the rules about what signatures they considered valid. We do everything we can to avoid that if you use one of the reference implementations binaries. We statically link against openssl because we want to nail down everything so that we don't have a chain forking incident like that. Will we never have one again? I can't guarantee that. That's definitely something we think about. This is another reason why this is hard.
 
+Q: We are just past the 1 year anniversary from the transaction malleability WTF day. I have noticed some work, maybe bip63 or one of those bipps by Peter Voll. bip62. To address the twenty or so known edge cases that can lead to transaction malleability. Do you think it can ever be completely irradicated? And two, do you think there's any specific timeframe or do you have some timeframe for incorporating bip62?
 
+A: We are think, I think sipa said yesterday that 3% of miners are producing bip62. Bip66. 66. I can't keep the BIP numbers straight. Yes, the malleability BIP. The malleability fixes, we are in the middle of a soft fork right now and I think we are at 3% of miners are producing upversioned blocks. When that gets to 75%, it kind of switches over and you can start to rely on... no blocks that have these forms of malleability. I am actually pretty optimistic that in a restricted subset in our scripting system, that it will be immalleable. I think that we have found all the edge cases for that restricted subset. 90% confident of that. I am pretty optimistic that once miners roll out the block version that.. If you need something that has immalleable transactions, you will be able to construct transactions that are not malleable.
+
+Q: So for libsecp256k1, does that tighten up ECDSA signature and validation rules for malleability?
+
+A: Um, we had to do the soft fork before switching to the new libraries. Just because openssl is so vague and interesting. I don't want to trash other open source software developers. I know how hard it is. We had to do the sfot fork first. That will give us more confidence. We really deeply understand libsecp256k1.
+
+Thanks a lot I will be around all day.
