@@ -1,0 +1,70 @@
+Here are some notes on oligonucleotide synthesis using phosphoramidite chemistry, including notes on an inkjet DNA synthesizer based on the [POSAM project](http://bioinformatics.org/pogo/).
+
+<div id="oligonucleotide-synthesis" />
+# Oligonucleotide synthesis using the phosphoramidite method
+
+<a href="http://diyhpl.us/~bryan/papers2/DNA/oligonucleotide-synthesis-by-phosphoramidite-method-cycle-diagram.png"><img src="http://diyhpl.us/~bryan/papers2/DNA/oligonucleotide-synthesis-by-phosphoramidite-method-cycle-diagram.png" /></a>
+
+## Synthesis cycle steps
+
+The following steps are for the addition of each nucleotide to the growing oligos. It's not the complete set of steps. Each addition of a nucleotide requires the following steps.
+
+### 1. Deblocking (detritylation)
+
+Detritylation occurs using an acid such as 2% [trichloroacetic acid (TCA)](https://en.wikipedia.org/wiki/Trichloroacetic_acid) or 3% [dichloroacetic acid (DCA)](https://en.wikipedia.org/wiki/Dichloroacetic_acid), in an inert solvent ([dichloromethane](https://en.wikipedia.org/wiki/Dichloromethane) or [toluene](https://en.wikipedia.org/wiki/Toluene)).
+
+- produces an orange-colored DMT cation which needs to be washed out
+- oligonucleotide precursor has a free 5'-terminal hydroxyl group
+- using a stronger acid or conducting detritylation for an extended time, leads to [depurination](https://en.wikipedia.org/wiki/Depurination) of the oligonucleotide
+
+### 2. Coupling
+
+A 0.02–0.2 M solution of nucleoside phosphoramidite (or a mixture of several phosphoramidites) in acetonitrile is activated by a 0.2–0.7 M solution of an acidic azole catalyst (below). The mixing is usually very brief and occurs in fluid lines of oligonucleotide synthesizers (see below) while the components are being delivered to the reactors containing solid support. The extension reaction forms a phosphite triester linkage (below).
+
+The concentration of the activator is primarily determined by its solubility in acetonitrile and is irrespective of the scale of the synthesis.
+
+Upon the completion of the coupling, any unbound reagents and by-products are removed by washing.
+
+acidic azole catalysts:
+- 1H-tetrazole
+- 2-ethylthiotetrazole
+- 2-benzylthiotetrazole
+- 4,5-benzylthiotetrazole
+- 4,5-dicyanoimidazole
+- alternatives can be found here: Wei, Xia (2013). "Coupling activators for the oligonucleotide synthesis via phosphoramidite approach". Tetrahedron 69 (18): 3615–3637. doi:[10.1016/j.tet.2013.03.001](https://dx.doi.org/10.1016%2Fj.tet.2013.03.001).
+
+phosphite triester linkage: The activated phosphoramidite in 1.5 – 20-fold excess over the support-bound material is then brought in contact with the starting solid support (first coupling) or a support-bound oligonucleotide precursor (following couplings) whose 5'-hydroxy group reacts with the activated phosphoramidite moiety of the incoming nucleoside phosphoramidite to form a phosphite triester linkage.
+
+Highly sensitive to water. Commonly carried out in anhydrous acetonitrile.
+
+### 3. Capping
+
+- mixture of acetic anhydride and [1-methylimidazole](https://en.wikipedia.org/wiki/1-methylimidazole) (or less often, [DMAP](https://en.wikipedia.org/wiki/4-Dimethylaminopyridine)) as catalysts
+- unreacted 5'-hydroxy groups are acetylated by the capping mixture
+- capping reagent solution helps prevent reactions that might cleave the oligonucleotide (because of depurination, the apurinic sites are readily cleaved under the basic conditions of later steps). Capping reagent solution helps as long as the capping step is performed prior to oxidation with I<sub>2</sub>/water.
+
+### 4. Oxidation
+
+The newly formed tricoordinated phosphite triester linkage is not natural and is of limited stability under the conditions of oligonucleotide synthesis. The treatment of the support-bound material with iodine and water in the presence of a weak base (pyridine, lutidine, or collidine) oxidizes the phosphite triester into a tetracoordinated phosphate triester, a protected precursor of the naturally occurring phosphate diester internucleosidic linkage. Oxidation may be carried out under anhydrous conditions using tert-Butyl hydroperoxide or, more efficiently, (1S)-(+)-(10-camphorsulfonyl)-oxaziridine (CSO). The step of oxidation is substituted with a sulfurization step to obtain oligonucleotide phosphorothioates (see Oligonucleotide phosphorothioates and their synthesis below). In the latter case, the sulfurization step is best carried out prior to capping.
+
+# solid supports
+
+# linker chemistry
+
+linkers go here
+
+# Inkjet printing steps
+
+1. Printing
+
+2. Washing
+
+3. Oxidation
+
+4. Washing
+
+5. Detritylation
+
+6. Washing
+
+# Reagent suppliers
