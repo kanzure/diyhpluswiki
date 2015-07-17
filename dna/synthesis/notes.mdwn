@@ -80,6 +80,45 @@ linkers go here
 - [replacing bottle seals on reagent bottles](http://diyhpl.us/~bryan/papers2/DNA/abi391/Replacing%20Bottle%20Seals%20on%20Reagent%20Bottles.pdf)
 - [takeitapart.com ABI 391 DNA synthesizer teardown](https://takeitapart.com/guide/94)
 
+<div id="abi391-reagents" />
+## ABI 391 reagents
+
+bottles:
+
+1. adenosine phosphoramidite (A) (deoxyadenosine (dA-bz) phosphoramidite) (beta-cyanoethyl, as all the other phosphoramidites)
+2. guanosine phosphoramidite (G) (deoxyguanosine (dG-ib) phosphoramidite)
+3. cytosine phosphoramidite (C) (deoxycytosine (dC-bz) phosphoramidite)
+4. thymidine phosphoramidite (T) (deoxythymidine (dT) phosphoramidite)
+5. spare phosphoramidite reservoir for modified bases (X), such as deoxyinosine
+9. tetrazole/acetonitrile (180 mL)
+11. acetic anhydride/iutidine/THF (180 mL)
+12. 1-methylimidazole (180 mL)
+14. trichloroacetic acid (450 mL)
+15. iodine/water/pyridine/THF (200 mL)
+18. acetonitrile (4 L)
+
+also the following two might either be separate bottles or the same as bottle 18 (dunno):
+
+* anhydrous acetonitrile, for dissolving phosphoramidites
+* ammonium hydroxide
+
+also:
+
+* argon
+* concentrated ammonia
+* concentrated ammonium hydroxide
+* waste bottle (because "The synthesizer generates 1 to 2 liters of hazardous, halogenated, organic liquid waste per 100 base additions. The waste is collected in a 4 liter polyethylene bottle which is placed on the floor or on a nearby bench lower than the instrument. The bottle can be kept inside a protective carrier to contain accidental spillage. A 1 gallon carrier is sufficient and can be purchased. When the bottle is emptied, it must be emptied using a specific procedure.)
+
+There are three types of protecting groups:
+
+1. 5' protecting group - dimethoxytrityl (DMT)
+2. beta-cyanoethyl phosphate protecting groups
+3. base protecting groups - benzoyl on dA and dC and isobutyryl on dG
+
+The 5'-protecting group, dimethoxytrityl, is attached to each nucleoside phosphoramidite and is cleaved from the growing oligonucleotide chain during each cycle of base addition. You can program the 391 to remove the last DMT to yield a 5' hydroxyl by choosing the ending method Trityl off, or leave the DMT on by choosing the ending method Trityl on. When purifying by polyacrylamide gel electrophoresis or ion exchange HPLC2, the last DMT group should be removed. When purifying by trityl-specific OPC or reverse phase HPLC, the last DMT group should be left on.
+
+To remove oligonucleotides from the solid supports, use concentrated ammonium hydroxide for simultaneous decyanoethylation and cleaving. Next, the base protecting groups are removed by the addition of fresh concentrated ammonia and incubation at 55 degrees celsius.
+
 <div id="posam" />
 # POSAM
 
