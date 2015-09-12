@@ -1,0 +1,52 @@
+Ittay Eyal
+
+Emin Gun Sirer
+
+A testbed for bitcoin scaling
+
+
+I want to talk today about how to scale bitcoin. We want lower latency, we want higher throughput, more bandwidth and more transactions per second, and we want security. We can try to tune the parameters. In all of the plots, I have time going from left to right and these are blocks in rectangles. We have larger blocks which might give us more throughput. We could have shorter block length, and transactions would come faster on the chain and we have better throughput but we get forks and orphans when that happens. We have unfairness, smaller miners get less revenue and leads to centralization and I will talk about that. We have a longer time to convergence because of these orphans and forks.
+
+We need proper evaluation. We need a scientific way to realize what we are achieving and how to evaluate which proposal is better. We need a clear way to realize which way is best.
+
+I am presenting about a project where we run the actual code, the actual Bitcoin Core client and we emulate the world for it, we emulate the network based on measurements from the bitcoin network. We do some basic bootstrapping and then we just run the raw code. So that's fine, oh I should talk about- we have 500 machines, the experiments I'll show you later are 1000 bitcoin nodes running on multi-core machines. 150 machines? 500 machines?
+
+The first measurement is going to be- consensus delay, how long it takes for you to reach agreement. The easiest way to explain this is by example. The 80% consensus delay is if at least 80% of the time 80% of the nodes agreed on what happened until 10 minutes ago. We reduce the interval between blocks, and the bandwidth remains the same but blocks come in faster. You can see in the x scale the block frequency, and 0.1 means one block every 10 seconds. There are clear trends here.
+
+We see that as we increase the block frequency the consensus delay improves. We get improvement which is what we want. As we increase the block size, and this is the second type of experiment, we have one block every 10 seconds and we increase the block sizes generated every 10 seconds. There is increased block size, and the consensus delay is way up and it grows quickly. This is bad. So we're trying to improve bandwidth and this is what happens to consensus delay.
+
+Another metric is time to prune, I am measuring the time it takes to realize that you are sitting on a branch. And once you are sitting on a branch, how long it takes you to realize that the real chain is somewhere else. We obviously want this to be short. "Subjective time to prune".
+
+As we increase block size, subjective time to prune becomes increasingly worse.
+
+Next I will talk about fairness. We know that larger miners get more than.. I am not talking about selfish mining or anything or any cheating, just miners mining. Any miner mining on their own branch if there is a fork. So larger miners get more. So I am talking myself, how much do the smaller miners get? We want them to get what they need. As we increase block frequency, bandwidth throughput is the same, we have faster blocks smaller blocks, we get the fairness going down very quickly, as we increase block frequency, same result. The trend is clear.
+
+Mining power utilization is how secure bitcoin is. It's the ratio of blocks that end up in the main chain. Other blocks are those that do not contribute to the security of the system. What's the ratio of these? We want it to be 1, we want all of the blocks to be on the main chain. This would improve latency. And as we increase the size of blocks, it goes down quickly.
+
+Time to win: how long until the last competing branch is generated? Until any other miner agrees that this is the longest chain and they stop creating competing branches? We want this to be zero optimally, and as we increase block frequency we get longer time to win, and as we increase block size we also increase the time to win.
+
+So in summary I talked about scaling the blockchain; I gave clear metrics. We did not evaluate any of the suggestions from the BIPs. This is just the raw Bitcoin Core software. We wanted to see stark trends. We measured power utilization, time to win, time to prune, fairness, and consensus delay. We think these are good metrics. We introduced the blockchain testbed, we are very happy to run your code on it. We want to run experiments. We just need a real working client on this system, and we want to make it big, realistic and effective, and test real options for bitcoin and beyond.
+
+Speaking of beyond, I would like to present to you now, Bitcoin NG, which is a different protocol, a new generation of blockchains, it solves everything that I presented so far. Key blocks have no content, leader election. We have two types of blocks. We have key blocks, they carry no content and they are only used for leader election. And then there are microblocks that only have content; only the leader is allowed to create or generate microblocks.
+
+Keyblocks have a proof-of-work just like bitcoin, and they have the previous block which is a microblock just like bitcoin. And they have public key K generated by the miner. Every microblock has the actual transactions that the miner wants to introduce. These are signed by the private key of the leader. Only the leader can generate these microblocks. The interval between keyblocks are maybe 10 minutes or longer. The microblocks come in very quickly with short intervals, think seconds. This can be shorter than the network diameter.
+
+Now fees; each key block gives the usual subsidy with whatever way you do it, and we need to talk about the fees from the transactions. The fees are given 40% back to the leader, and 60% going forward to the next leader (the next miner). The reason is that the next miner, the one who gets the 60%, is motivated to place itself as late as possible in the chain. It is motivated to include transactions from the previous miner, the leader on the left the one that gets 40% is motivated to place transactions in microblocks because then he gets his 40%. Why 40%? Because we have to make some assumptions about the size of the attacker, and we don't want the attacker to be motivated about mining multiple blocks, it becomes complicated. It could be 10%, but then larger miners might be motivated not to place transactions in blocks.
+
+Double spending: skipping.
+
+Consensus delay of bitcoin-ng: 100 second key block intervals, 10 second microblock intervals. Increase block frequency, consensus delay is down, like in bitcoin but better. The same goes as you increase block size.
+
+Fairness is what becomes interested; key blocks are so far apart that you get minimal forks. So the fairness is about 1, which is qualitatively better. As you increase the block size, it stays at 1.
+
+Mining power utilization, with block size it's fine.
+
+Time to win: Almost no large forks.
+
+Subjective time to prune: similar.
+
+You need clear metrics, you need to run the actual code, you need to emulate the world around it. We have the testbed and we're happy to collaborate with different ideas. I also presented bitcoin-ng.
+
+Adem Efe Gencer, Emin Gun Sirer, Robbert Van Renesse, Ittay Eyal.
+
+
