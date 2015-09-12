@@ -1,0 +1,40 @@
+
+Miners have another job as well. Miners are commodity producers, they produce something that the world has never seen. They produce block space, which is room for transactional debt. Let's explore what the field of economics tells us. We'll plot the total number of bytes per block. On the vertical we will plot the unit cost of the commodity, or the price of 1 transaction worth of blockspace. The coordinates of the point represents the price and quantity of that commodity. The law of demand states that as the unit price increases, the total quantity demanded by the market tends to decrease. As the price falls, the total commodity decreases. These points form a demand curve. If the price per unit is low enough, the quantity demanded can be arbitrarily high. Demand can be considered infinite. This is something that I hear regarding the block size debate, and people say we need a limit because the demand for block inclusion is infinite. Economists have been thinking about this for 100s of years; they have the law of supply. The law of supply is the opposite to the law of demand. It says that producers will only produce more if they are paid more to do so. Apple farmers will only plant more trees if they get more money by doing so. The law of supply has a positive slope. The demand curve has a negative slope. The intersection of these two curves is the free-market equilibrium. Even if the demand is considered infinite, we still get a finite quantity produced.
+
+Is blockspace a normal economic commodity? Does it satisfy the laws of demand? It makes sense that as the unit price for block space decreases, more data will be written to the blocks. But does it also satisfy the law of supply? It might seem that if miners can add as many transactions as they want for free to a block, then the supply period would flatline like this, and supply-andd-emand would never meet, and we would have a tregedy of the commons. It's not really a problem as you will see later. There's a flexcap proposal. It's artifically simulated the supply curve of a normal commodity. There would be a forced equilibrium instead of a free market equilibrium. With a finite quantity of block space.
+
+flexcap requires a centralized group of people to decide what the right price is for block space. That group would be able to decide winners and losers by deciding that price.
+
+What is orphaning? Normally when a miner finds a block, he broadcasts it to the other miners, they all start running away, and if that guy finds a block later, everyone is happy. Let's imagine that this time that miner mines a really big block. It propagates more slowly. Now when our miner mines a small block, his spreads much faster. Everyone think the small block came first even though it didn't. The miner at the top.. the miner at the bottom is happy. Orphaning is not a hypothetical theoretical construct. There were 155 orphans in the first quarter, and 97 in the second quarter, about a 1% orphan rate.
+
+How does orphaning effect the miner's cost for the production of block space? If the miner finds a block, he gets the fees from any transaction plus the reward. Reward + fees times the ratio of miner's hashrate to network hashrate. We need one more term to account for the bigger the block the more likely it is to be orphaned; it is a decaying exponential in propagation time according to my paper. The miner can control the fees and can control the propagation time. He can get more fees by making his block bigger, he can get lower orphan rate by making his block smaller. He must choose between fees and size to maximize profit.
+
+The cost per byte is proportional to bitcoin inflate times a term that grows exponentially with propagation time. There's a real cost for block space. If the inflation rate is zero when the block reward runs out, it's not clear what happens to the production cost, we want to find the total quantity of the commodity produced. There's a Shannon-Hartley theorem that says that the amount of time to communicate information is proportional to the amount of information to communicate. 
+
+Propagation impedance (how long it takes to propagate a megabyte of block information) times the block size... The cost grows exponentially with the size of the block. flexcap wanted to make the block size increases; bitcoin already has that property, but instead of a forced market equilibrium, we would have a free market equilibrium.
+
+In other words, a free market exists without a block size limit.
+
+What happens if a mining cartel decides the block content beforehand? They all decide what they are working on. They never orphan each other's blocks. Sure, that's called a mining pool. But tha tdoesn't effect the fee market because the miners still need to transmit the block solutions to each other.
+
+For the inflation to be non-zero, we need more than one miner per pool. If everyone joins the same pool, then the market no longer holds. There's nobody to lose orphan races to.
+
+We don't need a block size limit. Do we want one? Economics helps us answer that question too. When Satoshi Nakamoto put the block size limit in place, it served as an anti-spam measure, it was above the free market equilibrium point, it was 800x greater than queued star.
+
+Bitcoin has been growing over the years. The block size limit is on this side of Q starred. This is causing "deadwight loss", the loss of economic activity as a result of this production quota. Some people think that production quotas can be positive if they serve to eliminate some negative externality. I am not going to weigh in on whether I think a negative externality exists. How can a group force a production quota against a market? How will a group fight this invisible hand of the market?
+
+I think they would follow the playbook of command and control. They would probably censor people who speak out against the quota. This is not a hypothetical example, theymos already censored everything about BitcoinXT.
+
+The production quota will fail because you can only enforce rules that people agree with. Bitcoin wil break down dams erected by special interest groups attempting to implement quotas. various conspiracy theories here.
+
+* Sirini Devadas
+* Campbell Harvey
+* Christopher Douglas
+* Elaine Shi
+* Vijay Pande
+* Jerry Brito
+* gmaxwell
+* Houman B. Shadab
+* vitalik buterin
+
+
