@@ -1,0 +1,29 @@
+Rusty Russell
+
+This is not what I do. But I was doing it anyway.
+
+The proble mis that blocks are transmitted in their entirety. If you have a 1 MB uplink and you're connecting to 8 peers, your first peer will see your first block in about 66.8 seconds. And the last one will get it in 76.4 seconds. Miners can solve this problem of slow block transmission by centralizing and all using the same pool.
+
+It would be nice if we could take advantage of the redundancy in the same block. The worst case is that you create a block that nobody has seen before. A naieve approach is to send txid which potentially adds some roundtrip latency, so you want to avoid that.
+
+The first part of this was gavinandresen's O(1) block propagation using an invertible bloom lookup table. I google image searched for IBLT and that's what I got. An invertible bloom lookup table, basically what you do is you take.. you split your transactions into fragments that look like this, a fragment id, an index, and then the actual data. Those of you familiar with bloom tables is that you take three hash functions, you throw the fragment into your bloom filter there, and then you can keep a counter with XOR and AND. There's a two-counter on that bucket, you do that on each fragment, you get something like this, which is basically an oversaturated bloom table and useless to everyone.
+
+One side does that; then the peer gets the equivalent IBLT and then XOR the main parts, you subtract the counters and get the difference, and hopefully that's not oversaturated. You extract the buckets. Buckets with -1: transaction not in block. If the count is 1, then there's an unknown transaction in the block. If you have an empty IBLT, you then try to form a block out of that. That's IBLT in a nutshell.
+
+There are some minor improvements and optimizations on the original proposal that have been coded up. Use siphash not SHA256 for id (v. fast). Offset index by hash of id (decode ordering). etc.
+
+More interestingly, creating this IBLT is really fast. It's O(number of transactions in the block). There's a twist that we use to make it O(n log n). Pieter Wuille suggested why don't we just XOR transactions into IBLT, potentially differently for each peer.
+
+So the question comes down to scaling. How well does this approach scaling? It scales with the differences in mempool with some factor. There's some encoding penalty (1-2.2x) for throwing these transactions and blocks into IBLT. It depends on whether they are missing. The differences in mempool scales with transaction rate. As more transactions go through, the more likely you are to have missing transactions in someone else's mempool.
+
+The issue that comes up is that this helps against centralization in one sense, because there's less pressure on miners to collaborate into single pools because they have faster block transmission. But it does put pressure on homogenization, which might open the door to things like censorship.
+
+We really wanted a tradeoff. You do need some heuristic about which transactions are going to be in the block. You can't put the entire mempool into the IBLT. So you're going to need some heuristics, but we need a compact heuristic for them to get an idea about the kinds of things they should put into their IBLT. As efficient as possible.
+
+So this is what we came up with. You first send your minimum satoshi per byte or per kilobyte or whatever scale it is. This assumes that miners are profit-maximizing, that if they find a transaction that pays more than some rate, they will include it. And then they include transactions which are below that rate (priority line perhaps), or some that were above the threshold but I didn't include those.
+
+Even if you have 1 million transactions in your mempool, it is still only going to cost 20 bits for each of those 1 million transactions. Those are actually pretty cheap to include in the IBLT.
+
+About six months ago, I hacked up bitcoind to dump mempools every time it receives a transaction and block. I ran a node in Singapore, one in Australia, two in San Francisco one of which is on the relay network. I have up on github, a bitcoin corpus of a week of mempool data for all of these nodes <https://github.com/rustyrussell/bitcoin-corpus> - if we used 128 byte fragment size, it seems to be the ballpark right size, instead of transmitting everything to everyone else, we send, and this is best case, this is the smallest possible IBLT and still get the data across, we would still get 3% of that. Best possible case is 15.4 MB instead of 482.3 MB.
+
+I got lucky, and there's a streak of "stress testing" on the network, random fluctuations on the network that cause full blocks.
