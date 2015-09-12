@@ -42,9 +42,30 @@ There needs to be a way to incentivize a more distributed use to avoid monopolie
 
 Do we want to model threats that are so large that you can't possibly handle it anyway?
 
+# Data collection
 
+Distributed systems often get designed by gut feel, like how many neighbors to use? In many contexts, these numbers don't really matter. In bitcoin, these decisions have real monetary consequences. The real driving point for our us was that we should reason quantiatively, and we need better tools for that. What sorts of data to collect from the network?
 
+Node configuration, how do people configure their nodes? Peer lists, the topology of the network is an important detail. Just like the internet is an emergent living organism, the bitcoin relay network is an important emergent organism and we should understand it. The orphan rate is something critical. That orphan rate reported on blockchain.info is misrepresentative, it's not correct.
 
+Mempool size. Blockchain state, divergences and consensus forks. Transaction arrival, timestamped data, a lot of this data is not timestamped at the moment. There's a lot of exciting data at the blockchain going, shapes of transaction graphs.
 
+The next question is that collecting data has privacy implications. There's a real worry that attackers might use this data to launch attacks, and maybe adapt on the fly and so on. Raw transaction logs could be used to triangulate the source of transactions and find users in the network.
+
+It's possible to overcome some of these concerns. One can share one own's node configuration, perhaps not with their name attached, as long as that configuration data is not attached to an IP address, I would hope also that some other people would share this data in anonymized form.
+
+Another idea was to snapshot the network, but snapshot it and reveal it 6 months later. That would be incredibly useful to researchers everywhere. Every node could do this at the same time.
+
+Have a public repository for users to contribute data that they have collected. Miners and pools should generate and share their own data, with incentives perhaps. How do you make sure that people wont game it, and that the data is correct?
+
+How many locations do the beacons need to be at? The next discussion was what do you do with these studies. How does the bitcoin price impact the network behavior? Can you tell what the bitcoin price is based on the network behavior? Probably not for long.
+
+Where are orphan rates going? Anomaly and attack detection. It's also useful for online attack detection. Where are the denial of service attacks coming from? Being able to quantify normal behavior versus bad behavior would be very useful for miners, which are sensitive to network health. At the moment they are using informal channels for this between different mining cartels.
+
+What happens when there are 1 billion bitcoin users? Feasibility of different protocol changes, economic simulation, etc. We talked about the impact of collecting data, can people misuse this information. Do you restrict it to a closed set? The similarities to internet measurement also showed up. On the early internet, they had to use weird hacks to collect information from DNS servers. It would be nice if there was something that supported this. Network operators were willingly pooling their data. The ideal here is to build in some measurements into the protocol implementation itself.
+
+There are some innovative ways to collect information, a geographically distributed relay network, use an opt-in tracer transaction technique, or using a bitcoin measurement body like IETF RG. Finally we tried to identify patterns of transaction, and get off-chain activity as well. It could move on the chain, or stuff on the chain could move off as well. And it would be good to get a handle on this.
+
+We would like to urge the core developers to keep measurement off. The natural evolution of most systems is to restrict information over time. The ability to crawl the network might disappear in the future. This is a space where the protocols are under-researched and the next level of changes to be applied to the protocol need to be well-informed, which is impossible without data.
 
 
