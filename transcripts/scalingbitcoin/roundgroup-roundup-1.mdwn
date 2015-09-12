@@ -68,4 +68,62 @@ There are some innovative ways to collect information, a geographically distribu
 
 We would like to urge the core developers to keep measurement off. The natural evolution of most systems is to restrict information over time. The ability to crawl the network might disappear in the future. This is a space where the protocols are under-researched and the next level of changes to be applied to the protocol need to be well-informed, which is impossible without data.
 
+# Mathematical modeling
 
+Bram Cohen
+
+There's doing simulations and emulations, differential equations with pencil-and-paper. Mobile process calculus which you can find out by searching for pycalculus and it's useful for concurrent process analysis. There's some stuff for mining incentives, there's an unfortunate lack of modeling of peer selection algorithms resulting in network segregation or not, they seem not to but who knows. High-level models are easier when you make simplifying assumptions, which you can sometimes do. Bitcoin is hard to analyze because it's a large monolithic protocol, even if you modularize it internally, it's really a big monolithic interconnected thing.  Proof-of-stake are even harder to analyze, and they have the retroactive go back to where you have 50% problem.
+
+# Miner-developer relations
+
+Matt Corallo
+
+How can we improve conversations between miners and developers? We focused largely on dealing with immediate alerts about something is broken and something needs to be fixed immediately and make sure the messages come from the right people. Who's allowed to send messages directly to mining operators? How do we filter that list? We had a much longer discussion about what kind of mechanisms and how should these messages look. We talked about the existing alert system and how it's going away. We talked about how existing miners have networks designed and which points we can inject messages that will get to them very quickly.
+
+And then we moved on to maintaining good working relationships between miners and developers. How do we have regular basis meetings? How do we have non-emergency communication? How can we get people to use the mining mailing list? How can we talk with them in general, about Bitcoin Core announcements? Or things that miners should be aware of?
+
+Why are we at Montreal at all? What are the block size issues? Why are we having these discussions? It's important to have these discussions between miners and developers because these discussions have not already taken place. We had a brief discussion about exactly why the block size is still a contentious issue and why we're in Montreal and what everyone should be trying to take out from Montreal.
+
+# Scalability and hosted infrastructure
+
+We very well represented by bitcoin infrastructure companies. I wont give the names. We had a good number of hosted wallet providers, as well as API providers. The major takeaways were that people, of this group, universally agreed with increasing the block size which is interesting to me, because it's a hard-fork to bitcoin. It's weird that they agreed to hard-fork bitcoin. There was an interesting point about it's not just about changing the block size, it's about proving to the world that somehow bitcoin can govern itself so that people don't have to be afraid that when critical issues arise we can resolve this somehow.
+
+We talked about things like the difficulty that the stress test has caused wallets right now. The wallets are unsure how to calculate fees, so some people talked about making looking at the code in Bitcoin Core for how to calculate fees correctly, whatever that means. But still lots of wallets have had difficulty with this. Another interesting thing to me was that a number of infrastructure companies don't run Bitcoin Core. They run completely different implementations of bitcoin. I thought that was very interesting.
+
+There was concern about cost and concern about this spamming attack- this "stress test"- there was higher cost to the infrastructure companies. There was major cost impacts. And then customers get grumpy, and then the API companies have to devote engineers to this.
+
+# Pathways to adopting better cryptography
+
+Andrew Poelstra
+
+We talked mostly about new cryptography that could be used in bitcoin for better scaling. Most of the stuff we can soft-fork in an unexciting way. Where can we improve scaling? The first thing we talked about was looking at digital signature validation. That's a huge part of validating blocks and the initial block download. We can work on that concretely and we have been doing that in Bitcoin Core. We talked about some boring algebraic improvements, and suppose you could replace the ECDSA signature algorithm with EC Schnorr signatures. It's functionally identical to ECDSA, but the algorithm does not involve division. A critical thing this enables is n-of-n multisignature, where all parties are required to sign. To create such a tihng, there's a large script required. You need a 10x script size to get a 10-of-10 bitcoin script at the moment. A standard single signer signature looks the same as the 10-of-10 signature for Schnorr signatures. We can extend this from n-of-n to m-of-n where there are different values. We do this in a cheap way where we reduce it to n-of-n, like if I was going to do a 5-of-10 multisignature, then I publish a public key eequivalent to what 5^10, we can get some space savings by putting all the possibilities into a merkle tree, then reveal only the path that actually gets used. There are very expressive multisiganture that is only logarithmic in size with the number of possibilities, which is much better than today's OP\_CHECKMULTISIG today.
+
+Schnorr signatures also allow batch validation. We have some ideas where if it was possible to change bitcoin script so that checksigs were not allowed to fail, so we can only have checksigverify, then we can run through all the script validations for a block, and make sure all the transactions succeed, so we first make sure the signatures are okay, then we take all of the signatures in the block and make sure everything works. In schnorr signatures we can combine them all algebraically, then do a single validation, and this is a 50% speedup versus individually verifying all the signatures. That's just from fairly simple algebraic tricks.
+
+What about instead of just having different branches for merkle trees, what about extending this to the whole script? Where you have an IF statement in the script, what about if you take all the pathways for the execution of the script and put those in the merkle script, and rather than publishing the whole thing, you only publish the scriptpiubkey as just the merkleroot of your script, and it only reveals the pathway that is actually taken. You no longer have to reveal the entire script. The standard execution is very narrow and efficient in some cases, and then there's like someone dropping out and then an expiring locktime, well if these bad events don't happen then you only reveal the nice case which is very simple. You could have complicated recovery scripts where the blockchain does not have to bare the complexity of this.
+
+We talked briefly about quantum-resistant cryptography using lamport signatures rather than ECDSA which would be a huge size hit, of like, 100x or more size increase in the size of our signatures but potentially faster verification assuming we had SNARKs which is compact verifiable computing, which we talked about earlier in earlier talks, we could eliminate all of the blockchain data and just provide proof that it was all correct. Lamport signatures and using hash-based signatures would be faster in that case, instead of using ECDSA. There is weird situations where usually Schnorr signatures are very bad ideas for scalability, but if we had other magic crypto then suddenly they are a good idea again.
+
+We talked also about UTXO commitments in blocks and various tradeoffs in that.
+
+# Privacy and scalability
+
+zooko
+
+Privacy is related to censorship resistance and fungibility. Censoring someone because it's usually cheaper to do that, rather than punishing them for having said it. Privacy is the weak-link. Fungibility means that all money is created equal and trades at face value. There were a whole bunch of people at this roundtable, which I thought was cool, because bitcoin is terrible at privacy. But at the social layer, almost everyone agrees that privacy is extremely important. We talked about three specific technologies, one is lightning network with onion routing attached, another one was coinjoin + confidential transactions, and the third was zerocash with SNARKs like Andrew Poelstra just mentioned. They have lots of tradeoffs.
+
+We talked about how one measures or evaluates privacy. Most of the methods were rejected as not really useful. The one that we thought was potentially interesting was the qualitative practice of creating user stories, and whether their use in certain stereotyped patterns would betray them or not.
+
+We agreed that privacy is more of a group property rather than individuals; it should be ubiqituous and the default setting if it's going to do any good. Someone mentioned that in their bitcoin company that when they are talking about potential privacy features, someone mentioned that the US banks were the most excited about that because they need privacy from their competitors. We often see privacy in terms of social terms, but lots of people need more business-oriented privacy.
+
+Privacy is a really difficult problem, but this community is full of really smart people that care very strongly about privacy and so we're not going to give up.
+
+# Potential for SHA-3-like competition processes for bitcoin
+
+Our group discussed potential competitions and contests. SHA-3 contest was held by the US government for selecting a new hash standard. They had three stages. First they had a bunch of workshops, and then they looked at what their requirements are for the new hash function, and what it should be strong against. Once they did that, they published a set of requirements and then opened up the field to various people proposed hash functions, once they got the initial proposals in. Everyone evaluated them, different teams attacked the other teams' hash functions, and you found other people's problems in hash functions. It was epsecially productive in the cryptography community. Because it happened over a long period of time, people were able to set long-term research agendas, for example it started in 2004 and continued into 2011 when they selected Ketchup as their SHA-3 standard. This could offer value bitcoin in the sense that this could produce legitimacy, having this nice discussion and having reasons and very formal well-thought-out logical manner could help these discussions and help everyone understand stuff, but it could also help the technology.
+
+One of the questions was well with SHA-3 there was a committee for selecting which hash function should win, and this might be contentious in bitcoin. So there was some question for whether this was useful for solving contentious issues, and there was a bit of discussion around this and I don't think it was resolved. One thing that we generally seem to agree on is that it would be useful for non-contentious issue, and just because something isn't contentious doesn't mean it couldn't harm bitcoin. So what issues could help bitcoin and could prevent lots of problems? One of those we thought of was the p2p network, because you can run different p2p networks and relay networks without causing forks, it's independent of the blockchain consensus decisions. That might be less contentious. 
+
+Also we should approach non-contentious issues first, might be a good way to move to more contentious issues later. And then potentially having it on a longer time-scale like a few years to 10 years allows people to develop technologies that wouldn't have immediate applications but might have larger applications long-term. A lot of academics take a while to steer the ship, having a longer-term time frame might build confidence and get deeper longer-term research projects involved.
+
+We also discussed that SHA-3 was a government project, so it had a lot of government resources. The cryptography community in Ceasar engaged in a similar competition in a shorter time-scale outside of government. Who would fund this?
