@@ -1,0 +1,50 @@
+Roundtable roundup review 1
+
+# Future of SPV Technology
+
+Bram Cohen
+
+So hopefully I summarized this reasonably. There were a number of things that came up in our discussion. It would help SPV a lot if there were UTXO commitments in blocks. This can be done with a soft-fork. It has implementation cost difficulties. There are some ugly things you could do about how the trees are formed, so that you don't have to repopulate the whole thing every single block. There might be some happy place where the complexity of code and the difficulty of doing this and the complexity of doing the lookups are only modestly ugly. More work should be done there.
+
+There should be a SPV implementation in Bitcoin Core which leads to not a clear leading reference that has good behavior. SPV clients should in general should talk to 1000s of nodes or even more. They should talk to hundreds of them because there's no actual big cost in doing so, the main one is whoever claims to have the largest chain and you can easily verify that from them.
+
+SPV clients should maybe not do fee estimation, perhaps payment channels will interact with SPV in the future.
+
+Bloom filter requests in SPV are broken and busted and have denial of service attack problems. It would be nice to have a private information retrieval protocol that would be more expensive but give you the privacy that it claims unlike the bloom filters which don't.
+
+# Network propagation
+
+Rusty Russell
+
+Please propagate forward.
+
+There was a lot of discussion about physical topology of networks, routing, overlay networks, but it was made very cloear that block propagation is the key focus for miners. There was a lot of speculation about how that would look, adding physical routing to the network. There was some discussion around that, but perhaps not many major conclusions, except that if bitcoind doesn't do it really really well, then miners will do it themselves. We also discussed IBLT. There were some interesting interest in doing weak blocks or near blocks. Because they tend to be very similar to final blocks, and final blocks are usually similar to weak blocks. This should be fairly easy to implement, unlike IBLT. Also general cleanups in networking code, which will lift our gain a bit there, and open some potential to doing smarter things like small nodes.
+
+Most fascinatingly, 1 BTC is about equivalent to 7000 tons of water if you are operating a hydrodam.
+
+# Involving academia
+
+We talked a lot about publishing and how academics are judged by perhaps mysterious criteria if you haven't been a phd student. There's a standard top tier of journals. There's starting to be a small number of bitcoin papers per year. There's a lot of pressure to send my best ideas to there and impress clever computer about how clever that bitcoin stuff is, even if there's not many bitcoin people there. Then there's a hierarchy of second tier conferences. Then there's the bitcoin workshop, or Financial Crypto, or the Ledger journal as a special thing. Unfortunately that's not viewed as the same way, and academics don't get nearly as much career credit. That's a much better way to get your ideas out to the bitcoin community, but doesn't give you career brownie points. Perhaps we should take research from top tier research journals, and extract them and try to get information going down that way. And also some way to get cool research from bitcoiners from non-academics, who don't have incentives to write up long references and long papers, and perhaps get some of those ideas exposed to the crypto crowd to get them more interested in bitcoin. There's been some progress here in computer security. We've had more survey papers about what the interesting problems are, we could try to write more about what the open problems are and pose them in a good way to make sure that academics are solving the right problem. Surveys could help say that the community identified a problem. Would be great if more game theory and economics people were looking at bitcoin more. We need a repository where educators could put notes. Here's how IBLTs work, here's a pset on this, actual resources but people implementing it and trying to learn more. More outreach to undergraduates. Funding would be nice. The best way to convince academics to work on your problems is by convincing grant bodies about it, because then academics will get grants and then pay grad students to work on it. NSF is already funding some bitcoin stuff, but other academic funding bodies would be nice.
+
+# Trustless UX and human crypto interaction
+
+In terms of talking to users, in terms like vulnerability and dependency, to make things more clear. We also questioned a lot about whether users care about trustlessness and security, and how to change that mindset. A lot of the situations where people or basic users are going to appreciate the security that bitcoin brings, is centralized systems failing and seeing the examples of trusted systems just not working. It comes down to a mindset perspective shift. Security should be the default option, but it goes back to if given the option to have a quicker transaction or something like that, are users going to sacrifice their security? And how much to tell the user about cryptography and the security? How much should be relayed to the user, and how much do they even care about that? Does there need to be a more concrete relationship between designers and developers? Create positive feedback loops for funding this software. There is an incentive to centralize your application if you're going to be able to get more funding because users are more dependent on you. There should be more incentives for funding in a distributed manner.
+
+What is the UX problem? It is different for different people in different situations. People having internet access. Is it problematic that you need to use cash for buying coffee? Where are the actual pain points that we should be focusing on? And then expand on user friendliness for less important things later on.
+
+# Threat models and boogeymen
+
+Andrew Poelstra
+
+We talked about various threat models against bitcoin. We talked about threats to bitcoin from other systems. And threats to other systems from bitcoin. Consensus, fungibility, and selective rule enforcement. There were threats towards bitcoin from miners. Miners are the only part of bitcoin that involve a human element of trust. So we worried about if miners could collude or become centralized, what are the risks? One of them is that miners can cause consensus failure, and they might be coerced into doing this for example if there was political or other pressure on them to reverse transactions, you might have a situation where miners would be forced to rewrite the blockchain. There is then risk of consensus failure, or miners might have to use different rules just by legal agreement. Second we talked about fungibility, which is that if miners are looking at the transactions they are mining, then there is a risk that they might concern some coins worth more than others. Miners might be tracking coins for AML reasons. Some coins might be worth more than others. Technically, all coins should be worth the same amount. We shouldn't need a patchwork of legal infrastructure to keep track of coin worth.
+
+There needs to be a way to incentivize a more distributed use to avoid monopolies at every single level. Miner monopolies, our final concern was selective rule enforcement. Miners in certain geography may not be allowed to mine certain transactions. Perhaps more insidiuous is internal selective rule enforcement and this would be something where miners might start imposing rules that benefit them, like if they start demanding ridiculous fees. We didn't go into specific examples, we were keeping it really high level, the one interesting thing at the end of the discussion was that if the threat can end bitcoin, was that a threat or a complete failure. Where do you draw the line that it's a threat to bitcoin's future, or is that just a bitcoin failure?
+
+Do we want to model threats that are so large that you can't possibly handle it anyway?
+
+
+
+
+
+
+
