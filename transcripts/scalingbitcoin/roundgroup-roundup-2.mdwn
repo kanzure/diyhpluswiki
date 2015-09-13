@@ -62,3 +62,76 @@ There were a lot of contentious areas where people don't exactly agree or have a
 
 We're thinking about applications with trustless timestamping, stake consensus, we weren't able to agree on any core categories. We talked about a number of different methods. We also talked about possibilities of various different applications with different levels of security required and various options to poo all over the blockchain versus higher security and more expensive for others. That about covers it.
 
+# Network events and planned responses
+
+Network partitions, the block size halving coming up, and failures of centralizing such as what if Coinbase collapses or there's a major hack or something. Disaster notification kind of like when the hard-fork happened in March 2013. How do we get people notified and get them on it as fast as possible?
+
+When the network partitions happened, we were really talking about what happens if China shuts off all bitcoin communication? There's going to be the China side of the network, or maybe the hashpower will be even and there's going to be a reveal where one side is 16 blocks ahead and one side is 18 blocks ahead. And maybe the 16 blocks will still keep mining on the chance that they might get ahead in the future. They aren't going to give up 16 blocks of rewards just because the other side is 2 blocks ahead.
+
+If one side has much more hashrate than the other side, then the side without hashpower, they are just going to freeze. Confirmations are going to be meaningless, and you have to get the transactions across the network. You can setup multiple jumps and jump a network partition or use SMS or some form of steganography to get over the firewall.
+
+For the block size halving, there's a lesser problem which is that the final 25 bitcoin reward block is going to be more attractive to mine than the first 12.5 coin block, so miners will never forward and they will keep mining and keep trying to steal that 25 coin block. If this gets really bad, we can have someone just make timelock transactions that are a few blocks in the future and incentivize miners to move past that one block reward. I think that would resolve quickly and require specialized software and I don't think most miners are going to implement that.
+
+The more interesting problem is that the reward halves and the difficulty does not. Where the electricity is the most important expensive cost in mining, then suddenly it wont be profitable. So all the miners shut down at the same time, which would be a disaster because the chain grinds to a halt, so how do you get around that? Hoping that miners stay on, beg them to take a loss for 2 weeks until the difficulty adjusts? Or do a kickstarter with transactions with high fees? But then we realized that miners have fixed electricity costs or are even fined if they don't use the full $20k/mo megawatt. They pay a penalty for not consuming their electricity. Some of these costs are fixed or something. Miners might eat it for two weeks because their costs are already fixed, so large farms do not benefit from shutting down their miners for such a short period. So this probably wont be a huge issue.
+
+Decentralization failures- there sohuld be some sort of process for responding to these and be prepared for some service to bring a bad name to bitcoin. And there is talk about exchange failure and preventative modes, like proof-of-reserves, which isn't that valuable because I can just buy a signature from soneone and give them $100 and then they give me a signature that says I own $1k bitcoin. Proof-of-reserve can be faked using collaboration. I think the best alternative is to combine cryptography and government regulations to protect from centralized service failure.
+
+The notification system, what happens if something out of the blue goes really wrong, how do we get ... there's no phone number tree for contacting everyone. I think that from a federal perspective, regulators would like to know that the ... we need to get everybody on board in a few hours. We need an emergency mailing list.
+
+There's a good track record on previous disasters. On the recent fork we had everyone online and talking within a few hours. I think that we just need to formalize this to make other people feel better. I think the system we have in place does a good job informally.
+
+# Challenges for major protocol changes and their benefits
+
+We started talking about hard-forks versus soft-forks, then we saw that major changes that can be soft-forks and minor changes that can be hard-forks. A hard-fork makes a change more major because it requires far more coordination. And then we talked a lot about different proposals and mostly we spent a lot of time about the challenges of getting proposals through, and then we started listing changes, and then particularly what would be blocking them and what would the rewards be. It's on the whiteboard paper in the back after this you can go take a look. I'll cover some of the common themes.
+
+The benefits are usually either that they make some feature set work like sidechains, SPV stuff, blockchain pruning, or they increase performance of bitcoin, like make more transactions per second, faster signature verification, and then kind of pretty uniformly the challenges had to do with the fact that there isn't consensus in the community and everyone involved as to whether the change to go through. Sometimes the incentives are not clear because what are the results of changes?
+
+So it makes it hard for the community to agree for whether a change should be proposed or even agreed about.
+
+# How can we get 10x the number of "core" contributors?
+
+crescendo
+
+This is not a linear scaling problem. We actually drew a lot of parallels between the early time in Linux and what has happened in the bitcoin community. You have large entrenched powers that are responsible in Linux but they were originally UNIX companies really. The big banks are sort of the parallel. We talked about problems like the industry, the parties interested in bitcoin and blockchain. They are not prioritizing contributions back to the core software. There are only two companies that are responsible for hiring, with the other notable addition of MIT DCI and previously what the Bitcoin Foundation did.
+
+We were thinking of asking newcoming professionals to hire dedicated developers that is responsible for contributing back to the Bitcoin Core developers. Hire technical writers to encapsulate these ideas and get them into simple clean formats that are more easily understood by developers and others alike with a wider range of skill sets.
+
+We talked about this other problem where there isn't enough talent out there, developers are already in extremely high demand. With bitcoin it's doubly high demand, it's proficient developers plus cryptography knowledge, that's doubly more difficult. We suggested industry companies investing in the community by sponsoring mentorship, hiring interns and providing internship, take someone under your wing and provide mentorship and guide new people. This is a start but doesn't get us to 10x.
+
+There's also a lack of modularization in the Bitcoin Core codebase. It manifests in a number of different ways. There are existing efforts. When you have such a small coupled system, it's hard for one change to not impact other parts of the system in unexpected way, there's also libconsensus but more effort needs to be put into breaking this system out. Other developers can then contribute and provide contributions without breaking other parts of the system.
+
+We obviously talked about communication problems and this has some ways of manifesting which is that the information out there and available is duplicated, incorrect, and we need to make an effort to consolidate a lot of this information, and one of the best ways we found of doing this is the bitcoin wiki. This has largely fallen into decay. It would be beneficial to increase community effort to document conversations in bitcoin-dev, bitcoin-wizards and stackoverflow and getting the useful chunks of information to go read it without wasting someone's time for the 100th time or something with the same old questions.
+
+There's also the importance of reducing the information down to something consumable. It has to be simpler. Developers that don't have deep expertise should at least be able to see the nuances and complexities so they can have perceptual understanding or insight.
+
+There's also something to be said for face-to-face meetings, including smaller events. We need to see the SF Bitcoin Devs meetup in other locations. These are important conversations to be had. Looking someone in the face changes the nature of the communication.
+
+We need more mentorship, and we want to make a call to industry players to actually make a commitment to invest in the future of bitcoin. This is not just one year returns of profit. This is massively important. If you invest in the bitcoin community, the bitcoin community will become stronger as a whole which is absolutely necessary for the long-term success of the projects.
+
+There are also parallel communities like altcoins such as litecoin, ethereum and dogecoin, these provide low-risk ways for new developers to get involved. Also these are probably false flags to recruit new developers. We shouldn't poach developers from each other. And we should poach more Linux kernel developers. We need to reach out to parallel communities and get them more involved.
+
+Also, we talked about how to encourage developers to participate. We need more people to offer jobs to developers that want to work on bitcoin stuff, but also this unified vision that we're all building a better vision and that we are all working on this. We should show people that the vision is without centralized systems and without censorship, the value loss that is taking place, the middlemanship then even more developers will get involved and most people aren't aware of that.
+
+I want to highlight MIT's program, if you are interested in offering mentorship to students or other individuals, please email bitcoin@mit.edu because they are actively looking for people to provide mentorship.
+
+# Sustainable financing
+
+Patrick Murck
+
+Thanks for organizing this. This conference reminds me a lot of San Jose in 2013. The first big Bitcoin conference which set the stage for a tremendous series of events afterwards that really grew bitcoin in general. So this is a great show.
+
+So how do we fund bitcoin in a sustainable way? Bitcoin development and infrastructure. We want to put some parameters around that. You can easily find yourself in a space where you are trying to boil the issue. Let's cut out marketing and policy and so on, because those aren't essential to operating and running bitcoin. What are the absolutely critical aspects? Well, full-nodes to propagate transactions. Miners, protocol maintenance making sure the uptime of the network is there. Core developers who work on maintaining the protocol and the software and network, and also improvement as needed to keep things moving forward.
+
+How do we measure this? What are the true costs of operating these full-nodes? What about the costs of developers? Once we have figured out the costs of maintaining what exists today, then what is the cost of improving it even in marginal ways? If we can measure what the true costs are, even the costs of making improvements, how are resources being currently allocated, and how are we resourcing the resources anyway? The mining ecosystem had the incentives built-in. But other infrastructure is not incentivized, like full-nodes. We had a great presentation about incentivizing full-nodes. We kind of left that up in the air for whether it should be a financial incentive.
+
+Is money the right way to fill that gap? Technical writers we have heard that two times early, but those are hugely important. We can fill that gap. Technical writing isn't very sexy, but that can be funded. We talked about filling in that gap by creating a culture of giving back. We've talked about this before, but the companies that are funded that have got VC funding or miner revneue or whatever, developing a culture of giving back, whether running full nodes or incentivizing full nodes, or lending out your developer resources, those are some of the ways that the companies can give back.
+
+MIT is a good example of this, but we should leverage academic institutions because they have different resources that are generally available and we have wondered around why every academic institution isn't yet running a full node. There are over 50,000 institutions out there. The NSF is giving out grants, perhaps they could get grants for running full nodes. When companies are raising money, what is giving back going to look like?
+
+# Scalability of wallet technology
+
+One of the first things we talked about was separation of wallet from Bitcoin Core node activities. The idea of reusing the Core software within other wallets, the ability to embed the core ode in other wallets, the idea of having standard interfaces and the importance of running a full node. Everyone should be running a full node. Perhaps there should be a storageless full node on your router device. We also discussed whether SPV is going to stay. How can we incentivize the use and development of SPV? The issue of SPV with privacy, security and the fact that you're not really part of the network, you're a leaf and not participating. We discussed the issue of the number of nodes.
+
+We also discussed what happens if we have 50,000 new nodes. Can the network handle that? Are those nodes going to start sinking and take the network down?
+
+We discussed the idea of oracle services having standard interfaces for multisig, the idea of blockchain API companies having standardized APIs between each other. It's hard to have customer service with open-source software, so are we going to have some Red Hat model, how is it going to work for software? Today most of the companies that offer wallets go beyond their applications in order to support the customers. Is that how it's going to work in the future?
