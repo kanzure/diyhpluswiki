@@ -177,9 +177,6 @@ MV: They used a curve for which EC operations are fast, you can do bit twiddling
 
 You can pick primes so that polynomial interperolation is fast. You can match up curves for bootstrapping, where you have cycles about proofs about proofs about proofs. Another thing is choice of hash function, if you are willing to use lattifce assumption (?), you can have hash functions that are extremely fast, don't use SHA, use knapsack-based hashes. There are a lot of tricks when you go deep enough, and thos etricks can give lots of optimizations.
 
-** maybe off record?
-AM: Elaine are working on SNARK-friendly cryptography project. Build whole suite of encryption, hash functions, pseudorandom functions that are all amenable to that particular curve choices that are there. Kanps-ackbased collision resistant hash function that MV was talking about is one instance of that, directly inspired. They might be submitting the paper soon, so don't put this in public.
-
 AM: gmaxwell has an idea of a simplest possible SNARK appslication with bitcoin today, which is where you solve some problem, someone should just do this, it would be the first practical SNARK. You compute a solution to a hard problem, like sudoku or something, perhaps there's another problem though. You have the solution, the problem, you take the hash of the solution, you put hte hash in the bitcoin transaction, then you would have to reveal the solution in the spending transaction. Out-of-band you would provide a SNARK proof, then you could get people to pay you because once they put enough money into it, they need to claim the bounty to reveal the solution. And that's very clever.
 
 MV: Bitcoi naddresses that can be spent if you have a hash collision.
