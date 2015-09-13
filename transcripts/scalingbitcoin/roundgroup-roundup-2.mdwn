@@ -1,0 +1,64 @@
+Roundgroup roundup day 2
+
+# Communicating without official structures
+
+Hi guys, okay I am going to try to find my voice here. I am losing it. I ran the session on communication without official structures. We went through the various channels through which people are communicating in this community like forums, blogs, irc, reddit, twitter, email, and we talked a little about them each. There's also the conferences and meetings. There are different forms of communication in text than in person. It's a lot easier to read into things negatively when it's just via text. It way may not be intended, but people may assume negativity. One of our goals was, are there ways to encourage people to assume good faith?
+
+We also discussed trolling. We noted that certain communities can establish a baseline whereby the general respect is such that you don't have a lot of trolling, and why we want to encourage that in this community. We discussed getting new entrants into this space, and we'd like to have core devs explain everything to everyone new in the community. We need better resources for new entrants to the community so that when they have a new idea when they join mailing lists they aren't shutdown, but onboarded into the community in a way where they don't need to be shutdown.
+
+There can be mentorship, ambassadors that are not involved in core development but could explain to people just getting involved certain resources or certain forums to get up to speed. This depends on getting the right resources. Lastly we discussed a concept of not a code of conduct, but maybe a general rallying cry for a code of ethics or a statement that the community can collaborate on, for collaboration and treating each other with respect, we point to Wikipedia that has a community with that. It of course would be opt-in and look good when you sign it.
+
+We should remind people about the human nature of the people they are communicating with. Their online interactions should include remembering that these are real people. We should get folks in the community to assume good faith and assume that people are well-intended, while not being less scrutinous. Several of us decided that we would write this rallying cry or statement and the point is to make it positive and encourage people to collaborate and be respectful.
+
+# Payment channels
+
+We were talking about payment channels. The initial topics were the soft-forks required for lightning network. Some of the changes that need to be made before this is usable, like checklocktimeverify (CLTV), a relativechecklocktimeverify (RCLTV). And the malleability fix is the trickiest, it's not that anyone disagrees- except that they do, ... it can get fairly big pretty quick. SIGHASH\_NORMALIZED might be nice. You might as well make a new signature type when you have a new sighash type. There's a lot of rider bills that want to go on. Normalized txid, no txid, don't sign your input at all which allows for some really fun stuff, so that's sort of the worry.
+
+We also talked about usability of payment channels, not just be about layer-2, but what does the presentation look like to the user? We need to focus on the UX aspect. Once you hit a button on the phone, are the users even aware that they are using payment channels? Routing payments need to be solved too. Outsourcing- we can't expect users to always have a computer online at all the time. It has to be compatible. We can incentivize people to ... to stay online for them, delegates, maybe your friend broadcasts transactions for you, maybe you can broadcast old payment transactions to educate users about the security parameters.
+
+Are we still going to use bitcoin addresses? Maybe another encoding. Maybe a wallet-to-wallet communication channel and a payment protocol like bip70 but not bip70. We want a well-connected graph for payment routing. You don't want a situation where there's a bottleneck in the graph. There should not be a small number of large nodes at the center of the network. You should optimistically connect to a lot of people and route things that way. What do you use for initial discovery? Probably an IRC channel, use some kind of DHT, maybe something from bittorrent will be applicable to this. How do you present this to some user? Some identifier at host?
+
+Tor should be considered as the de facto transport. We can have locks around it because tor as a high-latency network would still be compatible with the timelocks. We didn't discuss timestop too much, there are sort of systemic problems that anyone channel is not such a big channel, but what happens if you have lots of channels going down at once? So having a timestop where you have a blockheight a real blockheight and then an adjusted blockheight that transactions could reference would be something that could prevent that. We discussed crazy edge cases that will almost never be a problem, but you still have to have a solution for them, because if you have a solution then it would definitely never be a problem so that nobody will ever try that attack.
+
+A bunch of people are implementing these things and they should all bug Rusty Russell to prevent him from continuing. It's sort of annoying that there are incompatible clients. It's nice to have consensus here. We need to take the time and design these systems correctly. We need to make sure we don't take shortcuts or undesirable properties.
+
+Lightning payments on average should be sub-satoshi because hot wallets are required and are extremely low security.
+
+# Interfacing with W3C, IETF, etc.
+
+What are some of the other organizations out there that we might want to be interacting with? Well we decided to hell with them. We decided there is value in talking with other groups out there. One of the first things that came up when we were talking about it was that we saw organizations with similar characteristics but they tend to self-organize around issues in the same way that we did at the roundtables to allow some more focused discussions happen and allow people to work in their areas of expertise. We should try to define the problems we have, like some of the networking issues and being able to more quickly blocks distributed across the entire network, these are the things that people have already worked through the problems on. The challenge that we have of trying to make sure the block gets everywhere very quickly is something that CDNs have worked with. We can learn from their experiences, this gives us a really good way to go into other ecosystems and do some spearphishing for some really good developers. If we go into a group of networking people and not mention bitcoin, then you can get them hooked on their own technology love rather than convincing them that bitcoin is awesome as a first step. This could be a really valuable way to do it. I think we have pulled some developers from linux and other places by doing exactly that.
+
+The web consortium is going out and working on web payment standards, ensuring that we have representation at those meetings would be nice. We want them to build a bitcoin-positive way, and we should make sure the standards bodies understand our needs and what we can do.
+
+Those were some of the big takeaway points. We should organize around problem topics, leverage that to work with other organizations without framing the problem as bitcoin.
+
+# Perspectives and challenges on interfacing with China
+
+We didn't have that many questions in the roundtalbe. If you want to do business in China, everyone in China uses weechat. You can use it to pay each other, use it to chat, it's like facebook, snapchat and uber all combined into one package.
+
+What does the Chinese government feel about people mining bitcoin in China? As long as it gives the government some benefit to have bitcoin, they'll do it. They have a panel of advisors from research institutions advising them on what they should do with bitcoin and cryptocurrencies in general.
+
+What about the block size issue? They don't really understand technical aspects of bitcoin, they just want you guys to make a decision. Chinese miners just want to go with the flow. Tell us what your decision is. So at the end of the conference they were asking us what the decision was, have they decided?
+
+Latency is an important parameter for Chinese miners with regards to the miners.
+
+# Systematizing knowledge
+
+Hopefully we have been making a lot of knowledge here today, perhaps it's Zero Knowledge but it still counts.
+
+The problem over the past few years was that we have an enormous amount of ideas and original research and this isn't very organized. We have bitcointalk, reddit, IRC, various development mailing lists, a new mailing lists on linuxfoundation.org, and it's difficult to index all of this. It's also difficult to bring new people into the bitcoin community because it's difficult to point them to anything to navigate themselves to figure out how to get up to speed. There's a few different targets for outreach and documentation.
+
+We have several groups that have different requirements: developers, miners, users, professionals from other industries, policymakers and regulators, academics in university and researchers, and we need to take a different approach in providing all of these people.
+
+There are problems with organizing information on IRC. There are big bottlenecks in producing content, especially around Bitcoin Core development. Often there's only one person that knows what's going on, and often it's the same person. Often the answer is "go answer person X" and person X is then completely swamped. This is a bottleneck that needs to be improved.
+
+The organization is also important. Things are very spread out. Looking towards solutions, we talked a lot about hiring technical writers. How do we get more developers? Let's try to hire technical writers. There's more writers out there than there are more developers out there. They are probably a bit cheaper too.
+
+What ideas can we copy from academia? Academics hate the way that peer review works. It's very slow. It's very formal and hard to work with. There's some good consequences of the academic peer review process. One of these is that if you want to find a new idea, there's only one place. You can do a journal search and you'll find it, plus any responses or any refutations if anything was wrong. There's also a culture in academia of formatting your proposals in a certain way, including how your proposal is new and how it is different and what the related work is, and what the idea is that you are contributing. It's taboo to fail to cite or taking credit for something you didn't do. This is sort of missing in bitcoin to a large extent; just random posts to reddit and blogs. This contributes to the difficulty in organizing information. We would like a way to encourage a culture of producing new ideas and describing new ideas in a way that is amenable to finding them and finding related work and finding how they fit into everything that is going on.
+
+# Non-currency applications
+
+There were a lot of contentious areas where people don't exactly agree or have a shared view on what's going on now or what the future will be. We tried to pin/pen a few things down, we tried to figure out what about bitcoin applies well to non-currency applications. There are information technology properties, like availability and integrity. We talked about general areas in applications today like notaries, timestamping, copyright, arbitration, identity management, loyalty points, asset management systems.
+
+We're thinking about applications with trustless timestamping, stake consensus, we weren't able to agree on any core categories. We talked about a number of different methods. We also talked about possibilities of various different applications with different levels of security required and various options to poo all over the blockchain versus higher security and more expensive for others. That about covers it.
+
