@@ -137,9 +137,9 @@ MV: In theoretical practice, and in practice-practice. I am not aware of large-s
 
 AP: I thought multilinear maps are necessary.
 
-MV: Nope, not at all.
+MV: Nope, not at all. You need bilinear groups plus some assumptions. You can do it in the generic group model.
 
-Generic bilinear group is efficient, but not realistic, it's superstrong model. It's not more than that. It's like the whole group in the random oracle.
+AP: Generic bilinear group is efficient, but not realistic, it's superstrong model. It's not more than that. It's like the whole group in the random oracle.
 
 AM: Hardness assumptions that it relies on?
 
@@ -204,7 +204,7 @@ AP: Oh not a security thing, just a triviality of the example.
 
 Hash PCP?
 
-MV: Impossibility result of trustless setup? You can't have ZNIK, the attacker could just enumerate over outputs of your proof, and could just give you one that it accepts. You need cryptographic hardness assumption. There are also results in late 90s I could look up reference that you need a common random string for non-interactive zero knowledge, and common random string we can instatiate in practice, sha256 of 0, of 1, that's your random string. Just using SHA as a random oracle. But there are papers and there are impossibility results saying that a common random string is a lowest assumption you can make.
+MV: Impossibility result of trustless setup? You can't have NIZKs without some sort of oracle, the attacker could just enumerate over outputs of your proof, and could just give you one that it accepts. You need cryptographic hardness assumption. There are also results in late 90s I could look up reference that you need a common random string for non-interactive zero knowledge, and common random string we can instatiate in practice, sha256 of 0, of 1, that's your random string. Just using SHA as a random oracle. But there are papers and there are impossibility results saying that a common random string is a lowest assumption you can make.
 
 AM: This is a disambiguation thing; in CRS- that's the output of your setup procedure. CRS can mean common random string or common reference string. It could be sampled from a random distribution or even distribution. Common reference string on the other hand has to be some algebraic structure thing, like some RSA thing, has two large prime factors but we don't know it, or in order for trusted setup with SNARK then a trap door. What you're saying is that impossibility results say you need at least a common random string. 
 
@@ -212,7 +212,7 @@ MV: There is no impossibility result that SNARKs would require common reference 
 
 AP: Lots of research about PCP-based SNARKs?
 
-MV: There are theoretical constructions. There are implementations in LaTeX of those things. The team at Skipper lab actually has REDACTED. .........  If you had a sufficiently big quantum computer, you wouldn't be able to break PCP-based SNARK, if you had a quantum-safe hash function and you believed there was nothing better than Grovvler's algorithm which is just square roots, then we have PCP-based SNARKs and they are quantum-safe. We should start a SNARK wiki.
+MV: There are theoretical constructions. There are implementations in LaTeX of those things. The team at Skipper lab actually has REDACTED. .........  If you had a sufficiently big quantum computer, you wouldn't be able to break PCP-based SNARK, if you had a quantum-safe hash function and you believed there was nothing better than Grover's algorithm which is just square roots, then we have PCP-based SNARKs and they are quantum-safe. We should start a SNARK wiki.
 
 MV: Can I submit pull request corrections?
 
