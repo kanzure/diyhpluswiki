@@ -31,6 +31,10 @@ When BIP66 activated on the network, we had an unwelcome discovery. There were s
 
 What's interesting about this data is that because it's measured from actual miner output, it excludes the base latency caused by Bitcoin Core, because that would have been experienced by the first pool as well. This is all latency from the network and other parts of the stack. My next step in this research is to go and figure out what parts of the network can be optimized in the stack.
 
+mining work delay graph:
+
+<img src="https://people.xiph.org/~greg/sp2.png" />
+
 Q: (inaudible)
 
 A: So, it depends, the question was what is the estimated time to validate a block compared to propagate. In Bitcoin Core, we use extensive caching. If all of the transactions have already been seen, then it's sub-second to validate a block, because we don't have to do any ECDSA. We have done a bunch of work to minimize that latency. One of the implications of these delays is that the more latency in the mining process means that more progress mining has, which creates an unequal advantage to larger miners. If you are the largest miner you are at an advantage because others are waiting to receive your blocks. So we optimize this to reduce centralization pressures. This is especially large when you consider Matt's relay protocol, which allows most blocks where transactions are all known, to have a single block sent across the internet in a single packet. It's not the time to transmit the blocks. Interestingly, the data shows a significant dependency on block size and these latency numbers. Even with the block relay protocol, there is size-dependent latency here, such as taking longer time to validate the block the bigger it gets.
