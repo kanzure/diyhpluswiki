@@ -52,12 +52,6 @@ Q: In encrypted transactions, there are two steps. The second step- can miners c
 
 A: I skipped over the details there. It's timelock-encrypted. It has to be provably decryptable at the time you publish the first phase. If you publish it, and then you fail to publish it in the future, then everyone can decrypt it, it just takes sequential execution on a CPU core.
 
-Q: 
+Q: How can we ensure everyone with the valid transaction is going to use the Bitcoin Core wallet under the anonymized blockchain?
 
-
-
-
-
-
-
-
+A: It is a trade-off, mainly I was arguing that the overhead is less than it seems. Maybe 5x is too much, but if we do the analysis and find that in the best case most CT transactions would replace 5 regular transactions, then maybe it will be the same overhead. The fragmentation in wallets, and the amount of transactions that arise purely from attempts to get value privacy, could give us an indication. And also there is hope that we could improve the space overhead of CT transactions, from 2.5 kilobytes to slightly under 2 kilobytes.
