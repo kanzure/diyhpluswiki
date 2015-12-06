@@ -1,0 +1,52 @@
+Andrew Poelstra (andytoshi)
+
+Security Assumptions
+
+Hi, welcome back.
+
+I am a developer for libsecp256k1. It's a library that does the underlying traditional cryptography used in Bitcoin. I am going to talk about security assumptions, security models and trust models. I am going to give a high-level overview of how we should be thinking about these issues for scaling and efficiency and decentralization. Bitcoin is a crypto system. Everything about it is a crypto system. It needs to be designed with an adversarial mindset, even in an adversarial setting.
+
+This is probably an unfamiliar area for most areas of research. An example that a friend of mine uses on IRC, you could imagine asking a structural engineer, saying you need to design this building, it needs to be structurally sound, it needs to withstand weather, and if anyone studies your plans in detail, if anyone studies it then it they couldn't destroy the building. That mostly can't be done for most systems. It's incredibly expensive to build things that are secure against outlandish attack scenarios. A lot of society is built around preventing adversarial behavior, because of the difficulty of intrinsincally preventing it.
+
+However, online we don't have this. We have pseudonymous and anonymous behavior, anyone can connect to everyone and hurt the system. If it's possible to adversarially hurt the system, then they will do it. We cannot assume they will be visible and that they will be caught.
+
+We had a bug in libsecp256k1 about three or four months ago. This was a very technical bug. What it was was that we had a problem with group addition format, we had this problem where, well we know it cannot be exploited. We knew that it was not a usable bug, it was extremely difficult to hit. For every 1 in 2^128 inputs to our group addition function, for every point on our curve there would be one good point and one bad point such that you could get the wrong answer. Since we don't know how people are going to use this in the future, we realized we had to fix this bug. Our initial solution was a big hit in efficiency, it cost us 50% in signature production and verification. We got this down to 25% and then down to 8% and then 3% is where we landed. At no point did we say, hey this is really hard to hit, and htis will never happen by chance, so let's just not fix it. We can't think that way, because then we will have an addition formula that is wrong for some class of problems, and then in the future we will add another crypto system that uses this, and then we will remember about the caveat later and then something bad will go wrong.
+
+The assumptions that we make when we think adversarially are pretty uncontroversial, like ECDSA signatures. The assumptions are things like, every participant has to be a polynomial-time turing machine, or maybe a quantum turing machine. That is pretty non-controversial. And then there are... this is not too controversial to say, this is probably not possible with probabilistic formulas, I guess it might be with quantum computers, but whatever the clock is ticking.
+
+We hve to do this adversarial thinking. In Bitcoin, in addition to having this, this is the boring part of this, this is Script verification. We complain sometimes about this, but it just works. What's novel in Bitcoin is this proof-of-work mining system. This is a way to develop a consensus on the order of the transactions. And we want it to be a decentralized consensus. The reason is that there are some problems that miners solve that are intrinsically possible to solve cryptographically. One is that we can't cryptographically enforce, if they just pack up and go home, the system.. so we want them to keep going. Another thing is censorship resistance. It's possible to prove that a miner was aware of something and then didn't commit to it, so proving awareness is conceptually impossible. So we want incentives for miners to include transactions. We want to balance this without trading incentives for miners to fill blocks with transactions. Miners are there for a reason. We want them to agree to extend the same history, and we want them .... so these are the things that we can't do cryptograhpically, the last one is perhaps the weirdest one, the fifth postulate of security thinking is that there is no way to get a universal clock. So we use proof-of-work to get agreement on time. The chain with the most work and the most long and some other weights, all of these things, we can't do this cryptographically, so we add incentive structures that will hopefully induce people to do the right thing. This is how Bitcoin is designed.
+
+On top of this, this is already really difficult. We still need to speak adversarially about this. The next talk has a similar topic, by the way. We have these problems already, the reason why Bitcoin is slow is because we want decentralization and in these properties that we can't necessarily cryptographically force. We can do decentralization around threshold signatures, we can have everyone verify the signature. However, decentralizing things like time-ordering is not so easy. So when we talk about scaling bitcoin, we talk mostly about ... we want to avoid centralization ((inaudible)).
+
+A lot of scalability proposals for Bitcoin change the trust model. One example of that which I want to talk about is the one I should mention, which is segregated witness. It's a way to add transaction signatures ... and people in the blockchain to make sure it's correct. ..........
+
+
+..... per-transaction in each block, trusting the miners, trusting to, ,  ..........
+
+beyond current transaction throughput numbers not qualitatively, but if Bitcoin can handle 5x transactions at the end of the day, but that's not a game-changer. When they talk about being unable to do things because of Bitcoin throughput, they really mean orders-of-magnitude more transactions.
+
+When we do this, we have to remember that the security model, the trust model, are cryptographic, they should be thought with an adversarial mindset because even though we can't verify them cryptographically, we still have to have security. We can't just say "this will never happen", "this part of the transaction is purely random", or "this group of people wont ever collude". Bitcoin works in an adversarial setting, if there are failure modes that can be found, they will be targeted. This is almost not worth saying, it's something we almost never explicitly say in cryptography because it's so ingrained and old, when we move from these traditional cryptographic assumptions to this more nebulous region thinking about incentives and I guess economics and trust things and how people are going to collude and what do people want to do, this sort of stuff, these are traditionally the domain of more traditional ways of thinking where you assume that people know each other, or they wont try to screw each other, they have reasons to not screw each other, or there will be legal consequences. This is not the world of bitcoin. We have to bring different modes of thinking into our more nebulous areas. This is why the problem is so difficult. This is why there's any controversy at all- they are hard problems, hard to solve and hard to think about.
+
+My second half of my talk would have been about decentralization of miners and validators. Sometimes their incentives do not align, and now we have multiple participants with different incentives and this trips up our ability to develop solutions.
+
+Let's take questions.
+
+Q: Regarding decentralization, which proposals are better and worse from an adversarial standpoint?
+
+A: A solution that would not be great from an adversarial standpoint that would not be great, would be replacing mining with a single signer. Now not only do you have one entity that is able to compromise the ordering of the transactions, now he's a target. So now anyone that wants to attack the system can just attack that target. That would greatly increase risk. Whereas something like, for example, the lightning proposal, that does change the trust model, but only individual transactors' trust model. They can individually decide to trust each other not to double spend, and they also have a fall-back where they can control the conditions when something goes wrong. The failure mode is much more constrained.
+
+Q: So you allude to the assumption of trust. What are some frameworks to approach the different social assumptions of bitcoin?
+
+A: I guess you're asking, can I enumerate different trust models? The bitcoin trust model, what we would hope, is one in terms of transaction ordering, we would have miners all over the world fighting for the next block, so we don't have clustering or single points of failures or single targets. In fact, we have a bunch of mining centralization than we maybe like if our goal is decentralization. Some things that approach this is that instead of a single entity like a bank or clearinghouse to decide which transactions to go through, you would have a federation of maybe a fixed group like 10 or 100 people to agree. That's obviously not decentralization, but it is obviously a cheap approximation which might be okay in some scenarios, but certainly not for what Bitcoin does.
+
+Q: ...
+
+A: A lot of tooling needs to be built. We need to radically change the way we design protocols. The protocols are written and specified and expected that everyone follows them more or less. And we try to design things so that bad things don't happen. We would like to computationally verify that the protocol is resilient. I have seen some papers about this. The one that I read just yesterday was called "Session types for rust", which is a way of using a strong typing system like in rust or haskell to basically describe your protocol in a way such that when you go to implement it the compiler will prevent you from violating the model. So then you could prove that you implemented the protocol correctly. Your code wont compile if you have any failure modes like that in there. We need to be developing this. There has been a lot of progress in this area.
+
+
+
+
+
+
+
+
