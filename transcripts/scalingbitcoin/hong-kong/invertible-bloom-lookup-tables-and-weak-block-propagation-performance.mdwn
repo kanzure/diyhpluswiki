@@ -1,0 +1,77 @@
+IBLT and weak block propagation performance
+
+Kalle Rosenbaum and Rusty Russell
+
+Before we get started, for privacy reasons, and for reasons of zero attribution, please do not take pictures of attendees. Do not have pictures of attendees in the photographs. Taking pictures of the stage and slides are OK, since they are being broadcasted. No photogrpahs of any attendees, please let them remain anonymous and private. For Chinese speakers, please ask in Chinese and I will use American English to translate. Our next speakers are Kalle Rosenbaum and Rusty Russell.
+
+Can we get slides up there? Great, thank you.
+
+We will talk about block propagation and how it can be improved with IBLT and weak blocks. I will start by talking about invertible bloom lookup tables (IBLT). This was originally proposed by gavinandresen and Michael T. Goodrich and Michael Mitzenmacher wrote an 2011 paper about this.
+
+IBLT allows set reconciliation. This is great for bitcoin block propagation if mempools don't differ much. I will briefly describe IBLT. You have a block you want to propagate to a peer. Yo utake each of the transactions, you slice them up into slices of fixed size, you run each slice into hash functions, you get an index into the slice. Adding a slice will bitwise XOR into the IBLT. It will not grow when you add data into it. You will take this IBLT and send it off to the peer. The peer would receive it, and make a guess about which transactions you have put in there. He will take each transaction in his guess, and remove them in the same way that I added them, by adding them hashing them and then removing them from the cells. What's left is the difference between the block and recipient's guess. If this IBLT is sparse enough, then these transactions could be extracted and reassembled from there.
+
+So we will do some simulations, and for these we will do some simulations. We need the value size, the slice size, and the number of hash functions. In my previous slide I had 3 hash functions and 64-byte slices. I will show you where those come from. To find a good value, a good number of hash functions, we search for the smallest successful IBLT to encode 100 transactions. There's no point in having more than 3 hash functions, as it turns out.
+
+We did the same for value size, we like 64 bytes. It's not very sensitive, but it seemed more general. We want to see what happens when we use IBLT in a real world scenario. So we used rusty's bitcoin core corpus project, which covers 721 blocks from 4 different nodes. The average block size is 380 kilobytes. We will only focus on the Australian node in this data set right now. So we asked, how small can we make this IBLT in order to successfully transmit 95% of the blocks to Australia? We have on the x-axis here, we have the failure probability, and on the y-axis we have the IBLT size. With an IBLT of 21 kilobytes, that's 5.7% of the average block size. You will successfully transmit 95% of the blocks. If we used an IBLT of 10 kilobytes, that's 2.6% of the average block size, we can successfully transmit 94% of the blocks to Australia. This is of course based, this is a stupid solution where we use a fixed size IBLT across all block transfers. Rusty will tell you more later about dynamic IBLT sizing and further improvements.
+
+So now we want to see what happens when a number of differences arise. We will select a number of differences randomly from the blockchain. We will also select an IBLT size, we will encode and decode those transactions and see if it fails or succeeds. Then we will repeat this a ridiculous number of times to measure failure probability. This is one way of visualizing the results. The lines here represent from top to tbottom, the 32 differences, 64 differences, 128 differences, down to 1024 differences. On the x-axis is failure probability, and on the y-axis is the diff cost. That's the IBLT size divided by the number of diffs.
+
+So the first thing we can notice here is that for certain failure probability, and also the other thing we can note is that there's a sweet spot, that means we can decrease failure probability very cheaply down to that specific sweetspot. That sweetspot will move towards zero as the number of differences (increase? decrease?). It's at 1.5% for 32 diffs. One sweet spot is at 0.1% failure probability for 1024 differences.
+
+I will illustrate this with another example. We have to make a few assumptions in this example. We will assume here that the number of differences increases linearly with transaction rate. We will assume that the blockchain increases linearly with transaction rate. The corpus averages about 6 diffs per block. Let's pretend that the transaction rate increases by 10x, 100x and 1000x. That would mean that we would have to encode 6 differences, 60 differences, 600 differences, and 6000 differences. What would that look like if we target 5% failure probability?
+
+As we saw in the earlier graph, the diff will decrease as the number of differences increase. You have the factor of 1 on your left, and a factor of 1000 on your right. An IBLT encoding of today would take about 2.2% of the block size. But that percentage will increase as the number of differences grow. We will end up with less than 1% of the block size if the transaction rate is 1000x. This is of course based on the assumption of linearality between transaction rate and mempool diffs.
+
+So far, we have tested IBLTs on bitcoin-corpus from Rusty. We have seen that 21 kilobytes are enough to transmit 95% of the blocks. IBLT has some really nice scaling properties. I will hand over to Rusty now who will take the rest.
+
+I am going to dig down a bit and talk about the proposed Bitcoin IBLT protocol. I like pictures. Here's a picture of a block with transactions. This is a node with a mempool, it looks very similar to the block. There's two transactions, the red ones, that are in the block, but it doesn't know that. There's some transactions it knows about that are not in the block. Effectively, in this example, we take things we didn't know about, and put them in our mempool. We remember how much we have in our mempool.
+
+Our node 1 mempool kinda looks like this. We order this by fee rate. You have to pay about this much per kilobyte in order to get into the block. We have a set of things that we would have expected to get into the block, but didn't. Then we have a set that was going to get into the block despite being below our fee rate. We send this information through IBLT. It trims the candidate set using this information.
+
+One thing I skipped over was sizing. Here I said that the node guesses the size of the IBLT buckets. It turns out that mempools at least across the corpus were pretty similar. The big difference was the blocks. Let's assume that the block is a... similar to the recipient mempool, but it might be slightly different. Dynamic estimate extra factors, you could hvae a fixed factor, or you can have a multiplier.
+
+The z-axis is the number of transactions that you assume they don't have, on the x-axis is the variable factor you don't use, as you bump this up your IBLT gets bigger, but your recovery probability is not lienar. The answer is that you add 10 slices to the number, then you multiply the whole result by 1.35, across our 826 megabyte corpus data, we get about 20 MB transmitted (95% reconstructed) or about 2.4% of the raw size. 4% of blocks sent "raw".
+
+The first nodes to receive a block would pretend that sends a nIBLT to all the other nodes. 4% of these blocks are sent raw. We figured out how big the IBLT would be, and it would have been bigger than the block.
+
+Now I am going to switch gears and talk about weak blocks. This was previously called near blocks. This was talked about years ago. I called them weak blocks. The idea is very different from IBLT. Miners send blocks that don't meet the threshold. They take work to produce. They offer provable insight into what miners are mining. For our discussion, all miners could be encoded in terms of previous weak blocks, which is useful for propagation. You can see this is basically the same thing but with more transactions. Assume a dumb 2-byte encoding, you say this weak block is the previous weak blocks with these transactions, and then you tack on the new transactions at the end. So you assume a 2-byte overhead per weak block.
+
+We took our corpus and randomly generated a weak block, we assume a peer generates one weak block every 20 seconds, when we get a real block we just reference the last weak block that everyone knew about. If we assume we generate a weak block on average once every 30 seconds, we on average generate only 35 MB (+- 3 MB). We only have to transmit a small amount of data. The total amount of data doubles, however, because we are sending all the weak blocks as well.
+
+Yes you are using more bandwidth, but you're not using it at the critical point of that latency of transmitting those strong blocks. So it's a good result and bad result.
+
+We could do better than this by introducing super weak blocks. It turns out, there's a good point in the corpus where we get full blocks. This corpus is from months ago. We were seeing full blocks back then, and we caught some in the corpus, whcih is nice. When blocks are full, you want that first weak block as soon as possible, because if you get a strong block before a weak block, you can't use weak block encoding. So you need the first weak block to be 16x weaker, such that you can get one every 2 seconds. This cuts down from 35 to 27 megabytes, and our total only increases a little bit to 1.53 GB. This primes the pump for those full blocks.
+
+I simulated weak blocks on the corpus. Those peers are all similar. In practice in the corpus, the actual blocks are much different and the mempools are going to be different. So in practice, we will get poorer performance and compression. IBLT and weak blocks. Remember, we had 826 MB when we sent the blocks raw. We got 95% recover with 20 MB through IBLT. With weak blocks we got 27 MB and 1530 MB total. If we use them both, we drop the cost of sending the strong blocks to 15 MB and it actually bumps up accuracy to 98%,  and we drop the 1.5 GB down to 233 MB overall. But we get a horrifically bad reconstruction rate for weak blocks. We can tune this to get the 95% number back, but the reason I hate this result, it's actually an artifact of the way we see weak blocks. In my model, the weak blocks propagate instantly, so in that case the transactions are slower, so the IBLT hurts pretty badly. There's some wins here, but take these numbers with a huge grain of salt.
+
+What would this look like with deployment? We have a block message, we can do IBLT or weak blocks, there's some data structure here. Deployment of weak blocks has some problems. If you are going to set the difficulty to 16x lower, then we can ratchet it up and work it up. There are many other things we coud od
+
+Caononical fee per byte ordering, much better for IBLT and weak block encoding. Coinbase encoding incentive to publish weak blocks (save 500 bytes). Block blast, over half encodings give block < 3k. IBLT mempool sync, gmaxwell says may save 70 bytes per tx per peer.
+
+Q: Can you talk about adversarial conditions where a miner might decide not to send transactions in IBLT for the purpose of slowing down others?
+
+A: Yes. Our IBLT model does not assume miner cooperation. The IBLT is generated between peers. The miner can send out a full block. They could generate something in a block that IBLT doesn't work with. If you have never seen a transaction in the mempool, then you can't do anything about that. We can improve the best case, but the worst case, the adversarial case, we can't approve that. In a world with miners living off of fees, that might have a cost for them. But in the corpus, we see blocks that have nothing in common with everything else.
+
+Q: What about encoding latency in terms of milliseconds?
+
+A: Encoding is fast. It's pretty damn fast. There's some XORing, some hashing. You can't use txid for hashing. If you get IBLT clashes, you can make an IBLT that cannot encode, you can detect that and send the transaction in the raw, a miner who is trying to minimize the size of things sending out, you could do a denial-of-service attack. The cleanest way is to have a secret and re-hash everything, re-hash to get a 48-bit IBLT ids, and that has some cost to it. But it's pretty damn cheap, you can customize it for every peer and it's still cheap.
+
+Q: How many roundtrips?
+
+A: Just one. Send the IBLT, if they reconstruct it, you're done.
+
+Q: ((streaming problems))
+
+A: Originally we were going to do a dynamic sizing based on previous interaction with a peer, and then guess about their mempool. We can still dynamically bump up the IBLT size in the future, we can optimize that in the future, and reduce IBLT size in the case where a peer is somewhat more in sync, we would have to keep this in account when mempools are converging versus diverging.
+
+Q: Weak blocks would be published by miners?
+
+A: Yes.
+
+Q: What about cost vs incentive for miners to be publishing them? What would change the game theory if you were getting huge mempool backlogs?
+
+A: You speed up your transmission of strong blocks, by transmitting weak blocks. The game is net to you, if nobody is doing it, so the ratchet scheme makes sense. We could do coinbase diffs, your own coinbase tends to be unique, for weak blocks it's a wash, but a binary diff of your own coinbase in a strong block, is probably pretty small. So maybe we should do a diff encoding to encourage you to publish your weak blocks. When we talk about getting aggressive about miner opitmization, miaybe that half a kilobyte is really important.
+
+Q: Regarding different policies, can we have just one mempool with everything you've seen with everyone, and just one mempool for what you want to mine?
+
+A: Yes. Your mempool can be conflicting transactions, anything you think someone might have. You can have something in your mempool that you would never include in a block yourself. You can do this in a trimming step and it works pretty damn well in practice. You could have an extra mempool of extra stuff, yeah.
