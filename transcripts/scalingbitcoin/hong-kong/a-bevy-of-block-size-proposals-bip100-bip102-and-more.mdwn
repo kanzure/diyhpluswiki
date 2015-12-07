@@ -1,0 +1,93 @@
+We're going to be talking about every single block size proposal. This is going to be the least technical presentation at the conference. I am not going to go into the proposals htemselves. Changing the block size itself is pretty simple. You change a constant. It's more a discussion of algorithms, roll-out, etc.
+
+What are some of the high level concerns with block size? We have been addressing technical scaling issues like mempool and other work. I think this has been deferring some of the economic and game theory issues, which is not so good. There's the "FOMC problem" where humans pick block size and functionally choosing economics, versus the free market where the free market chooses block size but maybe it chooses wrong and runs bitcoin off a cliff.
+
+You have to achieve a zen balance where at the low end the users are forced on Coinbase or walled gardens. But at the high end, most nodes can't process big blocks, and you centralize that way when you force them off the network. Either way, you defeat the security and privacy of the system.
+
+What is a healthy fee market? We haven't figured that out yet. Is the block size algorithm easy to game? Can miners game it? Can users game it? Can you generate lots of transactions? There is very little field data on hard-forks. We have had incidents like the March 2013 fork. We have very little field data on hard-forks in general. Rolling them out to a large user populous.
+
+Signaling bitcoin growth to external parties, some people are ((mistakenly)) looking at block size as a proxy for whether users can upgrade bitcoin and whether they should start projects on bitcoin. Is there going to be a crisis when block size changes? Users want predictability.
+
+High-level miners mining without validating. Miners as it relates to block size, today, they can choose to reduce the block size, but they can't choose to increase the max block size. That's the average block size over the past two years, it's going up not racing up. That's the average over the past 180 days. It's not really going up very much.
+
+Thinking about the fee market. From a user experience standpoint, fees are very difficult to reason and predict by design, that's just how the system works. Fees are disconnected by transaction value, because it's size-based. You might have a low-value transaction that is big in terms of bytes, so you are paying a high fee on a low-value transaction. You might have a super-large value transaction that has only one small UTXO, so the fee is tiny.
+
+From a user point of view, they only have choices in terms of what they get for what they pay. You can pay a high fee, and that's I want it as soon as possible, you can pay average fee, slightly below fee, or zero and have a very long wait. These are the definitions from the user's point of view. They don't have direct control based on fees. The block generation times are noisy, you might have a burst of two blocks inside of a minute, and you might have to wait an hour for another block. Even if you pay a high fee, there's no guarantee that it will confirm in the next ten minutes, only that it will confirm in the next block. From a user perspective, transaction fees are hard to reason about. Wallets have a difficult time figuring out what the best fee is to pay ((see Bram Cohen's work here)). How do you present that in the user interface?
+
+The fee market status, the changes, the economics, market reaction, all plays into the block size as well. The fee market exists today in a narrow band based on simplistic wallet software fee behavior. If you think through some scenarios about block size changes, you think if you have full blocks and then we change the block size, that might reboot the fee market and then introduce chaos into the user experience. If you don't have full blocks, then you might not have that hurdle. A large block size step might reboot the fee market.
+
+Let's move on to bip100. Have I been talking for 23 minutes? I don't know if I have been time traveling or not. bip100 is shift block size from development to the miner market. The limit floats between 1 MB and 32 MB. 1.09% per diff perod, 100% growth every 2.5 years. It's a slow-motion miner vote. There's a continuous 3-month voting window. At each 2 week diff period, the new size looks at the last 3 months of coinbase, and examine 90th percentile of votes, take average. The activation method is flag day, on this day in 6 months from now, that's when the network changes.
+
+Analysis of bip100. This shifts block size selection to the miners. This avoids anointing developers as the FOMC for humans that pick constants. The miners have inputs on fee income. Community feedback is that it gives miners too much control, miners can sell votes costlessly, limit increase is too large. That last point was addressed. Miner control I will cover later.
+
+That's bip100 in a nutshell. That's a template for some of the other proposals. This is my analysis, but what's the community feedback as well? That's quite relevant.
+
+bip101 has the theme of predictable growth. Immediate jump to 8 MB, doubles every 2 years. Activation is 750 of 1,000 blocks to indicate support, then a 2 week grace period to turn on. It's predictable increase, so that's good from a user perspective. There's no miner sensitivity. The fee market is significantly postponed, as blocks are a limited resource, and transaction fees are bidding for that limited resource, if you have 4 MB of traffic in 8 MB max block size, then you have no fee competition so fees would stay low. Community feedback is that it's a big size bump. There was negative community reaction to politics around bitcoin-xt drama.
+
+That's all I have to say about that.
+
+bip103's theme is block size following technological growth. Increases max block size by 4.4% every 97 days, leading to 17.7% growth per year. Activation in a while to give time to upgrade. Predictable block size increase. No miner sensitivity. Fee market sooner. Not much community feedback, but the main criticism from redditors was way too small an increase, so later hard-fork would jump beyond this, and 2017 activation is way too far.
+
+bip105 is consensus-based block size retargeting. Miners would vote to up or down the block size target by a max of 10%. Miners would pay with difficulty, providing a proportionally higher block hash target. You either get lucky, or you mine for a longer time. Miners have to pay a cost to increase the block size. It shifts the block size selection to miners, away from developers. Miners have an input on fee income. Community feedback has been little; my personal opinion is that pay-with-difficulty skews the incentives and it's difficult for miners to reason about incentives. Meni Rosenbaum mentioned pay-to-future-miner concept. I do think there's a potential modification to this called pay-to-future-miner, which Meni Rosenfeld proposed. You use CLTV to lock some funds but you make it an ANYONECANSPEND so you're paying to whatever miner is 2 years in the future or 2 months in the future or whatever.
+
+bip106 is dynamically-controlled block size max cap. There are two variants here. Variant one is per difficulty period. Says if blocks are full, then 2x the block size, if blocks are less than 50% full 90% of the time then halve the block size. The second variant is, I encourage you to read the bip because the formula is quite complex, this is the interesting variant because it looks at transaction fee pressure. If transaction fee pressure is increasing, then it increases the block size. That's pretty interesting. It shifts block size selection to miners, it avoids anointing high priests. Not much community feedback. Variant number one is easily gamed, you can fill the blocks with spam and pump up the max block size. Variant two is more interesting, but it encodes the economic idea of too much fee pressure. So you're having software decide when fees is too high, so that's an open question, needs analysis. Is it a good idea? is it not? etc.
+
+bip102: aka the backup plan. One-time bump to 2 MB. Activation is 6 months in the future flag day, with non-binding miner voting to signal hashpower for that type of upgrade. It's intended as a backup option. It's conservative with regards to block size limit. It's conservative to the algorithm, it's just changing a constant. It's a conservative method for obtaining hard-fork field data, for all the unknowns that we don't know. It's highly predictable, always 2 MB. This seems acceptable to most people. This does not avoid the FOMC problem. It requires another hard-fork in the future to change again.
+
+Similarly, Tadge really nailed it with bip numbering. BIP 248 summary is 2-4-8 proposed by Adam Back. I am calling this bip248. 2 megabytes now, 4 megabytes in 2 years, 8 megabytes in 4 years. I assume activation is similar to flag day with non-binding miner voting. This is very similar to bip102. Highly predictable. Allows us to learn from hard-forks and get field data about what goes wrong what goes right. Similar to bip102. Does not avoid FOMC problem. Requires another hard-fork like bip102 to move beyond this.
+
+bip000 is again Tadge beat me on the bip numbering. That's status quo. Keep the current block size until change is obviously necessary. Keep the current max block size limit. Keep the node numbers at the current numbers. It's maximally conservative, it's what's been working today and will continue to work until the blocks are full. It goes against the economic majority of bitcoin startups. We can't really sample users. There seems to be clear economic consensus that they want to increase, but not about target. If you ask exchanges, businesses, miners, those guys, they all want way bigger numbers for bragging rights. Staying the same, wallet software is not prepared for transaction fee estimation. It's difficult for users to reason. ((Is any block size appropriate if everyone wants to store everything on the blockchain?)) Just like in politics elsewhere, policymaking in a crisis is probably the worst policymaking you could do. Centralization on the low-end, if you stick at 1 MB, there's potentially users pushed into zero-conf transactions as fee pressure increases.
+
+My personal thoughts, this is not speaking for anyone else except for myself, all vendor hats are off now. I think we need a small bump now to gather crucial field data. You can theorize and test and so on, but the internet and the real world is the best test lab in the world. You can only get that full accounting of field data if you actually do a real hard-fork. So the venture capital consensus wants to g beyond 1 MB. The technical consensus is that going above 1 MB is risky. I think it's poor signalling to users.
+
+We have been kicking the can down the road, we have integrated libsecp256k1 to increase validation speed and validation cost. These are big metrics in our system. We have been making positive strides on this. This should reduce some of the pressure to change the block size. The difficulty is finding an algorithm that cannot be gamed, cannot be bought, and is sensitive to miners. You can get 2 out of 3 but not all 3.
+
+....
+
+Q: ...
+
+A: ... I haven't seen any of that so far, well that's not true, there's someone there who has done some, Rusty has done some numbers. In general we need much more data.
+
+Q: What fee is too much? What about the number of people? Perhaps this is more viable than fee number or fee level.
+
+A: Yes, that's one of the inputs to block size debate. It's very difficult to measure users. ((We would have to keep verification super super cheap. Increasingly cheaper.)) ... In the past, we would rather onboard bitcoin users with low-fees, rather than high-fees in bitcoin's current stage. This is a valid economic choice as well, 
+
+Q: Bandwidth solutions over non-bandwidth solutions?
+
+A: Both. That needs to continue. We have promising technologies which are risky. It's risky whether they will be effective. The original vision was p2p decentralized cash, as described in the Bitcoin whitepaper.
+
+Q: Miners think they need to choose one bip over another bip. I think it will be pretty easy to find consensus if miners could vote for several proposals that they approve. So the point would be just as they could vote for a single one, like bip100, bip102, and if one of those reach some threshold, then we could start talking about doing the hard-fork. What do you think about this?
+
+A: That's related to some of the roll-out proposals. How would you roll-out a hard-fork? You definitely want to engage users. A flag day was the preferred solution, 6 months in the future, but you want a non-binding miner vote to say the hashpower is ready for that hard-fork. So there's two leaves to that rollout, and definitely it makes a lot of sense to have the hashpower say we support this proposal this proposal this proposal.
+
+Q: Looking for comments on segregated witness stuff.
+
+A: Totally cool and totally missed the talk.
+
+Q: How do you expect we will arrive at consensus?
+
+A: That's the question of the hour. I think it's more of a process whereby in Montreal we did some input data stage. In Hong Kong now, we're looking at here are all the issues, the validation costs, the various proposals et cetera. Now step 3 is you take this back, you noodle with the busineses, users, miners ((but not the developers??)), then you get a rough consensus. My general response is you need to make your thoughts known. Everyone can know this is what jgarzik thinks, or this is what BitPay thinks. I think that transparency and discussion are the ways we find this. I think backroom deals, private visits to various people, that's not the way to do it. You have to do it in public. That's the open-source way.
+
+Q: What's preventing us from moving to 2 MB block sizes tomorrow?
+
+A: Well, a lot of factors. There's still resistance to change in general. There's the valid concern of hard-fork risks, splitting the community. Lack of testing. Lack of patches. In general there has been a lot of work not on block size, so moving to it tomorrow would just not work. I think all of us in this room need to work towards testing, data, simulation, generate patches. It's not a magic formula. It's just a lot of hard work.
+
+Q: 1 month?
+
+A: That's reasonable. You are going to be rolling out a patch, which says 6 months in the future we are going to do X. So you have 6 months of time to do additional testing and simulation etc.
+
+Q: In one of those slides, you said 75% levels, so 750 out of 1000 blocks. That was bip101. What is your optimal choice for that? Is it 75% 80% 90%?
+
+A: That's why we're leaning towards flag day with non-binding miner voting. It's to avoid picking a specific number. You want to have a clear majority of hashpower on the fork that users prefer. I don't want to pick a number. I don't have a number. It's just a supermajority of the hashpower. That's step 2. But step 1 is the users agreeing by running the new software.
+
+Q: Would you break SPV clients in a hard-fork?
+
+A: Potentially, if that needs to be done.
+
+Q: Would you deliberately do it?
+
+A: No. I want to maintain backwards-compatibility if at all possible. Not all wallets are SPV. Some are SPV-light.
+
+Q: Do you think increasing on-chain bandwidth will interfere with the value of bitcoin?
+
+A: It will increase the value of bitcoin. It will signal that we are willing to enhance the system.
