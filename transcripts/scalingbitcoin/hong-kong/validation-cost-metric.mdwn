@@ -10,7 +10,7 @@ The actual costs for a node are composed of multiple factors, such as the resour
 And these factors are not necessarily in a linear relationship with each other.
 This has been discussed more detailed in Mark's talk at the previous Scaling Bitcoin conference.
 
-The most prominent example for showing non-linear relationships consists of putting as many OP_CHECKSIG operations into a single transaction as possible.
+The most prominent example for showing non-linear relationships consists of putting as many OP\_CHECKSIG operations into a single transaction as possible.
 For each checksig operation, the whole transaction is hashed and a signature is verified.
 Assuming 1MB blocks, it is possible to create a block that takes more than 10 minutes to validate on my 2014 laptop.
 It is clear that each proposal that increases blocksize also needs a strategy to deal with these non-linearities.
@@ -47,10 +47,10 @@ This coefficient can then be used in a consensus rule.
 
 Experiments
 ---
-Validation cost is affected first and foremost by OP_CHECKSIG, that is signature verification and hashing the transaction.
-Bitcoin Core already limits the number of OP_CHECKSIGs but this is insufficient for our case because what counts are the number of OP_CHECKSIGs that are executed.
+Validation cost is affected first and foremost by OP\_CHECKSIG, that is signature verification and hashing the transaction.
+Bitcoin Core already limits the number of OP\_CHECKSIGs but this is insufficient for our case because what counts are the number of OP\_CHECKSIGs that are executed.
 We built on Gavin Andresen's code to count those factors while validating transactions.
-We also record hashing via the OP_HASH opcodes, and how many bytes are written and removed from the stack.
+We also record hashing via the OP\_HASH opcodes, and how many bytes are written and removed from the stack.
 And the number of inputs which loosely corresponds to the number of lookups in the utxo set.
 And of course we also measured our dependent variable, the ConnectBlock duration on the reference machine.
 
