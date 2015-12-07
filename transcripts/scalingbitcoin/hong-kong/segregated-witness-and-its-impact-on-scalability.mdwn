@@ -56,9 +56,22 @@ We can switch to a cost-based metric in a hard-fork soon, which maaku will be ta
 
 Questions?
 
+Q: Can we change the type of signature to Schnorr signatures? Would we do that?
 
+A: Yes. I would like to switch to Schnorr signatures. I'm not aiming for that right now. I think what we need to get in place is to get a framework in place to allow these upgrades to happen.
 
+Q: Telecommunications bottleneck, to validation as bottleneck?
 
+A: There are bottlenecks for different types of infrastructure in Bitcoin. The only reason why I'm fine with this is because we know of technologies which can improve the relay. I think the situation, we do need to work on making relay faster, but we know how to do that. So this is a multiplier.
 
+Q: So your proposal depends on other things that weren't listed?
 
+A: No, they are listed.
 
+Q: So 4 MB is okay depends on other changes not listed?
+
+A: We'll talk in a bit.
+
+Q: So you said moving the signature data outside the UTXO set..
+
+A: It's never been in the UTXO set. But we are now able to treat the part of the transaction, which has no impact on the UTXO set. The signature data has never had an impact, but it was bounded to the rest of the transaction, which did have an effect on the UTXO set.
