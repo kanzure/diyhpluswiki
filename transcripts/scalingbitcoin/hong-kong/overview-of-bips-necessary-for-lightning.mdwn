@@ -1,6 +1,8 @@
 Tadge Dryja
 
-Scalability of Lightning with different BIPs and some back-of-the-envelope.
+Scalability of Lightning with different BIPs and some back-of-the-envelope calculations.
+
+slides: <https://scalingbitcoin.org/hongkong2015/presentations/DAY2/1_layer2_2_dryja.pdf>
 
 I don't have time to introduce the idea of zero-confirmation transactions and lightning. We have given talks about this. There's some documentation available. There's an implementation being worked on. I think it helps a lot with scalability by keeping some transactions off the blockchain. Ideally, many or most transactions. Instead, you would open and close channels. That's all that needs to be on the blockchain. When it fails, it should fail back to the efficiency and security of Bitcoin. When people are cooperating, they should use this. When they stop cooperating, they can drop back to Bitcoin and be okay.
 
@@ -69,3 +71,29 @@ Thank you.
 ---
 
 small correction about the scalability matrix: <https://twitter.com/tdryja/status/673705980668993537>
+
+Other lightning presentation from same day: <http://diyhpl.us/wiki/transcripts/scalingbitcoin/hong-kong/network-topologies-and-their-scalability-implications-on-decentralized-off-chain-networks/>
+
+Some other resources:
+
+<http://lightning.network/>
+
+<http://lightning.network/lightning-network-summary.pdf>
+
+<http://lightning.network/lightning-network-technical-summary.pdf>
+
+<http://lightning.network/lightning-network-paper.pdf>
+
+other presentation <https://www.youtube.com/watch?v=8zVzw912wPo> and slides <http://lightning.network/lightning-network.pdf>
+
+SF Bitcoin Social presentation slides <http://lightning.network/lightning-network-presentation-sfbitcoinsocial-2015-05-26.pdf>
+
+slides re: time and bitcoin <http://lightning.network/lightning-network-presentation-time-2015-07-06.pdf>
+
+<http://diyhpl.us/wiki/transcripts/scalingbitcoin/bitcoin-failure-modes-and-the-role-of-the-lightning-network/>
+
+<https://github.com/ElementsProject/lightning>
+
+<https://lists.linuxfoundation.org/mailman/listinfo/lightning-dev>
+
+irc.freenode.net #lightning-dev

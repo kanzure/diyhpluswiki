@@ -2,7 +2,11 @@ IBLT and weak block propagation performance
 
 Kalle Rosenbaum and Rusty Russell
 
-Before we get started, for privacy reasons, and for reasons of zero attribution, please do not take pictures of attendees. Do not have pictures of attendees in the photographs. Taking pictures of the stage and slides are OK, since they are being broadcasted. No photogrpahs of any attendees, please let them remain anonymous and private. For Chinese speakers, please ask in Chinese and I will use American English to translate. Our next speakers are Kalle Rosenbaum and Rusty Russell.
+slides: <https://scalingbitcoin.org/hongkong2015/presentations/DAY1/3_block_propagation_1_rosenbaum.pdf>
+
+IBLT - invertible bloom lookup tables
+
+Before we get started, for privacy reasons, and for reasons of zero attribution, please do not take pictures of attendees. Do not have pictures of attendees in the photographs. Taking pictures of the stage and slides are OK, since they are being broadcasted. No photographs of any attendees, please let them remain anonymous and private. For Chinese speakers, please ask in Chinese and I will use American English to translate. Our next speakers are Kalle Rosenbaum and Rusty Russell.
 
 Can we get slides up there? Great, thank you.
 
@@ -75,3 +79,15 @@ A: You speed up your transmission of strong blocks, by transmitting weak blocks.
 Q: Regarding different policies, can we have just one mempool with everything you've seen with everyone, and just one mempool for what you want to mine?
 
 A: Yes. Your mempool can be conflicting transactions, anything you think someone might have. You can have something in your mempool that you would never include in a block yourself. You can do this in a trimming step and it works pretty damn well in practice. You could have an extra mempool of extra stuff, yeah.
+
+----
+
+rusty's bitcoin data corpus <https://github.com/rustyrussell/bitcoin-corpus> and <https://github.com/chr15m/bitcoin-notebook>
+
+gavinandresen IBLT proposal <https://gist.github.com/gavinandresen/e20c3b5a1d4b97f79ac2>
+
+IBLT stuff from montreal workshop <http://diyhpl.us/wiki/transcripts/scalingbitcoin/bitcoin-block-propagation-iblt-rusty-russell/>
+
+weak blocks proposal <http://lists.linuxfoundation.org/pipermail/bitcoin-dev/2015-November/011707.html> and some minor follow-up at <http://gnusha.org/bitcoin-wizards/2015-12-02.log>
+
+various links about weak blocks <http://lists.linuxfoundation.org/pipermail/bitcoin-dev/2015-September/011158.html>

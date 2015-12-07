@@ -1,3 +1,7 @@
+Joseph Poon
+
+slides: <https://scalingbitcoin.org/hongkong2015/presentations/DAY2/1_layer2_3_poon.pdf>
+
 LN transactions are real Bitcoin transactions. These are real zero-confirmation transactions. What's interesting is that the original idea behind Bitcoin was solving the double-spending problem. When you move off-chain and off-block, you sort of have this opposite situation where you use double-spends to your advantage, spending from the same output, except you have this global consensus of block but you have this local ordering that you use through this lightning system of penalties through which you can update the balances between two people. Through this system, there is no delegation of custody to a third-party, you don't put your money into some exchange or whatever.
 
 By having a network of these payment channels, you can do atomic payments across these channels. This is functionally instant, like within a few seconds at most. If everyone is in the same room, you could probably do this in milliseconds, and this enables micropayments because you can update the state way more frequently than you can hit the blockchain.
@@ -63,3 +67,7 @@ A: Ah you mean the hub is poor?
 Q: It's a matter of capital allocation. Faster channels would be more efficient than big channels. They still have to close and reopen channels.
 
 A: Yes, I think that's similar to the other argument where money is locked up, and you just close up. And then reopen later? By doing that, as a function, I think that's a decentralizing force. I don't think the hub model will work. I think you will have somewhat supernodes, but I don't think you will have a centralizing hub, because you will kick off users. And that helps with decentralization. Yeah, it's not profitable to be a hub, that makes it decentralized, yeah. If you have this type of model, you're going to face the same problem where it is going to be deeply unprofitable use of allocation of capital. It's going to be biased towards a system where you are going to want to connect to people within your supply chain and your geographic area, to keep track of velocity of money and time value of money and so on.
+
+----
+
+Other lightning presentation from same day: <http://diyhpl.us/wiki/transcripts/scalingbitcoin/hong-kong/overview-of-bips-necessary-for-lightning/>
