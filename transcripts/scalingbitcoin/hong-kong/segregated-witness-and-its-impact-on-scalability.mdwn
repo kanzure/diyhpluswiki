@@ -75,3 +75,10 @@ A: We'll talk in a bit.
 Q: So you said moving the signature data outside the UTXO set..
 
 A: It's never been in the UTXO set. But we are now able to treat the part of the transaction, which has no impact on the UTXO set. The signature data has never had an impact, but it was bounded to the rest of the transaction, which did have an effect on the UTXO set.
+
+----
+
+    18:36 < aj> oh, huh, i guess segwit moving signatures out of the block means that the size of cross-chain witness proof things (what are they called?) for pegged sidechains is kind-of irrelevant...
+
+
+
