@@ -1,0 +1,149 @@
+Motivation
+===
+
+As we've seen over the last two days scalability is a multidimensional problem.
+One of the main topics of research is increasing the blocksize to increase transaction throughput.
+The assumption is that as technological progress is continuing and transaction throughput is increased accordingly, the cost for runnning a fully validating node stays constant.
+
+However, blocksize proposals usually only directly change one aspect of full node costs - the blocksize.
+The actual costs for a node are composed of multiple factors, such as the resources required to validate a block or to store the utxos.
+And these factors are not necessarily in a linear relationship with each other.
+This has been discussed more detailed in Mark's talk at the previous Scaling Bitcoin conference.
+
+The most prominent example for showing non-linear relationships consists of putting as many OP_CHECKSIG operations into a single transaction as possible.
+For each checksig operation, the whole transaction is hashed and a signature is verified.
+Assuming 1MB blocks, it is possible to create a block that takes more than 10 minutes to validate on my 2014 laptop.
+It is clear that each proposal that increases blocksize also needs a strategy to deal with these non-linearities.
+
+One of those strategies is to put a hard limit the number of signature verifications and the number of bytes that are hashed for a block to be valid.
+We see some problems with this approach:
+First, as it stands there is no intuitive way to choose these limits nor how they grow with the blocksize.
+Second, there are other factors that influence validation cost, which might not relevant now, but could get significant in bigger blocks if not properly limited.
+For example, it is possible to create a 1MB block that takes 5 seconds to validate on my laptop, which just consists of as many HASH opcodes as possible.
+And third, placing hard limits on certain factors completely ignores the relationship between those factors.
+
+These relationships exist, because thiose factors influence validation cost in some way.
+This brings us to the concept of cost metrics.
+
+The goal of the cost metric approach is to tie consensus rules to actual resource requirements.
+The idea is that cost of a block is a *function* of certain block properties.
+As an example, the block cost could be represented by a weighted sum of block size, validation cost and utxo growth.
+
+When we have agreed on such a cost metric, we can get rid of the hard limits and instead introduce a new consensus rule that blocks need to cost less than a threshold to be valid.
+
+Validation cost
+---
+One aspect of a full cost function are validation-cost.
+We can view validation cost as the time it take to validate a block on a reference machine.
+Then we can introduce a threshold saying that a block is not allowed to exceed 30 seconds validation time on a reference machine.
+In other words, we want to find a function from block features like the number of bytes that are hashed for signature validation
+to validation time on the reference machine.
+To do that, we assume a simple model function that states that the validation duration is a linear combination of block features,
+collect data about the actual validation duration on that machine and then fit the model to the data.
+
+The one dimensional situation is depicted in the right, there is one data point for each block consisting of the number of bytes that were hashed and the time it took to validate.
+With this data it is possible to determine the effect or coefficient of hashing on validation time which is represented as a line in the plot.
+This coefficient can then be used in a consensus rule.
+
+Experiments
+---
+Validation cost is affected first and foremost by OP_CHECKSIG, that is signature verification and hashing the transaction.
+Bitcoin Core already limits the number of OP_CHECKSIGs but this is insufficient for our case because what counts are the number of OP_CHECKSIGs that are executed.
+We built on Gavin Andresen's code to count those factors while validating transactions.
+We also record hashing via the OP_HASH opcodes, and how many bytes are written and removed from the stack.
+And the number of inputs which loosely corresponds to the number of lookups in the utxo set.
+And of course we also measured our dependent variable, the ConnectBlock duration on the reference machine.
+
+As a reference machine we used my laptop, which has two 3gHz i7 cores.
+To collect block feature data and the corresponding ConnectBlock duration, we reindexed mainchain, testchain and custom regtest chains which for example consisted hard-to-validate blocks.
+I found out that I could comfortably use the computer while using only 5GB of 8GB RAM, so I set the dbcache option to 3GB.
+dbcache determines how much data is cached in memory
+We ran Bitcoin Core version 0.11.2 with libsecp validation and disabled checkpoints.
+
+Result
+---
+After estimating the coefficients using linear regression,
+we get useful information like for each kilobyte of hashing validation takes 0.005 millisecond longer
+for each signature verification it takes 0.1 millisecond longer.
+Other features do not play a comparably significant role at the moment, even though it is possible
+to create a block that takes around 5 seconds to validate and only consists of hash opcodes.
+
+The validation cost function fit is very accurate: for a random test selection of test and mainnet we get an average absolute error of less than 4 ms.
+Most importantly, the estimated function is able to predict hard-to-validate blocks very accurately: The one tested example was a block that took 130.4ms to validate, 131.7 was predicted.
+
+Cost Metric
+===
+So, now we derived a validation cost metric that corresponds to
+validation time on a reference machine and
+we can define a new consensus rule that would require a block to
+have a smaller validation cost than some threshold.
+After picking a threshold, there would be a situation like in this plot, where x-axis is the block size, y-axis validation time
+and the green area represents the space of valid blocks.
+
+However, picking another threshold is difficult.
+because there is no one size fits all solution:
+(1) you don't want to constrain potential use cases but
+(2) and you also don't want want to sum validation time and bandwidth worst cases.
+
+On the other hand, we can try to relate bandwidth requirements and validation cost
+using a simple weighted sum for example and then pick a single threshold.
+
+And this is exactly the idea behind the cost-metric, find all factors affecting node cost and
+how exactly they influence node costs and then pick a reasonable cost threshold.
+And what this idea really entails is moving away from blocksize proposals to arguing about total node costs.
+
+Now the question is how exactly do you convert bandwidth requirements, validation time to cost?
+Does it make sense to trade off one second of network latency with one second of validation duration?
+How do we bring additional cost factors in, like utxo set size?
+How future-proof is that solution?
+
+There is certainly no single correct answer to these questions.
+We can, however, show the advantages of a cost function while building on existing block size proposals.
+Most block size proposals consider average use at a specific maximum block size.
+So in terms of cost threshold it would make a lot of sense to allow maximum sized blocks only in combination with average validation time.
+In this way we can prevent blocks that have both a worst-case size and worst-case validation time.
+We get the average validation duration for a specific block size using the data we collected earlier with the reference machine.
+
+Also we set a hard limit validation cost of 10 seconds, which seems reasonable because the maximum validation
+time on the reference machine was 6 seconds.
+to the average validation time at the maximum blocksize.
+Then we allow to linearly interpolate between the maximum validation time at half of the maximum blocksize
+
+This shows an advantages of a cost metric: we constrain the worst case by bringing it closer to the average case,
+and still allow possible future use-cases which require a lot of validation resources.
+
+So far, the cost of maintaining the utxos has not played a role in Bitcoin.
+In fact with a 1MB block, the worst case utxo set size increase is almost 1MB, whereas the average over the past year is an increase of around 11kilobyte.
+Finding a reasonable place in the cost function is even more complicated than validation and bandwidth resources, in part because they are long-term costs.
+The current situation with Bitcoin is that there is no incentive to avoid increasing the utxo set size if possible.
+This can be as simple as moving bytes from the scriptSig to the scriptPubKey.
+What we can do with the cost function is placing a slight incentive to include transactions that reduce the utxo set size and thereby cheapen them.
+The proposed way to do this is allowing a larger validation costs when the block reduces the utxo set size.
+This aligns well with the fact that blocks that sweep a lot of utxos have rather extreme validation costs due to the high ratio of inputs to outputs and we want these blocks to be valid because they are extremely beneficial.
+
+In order to determine a specific function one can compute the maximum possible decrease of utxo set size for a block of maximum size.
+Then linearly interpolate such that for each byte the utxo set is reduced the maximum allowed validation costs are increased until we reach let's say half of the remaining validation cost.
+This rule does not give the utxo set size the prominent place in the cost function it would deserve but at least moves incentives in the right direction.
+
+This cost function can trivially grow with the blocksize, by multiplying the validation cost limit and average validation cost with the same scaling factor.
+So if the blocksize is doubled, then double max validation cost point and double max validation cost and double average transaction
+
+This situation is shown in the plot for 1MB, 2MB and 4MB maximum block sizes.
+
+It ensures that the worst case validation time scales as fast as the block size, which is an implicit assumption underlying many blocksize proposals.
+Also it guarantees that average blocks are always allowed to have the maximum block size.
+
+Conclusion
+===
+In conclusion, Bitcoin places *various* resource requirements on full nodes.
+And it is essential that blocksize proposals account at least for the most important ones, or extreme worst cases are .
+A cost metric helps with that because it sets the requirements in relation to each other.
+
+We've seen that estimating a function for validation cost only, is straightforward, when assuming a reference machine, collecting data and fitting a linear function.
+
+A more complete cost function that includes bandwidth, validation and utxo requirements is difficult to derive from the bottom up.
+But as we showed we can build on existing blocksize proposals to get some of the advantages of a cost metric,
+* such as confining the worst-case while
+* allowing to trade-off various block aspects
+* and setting the right incentives.
+
