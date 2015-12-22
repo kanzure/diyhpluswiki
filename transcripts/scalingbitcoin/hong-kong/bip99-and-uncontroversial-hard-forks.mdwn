@@ -16,7 +16,7 @@ Soft-forks have some limitations as well, which is why I want to deploy hard-for
 
 Another category of consensus forks is unintentional hard-forks. Accidents happen. There are mistakes in implementations, not everyone always implements the exact consensus rules. Accidents like this have happened in the past. Does it matter if they are soft-forks or hard-forks? I don't think so, we just don't want to do this. The deployment combination is trying to not deploy this. It's simple. But what are this specification of consensus rules that people are not able to follow?
 
-There's some documentation that claims to be consensus rules, but it's usually outdated and doesn't go into enough detail. One project that several people are working on is decoupling the consensus rules from Bitcoin Core, from the rest of Bitcoin Core. The project is big, and the consensus rules are really only a tiny part of that. So far we have exposed verifystrict, which is kind of low-level, but it's pretty good, because you have most of the crypto and the difficult stuff. I would like to expose VerifyTransaction and VerifyBlock and hopefully move this into its own repository apart from Bitcoin Core.
+There's some documentation that claims to be consensus rules, but it's usually outdated and doesn't go into enough detail. One project that several people are working on is decoupling the consensus rules from Bitcoin Core, from the rest of Bitcoin Core. The project is big, and the consensus rules are really only a tiny part of that. So far we have exposed verifyscript, which is kind of low-level, but it's pretty good, because you have most of the crypto and the difficult stuff. I would like to expose VerifyTransaction and VerifyBlock and hopefully move this into its own repository apart from Bitcoin Core.
 
 When we have that, we will have a formal specification and the implementation. Other implementations separate from Bitcoin Core will evolve form that. We don't have libconsensus yet.
 
@@ -40,7 +40,7 @@ A controversial soft-fork is where miners decide to collude between themselves, 
 
 There are controversial hard-fork proposals. We will see some examples if I have time. The point here is that we don't care about miners here because if we have something controversial, some miners might be opposed, then we don't want use any miner upgrade confirmation mechanism because we can just use a time threshold and that's it.
 
-A schism hard-fork is like going to war, and we don't want to kill civilians or anything, we don't want to hurt bystandards that don't know what's going on. A way to do that is to start the controversial hard-fork is by..... 
+A schism hard-fork is like going to war, and we don't want to kill civilians or anything, we don't want to hurt bystanders that don't know what's going on. A way to do that is to start the controversial hard-fork is by..... 
 
 (inaudible / stream problems)
 
