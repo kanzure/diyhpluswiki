@@ -1,0 +1,64 @@
+Deep learning for AGI: Survey of recent developments
+
+Cosmo Harrigan
+
+<http://agi-conf.org/2016/>
+
+<https://www.youtube.com/watch?v=dLdFLVDlJes&list=PLZlLHCryX93L40ZLylvbO8zqfbz3ZNwmm&index=6>
+
+There we go. The floor is yours.
+
+My name is Cosmo Harrigan. I'm going to present a brief overview of work that I have found interesting in the past 2 years that extends on Leslie's comments, on deep learning and how it might be applied ot the field of AGI.
+
+Here's a brief outline. First I'll describe how we might view AGI in the context of deep learning. I'll present another definition for deep learning. We'll review several fields. We'll go into intrinsic models, programmed learning, memory, learning to act, issues with one-shot learning, transfer learning, attention, and then some architectures and potential avenues for the future.
+
+Because this is a brief talk, I will only be able to go into these models in brief detail. These are all described in differet papers. Why do I think deep learning is relevant for AGI? I think it's relevant for two reasons. First, the methods for deep learning are expanding in scope, beginning to include ways to address memory, program learning, unsupervissed learning, action learning, etc. Because deep learning is being used in conjunction with other systems, to produce other systems, too.
+
+So what about universal intelligence like from the tutorials yesterday? In 2011, Venice paper, planning is expecting max searching into the future. Learning is the use of bayesian mix of turing machines to predict future observations and rewards, in the AIXI framework. We can view practical methods for AGI as an approximation of these ideals. Deep learning is one example.
+
+I like this alternative definition of deep learning, where he defines the program implemented by the network, and several pieces of terminology like a partial causal sequence, concept of weight sharing, credit assignment task, and uses this to define what we mean by deep neural network. He defines the definition of the network as its program, or its weights, and a partially causal sequence defined by the network, including the concept of events. The network encodes a topology. There's a crucial concept of weight sharing in many types of deep neural networks. We also have the concept of credit assignment paths through the network. And potentially causal connections. I apologize for going through this rapidly. These concepts are put together to define the concept of depth; we have a definition of deep learning which is extremely general and can encompass many architectures.
+
+Now I will review some work from this field. We'll begin with intrinsic motivation. This is a method to allow embodied agents to satisfy internal drives for discovery, which could be defined in many ways, rather than aiming to solve a higher-level goal function. This is useful in environments and settings where you have a long delay for rewards, sparse rewards. Hierarchical value function at different temporal scales, with intrinsic motivation function, to approach deep learning. They are able to learn intrinsic goals, also called options as defined by Richard Semiens. This is an example of their architecture in this diagram.
+
+Here's an interesting application. In the original deep q network paper, this was presenting one of the exaples that is difficult for the algorithm to achieve. This is an instance of a delayed reward where you .. complicated scene of actions. This hierarchical cuonent algorithm, you can see has achieved very good results in comparison to the original results.
+
+Moving on to other recent work, they have outlined possible functions to use as intrinsic motivation functions. Of these five possibilities, they focus on the concept of empowerment. We could formulate intrinsic drives, but they all involve an unsupervised learning method that allows an agent to arrive at some measurement of value, to achieve its goals. In this paper, they used a mutual information method, called empowerment, which allowed the agent to achieve this type of reasoning.
+
+Another theme interesting I found is generative models, based on variational auto-encoders, which are latent variable probabilistic models which are used in unsupervised learning settings. On the left, we have examples provided to the system, and on the right we see they learned to hallucinate additional classes, based on their model, in the style of the example on the left.
+
+An additional work done on this is the general adversarial network. In this framework, they trained two models, one is a generative model, which caches and distributes the data. The second is a discriminative model, which attempts to determine if the sample it is given came from the sample data or a generative model. This corresponds to a mini-max scheme. These types of generative models were applied recently to produce a learned models of chairs, where they could see latent features and generate new images. They were able to vary features like color to generate different chairs that were not presented in the chain. There has been additional work in this regard as well, where they combine pyramids with the generative adversarial model for class exchange.
+
+So what about memory and programmed learning? There have been some recent works in this regard. There was a feedback recurrent memory queue network, where there is context-dependent retrieval of memories. They were able to use an attention model to determine which memories to focus on, for computing a value function. The model is illustrated on this slide.
+
+A lot of memory, we have the concept of programmed learning, which is a key aspect for AGI. There was the neural turing machine paper, which a couple of neural networks .... the diagram of the architecture ... now we will describe some of its properties and applications. They have applied to sorting, associative recall, and simple tasks. They have constructed an architecture that extends standard recurrent neural networks, to allow it to utilize a memory. This is analogous to a working memory system.
+
+Additional recent work has extended this is the neural GPU. This in context with the neural turing machine is a highly parallel architecture, designed to make it easier to train and more efficient. They have applied this to several tasks.
+
+Neural programmer interpreter. This was a recurrent and compositional network that learned to represent and execute programs in python. It's interesting to look at their results. They compared it to a traditional sequence-to-sequence network. First they looked at sample complexity. After 8 training examples it achieves perfect accuracy, whereas the sequence-to-sequence one took much longer. We could also look at the generalization ability, where we see that it is able to generalize much better.
+
+Moving on to the next topic, neuroevolution and learning to act. Neural networks can be used for feature learning and reinforcement learning. We can represent the controller as a eural network, and optimize it using genetic algorithms.
+
+Using a sequence of three papers, learning to drive from screen pixes, in a simulator. They used a genetic algorithm to train a convolutional neural network and other one, and they did not use backpropagation in this case.
+
+Another recent case was using backpropagation rather than neuroevolution to train this network for taking captions and targets. These are both examples of deep reinforcement learning.
+
+The next field I would like to briefly summarize is that of data efficiency and one-shot learning, which was mentioned in the previous presentation. If we look at part 1, we see that we're given one example highlighted in red, and the problem is to look at the initial remaining examples and see which ones belong to the same class. Humans can do this easily, given one example, the problem is to describe systems that also have that ability. If we look at the second example, the problem is being given one example and being able to generate new examples. This is known as one-shot learning.
+
+Original deep reinforcement learning methods were highly data inefficient methods. There have been several recent attempts to overcome these issues. There is one way called episodic control. It reenacts successful policies, in memory, by following highly rewarding sequences that have achieved good results in the past. This is an instance of a fast learning system, based on non-parametric memorization of certain experiences. The context in which this was presented in humans and animals they are able to learn rapidly from single examples using multiple methods like memory and decision systems. Sometimes it is appropriate to use model-based planning, which takes more resources, but sometimes you need ot make fast decisions, but then you need less resource-intensive models. Model-free episodic control, shows an instance based method that is used as a rough approximation when less resources are available.
+
+Other work in this vein of data efficiency and one-shot learning was presented in "One-shot learning with memory augmented neural networks". They were able to rapidly learn from new data, and utilize it, for further instances. This is more in the deep reinforcement learning setting, where the concept of experienced replay stores prior experiences and replays them internally to continue to train the model. Traditional experience replay does not have a way to prioritize certain memories. In 2015, Shawl, they introduced prioritized experience replay where they have a method of sampling based on predicted importance of the memories.
+
+Another interesting work was called "Multi-tasked learning". In this case they were able to train a single policy networks, using the guidance of teachers, how to act in a set of distinct tasks. There was another example called "deep skill networks", using a hierarchical reinforcement network for life-long learning. This is an illustration of their architecture.
+
+Universal value approximator function. It expands the concept of a value function in reinforcement learning, rather than just for the state, it's generalized to a state-goal pair, so that it could be generalized to new goals when the agent acquires new experiences and requirements.
+
+I want to present recent architectures. Highway networks, deep recurrent networks, latter networks for unsupervised learning, the dueling network for learning an advantage function in conjunction with the value function for stray pixels; also automated theorem proving applications. Recurrent neural network controller, with a recurrent neural network model, which utilize each other to learn and predict and control in an environment.
+
+I would like to point out that many of these models take inspiration from neuroscience. There was a recent paper where it said that structured architectures, and dedicated systems for attention, short memory, long term memory, and these architectures are heterogenous. And there are series of interactive cost functions, aiming to make data more efficient and targeted to the needs of the organism.
+
+In conclusion I think we will see more hybrid models. We may see work aiming to address planning and reasoning, building cognitive architectures using components from deep learning. Future generations of neural networks willl look very different from modern entworks. We might see more structure and inductive biases will be built inot the networks, or learned from previous experiences from previous tasks, leading to human-like behavior.
+
+By expanding the scope of deep learning and combining it into hybrid systems, I think this is relevant to the topic of artificial general intelligence.
+
+Model-based reinforcement learnings and planners.
+

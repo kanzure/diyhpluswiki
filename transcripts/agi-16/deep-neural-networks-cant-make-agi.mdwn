@@ -1,0 +1,33 @@
+Deep neural networks can't make AGI
+
+Brandon Rohrer
+
+<https://www.youtube.com/watch?v=KK6uHsIm8rA&list=PLZlLHCryX93L40ZLylvbO8zqfbz3ZNwmm&index=7>
+
+The intention was to have an inflammatory conversation about whether deep neural networks are as awesome as the media implies, and whether they can solve everything. If you happen to agree that it's not enough then you should think about what to fill the gap with. I'm not going to take that opportunity right now, but I will elucidate what I see the gap is.
+
+We have what deep learning can do. I would sum it up in a broad brush as saying, it finds patterns, specifically in terms of weighted combinations of inputs. If you look at most of the talks from this morning and yesterday, a lot of the conversation started at the symbolic levle. Going from pixels, touch sensors, microphones, using a huge gap that has to be crossed. Can deep learning do that?
+
+Deep learning can do some generalization, especially convolutional neural networks, and with some add-ons and some other layers you can do classification, assigning categories, doing regression and assigning a numerical value, and you can do clustering, to determine what's similar, and you can also choose your actions.
+
+Deep learning is, in fact, cool. You can take raw images, expose it, and then learn feature that when reconstituted are quite interesting. You can expose it to cars and learn features that look like cars. This idea of going from raw pixels to symbols is quite plausible here.
+
+You can do this with imagery. Raw exposure to data. You can take raw audio soundtracks, break them up to frequencies, run deep learning, and learn features, and then figure out the author from this. Modest Mouse and the president of the U.S. are similar. Beyonce and Taylor Swift aren't too far away from each other. And so on.
+
+You can also, as mentioned, you can use deep queue networks to learn to play Atari very well. You can also do crazy things like have a robot watch youtube videos, learn types of objects, and with some other mechanisms, apply those to how to cook.
+
+So we have one edge of our gap. The other edge of our gap is what's necessary for AGI? For the purposes of this conversation, there's a lot of debate there yes, I would like to focus on things that are externally observable. I don't want to touch internal representation or internal processes or affects. What can the thing do? I would like to use human performance as a threshold. This is a human-level AI concert. Can deep learning do everything that a human can do?
+
+What can humans do, that deep neural networks cannot do? I want to throw out some concrete observations. In the category of action, there's switching context and making plans. Deep neural networks don't do that well. Generalization and adapation, in perception, are severely lacking.
+
+What I mean by switching context is that existing approaches map one set of inputs to one action. Humans don't appear to rely on that. In the example of a self-driving car trained in the US, you take it to the UK, it would probably take more than a 5 minute lesson to get it to work.
+
+And planning. If you look at how your algorithm did on the Atari games. There was a pattern, where the action was determined by the current state of the screen. That blew humans out of the water. But when you had to do a series of actions, they were awful at that. There are ways around this. I'm not aware of general ways around this, using only deep neural networks. This has still not happened well.
+
+They are having some successes in Go and Chess. Those parts, planning, were not done with deep neural networks. They were done using tree search.
+
+Generalization is one of my favorites. If you look at deep neural network evidence, they were designed to identify cats. The generalization is that it's good at taking an array of pixels, finding a pattern, and finding it no matter where it is in the image. As long as your data has 2d or 3d structure, you can have translational invariance and translational generalization. What it does not do is finding things that look different in their raw pixel format, but are similar in some other way. And it doesn't work well if you have data that doesn't have 2d structure. There's a very narrow carefully defined set of problem, like looking at the light where it is in our implementation if you were to have an implementation like an advanced robot with some cameras and robots and range sensors and microphones, you can't take all of that and put it into a nice 2d array that is meaningful, meaning two inputs that are next two each other are similar and two distant signals are not related. So the generalization that deep neural networks do right now, is very limited.
+
+Finally, adaptation. As was mentioned earlier this morning, and I was nodding vigoriously as Gary Martins was talking. It would be good to not only have benchmarks where you have to learn to do a task, but where you have to learn to do a set of tasks even better, but better yet where you have to do a set of tasks and then you are tested on a completely novel task, or a way that the world is changed in some fundamental way during the course of the task. How well does it learn to play chess after the same number of games? If a computer and a human first play 10 games of chess before playing each other, being able to quantify that and will be interesting.
+
+What do we need to fill this gap with? Thanks for your attention.
