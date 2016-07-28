@@ -1,0 +1,243 @@
+Montclare protein engineering lecture 10: Directed evolution
+
+<https://www.youtube.com/watch?v=1dd5e6ys2R8>
+
+In this lecture, we will talk about directed evolution. Protein engineering and rational design requires structural knowledge. Proteins are complex, fragile and poorly defined and highly interconnected. It's easy to mess up proteins by mutating essential residues. It's hard to predict beneficial changes even if you know its structures.
+
+
+There are three categories by which you can identify proteins or develop proteins. First is discovery in which you identify natural proteins from nature that have already been evolved. You identify the one that has the function that you want. Alternatively, you can use recombination of naturally evolved protein. You take proteins from nature, use in vitro recombination and identify and recombine protein that can actually do the function that you want. And then comes directed evolution, where you take a single protein from nature and then you introduce diversity and you actually evolve the protein in vitro to generate an evolved protein for the particular function that you want.
+
+This process of directed molecular evolution mimics that of natural evolution. In natural evolution, coined by Charles Darwin, essentially takes a timescale of thousands and millions of years to go from one starting point to another more fit and more evolved protein, or a species in the case of Charles Darwin. Directed evolution is similar to natural evolution, but instead the tiescale is reduced from thousands and millions of years, to weeks and months. You can go from a protein, introduce mutations, and keep constantly going through this iterative cycle of introducing mutations and selecting at each step to generate a protein of interest that has been evolved.
+
+The process of natural evolution has three key important features. One is that it introduce a mutation, then you introduce recombination, and then selection. So that process is taken and used in directed evolution so that we can shorten the timescale from millions of years to weeks and months.
+
+Directed evolution allows us to explore enzyme fuctions never required in the natural environment, and for which the molecular basis is poorly understand. This bottom up design approach is different from the top-down site-directed mutagenesis and computer design approaches. In directed evolution, you start with your parent protein shown here, and isolate its gene and introduce a new mutation that was one step borrowed from evolution and as well as recombination. This DNA library is then transformed back into cells so that the protein is generated, and then you introduce a selection or screening to see if this product is more fit.
+
+If it is more fit, then you say yes and here's your evolved protein, which then you use as your starting point for introducing another set of mutations and recombinations, and then you go under screening again. The ones that are not fit are thrown out. So you are only identifying the proteins that are improved. You get to a highly evolved protein through iterated cycles.
+
+# Overview of remainder of lecture
+
+In this directed evolution lecture, I have introduced the concept of molecular evolution. We will talk about generating large populations (libraries) of mutants. We will talk about localized mutagenesis and randomized mutagenesis.
+
+We will also talk about isolating protein mutants with desired properties, like screening assays and selection strategies. We will also look at case studies of proteins engineered by directed molecular evolution, like thermostability of subtilisin and the binding affinity and specificity of antibodies.
+
+# Genetic code
+
+Before we talk about mutagenesis strategies, let's look at the genetic code. Is the code universal? Sort of. Mitochondria tend to be a little bit different. UAA may code for trp instead of termination, as there are three stop codons. In general it's universal.
+
+Code is heavily redundant. Crick wobble hypothesis. Third base makes little difference, first two bases have 6 hydrogen bonds, third base is irrelevant, that's why there is degeneracy of the codons.
+
+# Mutations
+
+Mutation is any change in the DNA base sequence, like AGC codes for ser but so does AGT. The codon has changed, but it produces the same amino acid, that's called a silent mutation. If you mutate AGT to GGC, it's a pro now. In the case of G mutating into a T, it leads to a stop codon (from AGC to ATC) is a stop codo. You can also have insertions and deletions. You can have inversions like AGC and CGA is an inversion.
+
+The standard genetic code, there's a degeneracy of codons, in which you have 64 codons coding for 20 amino acids, and then 3 stop signals. This shows that you can generate all these types of mutations and they will lead to etiher silent mutations, nonsense mutations and inversions.
+
+Frameshift mutations happen when you have an addition or deletion of bases in other than multiples of 3. If you do "the cat ate the rate" and with 1 base deletion it becomes "thc ata tet her at..." which does not make sense, it's a frameshift. The addition or assertion of 3 bases might change an amino acid at insertion point but downstream code stays the same, like "the red cat ate the rat" and you can change it and insert it, it's "thr ede cat ate the rat", which is where you inserted "red" into the sentence.
+
+Suppressor mutations are mutations that cancel the effects of the first mutation. It's not a reversion, but a reversal. It might occur in the same gene, intragenic or within, it's a +1 frameshift and then canceled by a minus 1 frameshift, or improper folding compensated by another change.
+
+In intergenic suppressor mutations, usually tRNA mutation, inserts "correct" amino acid in response to the wrong codon. This could allow for, even though the mRNA is mutated the tRNA allows for adding the right amino acid.
+
+In terms of other mutations, you could have a transition mutation where the purine or pyrimidine base pair is replaced with a base pair in the same purine/pyrimidine relationship like GC with AT.
+
+Transversion mutation on the other hand are mutations where a purine/pyrimidine replaces a pyrimidine/purine base pair or vice versa, e.g. GC with TA.
+
+<https://www.youtube.com/watch?v=1dd5e6ys2R8&t=10m>
+
+Here are some mutation examples. There are transition and transversion mutations. They are shown here in the red. The transitions are shown in blue. You can have silent mutations, where you are taking TGT to TGC, which leads to a synonymous amino acid. And then you have missense mutation, where you have TGT mutated into TGG, which is Cys -> Trp. The T to G is a transverse mutation. In the case of T to C, it's a transition mutation. And in a nonsene mutation, like TGT mutating to TGA, that's a cysteine getting converted into a stop codon. T to A is a transversion mutation, and it's a non-synonmous mutation. It's non-synonymous for for missense and nonsense mutations, here.
+
+# Directed molecular evolution (again)
+
+What is directed molecular evolution? It's a laboratory process whereby mechanisms employed during "natural" selection are employed at the molecular and single cell level to cause and then identify evolutionary adaptations to novel environmental challenges. This often includes deliberate modification of genetic sequences.
+
+We start with a gene of interest. We make a mutation or more than one mutation. We do a selection where the variance with the desired property, and we go through this process iteratively.
+
+Why use this approach? To achieve the same goals as other methods of protein engineering, you need to understand the properties. It's ot understand protein function and improve protein function for industry and medicine. To go from DNA and to predict the amino acid sequence, we know how to do that. But then to predict the folding and identify the function is very challenging. Nature has been successful at this process, through evolution.
+
+There are four requirements for successful directed molecular evolution. The desired function must be physically possible. The function must be evolutionarily feasible. There must exist a mutational pathway that exists from "here to there" through ever-improving variance.
+
+While we cannot know a priori that the path exists, a good experiment would maximize the likelihood.
+
+You must be able to make libraries of mutants that are complex enough to get rare and beneficial mutations, like in a cell library of ecoli or something. And finally, you need a rapid screen that depends on how rare mutations and the desired property are, and how many must be accumulated to achieve that desired result.
+
+In addition to a screening, you can have a selection which also can be done as well.
+
+# Selection strategy
+
+For a selection strategy, the genotype and phenotype must be linked. All mutations are assayed in the same reaction compartment. More protein variance can be assayed then. Selection strategies are used to isolate protein binders like peptides and antibodies. The protein mutants have to be linked to their encoding DNA so that you can use PCR to amplify the sequence.
+
+Several strategies have been developed to link genotype and phenotype.
+
+# Directed evolution steps
+
+The typical steps in a directed enzyme experiment are as follows. You start off with your wild type sequence, introduce mutations, this is done through PCR and site-directed mutagenesis or recombination from more than one parent sequence, you generate a whole set of variance which are then ligated into host vector which are then transformed into host cells, for the protein to be generated, and then clones expressing the improved enzyme are identified using a high-throughput screen or in some cases by selection; then, the genes encoding the ones that are improved, are then isolated and the cycle then repeats.
+
+# Subtilisin thermostability
+
+Our case study is the thermostability of subtilisin.
+
+Subtilisins are used in detergents for washing machines, so they have to be active at high temperatures and high pH. The half life of subtilisin E at 65 degrees is less than five minutes. How could the thermostability be improved?
+
+A homologous protease from Thermoactinomyces vulgaris has a half life of 17 hours at 65 degrees. Why are some proteins more thermostable?
+
+Subtilisin E from Bacillus subtilis and "thermitase" from T. vulgaris are 57% identical -- there are 157 amino acid differences. Which are the important ones?
+
+One can do this by taking subtilisin E and introducing variance through recombination with T. vulgaris or through random mutagenesis. And then select for this property of having a half life of 17 hours at 65 degrees.
+
+# Methods to generate large populations (libraries) of protein mutants
+
+The methods to generate large populations of protein mutants (libraries) are as follows.
+
+Random mutagenesis: error-prone PCR, mutagenic bacterial strain or cell line, UV irradiation, chemical mutagens.
+
+Recombination and DNA shuffling.
+
+Localized mutagenesis: oligonucleotide directed mutagenesis, cassette mutagenesis.
+
+# Error prone PCR
+
+In normal PCR, you have primers and you add dNTPs and you try to have high fidelity replication to regenerate the same gene over and over again. In error-prone PCR, you are introducing mutations intentionally so you can have a library of random mutations in your genes. In order to do this and make the polymerase more able to introduce errors as it's copying the template, you can increase the MgCl2 concentration, increase number of cycles, polymerase concentration. You can introduce biased nucleotide ratios, mutagenic nucleotides, polymerase with no proof-reading.
+
+The drawbacks of error-prone PCR is that you get multiple mutations, enzyme preferences like a bias in putting particular mutations into the gene sequence. Also you have restricted amino acid substitution.
+
+# Library size
+
+When you make libraries it's important to calculate library size. It's important for peptide synthesis library reasons. The number of possible variants that can be created by introducing N mutations simultaneously over M amino acids. So it's 19^M * (N!/(N!-M!)! * M!).
+
+For example, if you have one amino acid being changed, and the protein is 200 amino acids long, then the equation becomes 19^... N! is 200.. 200 minus 1 becomes 199, times 1 factorial, will lead to 3800.
+
+As you increase the number, and most proteins are about 200 amino acids; if you go to 4 mutations, 4 things being changed simultaneously, you have a library that is incredibly large: 8429807368950.
+
+So you need to be able to understand and generate libraries, but have confidence in covering that diversity of that library. To have 95% confidence that a given number of variants is represented, the number of clones must be 10 times larger.
+
+If subtilisin E is 381 amino acids, then there are 7239 possible mutants with one substitution.
+
+# How to search protein space
+
+If we want to search protein space for a protein of 250 residues, there are 20^250 possible sequences. Your search capacity is 10^6 to 10^9. Most sequences are non-functional, most mutations are deleterious. Start with something close to the target. Small steps of 1 to 2 amino acids at a time.
+
+There is recent evidence that a higher mutation rate might be better. Maybe 3 to 5 mutations, but you have to screen what they are.
+
+How many protein variants need to be screened to find a mutant with improved properties? The more mutants screened, the higher the chance to identify a mutant with the desired property.
+
+How many mutated genes can be generated by recombinant DNA techniques? More than 10^15 mutaned genes can be generated in a volume of 1 mL. However, the number of mutated genes that can be ligated into a plasmid and brought into cells is smaller, around 10^9 to 10^10.
+
+How many mutants can be tested? That depends, but several billion at most.
+
+# Methods to identify and isolate proteins with interesting properties
+
+Screen assays: microtitre plate based assays (10^3 to 10^6), colony screens (10^5 to 10^8), FACS (fluorescence activated cell sorting) (10^7 per hour).
+
+Selection strategies: phage display (10^8 to 10^12), ribosome display and mRNA display (up to 10^13). In vitro selection, compartmentalized self-replication, etc.
+
+What is the difference between a selection and a screen? If we use selection and using ecoli, and we're looking for beta-lactamase and ampicilin, normally ecoli dies. If you have the beta-lactamase gene and it hydrolyzes ampicilin, then you would start to see colonies.
+
+In a screen, all cells grow. We have agar plates and we add X-gal. We are looking for ecoli with and without beta-galactosidase. You will see colonies, but they will be white. In the presence of beta-galactosidase, they will turn blue, so by identifying the blue colonies those are the ones screened to have the function that is needed.
+
+# Microtitre plate based assays
+
+Mutants are expressed in individual wells on the microtitre plates. 12, 96, 384 well plates. Activity of mutants is assayed on microtitre plates.
+
+You can run a high throughput colorimetric assay, where you have a substrate that when hydrolyzed by the protein of interest, perhaps it forms 4-nitroaniline (yellow).
+
+N-succinyl-ala-ala-pro-phe-p-nitroanilide, hydrolyzed by subtilisin or the protein of interest, forms a peptide plus 4-nitroaniline (yellow) which is detectable.
+
+# Back to directed evolution of subtilisin thermostability
+
+So now we can go back to our directed evolution of subtilisin for improved thermostability.
+
+1. Mutagenesis (error-prone PCR)
+2. Ligation of mutant genes into a plasmid
+3. Transformation into E. coli
+4. Purification of DNA "plasmid library"
+5. Transformation in Bacillus subtilis
+6. Growth in microplates
+7. Supernatant (secreted protein) used for colorimetric assay
+8. Pellet (cells) used to recover genes
+9. DNA shuffling of the best genes
+10. repeat for 6 generations
+
+So you have the best top 5 variants, shuffle them, identify a single sequence, introduce mutations through error-prone PCR, identify better ones, and repeat.
+
+# DNA shuffling (Stemmer)
+
+DNA shuffling was pioneered by Stemmer. Using artificially generated mutants, for example variants selected from a library, you can multiple related parents which are then fragmented with DNA spun, and then you generate a recombinant library of pieces being placed together. Then you identify the ones that have the best function, identifying the beneficial mutations.
+
+You can also do shuffling using homologous genes from a protein family. High homology is required. You use homologous sequences that are chopped up and then pieced together in ways that they haven't pieced together before.
+
+# Back to subtilisin example again
+
+Error-prone PCR was done. 5000 variants screened for survival at 65 degrees. 5 best variants shuffled to recombine mutations. Then 8000 screened at 75 degrees. Error prone PCR of the best variant. 2000 screened at 76 degrees. Shuffling of the best three variants. Then again at 78 degrees, etc.
+
+# Analyzing subtilisin mutations and results of directed evolution
+
+8 mutations cause a 200 fold increase in the half-life of subtilisin at 65 degrees.
+
+Through these various cycles, they were able to obtain a subtilisin that was thermostable.
+
+When the mutations were re-cast on to the actual protein fold, we see that the mutations that were identified that improved thermostability, would never have been predicted. They were on the surface, and they don't interact with each other. So directed evolution was able to do this without knowing the structure.
+
+# Alternative methods of screening protein activity
+
+Colonies on a nutrient plate. Mutants can be expressed in individual colonies on a nutrition plate. Activity is measured directly on the plate, such as by adding a substrate that changes its color if there are any active on the plate. Before the activity assay replica plates are produced to express the protein variant or to isolate and sequence the encoding DNA.
+
+Another alternative method is FACS (fluorescence activated cell sorting). Mutants are expressed in individual cells. Cells expressing active protein variants are fluorescently labeled. Cells are sorted according to their fluorescence intensity (millions of cells per hour).
+
+You can have more than one type of fluorescent cells, like red and blue and green. You can sort millions of cells per hour.
+
+# Selection strategies for genotype-phenotype linkage
+
+We have discussed some of these already. Now we are looking at linking genotype and phenotype.
+
+## Phage display
+
+Phage display is one method. In phage display, phages are used to infect bacterial cells to generate a phage, and depending on whether your gene of interest is encoded attached to the gVIII protein, you have to dipslay on either the pIII side or the pVIII side.... You can display proteins. On a bead or surface, immobilized to the target of the interest, you look for binders. For the ones that are not strong binders, they wash away. Then you can isolate the strong binders.
+
+The beauty of phage display is that you can do phage planning. You can start with a library of, antibody library on phage display. The nyou have a column with your target of interest. Only the phage that binds to the target of interest will bind to the column. The rest are washed out. Then you can elute out the phage that bind to the target in the column. Then you can identify your gene and go through another phage display cycle.
+
+## Ribosome display
+
+Ribosome display allows tethering genotype and phenotype. You start with your DNA using in vitro transcription to generate your mRNA, using translation, that allows you to generate a ribosome that is tethered to the native protein because as your ribosome goes over it, you're adding paramycin at the end which does not allow for the dissociation of the ribosome and mRNA. You can select for binding to a particular antigen or protein. Those that are bound and stay, and those that are not bound will wash away. So you can specifically dissociate this complex, isolate the mRNA and reverse transcribe to generate DNA, add mutations, and then go through this cycle over again.
+
+You can link genotype and phenotype. You are not dealing with transfections in cells or anything. It's all about generating DNA.
+
+## In vitro compartmentalization
+
+In vitro compartmentalization starts with a gene library. You generate an oil-in-water emulsion like an artificial cell. Each compartment has the transcription and translation reagents. Usually you have a fluorescent product that can be identified through cell sorting like FACS. You can generate or isolate the gene, then use that to generate your new library. Again you have a link to your genotype and phenotype in this artificial compartment. You are able to then do the directed evolution that way.
+
+# Antibody engineering case study
+
+The immune system is capable of creating millions of different antibodies. Scientists for decades were investigating mechanisms for creating these, such as with recombinant technology.
+
+Here's an antibody with constant regions and variable regions. The power of antibodies comes in its strength of specificity. Dissociation constants (Kd) range from 10^-4 to 10^-10 molar; it's highly specific.
+
+It has an immunoglobulin fold. Has antiparallel sheets assembled together. Each CDR region, complementary determining region (CDR), of an antibody binds to the antigen. This region allows for recognition of the antigen and high-specificity binding.
+
+The antigen binding site of an antibody is compromised of six complementary determining regions (CDR) or hypervariable regions, three within the light chain, shown here, and three within the heavy chain shown here.
+
+You can take antibody variable regions, and you can have it both on a light chain as well as on a heavy chain. And then you can select for antigen binding. Once you select for antigen binding, those lymphocytes that produce the antigen are activated and it triggers the incorporation of the somatic mutations into those genes, shown here, and this allows for improved binding to the antigen binding site.
+
+These processes can be exploited to generate highly selective and highly tight binding that can recognize the antigen.
+
+# Generation of an antibody fragment binding to a specific antigen
+
+Antibody fragment (ScFv) library is generated by mutagenizing CDRs. Library is displayed on a phage. ScFv-phage binding to a specific target (like a receptor) is selected. DNA encoding the selected ScFv proteins are sequenced. Selected ScFv is expressed.
+
+# Methods to generate mutant libraries
+
+We have discussed the random mutagenesis methods, and some recombination DNA shuffling methods. Now we will talk about localized mutagenic strategies.
+
+Mutagenic oligonucleotides are where you can have an equal mixture of 64 different sequences containing.... because of the degeneracy of the genetic code, ... you can encode all 20 amino acids with just 32 codons including just one stop codon, instead of 60+ codons.
+
+When doing so, you can use targeted mutagenesis using a mutagenic oligonucleotide. You have a primer here, a primer on the other side too, and then you can do PCR and have the two fragments anneal to each other, then extend.
+
+You can also use site-directed mutagenesis (SDM) where you have a single primer on top of here would be the DNA strand, and here would be the forward primer where your mutation is, and then you can just copy the rest so that you generate the whole plasmid during the mutation.
+
+Again, for mutagenic oligonucleotides, if you are using a codon schemes where you have 32 codons including a stop codon, if you mutate one amino acid, you get 32 library members. If you mutate 2 amino acids, you would get 32^2 which is equal to 1024. If you do three numbers of mutated amino acids, then you get 32768, and so on. As you reach 4, you are already up to 1 million. At 5, you are up to 3.4 * 10^7, and 6 is 1.1 * 10^9. So you do not want to exceed the transformation efficiency of ecoli. Because if you are generating protein libraries in ecoli. You want to generate libraries where you have, where you limit yourself to a maximum of about 5 mutations, because these would be to a library size of 3.4 * 10^7 but if you wanted to generate a library that covered the diversity at a confidence level of 95%, then you would have to multiply this number by 10, so that would be 3.4 * 10^8, as your theoretical diversity that you wanted to cover using your ecoli transformation efficiency, this would be the maximum limit. If you multipled 10^9 by 10 you get 10^10 and ecoli transformation efficiency is not that effective.
+
+You should be able to calculate confidence levels of... well not confidence levels, but theoretical diversity of a library, and covering that library with a confidence of 95% and look at whether papers are doing that to see if they are generating the library of sufficient coverage.
+
+# Topics discussed
+
+Screen assays, selection strategies. We have talked about plate based assays colony screens, FACs, phage display, ribosome display, mRNA display, and in vitro compartmentalization which we discussed towards the end.
