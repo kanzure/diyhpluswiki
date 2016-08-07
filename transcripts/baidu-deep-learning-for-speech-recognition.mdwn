@@ -1,0 +1,209 @@
+2015-03-27
+
+Awni Hannun
+
+Deep speech: lessons from deep learning <https://vimeo.com/123431541>
+
+Deep speech lessons from deep learning <http://usa.baidu.com/deep-speech-lessons-from-deep-learning/>
+
+Deep speech: Scaling up end-to-end speech recognition (2014) <http://arxiv.org/abs/1412.5567>
+
+As Andrew said, I'm going to talk about speech recognition and how we have been using deep learning to scale up and make progress in speech recognition. As Andrew alluded to, what we're really interested in doing is solving speech recognition. When I say "solve speech recognition", what I don't mean is "it works pretty well when you're holding your phone close to your mouth and you can say things clearly and loudly". We want it to work in a wide array of contexts. Andrew gave an example of your phone in your passenger seat, it's noisy, and you're driving. That doesn't work so well right now.
+
+Another exaple would be watching TV, you're sitting far away from your television, volume is on and there's some noise, perhaps there are kids playing or other people talking in the room, and you would like to be able to talk with your television using voice as your interface. In order for this to work, we need a lot of progress particularly in noise. So that's the kind of example we're thinking of when I say we're trying to solve speech recognition.
+
+Deep speech, what I'm going to talk about momentarily, and it's some of the research we've done recently in order to make progress on this. Okay, so, let's get started. So, here's what I'm going to talk about. Ultimately, like I said I'm going to talk about the state of speech recognition so that everyone is on the same page so that you have enough context. First I'll talk about what is the current state of speech recognition? Where does it work? Where does it not work? Why does it not work? How does it work? I'l lget into the details of how it works.
+
+After that, I'll talk about deep learning. I'm not going to get too much into the details of deep learning, but my goal is to leave you with some intuition for why it is a promising route for making progress. Finally, I hope you guys will have enough context on two things, and then I can get into discussing the two main reasons for what has allowed us here at Baidu to make progress in speech recognition and our deep speech system. And I'll talk about the model of course.
+
+So let me just say, actually, the plan is to I'm going to try to keep this presentation relatively short maybe half an hour, and the plan is to have some time for questions. I would like to ask my colleagues here with me to help answer some of those questions. So if you guys do have questions that are more generic or less relevant to what I'm talking about, I would ask that you hold those for the end and we can have some time to answer those. Okay? Great.
+
+So, speech recognition. Alright, so. As I have alluded to already, where does it not work? One example is signal-to-noise. So one failure mode of speech recognition is where the S-N ratio is low. Perhaps the most straightforward to see is when there's a lot of background noise, like in the car or the television in a busy household. There are other situations, though. One such example is far-field speech recognition, where you have low signal-noise ratio. What this is is when I'm trying to have a microphone which is a distance from me and recognizing my speech. Even without a lot of noise, it's still hard to get speech recognition to work. Another thing to cause low SNR is reverbation. Right now I'm speaking, say there's a microphone in that phone, and I'm speaking directly towards it, but not all of my speech is going straight to the microphone. It's bouncing off of you, the walls, the floor, the ceiling, and it will be smeared in time by the time it gets to the microphone. So SNR is a real problem here.
+
+Another failure mode in speech recognition today is speaker variability, like accents are a great example of this. If you have a very strong Scottish accent, probably you would have noted that the state of the art speech recognizers will not work well for you. Speaker variability can happen for other reasons other than accents. It can be difference in gender, differences in age, children are actually much harder than adults to recognize their voice. They tend to be a lot harder. One other thing is the length of your vocal tract, this can make a speech signal look quite different to a machine. Speaker variability is something we need to make progress on.
+
+Lastly, natural and conversational speech. With speech recognition today, you speak in an effective manner. You might speak really slowly or loudly like you're scolding a small child into your phone. The converse of this is natural or conversational speech. This is kind of how I'm talking right now. Or say two of us are having a conversation and I wanted to transcribe that speech. Why is it so hard? Well, for a lot of reasons. As I'm talking, sometimes I speak quickly, sometimes I speak slowly. This makes it hard for a voice recognizer. Another thing is something called disfluencies. These are things like me starting a word and not finishing it, or speaking over myself, uhs and ums, filler words, things like that.
+
+Q: How much of the impact is due to language?
+
+A: Right. I see. I see. I see. Yep. So, language, to give you a quantitative number, better language does help with speech recognizer. There's a big gap between as you will see between clean speech and noisy speech. That's using the same language modeling as kord. There's of course understanding the raw signal. Maybe I'll just answer this with an observation. If I close my eyes and cover one ear, I can still transcribe speech much much better than machines. It can help, but I don't think it's going to get us most of the way there.
+
+So, you guys might have noticed the proliferation of devices which at their core have speech recognition for their interfaces. Up here on your left I guess, we have smart watches which you can swipe. But if you want to interact with them in a meaningful way, you have to speak to them. It would be cool to be able to walk while using your smart watch and compose a text message. And right here we have a Baidu product, this thing is cool, you wear it around your neck and it's got a camera above your right ear, and a speaker in your left ear. It can see your field of vision. To interact with it, you have to give speech to it. We have to make progress on that. At least the SNR and natural speech. And you guys are probably familiar with the Amazon echo cylinder. And people ask it to do things like "echo, add milk to my shopping cart", or "echo, play some hot music". If you ask Amazon echo to play some pop music, it will start playing music, it will create a cloud of noise around itself and then it will be hard to interact with it after it starts playing. So it remains to be seen, these need to make progress on low SNR. Also, it has seven microphones. The reason it has so many microphones is so that it can zoom in on the source of sound. If you want to listen to speech far away, then you need to find the source of the sound. Humans have two ears, essentially two microphones, and yet we can transcribe speech much much better than any of these devices. So it suggests to me that there's something algorithmically missing.
+
+Okay, so. How does speech recognition work today? It all starts when I have a snippet of audio. It's a waveform. I feed that into an acoustic model. Can you guys read this in the back? Not sure what to do here. Turn off the lights in the front. Yeah. The lense in the front? Okay, well, I will describe what's on the picture ((11min 55sec)). Okay, alright. Okay, so. Like I said, we have an acoustic model. It receives the raw audio data. The job of the acoustic model is that given a snippet of audio, it's supposed to make a prediction over what phoneme might be present. Phoneme is a unit of sound. It has to make a prediction over what units of sound might be present in that audio. Acoustic model feeds those predictions into the phoneme model. The job of the phoneme model is to make a prediction of what words might be present given some predictions of ponemes. And then there's a language model, which takes those output predictions and assigns a higher probability of words that are likely to be together, and a lower probability to words that aren't likely to be otgether. My phoneme model might spit out "cat hat sat", they kind of sound similar in terms of the makeup of phonemes. The language model would then say "you said cat sat, because hat sat doesn't make sense". And then you get a transcription out of the model.
+
+So I want to focus in on the acoustic model, and dive into what's happening in the acoustic modeling. That's where the speech-specific magic, at least of those traditional speech recognizers, happens. So let's take a look. So this is what's inside the acoustic model. This is made up of several subcomponents itself. The first is feature extraction, then speaker adaptation, and phoneme prediction. In audio, feature extraction is a fourier transform. Doing this computation and trying to use insights from how we as humans process sound to extract relevant features. One such insight is that we hear audio at least in terms of frequencies on a non-linear scale. We resolve the audio frequencies in a non-linear scale. The difference between 100 Hz and 200 Hz might sound similar to the difference between 10k Hz and 20k Hz. This is called the Mell scale of speech recognition and we take that into account in feature extraction.
+
+Job of speaker adaption is to remove speaker-specific effects of the features, and leave a representation that is independent of the speaker. And finally after speaker adaptation is phoneme prediction, which predicts which phonemes are in the sound. This is typically done these days with supervised machine learning algorithms, typically a deep learning network these days. So that's what's going on in speech recognition elsewhere, at a very high level.
+
+So now I want to get into deep learning. Drawing some inspiration from computer vision, say that I have this task, right. I have this data set of images. What I would like to do is correctly classify if there's a coffee mug. A really simple task. Several years ago, I as a human would approach this problem, I would sit and look at it for a little while, and build up my intution about what's important about these data points. I might notice that edges are really important. Or that circular shapes are really important. What I would then do is try to build a nalgorithm that is capable of extracting those relevant features, and then I would present those features to some kind of learning algorithm, which would then make a prediction. I would have some features, and the features would be passed to a learning algorithm which makes predictions. The observation of computer vision is that I could take the feature extractors, rip out the learning algorithm, and replace it all with a deep neural network. This deep neural network now receives the pixels directly of the image as input. It turns out that this works much better.
+
+So why does this work much better? Honestly, nobody really knows. We can try to inform our intuition a little bit, though. One thing we might do is probe the network and try to ask it different questions and understand what it's learning. If we do this, say we passed the lower layers, what excites the neurons in the lower layers? In the case of this image, Barack OBama, we might find that the neurons in the lowe rlayers are maybe excited by... different rotations... If I asked the same question of the neurons in the middle layers, they might be excited by face parts. If I ask the same question sof the higher layers, perhaps they are excited by faces, different faces in different positions. So what we get is this amazing notion of hierarchical abstraction that the netowrk is learning on its own. At no point am I asking the network to explicitly look for anything to parse in the middle or upper layers for that matter. I simply give it the data set and give it the ability to learn from that data set, and it learns what's relevant to learning the correct decision.
+
+This might have been an unsupervised learning exercise. Paper: Unsupervised learning of hierarchical representations with convolutional deep belief networks. Communications of the ACM, vol. 54, no. 10, pp.95-103, 2011.
+
+((19min 13sec))
+
+Okay, so. Why deep learning? Well, what we might see if we empirically observe other machine learning algorithms, is that as we scale up the amount of labeled training data, we might see that other machine learning algorithms tend to saturate. We get very marginal returns. The great thing about deep learning, at least empirically, is that it often looks like it continues to improve rapidly as we increase the amount of data.
+
+Drawing inspiration from deep vision, let's look at the speech recognition pipeline. I showed you the earlier slide for state-of-the-art speech recognition pipeline. Where deep learning has taken hold is in the acoustic model. Similar to computer vision, let's replace the entire thing with a deep learning network. Let's go directly from audio to output text. So deep speech has kind of taken a big step in that direction. We have not completely achieved this mission. There are a few challenges to achieve the big picture.
+
+Variable length problem is still a problem. Not all audio snippets are the same length. Some are 10s some are 20s. We need a way to handle this problem. There might be two possibilities here. One is try to make everything the same length. It's actually not as crazy as it sounds. This happens in computer vision all the time. If I go to the web and I get a data set of a million images, when I first collect those images they aren't going to be all the same size. Often you rescale everything to 256x256 or something. The reason why this works is that the images, the underlying class of the object for the location of the object is invariant to the size of the image. Speech recognition, well in audio, this is much less the case. If I increase my audio snippet, by too much, it's no longer going to sound reasonable at all even to a human. Likewise, if I shorten it. So we have no reason to expect that this is a reasonable approach.
+
+So rather we're going to try to find a model that can handle variable length audio. We're going to use a recurrent neural network. I have some waveform input like this. I'm going to slice it up into three bins like that, into three timesteps and on top of the first timestep, I'll just plot the deep neural network for timestep 1. On top of the second timestep, I'll plot another deep neural network. So this one will read the inputs from deep neural network from timestamp 1, plus the waveform from timestep 2. So you can see that this will generalize to an arbitrary number of input samples. What is the window size? Cross-validation, I would say. Are the audio sample windows the same size? Yes these are all the same size. Is that your question? Yes.
+
+((23min 30s))
+
+Yeah that's a great point. I'll show you the model in a few minutes. We have a bidirectional recurrent neural network. I'll show that in a second.
+
+Okay, so. Other challenges that we will encounter while we scale up deep learning. One is data, where are we going to get all this data to train this model? The first approach is to go collect more real world data. Maybe there are some benchmarks, maybe I can hire people to give me data, or go work for someone that has data. But often it's the case that real data is expensive and hard to come by. So we're going to look for ways of cleverly synthesizing more data out of the data we already have. In vision, the way that this works is say I have a picture of a house. What are the ways to change this picture while preserving the fact that it's a house? One idea is to translate it to the side, to shift it to the left. Another way is to reflect it on the vertical axis, and also rotate like so. In all cases, it's still a house. You still expect a machine to understand that it's a house. It's very different, though, the pixels are all different.
+
+In speech recognition, it's less clear about how to deform the signal while preserving the correct transformation. One thing we might do, which we do do, is take a clean snippet of speech, and add noise. That was me saying "the quick brown fox jumped over the lazy dog". I can literally sum the two together, sum their elements, and have noise in the background. What you hear there is relatively realistic souding audio, me saying the same thing, but it has some background noise now. It's almost like a new training example for the network.
+
+So data is one challenge. As we scale the amount of data that we want to train our model on that will take the training take a lot longer. As we increase the amount of data, we want to make our model larger, give it more capacity, by increasing the number of parameters or connections. And this will also lead to longer training.
+
+What we'll do here is instead of using CPUs which are capable of computing at 100 giga flops, we'll use GPUs which are capable of 5 tera flops. GPUs are not a panacea, in the sense that everywhere you have a CPU you can plop in a GPU and make something faster, no. They shine in a really specific type of computation, which is when I have multiple instances of data and operating on that data with the same instructions. It turns out that matrix multiply is a great example of this. At the heart of most deep learning algorithms is some small number of matrix multiplication operations. Deep learning maps really well on to GPU.
+
+One GPU is not enough for us. So we get many GPUs and we put them into boxes together and have them communicate with each other over superfast networks using infiniband. Okay, so that's deep learning at a high level.
+
+Now I will talk about deep speech. You need data and you need computation. How do we solve the two problems I mentioned earlier with scaling it up? Let me first show you the model. This is actually not much more complicated than the recurrent neural network we saw earlier. It looks like there's more going on, but there isn't that much more. There's a forward recurrent layer here, and there's a backwards recurrent layer here. The intuition here is that I would like to use information both from the past and the future to inform the present. At the lowest layer, you have a spectrogram. The audio wave file you saw earlier, we compute a spectrogram on top of that. It's a window sliding fourier transform. We do nothing else. That's all we do before feeding it to the network. Spectrograms can be done with matplotlib in python or something. We feed that spectrogram through the network. At the top, we predict the character of the output.
+
+Deep speech is what's called a grapheme-based system. A grapheme is the smallest unit of written language. So in English, this is of course the alphabet. At each timestep, we're going to predict one letter of the alphabet, including the space character and some punctuation. We put the neural network at different timesteps. It's often the case, though, that the number of timesteps we segment this into, is many many more than the number of characters we'd like to predict. I might have 100 timesteps of my input, but I only want to say "cat" or something. So how are we going to get around this? Well, we allow the network to output a no-op or blank character. If it thinks it shouldn't output something, then it outputs an underscore as a blank character. In order to get this, which might be an example of something the network would output, we simply yank out the blanks (all the underscores) and collapse the characters that are not separated by spaces. And this will reveal "the cat". So it allows the network to decide when to output a relevant character.
+
+Q: ..
+
+A: That is correct. Yes. We use a dynamic programming algorithm to integrate over all possibilities. And, this was a known algorithm called CTC, Connections Temporal Classification. At training time, we say I would like the network to maximize the probability of the correct transcription which might be any one of these possible alignments.
+
+Q: ...
+
+A: Do you mean how much overlap is there between the audio segments?
+
+Q: ...
+
+A: What's the overlap between the consecutive timesteps? It's something like, in our system, 100 millisecond. At each timestep, I will process something like 10 milliseconds of information, and overlap would be the previous timestep something like 100 milliseconds.
+
+Q: ...
+
+A: Right, right. That's a good point. We do kind of stride this, in, yeah. We do actually skip... but we haven't explored how much more... yes.
+
+Q: ....
+
+((33min 35sec))
+
+A: So the way I would deal with repeating letters, I would force the network to output a blank between the letters that are the same. If this was a blank, the "AAA" would be "A_A" and that would be a consecutive AA. I only collapse when there's two blanks.
+
+Q: Is the grapheme related to the ..
+
+A: It depends on what language. In English, the relationships between letters and underlying sounds can often be not ambiguous. But in other languages it is often much more phonetic.
+
+Q: ....
+
+A: Ah, so. It's determined by the sample rate of the audio. And the sample rate of the audio we have been using is 16k Hz. And vertically... so in the spectrogram, we're using that results in ... 160 ... because we're stepping by 10 milliseconds, that results in 160.
+
+Q: ....
+
+A: Right.
+
+Q: ....
+
+A: No, we do nothing to preprocess the data. Actually, it would be interesting to see how the network handles that situation. It's certainly the case that it's learning something non-trivial about language. Since it has seen some examples, we would hope that it, it would know when to put two s characters.
+
+Okay, so, again I mentioned that data is important. Having a lot of data is important. On the y-axis is number of 1000s of hours of speech. And when we were going to collect data to train our model, we went to the data to train our benchmarks. WSJ has read clips of WSJ. Switchboard telephone speech. These are about 2000 hours. We then got 5000 more hours of our own training set and added this, so we got about 7000 hours. Most state-of-the-art speech recognizers are trained on 5000 to 10,000 hours. For us, 7000 hours is still, Deep Speech has an appetite for data. 7000 hours is not enough. So we apply our synthetic techniques to augment our data set. Using our 7000 hours as a core data set, and adding noise to it in different ways we were able to augment it to something like 100,000 hours to train the network.
+
+The other problem is that we ... when training on 100,000 hours of data. How do we kee pthis thing efficient? Even on a GPU, this might take weeks to months to train the model from start to finish. So it's important to consider scale here and optimize this. It turns out that the simple feed-forward layers are actually easily parallelizable because they are all independent. So, that's actually quite efficient and it scales nicely. The problem lies when we're trying to compute the recurrent layers. We can see that because these layers induce a sequential dependency. So the forward recurrent layer is slow to compute and it must be sequential. And the backward recurrent layer likewise.
+
+So the first thing you might observe is that these two layers, the recurrent layers, are totally independent. We can have one gpu compute the forward part, and another one to compute the backward part. The problem with this is, and it's not easy to see here, but if we did it this way, what would happen is that these two processes, gpu1 and gpu2, would have to exchange a lot of information when they went to compute. So the communication cost is going to increase. And so, rather, what we did is we literally cut the model down the middle, and had one gpu work on the left half, and one gpu work on the right half. The way that this works is that I'm just going to have gpu1 in the first part of the forward recurrent layer, until it gets to the middle. And gpu2 will do the firs tpart of the backward recurrent layer, and when they reach the middle they will exchange a small amount of information and pass a small message, and then they will swap, and gpu1 will do the first second part of the backward recurrent layer, and gpu2 will do the second part of the forward recurrent layer.
+
+Q: ....
+
+A: Right.
+
+Q: ....
+
+A: Right. Uh. So, usually when we're running sound through this model, we run it in small segments, like 10 to 20 seconds of audio, because that's how people do speech. If we wanted to transcribe a lecture, like 30 minutes, we would have to think about how to chop that up cleverly so that .. in order to not have to unroll this thing for thousands of timesteps.
+
+Q: What is the dimension?
+
+A: You mean how many parameters are there in it?
+
+Q: ...
+
+A: Okay, so. Let me see if I can answer your question. These nodes, each of them represent a different unit. And that unit is one number, and there will be something like 2000 of these in our network. And each of those nodes will communicate to the next layer. It's on the order of something like 2000 in each layer. Did I answer your question?
+
+Q: ...
+
+A: Ah, so. With the network sizes we're using, it gives something like 30 to 40 million parameters. If you were to unroll this network and count the number of connections or synapses between hidden units it would be something like 5 billion. There are many many more connections than there are parameters.
+
+Q: ...
+
+A: It's trained with backpropagation, yes.
+
+Q: ...
+
+A: Uh. Yeah. It's essentially fully-connected. The input, you can think of it being partially connected, we're striding across it almost like a 1d covolution. But then you look at one slice of it, essentially.
+
+Q: ...
+
+A: Oh that's a good question. I better not say numbers on that. I don't know precisely. Let me tell you what it should be able to do. Most speech recognition systems should be able to transcribe in half real-time, in order for latency to be acceptable. Actually the bigger problem with real-time trascription with this is that the backwards recurrent layer makes it hard to do online transcription where I want to transcribe as I'm receiving. That's a problem here.
+
+Q: .. problem with ... variable .. translate it over to the ... the wave function .. and then based on that .. iteration .. transmit .. useful .. another .. this case, .. stacks of disks .. direction of... and then couple one layer .. one .. otherwise ..
+
+A: I see. You're going to have to draw that for me. It sounds very interesting. Is there another question? Yes.
+
+Q: ...
+
+A: Yeah, uh. I haven't done that on a large scale yet. I have done those experiments on smaller data sets. Even introducing the first forward directional recurrent layer is responsible for a lot of ... the backwards recurrent layer gets you a bit more. I better not quote numbers, but it's not trivial.
+
+Q: .. train .. required .. what's the minimum ... to generate the prediction ..?
+
+A: In the sense of like picturing one on one..
+
+Q: Yeah.
+
+A: Uh. It probably is the case that memory is .. but.. yeah. Uh. I think that the answer is probably .. 
+
+Q: ..
+
+A: Yes. Yes.
+
+Q: ...
+
+A: Ah. Okay. Let me answer that.. do you have any more specific questions about these particular slides? I would like to address that question later with my colleagues, who have more interesting things to say about that. Yes.
+
+Q: ...
+
+A: Uh. Yeah. That would be a good idea, if the samples were quite long. Is that what you mean?
+
+Q: ..
+
+A: Right. Right, so I would imagine there's a lot of other clever ideas that we haven't tried yet. Yes.
+
+Q: ...
+
+A: Sorry, I didn't catch that.
+
+Q: ..
+
+A: No, we are not at all. For those of you not familiar with traditional speech recognition, the core of traditional speech recognition is a hidden markov model, which is the typical method for .. and we have kind of ripped that totally out of the picture.
+
+Q: ...
+
+A: Uh, you know, I don't think, we haven't tried MSVCs in the large scale of this model yet... on top of spectrograms. We have't tried them on their own, nor on top of spectrograms. I would imagine that with a large enough data set, it's probably fine. That said, in traditional speech recognition, it's extremely ..   Yes?
+
+Q: ...
+
+A: Yes.
+
+Q: ..
+
+A: Yep.
+
+Q: ..
+
+A: I don't know. But, that would be a fun thing to try. I'm sure it would work, perhaps not as well.
+
+Okay, let me move on. We have collected our own test set of 200 utterances. 100 of them were clean with no background noise. 100 had noise. We benchmarked these against other speech recognition systems, like Apple dictation, Bing speech, Google API, wit.ai (Facebook), and our Deep Speech. With the noisy examples, we have a big improvement. There's still a big difference between clean and noisy speech. There's a long way to go. If you look at how humans transcribe either of those, we're still a long way off. Word area is the edit distance between two ...
+
+<http://deeplearning.stanford.edu/tutorial/>
+
+<http://bit.ly/deepspeech>
