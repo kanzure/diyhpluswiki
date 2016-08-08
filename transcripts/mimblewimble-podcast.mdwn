@@ -1,0 +1,341 @@
+
+<https://soundcloud.com/heryptohow/mimblewimble-andrew-poelstra-peter-wuille-brian-deery-and-chris-odom>
+
+* Andrew Poelstra (andytoshi)
+* Pieter Wuille (sipa)
+* Brian Deery
+* Chris Odom
+
+Starts at 26min.
+
+I am going to introduce our guests here in just a minute.
+
+Launch of zcash might be delayed in order to allow the code to be analyzed by multiple third-party auditors. Zooko stated, "I feel bad that we didn't do a better job of making TheDAO disaster-like problems harder for people".
+
+Our guests on the line are Andrew Poelstra and Pieter Wuille. Andrew are you there?
+
+AP: Hey. We're here.
+
+host: I am going to let you guys give our audience some background. Andrew, tell us about yourself and what you do i nbitcoin.
+
+AP: Sure. I showed up in the bitcoin space around late 2011 while I was starting a PhD in mathematics. I wound up hanging around on the research side of things, like IRC channels centered on cryptography research. These days I work on the libsecp256k1 project which does the underlying cryptography stuff for Bitcoin Core and related projects. That's mostly what I spend my days doing, implementing crypto code.
+
+host: That's pretty awesome. This is probably one of the first times we've had a hard-core cryptography person on this show. We should probably have you back at some point in the future. But as it turns out, we have another one on the phone now too. Pieter Wuille is also a cryptography expert. Pieter, go ahead and tell su about yourself as well.
+
+PW: Sure. I discovered bitcoin around the end of 2010 and I was immediately attracted to the development side of things. I started coding on bitcoind and it became Bitcoin Core. This is now my full time job and working as well on the cryptography libraries.
+
+host: You're one of the Core developers?
+
+PW: There's no good definition for that word, but yes I suppose.
+
+host: Fair enough. But definitely a person with very deep knowledge of bitcoin and very integral in its development. Thank you both for coming on, I really appreciate it. Courtesy of our in-studio bitcoin expert, who is with us here a lot, Brian Deery at Factom, actually real quick too... Factom has had some good news lately...
+
+BD: Oh we don't want to talk about that. No.
+
+host: Well why have we brought these two on the show?
+
+BD: Something exciting happened last week. On the same day that Bitfinex lost a lot of money, a mysterious Harry Potter fan, who was also a world-class cryptographer, who was and remains anonymous, announced a new cryptographic protocol to the world.
+
+host: Was this Satoshi again?
+
+BD: Probably not.
+
+host: Was it Craig Wright?
+
+BD: There would be a lot more swearing involved.
+
+host: So what is the new protocol about?
+
+BD: The working title is mimblewimble. This is a Harry Potter spell that stops other wizards from being able to cast spells against you. It's a very fitting name for an anonymity protocol that allows you to spend money without having other people watch you using their own magic of watching you and how yo uspend your money.
+
+host: Is this another cryptocurrency-like protocol? How would you characterize it?
+
+BD: This is a way to, why don't we let our guests answer that? Andrew was the first one to poke some holes in this protocol and make a few fixes and tweaks to it. And so, of all the people in the world would come on the show who isn't hiding behind tor at the moment, he's the most appropriate, he's the world expert.
+
+host: Andrew could you elaborate on mimblewimble?
+
+AP: Mimblewimble.
+
+host: Forgive me, I'm not as big of a Harry Potter fan as I should be. Tell us more about that.
+
+AP: Sure. On Monday, I think it was, on Monday evening, someone logged on to one of our research channels and dropped a paper under the name Tom which is the name of Voldemort in the French translation of Harry Potter. You can find the paper online, and it's written by Voldemort. He dropped this, then he signed off and that's the last we heard from this person.
+
+host: It sounds like really intelligent nerds. Instead of frat boys dropping burning bags of shit on people's front doors, it's like dropping research instead. Okay, so someone dropped the paper. Continue.
+
+AP: Yep. Okay so he dropped the paper. What this paper describes is the cryptography behind something like bitcoin but not bitcoin. You could build an altcoin with this. Or more usefully you could build a sidechain with this. It's a way to create transactions, unlike bitcoin where you have this bitcoin script system and you have to solve the bitcoin script; it uses straightforward digital signatures. You can spend money by having a secret key, you can do multisignature things, etc. It's structured in such a way that when you make a transaction and someone else makes a transaction, you can combine them and make a bigger single transaction. In bitcoin, you can't do this, because transactions are atomic except in coinjoin where you can do interactive transaction merging in bitcoin. Instead of blocks being a giant list of transactions, in mimblewimble each block is one giant transaction, and you can't tell which parts correspond to different transactions. This is a big thing for privacy and anonymity. It takes your entire transaction graph and squishes it into one transaction per block.
+
+PW: I have something to add here. This is Pieter. What Andrew is describing is that somewhere in 2013 there was another anonymous author who dropped a paper on bitcointalk.
+
+((37min 58sec))
+
+host: So is mimblewimble polish? No, it's pottish. Okay at least they laugh. That's good. So just to remind ourselves, this protocol can combine transactions, but not just one transaction and another transaction, but you're saying all transactions in a single block? Pieter please continue with your point.
+
+PW: Andrew was explaining how this mechanism allows transactions to be combined together. This mechanism was described 3 years ago by another anonymous author who dropped a paper anonymously on bitcointalk, called OWAS. The difference is that OWAS required a new type of cryptography called pairing crypto, which is not well-trusted in the academic space yet. Mimblewimble accomplishes the same thing as OWAS, and more, but does not need the new assumptions, and it only uses the elliptic curve crypto like Bitcoin is using.
+
+host: When you say this other form of crypto is not well trusted, is the reason is that it uses a certain set of unproven assumptions?
+
+PW: That's right. They are impossible to prove. They were just assuming that no efficient algorithm exists to break that. The assumptions for pairing crypto are a bit stronger than for elliptic curve crypto. In short, it's newer.
+
+BD: Does mimblewimble rely on discrete logarithm problem?
+
+PW: Yes. The elliptic curve discrete logarithm problem.
+
+BD: Just like bitcoin?
+
+PW: Yes.
+
+host: What are the implications of combining all transactions into one in a single block?
+
+AP: The implication is that the transaction graph, which is sort of a technical way of describing all the inputs and all the outputs of each transaction for money in and money out, those transaction graphs no longer give you a way to follow the coins to learn anything.
+
+PW: This is the same thing that coinjoin tries to accomplish. In coinjoin, all the participants need to be online and collaborate at the same time. Mimblewimble allows anyone on the network to take any two transactions and combine them. It simplifies coinjoin.
+
+host: Users have to take steps to do this?
+
+PW: Every node on the network would do mimblewimble automatically, which is not possible with interactive coinjoin.
+
+AP: This is only half of mimblewimble. It's pretty cool that you can get OWAS without pairing crypto.
+
+host: So were we discussing the mimble or the wimble?
+
+AP: So the second part is that what this allows you to do, and I think OWAS could have been coerced into doing this, but mimblewimble definitely does. It's that, if you have a series of blocks, then somebody can give you if you want to validate all those blocks, rather than getting every full block with every transaction, they could just give you the effect on the blockchain of all those blocks put together. So if a transaction had an output, and a later block had the output spent, then it doesn't appear, you can delete that data, and you can give someone the entire chain with the missing data, and that person can still verify the entire chain. This is something that you can't do in bitcoin right now.
+
+((42min 54sec))
+
+PW: Specifically, this actually means that the blockchain could shrink. We could have a block that spends more than it creates, and the result would be that the entire blockchain would shrink. The amount of data I need to give you to prove that the state of the ledger is correct, could theoretically go down over time. Whereas in bitcoin, we append blocks all the time.
+
+host: So it's not just that the chain would grow in an incrementally smaller space, it's that the total data could go down over time.
+
+BD: Ethereum has the full UTXO set equivalent in the patricia merkle tree.
+
+host: You should explain that.
+
+PW: There's a bit of a difference here in that the UTXO set is the state of the ledger. Knowig how much money everyone has. That's what the UTXO set is. In bitcoin, you could be given the UTXO set and you wouldn't have to verify the history if you trust me. If you don't trust me, then you need to see all blocks in history to verify that the state of the ledger is correct. In mimblewimble, the data I need to show you, you don't trust me, I can prove that it's correct, that amount of data can go down.
+
+AP: Ethereum does not change that. It has commitments. Now you're trusting a miner that did a lot of PoW and maybe is more trustworthy, but you're still ultimately trusting that miner that the state of the chain is what it is. With mimblewimble, it's as if you downloaded the entire blockchain and verified it, but you don't.
+
+host: So as far as blockchain and block size, it sounds like there would be no need to increase the block size with bitcoin in terms of transactions per 10 minutes or whatever because in practice there's just so little data going across....?
+
+AP: That's complicated. In real-time, the data still has to go across. It's only for the people that join later. They get to reap the benefits of all that deleted data. I can give you the mimblewimble coin history, and it will be really small. But while you're watching the network, you still have to participate in real time.
+
+host: So if you have 100 million transactions in a block, you have to keep listening?
+
+BD: You have to keep up with the fire hose in real-time.
+
+PW: Good analogy. Part of this operation happens within a single block. If I send you some money and you spend it, and both transactions go into the same block, then those two cancel out with each other, and it doesn't appear in the chain anymore.
+
+BD: So now we have to have two transactions? Someone needs to spend money, and I need to spend it too?
+
+PW: Oh, no. I am just describing transaction inputs and outputs. The transactions where I send you and where you take it can be merged together and they cancel out. So the joined transaction of those 2 is smaller than the sum of the individual transactions.
+
+host: Interesting. It's a lot to wrap our head around. We're so used to ...
+
+PW: It's very different from how bitcoin works.
+
+host: We are so used to that, we have a mental inertia of how we understand bitcoin, it's a little difficult to wrap our heads around this.
+
+BD: is this going to have to be an interactive protocol? In coinjoin, I need real-time communication with the people I'm mixing with. Do I need interactive communication to make this transaction?
+
+AP: You need to be in communication with the person you're spending to. That's interactive. But the merging is non-interactive.
+
+host: So not all transactions are guaranteed to be merged?
+
+AP: One of the rules in the mimblewimble....
+
+host: Andrew and Pieter are here. One of them lives in town. We'll have to have them on our show in the future. Mimblewimble. Having a crypto expert on the show is cool because in something like bitcoin, we're grateful to have experts on our show to enligthen us and our listeners about these arcane aspects of a wonderful technology and related tech. That cryptographic stuff is always something that is a little bit missing with others that we have on. It's a key element that's nice to fill in. In a future episode we would like to explore that more. When we were coming to break, was it ... someone I forget.. was trying to say something on the way out, I don't know if either of you remember what that would have been.
+
+BD: We were talking about the block size, was that it?
+
+host: Well there was something related before that. In that case, Brian, you had a good question about multiple assets using this tech.
+
+BD: Okay, sure. In the sidechains paper, there was talk of having multiple assets in a single sidechain. You could have a dogecoin sidechain and a bitcoin sidechain and inside that sidechain you would have atomic swaps which are basically trustless but that rely on everything pretty much being transparent. But now, not having transparency, is multiple assets can you have multiple assets on the same ledger with this mimblewimble tech?
+
+AP: Um, sure. In something like, and Blockstream has a sidechain called Elements Alpha which only supports bitcoin. It has something called confidential transactions which is a way to encrypt amounts. It's a way of encrypting amounts where you can still verify that the transaction si valid. If you had asset pegs on this, you could have verifiers check which inputs have a certain asset type, and which outputs have another asset type, and that for every single asset nothing was created or destroyed. The way that mimblewimble works is that it uses confidential transactions in some creative ways. These ways are not too creative that would prevent asset pegs. So you have two transactions that don't create or destroy any assets. After merging, this would still be the case and thus it is compatible. The amounts are still encrypted. The assets would not be encrypted in mimblewimble. But they are still compatible.
+
+host: After merging, the assets would still be encrypted? or what were you saying?
+
+PW: The balance would sitll be encrypted. But for each output you would see which asset type, but you wouldn't see how much. And improving on that is something we're working on. I guess that, the baseline answer to your question is, there's a conflict between how in a blockchain we make everything public because we think it's the only way that things can be verified. Usually we try to make protocols where you don't need to reveal everything. Confidential transactions is one way. Mimblewimble accomplishes the same thing.
+
+host: Could mimblewimble be applied to bitcoin or be added as a layer on top? Would it instead operate as a potential competing cryptocurrency?
+
+PW: So, it works very differently from how bitcoin works. Introducing mimblewimble into bitcoin in a backwards-compatible way would be a difficult exercise. It may not be impossible, but it would be hard. I think the way if people were experimenting with this, I would expect it to be an experimental separate chain or sidechain. In a sidechain we would not introduce a new cryptocurrency but it would be a separate chain. There are some downsides to mimblewimble. In particular, it does not have a scripting language.
+
+host: For some who do not know the implications of that, why is that a bad thing?
+
+AP: So, that's something we have talked about on the show before is something called lightning network and payment channels, which is a way to do a transaction off-chain. In mimblewimble, those are not supported. I think I can get payment channels to work, actually. Bitcoin can do payment channels with its scripting language. Another big one is cross-chain atomic swaps where I could for example trade with Brian some dogecoin for some bitcoin. And dogecoin and bitcoin have nothing to do with each other, but we can still trustlessly swap these using a cross-chain atomic swap, because both of them have a very expressive scripting language so you can find sorts of trickery that let you do things like this, and in mimblewimble you cannot. And I don't see any way to make mimblewimble able to do that, actually. And there's lots of other examples I could think of. Bitcoin can do a lot of stuff beyond just passing money between people.
+
+PW: Yeah the nice thing about bitcoin scripting language and other cryptocurrency with expressive script is that people end up doing things with it that it was not designed for. Nobody was thinking about cross-chain atomic swaps and lightning when bitcoin was invented. And yet it requires almost no changes to the protocol, at the scripting level at least. So it's, having a relatively expressive language in transactions allows much easier experimentation by doing things it was not designed for. This would be much harder in mimblewimble. It's basically just for sending money. It could do things like multisignature and a few others, but it's much more limited in its possibilities.
+
+BD: Could it do 2-of-3 multisig?
+
+PW: Yes. Any of them. Larger ones require a lot of interaction between the participants, in worst case scenario I think exponentially so. Things like bitcoin, yes definitely. If we're just talking about multisig on a small scale like bitcoin does, yes. It doesn't go as far as what we can do with Schnorr or key tree signatures.
+
+((58min 7sec))
+
+host: So just to clarify then, because bitcoin has an expressive scripting language, it has a lot of versatility compared to mimblewimble's narrow scope? It doesn't have this sort of flexibility to be adapted to other things?
+
+PW: Yes.
+
+host: So that's a good thing to know, not that it would be a bad thing if it was otherwise. So it's not in direct competition with bitcoin, it can share the space with bitcoin.
+
+PW: Yeah there's an argument to be made that an expressive scripting langugae is sort of an inherently privacy fungibility risk to the system in that say tomorrow AwesomeWallet.com opens and they might be the only one in the bitcoin space that uses 3-of-7 multisig and now you can identify every transaction on the blockchain that uses that wallet because they are the only 3-of-7 multisig users. A scripting language is very neat to play with, but it has a privacy downside. Mimblewimble takes this to the other side where you have very good privacy but at the expense of no other features any more.
+
+host: Just to clarify, what you're saying is that it's a downside because the ledger shows....
+
+PW: The scripts go into the blockchain. So if you want a transaction to be indistinguishable from another one, and you use a different script that nobody else is using, then you have already failed.
+
+host: Oh okay got you.
+
+PW: Go ahead.
+
+BD: There was some talk about zcash about our crypto compare news minutes. Is this crypto mix this up? Would you trust this more or less than the crypto that underlies zcash?
+
+PW: So the crypto that underlies zcash that zcash relies on is SNARKs. Andrew knows this better than I do. It's pairing based but it requires a trusted setup. There's a ceremony where a number of people need to come together and create a private key for the system itself, and then destroy it. And then anyone who has that private key can do anything they want in the system. This is called a trusted setup and it's something that zcash has, and mimblewimble does not require trusted setup.
+
+(1h 1min)
+
+BD: Are there any signatures in mimblewimble?
+
+host: Sounds like it needs some thought to answer. We can answer this after the break. Alright guys welcome back. Let's get back to our guests. We have both of the Chuck Norrises of bitcoin cryptography, Pieter Wuille and Andrew Poelstra. So we're talking about mimblewimble, which can help maximize privacy. Brian, you had a question for one of the guys as we went out?
+
+BD: There was some talk in the break about is this does this use signatures? I guess that's not an easy question.
+
+PW: Sure. Yes, it definitely uses digital signatures but more in an implicit way. There are no OP_CHECKSIG and there's no scriptSig in mimblewimble. In bitcoin, signatures are very explicit. You say "I expect a signature here" and then you verify it. In mimblewimble, they are part of the transaction structure. I guess this is not a useful answer. I guess the answer is yes.
+
+host: Is there a way you can elaborate and clarify on that to explain that better, or is it a deep thorny issue?
+
+BD: So it maintains a state and then cryptographic operations which are similar to the bitcoin signatures that we all know and love, transform from one state to another state however.. that's not really.. you can really go from the first state to the last state without all the things in between it, and all the morphs are squished together in a single.. to go from the beginning to the end very quickly?
+
+AP: Here's one way to think about it. In bitcoin, everything uses digital signature. What a digital signature does is say that someone authorizes a state transition. To spend a coin, there is a key related to that coin, you sign a message saying this coin is no longer this coin, but now there's a new coin and it belongs to someone else with a different key that could authorize its future transfer. And that's how you sign stuff. With these signatures, they just take some arbitrary data and sign it. They authorize something. There's no mathematical connection between the input and the output in a normal signature scheme. What mimblewimble does is it does make the inputs and outputs mathematically related but in a way where you can't actually make a transaction unless you know a secret key. So, I mean, this is kind of a signature in some sense.
+
+PW: Maybe important to add is that there are no addresses in mimblewimble.
+
+AP: Oh yeah, that too.
+
+PW: You just talk directly to the receiver and you jointly construct the transaction as you are talking. So there are private keys, public keys and signatures involved there, but it's not like I create an output to this address and to spend this I sign off using that address. It's more deeper, I guess, inside the engine.
+
+host: How do I know how many mimblewimble coins I have then, if I don't have an address?
+
+PW: Ah. Well, basically you want to receive some coins and you construct the part of the transaction with the amounts in it, and then you give it to the sender for them to create the transaction. You know how much is in there because that's what you put there.
+
+BD: Okay so is there no concept of change anymore? or miner fees?
+
+PW: Oh yeah, there's still definitely ...
+
+AP: Imagine I am trying to send Brian some money. When we jointly create our transaction, I basically make a transaction that's got a bunch of inputs, and some change, and Brian then adds to that transaction some outputs that he created of the value that he wanted. And then we can also leave some value sitting on the table there. We send the transaction out, and then anybody can add an output and take the remaining value. So this means miners can take their own fees, more or less. At each stage of creating a transaction, you create the part of the transaction that you want to authorize and that you know how to create, and then the other party, I guess the recipient, tacks on some outputs that they know the value of, that they can take ownership of, and other nodes and miners can take fees and any floating value is -- you have to explicitly say what the floating value is, and they can take some of that, and they wont be able to make the transaction add up if they take more than is available. So there's this sort of neat thing where everybody receiving coins can get to make their part of the transaction, basically.
+
+host: I think a lot of this is still cooking in my brain. So these transactions between two people are still broadcasted to the network?
+
+BD: You need to broadcast the transaction and the leftover fees that someone can then calculate. Would the transaction be valid if it wasn't exactly inputs and outputs? if the balances didn't match?
+
+AP: No.
+
+PW: It has to match exactly so that the amounts  in the inputs must be exactly equal to the amounts in the output plus the fee that you declare. If the number is not exactly the same, then the transaction is irrevocably invalid.
+
+host: So obviously the transaction as it goes through how long does it take?
+
+PW: Milliseconds.
+
+((1h 12min 30sec))
+
+PW: I actually learned this from Andrew.
+
+host: Well Andrew, you go ahead then. You're the source.
+
+AP: Well I also learned it this week, but not from anyone in this room.
+
+PW: Sourcer.
+
+host: Ahh that was good. We always love good puns on the crypto show. You are the number one punster for the show. Anyway, go ahead.
+
+AP: What mimblewimble does in Harry Potter is that it prevents someone from saying some sort of information, like any sort of information. This was used in the books where before the books even happened and Harry's parents were killed. And they were part of some group called the Order of the Phoenix and they were being hidden in some house whose location was secret. And the members of the Order of the Phoenix used this mimblewimble spell on each other to make sure that none of them could reveal the location of this house. So they were magically unable to give away the secret location.
+
+host: That's interesting. So they had a secret society, and instead of blood oaths to keep the secret, they cast spells on each other.
+
+BD: That's a perfect name for the protocol.
+
+PW: I really love how earlier this week we had totally serious discussions which sentences like "So what Voldemort told us ...."
+
+host: ((laughter)) And that's the beauty of the crypto space. All the brilliant minds still love their Harry Potter and bringing in the Harry Potter terminology. In France htey called Voldemort what?
+
+AP: I might be saying this wrong. It's Tom elvis... which is an anagram of Voldemort.
+
+host: Oh.
+
+AP: There's a scene in the second movie or the second book where Voldemort conjours up some letters for "I am lord Voldemort" and the letters re-arrange themselves and it turns out to be an anagram for "Tom Elvis Jedusor". Sorry, he says, "Calm Marvel Riddle" and he rearranges these letters to "I am Voldemort". So in the French books they needed a different name that would anagram to "I am Voldemort" in French.
+
+PW: And that's what the author of the mimblewimble paper called himself.
+
+host: That's awesome. That's amazing. I love the French. So back to serious matters. Go ahead.
+
+BD: And a rant.
+
+host: Uh oh.
+
+BD: So the state itself is that what we advance slowly over time. There was a proposal called "flipping the chain" way back way, perhaps attributed to Alan Reiner, only using UTXO commitments so it was the state of the chain which is what Ethereum is right now... and now on to my rant now about Alan Reiner. With Armory Wallet... he's shifted to the dark side, he's working for Iron Net Cybersecurity which is Keith Alexander's cybersecurity company, who was director of the CIA for a decade until 2014. So this kind of falls in with a lot of other wallet providers who have turned to the dark side. Yaun Moeller is one of the founders of Chainalysis, he's the original founder of Mycelium.
+
+host: Really?
+
+BD: Well not Mycelium itself. But the original author of Bitcoin Spinner which turned into mycelium. So the dark side is strong with us in the wallet industry.
+
+host: So it's a project to deanonymize what, you didn't finish.
+
+BD: Bitcoin transactions.
+
+host: Really? And so what is the purported advantage of benefit to that?
+
+BD: Well if you wanted to track flows of money...
+
+host: Well fair enough. But I mean if you're not the government basically....
+
+PW: A government can force businesses to use Chainalysis and other services, to make sure money received isn't stolen or something. And my attitude towards such services is that they are great because they give us a target. Our job in developing this system is to make their job impossible.
+
+host: You mean with mimblewimble?
+
+PW: As an example, yes. There are various other things we can do. You can't blame people for trying things that are possible. They show us what is possible so that we have a target to improve upon.
+
+host: So they give you more purpose. I like that.
+
+BD: As a corollary to this though, one of the benefits of bitcoin is that I can provably show that I have paid someone some money, cryptographically proven. If I make one of these transactions will I be able to cryptographically show that I paid some money to someone even though it was anonymous?
+
+AP: Yes. Yep, you can. The way that this is done, say that when we're talking to build this transaction, you need to create an output for this transaction. Part of this output is a part of confidential transactions, called a range proof, which you need to make on that output. And to make this, you need to use the secret key for that output. As soon as I see that output, I know that you were in control of that key. When I build the whole transaction, I know that the output is your output, because I was with you when we were creating the transaction. And then we send out the whole thing, this sort of built together transaction, and what shows up in the block is a whole bunch of inputs, whole bunch of outputs, lots of merged transactions that you can't separate. But I can see that one of the outputs in that merged transaction is the one that you gave me when we were talking (interactively) in the blockchain and we can both see that and we both have the transcript of our conversation.
+
+BD: Could I prove it to a third-party as a sender?
+
+PW: Yes. You can show the transaction and then show it was linked in the chain. This is usually the tradeoff that I think is optimal where the public ... where you always have the ability to prove to an auditor that something happened. It's voluntary.
+
+host: That makes sense. As we talked about off air, I was wondering if you guys have any opinions about the memo from a year ago that the NSA put out, basically discouraging people from upgrading to elliptic curve crypto from RSA if they haven't done so already, sort of implying that it wasn't worth it. The context was that the NSA expected advancements in quantum computing to make such a switch irrelevant. I believe that is what they were implying. I am curious what you guys thought about this. As Brian was explaining, there were two cryptographers that explored a game theoretic-- different scenarios under which the NSA might make such an announcement, and what motives they might have had for that. Do you guys have comments on that?
+
+AP: On the NSA? So my recollection of the NSA announcement, I had forgotten or didn't read the part about RSA. There was a recommendation as part of this to ..
+
+PW: I just looked it up. This is from an article. I don't know the exact quote. Complementary to a decision to move away from elliptic curve crypto, also what the NSA ... p256 .. blah blah blah... uh.. more resistant to advancements in quantum computing. So the claim is that there's some belief that especially the smaller elliptic curves in the future could be vulnerable to quantum computing. Whether that's the real reason, I don't know.
+
+host: So maybe just go to bigger curves and that would ..?
+
+PW: With a few people we recently visited Stanford campus here a week ago and met with Dan Boneh who is an expert in elliptic curve crypto and other things. And he basically confirmed that even if quantum computers were real, there's a chance that they would not be able to attack larger elliptic curves while still being able to attack smaller ones, at least that was my understading from what he said.
+
+host: Would the reason for that be that in the same sense that for any kind of cryptograhpic breaking, even with quantum computers, the bigger curves would take too much time?
+
+PW: The usual assumption that is if we had a large fast quantum computer, then all of elliptic crypto would break instantly. This is not how things work in engineering. We don't go from no quantum computer to one big fast stable usable machine. But basically what I learned there with Dan Boneh is that there's some thereotical understanding that quantum computers in practice might be able to break and completely break the security of smaller curves while not being abl to break larger ones.
+
+BD: Is secp256k1 that bitcoin uses, is that a small one or a big one?
+
+PW: It's a small one.
+
+host: Oh, well....
+
+PW: Well as far as I know the largest quantum computer is like 5 qubits right now. And we would need a system with a few thousand qubits to apply this attack.
+
+BD: UT Austin had a recent big win on the quantum computing field. Professor Scott Aaronson has decided to move down and teach at UT Austin and setup a quantum calculation laboratory at the university. They wouldn't give his wife tenure at MIT along with... he already had tenure, so they offered... he wanted his wife to be with him, and so UT Austin gave both of them tenure.
+
+host: Good for UT. That sounds awesome. Screw you MIT. That's interesting. ... That's not to say that the government does or does not have quantum computing... I have already been fascinated by Fermat's last theorem ever since I was in high school. I read a book a while back about proving Fermat's last theorem and it had to do with elliptic curves. In y'alls education in cryptography, did Fermat's last theorem by Andrew Willes, was that significant at all in the progress of cryptography?
+
+AP: The short answer is no. The long answer is that I have tried to understand that proof many times. It starts with elliptic curves stuff. The whole history of Fermat's last theorem involves elliptic curves. This is why elliptic curve groups were invented, which allows us to do fancy algebra on elliptic curves. All this machinery was invented largely to deal with Fermat's last theorem and other algebraic equations we didn't understand.
+
+PW: Oh I didn't know that.
+
+AP: Yep that's true. And actually in the first chapter of most any general algebra book on elliptic curves, you will find a few special cases of Fermat's last theorem that have simple solutions for elliptic curves. But the most general form it starts with the curve and then it goes on to higher-level stuff and higher-level stuff probably 100 times and I can't even begin to understand what I'm uable to begin to understand about that proof.
+
+PW: It took him 7 years to write it, right. It's not something you would expect to like read over and say "oh sure that's obvious".
+
+host: So if it took 7 years to write, it could take 7+ years to read. The book said that, right. Lots of mathematicians had difficulty grasping it because it was so arcane and deep and so involved, so that's interesting, it's not surprising that you go down one rabbit hole and not everyone can necessarily follow you without that same amount of time to go down that rabbit hole. Interesting response. Yeah it's something, I got to AP Calculus and that's about it. The higher-order math and cryptography has always fascinated me. So I was really curious to hear what you thought about that, so it's an interesting response, thank you. Great discussion on mimblewimble. We have a minute left. It's been a pleasure to have you guys on. Thank you.
