@@ -18,7 +18,7 @@ AP: Hey. We're here.
 
 host: I am going to let you guys give our audience some background. Andrew, tell us about yourself and what you do i nbitcoin.
 
-AP: Sure. I showed up in the bitcoin space around late 2011 while I was starting a PhD in mathematics. I wound up hanging around on the research side of things, like IRC channels centered on cryptography research. These days I work on the libsecp256k1 project which does the underlying cryptography stuff for Bitcoin Core and related projects. That's mostly what I spend my days doing, implementing crypto code.
+AP: Sure. I showed up in the bitcoin space around late 2011 while I was starting a PhD in mathematics. I wound up hanging around on the research side of things, like IRC channels centered on cryptography research. These days I work on the [libsecp256k1](https://github.com/bitcoin-core/secp256k1) project which does the underlying cryptography stuff for Bitcoin Core and related projects. That's mostly what I spend my days doing, implementing crypto code.
 
 host: That's pretty awesome. This is probably one of the first times we've had a hard-core cryptography person on this show. We should probably have you back at some point in the future. But as it turns out, we have another one on the phone now too. Pieter Wuille is also a cryptography expert. Pieter, go ahead and tell su about yourself as well.
 
@@ -46,7 +46,7 @@ BD: There would be a lot more swearing involved.
 
 host: So what is the new protocol about?
 
-BD: The working title is mimblewimble. This is a Harry Potter spell that stops other wizards from being able to cast spells against you. It's a very fitting name for an anonymity protocol that allows you to spend money without having other people watch you using their own magic of watching you and how yo uspend your money.
+BD: The working title is [mimblewimble](http://diyhpl.us/~bryan/papers2/bitcoin/mimblewimble.txt). This is a Harry Potter spell that stops other wizards from being able to cast spells against you. It's a very fitting name for an anonymity protocol that allows you to spend money without having other people watch you using their own magic of watching you and how yo uspend your money.
 
 host: Is this another cryptocurrency-like protocol? How would you characterize it?
 
@@ -70,7 +70,7 @@ PW: I have something to add here. This is Pieter. What Andrew is describing is t
 
 host: So is mimblewimble polish? No, it's pottish. Okay at least they laugh. That's good. So just to remind ourselves, this protocol can combine transactions, but not just one transaction and another transaction, but you're saying all transactions in a single block? Pieter please continue with your point.
 
-PW: Andrew was explaining how this mechanism allows transactions to be combined together. This mechanism was described 3 years ago by another anonymous author who dropped a paper anonymously on bitcointalk, called OWAS. The difference is that OWAS required a new type of cryptography called pairing crypto, which is not well-trusted in the academic space yet. Mimblewimble accomplishes the same thing as OWAS, and more, but does not need the new assumptions, and it only uses the elliptic curve crypto like Bitcoin is using.
+PW: Andrew was explaining how this mechanism allows transactions to be combined together. This mechanism was described 3 years ago by another anonymous author who dropped a paper anonymously on bitcointalk, called [OWAS](http://diyhpl.us/~bryan/papers2/bitcoin/Increasing%20anonymity%20in%20bitcoin%20using%20one-way%20aggregatable%20signatures.pdf). The difference is that OWAS required a new type of cryptography called [pairing crypto](https://en.wikipedia.org/wiki/Pairing-based_cryptography), which is not well-trusted in the academic space yet. Mimblewimble accomplishes the same thing as OWAS, and more, but does not need the new assumptions, and it only uses the elliptic curve crypto like Bitcoin is using.
 
 host: When you say this other form of crypto is not well trusted, is the reason is that it uses a certain set of unproven assumptions?
 
@@ -150,7 +150,7 @@ host: Well there was something related before that. In that case, Brian, you had
 
 BD: Okay, sure. In the sidechains paper, there was talk of having multiple assets in a single sidechain. You could have a dogecoin sidechain and a bitcoin sidechain and inside that sidechain you would have atomic swaps which are basically trustless but that rely on everything pretty much being transparent. But now, not having transparency, is multiple assets can you have multiple assets on the same ledger with this mimblewimble tech?
 
-AP: Um, sure. In something like, and Blockstream has a sidechain called Elements Alpha which only supports bitcoin. It has something called confidential transactions which is a way to encrypt amounts. It's a way of encrypting amounts where you can still verify that the transaction si valid. If you had asset pegs on this, you could have verifiers check which inputs have a certain asset type, and which outputs have another asset type, and that for every single asset nothing was created or destroyed. The way that mimblewimble works is that it uses confidential transactions in some creative ways. These ways are not too creative that would prevent asset pegs. So you have two transactions that don't create or destroy any assets. After merging, this would still be the case and thus it is compatible. The amounts are still encrypted. The assets would not be encrypted in mimblewimble. But they are still compatible.
+AP: Um, sure. In something like, and Blockstream has a sidechain called [Elements Alpha](https://github.com/ElementsProject/elements) which only supports bitcoin. It has something called [confidential transactions](https://people.xiph.org/~greg/confidential_values.txt) which is a way to encrypt amounts. It's a way of encrypting amounts where you can still verify that the transaction is valid. If you had asset pegs on this, you could have verifiers check which inputs have a certain asset type, and which outputs have another asset type, and that for every single asset nothing was created or destroyed. The way that mimblewimble works is that it uses confidential transactions in some creative ways. These ways are not too creative that would prevent asset pegs. So you have two transactions that don't create or destroy any assets. After merging, this would still be the case and thus it is compatible. The amounts are still encrypted. The assets would not be encrypted in mimblewimble. But they are still compatible.
 
 host: After merging, the assets would still be encrypted? or what were you saying?
 
@@ -168,7 +168,7 @@ PW: Yeah the nice thing about bitcoin scripting language and other cryptocurrenc
 
 BD: Could it do 2-of-3 multisig?
 
-PW: Yes. Any of them. Larger ones require a lot of interaction between the participants, in worst case scenario I think exponentially so. Things like bitcoin, yes definitely. If we're just talking about multisig on a small scale like bitcoin does, yes. It doesn't go as far as what we can do with Schnorr or key tree signatures.
+PW: Yes. Any of them. Larger ones require a lot of interaction between the participants, in worst case scenario I think exponentially so. Things like bitcoin, yes definitely. If we're just talking about multisig on a small scale like bitcoin does, yes. It doesn't go as far as what we can do with Schnorr or [key tree signatures](https://blockstream.com/2015/08/24/treesignatures/).
 
 ((58min 7sec))
 
@@ -190,7 +190,7 @@ PW: Go ahead.
 
 BD: There was some talk about zcash about our crypto compare news minutes. Is this crypto mix this up? Would you trust this more or less than the crypto that underlies zcash?
 
-PW: So the crypto that underlies zcash that zcash relies on is SNARKs. Andrew knows this better than I do. It's pairing based but it requires a trusted setup. There's a ceremony where a number of people need to come together and create a private key for the system itself, and then destroy it. And then anyone who has that private key can do anything they want in the system. This is called a trusted setup and it's something that zcash has, and mimblewimble does not require trusted setup.
+PW: So the crypto that underlies zcash that zcash relies on is [SNARKs](https://github.com/scipr-lab/libsnark). Andrew knows this better than I do. It's pairing based but it requires a trusted setup. There's a ceremony where a number of people need to come together and create a private key for the system itself, and then destroy it. And then anyone who has that private key can do anything they want in the system. This is called a trusted setup and it's something that zcash has, and mimblewimble does not require trusted setup.
 
 (1h 1min)
 
@@ -200,7 +200,7 @@ host: Sounds like it needs some thought to answer. We can answer this after the 
 
 BD: There was some talk in the break about is this does this use signatures? I guess that's not an easy question.
 
-PW: Sure. Yes, it definitely uses digital signatures but more in an implicit way. There are no OP_CHECKSIG and there's no scriptSig in mimblewimble. In bitcoin, signatures are very explicit. You say "I expect a signature here" and then you verify it. In mimblewimble, they are part of the transaction structure. I guess this is not a useful answer. I guess the answer is yes.
+PW: Sure. Yes, it definitely uses digital signatures but more in an implicit way. There are no OP\_CHECKSIG and there's no scriptSig in mimblewimble. In bitcoin, signatures are very explicit. You say "I expect a signature here" and then you verify it. In mimblewimble, they are part of the transaction structure. I guess this is not a useful answer. I guess the answer is yes.
 
 host: Is there a way you can elaborate and clarify on that to explain that better, or is it a deep thorny issue?
 
@@ -312,7 +312,7 @@ PW: I just looked it up. This is from an article. I don't know the exact quote. 
 
 host: So maybe just go to bigger curves and that would ..?
 
-PW: With a few people we recently visited Stanford campus here a week ago and met with Dan Boneh who is an expert in elliptic curve crypto and other things. And he basically confirmed that even if quantum computers were real, there's a chance that they would not be able to attack larger elliptic curves while still being able to attack smaller ones, at least that was my understading from what he said.
+PW: With a few people [we recently visited Stanford campus here a week ago and met with Dan Boneh](http://diyhpl.us/wiki/transcripts/2016-july-bitcoin-developers-miners-meeting/dan-boneh/) who is an expert in elliptic curve crypto and other things. And he basically confirmed that even if quantum computers were real, there's a chance that they would not be able to attack larger elliptic curves while still being able to attack smaller ones, at least that was my understading from what he said.
 
 host: Would the reason for that be that in the same sense that for any kind of cryptograhpic breaking, even with quantum computers, the bigger curves would take too much time?
 
@@ -339,3 +339,5 @@ AP: Yep that's true. And actually in the first chapter of most any general algeb
 PW: It took him 7 years to write it, right. It's not something you would expect to like read over and say "oh sure that's obvious".
 
 host: So if it took 7 years to write, it could take 7+ years to read. The book said that, right. Lots of mathematicians had difficulty grasping it because it was so arcane and deep and so involved, so that's interesting, it's not surprising that you go down one rabbit hole and not everyone can necessarily follow you without that same amount of time to go down that rabbit hole. Interesting response. Yeah it's something, I got to AP Calculus and that's about it. The higher-order math and cryptography has always fascinated me. So I was really curious to hear what you thought about that, so it's an interesting response, thank you. Great discussion on mimblewimble. We have a minute left. It's been a pleasure to have you guys on. Thank you.
+
+AP: <http://diyhpl.us/~bryan/papers2/bitcoin/mimblewimble.txt> and <https://www.reddit.com/r/Bitcoin/comments/4vub3y/mimblewimble_noninteractive_coinjoin_and_better/>
