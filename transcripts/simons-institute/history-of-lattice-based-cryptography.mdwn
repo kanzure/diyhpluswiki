@@ -174,7 +174,7 @@ A: Today? No, I'm going to move that to today, in the last 30 minutes today.
 
 As we get closer and closer today, I will say less and less, some of these things were said earlier this morning. I'm a little bit out of time. Less than 2/3rds. There were some questions so I feel justified taking more time.
 
-# Efficiency of Atjai's function
+# Efficiency of Ajtai's function
 
 Let's start with efficiency, one of the two open problems. This problem came in a paper of mine, generalized knapsacks and efficient one-way functions, so what the paper did was to consider a structured version of Ajtai's function. The inefficiency in his function is that you have a 2-dimensional object, and it has a n square storage requirement. If you build a matrix that is structured, you can think of it as a matric with blocks and every block is a ... and every row is a rotation of the previous one. So you can implicitly represent this square matrix with just a vector. So then you get a linear storage requirement matrix. Using FFT and polynomial arithmetic algorithms, you can even compute this function in quasilinear time. You can get a fast function, that matches it in speed by and large. Not only that, what this paper showed is that you an still ... you can get a scaled down version of Ajtai's result. If you can break this ... out of the uniformly random matrices, you can solve .. in the worst case. I showed that if you cna break this problem, a random problem, with a random .. matrix.. then you can solve lattice problems in the worst case, other .. there's a similar restriction, namely cyclic .. and basically rotation of the coordinates. The assumption, any stronger than Ajtai's, it's still worst case assumption, over restrictive but still not the class of lattices. If we believe that lattice problems are hard to solve in the worst case over [cyclic lattices](https://cseweb.ucsd.edu/~daniele/papers/Cyclic.pdf), then we know how to build hard random instances.
 
@@ -286,7 +286,7 @@ If you try to put these foundational papers into a table, we have these injectiv
 
 <table>
 <tr><td>Surjective<, Weaker assumptions, Fewer applications</td><td>Injective, Stronger assumptions, More applications</td></tr>
-<tr><td>General lattices, Weaker assumption, Inefficient</td><td>Atjai 1996, SIS one-way function, Complexity omega(n^2)</td><td>Regev 2004, LWE encryption +, Complexity omega(n^2)</td></tr>
+<tr><td>General lattices, Weaker assumption, Inefficient</td><td>Ajtai 1996, SIS one-way function, Complexity omega(n^2)</td><td>Regev 2004, LWE encryption +, Complexity omega(n^2)</td></tr>
 <tr>Ring lattices, Stronger assumption, Efficient</td><td>M 2002, RingSIS one-way, Complexity O tilde (n)</td></tr>
 </table>
 
