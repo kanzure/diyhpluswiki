@@ -74,7 +74,23 @@ We want a tool where we can measure what privacy someone could have and could ge
 
 Also, we want to implement coinswap because the cool thing about coinswap is that whereas in coinjoin the anonymity set is the participants in that specific coinjoin, but in coinswap the anonymity set is everyone who was doing a coinswap at the same time, even if they were not coordinating with each other. Achieving that level of anonymity set increase using chained coinjoins is a lot more expensive, and I doubt that's the right strategy; the right strategy is to offer the additional protocol.
 
+# Q&A
 
+Q: How does this compare to coinshuffle?
+
+A: ...
+
+Q: .. solves the ..
+
+A: Solves the most naieve version of the snooping attack. The problem is combining the snooping attack and sybil attack. Someone could run multiple joinmarket clients. If you're initiating multiple transactions, you can eliminate the coins that you know belong to you. You can see which coins belong to the other users. If you can isolate a single participant, such as if you run 3 participants, and you initiate, and you contact 1 additional participant.. sure this will cost you capital expense, you have to tie up the bitcoin to run the participants, and you have to pay fees, but you can still learn information. It's not a perfect fix.
+
+Q: What percentage of joinmarket users are using onion routers?
+
+A: Tor? I would be surprised if anyone is using i2p. I'm not sure if you can connect to joinmarket servers for i2p. We use servers for communication channels. They don't have access to the end-to-end encrypted data. They do see some activity, I suppose. So what percentage is using onion routing? It's supported by the code. You change false to true, you get onion routing as long as you have tor running on the same computer. We have not collected that information because we are not spying on our users.
+
+Q: You mentioned coinswap versus coinjoin. Can you elaborate on whether you see doing future work towards coinswap?
+
+A: So personally I am one of those who independently thought abou the incentivization idea, and I imagined it with coinswap. I think building coinswap from the start is a much more scalable solution. You get a large anonymity set from the beginning. You need discretized amounts; if you have one coinswap with size of 1 coin, parallel to one with 2 coins, it's obvious that it's not the same people. But if everyone is amking coinswwaps with size 1, 10, 100, etc., then you have these tiered anonymity set. I think it's much better. To achieve the same size of anonymity set using parallel coinswaps or chained coinjoins, you would end up putting a lot more data in the chain. At the moment, joinmarket is loading the chain. Each initiator is creating some constant factor size transaction larger than regular transactions. Whereas a coinswap transaction is 4 transactions, happening in parallel with other set of coinswap transactions ycould give you roughly the same anonymity set as going one coinjoin of six participants... or many coinjoins, an entire switching network of coinjoin with fewer participants. 50 people doing coinswap in parallel, you would need a tremendous network of coinjoins to even come close to that. Coinswap is a much more stateful protocol. You don't just exchange information, sign and broadcast. You fund multisig addresses, then you exchange information, then you either take out your new coins, or you wait for a locktim to expire if a counterparty vanishes--- so coinswap is more complex of a protocol to implement. "Usable is useful" dictates that coinjoin be done first.
 
 <https://github.com/JoinMarket-Org/joinmarket>
 
