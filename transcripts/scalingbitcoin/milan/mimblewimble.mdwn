@@ -2,6 +2,8 @@ Mimblewimble: private, massively-prunable public blockchains
 
 Andrew Poelstra (andytoshi)
 
+<https://twitter.com/kanzure/status/784694673185107968>
+
 Hi, I am from Blockstream. I am here to talk about Mimblewimble. Mimblewimble is not mine. It's from the dark lord. I am going to start with the history of the paper. It has been in the news a little bit. I will talk about the transaction structure, the block structure, try to explain the trust model and argue that it's almost as strong as bitcoin. There's less data to verify than in bitcoin. If I have time, then I might talk about some extensions I have done to the protocol to make it extend the scaling beyond what was possible. And then next steps and open problems.
 
 # History
@@ -38,7 +40,17 @@ In the blockchain, let's considr this new verifier that downloaded the chain dat
 
 As far as fungible usable currency, it's just as strong and as usable as bitcoin's trust model. It gets you a massive scalability improvement.
 
+# Sinking signatures
 
+Can we aggregate the excess values in a block? This is in general hard to do. You could do some trickery with a variant of BLS signatures. If you use those, then you get aggregation within a block, but it's possible for someone who has seen a transaction to reverse a transaction by swapping inputs and outputs and putting a minus sign in front of .... and if the excess value doesn't sign itself, meaning you negate it when you... that's very bad. Historic transactions can't be reversed without rewriting blocks, but this is suddenly not the case. So instead you can do tihs scheme where every transaction signs a current blockheight, and ow the transaction the reversal can only appear in the block in which they appear. So reversing it in the same block is trivial and not important. This just by itself, this makes 20 gigabyte of historic data, can be 20 megabytes. So this is 1,000x savings. But now there's a lot of pairings to verify, which is a bit slow.
+
+You can do better than this. You can use proof-of-proof-of-work or compact SPV proofs from the sidechains whitepaper, to basically skip a whole lot of headers. You can give the verifier about 300 blocks that have enough PoW on them to have the same total difficulty as the original chain where the difficulty... in the original chain, a block count for some amount of work, and in the compact chain you can say if a block has exceeded a target, then you give it credit for all the excess it had. So using sinking signatures, allowing these excess values to sign the blockheights as well as previous blockheights, you can aggregate all the excess values on the signatures, and now those 22 megs become 1 megabyte, and you can verify that with unoptimized code in 20 seconds on my laptop. I think that's pretty good resource load for validation.
+
+This does change the trust model a little bit. The way that it changes it is that when oyu do the compression, the compressed chain has the same expected amount of work as the original chain. The variance is much higher, though. In bitcoin, such an attacker has 0 chance of producing that. We can formalise this. If I give you 400k blocks of bitcoin, this is a proof of 395,000 blocks worth of work. If you did substantially less than the full 400k blocks of work, you have almost zero chance. In compact chains this is not the case. So you need to give the verifier about 5000 blocks with the full PoW work. This will prove that what I was giving them was no accident, it wasn't by fluke, someone gave them a lot of work to produce that. And I also give them a compact chain from genesis to that 5k block. So this incentivizes anyone who wants to produce a forgery, that such a forger would expect to do as much work as the original chain, so the Satoshi argument is that they would rather extend the main chain rathr than generate forgeries. One thing proposed every so often is to drop old blocks, then just verify the tip... the problem is that dropping the historic data is analogous to a cliff, where someone who does as much work can forge, because they can forge part of the chain. So we no longer get that here.
+
+# Where are we?
+
+I have been working on a consensus library for mimblewimble. I have got hung up on pairing curve selection, I'm working on that now. I am going to publish the source code I've got and encourage people to contribute and do peer review. It's an exciting project. Once that is done and there's a consensus library written, then we can start doing cool stuff, we can write a p2p layer and write wallets and so on, and it will be much easier to write and more friendlier languages and you will have a lot more freedom--- there doesn't need to be consensus on that kind of source code. Right now we're still in the boring consensus part of development. I hope to get past this soon. As far as sidechains, I've been saying, ... we can actually make mimblewimble as a sidechain. If in addition to all the unspent outputs, you commit to pegs-in and pegs-out, then you can apply an excess signature on every peg-in and peg-out. And that's it. I'm over time. So I'm going to stop there. Thank you all.
 
 
 andytoshi's mimblewimble paper <http://diyhpl.us/~bryan/papers2/bitcoin/mimblewimble-andytoshi-INCOMPLETE-DRAFT-2016-10-06-001.pdf>
