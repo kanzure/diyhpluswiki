@@ -38,9 +38,20 @@ This is still a work in progress. I think invalid channel closes will be pretty 
 
 # Q&A
 
+Q: Incentive for defenders to watch the network, to spend a small portion of the value of the channel?
+
+A: Not compatible with anonymity. You have to tell them which channel it is and that money is there to get. I don't think it's as useful to do it this way. I just didn't think people would make money off of this. Anonymous with altruistic is probably more realistic.
+
+Q: ...
+
+A: Even if you're not running a full node, you can parse an entire block anyway. You don't necessarily know who is monitoring a channel. If you give the outsourcing data to a node, then they might forward it on to another person. It might be 100 people watching the channel. You lose track of who's monitoring it. You want someone to do it for you, but you-- you want a combination. You probably want a couple friends where you know they run full nodes. And then you have these anonymous unknown nice people also doing this at the same time.
+
+Q: You don't need a full block. You need UTXOs.
+
+A: Right, maybe txid list only. If you are doing it yourself.... unless you create... don't use bloom filters, for third-part outsourcing... I was thinking if you were doing it yourself, you just look at the outpoint. That's like a million txids. Is there a wire protocol message to get all the txids in the block? I guess we could make one. That would be even shorter. Oh then you could do the merkle root. Yeah...
 
 
-
+# References and other stuff
 
 Scalability of lightning with different BIPs <https://scalingbitcoin.org/hongkong2015/presentations/DAY2/1_layer2_2_dryja.pdf>
 
