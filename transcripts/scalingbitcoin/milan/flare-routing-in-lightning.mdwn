@@ -1,5 +1,6 @@
 Flare: An approach to routing in lightning network
 
+<https://twitter.com/kanzure/status/784745976170999810>
 
 Pavel Prihodko
 
@@ -55,6 +56,19 @@ There might be some update to this scheme when we want to increase.... not only 
 
 If no candidates are found E requests tables from nodes whose addresses are closest to D and so on. When several candidates are found, E collects dynamic information on them. If the one is found, E creates HTLC and sends money to D.
 
+# Dynamic data
+
+But how do we know which candidates to check first? Need ranking. The funds on the side of the channel that we want to send-- they are somewhere between zero and ... if we know nothing about the current distribution, then it makes to sense to assume it's uniformly random distribution. One can estimate the probability that a channel would be able to support this, using a probability that a payment will make it through a channel. It's a probability that the channel would be capable to route that payment. It's multiplication of each channel able to process a payment. After we get the probabilities we can start sending probes through the candidates with highest chance of success.
+
+# Implementations
+
+<https://github.com/lightningnetwork/lnd>
+
+<https://github.com/ACINQ/eclair>
+
+# Topology of LN
+
+I wanted to show some test results. Inside Bitfury, we experimented on 100,000 nodes. We have a simulated environment. We discovered that... different graphs; I think they also, run some simulation on 2,500 nodes with lightning client. The tricky thing is that if you want to measure performance then we need some realistic topology for lightning network. The problem is that at the moment nobody knows.
 
 
 paper <http://bitfury.com/content/5-white-papers-research/whitepaper_flare_an_approach_to_routing_in_lightning_network_7_7_2016.pdf>
