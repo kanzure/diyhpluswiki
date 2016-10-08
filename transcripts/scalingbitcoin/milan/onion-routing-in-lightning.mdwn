@@ -32,7 +32,24 @@ There were two asterisks on two lines of codes; those were the asymmetic crypto 
 
 # Hornet
 
-It's an extension of Sphinx and overcomes some of the detrimental problems there. Hornet is a progression of sphinx and it is targeting internet-scale. They want to eliminate the asymmetric crypto operations.
+It's an extension of Sphinx and overcomes some of the detrimental problems there. Hornet is a progression of sphinx and it is targeting internet-scale. They want to eliminate the asymmetric crypto operations. It does two important things. It gets the asymmetric operations out of the critical path of data forwarding. During initial setup, if we can get our symmetric keys and then only do fast symmetric crypto operations. Another nice part of hornet is that it creates a bidirectional circuit. Sphinx is setup and forget. But hornet has real-time.
+
+Hornet uses sphinx. Hornet uses sphinx initially to derive the shared secrets which then allows intermediate nodes to put a special key into a packet which they can use into data forwarding. The nice thing about hornet is that the nodes only need to maintain constant state. The packets carry all the state. The state is pushed to the endpoints rather than the intermediate nodes. The major parts is the anonymous header. A forwarding segment is encrypted by a node and can only be decrypted by itself, and it contains routing information like the next route to go to and some session information to avoid replay attacs.
+
+Nodes only need to maintain their own symmetric keys, they can decrypt the packets and then continue forwarding.
+
+Hornet can help with pyament flow of lightning itself. The payment flow is hypothesized to be out-of-band. Alice and Bob want to send payments through lightning. Maybe there's tor, maybe not. Maybe they exchange tor information so they can send money over lightning. Maybe they are doing several payments and need to talk back and forth. We can eliminate that out-bound communication and move it into the network. This assumes Alice and Bob have a route. Alice can create a hornet session to Bob and then they have a bi-directional link where they can exchange detail. I can get payment vaues and r values from Bob through the network itself.
+
+Maybe some of the links wont have sufficient capacity to send everything in one go; so I could fragment a payment through several routes in lightning at the same time.
+
+# Shared secret log
+
+The important part for maintaining a shared secret is that you need to reject a packet if it's sent again. An adversary could resend a packet, but we want to reject that. So you need a growing log of all the shared secrets, so if it's in the log then you need to reject it. If I need to maintain shared secrets for all my lifetime, I have unbound growth. So we need to garbage select part of the trees. So we can do that with key rotation. There are a few ways to do this. In tor, they have a central directory server and everyone uploads their keys and their new signed keys, but you know ideally we could do that and we would like to avoid that, there's a centarl point of authority so there's a few ways to do ad hoc key rotation. So let's assume that nodes have an identity key, and then they could authenticate hteir onion key with an identity key. So maybe each day they broadcast a new key to the network. So one subtletly of this is that the rotation has to be loosely synchronized. If you rotate keys and then someone sends you payment over the old key, then it looks like an invalid MAC, you would have to reject it. So there needs to be a grace period instead, where a few days after key rotation you still accept old packets maybe. So you check with the old key and check with the new key and maybe it works.
+
+Active key rotation actually encourages higher bandwidth and now we need to rotate keys 24 hours every 24 hours or something. So with a million node networks, that's a lot of data to download.
+
+
+
 
 
 
