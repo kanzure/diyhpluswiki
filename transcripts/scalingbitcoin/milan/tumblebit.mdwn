@@ -1,0 +1,37 @@
+TumbleBit
+
+Ethan Heilman
+
+Leen AlShenibr
+
+Hi. So I'm going to be talking about tumblebit. It's our untrusted private bitcoin payment system. Tumblebit provides payments which are private. They provide set anonymity when used as a classic tumbler. They are untrusted. The tumbler can't violate your privacy, and can't steal your coins. It's also scalable. It's compatible and works with today's bitcoin. There are no malleability concerns. We're going to rely on the constrained opcodes that currently exist in bitcoin.
+
+There's two ways to use tumblebit. You can use it as a classic bitcoin tumbler, providing k-anonymity. This is a more private version of coinswap. It has four transactions that are confirmed in two blocks. It has an average mixing time of 20 minutes. And then we can use tumblebit as a payment hub. It provides unlinkability during a payment phase. Payments are confirmed in seconds because they are off-blockchain. We are using payment channels.
+
+Before I explain tumblebit, I am going to do a brief reminder of a unidirectional payment hub and then I am going to evolve that into tumblebit. Alice and the hub have a undirectional payment channel implemented with two escrow transactions which are 2-of-2 multisig. Both parties on each end of the escrow need to sign off to spend that escrow. Alice wants to pay Bob through the payment hub so she does a claim transaction, payment hub creates a claim transaction as wlel; Alice signs the claim transaction to authorize it, the hub signs the other claim transaction. To close the channel, Alice can sign one and Bob signs one. There's a problem with this, which is that the payment hub could be malicious and not sign the second claim transaction and therefore walk away with the money. So one way to fix this is to make it atomic, so that either they both happen or they don't happen at all.
+
+One way this is solved is with hashlocks. You have some value x, the claimed transaction can't happen without x. Bob can't take money until Bob learns x. So Alice creates a second hashlock that uses the same x, and when the payment hub claims the funds, it has to reveal the value x. Alice can tell Bob what the value of x is. So HTLCs are helpful.
+
+The problem is that if you have a bunch of people using this, the payment hub can link the hashlocks. You can see Alice 1 is paying Bob 2 because they are both using the same hash value, hash input preimage. So it provides no privacy from the hub. So the main idea of tumblebit is to provide this in a way that is unlinkable, so that the hub can't see which transactions are atomic.
+
+You can think of it as unlinkable or private HLTCs. The main cryptography that I am going to use for this is RSA. We use RSA puzzles, which are textbook encryptions of some value epsilon. The tumbler has a public key. It performs RSA operation on epsilon and generates z, our RSA puzzle. Notice that the tumbler has a secret key and because the tumbler is using RSA textbook encryption, only that can solve the puzzle. So if it is given a puzzle z, it can use its secret key and get epilson. A tumbler can initiate the puzzles and solve the puzzles.
+
+We can use RSA blinding. Bob can blind his puzzle to Zstar. And sends Zstar to the tumbler. The tumbler can solve this and end up with a blinded solution epsilon star. Bob can unblind epsilon star to the original solution to z2. If Bob does this over tor, so that the tumbler doesn't realize that the tumbler is talking to Bob, then the tumbler can't link the puzzle it has solved. It knows it has solved a puzzle, but it does't know whether it was puzzle z1 or z2, because the puzzle sent to the tumbler was blinded.
+
+Tumblebit is based around this idea. What the tumbler is going to do is the tumbler is going to say to Bob I will if you solve this RSA puzzle, I'll give you one bitcoin. And the tumbler says to Alice I'll sell solutions to RSA puzzles. So you can see how this might allow Alice to pay Bob. Alice pays 1 bitcoin to solve hte puzzle, Bob then redeems one bitcoin. On the right side here, we see that Bob is going to do the protocol where if he learns the solution to epsilon he will get a coin.
+
+So first I'll explain how Bob does this, then I will show the fair exchange. So the tumbler is going to create an RSA puzzle with a solution epsilon. Then it uses an ECDSA signature and encrypts it under the solution to the RSA puzzle and creates ciphertext c. This signature is going to be a signature to a transaction that allows Bob to spend one bitcoin out of this escrow. So if Bob learns an epsilon, he can decrypt c to get sigma, so if he solves th RSA puzzle Bob can get a signature and he can use that signature to get one bitcoin. Bob blinds it, sends the blinded puzzle to Alice, Alice performs a protocol and gets the blinded solution, and Bob can now... decrypt the ciphertext to get the signature, and now he has a valid signature on that transaction and can get coins from there.
+
+I'm going to talk about the fair exchange from Alice to tumbler. You can use zero knowledge contingent payments here. Alice wants to trade a solution here for some ... we don't use ZKCP. We are using 2048 RSA and it would be fairly slow in zkSNARKs. But this could part could be solved by a ZKCP, sure. So Alice sends the blinded puzzle to the tumbler. Similar to the tumbler's earlier actions, the tumbler is going to solve the blinded puzzle and get epsilon star. If the tumblere tells Alice the value of epsilon star, then Alice would be able to get coins oops. So it's going to send the ciphertext and y to Alice instead, so if Alice learns X she can decrypt Q and get epsilon star. Alice is going to create a transaction that gets 1 coin out of escrow, if the tumbler reveals value x, and then Alice can decrypt Q and get epislon star and send that back to Bob. The problem here is that the tumbler could not play fiar... maybe they generate c here that is some random value, and if Bob tries to decrypt it, he wouldn't get a valid signature. Oops.
+
+So the way we solve this is two protocols. We have a puzzle promise protocol to convince Bob that the solution to a puzzle is a valid signature on a transaction. The other protocol is a puzzle solver protocol to convince Alice that the preimage x will allow her to learn epsilon star. Both of these protocols are similar, they use similar tricks. If I have time, I might go into the puzzle promise protocol. I'll be happy to show this.
+
+Tumblebit has three phases. In the first phase all the payment channels are setup. Each of the Bobs are given ciphertext and RSA puzzles. We want to be able to make multiple payments. There are additional ciphertexts and RSA puzzles. Each one gives an additional bitcoin to increase the payment channel size. Each puzzle is locked until Bob unlocks it, and he can use the signature to unlock the next RSA puzzle. The next phase is where the payments happen, we imagine this to be one month or less than that. Let's say Alice pays 1 bitcoin to the tumbler using the fair exchange.. Bob uses that signature to increase the payment channel by 1 bitcoin, and unlock the next puzzle. Alice pays again, Bob gets another signature and unlocks another puzzle, gets another signature, and we can imagine lots of these payments happening. Also, we have a cash-out phase.
+
+
+
+<https://github.com/BUSEC/TumbleBit>
+
+paper <https://eprint.iacr.org/2016/575>
+
+
