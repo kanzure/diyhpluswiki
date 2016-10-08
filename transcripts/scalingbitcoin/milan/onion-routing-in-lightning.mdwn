@@ -4,6 +4,8 @@ Olaoluwa Osuntokun (roasbeef)
 
 <http://lightning.network/>
 
+<https://twitter.com/kanzure/status/784742298089299969>
+
 
 Privacy-preserving decentralized micropayments
 
@@ -69,10 +71,15 @@ Maybe we can gain capabilities ... and moving the asymmetric operation to the fo
 We can also look into non-source-routed privacy schemes. Since everyone has to give information about links, you lose some privacy. There's some ways you could do this but they involve trusted hardware at the node using obliviousRAM (oRAM) and doing shortest path search over the graph and that would require special hardware. We probably wont do that. It's a cool research direction to look into for the future.
 
 
+# Q&A
 
+Q: Statistical correlation in onion routing?
 
+A: Randomized delays. We could pad out the packet sizes so that every packet on matter if you were doing an opening or a forwarding is always the same size. All the packets would be encrypted. We could do other things like add some delay or move to higher-latency networks which could help us hiding some of this metadata.
 
+Q: What do you do about... network layer attackers?
 
+A: For the payment network problems, we could say all payments in lightning are a particular value, and then we fix the channels, and then everything is completely uniform. With sphinx we talked about unlinkability, the packets themselves are indistinguishable bu tbecause the r value is the same. Versioning-- same path, same r value. We could use some techniques to randomize the r value just like we do for the group value for sphinx. We could do a scheme where we randomize the r values, where we add generic point multiplication or use fancy signatures where you do single show signature which forces you to use a certain value for the r value in the signature. If oyu sign with the key then you reveal the r value. Without that, it's somewhat limited. Maybe we could do this at the end of v1.
 
 
 
