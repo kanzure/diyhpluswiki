@@ -1,0 +1,78 @@
+Joinmarket
+
+Adlai Chandrasekhar
+
+Finding a risk-free rate for Bitcoin
+
+Joinmarket, just to clear up a misconception... Joinmarket, like bitcoin, it is a protocol. Not a company. The protocol is defined by an open-source reference implementation. There are other versions of the code out there. It's entirely, I guess you could say it's voluntary like bitcoin. Those of you who might have less of a finance background might not be familiar with the term risk-free rate. When you are investing fiat currency, you invest the government bonds, and it gives you a low return. It's not just fungibility, it's also an investment.
+
+I am one of the joinmarket contributors. Some of the other joinmarket developers are here today. We actually haven't had a definition of fungibility yet. It's the property where equal amounts of some commodity or some monetary good or whatever are interchangeable. In the case of mushrooms, you don't want to interexchange one mushroom for another. But in the case of bitcoin, most software will treat equal quantities of bitcoin the same. It's people that go look at the history and violate the fungibility.
+
+We're trying to make their job more difficult. Another interesting quote from cypherpunks more than 2 decades before joinmarket occurred, Eric Hughes foresaw this development. "It's a way to transfer a non-private good in a more private manner". So what is anonymity and privacy?
+
+# What is privacy?
+
+Anonymity is always within a set. There is an anonymity set. You're one of a few billion people. You're one of a few million bitcoin users. You are one of a thousand joinmarket users. If you are at a protest, then you are one of those people. If you show up with the wrong Guy Fawkes mask, then suddenly your anonymity set is a lot smaller. So the purpose of fungibility is to increase your anonymity set.
+
+There are two kinds of ... anonymity.. one to keep out your "Kid sister" and one to keep out governments. The same is true for privacy as well. You can fool most of the people most of the way, but you can only be a saint for six confirmations before the devil knows you're dead. Maybe your spouse can figure out which coins are yours. We are more focused on giving people privacy that stands up to the privacy tracking startups, and also... casual..
+
+There's also the concept of hiding and the concept of deniability. Attacking startups that say this customer of yours is using a gambling site or whatever-- they ca't actually do that. They are just saying we found a link. They give the estimate. But they can't prove that the link is you. So you have deniability even from regular bitcoin use. We try to give you better deniability but you have to go to great lengths to actually hide and have people not able to tell at all what your transaction graph is.
+
+If you get enough deniability with enough different plausible explanations, then you are hiding behind a smokescreen of possible explanations.
+
+Before joinmarket, users would just use all sorts of arbitrary methods. They would buy an altcoin, send it to another exchange, sell it back, send through wallets, send through gambling sites, and arguably these methods-- they give you worse privacy. So there are sites dedicated to unlinking. They call themselves "tumblers" which is a reference to "coin tumbling" where you collect physical dirty coins, you mix them with sand and water to clean them out. When you use a fungibility technology that everyone else is not using, then your coins become dirty. A tracking startup would notice you are trying to be private. So your personal transaction graph... but overall, your coins are as distinguishable as privatized coins.
+
+Greg Maxwell proposed coinjoin and coinswap in 2013 on bitcointalk. Coinjoin has gained traction, but coinswap has not unfortunately. Darkwallet offered p2p coinjoin, without a central server, but you had to wait a very long time-- hours or even days until enough people with enough bitcoin were online at the same time. And then you could make a coinjoin.
+
+Just in case someone has not seen what a coinjoin looks like, here it is.
+
+# Coinjoin
+
+This is arguably the simplest smart contract. We have two participants. One participant has this output here, the other one has two outputs, the first and the third one. They each get 0.8 BTC out. There's no way for you to look at this transaction and knows which output corresponds to the first input or the middle input.
+
+# Joinmarket goals
+
+First of all, no counterparty risk. We don't want to be a centralized mixing service. We're not going for strong privacy. It's difficult. It uses complex mathematics, which most bitcoin users don't understand. Possibly even most people don't understand it. It has to be a liquid tool. It must be highly available. You muts be able to show up with hundreds of coins and get some fungibility right away. You can make several dozen .. with hundreds.. right away.
+
+It has to be compatible with the existing bitcoin protocol. Some people might not like this attitude. We don't want users to install any different software other than the client they have today. So if you use a 5-year old bitcoin client, which doesn't have an RPC command that we use, we consider that a bug. Please let us know.
+
+It's probably pretty obvious, but we want a system that is usable. If it's not usable, then it's not useful. We're going for a working tool that people can use as soon as possible.
+
+# Joinmarket participants and users
+
+Joinmarket's fundamental innovation, which I think several people came up with independently, is ythat you compensate people for participating in the protocol. So you incentivize people to leave their clients running. Also this brings in more liquidity. People who don't care about fungibility do care about running money. So you increase the anonymity set as a user of running joinmarket. There are people investing dozens or 100s of coins. They would usually leave them in cold storage and leave them there fora year or more. Instead they are now running hot wallets and they are increasing other people's anonymity sets.
+
+Joinmarket divides participants in two different roles. There are passive participants or "makers". And then there are iniators/takers. Initiators have sporadic participation. If you are a participant, then you sign transactions that look okay with you. If you are an initiator, then you oordinate and assemble transactions. Initiators pay fees, and participants earn them.
+
+Because the initiators are coordinating transactions, they learn osme information about the other participants. So the regular participants get less privacy than the initiators. If you want the best possible privacy, then you have to pay for it.
+
+# Protocol
+
+Initiators pick which counterparties they want. They contact them with an encryption key and the amount htey want to transfer. In coinjoin, everyone has to use the same amount. The participant applies each one separately iwth the encryption key. From this point onwards, everything happends with end-to-end encryption in a hub-and-spoke model. Each participant has an end-to-end encrypted channel. The participant signs the ... with a bitcoin key. We sign the encryption key so that you know you're talking with someone who owns those bitcoin rather than someone who just wandered in.
+
+The participants apply with the unspent outputs that they want to use as their inputs... and then they also provide their change, they sign with their bitcoin key. The initiator signs and then broadcasts. That's how we get coinjoin.
+
+You may notice a problem. The initiator is the last one to sign. What if they don't sign? They have learned the mapping-- which inputs belong to which makers. They know additional unused addresses of those makers. So if they don't sign at the end, then they have learned this for free.
+
+This attack was known for a while. We didn't want to release a project with some theoretical attack. Over the summer, we saw the successful transaction count increasing, but in parallel there very suddenly appeared 3 to 10x more failed transactions where someone was learning information. We called this a snoop attack. This was not a sybil attack.
+
+The snoop attack is free. It doesn't cost the snooper anything. We can prevent this entirely. You can pay for the transaction and learn the mapping. So the second protocol has the same basic sequence. We add a signature on every message. The key thing here is that the takers don't just sign the encryption key with a bitcoin key. They commit with a unique commitment to some bitcoin some unspent bitcoin doesn't even have to be the same one. What does this mean that it's a unique commitment? Every bitcoin that exists currently generates one commitment. If you have seen a commitment, you can't figure out which bitcoin created it. If you see the same commitment again, you know it's the same. This lets the makers and the participants not talk to people who are initiating multiple transactions. Effectively, it puts a cost on snooping. You can still snoop, but you have to create new coins each time. We have not yet seen anyone conducting a snoop attack on this second protocol. So either this was a sufficient discouragement, or they are still writing code and collecting funds and perhaps the snoop attack will continue. Remains to be seen.
+
+# Future directions
+
+We have two wallet integrations that are written, ubt they need more review and testing. Electrum and Core.
+
+We have a hybrid mode that doesn't quite work yet, where if you don't have to make a transaction immediately, you can participate in other transactions and earn perhaps more fee than for your own transaction.
+
+We want to expose an API so that existing services, or exchanges, can use a hot wallet and also joinmarket at the same time. An exchange could offer their customers to earn money with coinjoin. I think a testnet faucet does this today, although not in a programmatic manner.
+
+Joinmarket is the first market of its kind. A lot of coin flowing through it, and there was an estimate of about $1 million/month. I didn't calculate it, so I'm just quoting it. People are earning money here. Some participants are earning more than othres. We want to look at howmuch people are earing, what are the optimal fee strategies, how can oyu maimize your earnings? There's a lot of unmined data here, it's sitting in the blockchain all public.
+
+We want a tool where we can measure what privacy someone could have and could get after using joinmarket. Right now it's pretty obvious that using a single coinjoin is almost useless. Doing 100 coinjoins is confusing to your attacker-- but where do you draw the line? These coinjoins cost money. People are paying per coinjoin.
+
+Also, we want to implement coinswap because the cool thing about coinswap is that whereas in coinjoin the anonymity set is the participants in that specific coinjoin, but in coinswap the anonymity set is everyone who was doing a coinswap at the same time, even if they were not coordinating with each other. Achieving that level of anonymity set increase using chained coinjoins is a lot more expensive, and I doubt that's the right strategy; the right strategy is to offer the additional protocol.
+
+
+
+<https://github.com/JoinMarket-Org/joinmarket>
+
