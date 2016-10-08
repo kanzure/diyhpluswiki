@@ -4,6 +4,7 @@ Tadge Dryja
 
 <http://lightning.network/>
 
+<https://twitter.com/kanzure/status/784752625074012160>
 
 Okay. Hi everyone. Check. Wow. Check one two. Okay it's working. And I have 25 minutes. Great. So I am going to talk about unlinkable outsourced channel modeling. Everyone likes channels. You can update states. You can link them together to make a network. This is really great. There are risks. These are additional risks. The price of scalability is eternal vigilance. You have to keep watching your channels. This is different from bitcoin. Receiver sends in these channels. When you are receiving bitcoin, you have to be signing. Your wallets are mostly hot. There are a lot of different risks. You have to watch your channel with a full node. Don't use bloom filters. The full node providing you with a merkle block could just lie. So if you're connected to a full node and say here's my ... if you don't know-- if you don't find out that you got some coins, you want to find out. In lightning, you need to know as soon as you can, so that you can grab money back from an invalid close.
 
@@ -31,7 +32,11 @@ If I have a channel and I close it, and then I tell the person monitoring it hey
 
 Backups of lightning channels are dangerous. Say you make a backup of state 30, then you make some more transactions, then restore your transaction to state 30, I could quickly lose all my money because I restored a backup. If I connect to my counterparty and say hey I'm trying to make state 31, and they will be sure, and they know the 31st revocation key already, so they can just take money. So it's very risky to restore from a backup.
 
+We could segment the HLTC encrypted blobs such that if I give you one decryption key, you could rollback and get a bunch of the previous decryption keys. Therefore you only need one HLTC at a time. Another thing to prevent spam-- part of the thing about unlinkability is that if I don't tell you which channel I'm monitoring, it might be something I completely made up. I might be spamming you. So there might be some way where you have some kind of group or ring signature to indicate this is a real channel but I'm not telling oyu which one. It's one of the channels curretly open on the networ, but I don't tell you which one. One altruistic node defending the whole network would be good. If the attacker tries to close the channel in the wrong way; they have to think hey is there nobody nice on the network that is going to try to defend that channel? Only then are they going to attack that channel and try to grab the money. Maybe the counterparty is offline and the timeout is this week... I mean maybe there's a node out there is monitoring. Make it anonymous so that nobody has a problem forwarding to everyone their data. Make it hard to spam so that someone will say "I'm the nice guy and I'm going to defend the lightning network and we're going to monitor it".
 
+This is still a work in progress. I think invalid channel closes will be pretty much impossible. There's all this work on transactions that will almost certainly never happen. You will probably never see invalid closes on the network. The risks are so high, and the gains are pretty high. Any questions?
+
+# Q&A
 
 
 
