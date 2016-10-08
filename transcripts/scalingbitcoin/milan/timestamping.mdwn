@@ -4,6 +4,7 @@ Riccardo Casatta
 
 slides <https://scalingbitcoin.org/milan2016/presentations/D1%20-%20A%20-%20Riccardo.pdf>
 
+<https://twitter.com/kanzure/status/784773221610586112>
 
 Hi everybody. I attended Montreal and Hong Kong. It's a pleasurable to be here in Milan giving a talk about scaling bitcoin. I am going to be talking about scalable and accountable timestamping. Why timestamping at this conference? Then I will talk about aggregating timestamps. Also there needs to be a timestamping proof format. I will describe two of the formats for this purpose, including opentimestamps and chainpoint.
 
@@ -49,7 +50,9 @@ Also, opentimestamps has git integration. Git has a extra space for extra data, 
 
 # Chainpoint
 
+Chainpoint describes a merkle tree where the chainpoint proof is in JSON. It contains information to go from the data to the hash of the transaction timestamped that contains the timestamping information. Basically, it contains data that is in the red circle. We can see that this operation is supported by receipt and tools provided to verify receipts, and supported anchor ties. We have bitcoin and ethereum. A single receipt and a single type of hash... so this.... so if we, we can put together two receipts because we are doing JSON-LD, to create something we have seen before. .. for the same data. The target hash is the same. So we use this receipt, if the initial packet is in common between the two receipts, then we have some redundancy in the proof, but it's just initial compact. But in some cases, like we have seen before, we have the hash in the bitcoin blockchain merkle tree, is different from the timestamp merkle tree, it's difficult to represent using this system.
 
+For the comparison of the size of proofs for opentimestamp versus chainpoint using json, as we can see the json is not that big of a deal. We can use msgpack for json serialization format. Testing compression is not very interesting. We can have gzip with better results, and most of the time msgpack + gzip is slightly better. Apart from size comparison, the point of the binary format of opentimestamps was to give a format with an atomic interpretation that you can either parse the data or you could do nothing with it. And that's exactly what we want.
 
-
+<img src="https://xkcd.com/927/" />
 
