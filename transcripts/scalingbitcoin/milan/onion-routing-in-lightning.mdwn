@@ -1,0 +1,48 @@
+Onion routing in lightning network
+
+Olaoluwa Osuntokun (roasbeef)
+
+<http://lightning.network/>
+
+
+Privacy-preserving decentralized micropayments
+
+We're excited about lightning because the second layer could be an important opportunity to improve privacy and fungibility. Also, there might be timing information in the payments themselves.
+
+
+Distributed set of onion routers (OR, cite OG onionrouting paper). Users create circuits with sub-set of nodes. Difficult for oion routers to gain more info than predecessor+successor in path. Low latency - usable within greater internet. Notable success is tor, notable success of routing nodes.
+
+In lightning, we have some goals to make it private and censorship resistant. We use source-routing which means the source fully specifies the entire route. In lightning we want to know what the fees are. We want to know the entire route, the timelocks and the path itself.
+
+We use sphinx to make a provably secure mix format. It has various desirable capabilities. With encryption, the ciphertext -- the plaintext due to randomization. There's non-trivial shipping and mapping to make sure everything is fixed throughout the entire size. With fixed size, it gives no positional information. If you are the fifth person in the graph, then you might give away information about the graph or your position in the graph.
+
+In sphinx you can derive a shared secret. To achieve unlinkability, we need to randomize the base key of the diffie-hellman itself. You can have n-keys in the package itself, but you can do things like RSA and now you have kilobytes of a packet because you need all the shared secrets itself. It's the hoop element at each hop. It's a cool trick. This can be generalized to any protocol like elliptic curves, RSA, we can do LWE and other things like that.
+
+So you get a session key for the session and then a list of all the public nodes in the route. So a0 is the initial public key for the first hop and then it derives a shared secret as 0. It raises it to the power of its secret exponent and then there's a blinding factor. Each intermediate node uses the blinding factor to randomize the public key for the next hop. a1 is g^x^b0. So each node derives a blinding factor from the shared secret, and uses this to randomize for the next hop. We have a constant-size key with each hop and we achieve unlinkability.
+
+In sphinx, packet processing is simplified. ProcessSphinxPacket.... if the MAC is the .. then you tampered with the packet and it's rejected immediately. Also, you have to protect against replay attacks as well. You re-randomize the shared secret with a new blinding factor.
+
+One thing we've done is we've started to make some modifications to sphinx itself. We realized it's useful to ourselves but maybe we could add some features for lightning. cdecker from Blockstream has done some work with this to make it more lightning-like. We can add a version byte to the header itself so we can have new versions later on if we use different cryptosystems. We also added the public key and the MAC is now over the entire packet. Originally in sphinx it's not over the entire packet, it was made for mixnet rather than indistinguishable replies. So you can't have the MAC on it because if you have a MAC then it's not indistinguishable. We don't have that reply use-case in lightning itself. We switched from AES to chacha20 for speed optimality. We also have a payload that attaches instructions for the hop itself. If one link has several links, which one should be used? We have some information about which links to link on, and which ones, and some other information like timing information.
+
+We have this code and it's done. We could start a mixnet to have an alternative transaction propagation mechanism.
+
+# Performance considerations
+
+There were two asterisks on two lines of codes; those were the asymmetic crypto operations for forwarding the HLTC where you derive a shared secret and randomize a .... so this might be nice to eliminate or advertise that we do it only one time and avoid it otherwise. The onion routers themselves need to maintain a per-session state. This is the hash, the incoming link and hte actual link. They need to maintain this state and forward it down to next path. If you forget the state and you get the settle, you don't know who to send it to. If you forget the state you can't remember the HLTC. So this would be a DoS attack. It needs to be persisted to disk, too. If we could overcome those limitations we could have it be faster and the routers could be stateless.
+
+# Hornet
+
+It's an extension of Sphinx and overcomes some of the detrimental problems there. Hornet is a progression of sphinx and it is targeting internet-scale. They want to eliminate the asymmetric crypto operations.
+
+
+
+
+
+
+
+
+onion routing specification <https://lists.linuxfoundation.org/pipermail/lightning-dev/2016-July/000557.html>
+
+onion routing protocol for lightning <https://github.com/cdecker/lightning-rfc/blob/master/bolts/onion-protocol.md>
+
+<https://github.com/lightningnetwork/lightning-onion> and <https://github.com/cdecker/lightning-onion/tree/chacha20>
