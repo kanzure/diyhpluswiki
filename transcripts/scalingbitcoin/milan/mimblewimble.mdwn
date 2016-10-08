@@ -2,7 +2,7 @@ Mimblewimble: private, massively-prunable public blockchains
 
 Andrew Poelstra (andytoshi)
 
-<https://twitter.com/kanzure/status/784694673185107968>
+<https://twitter.com/kanzure/status/784696648597405696>
 
 Hi, I am from Blockstream. I am here to talk about Mimblewimble. Mimblewimble is not mine. It's from the dark lord. I am going to start with the history of the paper. It has been in the news a little bit. I will talk about the transaction structure, the block structure, try to explain the trust model and argue that it's almost as strong as bitcoin. There's less data to verify than in bitcoin. If I have time, then I might talk about some extensions I have done to the protocol to make it extend the scaling beyond what was possible. And then next steps and open problems.
 
@@ -51,6 +51,12 @@ This does change the trust model a little bit. The way that it changes it is tha
 # Where are we?
 
 I have been working on a consensus library for mimblewimble. I have got hung up on pairing curve selection, I'm working on that now. I am going to publish the source code I've got and encourage people to contribute and do peer review. It's an exciting project. Once that is done and there's a consensus library written, then we can start doing cool stuff, we can write a p2p layer and write wallets and so on, and it will be much easier to write and more friendlier languages and you will have a lot more freedom--- there doesn't need to be consensus on that kind of source code. Right now we're still in the boring consensus part of development. I hope to get past this soon. As far as sidechains, I've been saying, ... we can actually make mimblewimble as a sidechain. If in addition to all the unspent outputs, you commit to pegs-in and pegs-out, then you can apply an excess signature on every peg-in and peg-out. And that's it. I'm over time. So I'm going to stop there. Thank you all.
+
+# Q&A
+
+Q: What curve are you using? Could you use ed25519?
+
+A: Good questions. When you create a transaction, the total input value has to equal the total output value. So any fee would be released as an explicit unblinded output value. As it's floating around the network, the miner would commit to that amount of fee value, so the miner would add its own output to all the aggregated transaction. On the blockchain there's an explicit fee. For a curve selection, I can't use secp256k1, can't use Ed25519. For sinking signatures, I need a pairing operation. I am using a 341-bit curve that I came up with, but I'll probably replace this as I learn more about what I should be doing.
 
 
 andytoshi's mimblewimble paper <http://diyhpl.us/~bryan/papers2/bitcoin/mimblewimble-andytoshi-INCOMPLETE-DRAFT-2016-10-06-001.pdf>
