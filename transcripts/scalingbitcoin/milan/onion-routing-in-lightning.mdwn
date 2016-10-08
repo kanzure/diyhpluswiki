@@ -48,7 +48,25 @@ The important part for maintaining a shared secret is that you need to reject a 
 
 Active key rotation actually encourages higher bandwidth and now we need to rotate keys 24 hours every 24 hours or something. So with a million node networks, that's a lot of data to download.
 
+# Passive key rotation
 
+You published a key. You use bip32 public key derivatio. The people at the edges have the blockhash and your master public key from bip32. Everyone can do key rotation by themselves on the edges. There's a gotcha, though. It's common knowledge that with public derivation on bip32 is that if you have the master pubkey and you leak the.... so.. with that new, you need forward secrecy if the private key is leaked. You can have an intermediate point, as to a step doing derivation and then leave that point later. If you use some crypto magic maybe you can solve that.
+
+So for passive key rotation, you could do pairing crypto and have passive non-interactive key rotation. Three cyclic groups. A bilinear pairing. We can have more meaningful identifiers like roasbeef@lightning.network and use that instead. So we have a three cyclic group and a pairing operation which takes elements from two groups and transmutes it to a third one. And the group is multiplicative. If you look at the pairing operation, ... that's the magical step that allows you to do a bunch of other cool stuff.
+
+Every node now advertises a master public key. With regular IBE, there's a trusted agent that distributes public keys to everyone else. We can have the nodes be the trusted agent to do the actual protocol. We need a novel primitive called a ... hash function.... we want the hash function to map directly to a point on a curve. You could do this iteratively where you have a string, you hash it, you get an output on the curve. What about mapping something to a point that isn't the identity point or the element at infinity? Everyone has an ID which is a blockhash. ID is a group element, a public key. So given a blockhash, they can then use this abstraction to derive another key that is a group element that matches that. If you remember in sphinx we had this g^r, we could do this to do non-interactive key rotation. Alice knows the key schedule of the other nodes. So then she uses that to basically, using g^r, to derive a shared secret. She uses bob's master key and then raises that to r which is the current session key with maybe some blinding factors. Bob takes r itself, does a pairing operation with n which is his private key. So it just goes out to the end where they both arrive at a shared secret which is the pairing of g, and the Bob's ID, and now they have a shared secret. So with this we can achieve passive key rotation from the edges-- but now there's a pairing operation cost as well. We can use this to do key rotation or just do a stop gap and do the other one.
+
+# Limitations in the scheme
+
+Assumes a high degree of path diversity. There are many ways to get from Alice to Bob. If there's only one path, then you know she's sending it to Bob. You can have some correlation with payment values where-- you know there's no other link could support a payment of this size, so therefore they are using this particular route.
+
+You can do timing attacks where you can see Bob and Alice are sending payments-- well you can see packet size correlation and so on.
+
+# Future directions
+
+Maybe we can gain capabilities ... and moving the asymmetric operation to the forwarding highlight. We could figure out the payload structure. How do I identify different chains? What is the timing? What about high-latency systems that give us more privacy guarantees? Maybe lightning is just for instantaneous payments, and maybe you could tolerate a minute and that's still okay.
+
+We can also look into non-source-routed privacy schemes. Since everyone has to give information about links, you lose some privacy. There's some ways you could do this but they involve trusted hardware at the node using obliviousRAM (oRAM) and doing shortest path search over the graph and that would require special hardware. We probably wont do that. It's a cool research direction to look into for the future.
 
 
 
