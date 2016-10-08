@@ -4,6 +4,8 @@ Ethan Heilman
 
 Leen AlShenibr
 
+<https://twitter.com/kanzure/status/784686167052709888>
+
 Hi. So I'm going to be talking about tumblebit. It's our untrusted private bitcoin payment system. Tumblebit provides payments which are private. They provide set anonymity when used as a classic tumbler. They are untrusted. The tumbler can't violate your privacy, and can't steal your coins. It's also scalable. It's compatible and works with today's bitcoin. There are no malleability concerns. We're going to rely on the constrained opcodes that currently exist in bitcoin.
 
 There's two ways to use tumblebit. You can use it as a classic bitcoin tumbler, providing k-anonymity. This is a more private version of coinswap. It has four transactions that are confirmed in two blocks. It has an average mixing time of 20 minutes. And then we can use tumblebit as a payment hub. It provides unlinkability during a payment phase. Payments are confirmed in seconds because they are off-blockchain. We are using payment channels.
@@ -28,6 +30,13 @@ So the way we solve this is two protocols. We have a puzzle promise protocol to 
 
 Tumblebit has three phases. In the first phase all the payment channels are setup. Each of the Bobs are given ciphertext and RSA puzzles. We want to be able to make multiple payments. There are additional ciphertexts and RSA puzzles. Each one gives an additional bitcoin to increase the payment channel size. Each puzzle is locked until Bob unlocks it, and he can use the signature to unlock the next RSA puzzle. The next phase is where the payments happen, we imagine this to be one month or less than that. Let's say Alice pays 1 bitcoin to the tumbler using the fair exchange.. Bob uses that signature to increase the payment channel by 1 bitcoin, and unlock the next puzzle. Alice pays again, Bob gets another signature and unlocks another puzzle, gets another signature, and we can imagine lots of these payments happening. Also, we have a cash-out phase.
 
+Our unlinkability definition is that... we refer to an interaction graph as any way that this could have happened between all the parties. We're unlinkable in that all interaction graphs compatible with the tumbler are equally likely. All of them are likely to have happened. There could be an extremely large set of interaction graphs where it ends up with this Bob getting the coins. The tumbler can't figure out which set of interactions led to those outcomes.
+
+Tumblebit can also be used as a classic tumbler. You can't tell what the old address was. To run this as a classic tumbler, you would open a payment channel with one bitcoin to be used with only one payment. We have a equal number of payers and payees. Each participant makes just one payment. To solve the anonymity problem, other schemes have been proposed. Coinswap and coinshuffle are vulnerable to DoS attacks. Coinshuffle has a limited anonymity set because it's limited by the transaction size of a few hundred kilobytes.
+
+We have implemented a proof-of-concept of the classic tumbler. We have source code available on github. Our implementation is perfomant. It consumes only 320 kilobytes of bandwidth. Most of the time is spent on the puzzle solving protocol. If you run tumblebit on the same machine, it takes only 0.6 seconds. If you run the server in Tokyo and Alice and Bob in Boston, then it takes 6 seconds. And through tor it takes 11 seconds.
+
+In conclusion, tumblebit provides private untrusted scalable payments via today's Bitcoin. We have running code for the tumblebit classic tumbler. We run our code on bitcoin mainnet blockchain. You can look at our tumbles. We are working on our source code to make it safe and easy to use. We want to make it far more secure.
 
 
 <https://github.com/BUSEC/TumbleBit>
