@@ -1,0 +1,104 @@
+Simulation-based evaluation of coin selection strategies
+
+Mark Erhardt (murch)
+
+# Introduction
+
+Thank you. ((applause))
+
+Hi. Okay. I'm going to talk about coin selection. I have been doing this for my master thesis. To take you through what I will be talking about, I will be shortly outlining my work, then talking about coin selection in general. And then the design space of coin selection. I will also be introducing the framework I have been using for simulating coin selection. Also I will talk about my results.
+
+To get right started, you may have seen this graph before, created by Pieter Wuille. What it shows is that we have unspent transaction outputs growing pretty quickly and it has grown in the past years doubled since the last year, and 7x in the last 3 years. So the value of the utxos and the size of the megabytes we're at more than 1.4 GB of UTXO set size now. Why is that a problem? Well, for miners to be most competitive, they have to keep the UTXO set in RAM toverify blocks as quickly as possible. This is more of an economic problem for smaller miners.
+
+How does it come that the UTXO set is growing so much? We have more coins every day. The average utxo value has shrunk from almost 1 bitcoin 2 years ago to less than 0.4 bitcoin. Looking at Core for example, they have a minimum change of 1 bitcent of change, which means we have a lot of room to grow this UTXO set still. So maybe we have to think about what we can do to make it smaller. We have heard today that segwit will give a discount for spending inputs, and if we get to Schnorr signatures that will help to compound and aggregate signatures and make inputs even cheaper to spin. I think coin selection can also help us to reduce the UTXO set size.
+
+# Coin selection
+
+Coin selection is basically just the question of how do we spend the coins we have, to fund transactions? Which ones do we use to fund the transaction? My hypothesis for my master thesis was to improve coin selection and have an impact on UTXO set size. Just looking at the hard constraints of the coin selection problem, you basically have to use the UTXOs that your wallet has. And then you have to pay for the transaction and the fee. Since we don't want to create non-standard transactions, we must not create dust outputs, and our change has to be a certain size as a result.
+
+We want to minimize the cost for the user, so we have to minimize inputs. On the other hand, we want to reduce the UTXO set size, so we have to use more than a few UTXOs because that's the only way to shrink the set. Also we want users to have as much privacy as possible. So we have to pick one or two of those and doing all three is hard.
+
+# Conditions and factors
+
+Priority-based selection for inclusions into blocks has largely changed to a fee market now, for miners to optimize their fee income. Block space demand has been increasing over the past few years. So the coin selection background has changed a little bit over the past few years. And then there's some factors that are partially individual-- it depends on what kinds of payments you're doing. If you're doing very large payments, you might need a different coin selection algorithm. Short-term cost is a different target compared to total cost over lifetime of the wallet. If you are looking at merchants might use bitcoin and how a mobile wallet user might use bitcoin, it's very different. Mobile wallet client might get a big payment incoming and then make lots of small payments, whereas merchants might have the opposite trend.
+
+One of the interesting thing is that a factor that can influence this is the size of change outputs. This also has a large impact on the utxo set composition going forward in your wallet.
+
+# Improvement
+
+There has been quite a bit of speculation about coin selection so far. I wanted to introduce some of the ideas floating around.
+
+Luke-Jr suggested we hsould try to ccreate change outputs up to the average size of the payments that the wallet has been making. So look at the payments the wallet has made over time, and adapt change to that. Another idea is that instead of creating tiny change, and have a little leftover beyond what we want to pay; instead of giving it back to the user, perhaps give it to the miner. It can be more costly to spend a UTXO than the value created by the UTXO if it is very small.
+
+We could generally try to match the spending amount with the change output. If we're trying to spend 1` coin or create a change output of 1 coin, which was speculated to probably have good properties in the wallet if we repeat the same size payment over time. This has come up quite often. Oh, one more. I wanted to try random selection on the utxo set size.
+
+These ideas have been floating around, but not quantified so much. So what is a good coin selection algorithm?
+
+# Simulator
+
+I created a coin selection simulator. We have a scenario that is just a stack of payments that happen in the simulation. We have a next payment coming in, it might be an incoming payment, and then we add one more unspent transaction output to the unspent transaction output pool of the wallet. If it's an outgoing payment, we consider a fee level and a block height. We create the transaction. And then the transaction uses up some of the UTXOs, and it might create a new change output to the UTXO set size. This is basically how it works in regular wallets. I just don't look at the network stack and stuff.
+
+So what I'm considering is the selection policy of the wallet that I'm simulating. I am simulating fees, but it's a fixed number, it's 10,000 satoshi BTC per kilobyte. I have looked at this with different transaction formats, like P2PKH and P2SH and P2WPKH from segwit. For some of the coin selection approaches, it's important how old the UTXO is for the selection, so I have also added blockheight into my simulation.
+
+What I don't do yet-- which might be a disappointment to some-- I have not yet implemented addresses into the simulation, so I can't talk so much about the privacy impact of coin selection algorithms.
+
+The most interesting part of the simulator is this box where coin selection works. I have looked at some of the prevalent policies in the space. Breadwallet has a policy of just spending the oldest UTXOs first, first-in first-out (FIFO). They also have some change outputs that get added to the miner fee. That's one of the most commonly used coin selection algorithms in bitcoin because a lot of people use Electrum and Breadwallet.
+
+As a second one, I looked at Mycelium, which uses a similar approach. They select by oldest first. After they have selected, they minimize the input set by removing the smallest inputs. They also add change, and they select the higher limit to add change to the fee. I think a lot of people are also using mycelium.
+
+The bitcoin wallet for android is also popular. I implemented their approach partly, but the core idea is that it is select by priority, which was the prevalent paradigm before the fee market. This is the age in blockheight times the value in satoshi BTC. If UTXOs have aged for a while, the value of the UTXO is the more important part of the priority calculation. The implications of this will show up in the simulation results.
+
+I also looked at electrum "private mode" which has a different idea about matching the target amount.. They select random buckets and select the bucket that has the least distance between the change output and target amount. I have not simulated this.
+
+In Bitcoin Core, their coin selection uses... I put it over here. It is not the most easiest way to go about it. Bitcoin Core's main idea could be described as trying to create a direct match for the amount to be paid. It tries to hit this with 0 satoshi difference. First it will look for a direct match UTXO. Second it will try to find all the UTXOs that are smaller than what they want to spend, which is useful. And third it just tries to do a knapsack solver and add up some UTXOs to create another match, and if that fails, it does a knapsack solver to select the smallest possible combination to spend a transaction and create a minimum change of 10 millicoins. It created me quite a while to figure out what Bitcoin Core does. One funny thing is that it first estimates the fee, and then it does try to find a selection, and then it finds out that zero-fee can't work, and then it starts again with a higher fee estimated on top of the previous solution. I think we might be able to improve that later sometime.
+
+# Data
+
+I've been using the only available real-life data set. This was provided by Mr.... is he here? I haven't met him yet. He offered his data set on github. It has 24,388 incoming payments and 11,860 outgoing payments. It's basically the only big set of real-life data that I know about. Running on this data set, here's a histogram of all the payments on the set. It kind of looks roughly gaussian, but it has spikes at round numbers. I think the most common payment is about 10 millibitcoin or 1 bitcent.
+
+# Simulation results
+
+<table>
+<tr><td>policy</td><td>num utxo</td><td>change mBTC</td><td>total cost mBTC</td><td>inputs</td></tr>
+<tr><td>FIFO</td><td>182.87</td><td>399.62</td><td>629.07</td><td>3.03</td></tr>
+<tr><td>pruned FIFO</td><td>763.73</td><td>169.93</td><td>623.39</td><td>2.91</td></tr>
+<tr><td>highest priority</td><td>2551.52</td><td>789.52</td><td>629.05</td><td>2.50</td></tr>
+<tr><td>Core</td><td>180.30</td><td>31.75</td><td>819.03</td><td>3.05</td></tr>
+</table>
+
+* FIFO maintains almost as few UTXO as Core.
+
+* Pruned FIFO and highest priority accumulate small UTXO
+
+* Bitcoin Core: overpays fees, computationally expensive, only 0.5% Direct Matches (63 of 11860)
+
+It has this queue of all transactions and it basically selects them until it has enough money to pay for a transaction and then it minimizes the set. It leaves always the smallest UTXOs left over. It leaves the smallest UTXOs at the front of the queue. And then it will create a huge transaction that spends a bunch of them. Otherwise it keeps them in the UTXO set forever.
+
+With bitcoinj, the highest priority approach, basically means always use the biggest UTXO you have in your wallet. It does grind down largest UTXOs to smaller UTXOs until basically they are not of high enough priority to be spent. And lastly, because of the way that Bitcoin Core estimates fee, by first selecting a bunch of inputs and then estimating how much that would cost to spend, if it can't spend a transaction at that point, then it will start that process over again with the previously estimated fee. If it picked 10 inputs and then realized it didn't have enough to pay for it, and then again to select for 2, then it will still pay for 10. This makes Bitcoin Core coin selection a little bit more expensive than the other approaches.
+
+Also, for all the effort that we put into making direct approaches for Bitcoin Core, we could only do 63 of 11860 payments as direct matches. It seems much more likely to make a change output and think about what size we want, and reduce complexity of coin selection.
+
+Here's one more figure to look at. This is the surviving UTXOs in each of the wallets after the simulation has finished. What you can see here is that the FIFO approach has all kinds of UTXO sizes because it just spends them as it goes. On mycelium where it prunes the smallest outputs, it has almost 400 of these 1 satoshi outputs even after the end of 36,000 payments. The most prevalent UTXO set size lower than 10,000 satoshi, so it has a bunch of really small UTXOs left over. The third one here is the bitcoinj highest priority approach, and also as you can see it has grinded down all the big UTXOs to small UTXOs. And in Bitcoin Core, it has only ... UTXOs left, and they are all pretty big size.
+
+# Simulation results with other strategies
+
+<table>
+<tr><td>Policy</td><td>UTXO</td><td>change (mBTC)</td><td>total cost (mBTC)</td><td>inputs</td></tr>
+<tr><td>Average target</td><td>137.89</td><td>207.39</td><td>767.08</td><td>3.04</td></tr>
+<tr><td>Wider match donation</td><td>165.24</td><td>32.95</td><td>829.38</td><td>3.02</td></tr>
+<tr><td>Double target</td><td>225.0</td><td>198.39</td><td>832.41</td><td>3.03</td></tr>
+<tr><td>Single random draw (no MC)</td><td>185.16</td><td>384.43</td><td>629.13</td><td>3.03</td></tr>
+<tr><td>Single random draw (0.01 BTC)</td><td>173.27</td><td>424.15</td><td>628.98</td><td>3.04</td></tr>
+<tr><td>Core</td><td>180.30</td><td>31.75</td><td>819.03</td><td>3.05</td></tr>
+</table>
+
+# Conclusion
+
+I have hopefully shown that we can do a few improvements on coin selection in the future. We will be able to find coin selection simulation framework on github later this month when I am finished writing my thesis which is due in 3 weeks. I will probably notify you on bitcoin-dev mailing list. I am hoping in the future, I don't think it's a hard change, to add in addresses into my coin simulation framework and think more about what privacy implications it has. We can also use it to do multisig addresses and all kinds of stuff later because the size of transactions that I'm simulating are just a few hard-coded or just a few variables in the framework. That's it.
+
+# References
+
+<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2016-September/013131.html>
+
+paper <http://murch.one/wp-content/uploads/2016/09/CoinSelection.pdf>
+
