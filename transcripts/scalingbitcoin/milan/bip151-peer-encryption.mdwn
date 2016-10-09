@@ -2,6 +2,8 @@ BIP151: Peer-to-peer encryption and authentication from the perspective of end-u
 
 Jonas Schnelli
 
+<https://twitter.com/kanzure/status/785046960705339392>
+
 Good morning. Thanks for having me here. I would like to talk about the end-user perspective of p2p authentication. I would like to start with a little example of how difficult it is to be aware of end-user issues that they are facing at the front. Who is using a thin client? An "SPV" wallet on your smartphone? Yeah. Who of you are on iOS? Yeah iOS has a pretty large market share, maybe not in this room. But in general, yes. And who of you are self-compiled and self-installed on iOS? Oh, two guys. Alright. Well, you can self-compile on iOS but you can't self-install unless you're participating in the expensive developer program. There is no proof that you are installing iOS app that reflects a certain git state. There is no link between the binary you download and the source code on github, unless you jailbreak your phone to hash your binaries. You can't hash an iOS application. Private key storage with iphone apps has a questionable trust and security model.
 
 Assume you have a large vaults at home, storing some gold bars. Would you allow unlimited access from the wallet manufacturer at all times? No, of course not. This is what you're doing when you're running an "SPV wallet" on your smartphone. Let's assume breadwallet as an example; assume there are 10,000 breadwallet users. Each of them stores maybe $1,000. This is a $10 million bounty protected only by a single icloud login; we have seen icloud logins attacked for much less value. Yes, apple has code signing. But what's the purpose? You have to be participating in the app developer program. The end users can't verify the signatures. You can always revoke the signature anyway, and upload a updated new-- revoke the key and upload a new application.
@@ -37,6 +39,24 @@ We have a chance to slightly update the message structure of how bitcoin p2p mes
 In bip150 (not bip151), is fingerprinting-free peer authentication. Greg Maxwell came up with a fingerprinting-free authentication. I think this is amazing. It allows you to authenticate a peer without revealing any information about your identity. A hacker cannot be pretending to be the trusted peer and then see who wants to connect. Authchallenge, authreply, authpropose, authchallenge, authreply. I think this protocol is pretty amazing.
 
 Thank you.
+
+# Q&A
+
+Q: AB Core on Android?
+
+A: Yes.
+
+Q: Anti-fingerprinting?
+
+A: The authentication scheme in bip151 assumes we have pre-shared keys. If you have a full node at home, you could scan the QR code with your smartphone and then the two devices are paired. Or maybe you need to put the identity key on your node first. You have to pre-share the keys in advance. And then you can authenticate without revealing your identit key, using a hash, and then the other party tries to use the pre-shared key to see if there is a match. And then producing a signature to prove that they know you, and then the same thing on the opposite side. It's impossible for a man-in-the-middle to steal identity or get information about who wants to connect.
+
+Q: Would you be open to running a contest for developing crypto protocols to get a larger field and get some adversarial engagement towards this?
+
+A: Totally. I think the only thing that drives me is having something that works. I think the standard we're using seems to be okay. But I agree we need more studies on the stuff we're using. But we're not inventing a new crypto system for this.
+
+Q: You mentioned some issues on iOS for hardware wallet. Given that most wallets work for Android, isn't the problem that iOS forces you to whitelist devices in order to connect them? As opposed to specific problems with standards.
+
+A: Yeah I mean the exact problem is that no hardware wallet for iOS, in many directions. We need a standard to decouple keys from the application that wants to sign something, in order to have secure key storage. Otherwise it's going to be a mix. It's going to lead to people not able to use solutions like hardware wallets that sign digital information.
 
 # References
 
