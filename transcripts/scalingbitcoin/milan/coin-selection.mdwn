@@ -2,6 +2,8 @@ Simulation-based evaluation of coin selection strategies
 
 Mark Erhardt (murch)
 
+<https://twitter.com/kanzure/status/785061222316113920>
+
 # Introduction
 
 Thank you. ((applause))
@@ -95,6 +97,20 @@ Here's one more figure to look at. This is the surviving UTXOs in each of the wa
 # Conclusion
 
 I have hopefully shown that we can do a few improvements on coin selection in the future. We will be able to find coin selection simulation framework on github later this month when I am finished writing my thesis which is due in 3 weeks. I will probably notify you on bitcoin-dev mailing list. I am hoping in the future, I don't think it's a hard change, to add in addresses into my coin simulation framework and think more about what privacy implications it has. We can also use it to do multisig addresses and all kinds of stuff later because the size of transactions that I'm simulating are just a few hard-coded or just a few variables in the framework. That's it.
+
+# Q&A
+
+Q: What about grouping by correlation? Trying to reuse them such that you can always reuse-- if they are already correlated such that you don't leak?
+
+A: Linked to the same address? That has been a frequent request and I have not looked at it yet, because I am not modeling addresses yet. But that's definitely something to look at.
+
+Q: Why not pull data from the blockchain?
+
+A: It's easy to crawl blocks and add up transactions. It's hard to model why that would be representative of any use case on the network because you don't know if the payments are from the same person. Here the use case is a gambling website, so lots of small payments and if someone wins it's a larger payout. If I could have more data, I would like to try with different data sets.
+
+Q: An average user of the person on a blockchain is not the same kind as the distribution you see on the chain itself; some users have many transactions. You need something that works for every use case rather than average use case. How do you scale from this-- what happens if you double the amounts, or half the amounts? How does it impact the results?
+
+A: Haven't done that yet. I was thinking of grouping incoming and outgoing payment amounts to have the same ingoing and outgoing amounts. I just wanted to present the one use case that I had real-life data from.
 
 # References
 
