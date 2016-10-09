@@ -2,6 +2,8 @@ Bitcoin covenants: Opportunities and challenges
 
 Emin Gun Sirer
 
+<https://twitter.com/kanzure/status/785071789705728000>
+
 We published this last February at an academic workshop. The work itself has interesting ramifications. My real goal here is to start a conversation and then do a follow-up blog post where we collate feedback from the community. We would like to add this to Bitcoin Core. Covenants.
 
 This all started from a very basic and simple observation about the current status of our computing infrastructure. The observation is that the state of our computing infrastructure is no where near safe enough to store assets like bitcoin. The default low energy state of an exchange is that it's empty. We have seen this with MtGox, we've seen it with Bitfinex, etc. Some of them are insider attacks, sure. Insiders are able to get away with it because their attacks are indistinguishable from other attacks. Teamspeak users get hacked since forever.
@@ -52,14 +54,74 @@ Elements Alpha implemented covenants and deployed it just two days ago. At least
 
 OP\_CHECKOUTPUTVERIFY will make thefts a thing of the past. It will take away the incentive to think that you can get away with a big heist. Your daily hot wallets might be at risk, but the actual stuff that we keep in cold storage in all sorts of protocols-- that would remain revertible back to us and that's a good feature. It also opens up new use cases. I would love to hear from the community about their concerns and feedback.
 
+# Q&A
 
+Q: Your description of color coins is wrong. You don't allocate satoshis to assets. You have your transaction commit to a distribution layer above it.
 
+A: Didn't realize that.
+
+Q: Right, just obsolete. So I don't think you need covenants for the first application. You could use nlocktime.
+
+A: There are multiple ways of implementing vaults?
+
+Q: Transactions work fine until the covenant period is over. So you might as well sign the nlocktime and show the transaction goes forward.
+
+A: I would like to see an example of your counterexample.
+
+Q: Sure.
+
+A: I would appreciate that.
+
+Q: Hacker... two keys here. Can your hacker show your coins...?
+
+A: Always a problem. This is not a universal solution for all ills. It just makes it a little better.
+
+Q: What is the period to destroy the coins?
+
+A: You set that. You can set that to be multiple months or as short as you want. It's entirely up to you.
+
+Q: In the case of destroying coins, is it also possible to make it so that it's spending to fee, so that the hacker can collude with a miner to mine that?
+
+A: The way we have it right now... and there are other ways to implement this, we are simply keeping the miner from spending it. We keep the hacker from spending it. You could imagine it doing it the way you mention. The hacker would have to join forces with miners; I think the miners wouldn't go with that.
+
+Q: My concern about covenants on fungibility is that it gets in the way of future improvements like one-way aggregate signatures or mimblewimble where you do non-interactive coinjoin. But if you have covenants you can tell the inputs and outputs are linked because the person who authored it cared about the content.
+
+A: True, but you need ... covenants attached for coinjoin.
+
+Q: Right, but you wouldn't be gaining from non-interactive coinjoin. So would you be able to mask which outputs are being linked?
+
+A: In the case of coinjoin with covenants, I just imagine it's, the two things don't mix. They are at odds with each other. One is trying to hide the origin of coins and the other is tracking. So unless all of the coins into the coinjoin have the same covenant, then the outputs shouldn't have any covenants as well; that's a way to make sure everything is uniform you're not adding or subtracting.
+
+Q: Can you compare this to multisig security? If the hacker gets both keys, they can steal this.
+
+A: You burn the coins if they get both keys.
+
+Q: What happens if someone spends a coin before you can revoke or destroy them?
+
+A: They cannot spend during the duration of the unvaulting period. You specify this period.
+
+Q: Related to the coinjoin topic, would merklized abstract syntax trees... help with that if you reveal the path with the covenant? The script would actually be... and you reveal the path you spend. So maybe it's fine to do coinjoins if you don't get the money stolen?
+
+A: I didn't understand the question.
+
+Q: Are you familiar with merklized abstract syntax trees? MAST.
+
+A: No.
+
+Q: Okay well we can discuss later.
+
+A: Okay thank you.
+
+Q: Can you use the opcode to make script payments?
+
+A: What?
+
+Q: like 50% from one to another?
+
+A: I don't follow the use case. It's programmatic restriction on what payments can go to which outputs. That's the use case.
 
 paper <http://fc16.ifca.ai/bitcoin/papers/MES16.pdf>
 
 coin covenants <https://bitcointalk.org/index.php?topic=278122.0>
 
 <https://en.bitcoin.it/wiki/User:Gmaxwell/covenant_busting>
-
-
-
