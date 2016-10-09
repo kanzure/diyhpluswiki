@@ -2,6 +2,8 @@ Fast difficulty adjustment using a low-pass finite impulse response filter
 
 Mark Friedenbach (maaku)
 
+<https://twitter.com/kanzure/status/785107422323085312>
+
 # Introductions
 
 I work at Blockstream Labs. This work is based on work I did in 2013 which is now only being presented. If there are any control engineers, I would encourage you. I am going to cover some mistakes that have been covered in the industry on alternative networks and proposals.
@@ -40,5 +42,50 @@ As I said at the beginning, it would be very interesting to apply this technolog
 
 # Q&A
 
+Q: Where is this used?
+
+A: Freicoin. Other systems like zcash and ethereum both do immediate response to last block, so based on time between the last block and next block, they do a non-linear adjustment which is a weak approximation of this, it's a bit more noisy. They fall in the left hand side of the curve from my slides.
+
+Q: ... selfish mining ...
+
+A: Because you are capturing more subsidy in that case?
+
+Q: You increase your relative hashrate relative oto ther miners, if the difficulty was constant then relative hashrate doesn't matter... if you adjust it immediately, then this is all you care about. You probably care about something in between.
+
+A: That's partially true. The largest aspect of that is simply the, it's not the time traveler attack, the fact that the bitcoin adjustment is longer, considering you're shorter than the length of the adjustment cycle.
+
+Q: You have to think about the ...
+
+A: One of the issues is that if you allow large variation in your difficulty then you can temporarily allow a much shorter interblock time by unfairly adjusting downward. This will be compensated for later with another adjustment. During that time period you can use selfish mining properties and use that advantage at the time. I believe the effect is quite small though.
+
+Q: In your plots you have a minimum of around 30 or 50. What is that parameter causing that?
+
+A: Not sure. This is an experimental design. I could explain why you have noise to the left and noise to the right. I think this is just when two noises are a minimum. On the right-hand side is when you're adjusting too infrequently. So therefore you have a large error rate because of a long period of time before your adjustment. On the left hand side you have a lot of variance due to high frequency adjustments. So your expectation is that you settle around the right hashrate, but you oscillate so much that you don't have consistent difficulty.
+
+Q: Critical oscillators... shock absorbers... if you know the oscillation or in this case if you have the sliding window or block time, you could set the maximum rate that someone can adjust the hashrate. So this could be a critically dampened oscillate. A low-pass filter has an additional parameter.
+
+A: Yes, thank you. I skipped over that. The linear filter is a first-order correction. In the literature, the optimal one is a second-order critically dampened oscillator.
+
+Q: If some of the miners go down, then the other miners can adjust the frequency to generate more highpower and provide a lot of compensation. For some miners they can double or triple the hashrate so it will be bigger power consumption but just believe us. If one part or fifty percent of miners go down, the others can economically push up to generate more profit, it's in their interest. There's a lot of hashrate located in China. So, no, this is not for sure. There are a lot of pools but there are a lot of customers overseas. Jihan from Bitmain can confirm they have a center in US and they can adjust location. If something happens, users can switch hashrate for another pool. So it's more flexible. But still this is great adjustments so any improvements can be great, but no promise.
+
+A: Thank you for the corrections.
+
+Q: One of the other oscillations is halvenings and different altcoins have approaches to that as well. What about the intersection of this oscillation and block rewards changing as well?
+
+A: Unfortunately in both halvenings, they have been preceded in a ramp up in price. Some people think it's casually related, but I think it's coincidence. We don't have good historical data because the market price went up and hashrate then increased as well. If it halved and it became unprofitable, the others would be able to make up the difference, and it would only go on for a bit. It's only the catastrophic scenarios that I am concerned about, like on the range of 5x to 10x or more.
+
+Q: What about sidechains?
+
+A: Similar story but more exaggerated. Bitcoin is the gold standard in terms of decentralization-- with a merge-mined sidechain, it is likely to be less decentralized than bitcoin itself.
+
+Q: Correction from Jihan... they have 42% from onsight in China.
+
+A: This is Bitmain specifically?
+
+Q: Yeah.
+
+A: I did not mean anyone in particular, by the way. Substitute any other country. There's a possibility that if the electricity prices in the Pacific Northwest... in which case we would have the same problem in the US if the US had internet connection issues.
+
+Thank you very much.
 
 
