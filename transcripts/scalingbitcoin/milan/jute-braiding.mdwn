@@ -1,0 +1,98 @@
+Jute: New braiding techniques to achieve significant scaling gains
+
+David Vorick (taek)
+
+# Introduction
+
+Okay, hello. My name is David Vorick. I have been with bitcoin since 2011. I have been a full-time blockchain engineer since about 2014. I run an altcoin for decentralized cloud storage called Sia. Today I am going to be talking about braiding which basically means we take the straight line blockchain of bitcoin and we allow blocks to have multiple parents. We get consensus by either picking a ste of blocks to choose and deleting the rest, or apply a story to the blocks we have. Inclusive means that you take blocks into your chain into your final post-processed chain that have conflicts. I am going to present something that has this inclusiveness property.
+
+# Get rid of selfish mining
+
+The biggest reason to do this is to get rid of self-ish mining and get rid of orphans. The latency between the time that a miner gets a block and everybody else gets about the block, everybody else is mining on an old block. This lays the foundation for selfish mining. Large miners can get advantages from this latency and basically you get more profitable per hashrate as you get more hashrate. This is a centralization pressure and we would like to get rid of it. We also have thorughput issues where things are idle for 10 minutes at a time, then a period of high activity and then 10 more minutes of idle time. We would like to bring down the block time so that we an get more optimal throughput. Sometimes in bitcoin confirmations can take up to 30 minutes. if we can bring down the block time, we can have more consistent confirmation rates. Finally we get more miner payouts if we bring down the block time, we get more payouts and that's good for solo mining. Right now if you want to solo mine you need $100's of thousands of dollars if not more. If there are 400,000 payouts per month then you only need thousands of dollars ofr solo mining which is better for decentralizations.
+
+The relay network and fiber and weak blocks and p2pool which you know take care of some of the throughput stuff but a lot of the solutions don't eliminate a lot of hte problems entirely or they don't stop miners from creating intentionally malicious blocks. So they fail during adversarial solutions. I don't think we really have a good solution to selfish mining. I'm aiming to fix that entirely.
+
+# Previous work
+
+There's existing braid work from Bob McElrath which he presented in Hong Kong. And then there's also GHOST. What I'm doing is pretty different from what has been presented so far. I've been trying to make it easy to understand as possible. I want to make it provable that 51% attacks that you can't reorganize history without 51% of history.
+
+# Performance of Jute
+
+Some context as I talk through things, the block time is about 6 seconds ,block size is 60 kilobytes, that's just for context when I'm throwing numbers out. So with block time of 6 seconds, you get a much wider graph on your blockchain in dagchain. At bitcoin if you freeze the network at a random time, on average every miner will have seen every block. When you have a 6 second block time and you freeze the network, there might be a block or two or even 6 blocks thta have not been seen by everyone. When miners are seeing each other's blocks, the graphing software I was using would just not draw the graph for me. You get this crazy mess where some blocks are including each other and one paper called it a "tangle" which I think is pretty fitting. You have confirmations going in every random direction.
+
+I want to step back and talk about security for a little bit and thinks that you're going to need to do if you want to be a credible replacement to bitcoin. History is immutable. If something has 1000 or 2000 confirmations hten I don't think anyone is going to bet money that the history is going to be changed. This is like the one thing that makes bitcoin worth looking at. But bitcoin also has this 51% barrier where anyone who is not more powerful than half the network, then they can't change history or do malice. Most byzantine protocols can only get to about 1/3rd. So you want to keep the 51% bar.
+
+"SPV" is something our ecosystem has got really reliant on. I wanted to throw away "SPV" but I realized htis was too much to do. You have ot support "SPV". Two things that bitcoin doesn't do well is that as your hashrate grows, you should not be making more money per hashrate. As your networking gets better, you should also not really, it should not be highly profitable for you to have a much more expensive network.
+
+So some things that you have to watch out for are denial of service attacks and if you start messing with the shape of the big graph you have to have transaction fee considerations, because people can play around with transaction fees in weird ways. Also, double spend attempts.
+
+To spend a little more time on double spend attempts-- when you include all the blocks, the double spends are free. In bitcoin, it's not that hard for a 25% miner to reorganize 6 confirmations of history. If they are trying, it's something like 5-10% chance that they would be able to do it, which is really high. If they hit that 90% chance that they fail, then they are going to lose however many blocks they have mined, and that's a lot of money to lose. In an inclusive blockchain, you don't lose that income, and it's not as scary as miners to attempt that, and the success rate is really high. So you have to be aware of this if you're making an inclusive blockchain protocol.
+
+Like I said earlier, we want to make it try to make it so that if you don't have that much hashrate, or you're in a remote area, or you're a high latency miner, then your profitability should match someone who is pouring millions of dollars into a data center. We include blocks that are going to be conflicting blocks. Instead of throwing out those blocks, we pick invalid transactions and throw them out or consider them invalid.
+
+Okay so now for the more fun part. Consensus in jute is by looking for a main chain in your graph. It looks at history you're confirming and then confirms the main chain only. Then you derive a total sorting. You have edges from blocks... here we have a very small chain, we have block 1 and block 2. And they are each confirming the genesis block. They confirm their own edge to them. There's only one chain. The edge has 1 vote. When 3 merges it, they have to pick between them somehow, and we will get to that somehow. 3 will confirm just one side of that. He will cast his vote to that and to himself. So you get these edges in the graph that start to get votes. When the other blocks follow this algorithm, we see that initially the 1 and 2 were tied, and then over here we have the edge from one to zero has five votes, and the edge from 2 to 0 has one, and to change the direction of hte main chain you have to put confirmations on block 2, and the honest half of the network is increasing the confirmatons on this one main chain only. So this is how we get the 50% assurance.
+
+# Tie-breaks
+
+... first we check to see if they have the same number of votes on an edge; if one has more ancestors, when they don't we use the hash of the merging block to seed hte random number generator, this can have consequences. It's simple to fix though.
+
+... meanwhile everything stays at 2s and 0s. I wanted to show what happens when if you never have the chain come together at a single point, this edge gets really strong. This graphing algorithm is not reliant on things collapsing together. You can have a perpetually very wide graph and you still get your security.
+
+# Reorgs
+
+Okay, so, I kind of went over this already. If you want to reorg the chain, then you have to pick an edge and then mine blocks off that edge where none of those blocks have any of these blocks in their ancestry and they have to get up to 14 confirmations and then you can move the main chain. But you're fighting the entire network and all the hashrate, so you need 51% hashrate to execute this reorganization.
+
+I'm going to skip the "almost" part. You can read the slides. I don't have enough time.
+
+# Ensuring convergence.
+
+.. if you make the block time too low, you lose this convergence property, it's dependent on one side of the, if some miners are mining on say 3 and some miners are mining on 5, at some point they have to agree on which of those two are more heavy. If you have blocks really slow, you bring block time really low, one side has more confirmations and if you look at the network frozen one side is winning but by the time that the othe rsid knows the other side is winning, they might have more blocks. You can have a centerpoint attacker that distributes hashrate to both sides and keeps them balanced to prevent the network from converging. I would like to bring the block time to lower than 6 seconds, but there's this convergence attack where an attacker can stall consensus probably indefinitely at least commit censorship or whatever. I don't know how to fix this without introducing weird backbendy things that don't seem good.
+
+# Sorting off-main-chain blocks
+
+How do we sort the blocks not on the main chain? We start with no parent should be in our final ordering, no parent should come in front of its child. For each block in the main chain, you basically start with that block, you include all of the ancestors that aren't in the main chain yet. You pick an ordering from the ancestors, you do a mini main chain. So you start with 0, then we go with 2, and that's the next block in the main chain. No ancestors in either of those. Then we go to 4, and we grab 1, and then we look at the chain as it was when 4 was created, and we're going to organize the blocks by edge-weight. And this is really important because we're looking at how 4 saw it, adding things in the future cannot change the ordering of these extra blocks. And so the only way with this algorithm to mutate any of the past history is to modify the main chain and as we've shown it's difficult to modify the main chain once convergence has happened and once enough confirmations have been put in place.
+
+# Source code
+
+I have source code for this.
+
+# Problems
+
+Transaction fees work very differently. Two blocks might mine the same transactions at the same time. Miners are losing transaction fees in this case. So you have to take a probabilistic approach, basically the whole transaction fee landscape is completely different from in bitcoin. Also, if you are fully inclusive and allow blocks infinitely block, you might have miners that hold blocks that don't announce them for a month or two, and then all at once it announces the blocks and it's a big congestion the network has to do. If there are no orphan blocks, then there are easier double spend attempts. In bitcoin it's pretty expensive so nobdy tries.
+
+# Transactio fee stuff
+
+Gonna skip this for now.
+
+# Addressing DoS bottlenecks
+
+For Dos attacks hwat you get is you get a group that can mine two or three months, drop all the blocks at once. If you're more than 200 blocks behind, then we wont count you as in the chain. So this actually opens up a window to cause oprhans. If I'm a malicious miner and I can get my 200 blocks in front of the rest of the networks' 200 blocks, probabilistically, then I can cause orphans on the rest of the network. We want to make sure that the amount of damage by an attacker lucky enough to get 200 confirmations deep, which is like 1 in 10,000 chance with 400,000 blocks per month a high hashrate miner can do this frequently. So we allow the headers to be viewed by the graph. We disregard work from blocks older than 200 blocks behind; but if there are blocks that depend on the blocks you have invalidated, then you allow those blocks to be included. So if an attacker manages to get 200 or 250 blocks ahead and gets to displace 200 blocks instead of the honest block losing 250 blocks they only lose 50 blocks. This is not ideal, but compared to selfish mining in bitcoin, the amount of profit that even a 45% hashrate attacker can gain by pushing orphans through the DoS prevention mechanism is really tiny. It's sort of an acceptable change.
+
+# Double spends
+
+This is the really important one. Double spending out to 6 confirmations if you have 40% hashrate is really easy because there's nothing stopping you. It's a big concern. I'll also observe that trying to brutefore a private key is really easy, each attempt does not take much energy, you can do hundreds or thousands per second. If it's an 8-bit private key, it's trivial to break. In bitcoin we use much larger keys. Each attempt is trivial, but getting a real bitcoin private key is completely impractical. In jute, we do the same thing. Instead of waiting for 6 confirmations, we wait for 50 or 200 confirmations. Since the block time is 6 seconds, it's not so bad.
+
+<https://github.com/Taek42/jute>
+
+I wrote a simulator for double spending, like attacker hashrate parameters and network latency parameters. The results are posted in the repo. Basically it says that if your threat model sassumes 33% hashrate attacker, then wait for 50 confirmations (5 minutes). If your threat model is 45% hashrate attacker, wait for 500 confirmations (50 minutes). This gets much worse as you approach 50% hashrate. Once you're above 50%, then no amount of confirmations can keep you safe from a 51% attacker.
+
+# "SPV"
+
+We have blocks commit to 200 blocks back (maximum gap height). What this means is that when you're doing SPV the SPV nodes can draw the graph, it's really easy to draw the graph and not download or verify transactions. They know tha tout of the 200 commitments that the block made which ones are invalid. If there is a reorg that went 80 blocks deep, then they know to ignore those 80 commitments and take the commitments from deeper back, and they wait for more confirmations so that the future blocks are committing to the correct transaction side. You can sort of recover "SPV" and give "SPV" nodes some flexibility about accepting transactions at 100 or 200 confirmations. That's up to the implementation.
+
+# Low block time rule
+
+This is only relevant if you bring the block time very low, which you can't do due to convergence issue. It's not sufficient to solve the problem.
+
+# Reiteration of weaknesses
+
+The weaknesses of this... bitcoin has really strong counter-incentives against miners attempting double spends. You end up throwing away blocks completely. Because you accept blocks very deep, even at 200 you can have a miner with 33% hashrate can mine 66 blocks in that window and dump it all at once. So you have a network that can be subjected to trivial flooding. The attackers can stall consensus even at 6 seconds they have a limited ability to do it, but lower than 6 seconds they have much greater ability to stall consensus. Finally, this is completely new territory, I'm sure there's a lot that hasn't been covered. You wouldn't throw this into bitcoin tomorrow. There's a lot of unknowns. The advantages are that we get rid of selfish mining, we get rid of orphan blocks, we make mining fair regardless of your latency or hashrate. Low-latency miners still kinda have an advantage due to being able to see which transactions have already been mined, but this is less significant than the selfish mining situation in bitcoin. The reduced emphasis on latency means that network optimizations can focus on throughput. The larger number of blocks per month helps solo mining. A safe number of confirmations assuming a 40% hashrate attacker means that confirmations happen between 5 and 15 minutes, and the variance on that is very small. So I believe that's the end, with 10 seconds to go.
+
+# References
+
+jute <https://gist.github.com/Taek42/3e4f029261b5719e4587fe4972fb904a>
+
+weak blocks <http://lists.linuxfoundation.org/pipermail/bitcoin-dev/2015-November/011707.html>
+
+<http://blog.sia.tech/2016/05/14/towards-a-sub-second-block-size/>
+
