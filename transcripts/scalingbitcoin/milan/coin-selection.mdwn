@@ -112,6 +112,14 @@ Q: An average user of the person on a blockchain is not the same kind as the dis
 
 A: Haven't done that yet. I was thinking of grouping incoming and outgoing payment amounts to have the same ingoing and outgoing amounts. I just wanted to present the one use case that I had real-life data from.
 
+Q: Do you have timing data?
+
+A: Unfortunately, no. Just the values.
+
+Q: In your summaries, it seemed there was a bad tradeoff between being efficient with the UTXO and minimizing the fee in the sense that the fee strategies tend to follow the UTXO, and compact UTXO strategies tend to do the reverse. Have you had the chance to model what would happen if the data set you had was re-done with segwit, would there be a strategy for minimal fees that also minimized UTXO use?
+
+A: Pieter suggested that a few weeks ago. I ran the numbers with P2WPKH for witness input and output scripts. It did not change much. It's still slightly in favor of outputs than inputs. So for these strategies the cost is roughly half of what was shown, but the UTXO footprint and all that seems mostly the same.
+
 # References
 
 <https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2016-September/013131.html>
