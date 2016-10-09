@@ -2,6 +2,8 @@ Jute: New braiding techniques to achieve significant scaling gains
 
 David Vorick (taek)
 
+<https://twitter.com/kanzure/status/785116246257856512>
+
 # Introduction
 
 Okay, hello. My name is David Vorick. I have been with bitcoin since 2011. I have been a full-time blockchain engineer since about 2014. I run an altcoin for decentralized cloud storage called Sia. Today I am going to be talking about braiding which basically means we take the straight line blockchain of bitcoin and we allow blocks to have multiple parents. We get consensus by either picking a ste of blocks to choose and deleting the rest, or apply a story to the blocks we have. Inclusive means that you take blocks into your chain into your final post-processed chain that have conflicts. I am going to present something that has this inclusiveness property.
@@ -87,6 +89,12 @@ This is only relevant if you bring the block time very low, which you can't do d
 # Reiteration of weaknesses
 
 The weaknesses of this... bitcoin has really strong counter-incentives against miners attempting double spends. You end up throwing away blocks completely. Because you accept blocks very deep, even at 200 you can have a miner with 33% hashrate can mine 66 blocks in that window and dump it all at once. So you have a network that can be subjected to trivial flooding. The attackers can stall consensus even at 6 seconds they have a limited ability to do it, but lower than 6 seconds they have much greater ability to stall consensus. Finally, this is completely new territory, I'm sure there's a lot that hasn't been covered. You wouldn't throw this into bitcoin tomorrow. There's a lot of unknowns. The advantages are that we get rid of selfish mining, we get rid of orphan blocks, we make mining fair regardless of your latency or hashrate. Low-latency miners still kinda have an advantage due to being able to see which transactions have already been mined, but this is less significant than the selfish mining situation in bitcoin. The reduced emphasis on latency means that network optimizations can focus on throughput. The larger number of blocks per month helps solo mining. A safe number of confirmations assuming a 40% hashrate attacker means that confirmations happen between 5 and 15 minutes, and the variance on that is very small. So I believe that's the end, with 10 seconds to go.
+
+# Q&A
+
+Q:  ...
+
+A: ... miners can randomly select transactions and not have conflicts. Your transaction pool isn't infinitely deep, though.
 
 # References
 
