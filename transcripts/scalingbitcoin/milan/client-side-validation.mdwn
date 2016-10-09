@@ -2,6 +2,8 @@ Progress on scaling via client-side validation
 
 Peter Todd
 
+<https://twitter.com/kanzure/status/785121442602029056>
+
 Let's start with what isn't client-side validation. I am going to call this the miner-side approach. Here's some smart contract code. In this example, it's Chronos which is a timestamping contract. What you have here is a contract that stores in ethereum state consensus some hashes as they are received, they are timestamped. And ultimately at some point in the future you could go and ask the ethereum state machine, you know, did you go and get this hash? And you know, this is typical of a lot of these applications. It raises a lot of questions about who has the data. Do we need everyone to have the data?
 
 In comparison, client-side validation of data is actually the mainstream thing that happens. This example is my bank. When you ask what's going on under the hood, well my web browser starts off with a root-of-trust and it receives signatures from a server that I don't trust originally. I check the signatures of course. Then I download the rest of the website. This is pretty typical. There's no shared consensus, it's all done client-side. This is pretty much how most crypto is implemented. Ethereum's "let's put it all into the consensus state approach" is something I think we have done a little bit too much of in the blockchain world.
@@ -28,8 +30,47 @@ Well how much data do you need for a proof of publication system? The amount of 
 
 Of course there's one caveat here, which is that defining protocols is tough. In bitcoin since we have miners attesting to what consensus is, it's easy to tell when the consensus has failed like when one person is using a slightly different version of the protocol than someone else. In a proof-of-publication system, it's not necessarily true that you would notice that. To give an example, consider the not entirely readable ethereum protocol spec in their yellow paper. This is probably the best attempt at specifying consensus.... well when the DAO hack happened, they ended up specifying things with links in a medium.com blog post. Ultimately it needs to be easier to specify protocols so that we can write in a language designed for this for what's a valid transaction. You would probably have 10 different implementations for moving the data around. But we need to agree on what's valid and what isn't. I would not be surprised if apologies to Blockstack that if they run into these problems too. I know Counterparty and Mastercoin have had these problems. It's going to be a tough problem to solve. Thank you. Questions?
 
+# Q&A
 
+Q: Miners let anything into a block. What about transaction fees?
 
+A: In practice you would give someone a proof saying here's a transaction, it's not valid yet, but if you put it into a block it would be valid and you can skim off the top of the transaction.
+
+Q: It seems confusing to me-- right now we have this scarce resource of block size. In your case it would be unlimited because it wouldn't matter. So I'm wondering if that's a correct understanding. Is it totally uncapped? Spam response is on the sender of the coin?
+
+A: I didn't specify in this talk what the proof-of-publication layer would look like. I've done some work in my treechains vision I guess it wasn't a full proposal. There are tradeoffs here. My suspicion is that this is a fundamental tradeoff. Priority would be paid for by fees in that kind of system. Equally I could imagine where instead of one chain, we have ten chains that are equal, and somewhat loosely coupled. And then we have a much bigger block size but the miners have to go and process less data. I think there's room to explore implementation details here.
+
+Q: If you shard the blockchain, then how can I pay from one of these shards to another shard? Does this work? Are they pegged?
+
+A: It does work. It's because when I give you money, I'm proving you the validity of it, across different shards. For example, if I start out in the red shard, and I'm proving to you that the coin is not spent for some part of history and that when it was spent it was committed to a different place. For that next part of history, it would be the same type of proof for that other shard. Even if someone is mining one particular shard doesn't have the full history, they are just proving the history was published and it cannot be rewritten. I can still prove that data to you by giving it to you as a client. That's the key difference there.
+
+Q: You're entangling randomness over time. You have a complex system where everything is being intertangled by these proofs such that you can't reproduce those without that time?
+
+A: I'm not sure I would say it like that. I think the idea about reproductions is interesting. In these systems, very little of the data needs to be public. If you have a transaction and the definition of a valid spend is that you publish the signature for some hash, nobody else needs to know what the signature means. You can conceive of a system where signatures go into a blockchain and they are encrypted. So when I prove to you that I have not spent the utxo already, I give you a decryption key, and you scan through it and test-decrypt all data, and then when the actual spend happens, you decrypt it, check the signature, and you're done. Everybody else doens't know what's going on. This is similar to Adam Back's committed transactions. In Adam's transactions, it's a fungibility issue where yes it will eventually get revealed.
+
+Q: When you mention DEX, do you have a more expanded explanation of that?
+
+A: DEX is also a drug. You could probably buy it on Silk Road. If you look at Christopher Allen's work, it's probably <http://weboftrust.info/> to find DEX. I can't point you to fully running source code.
+
+Q: In this system, would the shards be running the same protocol?
+
+A: Not a problem. But also not a part of this talk.
+
+Q: For linearization of the proof, you need a public random source. So you want to take that from blocks in the future?
+
+A: That's a tricky engineering question. If you look at the paper I mentioned, essentially what it's doing is finding how expensive it is to influence the result of that random beacon. And if you can... suppose you had full ability to influence that. You could make money out of thin air. So you need to tightly put bounds on how much mining power it would take to throw away blocks that would otherwise contribute to value, in comparison to influencing the value. A simple way to understand this is to think of the blocks being used as input to a random block and you can put bounds on how much you can move the final values. But this is a research question.
+
+Q: You can influence the randomness at a certain cost. And if you need to flip 1 bit to make a valid proof into an invalid proof then this might....
+
+A: With the random walk suggestion, you would need many blocks in a row to make an invalid proof into a valid proof. Or you could have this so that you-- mining is what lets you create coins out of thin air. You institutionalize the fraud.
+
+Q: Even before I spend my coin, I could test my proof goes through with that randomness and depending on that I either spend it or not spend it. Or maybe I send it to my self, and then spend it in the next iteration because the randomness is different?
+
+A: This is similar to fiat-shamir transform where you bound how much you can influence this simply because hash functions act like pseudorandom number generator. It holds promise.
+
+Q: Is it an accurate or oversimplification-- value hashcash.. present proof that I possess a fraction of htis hashcash, and use a proof-of-publication mechanism?
+
+A: I would agree with nearly all of that. I didn't mention what would lead to the creation. But chances are it would be hashcash by making every block worth so much. There are ways to do this like in treechains for example. You could use this for a centrally issued token for example with some initial issuance.
 
 # References
 
