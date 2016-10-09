@@ -4,6 +4,8 @@ Peter Todd
 
 <https://twitter.com/kanzure/status/785121442602029056>
 
+<http://diyhpl.us/wiki/transcripts/scalingbitcoin/milan/breaking-the-chain/>
+
 Let's start with what isn't client-side validation. I am going to call this the miner-side approach. Here's some smart contract code. In this example, it's Chronos which is a timestamping contract. What you have here is a contract that stores in ethereum state consensus some hashes as they are received, they are timestamped. And ultimately at some point in the future you could go and ask the ethereum state machine, you know, did you go and get this hash? And you know, this is typical of a lot of these applications. It raises a lot of questions about who has the data. Do we need everyone to have the data?
 
 In comparison, client-side validation of data is actually the mainstream thing that happens. This example is my bank. When you ask what's going on under the hood, well my web browser starts off with a root-of-trust and it receives signatures from a server that I don't trust originally. I check the signatures of course. Then I download the rest of the website. This is pretty typical. There's no shared consensus, it's all done client-side. This is pretty much how most crypto is implemented. Ethereum's "let's put it all into the consensus state approach" is something I think we have done a little bit too much of in the blockchain world.
