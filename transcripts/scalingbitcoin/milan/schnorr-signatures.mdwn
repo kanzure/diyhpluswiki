@@ -1,0 +1,76 @@
+Elliptic curve Schnorr-based signatures in Bitcoin
+
+Pieter Wuille (sipa)
+
+<http://pieterwuillefacts.com/>
+
+I don't consider myself to be a cryptographer. Most of the work I will be talking about is mostly the result of talking with a lot of smart people. These are things we have been talking about for a long time. Many issues have come up, and I'm glad that it has taken a while. This is the first time I have seen my slides, my screen was messed up when I spilled coffee and all the colors were messed up - it was really interesting but I don't understand it.
+
+Schnorr signatures for Bitcoin, I will first talk about Schnorr signatures and then about bitcoin.
+
+# Schnorr signatures
+
+They are a cryptographic system. That's the formula. I don't think I will discuss the details here. I will first talk about history of how we got to the situation we are today with ECDSA in bitcoin and then talk about the advantages that Schnorr signatures could and would have, and how to standardize that, and then go through applications that they could have and then show that the problem is harder than swapping one for the other.
+
+So history... Schnorr signatures were originally proposed in 1988 by Schnorr who patented his invention. The nice thing about Schnorr signatures is that they are remarkably simple. They are easier than ECDSA, even. They work in any group where the discrete logarithm is hard. At the time they were proposed for multipliation of modular groups. However, in 1993, a standard for signatures based on this type of cryptography was standardized, however they didn't use the Schnorr system presumably because it was patented. Instead, DSA was standardized, presumably to avoid some of the patents. Schnorr claimed for a long time that DSA infringed on his patents.
+
+In 2005, people built on top of DSA rather than Schnorr signatures. They could equally be applied to elliptic curves. Bitcoin in 2008 used ECDSA because that was the only standardized elliptic curve. In 2011, Ed25519 was standardized by djb which is essentially a very close group. Schnorr signatures are not an established standard. ECDSA is documented in ways that exactly specify all the math that have to happen. How to serialize the signatures, how to serialize the public keys and what each bit exactly means. This is not the case for Schnorr, which is more of a general idea for how to build a system. Well what I am going to try to do is convince you that we need a Schnorr signature standard.
+
+Under standard assumptions, like the random oracle model and the assumption that the discrete logarithm problem is hard, ECDSA is secure. Schnorr is provably non-malleable. With low-s policy and segwit, this prevents known malleability of ECDSA but there's no proof of no other malleability in ECDSA, but this is not an issue in Schnorr signatures. You can verify in batches for Schnorr signatures at high speed in each of them individually. This is exactly what we want for bitcoin blocks because they are essentially big batches of signatures to validate. Also, in Schnorr, you can have native k-of-k multisignatures, you can get a bunch of keys together and have a single signature that proves that all of them sum.
+
+# Applications of Schnorr signatures
+
+Can we take Schnorr as a drop-in replacement for ECDSA in bitcoin? And can we apply it to multisig transactions? And then I will talk about signature aggregation. My goal here is to come up with a single standard that fits all of the applications so that we don't have to worry about what can be used where and when.
+
+So first, drop-in replacement question. The security proof of Schnorr signatures says that they are existentially unforgeable under the assumptions I mentioned before. What this means is that there is a fixed chosen public key in advance that it is impossible to create a message for that key for any message even those that an attacker can choose. Turns out this is not precisely what we want. It doesn't say anything about keys that you haven't chosen in advance. If you take Schnorr sigantures and apply it to an elliptic curve group, it has a really annoying interaction-- if you know a master public key and you see any signature below it, you can transmute that signature into a valid key for any other key under that master key. This is not necessarily a problem under standard assumptions but what I'm trying to tell you is that we should really test our assumptions. This nice proof of existentially unforgeable is nice, but we need to test whether that's the only thing we want.
+
+Thankfully there is a known solution for this, it's a recommendation that inside Schnorr signatures there is a hash function in the formula, you have the public key under the hash. Or in other words, the message you are signing is not just the message, but it's the concatenation of the public key and the message and the problem disappears. The problem with this is that this allows naieve key recovery. If I give you a signature and a message, you could have derived the public key that would have signed this. We don't actually need that property.
+
+Multisigning is the big advantage for Schnorr and the whole reason we want this. A group of people can jointly create a signature that is valid for the sum of their keys. In the slide here, you see U1 through U3 which are users and how this mechanism works is that there is a two-round interaction scheme where they each pick nonces, they communicate to each other and add them together to get an overall r value which everyone knows, and then signs using this nonce with their own key getting three signatures, then you combine all the s values into the final s value which is a signature valid for the sum of their public keys. This is nice for k-of-k multisig because now I can say you guys need to sign off to sign this, we get your public keys, we add them up, we compute an address, and now any money sent you guys need to sign because there's no other way to come up with a valid signature. It goes even further, I'm not going to go into too much detail here-- I did a presentation about a year ago about this -- where even if you don't have k-of-k situation but any other policy about what combination of policy of keys can sign, well you just need a merkle tree and you build a tree where every leaf in the tree is a combination of the keys that can sign, and the merkle root is your address, and when signing you give the root and the signatures on the leafs and so on, and this has in practical cases it's pretty much constant time for verification.
+
+# Cancelation
+
+Unfortunately there is a big problem with this. Again this is challenging our assumptions. As I told you, you can create a signature valid for the sum of your keys. So you tell everyone your key Q1, but your actual key is Q2. You don't say your key is Q2. You say your key is Q2 - Q1. He subtracts the other guy's key from it. So the result is now just his key. This would mean that he could sign for both of them while everyone is assuming that we have created an address that is multisig that actually requires both of their signatures. This is the cancelation problem. You can choose your keys in such a way that other people's keys get canceled out. Usually this is not a problem because your keys are chosen before this scheme starts. However, in bitcoin we just have addresses, we don't have fixed keys in advance. It would be annoying to go assuming we send signatures on every address to prove that we know it, that would be one solution. So it's relatively annoying. This was for a long time a problem that we didn't know how to solve, until we discovered there is a trick that seems to make things work.
+
+Before signing, everyone multiplies their private key with the hash of their public key. This is not a problem. The result is now that instead of adding the keys together, it's the sum of the keys multiplied by their own hash is the formula down there. It's slightly harder to sign. All the other properties remain. I started to work on the proof that this is secure. I thought I found one. But whta I found a proof for was that the same cancelation property where there is one user and the other cancels out the first one, is actually impossible under this scheme.
+
+In particular, if oyu have an algorithm to figure out what the resulting private key would be after cancelation would be, under a 2 user algorithm, you could use the same algorithm to break Schnorr signatures themselves. So this is hard. People have studied this. Great.
+
+Unfortunately after talking with Adam and Greg and some other people at Blockstream it turned out that we couldn't extend this proof to the more generic case. And then Greg Maxwell came up with an attack which only applies in the case where there are multiple adversaries, multiple people who can each choose hteir keys together to cancel out the first one. There is a really cute algorithm called Wagner's algorithm which would completely break this in no time.
+
+So we need another solution. Instead of just multiply each key with the hash of itself, we multiply it with a hash based on itself and all other keys that are being used. So now an attacker cannot invent any key in the scheme anymore, because any key added to the scheme would change his commitment and break the linearity property that he used to derive. We have a sketch for a proof that this is secure. Unfortunately it would be highly inefficient for key tree signatures. Say you have a key tree with a million combinations, now for each of those million key combinations you need to do elliptic curve ryptography because eah of those would need an individual multiplier and this would kill key trees by several orders of magnitude. You don't need to commit to the exact set of keys, you could commit to the superset instead. To break this scenario, an attacker has to be able to choose their own key and not pick one from a set. We believe this is secure. As I said, I am not a cryptographer. If people are willing to help out on proving this, I would be really grateful.
+
+# Aggregation
+
+This is something that Greg Maxwell came up with-- we can do aggregation over all signatures in a single transaction because this is the case where you're trying to protect against a situation where you don't know what's all the signers are in advance. You reveal them on the fly. You still have all public keys, we're not aggregating the publi keys in this case, we're only aggregating signatures. We would do a single validation with the verifier. This doesn't have hte largest performance advantages. It does have the batch validation speedup, though. Here is a nice graph. The blue line is the current block size that is increasing as we see, the purple line was what if we were able to strip out all signatures which is something that we could do with OWAS or BLS we could go even much further with mimblewimble. But this is shorter-term thinking. The green line is the result if all bitcoin transactions in histor would have used signature aggregation from the start. It's a 20% reduction in block size. That's not ground breaking, but what it does have is it finally gives the financial incentive for coinjoin because now the cost you bare in a coinjoin for the space occupied by signatures is shared by all the participants. The more participants oyu have, it doesn't matter; there will only be a single signature for the whole thing, and the cost for the signature is shared. It's a small advantage, but I think the subtle incentives are important I think.
+
+# Bringing this to Bitcoin
+
+So we could do OP\_SCHNORR. Instead of CHECKSIGVERIFY, with the segwit script versioning, we could just define a new version number and say that CHECKSIGVERIFY now means Schnorr signature verify. Single signature for every key. We could do better and make an alternative, called OP\_CHECKMULTISIG which would have k-of-n, n keys, 1 signature. If we have the above plus a merkle check, or merklized abstract syntax tree (MASTs), we could choose some combinations of keys and provide a single signature. If we go as far as doing signature aggregation, we could do pretty much anything with a single signature for an entire transaction.
+
+# Signature aggregation
+
+Signatures right now contain the actual ECDSA signature with concanated to it the sighash type. We would change the checksig operation to either take a sighash type, or either a sighash type and a signature. So during an execution of a script, we add all the signatures and all the pubkeys and all the messages that get seen during an entire transaction into the stack, and then at the end we do the signature validation operation at the very end. After segwit would be a really easy thing to do this.
+
+# Future work
+
+We need to do academic writeups about this delinearization scheme. I don't know much in the literature about this exact case. Waiting for segwit to rollout because we need the script versioning. And we need to write a BIP.
+
+Thank you.
+
+Acknowledgements: Gregory Maxwell, Adam Back, Andrew Poelstra.
+
+# Q&A
+
+
+
+# References
+
+<a href="https://bitcoincore.org/logs/2016-05-zurich-meeting-notes.html">Schnorr signatures in bitcoin</a> (such as OP\_CHECKSCHNORRCHECKSIG), and tree sigs and poly sigs
+
+<a href="http://diyhpl.us/wiki/transcripts/2016-july-bitcoin-developers-miners-meeting/dan-boneh/">Schnorr signatures and BLS signatures</a>
+
+<a href="https://bitcoinmagazine.com/articles/blockstreams-pieter-wuille-proposes-tree-signatures-improved-flexible-multisig-bitcoin-transactions-1440624296">tree signatures</a> (<a href="https://prezi.com/vsj95ns4ucu3/key-tree-signatures/">slides</a>)
+
+<a href="https://github.com/bitcoin-core/secp256k1">libsecp256k1</a>
+
