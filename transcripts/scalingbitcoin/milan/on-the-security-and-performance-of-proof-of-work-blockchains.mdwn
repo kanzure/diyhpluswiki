@@ -2,6 +2,8 @@ On the security and performance of proof-of-work blockchains
 
 Arthur Gervais
 
+<https://twitter.com/kanzure/status/785066988532068352>
+
 As most of you might know, in bitcoin and blockchains, the information is very important. Every node should receive the blocks in the network. Increase latency and risk network partition. If individual peers do not get the information, they could be victims of selfish mining and so on. Multiple blockchains has been proposed, multiple reparameterizations like litecoin, dogecoin, ethereum and others. One of the key changes they did was the block interval time. Bitcoin has 10 minutes. Litecoin has 2.5 minutes. Dogecoin has 1 minute. One common misunderstanding is that-- ethereum uses the GHOST rule for its blockchain. For the difficulty calculation, it uses the longest chain. From a security perspective, we argue it's exactly the same as bitcoin. These are basically blockchains that we see out there and we would like to understand better how to compare these.
 
 If you have a faster block generation time, you get faster payments. If you get a bigger block size, you have more payments you can push through the blockchain. To give you some numbers, we have the medium block propagation time of about 8.7 seconds. This has been measured for several years now. For litecoin, it's under 1 second slightly, and for ethereum it's about half a second. There's a strong correlation to block size. There's also propagation time.
@@ -40,6 +42,25 @@ What about double spending? We can see that the probability-- profitability of t
 
 Double spending in bitcoin vs ethereum. I gave you some data points at the beginning, but this is the whole picture. On the x-axis, you can see the adversarial mining power. On the other axis, you can see double spending in block reward. On the right y-axis, you can see the double spending in US dollars. So different blockhains have different block rewards in US dollars. So first let's look at the first...not the dotted lines. You can see the blue and the red ones is bitcoin and ethereum with 6 block confirmations. They are pretty similar. Ethereum uses uniform tie breaking, once a node gets two blocks, it will choose uniformly one of them to continue the chain on, rather than the first seen block. So ethereum is slightly less secure here. If we look at the dotted lines which are translated to US dollar value, we can see that for 6 confirmations of ethereum and 6 confirmations of bitcoin, bitcoin is at all times more secure than ethereum. If you look at ethereum the green dotted line at 12 confirmations and bitcoin with 6 confirmations, you can see there's an intersection at about 11-12% adversarial hashrate. So these two blockchains have the same security at that point. At 11% of the hashrate, bitcoin and ethereum at 6 and respectively 12 block confirmations. It depends on the adversary.
 
+We propose a quantitative framework to compare blockchains. We need to quantify these to propose better systems. Selfish mining is not always rational, and double spending is an economically rational strategy.
+
+# Q&A
+
+Q: Just curious if you've tried to do any work extending your analysis to look at blockchain structures like bitcoin-ng or bizcoin. How do these effect those alternative structures?
+
+A: We have not included that. We only looked at reparameterizations. Bitcoin-ng is quite different. We don't capture that.
+
+Q: For selfish-mining, you were assuming a constant difficulty. I thought the idea was that you push the difficulty down and then you get more proportion.
+
+A: As I said, this is a limitation of our work. We don't consider difficulty changes in our security model. In bitcoin, if you were doing a double spending. The difficulty adjusts every few weeks. So if you were double spending, so the double spend will happen within 2 weeks. So constant difficulty is realistic. However, in ethereum, the difficulty is adjusted every block.
+
+Q: Great simulation effort. I made a simulation environment in 2014. TCP packet disordering and delay is difficult.
+
+A: We do not simulate congestion control for TCP. What we do however measure and simulate is the individual bandwidth in different nodes and the difference in upload and download in latency, across the world. So this is captured.
+
+# References
+
+<https://arthurgervais.github.io/Bitcoin-Simulation/index.html>
 
 paper <https://eprint.iacr.org/2016/555.pdf>
 
