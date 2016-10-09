@@ -2,6 +2,8 @@ Elliptic curve Schnorr-based signatures in Bitcoin
 
 Pieter Wuille (sipa)
 
+<https://twitter.com/kanzure/status/785040458103791616>
+
 <http://pieterwuillefacts.com/>
 
 I don't consider myself to be a cryptographer. Most of the work I will be talking about is mostly the result of talking with a lot of smart people. These are things we have been talking about for a long time. Many issues have come up, and I'm glad that it has taken a while. This is the first time I have seen my slides, my screen was messed up when I spilled coffee and all the colors were messed up - it was really interesting but I don't understand it.
@@ -62,7 +64,13 @@ Acknowledgements: Gregory Maxwell, Adam Back, Andrew Poelstra.
 
 # Q&A
 
+Q: Fixed size signatures?
 
+A: Yes. We pick a scheme with 64 bytes period for signature serialization.
+
+Q: Only one type of sighash?
+
+A: It's in fact compatible with multiple types of sighash types, but it's not compatible with multiple signers being online at the same time. There's a solution for this, I didn't want to go into the details. You can say we add an extra byte to define several registers and the group of signers that are online at the same time say sign in this register, and there's maybe a second register for... you lose the benefits of the complete aggregation but it still works.
 
 # References
 
