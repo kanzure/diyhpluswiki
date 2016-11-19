@@ -2,7 +2,7 @@ Various DNA editing and genome editing techniques
 
 * restriction nucleases
 * endonucleases, exonucleases
-* zinc finger nucleases
+* zinc finger nucleases (ZFNs)
 * proof-reading mechanisms
 * polymerase
 * terminal deoxytidyl transferase (TdT)
@@ -10,6 +10,8 @@ Various DNA editing and genome editing techniques
 * zinc-finger recombinase
 * site-specific recombinase
 * CRISPR/CAS9
+* Cpf1
+* fCas9
 * TALENs (transcription activator-like effector nucleases), TALE proteins, 
 * non-homologous end-joining (NHEJ)
 * homologous recombination
@@ -17,6 +19,7 @@ Various DNA editing and genome editing techniques
 * DNA ligase IV, ligases, ligation, stuff...
 * phage integrase (such as λ phage integrase (Int))
 * retroviral integrase
+* <a href="https://en.wikipedia.org/wiki/RecA">recA</a> (a recombinase that doesn't have a specific "core site", but still scans dsDNA for complementarity) (see also Uvsx protein from T4)
 
 * DNA repair pathways, error-prone DNA repair pathways
 * bacterial immune systems
@@ -26,7 +29,34 @@ Various DNA editing and genome editing techniques
 * programmable endonucleases (zinc finger nucleases, TALE nucleases, cas9, fCas9)
 * 
 
+----
+
 "A programmable Cas9-serine recombinase fusion protein that operates on DNA sequences in mammalian cells" <http://evolve.harvard.edu/123-RecCas9.pdf>
+
+"We describe the development of 'recCas9', an RNAprogrammed small serine recombinase that functions in mammalian cells. We fused a catalytically inactive dCas9 to the catalytic domain of Gin recombinase using an optimized fusion architecture. The resulting recCas9 system recombines DNA sites containing a minimal recombinase core site flanked by guide RNA-specified sequences. We show that these recombinases can operate on DNA sites in mammalian cells identical to genomic loci naturally found in the human genome in a manner that is dependent on the guide RNA sequences.
+
+"Tyrosine and serine recombinases such as Cre, Flp and C31 integrase have been widely used to catalyze the recombination of exogenous DNA into model organisms (18,19). However, the use of these enzymes has been limited by their intrinsic, non-programmable DNA sequence specificity. Most small serine recombinases, for example, recognize a specific pseudo-palindromic core DNA sequence of approximately 20 base pairs (20). Recombination using these enzymes at endogenous DNA sequences only occurs at 'pseudo-sites' that resemble the recombinase's natural DNA recognition sequence or at genomic sequences for which the recombinase has been experimentally evolved (19,21–26)."
+
+"To increase the number of sites amenable for targeted recombination in cells, researchers have fused hyperactive variants of small serine recombinases to zinc finger and TALE DNA-binding proteins (27–31). Because the catalytic domain and DNA-binding domain are partially modular in some recombinases, replacement of the natural DNA-binding domains with zinc-finger or TALE repeat arrays can partially retarget these enzymes to specified DNA sequences. Although the guide RNA-programmed Cas9 nuclease has quickly grown in popularity due to its relatively unrestricted DNA binding requirements and its ease of use, a guide RNA-programmed recombinase has not been reported."
+
+"Here, we describe the development of recCas9, a guide RNA-programmed small serine recombinase based on the fusion of an engineered Gin recombinase catalytic domain with a catalytically inactive Cas9. The recCas9 enzyme operates on a minimal pseudo-core recombinase site (NNNNAAASSWWSSTTTNNNN) flanked by two guide RNA-specified DNA sequences. Recombination mediated by recCas9 is dependent on both guide RNAs, resulting in orthogonality among different guide RNA:recCas9 complexes, and functions efficiently in cultured human cells on DNA sequences matching those found in the human genome. The recCas9 enzyme can also operate directly on the genome of cultured human cells, catalyzing a deletion between two recCas9 psuedosites located approximately 14 kb apart. This work represents a key step toward engineered enzymes that directly and cleanly catalyze gene insertion, deletion, inversion or chromosomal translocation with user-defined, single base-pair resolution in unmodified genomes."
+
+"Our group and others recently demonstrated that the N-terminus of dCas9 could be fused to the FokI nuclease catalytic domain, resulting in a dimeric dCas9-FokI fusion that cleaved DNA sites flanked by two guide RNA-specified sequences (10,11). We used the same fusion orientation to connect dCas9 to Gin, a highly active catalytic domain of dimeric Gin invertase previously evolved by Barbas et al. (34). Gin promiscuously recombines several 20-bp core ‘gix’ sequences (34) related to the native core sequence CTGTAAACCGAGGTTTTGGA (41–43). We envisioned that the guide RNAs would localize a recCas9 dimer to a gix site flanked by two guide-RNA specified sequences, enabling the Gin domain to catalyze DNA recombination in a guide RNA-programmed manner (Figure 1D)."
+
+"We varied parameters influencing the architecture of the recCas9 components, including the spacing between the core gix site and the guide RNA-binding site (from 0 to 7 bp), as well as linker length between the dCas9 and Gin moieties ((GGS)2, (GGS)5 or (GGS)8) (Figure 2A-F). Most fusion architectures resulted in no observable guide RNA-dependent EGFP expression (Figure 1C and D). However, one fusion construct containing a linker of eight GGS repeats and 3- to 6-base pair spacers resulted in approximately 1% recombination when a matched, but not mismatched, guide RNA was present (Figure 2E and F). Recombination activity was consistently higher when 5-6 base pairs separated the dCas9 binding sites from the core (Figure 2F). These results collectively reveal that specific fusion architectures between dCas9 and Gin can result in guide RNA-dependent recombination activity at spacer-flanked gix pseudo core sites in human cells. We refer to this 8xGGS linker fusion construct as ‘recCas9’."
+
+"The findings reported here provide a foundation toward RMCE (recombinase-mediated casette exchange) on native genomic loci that would require two complete recCas9 target sites to be proximal to each other. The estimated 450 human genomic sites identified in silico for recCas9 might be expanded substantially by replacing the Gin recombinase catalytic domain with other natural or manmade small serine recombinases that recognize different core sequences; many of these related enzymes have also been directed to novel sites via fusion to zinc finger proteins (19,63). Moreover, recent work altering Cas9 PAM binding specificity and the recent discovery of numerous Cas9 orthologs raise the possibility of further expanding the number of potential recCas9 sites (64–67). Extending the approach developed here may eventually lead to tools capable of specific, seamless integration of exogenous DNA into the human genome. [...] . While we carried out extensive optimization of the chimeric recCas9 to improve its activity (Figure 2), we imagine that further improvements, e.g. by evolving the chimeric fusion or using a recombinase domain with a broader sequence tolerance, may increase the activity and substrate scope of recCas9-mediated genomic modification. [......] the existence of recombination 'hot spots' or 'cold spots' biases the chromosomal regions that participate in crossover events and thus, the amount of diversity that can be combined into progeny using unassisted breeding (69). [...] the capabilities of recCas9 may further contribute to breeding efforts using elite cultivars by allowing researchers to manipulate the location of crossover events during meiosis. RecCas9 or future variants, in principle, could enhance or decrease the rate of recombination at specified loci, without introducing foreign DNA into the plant genome, by catalyzing favorable translocation events or removing specific mutational 'hot spots' that result in unfavorable crossover events."
+
+----
+
+"Redesigning recombinase specificity for safe harbor sites in the human genome" <http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0139123>
+
+"... we set out to identify mutations that enable unrestricted recombination between minimal recombination sites."
+
+"However, because of their strict recognition capabilities, recombinase-mediated genome engineering has been limited to cells that contain either pre-introduced target sites or rare pseudo-recombination sites [21]. To overcome this, numerous protein engineering strategies have been developed to alter recombinase specificity [22]. Yet despite several successes [23, 24], these approaches have routinely led to enzymes with relaxed recognition specificities [25, 26], stemming from the fact that many recombinases display an intricate and overlapping network of catalytic and DNA-binding interactions. In contrast to the SSRs described above, the resolvase/invertase family of serine recombinases [27] are modular in both structure and function, allowing the DNA-binding domains of these enzymes to be replaced without impairing catalytic function [28, 29] (Fig 1)."
+
+----
+
 
 "A photoactivatable Cre-loxP recombination system for optogenetic genome engineering" <http://www.nature.com/nchembio/journal/v12/n12/full/nchembio.2205.html>
 
@@ -36,11 +66,22 @@ Various DNA editing and genome editing techniques
 
 "Continuous evolution of site-specific recombinases with highly reprogrammed DNA specificities"
 
+"Nonreplicative homologous RNA recombination: Promiscuous joining of RNA pieces?"
 
+"Mechanism of homologous recombination from the RecA–ssDNA/dsDNA structures"
 
+----
 
+"IVA cloning: A single-tube universal cloning system exploiting bacterial in vivo assembly" <http://www.nature.com/articles/srep27459> ("in vivo assembly" cloning, using recA for homologous recombination)
 
-homologous recombination and recombinase-based DNA assembly <http://gnusha.org/logs/2016-11-18.log>
+"The presence of a recA-independent homologous recombination pathway in E. coli was reported more than 20 years ago[19,20,21], but has been neglected until recently, except for sporadic use in specific high throughput applications[22,23]. The pathway is mostly uncharacterised but is most efficient at recombining linear DNA fragments, likely acting through an annealing mechanism[20,24], although alternative mechanisms have been suggested[25,26]. Conveniently, the recA-independent pathway is responsible for the recombination of short overlapping sequences[19], whereas the recA system requires longer homologous DNA stretches (>150-300 bp)."
+
+"IVA cloning exploits a recA-independent recombination pathway, which is emerging as a powerful tool in DNA manipulation. Initial reports of this bacterial pathway and its application to cloning were not rapidly adopted, possibly due to the simultaneous reporting of in vivo cloning using bacterial strains expressing phage recombinases[51], which are now widely used for genome engineering[52]. While the recA-independent pathway has recently been utilised as a cloning tool in AQUA cloning, the protocols involved for its use in vivo require multiple PCRs, gel extraction, mixing of DNA fragments and incubation prior to transformation[28,29,30]. [....] Performing separate PCR reactions may increase efficiency when assembling >5 DNA fragments, since longer homologous regions can be included that could cause primer annealing problems if mixed in a single tube [...] While IVA is advantageous for almost all cloning applications, multiple modification of very large plasmids, such as BACs, which cannot be PCR amplified, would require different a different approach."
+
+Uvsx (from phage) does not have long homology requirement like recA, shorter homology works
+
+man, why haven't we made a primerless PCR with promiscuous polymerase yet
+
 
 # Protein parts
 
@@ -49,5 +90,16 @@ homologous recombination and recombinase-based DNA assembly <http://gnusha.org/l
 * polymerase catalytic domain
 * whatever the active sites are, for each of the above proteins and systems
 * recombinase catalytic domain
+
+# Homologous recombination for DNA assembly
+
+<https://groups.google.com/d/msg/enzymaticsynthesis/uyZqtJO24RE/lApLb4JmCAAJ>
+
+<http://gnusha.org/logs/2016-11-18.log>
+
+<http://gnusha.org/logs/2016-11-19.log>
+
+Also, programmatic DNA synthesis could be achieved with programmable recombination. Use a bead with attached DNA. Use recCas9 (guide RNA programmable recombinase) to extend each of the DNA molecules. Wash or flush any non-recombined reactants and byproducts. Insert guide RNA and recCas9 for next cycle, plus next DNA fragment.
+
 
 
