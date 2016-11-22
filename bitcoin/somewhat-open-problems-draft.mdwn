@@ -1,0 +1,49 @@
+Here are some interesting problems in bitcoin.
+
+See <http://diyhpl.us/~bryan/irc/bitcoin/scalingbitcoin-review.pdf> for some background.
+
+# SNARKs and Proofs of faithful execution
+
+Various SNARKs things would be nice, such as:
+
+* blockchain becomes "one big snark" instead of a growing data set forever, SNARK proofs would be nearly instantaneously verifiable although costly to construct a new proof (which is itself problematic...)
+* Construction of easy-to-verify proofs that transactions selected by a miner were all following consensus rules
+* proof that consensus rules were followed or are being followed by a certain participant
+* proof of validation
+
+* "SNARKs" without SNARKs?
+* SNARKs without trusted setup?
+
+# CPU mining
+
+It would be interesting to give a way for CPU mining to give subsidy rewards to anyone, even for absurdly weak PoW.
+
+* Consensus-enforced sub-satoshi micropayments maybe? extension blocks? etc.
+
+# Fraud proofs
+
+* fraud proof
+* non-fraud proof
+* what to do about non-publication of data? Parties that have incriminating evidence (against themselves) might not be incentivized to publish that information.
+* Need fraud (or non-fraud) proof of every consensus rule
+* How to recover consensus after mining cartel fraud or multisig fraud on a proof-of-publication platform? You shouldn't keep using the same consensus history, so what do you do instead?
+
+* consider federated multisig groups, p2sh escrow stuff, etc.
+
+# Push problems and bottlenecks to edges (wallets/nodes)
+
+* (1) wallets provide UTXOs and proofs when spending coins, see 'transaction linearization' proposal. Recipients are responsible for checking validity and proofs. Bandwidth-consuming proof for the occassional spend of old coins.
+
+* (2) Interactive protocol and proofs between 2 nodes to do secure multiparty computation, to prove that all parties are running bitcoin consensus validation rules. Don't send coins to someone who isn't running bitcoin consensus rules. Or, alternatively, don't send coins to somebody who isn't at least participating in CPU mining.
+
+* (3) utxo set + private key + snark could be used to show that a node at least has a utxo set that they can do computation with (or that they are silly enough to outsource their private key...) however it only shows that they have the utxo set data, not that they are doing validation work with consensus rules... oops.
+
+"coinbase txout hashcash"
+
+# Full node incentives
+
+Could there be a more direct and more obvious incentive to run a full node (validating all blockchain data and running consensus rules), other than security? Perhaps lotteries ?
+
+# Economies of scale and PoW
+
+There is an economy of scale for doing Proof-of-Work and probably any other conceivable computation. This might be bad? How to fix...
