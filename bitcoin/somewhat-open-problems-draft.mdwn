@@ -36,7 +36,9 @@ It would be interesting to give a way for CPU mining to give subsidy rewards to 
 
 * (2) Interactive protocol and proofs between 2 nodes to do secure multiparty computation, to prove that all parties are running bitcoin consensus validation rules. Don't send coins to someone who isn't running bitcoin consensus rules. Or, alternatively, don't send coins to somebody who isn't at least participating in CPU mining.
 
-* (3) utxo set + private key + snark could be used to show that a node at least has a utxo set that they can do computation with (or that they are silly enough to outsource their private key...) however it only shows that they have the utxo set data, not that they are doing validation work with consensus rules... oops.
+* (3) Transactions could encode proofs of consensus enforcement and validation work by their nodes (either sender or recipient, probably sender). Consensu-enforced rule could be introduced that transactions must conform to this format?
+
+* (4) utxo set + private key + snark could be used to show that a node at least has a utxo set that they can do computation with (or that they are silly enough to outsource their private key...) however it only shows that they have the utxo set data, not that they are doing validation work with consensus rules... oops.
 
 "coinbase txout hashcash"
 
