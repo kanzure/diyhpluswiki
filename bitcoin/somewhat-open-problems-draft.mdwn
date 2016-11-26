@@ -44,6 +44,10 @@ It would be interesting to give a way for CPU mining to give subsidy rewards to 
 
 "coinbase txout hashcash"
 
+Proof of consensus rule validation: must be easy to verify, computation must require exact consensus rules.
+
+
+
 # Full node incentives
 
 Could there be a more direct and more obvious incentive to run a full node (validating all blockchain data and running consensus rules), other than security? Perhaps lotteries ?
@@ -53,3 +57,7 @@ Could there be a more direct and more obvious incentive to run a full node (vali
 # Economies of scale and PoW
 
 There is an economy of scale for doing Proof-of-Work and probably any other conceivable computation. This might be bad? How to fix...
+
+# Recovering and spending tiny UTXOs (below the average transaction fee)
+
+There might be a way to "sweep" unspendable UTXOs into schnorr multisig pools. This is useful when early UTXOs were created and later the average transaction fee becomes perpetually high. See <http://gnusha.org/bitcoin-wizards/2016-11-24.log> for more details.
