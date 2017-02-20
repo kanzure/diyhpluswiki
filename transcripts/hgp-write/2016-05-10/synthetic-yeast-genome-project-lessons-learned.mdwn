@@ -1,0 +1,41 @@
+Lessons learned from the synthetic yeast genome project
+
+2016-05-10
+
+video: <https://www.youtube.com/watch?v=6nirrqtUSUk&list=PLHpV_30XFQ8R2Kpcc1pwwXsFnJOCQVndt&index=2&t=21m40s>
+
+Leslie Mitchell
+
+So good morning. Thanks for the chance to talk. I'm a post doc in Jef Boeke's lab. I've been thinking about synthetic yeast genome project. Today we're just going to give you some highlights about the project and some applicable highlights for moving into larger genome projects.
+
+Just to get going, the goal of the Sc2.0 project was to build an entirely synthetic designer genome to power growth of our favorite single-cell genomes, Saccharomyces cerevisiae. At the outset of this project, there were three design principles with competing agendas. On one side of the coin, the idea was to build something that had a wildtype fitness, a healthy cell, but the genetic code would be different, to increase genome stability and increase genetic flexibility. So we were going to preserve genetic material, to keep the noncoding DNA in tact under the assumption that we don't know whether they are necessary. The yeast genome is composed of 16 chromosomes and 12 megabases of DNA. So to build these chromosomes piece by piece in individual strands, progressively building more DNA by strands, up to 16 strands, and monitor fitness along the way.
+
+And on the other side, the more exciting side, what are we changing? Deleting all repeats from the genome, this includes TY elements as well as subtemereical repeats. Deleting all the tRNA genes on the original chromosomes and coding them on a new chromosome, and Patrick is going to talk more about that project. Building in a watermarking system so that we can understand the difference between wildtype and synthetic DNA. And also recoding the stop codon to add genetic flexibility. And also we addd a SCRaMbLE inducible evolution system that allows us to change once the chromosomes are built the order and orientation and content of genes.
+
+So this required a lot of thought in the design. The design has been applied universally to all 16 chromosomes. All of those changes are done on all of the chromosomes, using a centralized editing process, using a yeast genetics expert and a computational expert. All of this was done in the context of custom genetic design software written by Joel Bader who is here today, called BioStudio. And this is just a screenshot of that.
+
+So the design is actually quite extensive. This slide is a video of the editing of synthetic chromosome 5. A frame of this video represents a single edit. You see the genome shortening in size as elements are deleted. Some other elements are adding. We make base substitions, insertions and deletions. We went from a 550 kb to a 520 kb chromosome with extensive modifications.
+
+The genome is now designed. It encodes, or it's missing 750 kb that was previously there, 215 kb has been re-coded, we added 130 kb, and once built the genome will have ~1.1 Mb changed. It's reduced in size substantially.
+
+I'll highlight a few of the technical challenges which I think are going to be important moving forward. One we had to come up with a DNA assembly plan. We had a hierarchy and split it into progressively smaller pieces, going from mega chunks to oligos, and this provides different entrypoints for DNA synthesis. Decreasing cost of synthesis means we're jumping in at the mini chunk level and having synthesis providers building that for us. We have "SWAP-in" which allows us to introduce DNA, and in the interest of time I won't get into how switching autotrophies progressively for integration works.
+
+We've had to figure out how to debug chromosome. When designer changes confer fitness defect, how to figure out what those changes were, revert those and revert to wildtype. Chromosome 6 had a defect, we tracked it back to a single recoding of a protein and RNA folding. And we also had to figure out how to consolidate chromosomes, which we do via yeast mating, which is not necessarily applicable to other organisms.
+
+Another important component of this project has been the education component. That was spearheaded at John Hopkings in the build-a-genome course which engages undergraduates to build fragments of DNA from 750 bp to 10 kbp to feed directly into the genome construction effort. BAG China-- Tianjin University-- chr 5 and 10. There is a franchise operation there. There are representatives from that school here today.
+
+So what is the status of the synthetic yeast genome project? We have the new tRNA chromosome and the other chromosomes. The blue is synthetic DNA. Wild type is in yellow. Nearly all the DNA has been synthesized. About 60% of it in total has been integrated, representing about 7 megabases.
+
+----
+
+Patrick Cai
+
+<https://www.youtube.com/watch?v=6nirrqtUSUk&list=PLHpV_30XFQ8R2Kpcc1pwwXsFnJOCQVndt&index=2&t=28m30s>
+
+My name is Patrick and I did my postdoc with Jef Boeke a few years ago. Today we have, you know, many schools at many continents, working on this synthetic biology project. There are different chromosome sites, and there are different universities contributing to the project: JGI, NYU, JHU, Imperial College London, Univ. of Edinburgh, Pasteur, EMBL, Tianjin University, National Univ. Singapore, Macquarie University, Tsinghua Univ., BGI. This is a world-wide effort.
+
+A few years ago, 2011, ... IGEM in China in 2006... and then we organized the first meeting in Beijing, in this picture, we took it in 2012, we all look so young. What we really do is we took many people who we thought would be the key players in the project, and Hong Kong and India and we also fly all the funding agencies including Indian funding agencies we bring everyone into one room, and this was funded by NSF SAVI and that really stimulated the whole thing.
+
+SC2.0 agreement was signed before starting the project. In each agreement, what was in it? Each one committed to a certain space. 2000 square meters at minimum, and then they need to raise their own funding, and dedicate a person to the project. Every signee need to agree to quality insurance. We had to make sure that everyone sends 100% bp resolution. We also agree on material transfer. We don't assign IP on material. We also agree on authorship for publications. And also we support each other's grant proposals.
+
+We all agreed no IP covering Sc2.0 material. All software under the BSd license. Also we give ownership to individual scientists. Each site has an ownership. And then we have training and education of people across sites. Also, we comply with local laws. Last year there was a paper on freedom and responsibilities. Silva et al., Genetics, 2015. I just want to tell people about how we raise money. At the beginning, the project was funded by NSF salary. Up to the first meeting in Beijing, some got funding from the ministry of science and technology. JHU/NYU 4 NSF (SAVI) grants total ~$4M + 0.5M discretionary fund. BGI/Tianjin: 2012, $5M, from The National High Technology Research and Development Program of China, Imperial 2013 $1.6M from BBSRC UK, and Edinburgh 2014 $1.3M BBSRC, UK (2015 $10M, EGF, BBSRC). Pasteur 2014 $0.5M Agence Nationale pour la Recherche (ANR); EMBL 2014 $1.2M Federal Ministry of Education and Research, Germany; Macquarie 2014 A$ 0.5M from New South Wales Chief Scientist & Engineer; A$ 0.5M from the New South Wales Department of Primary Industries; A$ 0.5M from Boplatforms Australia; A$ 1M, Macquarie. Singapore 2015 $0.75M Ministry Education of Singapore. Each participant needs to raise their own funding.
