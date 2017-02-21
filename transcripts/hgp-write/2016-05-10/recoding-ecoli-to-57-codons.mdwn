@@ -1,0 +1,41 @@
+Recoding E. coli to 57 codons
+
+Nili Ostrov
+
+2016-05-10
+
+video: <https://www.youtube.com/watch?v=ZF2wFdMFn9Q&list=PLHpV_30XFQ8R2Kpcc1pwwXsFnJOCQVndt&index=3&t=39m24s>
+
+[Design, synthesis and testing toward a 57-codon genome](http://science.sciencemag.org/content/353/6301/819)
+
+<https://twitter.com/kanzure/status/833835975537205249>
+
+Hi everyone, my name is Nili. I am a postdoc with George. In the next 7 minutes I would like to share an example. We are talking about synthesizing a genome. We can choose what to synthesize. We can start from a genome that you edit, you have a template. If you start from nothing, you could synthesize a wildtype, or a modified wildtype. I would like to share a project that is one of our grand challenges in our lab, it's an ecoli with only 57 codons.
+
+I will take up from where jef took off. Recoding is the elimination of a codon throughout the genome or protein coding genomes, and the elimination of the tRNA that goes with it. This codon cannot be translated in a cell. Why would you want to do this? There are a few appealing applications for ecoli that cannot translate the other codons. One is genetic isolation. If 7 different codons cannot be translated, then wild type DNA that has that codon, then it cannot be transcribed in the cell. This also applies to viruses.
+
+Same thing with horizontal gene transfer, which was mentioned. The other really appealing application is that you can reincorporate those codons back into the genome using a synthetic codon and synthetic tRNAs.
+
+We're trying to eliminate 7 different codons in rE.coli-57. The stop codon is where we get our virus resistance and all those pretty applications. It has been shown that deleting one single codon could make ecoli fairly resistant to a whole list of viruses. We're doing it for seven codons.
+
+I would like to show you how we're doing it. If you're building a 4 megabase snythetic genome, we want to build it-- so a lot of synthetic DNA-- but also since it has a different function than the one usually used by ecoli, without the 7 codons, you have to test it and you have to make sure that those modified genes with proteins that were built from the genome with different synonymous replaced codon that those are working. So this is the distribution of the recoded codons over the entire ecoli genome, and we replaced 62,000 codons overall. Before, a single codon was replaced in nature. If you can single-handedly change 300 spots on the genome, then that's a great way to do that, use 300 oligos to change 300 spots. Changing 62,000 positions is a little more difficult, so the reason this was done with synthesis is simple-- it allows you to computationally design those 62,000 changes and it allows you to do that from scratch.
+
+Here's how we do that. This is recent results that we are showing here for the first time. First we designed the genome, that's a computational design. As I will show you, that computational design seems to work. We have to choose how to change those 7 codons. These are synonymous replacements-- we don't change hte proteins, we change the genes. However, we need to make sure that these work. This is very hard to do all together. If we made this entire genome in one go, and just tried it, and it didn't work, then it would be very hard and try to figure out which one of those 62,000 codons is the problem.
+
+So what we did is we took a 4 megabase genome and split it up into 87 segments, each about 50 kb DNA, each about 40 genes. This is about something we can handle. Then we synthesize the DNA, we don't start from oligos, we start from fairly big gene bytes. So this is DNA synthesis, genome synthesis, then yeast assembly, and each of those 50 kb pieces is put into a plasmid, we put the plasmid into ecoli, and this is a recoded 50 kb section. And this is the chromosomal wild type 50 kb section. You have to make sure that all the genes are functional, so we replace the 50 kb from wild type with our synthetic 50 kb... effectively we have a strain that has 50 kb of recoded genome on its plasmid, effectively a single copy. What we went through is most of those, and we will show some initial results.
+
+We had 63% of all the recoded genes now tested. That includes 53% of essential genes, and these are important because even though we don't go down to the gene level to check functionality... if essential gene doesn't work, then it's not a viable cell. So what we did is we looked at the fitness of all of these pieces of genome and just to be clear, each of these yellow patches are 50 kb segments in a different strain. So these are different strains each with a different 50 kb each with 40 different genes. Most of these are fairly fit, they have close to wildtype fitness. Some of them do have higher fitness. Some of them have lower fitness, we went down to find which genes were responsible and we're able to fix this.
+
+We also want to check that the genes are expressed. So far, we're happy to say that compared to wildtype, the recoded genes in blue are actually fairly healthy. The last thing you need if you want to recode is troubleshooting problems. We have two ways. One is to redesign the gene. We have a solid computational design for this genome. And the other one is using MAGE, which is our go-to for fixing genes that don't work in the recoded version.
+
+To summarize, this ecoli project is the first example of a radically recoded genome. 7 different codons were recoded. We showed that we have comparable fitness to wild type. We show that de novo synthesis is able to be done with genome synthesis. Step-wise experimental validation was also required for this kind of thing.
+
+Also, team members: George Church, Matthieu M. Landon, Marc Guell, Marc J. Lajoie, Gleb Kuznetsov, Jun Teramoto, Julie E. Norville, Natalie Cervantes, Minerva Zhou, Michael G. Napolitano, Mark Moosburner, Benjamin W. Pruitt, Nick Conway, Daniel B. Goodman, Kerry Singh, Cameron L. Gardner, Alexandra Gonzales, Barry L. Wanner.
+
+Q: Were you able to correct that by maintaining your original strategy, or did you have to put back some of the codons?
+
+A: That's a good point. One of the cases of vary bad fitness was actually, so we only recode protein coding genes, however we don't touch promoters. Some promoters are overlapping. The problem with the fitness here was a very central pathway for which the promoeter was overlapping the gene. So we used MAGE to find alternative codings of that area, to fix the gene and fix the promoter.
+
+Q: Degeneracy of the code allows you to relax secondary structure in mRNA. Have you looked at how large an organism you might be able to recode?
+
+A: First thing, shout out to the computational design for providing a really robust... we see 13 problems. Computationally this is solid. It was based on other things, like calculation of ribosome binding site strength and mRNA structure scores. We did not look at scaling this up to human, but you could say that if you had enough information to incorporate this into a computational platform... a lot of the factors, knowing very well, are not known to that extent in human. Putting effort into the computational design and putting the knowledge into the bioinformatics would really help us and really benefit a larger project.
