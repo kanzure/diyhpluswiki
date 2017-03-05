@@ -6,6 +6,8 @@ Peter Todd
 
 <https://www.youtube.com/watch?v=0mVOq1jaR1U&feature=youtu.be&t=1h20m>
 
+<https://twitter.com/kanzure/status/838481311992012800>
+
 Thank you. I'll admit the last one was probably the most fun other than. On the schedule, it said scaling and UTXO and I threw something together. <a href="https://petertodd.org/2016/delayed-txo-commitments">TXO commitments</a> were a bold idea but recently there were some observations that make it more interesting. I thought I would start by going through what problem they are actually solving.
 
 Like <a href="http://diyhpl.us/wiki/transcripts/mit-bitcoin-expo-2017/ideal-number-of-full-bitcoin-nodes/">David was saying in the last presentation</a>, running a full node is kind of a pain. How big is the archival blockchain data? Earlier this morning on <a href="https://blockchain.info/charts/blocks-size">blockchain.info</a>, it was 125 GB. They don't have a good track record, who knows, but it's roughly the right number. History doesn't disappear, it keeps growing. In this case, in David's talk, we were able to mitigate that problem with pruning if you want to run a pruned node you don't have to go keep all that 100 gigs on disk all the time. Currently there are some issues with pruned nodes where we don't have the infrastructure to do initial synchronization from each other. But long story short, it's pretty easy to see how the archival history problem we can solve it by essentially splitting up the problem and letting people contribute disk space.
