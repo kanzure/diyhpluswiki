@@ -94,7 +94,7 @@ What if we're only looking for errors that only change 1 bit in a character? How
 
 # Character sets
 
-There exist various character sets for base32 already. There's the C45 something which is a standard.. the z-base32 standard, various other standards for base32 data that have been used in the past. We're still going to pick a different one. The reason for this is that we were able to select our code to optimize for low-bit error rates, in such a way that 1-bit errors are no more likely than other errors... So this took another year of CPU time to optimize for this. We looked at tables for similarity between characters. The z and 2 are considered similar in some fonts or writing. As you can see they are "8" apart, one is 2 and the other is 10, so they are 1 bit apart. r and t are 1 bit apart, and x and k are one bit apart, and e and a are 1 bit apart, and the s and 5 are 1 bit apart. There are way more similar errors overlaid in this data that you can look for. It's pretty cool. We made a character set that optimizes for 1-bit errors, so our code is distance 6 for 1 bit errors. If you just look at 1 bit errors, we guarantee 5 errors. If you only make errors like that, we can detect 5.
+There exist various character sets for base32 already. There's [RFC3548](https://tools.ietf.org/html/rfc3548) which is a standard.. the z-base32 standard, various other standards for base32 data that have been used in the past. We're still going to pick a different one. The reason for this is that we were able to select our code to optimize for low-bit error rates, in such a way that 1-bit errors are no more likely than other errors... So this took another year of CPU time to optimize for this. We looked at tables for similarity between characters. The z and 2 are considered similar in some fonts or writing. As you can see they are "8" apart, one is 2 and the other is 10, so they are 1 bit apart. r and t are 1 bit apart, and x and k are one bit apart, and e and a are 1 bit apart, and the s and 5 are 1 bit apart. There are way more similar errors overlaid in this data that you can look for. It's pretty cool. We made a character set that optimizes for 1-bit errors, so our code is distance 6 for 1 bit errors. If you just look at 1 bit errors, we guarantee 5 errors. If you only make errors like that, we can detect 5.
 
 Q: Do you take into account qwerty keyboard distance?
 
@@ -202,7 +202,7 @@ A: Yes. While designing this, we tlaked with various people before publishing it
 
 Q: I am sure they appreciate the simplicity.
 
-A: I hope so. I had comments like "oh no a new error correction algorithm" and then I showed them hey it's only ten lines of code. They liked that. In practice, you need to implement more than that, but the whole reference implementation for encoding and decoding turns out to be about 20 lines of code.
+A: I hope so. I had comments like "oh no a new error correction algorithm" and then I showed them hey it's only ten lines of code. They liked that. In practice, you need to implement more than that, but the whole reference implementation for encoding and decoding turns out to be about 120 lines of code.
 
 Q: Thank you for presenting. There... what about flipping to ethereum?
 
