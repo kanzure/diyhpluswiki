@@ -590,7 +590,7 @@ A: Oh I see what you're saying. If you want lambda to equal 64, then this would 
 
 <https://www.youtube.com/watch?v=8WDOpzxpnTE&t=1h13m45s>
 
-The second property is signature aggregation. Anyone can compress n signatures into a single signature. It has, not only are BLS signatures, short signatures, but you can take many signatures and compress them into a single signature. This was a paper with Craig and Lin and Shihan. You can take a whole bunch of signatures, produced by many different people, and compress them all into a single signature and this one signature in fact convinces the verifier that in fact for all i, user i signed message m sub i.
+The second property is <a href="https://crypto.stanford.edu/~dabo/pubs/papers/aggreg.pdf">signature aggregation</a>. Anyone can compress n signatures into a single signature. It has, not only are BLS signatures, short signatures, but you can take many signatures and compress them into a single signature. This was a paper with Craig Gentry and Lynn and Shacham. You can take a whole bunch of signatures, produced by many different people, and compress them all into a single signature and this one signature in fact convinces the verifier that in fact for all i, user i signed message m sub i.
 
 If you think of certificate chains, where the signatures in the chain are all these BLS signatures... today, these signatures, you have to list all the signatures in the chain. But using aggregation, you could compress them into a single signature and this would actually reduce traffic in [SSL](https://en.wikipedia.org/wiki/Transport_Layer_Security) but unfortunately this is not used today.
 
