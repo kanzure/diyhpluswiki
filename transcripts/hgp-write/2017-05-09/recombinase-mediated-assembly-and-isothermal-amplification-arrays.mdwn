@@ -1,0 +1,63 @@
+Recombinase-mediated assembly and isothermal amplification arrays
+
+Max Berry
+
+What does a pilot project mean? I thought I would share some guidelines with you. Scientists have been sending in their abstracts to be evaluated by the scientific leadership of GP-write. Those proposals that are deemed to have merit that are related to something that would happen in GP-write have been approved. We will be thinking about putting in place a more formal approval process, once our executive team begins to meet more often, they just met for the first time last week. For the ones that are being pitched in the evening, those are abstracts that have not yet been approved but seem interesting and we wanted to share those with all of you before taking it to a formal approval process. At this time, before we raise the money we expect to raise, we are supporting the pilot projects and the researchers doing them with letters of recommendation, support, we have been successful in obtaining funding for at least the prototrophic genome project which we hope will be announced at this meeting at some point. And eventually we hope to financially support the pilot projects directly. Right now there will be two ways that you can apply for a pilot project-- you can apply for funding through your own university and we will support your project, or you can partner with the center and apply for funding to more closely affiliate yourself with the project. Those are the two approaches for now. We have another series of pilots we're going to talk about in the next session. I am actually very excited about the first speaker, Max Berry, he is our first citizen scientist to actually propose a project and be approved. We want all kinds of scientists to be involved, not just the academic scientists.
+
+----
+
+Hello everyone. Can you hear me in the back? My name is Max. I have a day job, but it's not related to this. So this is about creating genomes, the actual technical aspect of genome synthesis and assembly.
+
+# Isothermal amplification and oligo library
+
+Right now they are quoting 10 cents per base pair. In the next few years, maybe we can get to 1 cent per base pair not including assembly costs. So $30 million per haploid genome. I think we can improve that. The first proposal is isothermal amplification array where you have an 8mer library, combinatorial. This is about 65,000 oligos. We can do that with microarrays. What you do is you take a single, you synthesize a whole bunch of one strands, and then have a ligating restriction enzyme that only cuts one end. You can add on an extra 8 bp to the end of this, place it on the array and you can do extension on it, like the DNA microarrays. You have each spot has a unique 8mer attached to a foundation sequence with a nicking enzyme site on it.
+
+You lay that out, you have dNTPs, you have the polymerase come in and synthesize the second strand, the nickase cuts it off, the pool of 8mers begins to float around; you can pull them off and do other things with those. We take these oligos and we transfer them into a ligation technique based on a paper referenced here. You can have one 8mer immobilized on a surface, and if you feed in other 8mers, as long as they are fully hybridized, ligase will ligate them ogether and you can have this ladder like process. If you make the reaction stringent enough, you can get pretty accurate base pairing. If you have a short oligo or one with errors, not necessarily land on there, you can kind of extend this further and further and get some length of DNA fragment although we don't know. When they tried this in the original paper, it was like wildtype T4 or something, they got some okay results but they didn't tweak it much. We don't know how long we can make the DNA molecules. It's worth looking at.
+
+If you have guide strands in there, phosphorylated, they can be used to guide the ligase because they need a certain amount of double strandedness to do the ligation.
+
+This is the nicking enzyme thing, I think someone in George Church's lab was doing this at some point-- this is with much longer oligos, to amplify more DNA molecules. Pretty traditional stuff. With the library of 65,000 oligos, you just need to add the dNTPs and enzymes and you can just wait if you want to. To some degree, if you have a short oligo you can't use that one if it binds to itself, but you could algorithmically determine the best way to assemble the sequence as long as you can.
+
+# Recombinase-mediated DNA assembly
+
+Everyone know what recombinase is-- it's usually site-specific. In this enzyme, Uvsx, it's related to recA recombinase from yeast and humans. They are used in double stranded break repair. They will bind to ssDNA and then scan through dsDNA floating around. When they find a match, they replace the third strand on the dsDNA and shove in the ssDNA. This is used for isothermal PCR, you don't need to do temperature cycling. Polymerase can access the underhang and synthesize a new strand.
+
+Most people are using this for isothermal PCR in low-resource environments. What we could do instead is we have a fragment like I mentioned with an underhang on it, we don't know how long the fragments are, and then we have a male and female end just for clarity's sake. We have the X enzyme in there, cuts the single strand overhang, and then it scans it through-- all the double stranded DNA in the reaction. When it finds a match, where the overhang matches the female end of the other fragment, it displaces the other strand, and ligase will hopefully ligate it at that end and during that time, or shortly thereafter, the exonuclease will come in and degrade the extra third strand and then the ligase will ligate the second strand. This now larger strand is also simultaneously participating in the homology search reaction, and you throw it all together and you get a long stretch of DNA already assembled.
+
+There are questions about making these enzymes work together.
+
+UVsx is like recA. Other enzymes chew back the sequence on the break, and recA will scan through the sister DNA and find a match and do homologous recombination. DNA assembly in general have been used in recA... gibson assembly is single strand single strand, but these enzymes don't do that yet.
+
+There's a few different methods for fragment assembly, but you get side product, you get scars, seams, restriction sites, antibiotic resistance genes you have to shove in there, and for all of those you are relying on massive base pairing which is not that great.
+
+In vivo has its own problems of course.
+
+# Q&A
+
+No time for questions.
+
+Q: On the first slide, you said phosphoramidite cost is 0.01 cents/bp.
+
+A: I hear you at Twist...
+
+Q: We can go way down.
+
+A: Okay, I'll believe it when I see it.
+
+Q: Hvae you done calculations on the impact of a mis-paired ligation, and how frequently you will have an error, and how big of an issue that is going to be?
+
+A: We can do much more stringent engineering with ligase, it's not going to be plug-and-play. With the harsh conditions, yeah make sure the strong base pairing and see what happens. A lot of engineering work to be done.
+
+Q: The 8mers... when you make the initial 8mers, do you have ideas about how to make those high fidelity in the first instance?
+
+A: It's tough. The first 4 bases, that's 256 oligos, you can just make that. There's UV masking for phosphoramidite chemistry sure. To some extent it's error correcting because presumably we can do 100% yield on 4 base pairs, but we have to look into that, it's an ongoing issue.
+
+Q: Your background?
+
+A: I make proteins. My job is really not related, I don't know if I should mention them.
+
+Come find me later.
+
+
+
+
