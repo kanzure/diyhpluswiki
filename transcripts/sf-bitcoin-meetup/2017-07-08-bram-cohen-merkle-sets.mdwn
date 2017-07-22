@@ -1,0 +1,181 @@
+2017-07-08
+
+Merkle set data structures for scaling bitcoin
+
+Bram Cohen
+
+video: <https://www.youtube.com/watch?v=52FVkHlCh7Y>
+
+code: <https://github.com/bramcohen/MerkleSet>
+
+# Introduction
+
+There's been a fair amount of talk about putting <a href="http://diyhpl.us/~bryan/irc/bitcoin/utxo-commitments-or-fraud-proofs.stdout.txt">UTXO commitments</a> in bitcoin blocks. Whether this is a good idea or not, but on the off-chance that it might be a good idea, I spent a fair amount of time thinking and actually good merkle set implementation whic his what you you need to put utxo set commitments in bitcoin blocks. There are other benefits to this, in that there are actually a million and one uses for merkle sets in general, and it's actually a general interesting problem and it performs well. So I figured I would make it, and if it's not useful to me, then it might be useful to someone anyway.
+
+# High-performance merkle set implementation
+
+Okay, so. Merkle set. For those of you who aren't aware, this is sometimes-- sometimes people call it a hash set, based on hash tree, and then Ralph Merkle gets really mad at you. Since he's still alive, we still call them merkle trees. A merkle set is a set which contains arrays of bytes, it keeps track of its merkle root. All the things at the terminal things are the things contained in the set, in the middle are summaries, and then the root. You can use the root to prove, for someone who has the root, to prove whether something is or is not in the set.
+
+There's a series of interesting engineering problems to make these perform well. What hash function should we use? The obvious choice is <a href="https://en.wikipedia.org/wiki/SHA-2">sha256</a> because it's the standard. The really big benefit of sha256 is that it's really the only thing that has hardware acceleration and it's the only thing that is going to have widespread hardware acceleration for the foreseeable future. Unfortunately it's not super fast in software and on top of not being super fast in software, it has funky padding issues. If you concatenate 2 hashes, it doesn't align up nicely, and it has other block it has to compute on. The best thing to use is <a href="https://en.wikipedia.org/wiki/BLAKE_(hash_function)">blake2s</a> because everything here has 256 bit outputs, and blake2s has a block size of 512 bits. There's this slightly frustrating thing with the flavors of blake, that there's there's blake2s, which is optimized for 32-bit systems, and blake2b which is optimized for 64-bit systems. So nothing is 32-bit anymore, so we need to use blake2b, unfortunately it has a 1024 bit block size, so it's actually slower. I talked with the authors of blake to see if it would be possible to do a new variant, and they told me it would be a lot of work, so they said no. This is irritating.
+
+On top of that, it turns out that sometimes you do want just a little teeny bit of metadata. <a href="https://en.wikipedia.org/wiki/BLAKE_(hash_function)#Blake2b_Algorithm">blake2b</a> is really good about when you give it 512 bits, it doesn't need to do any padding, it processes exactly one block. But you do actually want some metadata, so it's a good idea, if you're doing this route, to sacrifice 2 bits to metadata, so that you can encode information what you're encoding, so the values we're using are whether it's "terminal" meaning it's just a hash string that is being stored, "empty" meaning there's nothing here, or "intermediary" which means this is a hash of multiple things below it, or "invalid" which basically means this hasn't been calculated yet when you're doing lazy evaluation this is really handy.
+
+So I'm using a patricia trie. There's a number of subtle different ways of making merkle sets. The most straightforward way is basically you just sort everything and put it into a list. That can't be efficiently updated, because the positions of everything aren't super-canonical, so everyone who is spending time on this has wound up using a patricia trie. It positions everything based on what the bits in it are. Here's the root. Everything that has a 0 as its first bit, goes here. Everything with a 1 as its firs tbit, goes here. This spot right here-- everything starts with the 0 bit, so there's these 2 things here which both have 0 bits, but you include explicit "empty" so that you can have nice proofs of non-inclusion. If you try to optimize out the empties, you could still have proofs of nonmembership, but it's really ugly.
+
+There's one more trick that's actually part of the semantics of this that I came up with, which is that if you have only two things below a particular point, and it's empty on the other side, you do a pass-through. If you look at the bottom here, there's 2 terminals, so the thing that has those 2 terminals children has to do a calculation to figure out the root value there. Above that, there's something where the other side is empty, so that does a "pass-through" because the other side is empty and it only has those 2 values. And then there's another layer that is also empty on the other side, so it does a pass-through. At the top of my diagram, there's a layer where there's no empty on the other side, so it has to  do the tree. The other one has an empty at the very top of the tree, but it doesn't work out because there's hashing to be done there. So this gets rid of a lot of the hashing. It's a substantial optimization and it's worth doing.
+
+# Reinventing memory management for fun and profit
+
+I have on github a merkle set git repository which is an implementation of this. It's in python, which is ridiculous. It needs to be ported to C soon. That has a reference implementation which is very straightforward, and a high performance implementation that isn't high performance yet. There are subtleties to what the performance needs are. In modern architectures, you spend all of your time waiting for memory. The exact subtleties of how that works aren't clear. When you're accessing memory, you want to get things near each other all together. In the extreme version, it's a physical hard drive where a seek is expensive but reading everything at once isn't an issue. In SSD this is less so, but it continues up the memory hierarchy. So you have to arrange things that are near each other are near each other in memory.
+
+I didn't invent the concept of memory management-- I have a chunk of memory called a block. When I first started playing around with this, it wanted gigantic blocks of memory allocated up front. I figured out how to make it act normally after a number of rewrites. The sizes of blocks aren't obvious. There's really bad documentation everywhere about how long things wait for and how near things need to be to each other to get better read times and how much of an improvement those are, so I made that a parameterizable in my iplementation and it needs to be optimized for local CPU memory bus architecture and phase of the moon.
+
+That's the high-level viewpoint of what this is going to do.
+
+There are two types of blocks. There are branch blocks and ... blocks. The root is a branch block. Every block can have many children, but only one parent. That makes things behave a lot better. No sibling relationships between them of any kind. Any time there is an overflow from a parent, it goes into one of the children. It's possible for multiple outputs of a parent to go into the same child if the child block is a ... block. Usually the terminals are leaves, and everything above them are branches. This way, this is fairly realistic in that it's pretty normal for a branch block to have one or a few leaves before it. Branches tend to fan out very fast, and when you're doing a memory look-up it tends to go branch branch leaf.
+
+These are the formats. A branch block has a reference, all of the things of size B here are memory pointers. It has a pointer to its active child, which is a leaf block, and it has a patricia of depth, the branch has depth as a parameter to how it works, its size is roughly 2^(depth). Each patricia .. 0 bit below the current position. Call it by the right hash, everything is starting 1-bit below the current position. Followed by the two child things, the patricia of 0 size n minus 1, and so this is a recursive data structure here. This one trick of just having a left and right next to each other, should improve look-up times a lot. When you're updating, especially. When you are recalculating hashes, you want the siblings to be right there. When you get down to patricia 0, there's a pointer to one of the children, and a position within that child. And indices within those blocks. If a child is a branch block position, it just looks like FFFF, an invalid node.
+
+Branch blocks are balanced, by their nature. Things don't move around. The biggest subtlety here is with respect to the active child. The branch block might overflow with itself, where there's 2 things that need to go to the same out position. Sometimes leaf blocks will overflow as well, and when that happens, it needs to decide where to put the overflow. It puts it into the active child. This does a good job of memory allocation. When you need to, you go and make a new active child, until it's full, and then you usually have active children with mostly full, except for one that has overflow, and you really only do memory allocation when you need to do. So this does a pretty good job of not pre-allocating any more than it actually needs.
+
+Within leaf blocks, this is an interesting subtlety, a leaf block is basically a list of nodes. It has first node used, a position in itself. Everything in here tha tis 2 bytes is a position. Num inputs, the number of times the parent has inputs going into it, and a list of nodes, a full node (not an empty node) has -- it has a hash of everything on the left side, hash of everything on the right side, and then a position on the child node on the left, and a position of the child node on the right, when I say left I mean 0-order low bit, and right is 1-order high bit. The empty node has a next pointer of just zeroes. The reason for this first unused and empty node here is that the unused nodes form a linked list, so when you want to allocate a new node, you pick the first one and point to the next one after it. If you hit the last one, you figure out you have to do an overflow, and you copy-out into the active child unless it's full or if you are the active child, in which case you make a new active child. If you have only one input yourself, you don't copy out into the active child, you take your whole block that you are, and copy it into a new branch block, which likely has a new leaf block beneath it. There's a lot of recursive stuff in here, in the code. It's a little bit subtle, but it looks simple.
+
+I have another interesting thing to talk about. First I'd like to ask if there are any questions.
+
+Q: Why do you.. not.. hash.. mechanism.. under a merkle tree?
+
+A: What do you mean by the skip hash? Oh, you mean... if you want to have a proof of non-membership, you terminate at an empty. When there's only 2 things below, you just terminate with that, you don't want to blow up the proof size.
+
+Q: Difference between merkle tree and patricia trie?
+
+A: I'm not really sure the difference between trees and tries. I'm not really sure the real difference between the tries and trees. I think tries have an I in it, and trees don't. I think patricia tries are called tries, and if you have a more straightforward approach of cramming everything together by position, that's usually called a tree, and it's usually not easily updated.
+
+Q: Trie is from a ... it's a tree where search is easy, where the points... splitting based on the key value rather than based on balancing. Every trie is a tree.
+
+A: Okay, so Pieter says that it implies everything is balanced in a trie. Anything even vaguely resembling what I'm talking about here, even without efficient updating, would be a trie.
+
+Q: There's like a million merkle tree libraries out there. Why did you do this?
+
+A: The ones that are out there right now don't do a good job of getting good cache coherence. Having to worry about cache coherence is sort of a relatively new thing in computer science, having to do with computers being weird and fast. Things moving around the bus are a problem. Really what it amounts to is a die is this 2d thing that needs to get, data around on these highways going over it, and the size of the die is quadratic and the width of the highway is linear, and now we have megalopsies on chips, it's actually problematic. There aren't too many things that talk about this kind of optimization. More recent versions of introductions to algorithms talk about sorting algorithms that will work optimally regardless of how your cache coherence properties work, and things like that. But it's not something that people usually worry about too much. So I decided to try to make this as performant as I possibly could.
+
+Q: Could you talk about that for a sec? When you say performance, you mean handling larger trees?
+
+A: The relevant performance characteristics have to do with-- well there's some operations it can do. It can check for inclusion, and it can update. When it's doing update, there's different usage patterns. Maybe it has a lot of retrieves interspersed with updates, and maybe it has whole batches of updates followed by retrieves. When you're doing retrievals maybe you care about proofs, ad maybe you don't. If you don't care about proofs, you should be using an ordinary set, because a hash set has really really good memory cache coherence properties because it already knows exactly where to look any time traversal happens. But traversing a tree is going to be very slow by comparison. If you want to check for inclusion and don't care about proofs, just have two sets, a merkle set and a regular set. The most relevant thing here is as I was thinking about this was how long would it take you to go over all over the entire blockchain history. For that particular use case, for each block, you're doing a whole bunch of updates, followed by getting the root. And then you do a validation for a bunch of retrieves for the next block, to make sure everything is in there. We could write something to try that, it has a lot of lazy evaluation because of the big batches of updates... when you're doing big batches of updates, you should sort them before you go ahead and do the-- you should sort them before actually applying the updates. The way that I am oblitterating the two high order bits, you actually want to sort with the third bit not the first bit, but I haven't inserted a convenience function for batch updates, because it has to be done in the right order, it's a weird gotcha. There's a bunch of different patterns, and because it's so hard to actually get even sane information about exactly where things bottleneck in memory hardware, I just optimized everything I could.
+
+Q: I don't know if people... blake2 has this personalization functionality, have you looked at using that for robbing bits?
+
+A: Not familiar.
+
+Q: The initial state of the blake2 hash you can set to different values based on running blake2 to pre-initialize it. So you can use this to separate the domain of different hashes.
+
+A: Yes that would be a much more elegant way of adding the necessary metadata than losing the 2 bits of security. It really is necessary to do something along those lines because otherwise osmeone might try to store a tree value in the set and you can't tell whether it's an internal or external value.
+
+Q: I think personalization will help you there.
+
+A: Sounds like a better way to do that. The default APIs of this stuff doesn't tend to give you those fancy bells and whistles. I was unaware of that as a feature.
+
+Q: You were talking about... testing.. have you done?
+
+A: Because my implementation so far is in python, it needs to be ported to C. It's really weird looking python that is meant to be ported to C. There are data structures that have pointers, you can't do that in python, it doesn't like you using bytes as a pointer to a python object, so I took all of the memory data structures and used a hash table and wrote wrapper methods for getting things in and out of the hash table. Yeah it's kind of weird. It's handy to have everything in there, so as part of debugging there are audit methods, and you can just go over the whole hashtable and check that everything was allocated or not deallocated. I did read over data about how hard drives and SSD drives work. SSD usually has page sizes like 2 kilobytes and you probably want to align with those.. and hard drives, things should be pretty big, like 1 megabyte for the blocks. And then you get things like where you only want the terminal leaves to be on the disk, and everything above that to be in memory, and then you spend all of your time waiting on the disk. That's ... when it gets to more fine-grained things about well if I'm storing the entire thing in memory, not in SSD, not in the physical drive, it's all in memory, how big should my branch and leaf blocks be? The available docs are really bad-- seemingly similar machines have just radically different behaviors. There's a library called fastest fourier transform in the west-- the first time you run it, it benchmarks itself on the current machine, and it decides what its magic numbers should be. I think this might be the most reasonable solution for now.
+
+Q: Your block structure doesn't change the resulting root hash?
+
+A: Yeah. The block structure does not change the root hash whatsoever. I implemented this as a very simple reference implementation which is quite straightforward. It has some nice properties. If you are doing things with lots of fallbacks, and you want to keep lots of roots without copying everything over, everything is immutable in it. The performant one-- everything is really mutable and if you want to get back you have to rollback. They do absolutely the same exact thing, and I have extensive tests, the way these tests work is that they have just a random bunch of strings and they repeatedly add one string at a time and they report the root each time and they make sure everything added is still there, and everything added isn't there yet, and then deletes them one at a time and works its way back. Once it has tested the reference implementation, it does this for other parameters including fairly degenerate ones, for the performant one. I found a lot of bugs. It has 98% code coverage with a fairly small amount of test code.
+
+# TXO bitfields
+
+Any more questions? Okay, something that I am fairly sure will be controversial. Unfortunately the <a href="https://lists.linuxfoundation.org/mailman/listinfo/bitcoin-dev">bitcoin-dev mailing list</a> has got completely drowned in discussions of subtleties of upgrade paths recently (laughter). So there hasn't been too much discussion of real engineering, much to my dismay. But, so, using a merkle set is kind of a blunt hammer, all problems can be solved with a merkle set. And maybe in some cases, something a little bit more white box, that knows a little bit more about what's going on under the hood, might perform better. So here's a thought. My merkle set proposal has an implementation with defined behavior. But right now, the way things work, you implicitly have a UTXO set, and a wallet has a private key, it generates a transaction, sends it to a full node that has a UTXO set so that it can validate the transaction, and the UTXO set size is approximately the number of things in the UTXO set multiplied by 32 bytes. So the number over here is kind of big and you might want it to be smaller.
+
+So there's been discussions of maybe using UTXO bit fields, I had a good discussion with petertodd about his alternative approach to this whole thing, wherein I said this weird comment because he likes UTXO bit fields, I said the thing that might be useful there is that you can compress things down a lot. And it turns out that this really helps a lot. I had this idea for a UTXO bit field. UTXO is all the unspent transaction outputs. It includes all unspents. The idea with a UTXO bit field is that you have a wallet, a proof of position and its private key. As things are added to blocks, each one has a position, and no matter how many things are added later, it is already in the same position always. So to make the validation easier for the full node, the wallet will give the proof of position which it remembers for the relevant inputs that it's using, and bundles that with the transaction to send it to the full node, who then a miner puts it into a block. The proofs of positions will be substantially larger than the transactions, so that's a tradeoff.
+
+So this goes to a full node, and it has to remember a little bit more than before. It has to remember a list of position roots per block. For every single block, it remembers a root of a commitment that can be canonically calculated for that block, of the positions for all the inputs in it, to allow it to verify the proof of position. And it also has a <a href="https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-March/013928.html">TXO bitfield</a>. The full node takes the proof of position and verifies the alleged position using the data it remembers for validating that. And then it looks it up in the TXO bit field, which in the simplest implementation is a trivial data structure, it's a bit field, and you look it up by position. It's not complex at all. It's one look up, it's probably very close to other lookups because you're probably looking at recent information, and these are all 1 bit each, so they are much closer to each other. The size of the TXO bit field is equal to the TXO size divided by 8. So this is a constant factor improvement of 256. Computer science people usually don't care about constant factors, but 256 makes a big difference in the real world. This also has the beenfit that my merkle set is a couple hundred lines of fairly technical code, it has extensive testing but it's not something that I particularly trust someone to go ahead and re-implement well from that, it's something where I would expect someone to port the existing code and existing tests. Whereas I would have much ore confidence that someone could implement a TXO bit field from a spec and get it right.
+
+The downside is that these proofs of positions are much bigger than the transactions. And this is based on the TXO set size, rather than the UTXO set size which is probably trending towards some constant. In the long term it might grow iwthout bound. There is a pretty straightforward way of fixing that, which is making a fancier bit field. When it's sparse, at the expense of it being much more interesting to implement, you can retain the exact same semantics while making the physical size that the bitfield usig is equal to the number of bits that are set to 1 times the log of the total number of bits, which isn't scary in the slightest. So this is still going to be quite small. To get this working, you'd have to go through an exercise about making a good merkle set, and someone is going to have to think about it, experiment with it and figure out what implementation is going to perform well. Whereas a straightforward bit field is just trivial.
+
+<a href="https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2016-June/012758.html">Any</a> <a href="https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-March/013928.html">discussion</a> of <a href="https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-February/013592.html">this</a> got drowned out with the mailing list's very important discussion about segwit. But I think this is an approach worth considering, with the given caveats about its performane, it has a lot going for it, rather than doing UTXO commimtents in blocks in bitcoin. Merkle sets can do a lot more things for a lot more stuff than just in bitcoin. I think they shine when you have truly gigantic sets of data-- probably people that have permissioned blockchains should be using merkle sets, not really bitcoin I guess.
+
+Q: The proof of position... is that position data immutable?
+
+A: Yes. It only grows.
+
+Q: That's the biggest distinction from petertodd's proposal, where he chooses bitfield and proof of position...
+
+A: petertodd's idea of keeping the whole UTXO, he likes indexing things by position on the grounds that the recent stuff is getting updated a lot probably, and by organizing things in memory that way, you get memory-efficient look-ups because it's always hitting recent stuff. My approach gets this and more, so you have this compacted down, so you are more likely to hit things that are near because it's all in a smaller area, and all of the recent stuff is right there. So that's a benefit. I don't think this is as near as much of a benefit as this implementation  of a trivial bitfield knowing exactly where the bit is, a one look-up, and the constant factor of 256 is a huge deal, and it's a really easy implementation to do.
+
+Q: The real challenge of petertodd's proposals previously was that wallet had to track basically the proof of positions and the change over time.
+
+A: Oh right. that's what inspired me to do this. I don't want wallets to have to keep track of everything. I don't want wallets to have to keep track of blocks. I want them to come back to life after years of being deactivate dand still be able to make functional transactions. And by making proof of positions never change, after like a few blocks, after you're past the reorg period, that keeps that property, so it makes wallets really braindead simple to write and have function.
+
+Q: Yeah. Makes sense.
+
+A: I got through this talk very quickly. Anyone have any more questions about this?
+
+Q: Can you describe the proof of position? What is information in that? How does that affect how bitcoin blocks or transactions?
+
+A: So... to make a proof of position, you have a canonical way of taking a block and calculating a position root. We're not adding anything to bitcoin blocks. You get a block, and you look at it, and you say well if I take the infrmation about the order of everything in here and I put it into a sorted orde rof their positions and have a root for it, it's a canonical root, me and everyone else will calculate the same value. I calculate everything abut this, I keep the root, I know it's valid, but I don't keep the whole thing. Someone else who wants to prove position, well they want everything up to this point has this number of things in it, and here's the list of things in order. Someone else who wants to make the proof of position will include the subset of the things up to that root that gives enough information to verify the offset of one particular TXO from the value that was at the beginning of the block. No new things added to bitcoin commitments and it's just this canonical calculation that everyone can calculate.
+
+Q: Mind if I re-state the benefits of this?
+
+A: Sure.
+
+Q: So the advantages of this proposal is that currently with a full node today to validate blocks you have this UTXO set which is maybe 2 GB of data, and what Bram is proposing is a scheme where the full node doesn't need to store that. It stores a bit field which is 256x times smaller, plus an additional hash per block. That's a huge savings in resources for a minimum full node. The downside is that a transaction are now much larger, instead of a few bytes like 226 bytes it's now like a kilobyte to remind the node of the data it has forgotten. There have been other proposals like from petertodd where the wallet would have to keep a passive view of the network to keep updating its proofs. So Bram's proposal doesn't have that problem. Well, then there's the question of what's worse for people, a lot of storage on disk, big transactions, or a lot of bandwidth to have the transaction overhead? There's a lot of wrinkles in the discussion on this-- you could have a p2p tradeoff where some nodes have the merkle set of data and they don't have to send it over the wire or things like that. Bram's proposal scales over the TXO size, not the UTXO size. The TXO count is all history not just the unspents, so it's a lot larger, but because of the big savings maybe it doesn't matter.
+
+A: Yeah. And like I was saying with maybe too many words trying to explain, when the ratio between TXO and UTXO set sizes become large, you can compactify this bitfield and the asymptotic size of htis bitfield will then be, the UTXO set size times the log of the ratio between the sizes between them which is totally under control. But it's not trivial to implement, doing that well is the same order of effort as the effort I had to put into making a decent merkle set implementation, which was non-trivial.
+
+Q: ...
+
+A: It's not necessary right now, this bitfield is so small that it's not scary in the slightest.
+
+Q: Just to clarify.. we have 1600 transactions/block on average.
+
+Q: Inputs and outputs.. so ... 2500 per block.
+
+Q: Are we talking about adding so much data that we will limit the number of transactions?
+
+A: We are not proposing the number of transactions per block.
+
+Q: The way to think about this is to think about what's more expensive for users.. bandwidth or storage? If bandwidth was free, then sure. There's a tradeoff circus where this makes more or less sense.
+
+A: We're trying to make technical solutions that can keep up. We're not-- we're trying to avoid anything that touches the semantics of bitcoin at all, we just want to make some magic pixie dust and get the issues going away, and then people can stop discussing hard-forks to fix them.
+
+Q: I want to answer that question differently. Your blocks would be the same size. Your transactions would be the same size. All the accounting is the same. But when I give you a block or transaction, I would also give you the proofs that the outputs it's spending also existed in the past. It's auxiliary information that you pass around in the past, it doesn't change the canonical block data, it just changes what I need to give to you in order for you to verify it.
+
+Q: Proof of position....?
+
+A: The wallet can be given the proof of position and it will remember it.
+
+Q: That is the solution that petertodd suggests. Yeah, farm it out to someone else. But in this case, there's no reason to do it. You only need a third party if you went offline immediately after getting paid, but if you were online when you got paid, you just save it and you're done. It only changes during a reorg. Once your transaction is confirmed, you save the data. If you lose the data, you go to a third party, and you give them a transaction without proofs plus an extra output to pay them, and they give you the proof in order to get your money.
+
+A: You only need to find one fully true node to find the lookup position, and then that proof that can be sent around to everyone else in the whole network.
+
+Q: Are these bitfields stored per block, are they aggregated?
+
+A: One giant bitfield for the whole history. The very first bit is the first UTXO of the genesis block.
+
+Q: No. Block 0 doesn't create any outputs. It was never inserted in the database.
+
+A: Uh... well since block 0 doesn't create any outputs, the first one would be block 1. And then block 2, 3, 4 and so on. So yeah it grows without bound off of the end of the thing.
+
+Q: if we have time, -- can I ealborate on how I thik the proof works? So that we can make sure I am thinking about the same thing.
+
+A: Go right ahead.
+
+Q: I think you're going to make in every block a merkle tree that for its outputs, based on its position and whatever the value is in the TXO, which is the amount, the scripts and txid.
+
+A: It just needs position information.
+
+Q: The hash needs to..
+
+A: It needs to commit to the hash, yes.
+
+Q: When I want to spend something, I give you the output I am spending, plus a merkle path, which is per block, from the block it was created in.
+
+A: It doesn't have to be per block. I like per block, because it's a good idea for a node to store the bunch layers tops of a merkle tree, and it's a good spot to stop at.
+
+Q: But we already have linear amount of data from the blocks that are available. I agree.
+
+# Other links
+
+delayed txo commitments <https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2016-May/012715.html>
+
+TXO commitments do not need a soft-fork to be useful <https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-February/013591.html>
