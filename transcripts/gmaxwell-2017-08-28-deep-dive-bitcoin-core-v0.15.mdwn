@@ -244,7 +244,7 @@ Work has started on something called "peer interrogation" to basically more rapi
 
 There's been ongoing work on improved block fetch robustness. So right now the way that fetching works is that assuming you're not using compact blocks high-bandwidth opportunistic send where peers send blocks even without you asking for it, you will only ask for blocks from a single peer at a time. So if I say give me a block, and he falls asleep and doesn't send it, I will wait for a long multi-minute timeout before I try to get the block from someone else. So there's some work ongoing to have the software try to fetch a block from multiple peers at the same time, and occasionally waste time.
 
-Another thing that I expect to come in relatively soon is ... proposal for  gcs-lite-client BIP for bloom "map" for blocks. We'll implement that in Bitcoin Core as well.
+Another thing that I expect to come in relatively soon is ... proposal for <a href="https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-June/014474.html">gcs-lite-client BIP</a> for bloom "map" for blocks. We'll implement that in Bitcoin Core as well.
 
 # Further further....
 
