@@ -320,7 +320,7 @@ Q: Hi, you mentioned taking out openssl. But someone who is working on secure co
 
 A: Right, no chance of that. Openssl has a lot of stuff going for it-- largely wideployed, but has lots of attack surface. We don't need openssl for secure communication.
 
-sipa: If I can comment briefly on this, the most important reason to use openssl is if you need openssl. For something like this, we have the expertise to build a much more narrow protocol without those dependencies.
+sipa: If I can comment briefly on this, the most important reason to use openssl is if you need ssl. For something like this, we have the expertise to build a much more narrow protocol without those dependencies.
 
 A: We also have some interesting things different for bitcoin, normally our connections are unauthenticated because we have anonymous peers... there are some interesting tricks for that. I can have multiple keys to authenticate to peers, so we can have trace-resistance there, and we can't do that in openssl. Your use of authentication doesn't make you super-identifiable to everyone you connect with.
 
