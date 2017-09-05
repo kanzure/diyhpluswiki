@@ -122,16 +122,68 @@ And there are other things that may be critical for overall security in terms of
 
 Yeah that was pretty quick. I hope you have some questions.
 
+Q: How many peers are SPV nodes often connected to?
 
+A: There are BGP-attack possibilities. Chainalysis. Lots of threats. SPV only connects to 4-8 peers. Not thousands.
 
+Q: Are there censorship resistance reasons... are any of the other encrypted protocols using 65 bytes?
 
+A: Those 65 bytes... I think that's just an example for the packet. Yes.... I hope it's calculated correctly. But I mean, other packages, the int is short, it's just.. you get like four instead of twelve bytes.
 
+Q: Is there a code impossible to encrypt?
 
+A: I don't think so. I am not a cryptographer.
 
+Q: I'm a little bit nervous about the... the kind of layer violation going on between the negotiation of the header and then having to come back and keep some state at the network. Have you looked at kind of using the current header structure so that... basically, imagine that the networking part, kind of the, by taking the header, and separating the ... and forwarding it along. I mean, .. but for the sake of example, as  you ... you have to pass it up in order to decode the message; you have to understand that the setup is being done so that you can pass it to that layer. Is it possible to separate those two layers? Or how much you have considered this?
 
+A: You're thinking already lines of code, which is good. I think we will have time in the next few days to talk about that. We can improve the proposal, for sure.
 
+Q: There's still... into... being able to talk with the peer if the ISP... if the handshake process..
 
+A: Some of these protocols use certificate authority chains. SSH does it using pending down the .. identity key. Both are not fully preventing you from active man-in-the-middle so... it's always the problem. Pieter may have a more precise answer.
 
+sipa: I think you,... jonasschenlli was talking about wto ddifferent proposals. One was to setup an encrypted channel. And secondly, authentication to know if you are talking with the right peer. If you are not using the authentication proposal, then of course, just encrypting your conection doesn't lead to anything if you don't know who you are talking with. Your ISP could be running a node. If you are purely talking about encryption, it makes certain attacks harder but it does not prevent anything. But as soon as you use the authentication proposal, these problems go away. If you have verified the key of the node, and you have configured the nodes to connect, then yes that problem goes away.
 
+gmaxwell: I would like to clarify. The peer encryption does have the advantage of blocking passive observers-- and passive observers are cheap to do... and so is this prevention. If your ISP was monitoring your bitcoin connections today, you wouldn't be able to tell it. Comparing session ids is also something that is possible. This is a useful piece of machinery to have in the system, even without the peer auth part.
+
+Q: Are there any thoughts to extending this to Web of Trust so that I don't have to authenticate my friends directly?
+
+A: That's a possible extension, but first we need to do the other steps. But also, you need to authenticate your peers or else WoT doesn't work.
+
+gmaxwell: Part of the reason for the split between authentication and encryption is so that we can have many different authenticaiton schemes that people could use. I don't know if WoT is ever going to be useful for bitcoin network. But maybe for trasaction relay it will be interesting. But any cool authentication ideas, that can be dropped into the scheme and use the same encryption layer.
+
+callen: So it seems there are three states... an ongoing relationship with tohter peers, you have got an identity check, and then there's initial setup, a node that has never talked with the network or hasn't talked in a long time. Are there--- one of my concerns would be early on, establishing the network, has there been some discussion about improving the performance there? Besides DNSSEC. Which I've seen being promised for pretty much my whole 30+ year career.
+
+A: I think DNSSEC has that kind of layer of anonymity which is for say good. But sometimes it could be more desirable to first use a static list. But I think there's, it's a piece we need. That's just the nature of the p2p system. First kickstart... hopefully all over that.
+
+gmaxwell: The network is still an anonymous identity list. You don't need to bootstrap identities here because there is no need for identities in the first place, except in areas where people are already connecting to identified peers.
+
+Q: Does the onde signal this with a service bit, or is this o na fork, and if you add more ciphers how does this work?
+
+A: How do you announce the encryption type? How do you know if the connection is possible? Yeah I don't know if the current proposal is good for that. The proposal says you have to do this between the version check handshake. So there's no service bits. So you should just try the encryption handshake and if the peer ignores it, maybe disconnect and try again. It's not ideal. Ideally you encrypt at the very first point.
+
+Q: So it makes sense for nodes to listen on multiple ports?
+
+A: That would make it more obvious what version you have. But yeah, maybe.
+
+Q: Would you say that encrypting the bitcoin network traffic would bring further state attention to the bitcoin network?
+
+A: I don't think so. Kind of having undetectable transaction like zcash and stuff, that's kind of ringing the alarm clocks there. I think pure encryption? Nah, I don't think so. They probably expect at much at this point.
+
+Q: How did you decide how often or when to check a session key?
+
+A: The current proposal checks at the beginning and from that point there's a re-key. There's also a re-key that has to be done once the session id has been checked. And then from then there's kind of a chain of the keys that goes back to the initial detection.
+
+gmaxwell: If you're doing it manually, how paranoid are you?
+
+A: The host could have changed it.
+
+gmaxwell: You could manually check the keys. To make sure they have the same session id? Do it every once in a while. If there's only one connection up, there's no way that a man in the middle came into the existing connection. So maybe look at it once a week or once a month. If only a tiny number of users check those session IDs, then no tier 1 ISP could be doing global observation of the network.
+
+Q: With regards to checking session IDs are the same or not, if an attacker knows that you're going to be checking the first digit of the session ID, are they able to do anything?
+
+gmaxwell: If the attacker knew that you were only going to hceck the first digit, then yeah they can grind that. But if they don't know what digit you're going to check..
+
+A: The pure fact that it is detectable will reduce the attack surface enormously. So this makes it worth doing. More questions?
 
 
