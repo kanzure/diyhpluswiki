@@ -18,5 +18,8 @@ One of the tools we want to use are these merkle mountain ranges or these merkle
 
 How does flyclient work? As we recall, every blockchain has this previous hash in the blockheader. Well, what if we don't include jus tthe previous block, but what if we include a root of a merkle tree and the merkle tree commits to all the... So in every blockheader, you have a reference to all the nodes in the blockchain. You can easily do lookups to say, what's the block number-- 13, was 13 included in this merkle tree? You can do a logarithmic sized proof that the block was indeed included.
 
+The nice thing is that the client only needs to store the head of the chain. If I want to prove to you that a transaction was included, I give you a merkle proof that the block was part of the chian and then I give you another merkle proof that the transactnction was part of the block.
+
+What if I get two chains? Which one is the right one? 
 
 
