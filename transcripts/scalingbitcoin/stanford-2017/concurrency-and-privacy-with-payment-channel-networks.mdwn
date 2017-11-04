@@ -48,3 +48,28 @@ This NIZK ensures that Bob doesn't lose coins. Bob is convinced of the relations
 Here we observe that concurrency on-chain transactions is somewhat easy to be solved. Miners have a view of all the transactions and they can take some of them and sort them or order them. No user has a complete view of off-chain payments. No user in the network has a complete view of all payments occurring in the network. No entity can look at all those transactions. So the approach is a blocking solution that can lead to deadlocks. As soon as they reach a channel with enough credit, that payment will... and then the payment... conditional payments will just timeout at this point. However, since a blocking solution can lead to deadlocks.... Here's an example. The red payment here, and Bob wants to pay to Edward for the sake of example, each channel might have the capacity for only one payment. Concurrent payments will be routed on different paths, and now the blue payment goes to Carol and she can't forward to Edward, and she had already used her coins for the red payment. So you can see how there is a deadlock here. Using a blocking solution, both payments get aborted because there's not enough credit, and both payments get released.
 
 What we propose is a non-blocking solution called Rayo. The property we are after is that in a set of concurrent payments, we want to make sure that at least one of the payments finishes. We use global transaction identifiers. For every transaction there is an identifier tha tevery node in the network knows. In the previous example, the red transaction and blue transactions have identifiers. Every node can locally check and order the transactions. The policy we implement is that payments with a lower identifier will get aborted. Now the nodes will know which payment to abort to resolve the problem.
+
+# Tradeoffs
+
+The identifier might interfere with privacy of the payments. Is this a problem? Yes. In the paper, we show that it is impossible to have a non-blocking solution and a solution with full privacy. So there is a tradeoff here. The system we propose, we have to give up one of the two. Either you give up concurrency or you give up privacy.
+
+# numbers
+
+We have been prototyping our system. The running time is largely dominated by the NIZKs. The creation of a proof requires 309 ms. The verification of a proof requires 130 ms. The size of a proof that we need is about 1.65 megabytes. In order to do a realistic scenario, we wanted a payment with 5 hops. We have been testing with the non-rpviate version of the lightning network, where we measured it as taking 609 ms. In our privacy solution, it takes about 1929 ms and we need 5 megabytes of communication between the nodes.
+
+The main point here is that ... we don't require etra information in transactions. These are data that are passed off-chain.
+
+# Conclusions
+
+In this work, we define security and privacy properties of interest in payment channel networks. There is an inherent tradeoff between concurrency and privacy. We have to loo kat that tradeoff and give up one of the two. There is Fulgor and Rayo which we have proposed. Two approaches for concurrency and privacy. Fulgor is blocking, but full privacy. Rayo is for concurrecy, but not private.
+
+We showed our solutions are efficient, compatible with bitcoin script, and they don't require storage overhead in the blockchain.
+
+Thank you for your attention happy to answer any questions.
+
+# Q&A
+
+
+
+
+
