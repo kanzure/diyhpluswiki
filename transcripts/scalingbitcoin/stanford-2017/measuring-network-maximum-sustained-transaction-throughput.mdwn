@@ -70,5 +70,29 @@ Since I am not even running the hashes in the bloom filter, this fast filter run
 
 # Q&A
 
+Q: How do I validate transactions if it's a gigablock?
+
+A: You use SPV.
+
+Q: How secure is that?
+
+A: I don't think this is a talk about SPV. We're looking forward. We don't assume you are going to run a 5 year old computer. We're not going to use 1 gigabyte blocks tomorrow. The fact is that a relatively inexpensive computer can do it today.
+
+Q: ....
+
+A: Can you repeat the question? I didn't catch what you said.
+
+Q: ....
+
+A: Right.
+
+Q: ... and you may want to re-spend... and I think.. 55% of the transactions... 0 ancestors.. So 45% have some ancestors or descendants? Was that in your case?
+
+A: The transaction generators are python scripts which are managing their own wallets. We are not using the bitcoind wallets. If you try to generate 2k tx/sec with bitcoind wallet, you'll get 20 transactions/second really.
+
+Q: .. parallelize acceptance... have all the non-descendants...
+
+A: Actually, you know, because we had relatively few.. you know.. computers. We bumped the number of ancestors way up, maybe 3-4x more times than is normal.
+
 
 
