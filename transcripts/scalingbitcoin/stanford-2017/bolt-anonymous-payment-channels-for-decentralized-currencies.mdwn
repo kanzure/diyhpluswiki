@@ -53,6 +53,26 @@ You can do more than just send payments, having a bartender and a beer.... You c
 
 One thing I would like to do is compare this to tumblebit, lightning, everything else. The difference is that tumblebit and lightning payments work in bitcoin as-is. They don't offer privacy from collusion in others in the network. In lightning, if everyone in your channel or network colludes, you can be identified. In tumblebit, if the hub... they can identify the sender. In BOLT, you can get full privacy, but at the cost of...
 
-So how do you deploy this? It ends up being the case that this can be deployed in zcash or bitcoin by adding a new opcode. I am not sure if this is a soft-fork or a hard-fork. Interesting discussion. You can deploy by adding an opcode. In bitcoin, one caveat. You need to be able to anonymize the funding of a channel. One cheat that makes this efficient is that it's a two-party protocol and you're doing exchanges back and forth. You can end up aborting.. the protocol goes dead or maybe it's malicious and you end up in an invalid state and you have to close the channel. This links a close to an abort.
+So how do you deploy this? It ends up being the case that this can be deployed in zcash or bitcoin by adding a new opcode. I am not sure if this is a soft-fork or a hard-fork. Interesting discussion. You can deploy by adding an opcode. In bitcoin, one caveat. You need to be able to anonymize the funding of a channel. One cheat that makes this efficient is that it's a two-party protocol and you're doing exchanges back and forth. You can end up aborting.. the protocol goes dead or maybe it's malicious and you end up in an invalid state and you have to close the channel. This links a close to an abort. Yo uwant to make sure that if they link to the open channel opening, then they can't identify you.
+
+# Q&A
+
+Q: Can you talk a little bit about the requirements to... revocation keys... and what a large merchant such as large online retailer might need to build in infrastructure to deal with this?
+
+A: It will be something like 32 bytes per... channel. So you have to store some data. And you have to monitor the network and make sure they are not closing the channels. Your infrastructure will store small data per client. You have to be online to monitor to watch for channel closure events.
+
+Q: Any kind of expiration of IOUs is just internal to the merchants with a customer?
+
+A: Yes there's a timeout. In lightning too, you have to pick a timeout parameter for how long until you post a closure. You have to wait for the other person to dispute it, too. You have to figure out the amount of money involved... infrastructure.. how much... that's a tunable parameter that can be set by the merchant and participants.
+
+Q: Can you talk about the opcode that is needed and what it does?
+
+A: It's an opcode that looks at the output of a transaction and you have to get a commitment the IOU it opens, and check that the balance and funds coming in are split according to the value of the commitment, like the amount going to the customer and the merchant and so on, and signed with the right private key.
+
+Q: Alright, thank you.
+
+
+
+
 
 
