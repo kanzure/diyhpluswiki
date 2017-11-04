@@ -39,10 +39,12 @@ The solution we propose is Fulgor. It's multi-hop HTLCs.
 
 # Multi-hop HTLCs
 
-We use a building block called non-interactive zero knowledge (ZKBoo [GMO16]). There are two things-- x0 and x1 and y0 and y1.
+We use a building block called non-interactive zero knowledge (ZKBoo [GMO16]). There are two things-- x0 and x1 and y0 and y1. The privacy you get is that the.. two values are the same. For anybody else these look like two random numbers being used for the conditions of the payment. Now that we have the conditions settled, we need to.... Cat will open.. and pull the money from Bob. And now Bob can take this x0 that he knows and pull the money from Alice in this manner.
 
+This NIZK ensures that Bob doesn't lose coins. Bob is convinced of the relationship between the values. Bob doesn't learn the information. He can't steal coins. Bob does not lose coins either. We can use a channel between them, like Sphinx, to do that communication.
 
+# Concurrency in PCNs
 
+Here we observe that concurrency on-chain transactions is somewhat easy to be solved. Miners have a view of all the transactions and they can take some of them and sort them or order them. No user has a complete view of off-chain payments. No user in the network has a complete view of all payments occurring in the network. No entity can look at all those transactions. So the approach is a blocking solution that can lead to deadlocks. As soon as they reach a channel with enough credit, that payment will... and then the payment... conditional payments will just timeout at this point. However, since a blocking solution can lead to deadlocks.... Here's an example. The red payment here, and Bob wants to pay to Edward for the sake of example, each channel might have the capacity for only one payment. Concurrent payments will be routed on different paths, and now the blue payment goes to Carol and she can't forward to Edward, and she had already used her coins for the red payment. So you can see how there is a deadlock here. Using a blocking solution, both payments get aborted because there's not enough credit, and both payments get released.
 
-
-
+What we propose is a non-blocking solution called Rayo. The property we are after is that in a set of concurrent payments, we want to make sure that at least one of the payments finishes. We use global transaction identifiers. For every transaction there is an identifier tha tevery node in the network knows. In the previous example, the red transaction and blue transactions have identifiers. Every node can locally check and order the transactions. The policy we implement is that payments with a lower identifier will get aborted. Now the nodes will know which payment to abort to resolve the problem.
