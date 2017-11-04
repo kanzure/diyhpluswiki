@@ -1,0 +1,25 @@
+
+Bolt: Anonymous Payment Channels for Decentralized Currencies
+
+paper: <https://eprint.iacr.org/2016/701.pdf>
+
+To make questions easier, we are going to have a mic on the isle. Please line up so that we can have questions quickly. Okay, now we have Ian Miers.
+
+---
+
+My name is Ian Miers. Just got my PhD at Hpkins... authors of zcash, zerocash, ... My interest in bitcoin was, first getting involved, was dealing wit hthe privacy aspect. There is also a scaling problem. I assume you are aware of that. The bottom line is... converting this to PDF doesn't work well, hm. The bottom line is that... blockchain-based payments have scaling issues. They are expensive in resources and money resource usage and just time, the time latency. This is a problem that is kind of annoying. It's next generation payments, but it's expensive? What?
+
+This is something we're fmailiar with. Hve you tried to buy a drink at a bar? It has fees at the merfhant payment processor. It has a time involvement.
+
+The solution to this is that you batch payments together. If you're at a bar, then you opne a bar tab. You give them your credit card. As you buy drinks, you build up this debt, and at the end of the night, you pay. The bar tender might not trust you. If they do trust you, then you put it on the tab and give them the card at the end of the night. You amortize the cost of an expensive payment system over multiple transactions. This is the basic idea behind a payment channel. The difference is that in a bar, there's a trust. What about in a trustless scenario?
+
+The way to think about payment channels is that they are a protocol for IOUs. They are not debt based though. They have real money. If the two people don't trust each other, at the beginning of the night you give the bartender $100, and he gives you $95. So you have this channel established between the two. But this is only if there's not a multi-hop network. You exchange these for "IOUs" that can be repudiated on the blockchain. At the end of the night when you're done, you have to go cash out the IOU and this should work as a pamyent protocol. Who do you cash it out with? You cash out the IOU wit hthe bartender but then you have to trust them. This is where the analogy breaks down... but the answer is a blockchain. That's where you pay. You can do this with escrow, of course. You have a lbockchain. Cost some resources.. you make a bunch of payments, then later come back and close the channel. This is one way to think about another payment channel network- put some money in, do a bunch of transactions... This is nothing new. This is not my work here. This is the basics of this thing. The question that comes up, is ...
+
+... it actually makes the situation worse because if ... you have ot identify your transactions. So you, end you identify your self. If you are trying to do this micropayments.. the bandwidth.. you identify yourself every time you do tihs, you build up this pattern. So there are privacy issues. You don't want to do that. You can't use it for some applications.
+
+Worse, it doesn't solve the privacy problem- everything on the blockchain is public. You think that by removing the transactions that you gain something. True, but you have t oworry about the aggregate data too. It doesn't matter that you are paying a psychiatrist once a week- what matters is that you know that they are paying a psychiatrist at all, even with channel open channel close.
+
+The situation gets better with payment channel networks with multi-hop. You can do onion routing. And then all that anyone sees is that you have a channel open with a particular entity. But there are still some problems. Hubs in the network learn what you're doing. This causes a bunch of issues. It's not really clear what these channel.... The hope is that you get a decentralized network. Even in this you have some problems, as mentioned in the last talk. You have a path through the network and if all the peers onhte path collude, then they can identify you, and it coul dhappen after the fact too. Even worse, you end up in this, where it might happen, where the network is centralied. You don't have to worry about collusion- the guy just knows anyway. And this has a bunch of problems. This starts to look exactly like what we have now for payment tech, it is unsatisfactory where you have a centralized payment provider. And they have start doing monetization stuff, selling your data, or whatever. It will happen there. For bitcoin, the situation gets worse, it's not going tobe like Visa which gets regulated-- they have rules about what you can do with personal data. BUt it will be, insert your sketchy exchange here...
+
+
+
