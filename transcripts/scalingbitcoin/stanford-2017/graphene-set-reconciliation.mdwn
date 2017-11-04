@@ -60,7 +60,23 @@ Graphene fits in one IP packet. Compact blocks do not. There is no increased tim
 
 # Q&A
 
+Q: Obviously you are talking about bigger block sizes... hard-fork to... by these results... is this theoretical, or are you expanding the bcash blockchain? They don't have enough transactions to ttest this...
 
+A: This is all just python simulations.
 
+Q: Simulation of what? testnet? bcash testnet? Where is... is this all simulation? Are there a testnet bitcoin where this has been tested?
 
+A: So the question is how did I get these results. This is a python simulation of Alice talking to Bob. I would love for someone to code this up and use this on a real network. Nobody got hurt in the making of this transaction.
+
+Q: How does the receiver expect the order of the transaction? Do they bruteforce it?
+
+A: If you have an order for the merkle tree... then you have a problem because there's no efficient way. In the worst way it's n log n bits to describe the order of something. In the best case there's a known canonical ordering. In that case, these results are small. If you have to have non-canonical ordering, then these results would be higher. That green line would go from 20 to like 80 or 100, still left than half of compact blocks. You are raising the minimum of what it takes to describe a block t osomeone. Graphene at this point is doing its best at its theoretical minimum lower bound on describing a block. It would overwhelm. All of the cost is in specifyin the order, block propagation would be about specifying order.
+
+Q: It's not clear to me why you are trying to find a difference between mempools. Since blocks are fairly specific in size, why not just try to consolidate the top megabytes of the mempool by economic order?
+
+A: Are you asking if I am trying to find a mempool difference?
+
+Q: Seems like you are deriving the IBLT by the mempool..
+
+A: I'm not. The mempools is over.. Sorry, the IBLT is over just the block from Alice's perspective. From Bob's perspective, it's just the transactions in his mempool that goes through the bloom filter. The IBLT tells him which transaction it is.
 
