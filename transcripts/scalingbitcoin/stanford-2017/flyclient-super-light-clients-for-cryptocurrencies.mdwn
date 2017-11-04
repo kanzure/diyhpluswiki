@@ -1,6 +1,8 @@
 Flyclient Super light client for cryptocurrencies
 
-Benedikt Bunz, Mahdi Zamani
+Benedikt Buenz, Mahdi Zamani
+
+buenz@cs.stanford.edu
 
 Thank you.
 
@@ -40,7 +42,15 @@ Thank you.
 
 # Q&A
 
+Q: ... similar things.. right?
 
+A: Non-inclusion proofs are very difficult. Nonmembership proofs require an accumulator or something. There are some ideas with bloom filters, but in general, it's not easy. You would have to check every block for even if you have a normal... it's not really possible.
 
+Q: The challenging question.. if you are going to rely on any... then.. the question we should ask is, can we...  provide a proof.. that it is valid.. then we don't rely on... rely on the... servers? Non-inclusion. Then we can... use it for inclusion.
 
+A: You could, but I don't think you have to, since we have nice cryptographic solutions.
+
+Q: What if someone tries to attack a speciifc SPV node by continuously forking? A continuous forks to try to get the next block to be a malicious one for that SPV client. And after that the real block is found...
+
+A: The same thing for.. you shouldn't trust transactions that aren't deep in the blockchain. You can always do a 3 block depth fork, if you have some mining power. It's going to be harder to do that at 10 blocks deep, though. In the protocol, you manually check the last constant number of blocks to prevent that situation as well. That's possible, yeah. That's why you can't trust transactions that are only 3 blocks deep.
 
