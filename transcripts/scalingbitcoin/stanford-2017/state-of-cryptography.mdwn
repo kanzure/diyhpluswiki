@@ -58,6 +58,9 @@ Can we do better? Can we get rid of trusted setup? It turns out there's some thi
 
 Bulletproofs: short proofs, just like SNARKs or STARKs, they are short proofs but it has linear verification. Been working with Greg Maxwell on this. The proofs are really short. Bunz et al. 2017 based on Bootle et al. 2016. Proofs are very short log(n) for statement of size n. Verification is like proving (slow). Replacement for sigma protocol. It has long verification but it's still useful for like range proofs, which was our original motivation, which is used in mimblewimble and confidential transactions. Their size is significantly reduced from 4 KB to 670 bytes. Also, you can aggregate them. Two range proofs- 736 bytes instead of 8 KB. For 16 range proofs, it's 926 bytes instead of 61 kilobytes. This is really nice for aggregation. In mimblewimble, this means the size of the blockchain drops from 160 GB to 17 GB. For confidential transactions, the utxo set size will also drop at the same rate because now your proofs are a lot smaller. It also has a built-in coinjoin protocol for combining confidential transactions. You can use it for solvency proofs, verifiable shuffles or mixnets where people have 10 transactions and they want to create 10 random outputs and nobody is able to link them together so they can use that there as well.
 
+paper: <http://web.stanford.edu/~buenz/pubs/bulletproofs.pdf>
+
+
 
 
 
