@@ -30,7 +30,16 @@ We can use a similar idea where we just have to find the forking point. What if 
 
 We have to check a constant number of blocks in each interval. It doesn't depend on how wide is the interval. It doesn't matter. Always check 81 blocks. The number of blocks that we check is dependent on how strong we assume the attacker is. We have to check log(n) intervals. For each lbock, we have to do log(n) merkle inclusion proofs, which is also logarithmic in the number of blocks. Overall this is complexity of log(n^2). To sync up, I only need to download 3 megabytes, and then I can throw it away later.
 
-This is cool, but there's a problem. This is still interactive.
+This is cool, but there's a problem. This is still interactive. The verifier has to ask for a certain number of blocks. The verifier asks for random blocks. There's no specific maintenance. He just says give me some random blocks. These public coin protocols-- I'll talk about this more in the afternoon. You can turn these into non-interactive protocols by using a hash function to get the randomness. In this specific case, we could get the randomness from the block headers. You use a slightly different hash function-- use sha3 instead of sha256 maybe. To hash the block. And then you get some random bits from that. And there's a paper on how exactly to get those beacons. And this is good enough to request these random blocks and it turns out that because creating multiple ... is difficult.. you don't need this 2^(-128)... You don't need as much as you normally need. It's quite difficult to do those multiple hashes.
+
+As a prover, if it's non-interactive, I can create a proof for a blockheight once, and then other people can forward it. There's no interaction anymore. You know. You turn it on, you have some nice server that gives your mobile client the header for the chain and an SPV proof, and then you have multiple services-- you have to make sure you get the same data of course, you were assuming the server was honest. And then you check which one is right, it's hard for them to fool you.
+
+Kaiyas et al.
+
+Thank you.
+
+# Q&A
+
 
 
 
