@@ -40,6 +40,18 @@ S ojust a few tidbits of how we achieve this performance. We have a highly custo
 
 So far I have focused on scalability implications related to bitcoin. I want to take a mention to second a few other things that blocksci can do. We can look into privacy of multisig. One of the purported uses of multisig was for organizations to manage their funds so that they can distribute keys to multiple people. But this allows leakage of private data, you can see some keys, acccess patterns ,etc. We looked at places where the keys used for a multisig changed slightly. For instance, if there was a 3-of-3 multisig, we found locations where there was an input and output where only one of the 3 keys changed. And that is a fairly substantial violation in organizational privacy if outside observers can tell when... it might just be a key swap, or maybe you booted someone out for control of the funds. You can explore this with blocksci, and you can see how much money is in outputs that exhibit these signs. So looking at the last few years, there are recently as much as 10k transactions per month with these properties, and a fair amount of money involved in them. These are serious privacy violations.
 
+"When the cookie mets the blockchain: Privacy risks of web payments via cryptocurrencies"
+
+"BlockSci: Design and applications of a blockchain analysis platform"
+
+# Q&A
+
+Q: What indexes do you need on Bitcoin Core?
+
+A: The default setup. You don't need txindex. We parse all of the block files ourselves without using any sort of indexing. The reason for this is that we would like to be able to have blocksci running concurrently with a node. This is not possible with bitcoin core's current leveldb indexes which only support single reader.
+
+
+
 
 
 
