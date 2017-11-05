@@ -32,7 +32,32 @@ Benedikt talked about schnorr signatures yesterday. There's one equation here, b
 
 I am going to use an "adaptor signature" where the two components of these schnorr signatures can be modified in such a way that we can add some random number t such that you can get a real signature knowing the secret value t and knowing the value secret t you can get a real signature. Knowledge of this value t becomes a key to producing this signature. The way this is done is using this thing called a valid signature. Someone can verify the adaptor signature. There's a little t value and a big T value.
 
+Once Bob signs, Alice has some secret information that she can use to get her coins.
 
+Adaptor signatures can be used instead of hash preimages. These discrete log challenges, have a bunch of extra structure. One is that you can make them work across elliptic curves with some extra cryptography that I will publish in the next few months. So even between Monero using ed25519 and then bitcoin with secp256k1. The adaptor signatures are undetectable and they are deniable. What winds up hitting the chian are just these normal looking schnorr signatures, and this off-chain interaction where Bob secretly re-blinded these and passed them to Alice is undetectable and deniable. Anyone can take these two signatures after the fact on any blockchain, add them and make them look like an adaptor signature or whateer; there's no eidence that the original stuff happened at all. This is good for privacy and fungibility. Coins that are used for various protocols like this are indistinguishable from coins used for normal p2p protocols.
 
+An additional cool feature of scriptless scripts is that these adaptor signatures are re-blindable. You can chain not just two transactions, not just two transactions made atomic. You can make arbitrary chains of transactions atomic. I can make all the hops happen atomically. This is what lightning is based on. You can do this knowing that there's no risk of coins being stolen because it's all happening atomically. There's a privacy issue with using hash preimages ( a standard way to do this ), where each party reeals a hash preimage and then the other parties can observe this. But eahc hop could have a custom challenge, and translate it into a new challenge. The participants in the hops are unable to tell without complete collusion that they are part of the same path even given the extra data. Nothing that hits the chain, no hashes that they can look at, to identify it. Even given the secret data they are passing amongst each other-- even then each hop in the path involves uniformly random data that is uncorrelated with every other hop in that path or any other path. So that's great thing for privacy on lightning.
 
+# Q&A
 
+A: You can do threshold signature tricks and that is completely compatible with this. You can have each party revealing different things to differnet people and they can have different weird structure ot their adaptor signatures.
+
+Q: How do you reeal the alue?
+
+A: Alice ... alng with a alid signature with little t. Once you know s + t, and if you learn t or s, you can get the other one.
+
+Q: So the signature will...
+
+A: Exactly. There's an additional thing gien. That's the adaptor signature, is s + t.
+
+Q: ... linkability between the two... like atomic swaps.
+
+A: No. The reason is that, after the signature is on the chain, there's little s hitting the chain. Anyone can make up some t value and T value. Add little t to the signature and... and pretend it was some other r value. You can do this with any t value, it's independent, there's nothing tying this particular t value.
+
+Q: Storage and transactions implication of this approach?
+
+A: Using schnorr multisigs, there are multiple signatures being combined into one. A signature on any transaction input could be reduced from 128 bytes to 64 byte signature. In addition to that, using something like an atomic swap, and something like a hash preimage, thats another 64 bytes.. In this atomic swap example, rathe rthan having about 200 bytes of data which is multisig plus a hash and a preimage, that's collapsed into one signature which is only 64 bytes. And on top of that there's an additional topic called aggregate signatures which can reduce from 64 bytes to 32 bytes. The rest of the transaction is the same, the shape of the transaction is the same.
+
+Q: This feels related to Tadge's work?
+
+A: I would love if Tadge would describe his work as a scriptless script so that I can claim to have a wide umbrella. I described adaptor signatures-- you could do other stuff like pay to contract, sign to contract, discreet log contracts, and another thing I hae been working on that might be public in the next few months. I wanted to gie an example of what hiding hte contracts offers to the chain. I wanted to motiate the paradigm.
