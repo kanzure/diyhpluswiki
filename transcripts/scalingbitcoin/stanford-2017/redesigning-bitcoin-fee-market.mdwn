@@ -1,0 +1,24 @@
+Redesigning bitcoin's fee market
+
+Or Sattath (The Hebrew University)
+
+<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-September/015093.html>
+
+<https://www.reddit.com/r/Bitcoin/comments/72qi2r/redesigning_bitcoins_fee_market_a_new_paper_by/>
+
+paper: <https://arxiv.org/abs/1709.08881>
+
+He will be exploring alternative auction markets.
+
+Hello. This is joint work with Aviv Zohar and I have just moved. And Ron Lavi. And I am going to be talking about tehcniques from... auction theory.. to rethink how fees in bitcoin are done.
+
+Just a fast recap of how the current mechanism works. Each block has a size. Users are asked to specify the fee they will even pay. And the miner orders the transactions in sat/byte.
+
+Let's do some thought experiments on what happens in the case where the block reward is kind of minimum at some point in the future as it will happen. There are some advancement that makes all the hardware 100x better than bandwidth, disk space, CPU, everything is 100x better let's say. What about increasing the block size by 100x? That should work out. And it did from many perspectives. From an economics perspective, it's problematic in a particular sense. If you increase the block size, then there may not be enough transactions to fit in the block and this might cause a drop in revenue for miners. This is a race to the bottom. Since blocks are not full, miners have an incentive to not take many small fees, so users might adapt their fees and revenue for the miners will deminish and the security of the entire network also decreases. It would be very cheap to-- because the system does not buy enough security. That's kind of bad. And this is the thing that we want to ask about and question.
+
+What are the design rules? As we have seen, increasing the hardware parameters and the block size might decrease the miner revenue. So what we want is to have a system without this effect. We want to maximie therevenue for the miners, and in particular if the increase in bandwidth and hardware parameters for the network we could increase the miner's revenue. And another issue that is somehow.. the block size issue is the main property that determines the current fee market... determines is related to both the security aspects to avoid DoS attacks and things like that, and also economic aspects. One of the angles is to decouple these two issues. And perhaps the last design goal is to related to the previous talk which is to simplify the user experience. It's sort of complex right now. How should the user decide those fees and how ...
+
+Bitcoin mining can be analyze
+
+((ask maaku for the rest of this document))
+
