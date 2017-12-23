@@ -118,8 +118,62 @@ Consensus could require an order that obeyed d ependencies, so you could make se
 
 <https://www.youtube.com/watch?v=EHIuuKCm53o&t=57m24s>
 
+Please wait for the mic if you have a question.
 
+Q: On your favorite topic of how to make compact blocks even smlaler or something like that; so, the thing where you're getting these like 2 byte indexes of transactions, would it be more efficient to send a compactified bitfield?
 
+A: Yes.
 
+Q: And then the permutation. And you want to get things down to fitting into a single packet. Isn't that just 2kb for a permutation?
+
+A: If the permutation is uniform, yes. But we have a strong prior for what that should look like, which is hwy I am able to get to that size with my difference thing. So the ordering is like rent and ancestor fee rate. My encoding scheme is efficient for here's some stuff out of order and the rest is in order. The 2 byte thing could be made mor eefficient, but the tradeoff is CPU time. REa ding 2 bytes and indexing is really fast. You could use an arithmetic coder and doing things that my template difference does, but it's quite a bit slower.
+
+Q: As far as reducing bandwidth used by relaying transactions, a pretty good network topology for doing that is full nodes become part of  some club and each transaction becomes part of a club. So you stream it out to the club. ANd then you have one peer in that club...
+
+A: Ther are many papers on efficient gossip networks. One of the things that work doesn't work on is byzantine fault tolerance gossip networks. The efficient gossip networks tend to be ones where a single malicious peer can black out all your transactions. But in bitcoin you can have nodes that are completely malicious and it wont really slow the transactions at once. So far academia hasn't been super useful folr concrete schemes.. I think the low fan out plus set reconciliation scheme is byzantine robust but I don't have a strong proof of this yet.
+
+Q: What's the current propagation delay across the network and what's a good target for that?
+
+A: We have lost our ability to measure it, and orphan rate is really low at this point. It's hard to say. There's some stats that people have from polling random peers. Christian Decker has a chart. It's gotten much better, it's nice to see. But this doesn't look at miners, just peers. THe best way we have to loo, kmat block propagation times from miners is how often blocks are getting orphaned. We over shot on some of this work- we improved some of these things but orphan rate wasn't going down. And then miners upgraded to segwit, and orphan rate went down. And we went for like 5000 blocks without seeing a single orphan, which was unlikely. I think the numbers are pretty good on the network. But the challenge is, is propagation time still adequate once we start producing blolcks with more data in them?
+
+sipa: The fact that we are seeing low orphan rates on the network me ans either our technology is awesome and we have solved the propagation delay..... or all miners are working together and it's entirely cwentralized and we've failed. So it's hard to tell.
+
+A: Before all of this optimzation, there were like 2 or 3 orphans per day, so it wasn't a very clear indicator in the first place, but it was one of the best we had, because it directly measures what we're trying to solve.
+
+Q: Is block propagation time bad on its own, or is jiut because of the effect on orphan rate?
+
+A: It's a lit tle bad on its own independent of orphan rate because it means that you take longer to see what the status of the network is. But suppose if you have a scheme where there are no orphans---- there's radical rethinkings of the blockchain where there's no orphans, like schemes with DAGs, where blocks aren't a straight-linked list, there's a forest of blocks, and then transactions can occur in multiple places there and there's some arbitration technique for dealing with conflicts. But the problem is low throughput because you have to send transaction data redundantly multiple times.
+
+Q: It seems to be that there seems to be this arbitrary permutation encoded in a block kind of sucks.
+
+A: It's something I would like to fix, but there's like, I know in genetics it's commonly the case that there's strange useless effects that turn out to be vital to life because other things have developed a dependency on this. In bitcoin, miners do really truncate blocks. If we take that away, would they care? It's hard to get miners to talk about protocol details. You could require it is an arbitrary order subject to the dependency graph, which is easy to do inside of node software, but hard otherwise. If I was doing bitcoin design today, I would probably require an arbitrary order.
+
+Q: WHen you said block propagation get better with segwit, is that because segwit helped it?
+
+A: No. It turns out that there were some large miners running really old software like Bitcoin Unlimited which was forked from a really old bitcoin version which didn't have cache improvements or any of the other improvements. It turns out that there weren't enough miners running improved software. And then miners switched to modern Bitcoin Core and then the orphan rate fell through the floor. It was difficult to tell though, because slow propagation doesn't just cause the miners to have orphans, it causes evertyone to have orphans. You couldn't really say ah Antpool has ltos of orphans and Antpool is running BU or whatever...
+
+Q: So we're in a stable time for network conditions. We're seeing major network partioning like the GFW or Syria or Turkey... is there a way to measure what happens if the internet becomes a lot more fractured?
+
+A: This is one of those things that is important but also hard to measure. It's not like the internet in the developed world fractures every day. So we don't have lots of data about how fractures or partitions impact the bitcoin network. So we need to overkill partition resistance. Satellites is one way. We could do more network monitoring in the community-- but it's not anybody's job to run the bitcoin network operation center... so unless someone like BlueMatt steps up and starts monitoring it like he does, we don't otherwise get the broad network data and nobody looks at it. There's some things like we can see twitches in cdecker's block propagation data, and if there was a widespread internet outage we might learn something about bitcoin's network partition resistance.
+
+Q: My question here.. you mentioned about BlueMatt's net work and how it has been useful for implementing and iterating on these... so what's the difference on what Matt did on his network and regtest or testnet? Why has it provided such huge benefits, and why not replicate that in the normal...?
+
+A: On all of these tools and techniques, we did lots of testing, sandboxing, simulated environments, there's Linux dummynets to simulate packet loss and latency. But the problems with these things is that they allow you to deal with known unknowns. Like you already know you need to measure the situation with packet loss. But what about the actual network out there? And what about user factors? We learned a lot about interacting with miners, like what does motivate them, what interfaces do they prefer, how sustiainable is manual configuration? Production usage for things like this is no replacement for a test, but a test is no replacement for production usage. And there was no real risk that Matt's network would break bitcoin-- the worse that would happen is that Matt's network would stop working... but that's the worst it could do.
+
+Q: Can there be multiple relay networks?
+
+A: There are in fact multiple relay networks. Some miners run their own relay networks between their data centers and they peer with themselves and friends. There's a social d ynamics question; how well can multiple olf these scale? Any of these require manual configuration. Matt would love it if someone would run a well-maintained relay network. He was previously getting donations to fund doing it.. but the effort to collect the donations each month was more than it was worth to it to him. And it turns out there's bnitcoin miners that don't want to pay bitcoin for things. There were people that only wanted to pay with wechat or something. So he pays out of pocket, and it was faster before when we had better funding for it.
+
+Q: ...
+
+A: We have tested other heuristics. Compact blocks can send transactions opportunistically. IT always sends the coinbase transaction because it knows you don't have it. I have tested a heuristic that basically works like, kjif a transaction was surprising to me then I should assume it's surprising to my peers too. This is an obvious area that could be investigatying. Why do misses occur in compact blocks? One reason is that a transaction just arrived milliseconds after a block; or another reason it's missed in a compact block is because there was a double spend-- and you have a different one than the one that the miner confirmed. We addressed this somewhat in Bitcoin Core, we don't just use the mempool to construct the compact block, we have an extra pool that includes double spends and replacements that we keep around for that reason.
+
+Q: There is some research about gigabyte-sized blocks. The issue here-- have you tried this yourself?
+
+A: Haven't tried that on Matt's network, but in private test labs sure. Being able to run large blolcks over this stuff is not a surprise. It's designed to be able to handle it. The problem is the overall scaling impact on the network. It's not just my one node on super fast hardware can it keep up. This bloom filter that xthin sends adds a superlinear scaling component that is worse than compact blocks. You can run a gigabyte block, but good luck keeping a node affordable running on that for any  period of time running....
+
+Q: I was wondering about transaction throughput on the bitcoin network. I have heard it's like 10 or 18 with segwit. In practice it's like 3?
+
+A: The throughput depends on what transactions people are producing. Prior to segwit, people started to do batch sends, meaning that transaction throughput is a poor metric in terms of capacity of the network. The number of transactions can go down, but the number of UTXOs or the people using it goes up. Segwit is only  being used by about 10% of the transactions so far. If you're not using segwit and you care about transaction fees, you should use segwit, it's a massive decrease in fees. I haven't looked today-- but in the past couple of days, the fees were around 5 sat/byte... Part of the design of segwit was to avoid crreating a s ystem shock by adding lots of capacity and causing a fee market collapse or something. There's an incentive to use segwit that goes up when fees go higher, and we get more capacity when there's more demand.
 
 
