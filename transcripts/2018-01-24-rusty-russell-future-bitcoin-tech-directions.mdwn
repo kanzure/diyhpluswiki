@@ -1,0 +1,340 @@
+Future technological directions in bitcoin: An unreliable guide
+
+Rusty Russell
+
+2018-01-24
+
+video: <https://www.youtube.com/watch?v=VABppufTdpA>
+
+notes: <https://docs.google.com/document/d/1iNzJtJRq9-0vdILQAe9Bcj7r1a7xYVf8CSY0_oFrH9c/edit>
+
+# Introduction
+
+Thank you very much for that introduction. Alright, well polished machine right there. Let's try that again. Thank you for that introduction. My talk today is all about this. I'm not going to be talking about this. If you see me reaching for the red hat, please stop me. Before I begin, I want to apologize in advance: this talk is a summary of things coming up in bitcoin that some people are workin on, which means first I need to apologize to the people whose work I am about to compress into about 85 second segments each, because I am going to gloss over a lot of things. I had to pick what I thought was most interesting. Also I apologize to you, my audience, because this is going to feel like 23 lightning talks back-to-back in quick succession. I am going to give you a vague taste of things, and you'll have to dig in later. Hopefully I can convey some of the exciement as I go.
+
+# Talk overview
+
+I believe that everyone talking about cryptocurrencies should disclose their holdings. In my case, bitcoin. Fairly straight-forward. Okay, moving on. First we're going to go through a bitcoin keyword primer. This is basically not nenough bitcoin to do anything useful but it does mean you know a few keywords and you can sound like you know what you're talking about. Then wen're going to talk about two kinds of proposed improvements. The first being consensus improvements, changes to the blockchain itself (transactions and blocks), in particular we're talking about backwards-compatible changes. And then non-consensus changes, such as changes in how peers on the network talk with each other, which does not involve changing the blockchain format. Today, for a lack of time, I am not going to be talking about anything built on top of bitcoin, layer 2. I am not going to be talking about hard-forks (incompatible changes to bitcoin).
+
+# Bitcoin keyword primer
+
+<https://bitcoin.org/en/vocabulary>
+
+<https://bitcoin.org/en/developer-documentation>
+
+So here comes a very quick bitcoin keyword primer. This is a bitcoin transaction. It contains outputs (TXOs). Each output has an amount and a script (scriptPubKey). That output script is a very simple stack-based scripting language with no loops that validates who can spend this output. Here's another transaction spending it. You can see that this transaction has an input, and the input has an input script (scriptSig) spending the previous output. In this case, it's a key and the signature of that key. When you evaluate that, and then the output script, it leaves "true" on the stack, meaning it's valid, and therefore that the transaction is valid and authorized.
+
+The other term that we come across is "txid" which is the hash of the entire transaction. Very simple.
+
+Transactions are built up into chains like this. Of the 19 outputs on this diagram, 6 of them are unspent. They are considered members of the unspent transaction output set (UTXO set). And that's important because to validate a new transaction, the transaction must spend a member of the UTXO set. That's the set of things that you need to check against, to spend a new transaction.
+
+Bitcoin uses a blockchain. A bitcoin block contains the hash of the previous block, causing it to be a chain. And it also has a set of transactions in the block. Now the way that transactions are put into the bitcoin block is kind of interesting. The txid is a hash of the transaction itself. We take pairs of txids, hash those together, and we build up a tree. We put the root of the tree in the bitcoin block header. That kind of hash tree is called a merkle tree. The cool thing about a merkle tree is that I can prove to you that this transaction is in the merkle tree. If you have the block header then I can prove that the transaction is in the block. But because all I have to give you is the txid and the hash of the other neighbor at that level of the tree, you can combine the hashes yourself, and check that it matches the merkle root. If it does, then you know that the transaction is in the block.
+
+That's all that I am going to tell you about bitcoin keywords.
+
+# Soft forks and consensus changes
+
+<https://www.youtube.com/watch?v=VABppufTdpA&t=5m26s>
+
+Let's talk about a first set of improvements that have been proposed and researched. These are called soft-forks. A soft-fork is the backwards compatible changes. Old nodes still work. You can make things that are currently legal to be illegal, but you can't make things that are currently illegal to be legal because that would break compatibility.
+
+# Segwit
+
+<https://bitcoincore.org/en/2016/06/24/segwit-next-steps/>
+
+<https://bitcoincore.org/en/2016/01/26/segwit-benefits/>
+
+<https://bitcoincore.org/en/segwit_wallet_dev/>
+
+<https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki>
+
+<https://github.com/bitcoin/bips/blob/master/bip-0143.mediawiki>
+
+<https://diyhpl.us/wiki/transcripts/scalingbitcoin/hong-kong/segregated-witness-and-its-impact-on-scalability/>
+
+<https://diyhpl.us/wiki/transcripts/scalingbitcoin/milan/segwit-lessons-learned/>
+
+As a warm-up, I am going to talk about an upgrade that was activated in August 2017 called segregated witness (segwit). And this addressed the problem of script upgradeability, UTXO bloat, and unwanted malleability. What really is segwit? Well, it's a new output script witness type. And it's literally just a version and then a hash. For version 0, it's either a 20 byte hash (hash of a public key), or a 32 byte hash (hash of a script). The "input" which normally spends this is empty. The real input data goes into something called the witness. And the witness contains the input stack and the key or script which we promised in the output. You can check whether it's the right one by hashing to check whether the hashes match up. Okay. Here's an old style transaction, remember the txid was the hash of the whole thing. If it was a segwit transaction, the input script would be empty and this new witness thing would contain the pubkey and the signature for example. Now, as you've noticed, that is no longer hashed into the txid, it has been segregated out of the txid. This turns out to be really important because there's a long list of different input scrips that can satisfy those output conditions. You can sign it again, there's a way for third parties to change signatures and make them still work but they completely change the txid, this is called transaction malleability. And malleate is an obsolete word, it means to hit something with a hammer, so I imagine someone out there whacking transactions with a hammer to change their transaction txid. Segwit helps several things. We see that version byte helps with-- everything else above version 0, like version 1, is given a free pass at the moment. It helps layer 2, because if you're building things on top of bitcoin, you can now rely on the fact that txid values don't change. Someone can't change the chain of transactions by malleating one of the earlier transactions in your pending transaction tree. It also helps hardware wallets because of a checksig change. But importantly, it helps bloat incentives and throughput. Without segwit, it's actually cheaper to create a new output than it is to spend an existing one. This creates incentives to create more UTXOs, which everyone has to remember. With this witness, it's outside the old rules-- it's a separate thing. These bytes are not counted in the same way. The bitcoin rules say that you cannot have more than a million bytes in a block. The witnesses, which do not apply under that rule, to count a quarter of a byte each. This means that you can fit more into a block, and in particular what it means is that it's now almost as cheap to spend an output as it is to create a new one so the incentives are more aligned. Also, 60% of the block is usually the inputs, and segwit is a significant capacity increase in bitcoin: instead of a megabyte, we end up at in theory about 4 MB but in practice probably about 2 MB to 2.3 MB blocks. That's in the past, now.
+
+# Segwit addresses: bech32 (bip173)
+
+<https://www.youtube.com/watch?v=VABppufTdpA&t=9m10s>
+
+<https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki>
+
+<https://diyhpl.us/wiki/transcripts/sf-bitcoin-meetup/2017-03-29-new-address-type-for-segwit-addresses/>
+
+<http://bitcoin.sipa.be/bech32/demo/demo.html>
+
+<https://github.com/sipa/ezbase32/blob/master/dist32.cpp#L13L25>
+
+
+The first of the proposals of the things that I want to talk about for the future is this new problem, in segwit, we have this new output format but we have no address format. The original bitcoin addresses are base58, a nice round number, with a 32-bit sha256 checksum. It's just an example address on screen, don't send money there. The new addresses are base32 with a 30-bit BCH checksum code. According to pieterwuillefacts.com, this is apparently the name of Pieter Wuille's dog. So here's wnullywullewuelewuulywulewuluhwuelwu... Anyway, the code is guaranteed to detect up to 4 errors. And for "similar" letter substitutions it detects up to 5 errors. And if you have other errors, it has a 1 in a billion chance of falsely okaying the result. This is a much stronger checksum than the old 32-bit checksum that we were using. With bech32, readability is improved, bech32 is case-insensitive, it fits better on QR codes, and it has error correction and error detection. We're seeing this being rolled out now. I think we're going to see this coming out very soon.
+
+# MAST (bip114 vs bip116 + bip117)
+
+<https://github.com/bitcoin/bips/blob/master/bip-0114.mediawiki>
+
+<https://github.com/bitcoin/bips/blob/master/bip-0116.mediawiki>
+
+<https://github.com/bitcoin/bips/blob/master/bip-0117.mediawiki>
+
+<http://diyhpl.us/wiki/transcripts/bitcoin-core-dev-tech/2017-09-07-merkleized-abstract-syntax-trees/>
+
+<https://bitcointechtalk.com/what-is-a-bitcoin-merklized-abstract-syntax-tree-mast-33fdf2da5e2f>
+
+This solves the problem of really large scripts. MAST stands for merkleized abstract syntax trees. When bitcoiners talk about this, what they are really talking about is urning a script into a merkle tree of scripts. So then in order to spend it, you provide one of those scripts, and one of hte hash proofs and the neighbors to prove that it's in the tree. Before, we might have had a complex script like this where I can spend it after 144 blocks or you can spend it with your key. And currently using a segwit output script it would be `0 HASH(script)`. That would be the output script.
+
+In bip114, it would break those two and create a merkle tree out of those conditions and it would be a merkle tree with only two leaves. And then you would commit version 1 segwit script they are proposing, which is "here's my merkle root". To spend it, you would provide the merkleroot in the output script originally, and to spend it you would provide the merkle inclusion proof and that has a version field as well. The actual implementation is slightly more complex than this, but you get the general idea.
+
+But bip114 is not the only game in town. There's a separate pair of proposals (bip116 + bip117). bip116 proposes adding a new opcode OP\_MERKLEBRANCHVERIFY which does the merkle tree check on the top stack elements. It takes the script, the proof and the merkle root and checks that it indeed is in the merkle tree. That doesn't get you MAST, it just gets you a check. What bip117 does is that it adds a new rule: extra stuff you've left on the stack after valid execution, is popped off the stack and executed in a tail-recursive fashion. So you use bip116 to prove that yes this was in the merkle tree, and then you use bip117 to execute whatever you left on the stack. There are some issues with this but I still expect this to happen within the next year or so. In addition to size, it also enhances privacy. It's another set of conditions that are summarized with a hash. You don't need to reveal that your backup plan involves a 3-of-5 multisig or whatever, so that's kind of nice.
+
+# Taproot
+
+<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-January/015614.html>
+
+There is, however, a problem with MAST which is that MAST inputs are obvious. You're doing a MAST payment. There's a proposal called taproot. This is why you check twitter during talks. It uses a new style of pay-to-pubkeyhash. You can-- the users, when they are setting this up, use a base key and a hash of a script that they want the alternative to be. They use that to make a new key, then they just say use this new thing and pay to that key. They can pay using key and signature like before. Or you can reveal the base key and the script, and it will execute the script for you. In the common case, it looks like pay-to-pubkeyhash which helps fungibility. In the exceptional case, you provide the components and you can do MAST. This overrides what I had said earlier about MAST coming soon because this proposal looks really awesome but taproot doesn't have any code yet.
+
+# Key aggregation
+
+<https://blockstream.com/2018/01/23/musig-key-aggregation-schnorr-signatures.html>
+
+<https://eprint.iacr.org/2018/068>
+
+Another problem in the bitcoin space are these keys and signatures. There's a separate key for every signer. In particular, there are many cases where you have multisignatures and you have to have a key for each signer. Say we have a deal where we both have to sign it and we use OP\_CHECKMULTISIG. There are however I would say, simpler signature schemes, like schnorr signature schemes where we can combine both keys and also signatures. The added keys become a single valid key. Same with signatures. And then we'll need a new OP\_CHECKSCHNORRSIGVERIFY. It's smaller, making transactions cheaper. It's also fungible, and whether it's multisig or single signaure is not publicy identifiable.
+
+# Signature aggregation
+
+<http://diyhpl.us/wiki/transcripts/bitcoin-core-dev-tech/2017-09-06-signature-aggregation/>
+
+Still, there is a single signature for every input, which takes up space. It turns out that with some certain signature aggregation schemes, you can aggregate signatures. Say you had an OP\_CHECKAGGSIG opcode. You provide a signature and a key. After the first signature, everything is empty, you say refer to the one above. OP\_CHECKAGGSIG wouldn't actually fail during script execution itself. When you get to the end of the transaction, it would add up the signatures you said to check, and then it would check that the signature was valid, all at once, and then pass/fail the transaction at that time.
+
+This helps input size, which makes more room for other transactions in the blockchain. And validation speed is improved- it's not one signature check per input, it's one signature check per transaction. Fantastic. But also it provides incentive to combine transactions. There's a protocol called coinjoin where two people who don't trust each other can negotiate to combine things they want to spend into one mega-transaction. By two I mean any number. This makesa massive signature. Using signature aggregation, a single coinjoin transaction is much smaller than having two separate transactions, so signature aggregation provides a coinjoin incentive.
+
+# Batch signature validation
+
+<https://bitcoincore.org/logs/2016-05-zurich-meeting-notes.html>
+
+It also turns out that there's still a lot of signatures to check in every block. But these signatures are actually ameniable to a batch validation mode where you do some prep work and you can check all of them work. This scales super-linearly. It's much faster to batch validate 10k signatures rather than running 10k separate signature validation operations. The downside is that all you get is an answer like they were all good or something went wrong, however that might be okay because when you're checking a block for validity that batch answer is all you care about anyway.
+
+In practice, this doesn't actually help with block validation. When you get a block, you have already seen many of the pending transactions and already validated them. But batch signature validation does help with initial block download (IBD) speed.
+
+# Scriptless scripts
+
+<http://diyhpl.us/wiki/transcripts/realworldcrypto/2018/mimblewimble-and-scriptless-scripts/>
+
+<http://diyhpl.us/wiki/transcripts/scalingbitcoin/stanford-2017/using-the-chain-for-what-chains-are-good-for/>
+
+Scripts are sometimes unnecessary. Scriptless scripts originate from work done by Andrew Poelstra on a project called mimblewimble. If you ever want to be amused, go look up the origins of the mimblewimble project. It turns out that scripts are sometimes unnecessary. Atomic swaps between blockchains where Alice wants to swap some coins across with Bob on another blockchain. The way that Alice does this is that she creates an unguessable big secret and hashes it to x. And then she produces a transaction that spends to Bob if Bob can provide some information. And Bob says the same thing on his blockchain and the value that hashes to x. To collect this, Alice spends it by revealing her secret. That means that Bob can see that transaction and now spend Alice's. So without trusting each other they have managed a swap of coins.
+
+With these kind of signature schemes, you can set things up by negotiating between the two parties with keys. There's enough information in that for Bob to create the signature he needs to take Alice's coins. And this concept is called scriptless scripts. On the blockchain all that appears is one transaction saying pay to some key and some people spend them, basically. Nobody but Alice and Bob knows that any of this fancy coinswap thing happening. So this helps fungibility and input size. It's a little bit in the future because it would only be able to happen once we get a soft-fork that introduces new signature schemes.
+
+# Simplicity
+
+<https://www.youtube.com/watch?v=VABppufTdpA&t=19m56s>
+
+<https://blockstream.com/simplicity.pdf>
+
+<https://bitcoinmagazine.com/articles/introducing-programming-language-so-simple-it-fits-t-shirt/>
+
+Along the line of script improvements, there is a problem with scripts particularly as they become more powerful. There are many feature proposals but it's hard to analyze the scripts and make provable statements about what the scripts will do. People have a hard time writing bugfree code. There's a language called Simplicity. It's a typed composition language. Read the paper. It's specifically designed for the blockchain use case. This helps the security of smart contracts by allowing you to do validation. Right now you would not write simplicity, but you would write in another language that compiles down to simplicity.
+
+# Covenants
+
+<http://fc16.ifca.ai/bitcoin/papers/MES16.pdf>
+
+<http://diyhpl.us/wiki/transcripts/scalingbitcoin/milan/covenants/>
+
+<https://github.com/jl2012/bips/blob/vault/bip-0ZZZ.mediawiki>
+
+Covenants would be a powerful improvement to bitcoin scripts. Current bitcoin scripts can't really do any kind of sophisticated introspection. In particular, you can't write a script that says "you can spend me if the transaction that spends me has this kind of output script". You might want to say, you can spend this transaction but the transaction that spends me must have an output that has a one week delay or it can be spent by an emergency key. This is the basic idea of the "The Vault" proposal. You would put your money into this kind of output and then you would watch the network. To spend it, you wait a week. To take money out of the vault, you wait a week. If you see money going out of the vault and you didn't authorize it, then that means someone has stolen your key and is trying to spend your money. At that point, you go to your backyard and dig up your emergency secret key and you take the funds back during that one week period. The only transaction that the thief was allowed to make was (due to the covenant) one with this one week period of lock-up where only the secret key could spend the coins during that period.
+
+# Confidential transactions
+
+<https://people.xiph.org/~greg/confidential_values.txt>
+
+<https://blockstream.com/bitcoin17-final41.pdf>
+
+<http://diyhpl.us/wiki/transcripts/gmaxwell-confidential-transactions/>
+
+<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-December/015346.html>
+
+Enough about scrips for a moment. The blockchain is public. In particular, the amounts are public, and this actually reveals a lot of information. By looking at the amounts, you can often tell which one is a change output and going back to the same person. All that nodes really need to know is not necessarily the amounts, but rather that there is no inflation in the system. They only need to know that the sum of the input amounts is equal to the sum of the output amounts plus the miner fee amount. They also need to kknow that there was no overflow. You don't want a 1 million BTC transaction and a -1 million BTC transaction.
+
+There's a way of doing this using math, it's called confidential transaction. It takes the 8 byte value and changes it to a 2400 byte value. To process each input that spends one of these takes about 14 ms. This is against 0.1 ms for a normal signature check. It's heavy and slow. But it provides the additional privacy on amounts.
+
+# Bulletproofs
+
+<https://eprint.iacr.org/2017/1066.pdf>
+
+There was a paper released a couple months ago called "bulletproofs" which cuts these numbers down to 4.2 ms and about 674 bytes. Interestingly this time does benefit from batch validation where you can reduce that time somewhat. And proofs can be combined across outputs. So if you have 8 outputs you only add a few hundred bytes to the proof. At this point you're thinking, this would incentive some kind of coinjoin scheme and everything else. I think this needs more research because it's a big change, the fungibility benefits are huge, it's fairly new math and it would-- bitcoin is generally conservative. There might be more squeezing or improvements we could do. Get it down by a factor of 10 and then we'll talk.
+
+# Client-side validation
+
+<http://diyhpl.us/wiki/transcripts/scalingbitcoin/milan/client-side-validation/>
+
+<https://scalingbitcoin.org/milan2016/presentations/D2%20-%20A%20-%20Peter%20Todd.pdf>
+
+# UTXO commitments
+
+<https://bitcointalk.org/index.php?topic=101734.0>
+
+<https://bitcointalk.org/index.php?topic=88208.0>
+
+<https://bitcointalk.org/index.php?topic=204283.0>
+
+<https://github.com/petertodd/python-merbinnertree>
+
+<https://github.com/bramcohen/MerkleSet>
+
+UTXO commitments are a very very old idea in bitcoin. The problem is that lite nodes which don't have the whole UTXO set and don't track the whole blockchain can't tell if a transaction is valid. the idea is to put a hash of the UTXO set in the block. We use a merkle tree and put the hash root somewhere. This would allow you to prove the presence of an unspent output by using a merkle inclusion proof. You could also prove that a utxo wasn't in there, if it was ordered you could provide two neighbors and show that there's nothing between two there aren't any members. You could get the UTXO set, check if it's committed to by that block, and then work forward from there, giving you some kind of partial semi-trusted initial block download and sync. This would help with lite node security. Unfortunately there are some problems with UTXO set commitments that put it in the "need more research" flying cars phase of the future.
+
+# UTXO proofs
+
+The unspent transaction output sets (UTXO set) sits at about 63 million outputs. If everyone in the world wants to own bitcoin, then that size is going to increase to about 7 billion items. So what happens when that UTXO set size grows too large for most nodes? If we had UTXO commitments then nodes could remember the merkle tree, when you want to spend bitcoin, you would provide proofs that each of your coins are in the UTXO set. The downside is that wallets would need to be able to track those proofs. These proofs would change in each block- so now you need not just your private keys but you need to track the blockchain. The proofs themselves will probably be about 1 kilobyte per input. So you're trading bandwidth for UTXO storage. These are a couple of problems that would probably-- unless the crisis is acute, it wouldn't help, it's in the flying cars research phase category.
+
+# TXO commitments
+
+<https://petertodd.org/2016/delayed-txo-commitments#slow-path-calculating-pending-txo-commitments>
+
+There's a proposal with one of he other things we have UTXO sets. Validating the UTXO tree is really slow when it gets really big. If you randomly add and delete nodes from the tree you do a lot of hashing to regenerate the merkle root. And everyone has to do that to validate the block. The idea of TXO commitments is that you commit all transaction outputs (TXOs) into the block, with a bit that says whether it was spent or not. And you basically build up this merkle tree. If you have a merkle tree where you continue to add data, you end up with a data structure where you have a number of peaks that you need to keep up with, and petertodd calls this a "merkle mountain range" that you build up and you just append and append and append. You wouldn't do this for the current block, but rather some previous older block, and you would just remember the changes since then. And then the wallet has to prove that the output was in the TXO tree. That wallet, the proof, that yes it was there, gives you enough information to change it from unspent to spent and re-calculate the root because you have all of the pairs or peers. Unfortunately the wlalets would need to still track the TXO proofs and it might still be about as bad as tracking other things, and it's still 1 kb of extra transmission for every input, but it certainly helps bring the UTXO commitment idea closer.
+
+# Fraud proofs
+
+<https://en.bitcoin.it/wiki/User:Gmaxwell/features#Proofs>
+
+<https://github.com/bitcoin/bips/blob/master/bip-0180.mediawiki>
+
+<https://diyhpl.us/wiki/transcripts/mit-bitcoin-expo-2016/fraud-proofs-petertodd/>
+
+Another idea that goes back even further, back to the bitcoin whitepaper, is the idea of fraud proofs. I sort of alluded to this problem earier, which is that lite nodes don't actually run the bitcoin protocol and they simply trust the miners. Like mobile phone nodes. "If it's in a block then it must be good". This goes back to the original Satoshi paper where he suggested that maybe nodes could give alerts. Well it doesn't work because you could give false alerts all the time and force you into a full node downloading all the blocks all the time anyway. And secondly because you can't validate a block by itself without the UTXO set you would have no idea whether the block is valid.
+
+What can you compactly prove? If a transaction is completely invalid or malformed, it's easy, you can give the lite node the malformed transaction and then a merkle inclusion proof for that transaction in the block and it's easy to verify that the transaction is malformed and that the merkle inclusion proof is valid. If a transaction can't spend the output it's claiming to spend, it's the same thing: proof that the transaction is in, and you can provide the transaction that already spents it, or the input transaction input, and the proof that a transaction output already spent, same thing done. However, you can't prove that a ninput transnaction simply doesn't exist, unless you had UTXO commitments perhaps with a soft-fork upgrade. Or you can have a lighter version where a block contains inputs of locations. You also can't prove that the fees collected in the block are incorrect. Miners are supposed to add up the inputs from every transaction and give themselves their money. What if they take too much? There's a merkle tree variant that could possibly fix this, called a merkle sum tree, you can in fact prove this and you could do this with a soft-fork.
+
+What if the merkle root hash of the transaction tree in a block is completely wrong? Just junk? In general you can't prove this. This is a subset of a problem called a data withholding attack. In this, you basically, the miner puts out a new block but doesn't provide any of the transactions in it. Lite nodes say it looks fine, and full nodes say can't validate this, but the full nodes can't prove this to help the lite nodes. There's speculation that a proposal could be made that employs fountain codes in such a way that you are required to reveal information ... but this is definitely in the realm of flying cars future research, a lot more research needed if we were to go in that direction.
+
+# Part 3: Peer protocol changes
+
+I am going to talk about peer protocol changes. I think I have time for-- nope.
+
+# TXO bitfields
+
+<http://diyhpl.us/wiki/transcripts/sf-bitcoin-meetup/2017-07-08-bram-cohen-merkle-sets/>
+
+Okay, TXO bitfields. This is a different approach for the problem of the UTXO set becoming far too large. In this, each node remembers a bitfield for each block. The bits represent whether the txout (TXO) was spent or not. It remembers a root merkle for that block. And then the node sends a merkle proof that proves that this transaction output I'm trying to spend is the 3000th output of the block, so the full node then checks the transaction is correct- is it bit 3000? And then checks bit 3000 and flips the bit if necessary.
+
+This works because the size of an unspent output is around 32 bytes. The sie of the bitfield is about 1/8th byte (only 1 bit). It turns out the ratio between TXO and UTXOs is only 12.6, so we end up with a data structure about 20x smaller. If it turns out that most things are spent, then there are ways to compress it further to make the data structure more dense.
+
+The cool thing about this is that proof size might still be an issue, but the proof of TXO position is static. Once the block is set, you can create the proof. It doesn't update like UTXO proofs do. This is also not a consensus change. Nothing has to go into blocks. Peers just have to choose to do this on their own. It does not require consensus between nodes to validate blocks or whatever.
+
+As far as I know, nobody is actually working on it, so it's in the further future, but it does help bitcoin node scalability.
+
+# Rolling UTXO set hashes
+
+<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-May/014337.html>
+
+Another subset of the UTXO set problem is that there's no compact way to prove that UTXO set is correct. XORing all the UTXOs together is not secure. There's this idea of a rolling UTXO set hash. You can update a 256-bit number, it's fairly easy to calculate, you can update this one hash when a new block comes in. If you're a full node, you can record your UTXO set hash and then validate that your UTXO set hasn't been corrupted. But it also helps the idea of initial node bootstrap and initial block download. If you get TXO hash from someone you trust, say someone writing the bitcoin software, you can go anywhere and get the UTXO set, and you can download it, and just check that the hash matches. Maybe if things keep getting bigger, then this might be a middle ground between running a lite node and running a fully-validating full node from the dawn of time itself.
+
+# Transaction compression
+
+<http://diyhpl.us/wiki/transcripts/gmaxwell-2017-11-27-advances-in-block-propagation/>
+
+We have this other problem that transactions are too large. We're bumping up to 170 GB for the blockchain. Turns out that with a dedicated compressor you can get 28% compression. This still needs to be benchmarked on how fast decompression is. This number is only in the context of compressing a single transaction, not with any context. This can help bandwidth and storage.
+
+# Set reconciliation for transaction relay
+
+<http://diyhpl.us/wiki/transcripts/gmaxwell-2017-11-27-advances-in-block-propagation/>
+
+Most of the bandwidth used by full nodes today is not sending blocks, but announcing that you have a txid. It's very chatty like that. Broadcast to all. What about instead announcing it to one or two peers and then use set reconciliation every so often to catch the ones you have missed? We know how to do efficient set reconciliation. This would help bandwidth and full nodes.
+
+# Block template delta compression
+
+<http://diyhpl.us/wiki/transcripts/gmaxwell-2017-11-27-advances-in-block-propagation/>
+
+Block propagation is fairly efficient. It takes about 40 kb to send a block. This is achieved because of compact blocks, which sends a summary of what's in the blocks. Assuming that you have seen most of these transactions before. There are two modes: high bandwidth mode and low bandwidth mode. In high bandwidth mode, I basically just send you the summary every time I get a block. It's only 40 kilobytes. But in low bandwidth mode, I notify you, and then you request it, and then I send the summary, so there's another roundtrip in there in low bandwidth mode.
+
+Bitcoin Core by default picks 3 peers to be high bandwidth peers and everyone else is low bandwidth peers. The 3 that get picked are the last that gave us a block, because they are probably prety-well connected in the bitcoin p2p network.
+
+The idea with block template delta compression is that every 30 seconds we take those 3 peers and we send them a template of what we expect to be in the next block, and when the next block occurs, we just send a delta between what the template had and what the block actually had. It turns out that about 22% of the time, that delta is under 1 packet, which of course is the golden point for low latency. This particularly helps especially if you are trying to do something crazy like bitcoin networking over a satellite link.
+
+# Dandelion
+
+<https://www.youtube.com/watch?v=VABppufTdpA&t=36m25s>
+
+<https://arxiv.org/abs/1701.04439>
+
+<https://github.com/sbaks0820/bitcoin-dandelion/issues/1>
+
+Another problem with fungibility on the network is that today there's a lot of nodes that connect to as many nodes as they can and look for transactions. These nodes are essentially looking for where transactions are originating from in an attempt to deanonymize the network. I ban a lot of them from my nodes, for example.
+
+Dandelion was a proposal to solve this where when it gets a transaction it exposes it to a single peer 90% of the time. And then on the 10% case it broadcasts it to everyone. So these are the stem phase and the fluff phase. There are a few other rules you have to add to make this robust and make it work. I hope to see this sooner rather than later because it really does help fungibility on the network.
+
+# Neutrino: Client-side block filtering (bip157/bip158)
+
+<https://youtube.com/watch?v=7FWKc8lM4Ek>
+
+<https://github.com/Roasbeef/bips/blob/master/gcs_light_client.mediawiki>
+
+<https://github.com/lightninglabs/neutrino>
+
+<https://github.com/bitcoin/bips/blob/master/bip-0157.mediawiki>
+
+<https://github.com/bitcoin/bips/blob/master/bip-0158.mediawiki>
+
+Another proposal that helps fungibility on the network is this proposal called Neutrino. The current way that lite nodes owrk is that they tell the full nodes a bloom filter of all the things they are interested in. This works against privacy as you might expect. Once you have seen one of those addresses, it's almost trivial to figure out which peer is interested in that address, in other words which peer has that address in their wallet. It also requires every node to look through the bloom filters and do calculations every time a block comes through, in an attempt to figure out whether to send the transaction to the lite node.
+
+Neutrino inverts this. The full nodes produce a 20 kilobyte block summary and the algorithm to do this is pretty awesome. This summary allows the lite node to say this is a block that I'm interested in, and pull down the whole block, ideally from a separate peer that isn't even related to the first peer. This would definitely help lite node privacy. But the reason why I say it's a few years out is that the originator of this, roasbeef, is deep in lightning right now and I expect lightnig network stuff to consume all his cycles for some time.
+
+# NODE\_NETWORK\_LIMITED (bip159)
+
+<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-May/014314.html>
+
+<https://github.com/bitcoin/bips/blob/master/bip-0159.mediawiki>
+
+Another problem on the network is that-- a number of years ago we introduced prune nodes on the network, which download all the blocks but they throw away old blocks. This saves a lot of disk space. It's still a full node, but it throws away old stuff it doesn't need. There's a bit in the service field when you advertize a full node, which says you will serve all blocks. But the pruned nodes can't set this. So there's a proposal for a few other bits, to say that actually I do have the last 500 or 10,000 blocks and this will really help the current bandwidth load on the current full archival nodes that aren't pruned. I expect this very soon.
+
+# Peer encryption and peer authentication (bip150/bip151)
+
+<https://github.com/bitcoin/bips/blob/master/bip-0150.mediawiki>
+
+<https://github.com/bitcoin/bips/blob/master/bip-0151.mediawiki>
+
+<http://diyhpl.us/wiki/transcripts/sf-bitcoin-meetup/2017-09-04-jonas-schenlli-bip150-bip151/>
+
+It might also interest you that in the bitcoin p2p network we don't currently authenticate or encrypt traffic between bitcoin nodes. It's to somewhat extent already public information, but there's analysis attacks against this. This is low hanging fruit against passive attacks. But it also helps with trusted nodes, like if you have a lite node and you want to connect to your dedicated full node. This would make trusted nodes easier since there's nothing out-of-the-box that does this yet.
+
+# Things that I wanted to mention
+
+There are a lot of things I wanted to mention in this talk but I couldn't, such as: <a href="https://github.com/bitcoin/bips/blob/master/bip-0008.mediawiki">bip8</a>, <a href="https://bitcoinhardforkresearch.github.io/">spoonnet</a>, <a href="https://github.com/nopara73/ZeroLink">zerolink</a>, <a href="https://bitcointalk.org/index.php?topic=1497271.0">coinshuffle++</a>, <a href="https://bitcoincore.org/en/2016/02/26/zero-knowledge-contingent-payments-announcement/">zero-knowledge contingent payments</a>, <a href="http://diyhpl.us/wiki/transcripts/discreet-log-contracts/">discreet log contracts</a>, <a href="http://lightning.network/">lightning network</a>, etc. I put them on this slide to make myself feel better. I am not going to mention any of them, unfortunately.
+
+# Conclusion
+
+I'll tweet out a list of references, it's currently a google doc. If there are any questions then I would be delighted to answer them.
+
+# Q&A
+
+Q: What do your hats say?
+
+A: This one says "someone in bitcoin did something awesome again" and this one says "someone in bitcoin did something stupid again". Anthony Towns suggested that this pair covers everything in bitcoin.
+
+Q: Which of those projects are you working on?
+
+A: No. I am working on none of these. I am actually working on <a href="https://github.com/ElementsProject/lightning">lightning</a>, and it's incredibly exciting, I've been working on it for about 2.5 years. It's soon going to be usable by normal people without losing money. It's an exciting time. My timing is terrible today though, I'm here talking about other stuff.
+
+Q: There's a question on twitter that asks you to prove that you are not the output of an artificial intelligence.
+
+A: Okay. I anticipated this question. I'm glad it was asked. I don't believe such a proof is possible.
+
+Q: Hi Rusty. On the dandelion project, do you think it could potentially hinder the ability to monitor the network for any nodes that are doing anything dodgey?
+
+A: So, dandelion itself not particularly. Dandelion does this stem and fluff approach. The idea is that the transaction will travel some way before it broadcasts to the network not necessarily the original point. There's a timer in there so that if it sends it down a dead-end then it will fluff it out. So what percentage of nodes need to be evil before this scheme is compromised? I think the numbers look good. It's hard to monitor the entire bitcoin network. That's kind of a feature in a way. I don't think this will be the main issue. I was shocked once to see a block explorer identify that I was the one to send a bitcoin transaction, by geography.
+
+Q: On one of your randomly generated slides, you made an intriguing comment where you said people were trying to deanonymize the network. Who are these people?
+
+A: There are companies that do this as their job.
+
+Q: Why?
+
+A: I stay out of that world. I believe they are trying to sell information to places that have KYC/AML requirements and say "this person is dodgy". KYC/AML are regulatory rules about knowing who your customers are. It sometimes conflicts with an anonymous cash system. They are generally not that clever, but it's still a bit of an arms race. We need to keep on top of it.
+
+Rusty, thank you so much for this presentation on the state of blockchain. Here's a gift of gratitude from everyone and the organizers. Let's give a round of applause to Rusty. Yes I'll stick around for the rest of the conference and I'll be around to answer questions. We have the penguin dinner tonight. It's behind building 1, under the blue space, in the green space, is where the groups start walking.
