@@ -169,6 +169,8 @@ There's a way of doing this using math, it's called confidential transaction. It
 
 <https://eprint.iacr.org/2017/1066.pdf>
 
+<https://joinmarket.me/blog/blog/bulletpoints-on-bulletproofs/>
+
 There was a paper released a couple months ago called "bulletproofs" which cuts these numbers down to 4.2 ms and about 674 bytes. Interestingly this time does benefit from batch validation where you can reduce that time somewhat. And proofs can be combined across outputs. So if you have 8 outputs you only add a few hundred bytes to the proof. At this point you're thinking, this would incentive some kind of coinjoin scheme and everything else. I think this needs more research because it's a big change, the fungibility benefits are huge, it's fairly new math and it would-- bitcoin is generally conservative. There might be more squeezing or improvements we could do. Get it down by a factor of 10 and then we'll talk.
 
 # Client-side validation
