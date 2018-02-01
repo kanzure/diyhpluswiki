@@ -16,6 +16,8 @@ Schnorr signatures for Bitcoin, I will first talk about Schnorr signatures and t
 
 # Schnorr signatures
 
+<http://diyhpl.us/wiki/transcripts/blockchain-protocol-analysis-security-engineering/2018/schnorr-signatures-for-bitcoin-challenges-opportunities/>
+
 They are a cryptographic system. That's the formula. I don't think I will discuss the details here. I will first talk about history of how we got to the situation we are today with ECDSA in bitcoin and then talk about the advantages that Schnorr signatures could and would have, and how to standardize that, and then go through applications that they could have and then show that the problem is harder than swapping one for the other.
 
 So history... Schnorr signatures were originally proposed in 1988 by Schnorr who patented his invention. The nice thing about Schnorr signatures is that they are remarkably simple. They are easier than ECDSA, even. They work in any group where the discrete logarithm is hard. At the time they were proposed for multipliation of modular groups. However, in 1993, a standard for signatures based on this type of cryptography was standardized, however they didn't use the Schnorr system presumably because it was patented. Instead, DSA was standardized, presumably to avoid some of the patents. Schnorr claimed for a long time that DSA infringed on his patents.

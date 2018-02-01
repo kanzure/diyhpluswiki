@@ -103,7 +103,7 @@ There is, however, a problem with MAST which is that MAST inputs are obvious. Yo
 
 <https://eprint.iacr.org/2018/068>
 
-Another problem in the bitcoin space are these keys and signatures. There's a separate key for every signer. In particular, there are many cases where you have multisignatures and you have to have a key for each signer. Say we have a deal where we both have to sign it and we use OP\_CHECKMULTISIG. There are however I would say, simpler signature schemes, like schnorr signature schemes where we can combine both keys and also signatures. The added keys become a single valid key. Same with signatures. And then we'll need a new OP\_CHECKSCHNORRSIGVERIFY. It's smaller, making transactions cheaper. It's also fungible, and whether it's multisig or single signaure is not publicy identifiable.
+Another problem in the bitcoin space are these keys and signatures. There's a separate key for every signer. In particular, there are many cases where you have multisignatures and you have to have a key for each signer. Say we have a deal where we both have to sign it and we use OP\_CHECKMULTISIG. There are however I would say, simpler signature schemes, like <a href="http://diyhpl.us/wiki/transcripts/blockchain-protocol-analysis-security-engineering/2018/schnorr-signatures-for-bitcoin-challenges-opportunities/">schnorr signature schemes</a> where we can combine both keys and also signatures. The added keys become a single valid key. Same with signatures. And then we'll need a new OP\_CHECKSCHNORRSIGVERIFY. It's smaller, making transactions cheaper. It's also fungible, and whether it's multisig or single signaure is not publicy identifiable.
 
 # Signature aggregation
 
