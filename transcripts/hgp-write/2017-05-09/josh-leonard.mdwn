@@ -1,0 +1,35 @@
+Genome engineering in mammalian systems
+
+Josh Leonard, Northwestern University
+
+<https://twitter.com/mammothredux>
+
+<https://www.youtube.com/watch?v=6qYx1etZ6f8&t=0s&list=PLHpV_30XFQ8RN0v_PIiPKnf8c_QHVztFM&index=23>
+
+Engineering cell-based therapies
+
+You can do on-demand synthesis, localized production, on-demand sustained synthesis, localizaiton of effects, sophisticated functions like target killing, healing, etc. Cell killing is something we can do with cell therapies. We got excited about engineering yeast cells to kill cancer. There's a gap in the use of cells to treat cancer.
+
+We know that from pre-clinical work that one of the barriers to cancer therapy is local immune supression at the tumor site. If you could produce stimulants at the tumor site, you could overcome that. We hae been trying to engineer some cells to go do that. The cells go everywhere in the body, but when they find a tumor, they would be able to generate the stimulants. When you look at the information that the engineered cell needs to consider to determine if it is near a tumor, mostly it's extracellular like: cytokines, chemokines, growth factors cell surface antigens and cell-cell interaction partners. When we started this project in 2012, there were really no good tools for this other than native receptors which weren't really facile for this.
+
+About that ime, we developed a MESA: modular extracellular sensor architecture. There are two receptor chains, one has a protease in it, the other has a sequestered transcription factor. The sequestered transcription factor must be free when the ligand is present, but not when it is absent. It's dimerization dependent. For a model ligand rpaamycin, this works and we can get a nice 10-fold induction of an oncogene when using this platform. It was the first ground-up receptor like this. It was important to understand whether this was feasible.
+
+In a more recent study we took the same architecture, and we wanted to generalize it for physiological inputs and outputs. We wanted to detect VEGF, which is present in every tumor basically. IL-2 also is a good candidate because it promotes T-cell proliferation and tumor killing. That's our oncogene we selected for this study. IL-2 is one of those immune stabilants that has been proposed if you inject it systemically you don't get any benefit before toxicity, but if you do it locally perhaps it becomes more useful. We didn't do the transgene like gfp in the last study, instead we wanted to regulate the endogenous IL-2 locus. Also, there's no cell that senses IL-2 and VEGF, so this would be a novel function if it works.
+
+We did not have to redo the architecture. Functional reprogramming of cellular input output. Schwarz et al, Nature Chemical Biology, 2016.
+
+The other thing I didn't mention before is that we swapped out the TTA transcription factor to one based on cas9, which could theoretically be redirected to any endogenous locus. We wanted to see if we could do more sophsticated logic and reprogramming. We reecently atempted to implement a single layer transcriptional AND gate by playing around with transcriptional promoters that respond to two different factors. Can we multiplex this, and if so how?
+
+We played around with promoter designs, we dialed up expression levels, we wanted different transcription factors for ligand-free and ligand-present patterns. The graph shows we are getting a different response, a bigger response, when both ligands are present. What are the opportunities to make this better?
+
+We were using a big data set to train a computational model. How good could you mkae this without trying to make it better? ... We were interested in this for practical, this is a translationally motivated slide. We took that big pile of data we had now, ... we applied it to humans, cured 95 people, too bad the slides crashed.
+
+The basic premise is that we came up with a mathematical model to figure out how our stuff works. One of the lessons we found is that heterogenerity plays an unexpectedly important role in how well this works. The premise is that we use this mathematical model to figure out what role heterogenierty plays most of our cells are doing nothing; when you try to optimize performance by looking at mean behavior, you are only optimizing a small subset of the system. We validated what we had predicted with this, and then we... the model more or less suggested there was a difference between mean cell behavior and the mean. If we took our same cells and our same experiment post-hoc identified optimal expression window, we got a 5x improvement to maybe 20x improvement on signal, that's the biggest change we have ever seen before. We are taking a model-guided approach to see how expression guides performance.
+
+We have little understanding at the moment for how these sources of variation can be reduced, controlled, or designed around these systems. Engineered genomes and chromosomes offer a lot of opportunities for testing out designs and how to implement these eventually.
+
+# Q&A
+
+Q: The 20% you are talking about.. the optimal ones? You select them out and see the difference? Is this heterogenity on a phenotypic level? Do you do flow cyometry?
+
+A: That's the exact idea we had. That's posthoc analysis. We can go back and look at the data and reanalyze it. As far as being optimal, the idea was, this gets into the weeds, we predicted a dosage effect based on ratio between plasmid reporter and transcription factors. We got it in this case based on dose-based post-hoc analysis. If you couldn't fix it, then you would just select out the cells that have the highest dose and only use those in the therapeutic for example.

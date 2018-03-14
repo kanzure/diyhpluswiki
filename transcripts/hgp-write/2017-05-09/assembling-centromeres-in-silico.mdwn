@@ -1,0 +1,37 @@
+Assembling centromeres in silico
+
+<https://www.youtube.com/watch?v=tl05wfEfNxw&t=0s&list=PLHpV_30XFQ8RN0v_PIiPKnf8c_QHVztFM&index=25>
+
+Karen Miga, Jack Baskin School of Engineering, UC Santa Cruz
+
+<https://twitter.com/khmiga>
+
+Linear assembly of a human Y centromere using nanopore long read sequencers
+
+As you hae already heard from a number of talks this morning, the human genome reading is incomplete. It has large multi-megabase gaps at every centromeric region. Before you can begin engineering, this is part of the prequel to hgp-write. Why do these gaps exist?
+
+When you zone in and look at the structure of each of these gap regions, these sites are really dense with repeats. There are satellite repeats and millions of bp of this. It's an incredible challenge for sequence assembly. It's important that the genomics community be faced with this challenge. Putting together a satellite array would be an important genomics milestone.
+
+Closing the centromere gap would signal that technology has reached the stage where we can completely read the human genome. Linear assembly of centromeric satellite array on chromosome Y. It's hte half-way chromosome and it's the smallest satellite array out of all the centromeric regions.
+
+We'll be using a BAC-based strategy. There's a map of the Y chromosome. Tilford et al 2001. We can apply long reads, in the range of 100 kb, to begin to resolve these regions but also begin to create... BACs with us.
+
+We developed a protocol called UCSC longboard 1D protocol. You have a circular BAC. You can ut this particular centromere.. and then you can ligate these adapters on, then go through minION sequencing. You can begin to read the actual length to get the full read length.
+
+The single molecule read is of insufficient quality, so we developed a multiple alignment quality by consensus. You can sample reads, filter in multiple alignment strategy, and get high quality results.
+
+What I'm showing here is some exmaple where you have 220 kb of sequence.. we're able to go through and ind all the variants that could be informative for mapping centromeres. I assume at this stage we have some false positives, so we need a series of steps to ensure quality. We use Illumina resequence to evaluate 5mer biases.
+
+Albacore is the software we're using.
+
+We can identify all the informative single copy sites in the BAC strategy. By taking the overlap position, 346 kb array, ... we expect that this particular array is biologically relevant. CENY array length is comparaible to estimates in population-matched datasets. Miga et al. 2014.
+
+# Optimizing long read strategies
+
+We are making version 2.0 of our protocol. We're moving towards the entire genome. We're improving methods of not only our base cost, but most of our informatics so that we can begin to mine some of this signal data. In the mean time, we have constructed initial maps that determine the chromosome satellite sequence and now we have some assessment.
+
+# Q&A
+
+
+
+

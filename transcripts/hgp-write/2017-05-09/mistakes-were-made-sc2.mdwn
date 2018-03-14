@@ -1,0 +1,36 @@
+Sc2.0 mistakes were made
+
+Joel Bader, Johns Hopkins Biomedical Engineering
+
+<https://www.youtube.com/watch?v=g0oB8idqbgs&t=0s&list=PLHpV_30XFQ8RN0v_PIiPKnf8c_QHVztFM&index=49>
+
+"Mistakes were made"
+
+The mistakes we made in the design of the Sc2.0 genome. I know that this session is focused on design software. I like writing software. I find it much less exciting to talk about. I want to focus on if we knew now what we knew when we started what would we have done differently on the design or on the comptuational side or the high order side.
+
+11.3 MB designed- chromosome 1 to 16, and the tRNA neo chromosome. 3.5 MB done for 2, 3, 5, 6, 10, and 12.
+
+Known design flaws: tRNA deleted systematically, will be added back on in a neochromosome, for single-copy or low-copy tRNA, have to be careful. Changes in ribosome levels, due to putting them in the neochromosome. During the process, there's a transient where the tRNAs are different, so if too low then more ribosomes, too many tRNAs then that also causes a compensation. Okay, maybe that's not really a design flaw since we know it's fixed with the neochromosome.
+
+The universal telomere cap is required. UTC silencing etends to sub-telomeric genes. Exacerbated by our deletion of subtelomeric pseudogenes. UTC = universal telomere cap.
+
+LoxPsym sites were an inherent risk; 1154 inserted for scramble system (Yue Shen, Giovanni Stracquadanio et al 2016 Genome Research). During chromosome assembly, <1% probability of seeding an off-target homologous recombination (2-3 events observed over 6 completed chromosomes. Trivial to catch, reasonably easy to fix.
+
+I think the biggest deisgn flaw was the lost opportunities and being aggressive in the design. There's several codons with frequency less than 10% relative usage, 30k-70k occurrences, maybe that would have been a better choice.
+
+Execution errors: using legacy systems, spreadsheets, emails from people, human experts, crisis mode emails, yadda yadda.
+
+Annotation errors: genbank changed their validation script for yeast genome sequence and there were things in the reference sequence annotation that genbank no longer accepts.
+
+We should have been more aggressive in what we wanted to do, so maybe that's for Sc3.0.
+
+# Q&A
+
+Q: Sorry for being so conservative, but we heard from Jacob Beal about the opportunity to introduce ... and.. obviously, any time you add you know things to your .. it's more work. So could you talk about the prospect of.
+
+A: The great benefit I see there is having a system with tools you can immediately plug into. Whta we wree doing, we did that with the GFS standard, it's a different type of standard. If you have something in a format like that which complies to a standard, say someone develops a fantastic editing tool, if it's compliant with SBOL, then anything you make, you should be able ot use a tool like that. The main things I see with ontologies is making it clear how they can add to it, keeping their namespace distinct, so when you're ordering PCRtags you hae a way to see how it fits into existing ontology but so that if someone defines something similar there's a way for there to not be conflicts. Then we can think about the design, rather than groups repeating each other's efforts. Genmod, genteic modified organism database works pretty well. Would be good benefit for hgp-write.
+
+Q: Some things are bugs only in certain situations or certain orders of operations. I was wondering if you could comment on the original conception of what you thought would be a bug.
+
+A:  A bug is any measurable difference in growth rate. There are some small decreases, but if we have too many of them then they accumulate. The growth rate needs to be under many different conditions, not sure how many they should be probed under, but different media, different tepmerature, maybe one of the experimentalists could comment on how many different environments growth conditions. 10^3? Okay. If someone is doing an experiment in a different condition and finds a defect, I think it's much easier to debug in this system than we thought it would be; we thought growth defects would be a lot of work to map and fix it, but in the end there were far fewer defects than we expected. Also fixing them is a lot of work, but feasible. Thanks to everyone who fixed arm 6.
+

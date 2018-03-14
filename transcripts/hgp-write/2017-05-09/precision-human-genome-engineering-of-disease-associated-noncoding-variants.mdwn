@@ -1,0 +1,47 @@
+Precision human genome engineering of disease-associated noncoding variants
+
+Neville Sanjana, New York Genome Center
+
+<https://twitter.com/nevillesanjana>
+
+<https://www.youtube.com/watch?v=NPEKf74I4Ls&t=0s&list=PLHpV_30XFQ8RN0v_PIiPKnf8c_QHVztFM&index=8>
+
+I want to thank the organizers for inviting me to present a GP-write pilot project from our lab. I am going to tell you a little bit about work we've been doing in the lab for a few years to do CRISPR to do .. screens. The previous talk was a ince introduction to the work we're doing.
+
+One of our motivating factors has been the tremendous advancements in genome sequencing. George had a similar slide earlier today. This is some data from a GWAS catalog from NIH. There's a tremendous growth in the number of publications where we took patients, sequenced them and tried to find genetic variations. There has been tremendous growth in our ability to read out genomes. However, our ability to write genomes has not grown as quickly or to the same scale as genome sequencing.
+
+We and many labs have been interested in using CRISPR as molecular scissors for DNA editing to cut or modify DNA. Often you might hear this referred to as cut-and-paste for genome editing. We have delivered well on the cut side of things, but not as well on the paste side of things. I am going to give you some background on cut, and then tell you about our pilot project, which is about paste.
+
+# Cas9
+
+The cas9 enzyme is the most widely used CRISPR enzyme. It has a small guide RNA. It can target a gene, and cut, and it's very efficient for gene knockout. If it's targeted to some non-coding region, like regulatory areas, it can result in mutagenesis. What is that non-coding region, like the introns, what does that do? We have been capitalizing on the idea of programming the CRISPR system with short RNA guides, and take advantage of oligonucleotide array synthesizers to synthesize millions of guide RNAs and target many locations in the genome.
+
+We synthesized CRISPR guide RNA libraries that can target every single one of the 20,000 genes in the human genome. So now we can figure out which genes are involved in neurodevelopment, cancer drug resistance, etc. We can use the CRISPR system to create loss of function mutations.
+
+This is a human cell-- it's a cell line- this is eGFP fluorescence in He cells. This makes the cells more green, more fluorescent. I'm showing you a few different CRISPR guide RNAs targeting this GFP gene. We introduced GFP and using CRISPR we try to get rid of it. Seven days after introducing the guide RNAs, they become the non-fluorescent cells again, the fluorescence is oblitterated. To compare to older tech, using RNA interference, we see 90% knockdown. This is fundamentally different though, this is complete knock-out--- if we sequence the cells, we don't find the GFP genes at all. So it's gene knockout.
+
+Gene knockout is efficient, but the precision of gene editing like introducing mutations like from single nucleotide polymorphisms is just lower efficiency. So this is the motivating factor or result behind our pilot project.
+
+# Knock-in pooled screens
+
+Just like we can go to many genes in the genome and knock them out, can we knock them in? There are some engineering challenges we need to put this into a viral delivery format so that each cell only sees one manipulation. We need to be able to select for construct- if we can select for the cells that have the CRISPR reagents, we see much higher levels of knockout. Can we optimize donor template design to boost homologous and non-homologus insertion methods, like ssDNA, dsDNA, asymmetrical, symmetrical, lots of variables to play with to boost efficiency. Also, what about pooled synthesis. We have to pair the synthesis of the guide RNAs with a donor piece of DNA which includes a mutation that we're trying to introduce. Each one is a small technical thing, but we have to address each of them if we want to be successful.
+
+Why is this important?
+
+"Whole-genome landscapes of major elanoma subtypes" -- caused by UV radiation, lots of mutation. These folks found that in each tumor they found 100,000 SNP variants. They found one tumor with almost 1 million variations. How do we make sense of these variants rapidly? Which ones are functional, which ones are driving it? Some are in regulatory regions that are non-coding, sometimes inside genes; do specific mutations create new functions? We need precise editing.
+
+I think this will have wide applicablity over many areas.
+
+We are recruiting postdocs and PhD students.
+
+# Q&A
+
+Q: I'm thinking about this-- pairing synthesis of guide RNA and donor templates. Would this have to go all the way of pairing it in the context of the complexes that go to the specific sites of the genome, to have more efficient replacement of the actual ...
+
+A: I think that's a cool idea. You could imagine having some DNA binding in addition to donoring, grabbing on to DNA binding proteins, there are so many ways to tether things with cas9. RNA binding protein, Ms2, also you could have DNA binding proteins or specific DNA aptamer.
+
+Q: How do you overcome the PAM dependence of CRISPR?
+
+A: There's been some nice work on that-- in Nature Genetics from a few months ago from Dan and Stew's group at Harvard-- where they use multiple cas9 orthologs that have different PAMs. Staph cas9, for example. cas9 itself, people worry about the PAM, it's not a huge issue, more PAMs increase the target space, no doubt. Only two successive g's in the entire human genome (is that right?).
+
+Thank you.

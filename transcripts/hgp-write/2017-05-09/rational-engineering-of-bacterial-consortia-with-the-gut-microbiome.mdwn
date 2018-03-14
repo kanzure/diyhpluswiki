@@ -1,0 +1,67 @@
+Rational engineering of bacterial consortia within the gut microbiome
+
+Jeffrey Way, Wyss Institute of Biological Engineering
+
+<https://www.youtube.com/watch?v=lzxClRZfjEI&t=0s&list=PLHpV_30XFQ8RN0v_PIiPKnf8c_QHVztFM&index=19>
+
+# Introduction
+
+I will be talking about the salmonella genome and recoding it. There's a lot of people involved. But I don't want you to think it really takes this many people to do genome recoding. 3 people did the wetlab work, and then the rest were involved in software, design, and so forth. There was an excessive amount of middle and upper management. It really isn't that bad. The money problem is more of a serious issue than personnel, I think.
+
+# Why salmonella?
+
+What we really want to do is use salmonella as a live vaccination vehicle. Right now when you get a vaccine, you get attenuated viruses that are live viruses that are vaccines. You can't do that with bacteria because bacteria can go into your gut and mix with other bacteria and exchange genetic information all the time. So if you attenuate a bacterium, it can easily recombine to something else in your own microbiome and become non-attenuated. What we want to do is create a situation where horizontal gene transfer is blocked. Part of the idea here is that we can do that by recoding the genome, dropping out some codons, and then incoming DNA cannot be translated.
+
+Salmonella specifically is useful as a live vaccination vehicle because it induces many of the immune responses you want, like antigen presentation and cell invasion and so on. It's a perfect vehicle for vaccine to protect against this family of bacteria like shigella, epeck, shigella dysenterea, and salmonella LT2 is only a mild pathogen, only toxic to mice not really humans. People in the old days there were stories about sucking pellets up and resuspending them and accidentally swallowing 10^11 and not really feeling good for a few days but nothing that serious happened.
+
+It's not ecoli, but all the same genetic tools apply.
+
+# Design specifics
+
+We only want to change two codons, the two leucine codons, TTA and TTG, to CTA and CTG. This is all we did, just two codons out of the possible 64. I do have to acknowledge Church's lab where they gave an introduction to this project in ecoli, and early on in this project we did talk with George and his lab members and they mentioned some problems which were real practical issues. Our project was designed to address some of those practical issues.
+
+One of the issues we were worried about, since we want to give this to humans eventually, we were worried that changing 6 or 7 codons would hae a deleterious effect on growth. So we just limited it to enough to be sufficient to prevent horizontal gene transfer, but not so much that we were just changing a lot.
+
+We removed and knocked out the restriction system. There are a few prophages of about 50 kb each, about 4 of them. We hae some pathogenicity islands, pseudogenes, transposons, about 400 kb out of a 4.8 MB starting genome. Our restriction site: LGuI/BspQ1 is completely removed. GCTCTTCN\*NNNN. It cuts adjacent to the sequence. It's good for PCR ends and linkers and so on.
+
+# Stepwise integration
+
+We use stepwise integration-- and this is kind of obvious to anyone who has done bacterial genetics- the idea is that you put in a new piece of DNA, and you have a drug resistance marker, when you put in your new fragment you have a different drug resistance marker, and then you have recombination out here, and then you select for this one to come in, and then you screen among those for recombination events that get rid of the old marker and you can use this over and over again.
+
+# Design challenges
+
+The particular design challenge that I will mention is that there's a number of cases where there are overlapping genes. We used a piece of software from Venter Institute that predicts the functional effects of amino acid substitutions. If we want to make an amino acid substitution, sometimes we have to introduce a sense change, especially for overlapping genes. The software helped us.
+
+$500k DNA cost
+
+# Implementation: SIRCAS: Stepwise integration of rolling circle amplified segments
+
+Synthesize small pieces of DNA by chemical means. Then assemble them in yeast using its recombination features to make a circular chromosome and then amplify that by rolling circle amplification. Digest-- linearize the DNA with an enzyme, Bsq1, to give linear fragments of 10 to 25 kilobases, and then we recombine them in ecoli nad we amp up the recombination system using Lambda red, which works in Salmonella as well as in Ecoli.
+
+# Progress thus far
+
+Over 200 kb has been recoded. 1557 codos changed of 1558 designed. We successfully instituted that many changes. Five substitutions, two 1-base indels in 156 kilobase region derived from sequence-verified DNA. 51 errors in 44 KB derived from non-clonal DNA fragments.
+
+# Key advantages of SIRCAS
+
+It's two days per integration cycle. Lethal and deleterious mutations that we introduced by design and don't realize they are lethal or delerious, well they become obvious and we only have to look at a small region to identify them.
+
+# Conclusion
+
+Thanks to Lau et al Nucleic Acids Research paper coming soon, DARPA-BRICS, Wyss Institute, Gen9 and SGI-DNA.
+
+# Q&A
+
+Q: .. how many instances if any in the 200 kb that you have tested have proven to be unchangeable?
+
+A: We have not found any so far. Comparing our efforts to Church lab, maybe they picked tougher regions. They were changing 7 codons, and we were only changing 2. We wanted to avoid that problem.
+
+Q: .. how long of a fragment are you integrating?
+
+A: 10-25 kb. We did some at 10, some at 25.
+
+Q: One of the aims of recodon coding is genteic firewall. Will your salmonella be firewalled against Church's organism?
+
+A: Good question. Their organism sending DNA into ours, it would be okay. If ours sent DNA into theirs, it would not work because they have changed more codons.
+
+

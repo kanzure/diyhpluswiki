@@ -1,0 +1,50 @@
+DNA synthesis using error-free oligos retrieved from NGS flow-cells
+
+Duhee Bang, Yonsei University
+
+duheebang@gmail.com
+
+<https://www.youtube.com/watch?v=0q7IYWu4xHI&t=0s&list=PLHpV_30XFQ8RN0v_PIiPKnf8c_QHVztFM&index=42>
+
+We have been developing DNA synthesis method using microchips for oligos and to reduce oligo cost. We also have developed laser cloning method, using bursting balloons. For the preparation of error-free oligos, we prepare 1000s and we start on microchips. We synthesize these, we do NGS and clone bead targeting. And then after sequencing, we basically map sequencing data from sequencer and we map our location data on the sequencing flow cell. So after mapping, since we know which clones are error-free, we use laser cloning (or sniper cloning) for the ones we really want. Sniper retrieval of target clones. Pulse laser.
+
+So we... we basically automated this process to the speed of around 1000 clones in less than 1 hour to be able to take... laser cloning on 454 flow cell. Validated it by Sanger sequencing. and NGS. We verified around 1000 clones.
+
+We wanted to see whether we could optimize the output, by using error-free oligos and our clones. We decided to use cas9 genes from different species to demonstrate this. When we started this project, we immediately realized the challenges of constructing from error-free oligos.
+
+Although every oligo is essentially synthesized on the microarray, but after we amplify those microarray library, prior to subjecting to NGS, we do amplification bias. A certain population with low amplification -we may not be able to obtain error-free oligo clones on 454 output.
+
+This is a real challenge for synthesis because for the traditional synthesis ... we basically used 2x tiling design. When we miss only one oligo, we are only able to synthesize... so we decided to introduce high-depth tiling at 10x tiling strategy. Each oligo is highly overlapped with several other DNA fragments. So we can produce lots of error-free oligos at once, even though we collect only 70% maybe, we can still get it to assemble the target gene anyway due to high overlap.
+
+Retrieved from 54 plate, and amplified error-free oligo library. We are finalizing the strategy to make cas9 genes. Briefly I would like to introduce laser based methods works but requires precise laser cloning instrumentation.
+
+NGS adapter - microarray.
+
+The essence of this alternative DNA retrieval method is sealing and replication NGS flow cell. After NGS, we seal our plate, and flow cell, and prior to sealing we put the .. laser.. and then.. seal it.. And then we replicate the entire library.
+
+We were able to collect over 95% of the target DNA with PCR retrieval from NGS replica pool. We want to extend this to synthesized genes to collect error-free genes.
+
+We developed selective DNA retrieval methods utilizing laser based cloning, or by PCR amplifiation of NGS replica pools.
+
+We believe that use of microarray, NGS, and laser-based cloning methods has a potentia lfor the construction of genetic materials for mammalian cells.
+
+Sunghoon Kwon at Seoul National University
+
+# Q&A
+
+Q: The flow cell is sealed?
+
+A: Yes.
+
+Q: How do you get from .. how do you open the flow cell? How do you get the oligo content beads out?
+
+A: We simply use illumina flow cell. Underneath, there is a hole for injection of ... for their sequencing. So basically, after we sequence, we take the illumina flow cell and then we .. solution out of the flow cell. We inject PCR reagent and then we seal it by using balm. And then we put that flow cell into .. temperature controlled.. device. And then we do a few cycles of PCR. And then after that, we get rid of the sealing, we take out the solution out of these flow cell, use those and then we dilute as much as we want, and then take portion of those solution that replicated from here to subject to PCR reagent and...
+
+Q: What about the beads?
+
+A: In this case, we are not using illumina. We are using 454 flow cell instead. There's no cover. It's open. Sorry for the confusion.
+
+Okay thank you.
+
+
+
