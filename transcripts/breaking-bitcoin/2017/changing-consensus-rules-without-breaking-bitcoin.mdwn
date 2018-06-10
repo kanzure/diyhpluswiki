@@ -4,6 +4,8 @@ Eric Lombrozo (CodeShark)
 
 video: <https://www.youtube.com/watch?v=0WCaoGiAOHE&t=32min9s>
 
+<https://twitter.com/kanzure/status/1005822360321216512>
+
 # Introduction
 
 I'd like to talk about ... we actually discovered we can replace the script completely with soft-forks.
@@ -114,7 +116,7 @@ And then luke-jr just out of the blue as a matter of fact, it was pretty crazy, 
 
 Luke-Jr mentioned that it could be done like p2sh's mechanism in bip16. The changes in transactions referring to each other... so you have to make the transaction not contain scriptsigs. That was the lightbulb moment. It took another 2 weeks for it to sink in. I was just trying to do a simple soft-fork plugin thing and I did not expect segwit to come out of this. I was just thinking about consensus structure and luke-jr ends by breaking soft-fork plugins and then he runs off to bed. This was the end of that chat.
 
-I recently looked this up for a new article that Aaron van Wirdum published in bitcoinmagazine where he looks over the <a href="https://bitcoinmagazine.com/articles/long-road-segwit-how-bitcoins-biggest-protocol-upgrade-became-reality/">history of segwit</a>. I was trying to find the original chat history for this and just looking back at this it was funny because at this point none of has had realized what we had stumbled across. It wasn't until a few weeks later that we realized what we found. This happened between the Montreal and Hong Kong scaling bitcoin conferences. At Hong Kong we didn't have the transaction malleability fix yet and people wanted bigger blocks and lightning and this solved all these things and we were able to do it with a soft-fork. It totally changed the roadmap at this point.
+I recently looked this up for a new article that Aaron van Wirdum published in bitcoinmagazine where he looks over the <a href="https://bitcoinmagazine.com/articles/long-road-segwit-how-bitcoins-biggest-protocol-upgrade-became-reality/">history of segwit</a>. I was trying to find the original chat history for this and just looking back at this it was funny because at this point none of has had realized what we had stumbled across. It wasn't until a few weeks later that we realized what we found. This happened between the <a href="http://diyhpl.us/wiki/transcripts/scalingbitcoin/">Montreal</a> and <a href="http://diyhpl.us/wiki/transcripts/scalingbitcoin/hong-kong/">Hong Kong</a> <a href="https://scalingbitcoin.org/">scaling bitcoin conferences</a>. At Hong Kong we didn't have the transaction malleability fix yet and people wanted bigger blocks and lightning and this solved all these things and we were able to do it with a soft-fork. It totally changed the roadmap at this point.
 
 Eventually came the segregated witness segwit BIPs. There were 7 of them. Only 4 of them here are consensus. bip142 was replaced by <a href="https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki">bip173</a> (<a href="https://diyhpl.us/wiki/transcripts/sf-bitcoin-meetup/2017-03-29-new-address-type-for-segwit-addresses/">bech32</a>) that sipa has been working on.
 
