@@ -1,0 +1,173 @@
+Changing consensus rules without breaking bitcoin
+
+Eric Lombrozo (CodeShark)
+
+video: <https://www.youtube.com/watch?v=0WCaoGiAOHE&t=32min9s>
+
+# Introduction
+
+I'd like to talk about ... we actually discovered we can replace the script completely with soft-forks.
+
+It's important to note this quote from satoshi, from summer 2010: "I don't believe a second compatible implementation will ever" ......
+
+# Comparing open-source development to bitcoin's blockchain
+
+... a lot of the inspiration came from the development of open-source. All source code is public, analogous to all blockchain being public. All changes are logged, same as all ledger additions, and subject to audit. The way that git works, our main tool, is by chaining these commitments, using hashes. I'ts very similar to a blockchain, except instead of using double sha256 proof-of-work, it's actually proof of actual developer work and people working on code. The typical workflow is to clone the codebase- similar to syncing to the blockchain. And pull requests are similar to broadcasting transactions, you're suggesitng that you are wanting to change the state of the system. Then there's code review (validity), and merging the changes (including the changes in some block or some future block). There's a lot of parallels.
+
+# Code forks vs chain forks
+
+But there's a huge difference around code forks versus chain forks. It's hugely different. You have these chains, yes, but you also have arrows merging into nodes. We don't have a way in bitcoin to merge two blockchains that have already diverged. There have been some ideas for blockchains that could be able to do this, like DAGs in general, but it's a hard problem to merge different histories and still have the same kind of security that bitcoin has right now.
+
+# Compatibility
+
+It's important to note changes that affect compatibility. In other code bases, compatibility might not matter. In the case of consensus rules, compatibility matters. Also in other aspects too, such as the p2p network layer. There needs to be some level of compatibility otherwise you get partitions of the network. Bitcoin doesn't work well when you have permanent partitions.
+
+# BIP process
+
+<https://github.com/bitcoin/bips>
+
+bip1 <https://github.com/bitcoin/bips/blob/master/bip-0001.mediawiki>
+
+bip2 <https://github.com/bitcoin/bips/blob/master/bip-0002.mediawiki>
+
+The BIP process was developed to document proposals and ideas and specifically ideas that involve compatibility issues. If you want to submit code and it doesn't impact compatibility, then it's probably not necessary to submit a BIP. The thing is that different BIPs have different levels of compatibility requirements. This was not really clear in the original way that the BIP process was documented, which is why I worked on bip123, which separates these different kinds of changes.
+
+# bip123
+
+The first distinction I made was the difference between consensus and non-consensus changes. In <a href="https://github.com/bitcoin/bips/blob/master/bip-0123.mediawiki">bip123</a>, there's the consensus layer, the most fundamental level and hardest one to change, and then the peer services layer including message structures and peer discovery which could be upgraded. You could have a migration path where you deprecate older calls and then once nobody is using the old stuff you don't have to support it anymore. Then there's the RPC layer for interfacing with node software at the higher layer, and then there's the application layer for <a href="https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki">bip39</a> or <a href="https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki">bip32</a> where you want to have wallets that share encrypted keys or stuff like that.
+
+# Consensus forks
+
+Consensus forks, you know, split the blockchain and we don't have a merge process in bitcoin. There might be some future ideas in future crytpocurrencies to allow for merging chains together. But for now there's no way to merge incompatible chains. The way iit's resolved is that if the rules and validity are all the same on competing chains then the consensus rule is to follow the chain with the most work. If there's any kind of partition, then as soon as the partition is resolved, then there's a reorg and the chain which has less work is not followed. The history of the chain with the most work becomes the one that is accepted. It resolves temporary partitions, but not permanent partitions. If you have an incompatibility problem at the p2p network layer, and nodes are banning each other and creating a network partition, then this kind of rule isn't going to be able to resolve that partition. It's not going to fix it. Or once it fixes it, you're going to get a really really bad reorg. The great firewall of China suddenly goes up and blocks all bitcoin traffic and then the next morning everyone's transactions are screwed or whatever...
+
+Soft-forks guarantee eventual consistency as long as there's majority hashrate enforcing the new rules. Hard-forks can create permanent partitions. This is all basic stuff. This is obvious now. We're aware of it now, that hard-forks always split the chain unless the legacy chain is either abandoned or destroyed. I think that in 2017, we can all look at this and say yes and we've seen plenty of examples of this phenomena. This wasn't obvious back when Satoshi was writing those earlier posts.
+
+# Even Satoshi broke Bitcoin a few times
+
+Before we all knew this, Satoshi introduced hard-forks and broke consensus. I don't think this is well known. Cory Fields found this commit <a href="https://github.com/bitcoin/bitcoin/commit/757f0769d8360ea043f469f3a35f6ec204740446">757f0769d8360ea043f469f3a35f6ec204740446</a> and informed me of it. I wasn't aware of it. There was actually a hard-fork in bitcoin that Satoshi did that we would never do it this way- it's a pretty bad way to do it. If you look at the git commit description here, he says something about reverted makefile.unix wx-config version 0.3.6. Right. That's all it says. It has no indication that it has a breaking change at all. He was basically hiding it in there. He also <a href="https://bitcointalk.org/index.php?topic=626.msg6451#msg6451">posted to bitcointalk</a> and said, please upgrade to 0.3.6 ASAP. We fixed an implementation bug where it is possible that bogus transactions can be displayed as accepted. Do not accept bitcoin payments until you upgrade to 0.3.6. If you can't upgrade right away, then it would be best to shutdown your bitcoin node until you do. And then on top of that, I don't know why he decided to do this as well, he decided to add some optimizations in the same code. Fix a bug and add some optimizations.. okay, well, he did it.
+
+One of the interesting things about this commit which isn't really described in Satoshi's bitcointalk post is the addition of the OP\_NOP opcodes. Before, they were just illegal. If this was found by the script interpreter then it would exit false and fail. And now they basically don't do anything, they are just NOPs. This is technically a hard-fork that he introduced ((if any transaction was to use these, and or if any transaction in the past had used these in a way that breaks the chain given the new rules, especially since this was not phased in with an activation height or grandfather clause)). The previous rule was that they were illegal. Because now transactions that would have been invalid before are now valid. At the time, nobody was using the NOPs so it probably didn't effect anyone ((that we know about-- someone might have had a pre-signed transaction that was not broadcasted that used the previous features)). The network was really small and probably everyone knew each other that was running a node. So it was easy to get everyone to upgrade quickly. Nobody seemed to care.
+
+There was a genius to this: by doing this hard-fork, it actually enabled future soft-forks. We can now repurpose these NOPs to do other things. I'll get into that in a second.
+
+# BIP classification
+
+Early BIPs had no classification. It's hard to really prioritize them or see which ones might be more difficult to review if you just look at them by name. By adding bip123, it makes it more clear which ones are consensus-critical. <a href="https://github.com/bitcoin/bips/blob/master/bip-0016.mediawiki">bip16</a>, <a href="https://github.com/bitcoin/bips/blob/master/bip-0017.mediawiki">bip17</a> and <a href="https://github.com/bitcoin/bips/blob/master/bip-0018.mediawiki">bip18</a> are touching consensus-critical code. The URI scheme is probably very localized to a single unit that is easy to review. So it makes it much easier to know what to expect in terms of how hard it is going to be to review a particular BIP.
+
+Some of these over here are later BIPs. We see that-- we have several soft-forks that were actually deployed, and other stuff that was not soft-forks like peer services changes that were added. And then over here, we see consensus changes are easy to spot. I'm not going to get into this story too much, but <a href="https://github.com/bitcoin/bips/blob/master/bip-0064.mediawiki">bip64</a> is not a consensus change. This was the reason that bitcoinXT was created actually. There was a dispute. Bitcoin Core developers did not believe that the <a href="https://github.com/bitcoin/bips/blob/master/bip-0064.mediawiki">getutxo</a> feature should be at the p2p level. It was not a consensus change. It became a much more serious situation later on with the whole block size thing which I'll get into in a second. Here you can see it's easy to see which particular BIPs are probably-- need to be reviewed more rigorously.
+
+# Hard-fork mania
+
+In 2015-2016 there was this hard-fork craze that came about. There was a whole bunch of BIP submissions about hard-forks. None of these were actually deployed. But it's interesting to note that there was this period of time that there was such a mania for hard-forks. During this time it's also interesting to note that people were still working on some ideas for soft-forks.
+
+There were some breakthrough discoveries about things that we could do with soft-forks that we didn't think were possible or that we thought were really hard to do. It was a generalization of what kinds of things could we add to the protocol using only soft-forks. It might be obvious now, but it wasn't always.
+
+# A brief history of bitcoin forks
+
+The first set of forks were all activated by basically just updating the software. There was no activation mechanism coordinated or whatever. Satoshi would just say hey I released a new version, install it and don't send bitcoin until everyone has upgraded. This works well when you have a network with only like ten machines. It doesn't work very well when you have a network with thousands or millions of machines. It's really hard to get everyone to upgrade all at once. ((Also, there are security reasons why it's very important to not include auto-updating code everywhere.))
+
+That didn't work so well. But that's the example of 0.3.6 that Satoshi did. That was done that way.
+
+# Blockheight activation
+
+After that, it was decided that using blockheight as an activation trigger would be better because it would give people some time to upgrade their software so it wouldn't be right away. Satoshi's 1 megabyte blocksize limit in September 2010 was an example of this where it was using the blockheight to activate the rule.
+
+It's also possible to activate with a flag date using the median time. This made it easier to predict when it would happen. This was used for bip16 and bip30 deployment.
+
+# Fork: imposing 1 MB blocksize limit
+
+In 2010, Satoshi added the 1 megabyte block size limit. This was an early soft-fork attempt. It was hardcoding a particular blockheight and if it's above that blockheight then enforce it and if not, don't. It assumes that everyone has upgraded their software by this time. This was the first crude mechanism which wasn't just wait until everyone upgrades and don't send transactions until then.
+
+# bip16 pay-to-scripthash (P2SH)
+
+And then came <a href="https://github.com/bitcoin/bips/blob/master/bip-0016.mediawiki">bip16</a>, right. And bip16 started to use other mechanisms like for instance like the anyonecanspend idea where old nodes would accept the transactions as valid and new nodes could have new rules on that and you could add functionality to this. This idea was reapplied in segwit and it made a comeback in a pretty strong way.
+
+# Soft-forks vs hard-forks
+
+By this time the distinction between hard and soft forks started to congeal. At the beginning there was not a good distinction. But there was a post from gavinandresen where he said there are "soft-rule changes and hard rule changes.. soft rule changes tighten up the rules, old software will accept all the blocks created by new software, but the oppsoite might not be true. Soft changes do not require everyone to upgrade. Hard changes modify the rules in a way that un-upgraded software considers illegal. At this point it is hard to deploy hard changes and they require every merchant and miner to upgrade". It was appreciated at this point that it was a difficult problem. And then a few years later, I guess gavinandresen didn't think it was that hard anymore.
+
+# Non-standardness
+
+Then there other recommendations like "consider transactions non-standard" if it has an unknown version number. You would bump the transaction version number. You could still include such a transaction in a block, but it wouldn't propagate over the p2p network. This would reduce the risk of sending transactions that might not validate correctly if some nodes aren't validating the nodes correctly.
+
+# isSuperMajority: First used miner activation mechanism
+
+This was around the first time that miner activation concept was invented or started to be used. Track the last number of blocks, the last 1000 blocks, if a certain number of them signal a higher block version then you know miners are going to be enforcing a new rule and then it's time to upgrade if you want to be safe. Unfortunately there's a lot of issues with this. If ther'es a cooperative scenario where the incentives with the miners are aligned then it helps to make a smooth transition. When the miners and user interests are not aligned hten there can be a lot of problems here, such as false signaling, validationless mining... just because someone is signaling something doesn't mean anything in particular. Miners might signal for a change but after activation they could trivially choose not to enforce it. And then there's this 95% threshold warning which indicates hey something might be up. isSuperMajority used 95% as a safety threshold. I think that unfortnuately this established a narrative that miners are the ones that are able to change the protocol. This was the first time that it was provided and it was to smooth out the process. It wasn't politicized at this point because most of the soft-forks at the time... there weren't any conflicts or obvious conflicts there.
+
+We had this super majority mechanism which incremented the block version but you could only deploy one soft-fork at a time. You're stuck on that one, and then what do you do if it doesn't get activated? 3 different soft-forks deployed that way: bip34, bip65, and bip66.
+
+# Versionbits (bip9)
+
+<a href="https://github.com/bitcoin/bips/blob/master/bip-0009.mediawiki">Versionbits bip9</a> was developed after that, with the idea that we want to be able to deploy multiple soft-forks at the same time. When I first got into bitcoin, I thought bitcoin would get obsolete, some better tech would come around and it would be better structured and I didn't see an upgrade path for bitcoin that could remain backwards compatible. When we started to look into versionbits, I thought hey this is a version upgrade path where we could actually add new features and deploy multiple soft-forks simultaneously and maybe we could even scale up the process a little bit. We did 2-- we did the <a href="https://github.com/bitcoin/bips/blob/master/bip-0065.mediawiki">checklocktimeverify bip65</a> + <a href="https://github.com/bitcoin/bips/blob/master/bip-0112.mediawiki">checksequenceverify bip112</a> bundle, and then came <a href="http://diyhpl.us/wiki/transcripts/scalingbitcoin/hong-kong/segregated-witness-and-its-impact-on-scalability/">segwit</a>, and segwit is where everything changed.
+
+# checklocktimeverify
+
+In checklocktimeverify (<a href="https://github.com/bitcoin/bips/blob/master/bip-0065.mediawiki">bip65</a>), the transaction version is bumped, which indicates it's going to be using this new feature potentially. And there's new rules. It's basically redefining NOP2 which Satoshi enabled with the hard-fork he did before. Had Satoshi not done that hard-fork, then there wouldn't be NOP2 available, and it wouldn't have been possible to implement checklocktimeverify like that. Old nodes treat it as a NOP (no operation).
+
+This is an example script: notice that if OP\_CHECKLOCKTIMEVERIFY is a NOP then the script interpreter just drops the entire line after the ELSE and that's how old nodes would evaluate the script.
+
+# Origin of soft-fork for segwit
+
+In this context, of seeing all these interesting developments happening with soft-forks, I thought it would be neat if we could have a more abstract soft-forking framework like a plugin kind of thing where rather than having a few people reviewing every single soft-fork proposal that everyone makes then instead have a screening process and modularize it more so that it's possible to have more unit tests and a clear execution pathway. I proposed this idea. We were concerned about the sequence of rules.. so if there's a set of rules that need to be checked and it doesn't matter in what order you can check them, then you can just chain all the different soft-forks. I thought this would be a good way to generalize this, the execution flow is easy to follow this architecture, and it's encapsulated (chat log exercept: "the execution flow is even easier to follow with this kind of architecture" and "because in the stable consensus code itself the specifics of the rule are encapsulated" and "and in the rule definition itself there's nothing else BUT the rule definition" and some comments about extension blocks). So the rule definition could be this module that whoever wrote it could write unit tests for it and just make sure it works perfectly.
+
+And then luke-jr just out of the blue as a matter of fact, it was pretty crazy, he just said to me, say a soft-fork for segregated witness. And I was like, could we really do that with a soft-fork? At this point, Pieter Wuille had been working on a segwit implement for the Elements Alpha project and it was there done as a hard-fork and even gmaxwell didn't think it would be possible to do this as a soft-fork. And according to luke-jr it was obvious that it would be doable as a soft-fork and he blurted out the answer. Note that sipa is Pieter Wuille. I was skeptical about this and luke-jr said in theory it should be possible and sipa was wondering, well, how do you do that? He said it probably entails p2p changes... we could do it with external data blobs and blocks like extension blocks.
+
+Luke-Jr mentioned that it could be done like p2sh's mechanism in bip16. The changes in transactions referring to each other... so you have to make the transaction not contain scriptsigs. That was the lightbulb moment. It took another 2 weeks for it to sink in. I was just trying to do a simple soft-fork plugin thing and I did not expect segwit to come out of this. I was just thinking about consensus structure and luke-jr ends by breaking soft-fork plugins and then he runs off to bed. This was the end of that chat.
+
+I recently looked this up for a new article that Aaron van Wirdum published in bitcoinmagazine where he looks over the <a href="https://bitcoinmagazine.com/articles/long-road-segwit-how-bitcoins-biggest-protocol-upgrade-became-reality/">history of segwit</a>. I was trying to find the original chat history for this and just looking back at this it was funny because at this point none of has had realized what we had stumbled across. It wasn't until a few weeks later that we realized what we found. This happened between the Montreal and Hong Kong scaling bitcoin conferences. At Hong Kong we didn't have the transaction malleability fix yet and people wanted bigger blocks and lightning and this solved all these things and we were able to do it with a soft-fork. It totally changed the roadmap at this point.
+
+Eventually came the segregated witness segwit BIPs. There were 7 of them. Only 4 of them here are consensus. bip142 was replaced by <a href="https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki">bip173</a> (<a href="https://diyhpl.us/wiki/transcripts/sf-bitcoin-meetup/2017-03-29-new-address-type-for-segwit-addresses/">bech32</a>) that sipa has been working on.
+
+# versionbits in practice
+
+Once we had segwit implemented, then we were thinking we'd deploy with versionbits bip9 which made the most sense. We talked with some miners and after discussion it seemed that everyone agreed it would be a good idea to deploy this. ..... bip9 was designed in a way such that instead of incrementing the version every time we do an upgrade, we used different bits in the version number and ew could parallelize this and do multiple upgrades at the same time. Here's the state transition diagram. It was designed to-- if it fails, the failure mode was that nothing changes. Status quo was favored. If miners are not going to signal for it then it just fails after a certain timeout. We did not anticipate other stuff like <a href="http://diyhpl.us/~bryan/papers2/bitcoin/jeremy-rubin-asicboost-notes.pdf">asicboost</a> and other issues that came up. This was assuming that in the worst of cases okay no change stay with status quo. We were happy with this but it caused some problems because miners started to misconstrue this as a vote.. in litecoin, this is segwit signaling in this chart here, and then the price is over here, and you would have to be stupid to not see a correlation here. Miners were starting to get close to the threshold and then drop their hashrate on it. This is an attack vector and it's not sustainable forever.
+
+# Flag dates and user-activated soft-forks
+
+So then we started to think maybe miner-activated soft-forks on their own aren't good enough. Well what about going back to user-activated soft-forks like the flag date? This is when <a href="https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-February/013643.html">shaolinfry</a> <a href="https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-March/013714.html">proposed</a> <a href="https://github.com/bitcoin/bips/blob/master/bip-0148.mediawiki">bip148</a> which required that miners signal segwit. It was kind of like a rube goldberg device where one device triggers another. This was a way to trigger all the nodes already out there ready to activate. And so we did some game theory analysis on this and actually NicolasDorier did some nice diagrams here. Here's the decision tree if you decide not to run a bip148 node-- if the industry or miners decide not to go along with it, thenyou get a chain split and possibly a massive reorg. On the other hand if you do run a bip148 node, then they would have to collude for you to get a permanent chain split. The game theory here- it's a game of chicken yes, and assuming it's not in their interest to do that, then they will opt to not go for the chain split. But if they do split the chain then it will probably be for reasons related to real economic interests like bcash where it's controversial and some people might wonder. My personal take is that I think it would be ineviatable that some miners would have interests that encourage them to have another chain. It didn't really adversely effect bitcoin too much and some of us got free money from bcash so thank you.
+
+The problem with bip148 is that the segwit2x collusion agreement came up and it was too late to activate with just bip9. James Hilliard proposed a reduction of the activation threshold to 80% using <a href="https://github.com/bitcoin/bips/blob/master/bip-0091.mediawiki">bip91</a>. It was a way to avoid the chain split with the segwit2x collusion agreement, but it did not avoid the chainsplit with the bcash thing which I think it was inevitable at that point. The bcash hard-fork was a separate proposal unrelated to bip91 and bip8.
+
+<a href="https://en.bitcoin.it/wiki/Segwit_support">Some</a> of the Bitcoin Core developers preferred bip8 over bip148. You can see the distinction here. The main difference is that bip8 does not have a transition from the start state to a failed state. In bip8, miners get a chance to signal and activate, but after a certain threshold rather than going to the failed state it goes to the locked in state. This does not allow miners to stall forever or to stall to the point where it fails. But it does still feed the narrative that miners are activating the fork and it still allows miners to stall for a long time. Others weren't too happy about that with bip8.
+
+# Future of soft-fork activation
+
+This is a big dilemma about how we are going to deploy soft-forks in the future. I'm really happy that segwit activated because now at least we can see some protocol development in second layer or higher-layer stuff that does not require tinkering with the consensus layer. I think this will usher in more innovation. At some point we're probably going to want to add more features to the bitcoin protocol. This is a big philosophical question we're asking ourselves. Do we do a UASF for the next one? What about a hybrid approach? Miner activated by itself has been ruled out. bip9 we're not going to use again.
+
+# Interesting changes requiring soft-forks
+
+Near-term soft-forkable changes that people have been looking into include things like: <a href="https://diyhpl.us/wiki/transcripts/blockchain-protocol-analysis-security-engineering/2018/schnorr-signatures-for-bitcoin-challenges-opportunities/">Schnorr signatures</a>, signature aggregation, which is much more efficient than the currently used ECDSA scheme. And MASTs for <a href="https://diyhpl.us/wiki/transcripts/bitcoin-core-dev-tech/2018-03-06-merkleized-abstract-syntax-trees-mast/">merkleized abstract syntax trees</a>, and there are at least two different proposals for this. MAST allows you to compress scripts where there's a single execution pathway that might be taken so you can have this entire tree of potential execution pathways and the proof to authorize a transaction only needs to include one particular leaf of the tree.
+
+We're looking at <a href="https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-October/015141.html">new script versions</a>. At this point we don't need to do the OP\_DROP stuff, we can add new opcodes and a new scripting language or replace it with something that's not a stack machine if we wanted-- not that we want to, but in principle we could replace it with another language. It gives us that option. It's something interesting to think about. Satoshi thought that bitcoin script would be the extensability mechanism to support smart contracts, and now we're looking at the opposite which is that the way the proofs are constructed. Adding new scripting languages turns out to be simple.
+
+# Potential changes requiring hard-forks
+
+Some changes in the future might require a hard-fork. Here are a few that are on the wishlist. Structural changes to the blockheader could allow for adding an extra nonce or chaining headers so you can add more fields or commit to other kinds of data structures, insead of having to stick stuff into the coinbase transaction.
+
+Withholding attack fixes, proof-of-work changes, things like that.
+
+Another change that would be nice is splitting the transaction inputs and outputs into separate merkle trees. You could construct much shorter proofs. If you're interested in whether a particular UTXO is in a block, you don't need to download the entire transaction. This would be a nice little feature.
+
+Also if we do want to increase blocksize then my particular take is that it seems silly to bump it 2x once, and then blocks fill up and then we hard-fork again? Every time we hit the limit we hard-fork again? We might as well add a percent increase per annum and have something where it grows gradually. Agreeing on the exact numbres and timeframe are obviously some areas where it might cause disagreement.
+
+# Hard-forks and inevitable chain splits
+
+Hard-forks might inevitable cause chain splits. I think this is something that we have come to accept. I think that back in 2015, we thought hard-forks might be a way to upgrade the protocol and assume everyone has the incentive to switch. We've seen several hard-forks now. The ethereum hard-fork is an example where people with different ideologies decided to stick it out and mine the old chain. I think we're going to see that in bitcoin. Even a tiny group of people tha tdon't want change, we're going to see a chain split. I think at this point, avoiding a chain split is not an option, but rather we have to work to mitigate the chain splits. This means including things like <a href="https://github.com/luke-jr/bips/blob/bip-noreplay/bip-noreplay.mediawiki">replay protection</a>, using different address formats, protecting SPV clients, things like that. Market mechanisms and price discovery, liquidity, trying to see whether or not the market actually supports the changes.
+
+Are there situations where the legacy chain will be voluntarily abandoned? I think if we were doing a hard-fork that was a win for everyone and maybe just some guy that just hasn't connected to bitcoin in years and has a node that he hasn't spun up... there's going to be a few of these people out there. There could be a hard-fork where everyone agrees, but still the logistics and coordination is difficult and it probably needs to be done with a lot of anticipation and some mechanism to mitigate any kind of issues there.
+
+Is it practical or ethical to kill the legacy chain? My personal belief is that as long as people want to use the chain, even a few people, then attacking the chain (like mining empty blocks indefinitely) is tantamount to attacking people's personal property. I think this could be a serious problem.
+
+If both chains survive, which one gets to keep the brand? This is the multi-billion dollar question. My personal view is that whoever is proposing the change, the onus is on them to demonstrate widespread support. The people who want to keep the status quo don't have to demonstrate anything. The change needs to demonstrate overwhelming support.
+
+# Conclusion
+
+I'm not sure how things are going to develop now. We've learned a lot in the past few years. Hopefully we will be able to do at least a few more upgrades. If not, then I'm happy we got segwit in so that we can start to do second layer stuff.
+
+# Q&A
+
+<https://www.youtube.com/watch?v=0WCaoGiAOHE&t=1h8m10s>
+
+Q: What about the research going on <a href="https://bitcoinhardforkresearch.github.io/">spoonnet</a> and spoonnet2 for hard-forks?
+
+A: There's a lot of interesting stuff there. jl2012 has been working on interesting stuff there. I think that at the end of the day there's still going to be political issues even if you have a technical solution to the logistical issues... if you can't get people to agree, then you're still going to have problems. But it's good to have ideas for replay protection. If you're going to split, then split for good, and make sure there's no way to merge again, and make sure you have a good way of coordinating that. This doesn't fix the political aspects though.
