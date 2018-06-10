@@ -1,0 +1,107 @@
+Lightning overview
+
+Conner Fromknecht
+
+video: <https://www.youtube.com/watch?v=jzoS0tPUAiQ&t=15m10s>
+
+<https://lightning.network/>
+
+# Introduction
+
+First I am going to give a brief overview of how lightning works for those of who you may not be so familiar. Then I am going to discuss three technologies we'll be working on in the next year at Lightning Labs and pushing forward.
+
+# Philosophical perspective and scalability
+
+Before I do that though, following up on what Neha was saying, I want to give a philosophical perspective on how I think about layer 2 as a scalability solution.
+
+How does layer 2 improve scalability? The metric I like to think about is bytes per meat space transaction. By meat space transaction I mean when I go down to 7-11 and buy something, that's a logical transaction but it need not correlate 1-to-1 to a transaction on the blockchain.
+
+A normal bitcoin transaction is about 500 bytes. When you use a payment channel that can be reused multiple multiple times for transactions, that can be reused a thousand or hundreds of thousands of times, the actual bytes per transaction that you actually have in the blockchain is much lower, we're talking sub 1 byte per transaction. I think that's the way to think about this. We're reusing more bytes on-chain by using batching and layer 2 solutions.
+
+There's also this efficiency-of-cooperation is what I would call it. In the general case, most people don't have disputes during their transactions. A judge doesn't need to preside over my transaction when I go to 7-11 and buy a bag of chips. Using the blockchain is like going to a judge. You really don't need that. In the genreal case we can assume that people will cooperate, and have provisions in the case that there is a dispute or diversion from the typical case. Awesome.
+
+That's my high-level introduction or the aims of how layer 2 solutions are trying to scale.
+
+# Lightning channels
+
+Moving on, what is a lightning channel? The <a href="https://lightning.network/lightning-network-paper.pdf">lightning network paper</a> was originally written by Tadge Dryja and Joseph Poon. Tadge are you here somewhere? There he is. And Joseph Poon, back in 2015 I believe. It was an epic paper. Two years later, we have working code, we have networks, Tadge continues to work on it at MIT as well.
+
+What is a lightning channel? In reality, it's a single output on the bitcoin blockchain. It's locked by 2-of-2 multisig. Because it's 2-of-2 multisig, once the funds are in there, they can only be spent in which two participants of the channel wish to actually spend that.
+
+The lightning network is a protocol for negotiating other transactions that can possibly spend from that UTXO. If you think the channel lifetime over the lifetime of the channel you're going to be updating with your channel partner a number of successive states where only the final one or the most recent agreement should be valid. Because of that, this is how we get the scaling. Not all of the transactions need to be broadcasted because there are economic and cryptographic assurances that only the most recent state will be executed. If people deviate from this, then they get punished. We can assume cooperation to get some more scalability benefits. As a cryptocurrency project, we still have to build trust-minimizing protocols.
+
+# Lightning network
+
+Channels on their own are great, but they aren't enough. A channel when you think about it looks like this. I have a channel forest diagram here. At each end of those lines there's one party. Maybe Alice and Bob. This is what it looks like on-chain. This is not useful on its own because if I want to pay anyone then I would have to make a channel to each person and that's O(n^2) number of channels and you would be better off just not using channels at all. The magic happens when you have a network and you have routing. The way this works is that people at the end of the channels announce they own a channel and if you notice an intersection of 3 edges in that graph then they have ownership of that and you can facilitate movement of money through that path. The density of that graph is important to making sure there's sufficient path diversity and this is how the backbone of the lightning network infrastructure is formed.
+
+# Atomic multi-path payments
+
+<https://lists.linuxfoundation.org/pipermail/lightning-dev/2018-February/000993.html>
+
+Now we're going to move on to one new technology called atomic multi-path payments (amps). The problem is that you need a path on the network between multiple nodes on the graph. The problem is that if Alice wants to send 8 BTC she has to-- these numbers are the capacities in the direction towards Felix. There's a capacity in both directions. If Alice wants to pay Felix she wants to send 8 BTC but she can't because each path on its own doesn't have enough capacity. And Felix at a time can only receive up to 10 BTC because he has that inbound liquidity, but he's unable to because of the single path constraint. This is solved by atomic multi-path payments.
+
+Atomic multi-path payments allow a single logical payment to be sharded across multiple paths across the network. This is done at the sender side. Multiple subtransactions can be sent over the network and take their own paths and then the necessary constraint is that they all settle together. If one of the payments fails then we want them to all fail. This is where the atomicity comes in.
+
+This enables better usage of in-bound and out-bound liquidity. You can send payments over multiple routes, and this allows you to split up and use the network better. This is a more intuitive user experience because like a bitcoin wallet you expect to be able to send most of the money in your wallet. Without AMPs, this is difficult because you can only send a max amount based on current channel liquidity or something, which doesn't really make sense to a user.
+
+Only the sender and receiver need to be aware of this technology. For this reason, it can be adopted into the current lightning network. It can be done with a feature bit and anyone in the middle doesn't have to know, and to them they look like single normal payments.
+
+The way this works is that the sender creates a base pre-image. Transactions in lightning are locked via a hash, which is a cryptographic hash function applied to some preimage and this determines who is able to claim the prize on-chain. We are going to construct these in a specific way such that they enforce the atomicity constraint we talked about before.
+
+From the base preimage, there's partial preimages that we can construct. I can do this as many times as I need. Then these are hashed against and these are the payment hashes that are used in the channels. Just from knowing the base preimage and the number of partial payments, I can derive the preimages and the hashes I need for the transactions.
+
+So the sender generates the base preimages, and then compute the partial preimages as well, and they are locked with P1 and P2 for the differently routed partial payments.
+
+To explain how this works on the return trip, there's actually a way we can do this-- in the original proposal that roasbeef and I worked and send to the mailing list- there's a way to do this with extra onion blobs where you attach extra data to the lightning payment and the receiver unwraps another layer of encryption and there's more information for them. We're going to use this to send over shares of the base preimage. For those of you familiar with secret sharing, it's a way of dividing up a piece of information such that when you reconstruct and put something back together, it's that no piece alone is able to divulge the whole secret. We want all payments to go through in order for the payment to be considered valid. We can do something simple like XOR. And we generate all these random values and continue to concatenate them into a big value and at the end we mix in our base preimage. When the receiver receives this data--- each of those shares are sent out in those extra onion blobs. When the receiver gets this, they are able to reconstruct the base preimage. Because all of the payment preimages and payment hashes are derived from this base preimage, as soon as Felix (the receiver) knows the base preimage, he knows all the information to settle these payments in one go. The atomicity is governed by his ability to reconstruct the base preimage, which he can only reconstruct if all the payments reach him. He settles back with the partial preimages and Alice is happy. So this transaction was able to route 8 BTC to Felix even though no single path had that liquidity.
+
+You can imagine a single payment carving a knife through the network but now you can do this in a more diffuse manner. With smaller updates, you're more likely to never need to close out an entire channel.
+
+We're going to be working on AMPs in the next few months.
+
+# Splicing overview
+
+<https://lists.linuxfoundation.org/pipermail/lightning-dev/2017-May/000692.html>
+
+Splicing is another cool technology. I think roasbeef came up with the scheme I'm going to present today. There's a lot of different ways to do this. We're still in the research phase. I am just going to present an example that is sort of familiar and easy to graph.
+
+Can I fund a channel with a regular bitcoin wallet and can I top off an existing channel with an on-chain transaction? The answer to both is actually yes. We use something called splicing which allows us to modify the live balance of a channel.
+
+With a splice-in, funds can be added to the channel, and they subsume an existing UTXO. And splice-out can remove funds from a participant balance and this creates a UTXO. You can take what's in the channel, splice it off to an address that a person I'm trying to pay controls.
+
+This removes the concept of my "funds are locked in the lightning network" because now you can do both on-chain payments into a channel and you can also do a payment out of a channel without interrupting the normal operation of the channel.
+
+These basic operations can be composed into a number of different things. Someone might want to splice in, someone might want to splic eout, so you can get really creative about this.
+
+We'd like to minimize the number of on-chain transactions. We want to be non-blocking and let the channel be able to continue usage while this is happening. Doing this, putting your channel on hold and you weren't able to route, that wouldn't be great for usability. I'm going to describe a way that we can do this with one transaction, is non-blocking, and allows the channel to continue operation.
+
+It starts with the funding output (UTXO) that we talked about earlier. And, the next thing we're going to do-- this starts at an initial state, the commitment transactions are spending from the agreement, and they update to state i which is the most recent and valid one in this scenario. At some point later, Alice has a UTXO and wants to splice into the channel. So we create a new funding output and this has its own commitment states. This is an entirely separate channel but we're going to copy over the state from the old funding commitments to the new ones. This should be congruent except that Alice has a little bit more money now. So now the trick to continuing to use this channel without closing it down, is that we're going to continue updating both channels in parallel. This means that the funding balance-- the balance added to the new funding transaction is not usable until it fully confirms, but it doesn't stop us from using the channel. Let's say the funding transaction doesn't go through- I still have my old funding transaction and that channel is still working. But if the new funding is working, and confirmed, then we can continue operations throughout that, because they were both compatible.
+
+What happens if the new funding transaction doesn't confirm? Well we might need to use replace-by-fee. You might actually need to maintain a superposition of n-different channels. You might start with one, then you add more fees and bump it up. Instead of doing it to both channels, it's the current channel and all n-pending channels. All transactions that we do are valid across all of these and at the end of the day one of them is going to confirm and take over.
+
+The modification to the current channel design is we need to update and validate these commitments. We need a validation phase where you check all the channels, and finally you just commit them. I think roasbeef has been working on this last week. I'll have to ask him about how hard was it really.
+
+The only real change is the routing.. when an output is spent from and some other transaction is broadcast on the chain, most nodes are going to see that as a channel being closed (especially if they are not upgraded), and it needs to remain open. So we need a new message that says hey this is being spliced it will closed but don't worry you can keep routing through me. That's the only change for the routing layer that has to happen. So they can close nad reopeen on another channel. The upgraded nodes can continue using that one, of course.
+
+# Watchtowers
+
+see outsourcers in <https://diyhpl.us/wiki/transcripts/blockchain-protocol-analysis-security-engineering/2018/hardening-lightning/>
+
+The last thing that we're going to go into is watchtowers. Watchtowers are more important for moving to a mobile-friendly environment. People want to be able to do contactless payments when they walk through stores and this is going to be a part of the modern economy.
+
+The problem is that you might go offline, you might go on a hike, someone might try to cheat you by broadcasting a state that's not the most recent. So what we're proposing is that we give some other person the ability to sweep this channel, close it and give me the money back. You think this might require you to give them the keys, but in fact, you only need them to give the ability to construct a transaction that you have authorized. This would require knowing what the transactions look like, being able to generate the scripts in the outputs, and generating the witness which authenticates the transaction.
+
+One of the hcallenges is privacy. If you're backing up these updates to different nodes then this might be a timing channel. We think we can mitigate this to a reasonable level. You also need to negotiate this with a finder, how much do you give them so that they have economic incentive? And finally, you need ways to clean up old channel states so that they are cleaned up properly and nodes don't have to unnecessarily use space.
+
+# Encrypted blobs
+
+The method that I am going to describe uses encrypted blobs. Whenever a prior state is revoked, I take the commitment transaction and take the txid. I take the first 16 bytes as a hint. The second half is an encryption key. As a hash this is hard for someone to guess. The watchtower is only going to really realize that they have an encrypted blob when that transaction is published. They look at all the transactions in a block, they look at their database, then they unwrap them using their encryption keys. The channel backing up also requires signatures so that it can be swept without my presence. And finally I need to put all of this into a blob including the script template parameters to fill out all the script templates we use. And finally they encrypt and send this package of hints and encrypted blobs. You send it up to a watchtower, they ACK.
+
+In terms of sweeping outputs, here's an example script of one of the scripts in the lightning script. There's also a receive HTLC and offer HTLC script. Anything in brackets is what I'm calling a script template parameter. You can inject these values and reconstruct the actual scripts used in the protocol. There's also the local delayed pubkey parameter in this to-local script. The other hting I need is if that-- we only need the watchtowers into play when someone broadacsts an old state, I need a signature also with the revocation pubkey signed under that pubkey. That's what I'm doing to assemble these template parameters and signatures. We actually sweep-- there are two types of outputs, commitment outputs and HTLC outputs. The majority of your balance is kept in the commitment outputs. That's where the majority stays. Anything in the HTLC outputs are transient. There's typically two commitment outputs and there can be up to 966 HTLC outputs on a single transaction.
+
+HTLC output scripts are a little more involved but they have script templates too and follow the same general format. There's SIGHASH\_ALL which is one of the sighash flags used in bitcoin required for this... the state space can manifest on chain because of thse 2-state layers of HTLC. Using SIGHASH\_SINGLE it's more liberal than SIGHASH\_ALL and allows us to get this down to a linear amount of space required for the signatures.
+
+And finally, in <a href="https://blockstream.com/eltoo.pdf">eltoo</a>, there's a recent proposal for <a href="https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-April/015908.html">SIGHASH\_NOINPUT</a> which is evne more liberal and it requires just one signature for all HTLCs. This will make this watchtower stuff pretty optimal in my opinion.
+
+# Watchtower upgrade proposals
+
+And finally just some closing thoughts on privacy for watchtowers. We want people's anonymity to be protected so that we can't correlate across channels and watch for watchtower updates. We want to use unique keys for each brontide handhsake. Brontide is the transport protocol we use to connect on the watchtower network. We can batch these encrypted blobs. There's no requirement that I need to upload them immediately, I just need to do it before I go offline for a long time. I could save it up and broadcast on a random timer. And finally, there's the concept of blinded tokens where I can pre-negotiated and get signatures from the watchtower on redeemable tokens and present one of those when I want to actually do a watchtower update and they would authenticate that they have already seen this token or whatever. There's no requirement to use the same watchtower, you can update across many of them or you can switch intermediately. I think I'm out of time. Thank you.
