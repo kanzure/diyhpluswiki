@@ -1,0 +1,129 @@
+Scriptless scripts
+
+Andrew Poelstra (andytoshi)
+
+video: <https://www.youtube.com/watch?v=jzoS0tPUAiQ&t=3h36m>
+
+# Introduction
+
+I am here to talk about scriptless scripts today. Scriptless scripts are related to <a href="http://diyhpl.us/wiki/transcripts/sf-bitcoin-meetup/2016-11-21-mimblewimble/">mimblewimble</a>, which is the other thing I was going to talk about. For time constraints, I will only talk about scriptles scripts. I'll give a brief historical background, and then I will say what scriptless scripts are, what we can do with them, and give some examples.
+
+# History
+
+In 2016, there was a <a href="http://diyhpl.us/~bryan/papers2/bitcoin/mimblewimble.txt">mysterious paper</a> dead-dropped on an IRC channel that I frequent called #bitcoin-wizards. The paper was written by somebody called <a href="http://fr.harrypotter.wikia.com/wiki/Tom_Jedusor">Tom Elvis Jedusor</a> which is the name of Voldemort in the French Harry Potter books. This was a text document written in broken English describing a blockchain design called mimblewimble in which all the scripts are removed in favor of transactions which only have inputs and output amounts. The way that things are authenticated is that amounts rathe rthan being exposed were hidden behind homomorphic commitments.
+
+Homomorphic commitments allow people to add things up and verifying inputs and output amounts, but also hiding the amounts. The hiding involves a random secret blinding factor. In mimblewimble, this factor would be used instead of secret keys.
+
+The result is a blockchain with only signatures.
+
+The question presented in the paper was what kinds of scripts could be given in this blockchain, without breaking the hmomorophic property that the transaction security depends on. Scriptless scripts is the answer to this question.
+
+Over the most of 2017 to now, we have been working on scriptless scripts as an answer to that question.
+
+# Scriptless scripts
+
+<a href="http://diyhpl.us/wiki/transcripts/realworldcrypto/2018/mimblewimble-and-scriptless-scripts/">Scriptless scripts</a> are a way to encode smart contracts into digital signatures. This has applications way beyond mimblewimble. The entire purpose is to do things without any scripts. Scriptless scripts are completely agnostic to which blockchain they are on, but they do require some sort of digital signature support. This was kind of hinted at during the panel earlier today. What we're doing here is removing these hash preimages, removing these various different script tricks that people use to get atomicity between chains and transactions, and moving those into signatures so that you get something smaller, more efficient, more scalable, more private, and also it's inherently interoperable.
+
+# Not just mimblewimble
+
+Let me review just what Script is. We know what Script is. Let me review why Script sucks.
+
+The reason why Script sucks is that they are big. They need to be dowlnoaded, parsed, and validated by every full node on the network. They can't be compressed. They contain the hashes, pubkeys, and preimages of hashes, and all of these objects are things that look like random data-- they are highly structured but there's no random data to compress out.
+
+The details of this data is visible to everyone forever in the blockchain. The details of the scripts are publshed to the blockchain and anyone can analyze these details and they wont ever go away.
+
+With scriptless scripts, nearly the only thing visible is the public keys and signatures. More than that, in multi-party settings, there will be a single public key and a single signature for all the actors. Everything looks the same-- lightning payments would look the same as payments, escrows, atomic swaps, or sidechain federation pegs, and it will look the same as tumblebit-like things. Pretty much anything you think about that people are doing on bitcoin today, can be made to look essentially the same.
+
+They all look like public keys, and they might look like locktimes in some cases, and there's a way to factor that out.
+
+So it gets us pretty close to perfect fungibility in temrs of how outputs are labeled.
+
+# Adaptor signatures
+
+The basic building block is an adaptor signature. Tadge has gone into this with his <a href="http://diyhpl.us/wiki/transcripts/discreet-log-contracts/">discreet log contracts</a>. One way to think about the relationship between these two is that discreet log contracts are a way to do alchemy with public keys, and scriptless scripts is a way to do alchemy with signatures.
+
+As a consequence of this, you need to use something called a <a href="http://diyhpl.us/wiki/transcripts/blockchain-protocol-analysis-security-engineering/2018/schnorr-signatures-for-bitcoin-challenges-opportunities/">Schnorr signature</a>. Right now bitcoin, zcash, litecoin and all others use ECDSA signatures, which are harder to work with than Schnorr signature. There was a recent paper published that there's a way to do scriptless scripts with ECDSA.
+
+I am going to describe everything in terms of Schnorr signatures. We need Schnorr signatures to do this efficiently and with a minimum of cryptographic assumptions. In principle you could do this with ECDSA.
+
+What is a multi-signature? It has multiple participants that produce the signature. Every participant might produce a separate signature and concatenate them and this is a multi-sig. Thta's what bitcoin does. It's cool and nice and it's easy to reason about because you don't have to worry about signers canceling each other's signatures. But it's inefficient- it's a lot of data and you have to handle this separately.
+
+With Schnorr signatures, you could have a single pubkey which is the sum of many different people's public keys. The resulting public key is one that will signatures will be verifiable against- as long as all the participants can cooperate to produce a signature. So it's still a multisig. They work together.
+
+The way this works with Schnorr is that they exchange public nonces, like in discreet log contracts these commit to the randomness of the signature and allow people to produce a public key version of the signature. And then everyone produces a private version, this is called a partial signature. They all add these together, and this can only be produced by them cooperating.
+
+If you use this partial signature and you have that algebraic property-- well, you can also have another object where you could learn the secret when they all publish it.
+
+Given an adaptor signature, if someone later reveals some secret to you, you will learn the real secret if you subtract them. If someone later reveals the other data, you can learn the secret. So we can use this in two directions.
+
+# Atomic cross-chain swaps
+
+<https://www.youtube.com/watch?v=jzoS0tPUAiQ&t=3h44m53s>
+
+Let's think about cross-chain swaps. Patrick hinted at this during the panel.
+
+The way that you do a cross-chain swap today typically is you have 2 parties on 2 different blockchains. They put their coins up in a 2-of-2 output where they both have to sign off to move them. You require that in order to move the coins, on both sides in order to move the coins, the preimage of a specific hash has to be revealed, and the trick is that it's the same hash. When one party signs to take their coins, they have to reveal the hash preimage, and the ohter party can take that secret value and then take hteir coins on the other chain. That's how the atomicity is enforced.
+
+This sucks, though. You have to publish the hash on both blockchains, everyone has to download hte hash, has to download the hash preimage, they can see forever that these two transactions were linked, and you can't do <a href="http://diyhpl.us/wiki/transcripts/layer2-summit/2018/lightning-overview/">atomic multi-path payments</a> with this-- there's some neat algebraic trickery to get those various hashes to combine into one revelaed secret.
+
+In discrete logarithms, the relationship between secret and public keys is nice in that it inherently supports this kind of addition.
+
+As before, two parties, two blockchains. They each put their coins up on a 2-of-2 output on each side. At this point, let's suppose that I'm trying to sell some litecoins to Tadge. So I put up a bitcoin, he puts up a litecoin, and before I do anything else-- first, we're going to start the multisig protocol and we exchange public nonces on both sides. Before we start exchanging partial signatures, I will give him two adaptor signatures to the same committed value. What these adaptor signatures are is that they are something such that if he has a partial signature then he can learn a secret.
+
+I will give him an adaptor signature giving him his bitcoin, and I will produce an adaptor signature taking my litecoin. If he learns the secret value then he learns both signatures. And then he will give me a partial signature taking the litecoins and givingt them to me. He will see my signature on the blockchain, subtract his contribution, and then he learns the secret, he takes that secret and subtracts it from the other adaptor signature, and now he can take the coins. The atomicity is in the signature. Just by publishing the signature, Tadge has learned something htat he can use to produce a signature.
+
+There's a more straightforward way to do this, but I wanted to do this with adaptor signatures to demonstrate this exchange of data using this commit-reveal trick using nothing but signatures.
+
+There's a public key on both sides, both belonging to me and Tadge, and then there's some signatures that are produced by us. It looks like one public key and one signature and no relationship from them. Someone could download those two signatures and imagine some value and show they are related... anyone could do that for any pair of signatures. Everything done here in public is independently uniformly randomly. Before I produced any signatures, I gave Tadge some partial adaptor signatures. The crux is just the ordering of the data that we exchanged. After the fact, neither of us can prove that we did any such protocol.
+
+# Blind atomic swaps (Jonas Nick)
+
+<https://www.youtube.com/watch?v=jzoS0tPUAiQ&t=3h49m35s>
+
+<http://diyhpl.us/wiki/transcripts/building-on-bitcoin/2018/blind-signatures-and-scriptless-scripts/>
+
+This is similar in principle to tumblebit. Suppose that one party is a mixing service that is receiving bitcoin and it is sending bitcoin. Suppose it is only receiving bitcoin in like one... it has a lot of UTXOs and they all have 1 BTC, the same amount. And they are all controlled by the same secret key. The server is producing blind signatures.
+
+A blind signature is produced interactively with the server and the server doesn't know what it is signing. It just knows how many signatures it has produced. The server can't distinguish between the coins, it can only count how many it has signed for.
+
+Rather than using an adaptor signature to reveal some secret arbitrary value to commit and exchange between parties... the adpator signature here will be the public part of a blind signature. There's a similarity to the discreet log contract here, but I'm doing it with signatures rather than public keys.
+
+The result is that-- suppose I'm a tumbler, and I'm executing these blind swaps.. Tadge sends me some coins, not directly to me, but to a 2-of-2 output such that we both have to sign off to get them. I tell him well I'm going to give you an adaptor signature such that if I sign to take these coins then I'm going to complete some blind signature protocol we went into together. At that point he says okay, and he provides a signature to send coins to me, I take them, he sees the signature of me taking them, he uses them to complete the blind signature-- and all I know is that someone connected to me and was doing a blind signature protocol, and somehow a signature comes out of that, and bitcoins move. I know how mnay signatures I made, and maybe I can do some timing analysis, but that's about it.
+
+So that's blind swaps.
+
+# Zero knowledge contingent payments (Maxwell 2011)
+
+<https://bitcoincore.org/en/2016/02/26/zero-knowledge-contingent-payments-announcement/>
+
+I have lots of other examples but they start to sound the same. Zero-knowledge contingenet payments are similar.
+
+In this zero-knowledge contingent payment (zkcp) example, I will be selling some secret knowledge. It's an idea that has been around forever. It came from Greg Maxwell in 2011 when there were no efficient zero-knowledge proofs out there. In 2013, this zero-knowledge scheme called SNARKs showed up. Then in 2015, Sean Bowe and gmaxwell did such a thing.
+
+In zkcp, Sean solves some sudoku puzzle and sold the solution to gmaxwell trustly. They did some interaction such that Sean Bowe could only take those coins if he gave gmaxwell the solution to the sudoku puzzle.
+
+They use hash preimage reveals to do this. Sean thought of some random number, hashed it, gave gmaxwell the hash, Sean solved the sudoku puzzle, gave the encrypted solution to gmaxwell, and then gave a zero-knowledge proof that the preimage he gave was a valid solution to the sudoku problem. This was very general- if you have a solutoin to a problem, this is a statement that zero-knowledge provers can prove to you as long as it's doable in NP.
+
+They could have used adaptor signatures. The way this would have worked is that Sean rathe rthan giving a hash that gmaxwell would have had to put on a blockchain, Sean would have given him a commitment to some value. And then Sean would have provided a -- would have done a multisig protocol and provided an adaptor signature to the secret half of that value. If Sean completed the multisig protocol and took the coins, then he would complete it, and he would provide a zero-knowledge proof that the signature is offset by some secret value which is some pile of data which is the solution to some NP problem. Maybe it's some other signature, like some other blockchain validation maybe. In principle, you could do all sorts of things with zero-knowledge proofs, even though zk proofs are difficult to verify. In principle, you can do pretty much anything this way. You could make anything atomic with anything else as long as the anything else is somehow verifiable in NP.
+
+# Features of adaptor signatures
+
+As I hinted, you can do zero-knowledge proofs with these, rather than directrly selling a solution to an arbitrary statement. You could prove the commitment is some part of some other protocol. There are all kinds of cool interactive protocols involving discrete logarithms and you can attach monetary value to it with adaptor signature sor zero-knowledge proofs. This is cool. There are many protocols out there that are "semi-honest" where as long as people follow the protocol then things are okay. If people abort or lie about which values they commit to, then maybe it doesn't work, and then you need to add zero-knowledge proofs and checksums and stuff. But using this, you can attach a monetary value to doing the protocol properly, which is cool and might be a general construction.
+
+You can make arbitrarily sets of signatures atomic. I'm just going to say that. It's a bit tricky to say precisely. What I mean is that you can have a set of signatures such that if any of those signatures or some subset of a certain form appear, then you can cause other signatures to appear, like constructing multi-hop lightning payments. Every time you make a hop, it could be atomic with another signature and another and so on. These can all be multisigs where there are multiple partial signature contributions which are atomic in different directions. During the atomic multi-path presentation- you can reblind these each time, and add anothe random value that you are adding that you are revealing at each step. You can have a many-hop many-channel payment path in which individual participants in the path wouldn't be able to tell they are in the same path unless they were directly connected, because there's this re-blinding happen. Anyone watching transactions on the chain wouldn't be able tosee what's going on, because everything appears uniformly random and independent.
+
+There's a deniability property-- because I'm taking signatures and differences of signatures and encoding the semantics into the order which you reveal to different people.... anyone can take any values from the blockchain and make their own protocol transcripts. It would be difficult to leave any evidence. You might be able to hash every step and use the hash as your randomizer but that's dangerous.
+
+Unlike hash preimages where the preimage is published on the blockchain and revealed... we're distributing a discrete log, the final party gets the secret key and doesn't have to reveal it. This allows a transferable proof-of-payment. Rather than saying this payment went through and then publishing the hash preimage and not having linkability, you can sort of prove that you know something without revealing it to anyone, and this makes protocols related to invoicing much simpler.
+
+Because I am encoding all of these semantics into signatures themselves at the time that signatures are produced, I don't have ot put anything into the blockchain except possibly some locktimes. If I have any multisig output laying around with someone, maybe Ethan and I have a 2-of-2 output because maybe one or both of us was trying to want a multisig wallet with each other... we could reuse that and say whoops we left these coins there several years ago, let's make a payment channel with this, we could do the adaptor signature trick to do this.
+
+# New developments
+
+<a href="https://lists.linuxfoundation.org/pipermail/lightning-dev/2018-February/001031.html">Lightning with scriptless scripts</a>-- getting that into lightning protocol is quite difficult. ajtowns has decided that he is doing it. He posted a message to lightning-dev, and he's doing it. That's awesome.
+
+Doing <a href="http://diyhpl.us/~bryan/papers2/bitcoin/Scriptless%20scripts%20with%20ECDSA%20-%202018-04-26.pdf">scriptless scripts with ECDSA</a> would be interesting today. Monero maybe-- doesn't have refund support. None of this works unless you have ECDSA. It turns out there was a paper dropped on lightning-dev about this. There's some groups working on implementing this multi-party ECDSA protocol which is exciting. This could be happening today. People could be doing it today, there's no evidence on the blockchain. You have no idea how many people were involved or what kind of smart contract they were involved. And if you are working for a Chainalysis company then you are lying to yourself and others.
+
+That's all I got. Thank you.
+
+<https://www.youtube.com/watch?v=jzoS0tPUAiQ&t=4h1m>
