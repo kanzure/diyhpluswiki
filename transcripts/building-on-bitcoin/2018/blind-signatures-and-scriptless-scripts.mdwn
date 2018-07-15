@@ -34,7 +34,7 @@ This system is usually explained as a two-party protocol between a client and a 
 
 The creation of the nonce and the signing are two different algorithms here
 
-This requires server_nonce change, and gives this nonce to the client, and the client creates a challenge from that. It creates the challenge by getting two random values, alpha and beta. Then it computes a new nonce from the old one, called R'. Then it creates the challenge which is just the hash of the new nonce, public key, and the message. It then blinds the challenge by adding some random numbers added to this challenge to blind it, basically.
+This requires server\_nonce change, and gives this nonce to the client, and the client creates a challenge from that. It creates the challenge by getting two random values, alpha and beta. Then it computes a new nonce from the old one, called R'. Then it creates the challenge which is just the hash of the new nonce, public key, and the message. It then blinds the challenge by adding some random numbers added to this challenge to blind it, basically.
 
 Signing, from the point of view of the signer, is almost identical to before except now the server doesn't have control over what it was signing. Previously the message would be hashed, but now it just has this challenge c value and it computes s and returns the value. The client unblinds this s value by adding alpha, and verification is the same as before. This is very important-- in every system where you have Schnorr verification, you can always use some sort of blind Schnorr signatures.
 
