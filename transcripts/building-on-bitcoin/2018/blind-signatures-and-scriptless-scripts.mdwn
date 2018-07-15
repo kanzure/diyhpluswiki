@@ -12,7 +12,7 @@ I want to introduce the blind Schnorr signature in a few moments.
 
 # Schnorr signature
 
-My assumption is not that you will completely understand Schnorr signatures, but maybe you will at least agree that if you can understand Schnorr signatures then the step to blind Schnorr signatures is not a big step.
+My assumption is not that you will completely understand <a href="http://diyhpl.us/wiki/transcripts/blockchain-protocol-analysis-security-engineering/2018/schnorr-signatures-for-bitcoin-challenges-opportunities/">Schnorr signatures</a>, but maybe you will at least agree that if you can understand Schnorr signatures then the step to blind Schnorr signatures is not a big step.
 
 So we have some group with G is generator of a discrete log hard group. In bitcoin, we use points on the curve secp256k1.
 
@@ -96,6 +96,8 @@ You can have some kind of token with a locktime and you can only spend it after 
 
 # Brands credentials
 
+<http://www.credentica.com/overview.pdf>
+
 Just like before, there's a serial number and a server signature, but also there's an amount and a type which is new. The reissuance protocol is similar- the first two steps are the same, where the client chooses a new random serial number and blind challenge, and the client then shows token and blind challenge ot the server. But now the client needs to prove that the tyype and amount in the token and in the challenge is the same. Otherwise the client could create a token with different amounts or attributes. The server needs to make sure.
 
 How can we have a buyer and a seller trustlessly doing this fair exchange of bitcoin and ecash tokens? There's now two versions of the reissuance protocol- one is where you just get a fresh token, but the other one is where someone receives two tokens with the same serial number. One of them is the buyer token similar to before but it also encodes a buyer secret only known to the buyer, and a seller secret at the beginning only known to the seller, and it's only reissued by the server when you prove knowledge of the buyer secret and seller token. And there's also a seller token, which is reissued only when the locktime is over.
@@ -115,6 +117,8 @@ There will probably be a Schnorr signature in the next few months. Implement it,
 We see that Lightning is great but we also want scriptless scripts in lightning so that we can buy discrete logs and also blind signatures and so on.
 
 <https://nickler.ninja/slides/2018-bob.pdf>
+
+<https://github.com/jonasnick/scriptless-scripts/blob/46eb506dbfa51295853bc285ce667eeb47fe35b9/md/partially-blind-swap.md>
 
 # Q&A
 

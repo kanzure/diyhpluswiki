@@ -62,6 +62,8 @@ Given an adaptor signature, if someone later reveals some secret to you, you wil
 
 <https://www.youtube.com/watch?v=jzoS0tPUAiQ&t=3h44m53s>
 
+<https://github.com/apoelstra/scriptless-scripts/blob/master/md/atomic-swap.md>
+
 Let's think about cross-chain swaps. Patrick hinted at this during the panel.
 
 The way that you do a cross-chain swap today typically is you have 2 parties on 2 different blockchains. They put their coins up in a 2-of-2 output where they both have to sign off to move them. You require that in order to move the coins, on both sides in order to move the coins, the preimage of a specific hash has to be revealed, and the trick is that it's the same hash. When one party signs to take their coins, they have to reveal the hash preimage, and the ohter party can take that secret value and then take hteir coins on the other chain. That's how the atomicity is enforced.
