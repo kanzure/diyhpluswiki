@@ -103,7 +103,7 @@ Thinking about the structure of scripts... especially following that model of th
 
 # Pay-to-scripthash (P2SH)
 
-We have to start with <a href="https://github.com/bitcoin/bips/blob/master/bip-0016.mediawiki">bip16 p2sh</a>, which was a change that was made as a soft-fork in 2012 where initially the program, the script, was put into the script output which meant the sender had to know what your script was. So this was a changed to something where instead of putting in the output the script itself, you put the hash of the script. When spending it, you reveal this hash was really this script, and now you can run it and here are the inputs to it. This had a number of advantages that at the time we might now take for advantage. All of the outputs look identical, apart from the single key ones where we're still using p2pkh (pay-to-pubkeyhashes). The sender doesn't need to care about what your policy is: if you happen to use a hardware wallet or some escrow service to protect your coins, then the sender shouldn't need to know about that. By turning it into a hash, that's accomplished. And also, because bitcoin nodes need to maintain the full UTXO set between the time the output is created or spent, they only need to know the hash not the full script. But you still reveal the full script when spending, which is not that great for privacy. What can we do better?
+We have to start with <a href="https://github.com/bitcoin/bips/blob/master/bip-0016.mediawiki">bip16 p2sh</a>, which was a change that was made as a soft-fork in 2012 where initially the program, the script, was put into the script output which meant the sender had to know what your script was. So this was a changed to something where instead of putting in the output the script itself, you put the hash of the script. When spending it, you reveal this hash was really this script, and now you can run it and here are the inputs to it. This had a number of advantages that at the time we might now take for granted. All of the outputs look identical, apart from the single key ones where we're still using p2pkh (pay-to-pubkeyhashes). The sender doesn't need to care about what your policy is: if you happen to use a hardware wallet or some escrow service to protect your coins, then the sender shouldn't need to know about that. By turning it into a hash, that's accomplished. And also, because bitcoin nodes need to maintain the full UTXO set between the time the output is created or spent, they only need to know the hash not the full script. But you still reveal the full script when spending, which is not that great for privacy. What can we do better?
 
 # Merkleized abstract syntax tree (MAST)
 
@@ -117,7 +117,7 @@ I want to make an intermediate step here, where I want to go into what is a 'una
 
 However, if you think about the scenario here.. we want everyone to agree generally, still we have to publish on the chain is our key and the top-right branch hash. It's an additional 64 bytes that need to be revealed just for this super common case that hopefully will be taken all the time. Can we do better? That is where <a href="https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-January/015614.html">taproot</a> comes in. It's something that Greg Maxwell came up with.
 
-Taproot gives the ability to say-- it's based on the idea that we can use a construction called pay-to-contract which was originally invented by Tim in 2013 I think, to tweak a public key with a script using the equation there on the screen.
+Taproot gives the ability to say-- it's based on the idea that we can use a construction called pay-to-contract which was originally invented by Timo Hanke in 2013 I think, to tweak a public key with a script using the equation there on the screen.
 
 It has a number of properties. Namely, if I know the original public key and I know the scripts, then I can compute the tweaked public key. If I know the original secret key and I know the public key, then I can compute the secret key corresponding to the tweaked public key. And if you have a tweaked public key, then you cannot come up with another original key and script that has the same tweak. It works like a cryptographic commitment.
 
@@ -139,7 +139,7 @@ This may mean difficulty with backups for example, because your money is lost if
 
 # Half-aggregation
 
-There is another concept called <a href="https://twitter.com/pwuille/status/1015678866428346368">half-aggregation</a> that Tadge Dryja came up with that lets you half-aggregate signatures non-interactively together. It doesn't turn them into an entire single thing but it turns them into half the size. With that, graftroot even for the most simple of cases is more efficient in terms of space than a merkle branch. But there are tradeoffs.
+There is another concept called <a href="https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-May/014272.html">half-aggregation</a> ((unpublished improvements forthcoming)) that Tadge Dryja came up with that lets you half-aggregate signatures non-interactively together. It doesn't turn them into an entire single thing but it turns them into half the size. With that, graftroot even for the most simple of cases is more efficient in terms of space than a merkle branch. But there are tradeoffs.
 
 # Taproot and graftroot in practice
 
