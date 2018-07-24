@@ -44,6 +44,9 @@ Schnorr signatures are the prototypical <a href="https://en.wikipedia.org/wiki/D
 
 In particular, I'm not going into <a href="http://diyhpl.us/wiki/transcripts/scalingbitcoin/milan/schnorr-signatures/">the</a> <a href="http://diyhpl.us/wiki/transcripts/blockchain-protocol-analysis-security-engineering/2018/schnorr-signatures-for-bitcoin-challenges-opportunities/">real</a> <a href="https://github.com/sipa/secp256k1/blob/968e2f415a5e764d159ee03e95815ea11460854e/src/modules/schnorr/schnorr.md">details</a> of the verification equation. I'm just putting them on the slide here to show that they are very similar in structure. It's just re-arranging the variables a little bit and putting a hash in there. The interesting thing is that Schnorr signatures have a security proof: we know that if the discrete log problem of our group is hard in the random oracle model, then there is a proof that the Schnorr signatures cannot be forged. There is no such proof for ECDSA. This is a nice-to-have.
 
+* Schnorr is sG = R + H(R,P,m)\*P
+* ECDSA is sR = mG + rP
+
 As we are potentially introducing a new signature scheme anyway, we have the opportunity to make a number of changes really unrelated to the theoretical foundations of the signature scheme. We can get rid of the dumb DER encoding from ECDSA signatures. There's some six, seven bytes of overhead just stuff like "there's an integer that follows that are this long" and we really just want 64 bytes so let's just use 64 bytes.
 
 # Batch verification
@@ -56,7 +59,7 @@ A few days ago, I published a <a href="https://lists.linuxfoundation.org/piperma
 
 # Schnorr signature properties
 
-One of the most interesting properties that Schnorr signatures have, and the reason why we looked into them in the first place, is the fact that they are linear. The linearity property is that you can take roughly speaking it's a bit more complex than this but generally you can take multiple Schnorr signatures by different keys on the same message and add them together in a certain way and the result is a valid signature for the sum of those keys. This is a remarkable property which is the basis for all the cool things we want to do on top of them. The most obvious one is that we can change how many of our multisignature policies work. In bitcoin, you have the ability to have k-of-n signatures. There's a built-in construction to do this. Especially when it's m-of-n, where you have a group of people and you require all of them to sign before an output can be spent, that reduces in the Schnorr signatures to a single signature. Roughly speaking, you just send money to the sum of their keys, and now all of them need to sign in order to be able to spend with this. It's a bit more complex than that, please don't do exactly that, there will be specifications for how to deal with this.
+One of the most interesting properties that Schnorr signatures have, and the reason why we looked into them in the first place, is the fact that they are linear. The linearity property is that you can take roughly speaking it's a bit more complex than this but generally you can take multiple Schnorr signatures by different keys on the same message and add them together in a certain way and the result is a valid signature for the sum of those keys. This is a remarkable property which is the basis for all the cool things we want to do on top of them. The most obvious one is that we can change how many of our multisignature policies work. In bitcoin, you have the ability to have k-of-n signatures. There's a built-in construction to do this. Especially when it's n-of-n, where you have a group of people and you require all of them to sign before an output can be spent, that reduces in the Schnorr signatures to a single signature. Roughly speaking, you just send money to the sum of their keys, and now all of them need to sign in order to be able to spend with this. It's a bit more complex than that, please don't do exactly that, there will be specifications for how to deal with this.
 
 # Musig
 
@@ -68,7 +71,7 @@ There are more advanced protocols that do even more with Schnorr signatures, whe
 
 The downside is that these things are not accountable. If you use a protocol like this, with a 2-of-3 multisig, you cannot tell from the multisig which of the two signers produced the signature. There are other constructions for doing this, though.
 
-Also there's an interactive key setup protocol for anything other than m-of-n. You really need the different signers to run a protocol among themselves before they can spend. For just m-of-n, we came up with a construction called musig. It was coauthored by Andrew Poelstra, Greg Maxwell, and myself. It's a construction for doing this non-interactively and take keys, combine them, and then you can send to them.
+Also there's an interactive key setup protocol for anything other than n-of-n. You really need the different signers to run a protocol among themselves before they can spend. For just n-of-n, we came up with a construction called musig. It was coauthored by Andrew Poelstra, Greg Maxwell, Yannick Seurin and myself. It's a construction for doing this non-interactively and take keys, combine them, and then you can send to them.
 
 # Adaptor signatures
 
