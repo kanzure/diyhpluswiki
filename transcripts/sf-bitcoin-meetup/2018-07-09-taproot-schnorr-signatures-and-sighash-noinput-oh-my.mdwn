@@ -1,0 +1,211 @@
+Taproot, Schnorr signatures, and SIGHASH\_NOINPUT, oh my!
+
+Pieter Wuille (sipa)
+
+video: <https://www.youtube.com/watch?v=YSUVRj8iznU>
+
+slides: <https://prezi.com/view/YkJwE7LYJzAzJw9g1bWV/>
+
+# Introduction
+
+I am Pieter Wuille. I am all the things that Mark said. I will just dive in. Today I want to talk about improvements to the <a href="https://en.bitcoin.it/wiki/Script">bitcoin scripting language</a>. There is feedback in the microphone. Okay.
+
+I will mostly be talking about improvements to the bitcoin scripting language. This is by no means an exhaustive list of all the things that are going on. It's more my personal focus in the things that I am interested in and excited about seeing happen.
+
+I will first start with some general ideas about how we should think about a scripting language, then go into two kinds of topics. In particular, signatures and structure of the bitcoin scripting system and changes to that. And then conclude with some remarks about how this can be brought into production which is a non-trivial thing.
+
+# Script system goals
+
+Much of what's going on is that I want to convince you that there are many things going on and that we need to prioritize in how we work on these things because there are engineering tradeoffs. I'll get to that in the end.
+
+First of all, we should think about bitcoin scripting language as a way for specifying conditions for spending a transaction output. Bitcoin uses a UTXO model. It has significant advantages in terms of privacy. Really everything that our scripting language does is specifying under what conditions can you spend an output. We want to do that under various constraints. One of them is privacy. You don't really want to reveal to the world who you are or really what you were doing, which is contradictory because we want a scripting language where you don't say what you want to do. You also want to be space efficient because space on the blockchain is expensive and there's a price to it so everyone is incentivized to keep things as small as possible. And of course there's the computational efficiency- we want things that are efficient to verify so that it's easy to run full nodes to fully audit the system.
+
+All of these concerns are related, not perfectly, but generally, if you try to reveal less about what you're doing then you will be saying less and using less storage and as a result there will be less data to verify. All of these things generally go hand-in-hand.
+
+An important concern here is to not think about a scripting language as a programming language that describes execution. We're working in a strange model where any time a transaction is included in the blockchain, every node in the world forever will be validating that transaction, executing the same steps and coming to the same conclusion. We don't want it to compute anything. I already know the outcome- I don't need 100,000 computers in the world to replicate this behavior. The only thing I am trying to do is convince them that the thing I'm doing is authorized. It's really about not so much computing things, but more verifying that a computation was done correctly.
+
+This has many similarities with proof systems. In the extreme, we can aim for a <a href="https://en.wikipedia.org/wiki/Zero-knowledge_proof">zero-knowledge proof</a> system really where all you say is I have some condition and its hash was X and here is a proof that this condition was satisfied and nothing else. Unfortunately there are computational and other difficulties right now. I think that should be our ultimate goal, for building things where we're looking at things that way.
+
+# Signature system improvements
+
+Regarding improvements, I want to talk about three things. One is <a href="https://diyhpl.us/wiki/transcripts/blockchain-protocol-analysis-security-engineering/2018/schnorr-signatures-for-bitcoin-challenges-opportunities/">Schnorr signatures</a>. Some of you may have seen that I recently a couple days ago published a <a href="https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-July/016203.html">draft BIP for incorporating Schnorr signatures into bitcoin</a>. I'll talk a bit about that.
+
+I will also be talking about <a href="https://diyhpl.us/wiki/transcripts/bitcoin-core-dev-tech/2017-09-06-signature-aggregation/">signature aggregation</a> (or <a href="https://bitcoincore.org/en/2017/03/23/schnorr-signature-aggregation/">here</a>), in particular aggregation across multiple inputs in a transaction. There's really two separate things, I believe. There's the signature system and then the integration and we should talk about them separately. Lots of the interest in the media on this topic are easily conflated between the two issues.
+
+Third, I also want to talk about SIGHASH\_NOINPUT and signature hashing. There's a number of developments there as well.
+
+# Schnorr signatures
+
+<https://www.youtube.com/watch?v=YSUVRj8iznU&t=5m50s>
+
+Schnorr signatures are the prototypical <a href="https://en.wikipedia.org/wiki/Digital_signature">digital signature system</a> that has been around for a long time, building on the <a href="https://en.wikipedia.org/wiki/Discrete_logarithm">discrete logarithm problem</a>. This is the same security assumption as <a href="https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm">ECDSA</a> has. The two have an interesting history where <a href="https://en.wikipedia.org/wiki/Digital_Signature_Algorithm">DSA</a>, the predecessor to ECDSA was created as a way to avoid the patents that Schnorr had on his signature scheme. The Schnorr signature scheme is better in almost every way. There's no reason not to use it, apart from the fact that due to it being patented until 2008, standardization focused mostly on ECDSA and we should see if that can be improved.
+
+In particular, I'm not going into <a href="http://diyhpl.us/wiki/transcripts/scalingbitcoin/milan/schnorr-signatures/">the</a> <a href="http://diyhpl.us/wiki/transcripts/blockchain-protocol-analysis-security-engineering/2018/schnorr-signatures-for-bitcoin-challenges-opportunities/">real</a> <a href="https://github.com/sipa/secp256k1/blob/968e2f415a5e764d159ee03e95815ea11460854e/src/modules/schnorr/schnorr.md">details</a> of the verification equation. I'm just putting them on the slide here to show that they are very similar in structure. It's just re-arranging the variables a little bit and putting a hash in there. The interesting thing is that Schnorr signatures have a security proof: we know that if the discrete log problem of our group is hard in the random oracle model, then there is a proof that the Schnorr signatures cannot be forged. There is no such proof for ECDSA. This is a nice-to-have.
+
+As we are potentially introducing a new signature scheme anyway, we have the opportunity to make a number of changes really unrelated to the theoretical foundations of the signature scheme. We can get rid of the dumb DER encoding from ECDSA signatures. There's some six, seven bytes of overhead just stuff like "there's an integer that follows that are this long" and we really just want 64 bytes so let's just use 64 bytes.
+
+# Batch verification
+
+Another thing that we can do is focusing on this too, we want <a href="https://diyhpl.us/wiki/transcripts/bitcoin-core-dev-tech/2017-09-06-signature-aggregation/">batch verifiability</a>, which means the ability to take a number of triplets of (public key, message, signature) and throwing them all at a verification algorithm and the algorithm can tell you all of them are valid or not all of them valid. You wouldn't learn where the faults are, but generally during block validation we don't care about that. We only care whether the block is valid or not. This seems like an almost perfect match for what we want to do. This batch verifiability is an interesting property that we want to maintain.
+
+# Schnorr signature BIP draft
+
+A few days ago, I published a <a href="https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-July/016203.html">Schnorr signature BIP draft</a> which was the combined work of a number of people including Greg Maxwell. And many other people who are listed in the BIP draft. This BIP accomplishes all of those goals. It's really just a signature scheme, it doesn't talk about how we might go about integrating that into bitcoin. I'm going to talk about my ideas about that integration problem later.
+
+# Schnorr signature properties
+
+One of the most interesting properties that Schnorr signatures have, and the reason why we looked into them in the first place, is the fact that they are linear. The linearity property is that you can take roughly speaking it's a bit more complex than this but generally you can take multiple Schnorr signatures by different keys on the same message and add them together in a certain way and the result is a valid signature for the sum of those keys. This is a remarkable property which is the basis for all the cool things we want to do on top of them. The most obvious one is that we can change how many of our multisignature policies work. In bitcoin, you have the ability to have k-of-n signatures. There's a built-in construction to do this. Especially when it's m-of-n, where you have a group of people and you require all of them to sign before an output can be spent, that reduces in the Schnorr signatures to a single signature. Roughly speaking, you just send money to the sum of their keys, and now all of them need to sign in order to be able to spend with this. It's a bit more complex than that, please don't do exactly that, there will be specifications for how to deal with this.
+
+# Musig
+
+<https://blockstream.com/2018/01/23/musig-key-aggregation-schnorr-signatures.html>
+
+<https://eprint.iacr.org/2018/068>
+
+There are more advanced protocols that do even more with Schnorr signatures, where you can implement any k-of-n policy or even further any monotone boolean function over different keys, such as "this key and this key and that key, or that key and this key and that key or that key" basically anything you can build with ANDs or ORs over keys is doable, but the protocol for doing so is tricky.
+
+The downside is that these things are not accountable. If you use a protocol like this, with a 2-of-3 multisig, you cannot tell from the multisig which of the two signers produced the signature. There are other constructions for doing this, though.
+
+Also there's an interactive key setup protocol for anything other than m-of-n. You really need the different signers to run a protocol among themselves before they can spend. For just m-of-n, we came up with a construction called musig. It was coauthored by Andrew Poelstra, Greg Maxwell, and myself. It's a construction for doing this non-interactively and take keys, combine them, and then you can send to them.
+
+# Adaptor signatures
+
+Another advantage of Schnorr signatures, and it's one of the more exciting things in this space, are <a href="https://diyhpl.us/wiki/transcripts/layer2-summit/2018/scriptless-scripts/">adaptor signatures</a>, which are a way for implementing <a href="https://en.wikipedia.org/wiki/Atomic_swap">atomic swaps</a> that look completely like ordinary payments and they can't be linked together. Roughly how they work is you produce two... you lock up your funds on both sides, say you have two assets on two different chains or on the same chain, you lock up both funds into a 2-of-2 multisig, and then you produce a damaged signature for both where you prove to the other party that the amount you damaged these signatures by is equal in both cases and then as soon as you take the money, you reveal the real signature in one, they compute the difference between the damaged and real one and then apply the same difference to the other side and take the money. Your taking money from one side is in fact what reveals and gives the ability for the other side for the ohter part. There's a recent paper that described how to use this to build a payment channel system with good privacy properties.
+
+# Cross-input signature aggregation
+
+<a href="https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-January/015696.html">Cross-input signature aggregation</a> is from the fact that the Schnorr signature construction where you can sign the same message with multiple keys, this can be generalized to having multiple different messages be signed by different people and still have just a single signature. The ability to do so really would in theory allow us to reduce the total number of signatures in a transaction to just one signature. This has been the initial drive for going and looking into Schnorr signatures and it's such an awesome win. There are many complications in implementing this, it turns out, but this is the goal that we want to get to. It has an impact on how we validate transactions. Right now, every input you just run the scripts and out comes TRUE or FALSE and if there's FALSE then the transaction is invalid. This needs to be changed to a model where script validation returns TRUE or FALSE and also returns a list of pubkeys which is the set of keys that must still sign for that input, and then we need a single signature that can do this, and it needs to be a transaction-wide rather than transaction input-wide.
+
+Another complication is soft-fork compatibility. The complication is that when you want different versions of software to validate the same set of inputs, and there is only a single signature, you must make sure that this signature and they both understand that this signature is about the same set of keys. If they disagree about the set of keys or about who has to sign, then that would be bad. Any sort of new feature that gets added to the scripting language that changes the set of signers, is inherently incompatible with aggregation. This is solvable, but it's something to take into account, and it interacts with many things.
+
+# Sighash modes
+
+Another new development is thinking about new sighash modes. When I'm signing for a transaction, what am I really signing? This has traditionally been a modified version of the transaction with certain values blanked out, permitting you to choose certain changes that can still be made to the transaction. There's the anyonecanpay flag, for example. Instead of signing the full transaction, anyonecanpay flag causes you to sign a transaction as if it only had a single input which is the one you're putting in. This is for example useful for crowdfunding-like constructions where you have "I want to pay, but only when enough other people chip in to make this amount match, and I don't want my signature to be dependent on them" (mutual assurance contracts). There's a number of interesting constructions that have been come up with, there's really only six modes. So we have to wonder, is this the best way of dealing with this?
+
+# SIGHASH\_NOINPUT
+
+Recently there has been a proposal by cdecker for <a href="https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-April/015908.html">SIGHASH\_NOINPUT</a> where you sign the scripts and not the txids. The scary downside of this construction is that they are replayable. I pay to an address, you spend using the SIGHASH\_NOINPUT and then someone else for whatever reason can send to the same address then the receiver of that first spend can take the first signature, put it in a new transaction and can take the new coins that were spent there. So this is something that should only be used in certain applications that can make sure this is not a problem.
+
+# eltoo
+
+Apparently they also have a pretty interesting advantages, one of them is the <a href="https://blockstream.com/eltoo.pdf">eltoo proposal</a> that those guys in the back know more about than I do. My general understanding is that this permits payment channels that are no longer punitive. Instead of-- if someone broadcasts an old state and tries to revert the state of a channel where they sent money to you, currently in lightning-like constructions, you get the ability to take their coins but you have to be watching. With eltoo, this can be changed to: they can still broadcast an old state and you can update and broadcast a newer state on top of it, so it makes it into something that always does the right thing rather than needing to rely on incentives.
+
+Then there are thoughts (regarding sighash modes) about delegation or the ability to verify signatures from the stack. There's many kinds of thinking. I'm not going to go into these things because I haven't spent much time myself on it.
+
+# Script structural improvements
+
+Thinking about the structure of scripts... especially following that model of thinking about script as a verification not an execution model, thinking less about it as a programming language and more as a verification system, I'm going to go through the difference steps and try to explain taproot and graftroot as the final step.
+
+# Pay-to-scripthash (P2SH)
+
+We have to start with <a href="https://github.com/bitcoin/bips/blob/master/bip-0016.mediawiki">bip16 p2sh</a>, which was a change that was made as a soft-fork in 2012 where initially the program, the script, was put into the script output which meant the sender had to know what your script was. So this was a changed to something where instead of putting in the output the script itself, you put the hash of the script. When spending it, you reveal this hash was really this script, and now you can run it and here are the inputs to it. This had a number of advantages that at the time we might now take for advantage. All of the outputs look identical, apart from the single key ones where we're still using p2pkh (pay-to-pubkeyhashes). The sender doesn't need to care about what your policy is: if you happen to use a hardware wallet or some escrow service to protect your coins, then the sender shouldn't need to know about that. By turning it into a hash, that's accomplished. And also, because bitcoin nodes need to maintain the full UTXO set between the time the output is created or spent, they only need to know the hash not the full script. But you still reveal the full script when spending, which is not that great for privacy. What can we do better?
+
+# Merkleized abstract syntax tree (MAST)
+
+One of the ideas that has been around for a while is <a href="https://diyhpl.us/wiki/transcripts/bitcoin-core-dev-tech/2018-03-06-merkleized-abstract-syntax-trees-mast/">merkleized abstract syntax trees</a>, as it was called originally. According to Russell O'Connor, it's not what we should be talking about when we talk about merkle branches today. The observation is that most scripts that you see in practice are something that is just this junction of a number of possibilities. You can spend if A and B sign, or if C has signed and some time has passed, or D and A has signed and some hash has been revealed. Pretty much everything we have seen to date is some combination of these things. It's unfortunate that we have to reveal all possibilities. Any time you want to spend anything, you have to reveal the complete script. The observation is that you can instead build a merkle tree, a hash tree where you pairwise combine different scripts together, and then in your output you do not put the script or the hash of the script, you put the merkle root of all the possibilities you want to permit spending. At spending time, you reveal the script, you reveal the path along the merkle tree to prove that the output really contained that script and the inputs to that script. This has log(n) size in the number of possibilities, and you only need to reveal the actually taken branch. This is an interesting idea that has been around for a while. There have been a number of proposals in particular by Mark Friedenbach (<a href="https://github.com/bitcoin/bips/blob/master/bip-0116.mediawiki">bip116</a> and <a href="https://github.com/bitcoin/bips/blob/master/bip-0117.mediawiki">bip117</a>) and Johnson Lau (<a href="https://github.com/bitcoin/bips/blob/master/bip-0114.mediawiki">bip114</a>) who have worked on ideas around this.
+
+# Merkle trees with unanimity branch
+
+I want to make an intermediate step here, where I want to go into what is a 'unanimity branch'. The observation is that in almost all interactions between different parties that want to participate in a script or smart contract, it's fine, not necessarily required, but fine to have a branch that is "everyone agrees". I'm modeling that here by adding an additional branch to my merkle tree. Due to Schnorr multisig, we can have a single key that represents a collection of signers that all agree. To explain this, I want to go into an abstraction for the blockchain called "the court model" which is that we can think about the blockchain as a perfectly fair court that will always rule according to whatever was agreed to in the contract. However, the court only has limited capacity. In the real world, hardly all disputes between any two parties ever get sent to a jury or a judge in the judicial system. The observation is that having the ability to go to a court is sufficient in many cases to make people behave honestly even if they don't actually go to the court. There's a similarity here with the blockchain because knowing that you have the ability to publish the full script and have whatever the agreed upon contract was executed, is enough to make people say "well, you know, we all agree, we can spend the money, there's no need to actually present the entire script". You could think about this as settling out of court where you just say "hi judge, we agree to settle this". That's how you can represent this as this single key that is everyone agrees in this merkle tree.
+
+# Taproot
+
+However, if you think about the scenario here.. we want everyone to agree generally, still we have to publish on the chain is our key and the top-right branch hash. It's an additional 64 bytes that need to be revealed just for this super common case that hopefully will be taken all the time. Can we do better? That is where <a href="https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-January/015614.html">taproot</a> comes in. It's something that Greg Maxwell came up with.
+
+Taproot gives the ability to say-- it's based on the idea that we can use a construction called pay-to-contract which was originally invented by Tim in 2013 I think, to tweak a public key with a script using the equation there on the screen.
+
+It has a number of properties. Namely, if I know the original public key and I know the scripts, then I can compute the tweaked public key. If I know the original secret key and I know the public key, then I can compute the secret key corresponding to the tweaked public key. And if you have a tweaked public key, then you cannot come up with another original key and script that has the same tweak. It works like a cryptographic commitment.
+
+We can use this to combine pay-to-scripthash and pay-to-pubkey into a single thing. We make a script output a public key that is tweaked by some script. You are permitted to spend either using the public key or the script. But what goes on in the chain in the scriptpubkey is just a public key. The way you spend the key path is just by signing with it, because you knew the original private key if you were authorized to spend, you know the script, so you can compute the modified secret key and just sign with it. If you want to use the script path, if you want to use the fallback strategy and run the full contract, you reveal the original public key and the script and everyone can verify that this tweaked public key from the chain matches that data indeed.
+
+The awesome part in this is that what goes on in the chain in the case of a spend through the key path is just a signature. You don't reveal what the script was, and you don't even reveal there was a script in the first place. This turns the unanimity branch in that we assumed in every contract there's the "everyone agrees" case, just becomes a single signature in taproot. We have all outputs looking identical, and all collaborative input case also looking identical, which is an enormous win for privacy.
+
+Taproot also interacts with adaptor signatures. For those you generally need an escape valve in the case of a timeout. As I explained before, you both put your money in the 2-of-2 multisig but you wouldn't want one party to just say nah I'm not going to take your money and now everything is locked up. You want a fallback strategy that after some time everyone can take their money back. With something like taproot, that still remains a single public key, where you just hide the timeouts script in a commitment to the public key. In the case that everything goes as planned, the only thing that touches the blockchain is a single signature and not the timeout scripts.
+
+# Graftroot
+
+If we start from this assumption that there exists a single key that represents the "everyone agrees" case, then we can actually do better and make use of delegation.
+
+Delegation means we're now going to permit spending, by saying "I have a signature with this taproot key (the key that represents everyone involved)", revealing a script, revealing a signature with a key on that script, and the inputs to it. There's a group of participants that represent the "everyone agrees" case, and they have the ability to delegate spending to other scripts and other particpants.
+
+The advantage of <a href="https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-February/015700.html">graftroot</a> over a merkle tree is, you can have as many spending paths as you want and they are all the same size. All you do is reveal a single signature. The downside here is that it is an inherently interactive key setup. You cannot spend as-- if you are a part of this s1, s2, or s3. You cannot spend without having been given the signature by the keys involved.
+
+This may mean difficulty with backups for example, because your money is lost if you lose the signature for example.
+
+# Half-aggregation
+
+There is another concept called <a href="https://twitter.com/pwuille/status/1015678866428346368">half-aggregation</a> that Tadge Dryja came up with that lets you half-aggregate signatures non-interactively together. It doesn't turn them into an entire single thing but it turns them into half the size. With that, graftroot even for the most simple of cases is more efficient in terms of space than a merkle branch. But there are tradeoffs.
+
+# Taproot and graftroot in practice
+
+In practice, my impression with all of the things going on is that there's a lot of ideas and we cannot focus on everything at once. Even worse, if you don't call this worse I guess, there are incentives to do everything at once. In particular, I have talked about various structures for how script execution should work but you need to commit upfront about what your structure should be. We need upgrade mechanisms, it doesn't exist in a vacuum. Thanks to segwit, we have script versioning. But needing to reveal to the world that there's a new feature and you need to use it for your script is itself a privacy leak and this is sort of unfortunate. This is an incentive to do everything at once so that you don't need to introduce multiple versions.
+
+Also, signature aggregation doesn't work across soft-forks because we need to make sure that different versions of the software agree on what the keys are that get signed. Again, it's an incentive to do more things at once. Any time a new change gets introduced, it cannot be aggregated together with the old things.
+
+There are some engineering tradeoffs to be made here I think where you cannot let these incentives drive the development of a system where you need vast agreement in a community about the way to go forward. So my initial focus here is Schnorr signatures and taproot. The reason for this is focus is that the ability to make any input and output in the cooperative case to look identical is an enormous win for how script execution works. Schnorr is necessary for this because without it we cannot encode multiple parties into a single key. Having multiple branches in there is a relatively simple change. If you look at the consensus changes necessary for these things, it's really remarkably small, dozens of lines of code. It looks like a lot of the complexity is in explaining why these things are useful and how to use them and not so much in the impact on the consensus rules. Things like aggregation, I think, are something that can be done after we have explored various options for structural improvements to the scripting language once it's clear around what the structuring should be because we will probably learn from the deployments how these things get used in practice. That's what I'm working on with a number of collaborators and we'll hopefully be proposing something soon, and that's the end of my talk.
+
+# Q&A
+
+<https://www.youtube.com/watch?v=YSUVRj8iznU&t=38m38s>
+
+Christopher Allen: In the Schnorr BIP, you publish a reference python not-safe. I'm already seeing a rust implementation again not safe. I'm obviously enthusiastic about Schnorr signatures but I'm not finding good resources for what are the processes and methods by which to make...
+
+A: Of doing this in a production ready correct way? Is that your question?
+
+Christopher Allen: Yes. Do you have sources or your own plans?
+
+A: We're working on an implementation that does things correctly, which is constant time, and based on libsecp256k1. I'm rather surprised by how fast people have written implementations already. I believe it's been 3 days. ((laughter)) That's exciting,  but it probably means we should hurry up with publishing an implementation. Ther'es more on top, because the BIP is single key Schnorr is what you would need to integrate into a consensus system. One of the advantages I talked about is all these multisig adaptor signature constructions and we will have a reference implementation for that.
+
+Christopher Allne: What is the kind of rigorous list of things that ought to be done or ought to be checked or where do people find to do this? I'm ont finding good resources for how to do that.
+
+Q: In the atomic swap case, do you need both chains to understand Schnorr signatures?
+
+A: What?
+
+gmaxwell: When doing atomic swaps across chains, do you need both chains to implement Schnorr signatures?
+
+A: Ah, yes, that's a good question. The adaptor signature based--- the question is, and correct me if I'm wrong, is if you use an adaptor signature to do an atomic swap between two chains, then do both chains need to support Schnorr signatures? The answer is no. The construction works as long as one of them has Schnorr signatures. The reason is that-- the exact same construction does not work between ECDSA and ECDSA. The reason is that you need to be able to lock things up into a 2-of-2 multisig which is a single atomic signature. Otherwise, the other party could just change their part of the signature and not reveal the piece of the damaged one they showed before. I believe in the paper that builds payment channels on top of these adaptor signature constructions, they actually come up with a way to do it between ECDSA and ECDSA. I don't know how complex it is.
+
+roasbeef: There's zero-knowledge proofs.
+
+gmaxwell: Andytoshi has a construction that allows you to use this across different elliptic curve groups. You could do this with secp curve and something using a bernstein curve.
+
+roasbeef: It's a lot heavier. If you use ECDSA, you encrypt a private key, they do a half-signature, then you decrypt it or something.
+
+A: You project things int oa completely different encryption system and then you map it down or something.
+
+roasbeef: For cross-sig aggregation, musig or BN, which one is a better fit?
+
+A: I will repeat the question slower. ((laughter)) For cross-input signature aggregation, what's the better choice-- Bellare-Neven or musig signatures? I think the answer is in theory there is no difference. What musig does is that it starts from the security assumptions and attack model of Bellare-Neven but reintroduces the ability to do key aggregation. Bellare-Neven is a generalization of Schnorr signatures where you have multiple parties that sign a message. But the result does not look like a signature for any specific given key. And for cross-input aggregation, this is fine because all the public keys are known to the verifier anyway. In practice, I think the answer is Bellare-Neven because it's older and it's peer reviewed. There are few advantages. It's an often-cited construction while musig is very new. In theory, they should both work.
+
+jrubin: Musig... hi Pieter. Musig lets us non-interactively combine any m-of-n. And interactively using related constructions we could do any monotone k-of-n.
+
+A: The signing is always interactive, but the key setup is non-interactive for musig.
+
+jrubin: For key setup, can I take an interactively generated key, and put that in into an n-of-n musig?
+
+A: I see no reason why not. The procedure for doing the k-of-n is where you have a number of parties that each come up with their own key and then split those into shares, distribute the shares among them, but really the sum of all the individual keys is the key the signature will look like under and you can put that key into a musig construction again. Also, and we don't have a security proof for this, you can do musig in musig in musig and things like that.
+
+Q: .. one of the big use cases for Schnorr signatures was in the area of blind signatures, the u-prove brandian signatures. Are there any insights or thoughts if other people have used this construction for blind signatures or if you have any thoughts there?
+
+A: I know there is interest in doing blind and partially blind signatures on top of Schnorr signatures. I'm not an expert in that topic.
+
+roasbeef: What are the implications of scripted batch validation? Are there any modifications needed? A year ago, they were talking about checksig verifies or something?
+
+A: The question was, whether any changes are needed for the scripting system to support batch validation. Generally, yes because you cannot have signature checks that fail but still are permitted. Specifically right now you could write a script that is public key of maaku checksig which means anyone can take this money except maaku. But this is of course nonsensical, there is no reason why you would want to write such a script because you know if you don't permit this key to spend it then just don't sign with it, and it's always bypassable. But that construction is a problem for batch validation because in batch validatoin you run all your script, out come the public keys, then you do your overall check. What if maaku did sign? Well, now the block is invalid. So we need to use a model where it is I guess statically-known at execution time whether any check will succeed or fail. An easy way of doing this is only allowing the empty signature as a failing one, where you are not allowed to produce with an invalid signature but you could just empty it and then things could work. Generally, the verify type of opcodes, only use... oh and another problem with this is that the current checkmultisig execution, say you want to do 2-of-5, it is going to try various combinations of which key matches which signature because the current language doesn't let you say which one matches which. This one is not compatible with batch validation either, but I think this could be improved by requiring telling the opcode which signature corresponds to which key because it's also a waste of execution time to spend validating all the possibilities.
+
+roasbeef: Wouldn't the new versions have better properties like lower cost and higher efficiency?
+
+A: For cross-input aggregation, I hope that the incentives to adopt it will be self-sufficient, as in people will want to adopt it simply because it's cheaper to use. Before that point, yeah. I think the reality is regardless of which changes are proposed, adoption of these things takes a long time and that's the reality we face and that's fine. We're aiming for long-term anyway.
+
+Q: Have you looked at BLS signature schemes?
+
+A: The extent to which these aggregation constructions can be done with pairing-based cryptography is far better than anything that can be done with elliptic curves. It's very appealing to work on these things. In particular, there's some recent work by Dan Boneh and Neven and others where they permit even multisignatures where you can have multiple keys that sign and it's just an elliptic curve operation per key and then a pairing operation for the whole thing rather than a pairing operation for each individual one. I also think that the difficulty of getting something adopted in the bitcoin ecosystem is much harder if you need to first introduce new cryptographic assumptions such as pairing. The counterargument to this is that well why don't you propose having the option of doing both. The problem with that is, again, that it reduces your anonymity set. You're now forcing people to make a choice between "oh I want to perhaps have the--" what is the advice that you give to people about which of the two they should be using? I think it's very appealing to look at BLS, and we should look into it, but I think it's something for the longer term.
+
+Q: For atomic swaps, how can you use different curves? Could you go over that?
+
+A: I believe it involves a proof of the discrete logarithm equivalence between the two. There's an existing construction that you can use to say the ratio between two points is equal to the ratio between two points in another curve and when you plug that in, it works out. That's the best that I can explain it for now.
+
+Q: You mentioned that when you're looking at these different elements you've talked about, that there are tradeoffs in engineering and you can't do everything ta once. Is this engineering time, or is this consensus persuasion?
+
+A: I think it's all of those things. A first step in getting changes like these adopted is convincing the technical community that these changes are worthwhile and safe. If that doesn't work, then you're already at a dead end I think. The engineering and review time in convincing a group of technical people is a first step. But then yes, the real bigger picture is just a concern that is a much harder to get anything adopted at all.
