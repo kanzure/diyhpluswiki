@@ -6,6 +6,8 @@ Adam Back (adam3us)
 
 Pierre Roberge (robep00)
 
+<https://twitter.com/kanzure/status/1043484879210668032>
+
 PR: Hi everybody. I think I have the great fortune to moderate this panel in the sense that we have really great questions thought by the organizers. Essentially we want to ask Adam and Peter what are their thoughts on the current and the future tech challenges for bitcoin. I'm just going to start with that question, starting with Peter.
 
 PT: Oh, we better have a good answer for this one. There's a lot of excitement around ethereum smart contracts and I think all of that hype will move to bitcoin. I think we have a good handle for simple ways to send money on bitcoin, although we don't for scalably sending money and we don't have a good handle on complex integration into other systems. The recent double spending bug was a good example. How do we get better programming practices to make this tech easier to develop and write code for and get it right the first time? I don't necessarily have all the answers there but I think it's going to be a big challenge in how we are going to go forward.
@@ -37,5 +39,17 @@ PT: Good privacy is not unknown. zcash has a lot of problems with its low usage,
 AB: Fungibility is pretty related to privacy. If a currency isn't fungible then i twill become difficult to use. Pierre used the question, is bitcoin fungibility careful enough yet? It seems like the current bitcoin fungibility largely comes from the fact that if one miner won't process your transaction then probably another one would. I think bitcoin fungibility is not in a great shape at the moment. We should do what we can to fix this. The companies doing taint searching or taint tracing... in some cases it causes people to leave an exchange and close their account because they made a transfer to a gambling site or they received a payment from a gambling site. This trend is actually quite bad.
 
 PT: What paypal actually does for fungibility is significantly less worse than the taint stuff we see in bitcoin. If you send money to me on paypal for something inoccuous, paypal won't freeze my account even if you're a criminal. In bitcoin, that equivalent situation can happen and taint your coins.
+
+PR: What about code base quality? Lightning is also more code and it expands the code base and exposure to bugs. Do you see this as an upcoming challenge?
+
+AB: The introduction of layers like lightning is good. Whatever change you make in lightning can't effect bitcoin's base layer reliability. You can also have competing versions of lightning. It's much more forgiving in that sense. It still has to be careful because people could lose money in it.
+
+PR: When do you think we could roll out Schnorr signatures or bulletproofs? Is it 10 years, 5 years, 1 year?
+
+AB: Peter is probably a better person to answer that. I don't actually write bitcoin software. I'm more interested in the cryptography. Schnorr from an indirect viewpoint or people workikng on it, it seems that the technology could converge fairly quickly like next year or the following year. Confidential transactions is a bit more difficult.
+
+PT: I've been working on stuff building on bitcoin but not directly Bitcoin Core software. I'm inclined to agree with Adam, within a year seems plausible. Pieter Wuille or Greg Maxwell would be a better person to ask.
+
+
 
 
