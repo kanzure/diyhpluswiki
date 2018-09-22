@@ -2,6 +2,8 @@ The reserve currency fallacy
 
 Eric Voskuil (evoskuil)
 
+<https://twitter.com/kanzure/status/1043385469134925824>
+
 Thank you. Developers, developers, developers, developers. Alright, it wasn't that bad. There's a lot of content to explain this concept of the reserve currency fallacy. It's hard to get through it in the amount of available time. I'll be available at the party tonight. I want to go through four slides and talk about the history of this question of scaling, and then the first scaling proposal, second scaling proposal, and so on.
 
 The first public discussion of bitcoin was this post on October 31, 2008 and the following post from James A. Donald from November 2, 2008. The first response to Satoshi was James talking about bitcoin and said the proposal does not seem to scale. The first problem was quickly identified. Satoshi's response was the first scaling proposal: big blocks. We've been dealing with that for a while. This isn't going to work; we can talk about how and why.
@@ -15,6 +17,22 @@ The second scaling proposal- this is Hal Finney. Sorry about the small text. May
 "George Selgin has worked out the theory of competitive free banking in detail, and he argues that such a system would be stable, inflation resistant and self-regulating."
 
 "I believe this will be the ultimate fate of Bitcoin, to be the "high-powered money" that serves as a reserve currency for banks that issue their own digital cash. Most Bitcoin transactions will occur between banks, to settle net transfers. Bitcoin transactions by private individuals will be as rare as... well, as Bitcoin based purchases are today."
+
+The modern scaling proposal are things like sidechains, drivechains, lightning network. I don't work on these things, I work on libbitcoin. These are some modern scaling proposals. These implicitly reject early proposal flaws like hte need for large scale participation or reliance on systems subject to authority. You don't need any authority to use lightning; but to participate in banking, you do.
+
+So why are we still talking about reserve currency? Some people might say it's a terminology issue. It's not. I've debated this with other people. Lightning network is not a reserve system, it's a layer. It's just bitcoin. When we talk about a reserve currency, we're more talking about what Hal was talking about in that quote.
+
+I want to give a high-level overview of what bitcoin is. It's not well understood or commonly agreed. Bitcoin is a class of cryptocurrencies. It's a concept; the chain is the implementation. This is my terminology, you don't have to like it, it's for my consistency. Merchants want to get their confirmations, and miners want to sell those confirmations. It's a confirmation market. The systems all share a common security model which was first outlined in Satoshi's whitepaper. Bitcoin attempts to produce a free market where you can buy and sell confirmations at whatever price you want.
+
+Why is bitcoin better than other moneys that have come before? The specific reason is that it gets the state out of the market to the best of its ability, although not entirely. It minimizes the money tax-- monetary inflation, financial surveillance, foreign controls, bitcoin helps people avoid those things. That's why it's valuable. You might like it because you can program money, but that's because of the lack of the money tax in the system. I've worked on paypal APIs and other things, and this stuff is a pain in the ass because of the law and chargebacks. Even if you're only interested in the programmatic aspects of bitcoin, you won't have it unless you keep the state out of the money. Bitcoin won't eliminate taxes or banking, but it will enable better transparency on taxation.
+
+You can have people buying and selling confirmations. The state usually takes a cut of the markets. Bitcoin intends to help people resist this.
+
+Fedcoin objectives: only two factors make bitcoin unattractive to the state, loss of seignorage and transaction transparency. The state wants two changes (fedcoin) to retain these tax advantages. It wants to create new units (inflation) and authorize confirmations (censorship). Only merchants can reject inflation and only miners can reject censorship. Rejecting these will be considered criminal money laundering. Accepting these would eliminate the value proposition.
+
+If it's authorized, then it's taxable, and it's no longer opaque to the state. The state is also going to want to issue new units of the currency to itself, this is what we call monetary inflation. Or the state will call it monetary policy. They also want financial surveillance, which can come from the miner side of the market. If you can prevent the miner from mining the transaction unless it's authorized by the state, then now you have financial surveillance. The state wants that. They have to get that from miners. Merchants have no say in that, miners can decide which payments are going to get confirmed.
+
+The state also wants inflation or monetary policy. You get that from the merchants- you have to get the merchants to accept that rule; if they don't accept the rule, then you don't get to introduce your new coin. Fedcoin is referring to the abstract concept that they cause a merchant to accept a rule change, and they cause miners to accept censorship.
 
 
 
