@@ -1,0 +1,57 @@
+Finite fields, elliptic curves, ECDSA and Schnorr signatures
+
+John Newbery (jnewbery)
+
+Digital signatures
+
+# Introduction
+
+Thank you to Anton and to everyone at Keio University and Digital Garage. I have an hour to talk about digital signatures, finite fields, ECDSA, Schnorr signatures, there's a lot of ground to cover. I'm going to move quickly and start from a high level.
+
+My name is John. I live in New York. I work at a company called Chaincode Labs. Most of the time, I contribute to Bitcoin Core.
+
+I am going to talk about the concept of electronic coins, finite fields, elliptic curves, and then Schnorr signatures, and then I will touch on ECDSA. I am talking about Schnorr signatures more than ECDSA because Schnorr signatures are easier to understand and easier to reason about and it should give you some intuition about how digital signatures work. I am not going to go into great detail in many of these things. I hope you will have some intuition about how these things come together. You can treat these things as a black box; if you know the properties of how digital signatures work, you don't necessarily need to know how it works under the hood.
+
+# Caveat auditor
+
+I am not a cryptologist. This is only an overview. There will be no formal proofs or mathematical formulas. I'm going to use some terms loosely. For any cryptographers in the room, I am sorry for these, like I might say "zero knowledge" but not mean zero-knowledge proofs.
+
+# Electronic coins
+
+This is a diagram from a document. Does anybody recognize which document? This is from section 2 of the bitcoin whitepaper. An electronic coin is a chain of digital signatures and you can transfer the coin by signing the hash of the previous transaction and the public key of the next owner, and append these together, and then you can verify the chain of ownership.
+
+# Transaction structure
+
+A transaction has at least one input, but possibly many inputs, whic hcontains a reference to the transaction output (txout) that is being spent, and a digital signature proving that the owner of the private key uathorized the transaction. And also a transaction contains some outputs (txouts) which contain the amount, the public key of the recipient. It goes from one public key to the next public key.
+
+# Verifying a transaction
+
+In practice, it's more complex. There's script. But this is a simplified view of how bitcoin works. How do you verify a transaction? Every node on the network checks that the inputs point to an output that exists and has not been spent. It also checks that the outputs do not exceed the amounts of the input. And that each input has a valid signature (valid scriptsig). This is what happens when you verify a transaction.
+
+# Digital signature
+
+Digital signatures are used to transfer ownership of coins. A digital signature proves that hte owner of the coin authorized the transfer- only someone with the private key can sign the transaction (authentication). Nobody can change that transaction once signed, and that's called integrity.
+
+Digital signatures use asymmetric cryptography. There's a public key which is known to everyone, and a corresponding private key which is kept secret. Only someone with a private key can create a valid signature over the message. Everybody can verify that signature. Bitcoin uses a digital signature scheme called ECDSA which goes over an elliptic curve called secp256k1.
+
+ECDSA is a little bit of a hack to get around a patent that was granted to the inventor of the Schnorr signature algorithm. Schnorr signatures are better in every way. In the future, bitcoin might be extended to allow for Schnorr signatures now that the patent has expired.
+
+# Discrete log problem
+
+ECDSA is an application of the discrete log problem. In some systems, it's easy to multiply, but difficult to divide. Multiplication is where you take an element and add it to itself multiple times. But if you give two elements and ask how many times do we have to get the first element to get the second input, that is difficult in some finite fields, and this asymmetry is called the discrete log problem. This is then built into a digital signature scheme.
+
+I am going to talk about cyclic groups. In general there is a generator G. For a given H in the group, what is the scalar x such that xG = H. This xG adding G to itself many times is easy, but given H, it's difficult to work out what x is. In public key cryptography, x is the private key, and H is the public key.
+
+In bitcoin, where we can multiply things but not divide, we use secp256k1 defined over a finite field.
+
+# Finite fields
+
+I am going to briefly talk about finite fields and elliptic curves. All of this can be treated as a black box. You just need to know that things in this blac kbox are easy to multiply but difficult to divide. Really, as long as you have a system where it is easy to multiply but difficult to divide, you can build an asymmetric cryptography scheme over it. You can build a Schnorr signature scheme over another group as long as it has these problems.
+
+A group in mathematics is a set of objects along with a binary operator which we are going to call + here. A binary operator is something that takes two elements from something in the set, and gives you another element from the set. The binary operator has the following properites: closure, which is where you add them together and you get another element in the group. There's an identity property which is that if you add zero to anything you end up with that same element. Every element has an inverse, another required property. If you have an element in the group, there's another element where you use a binary poperator, you end up with zero if you add the inverse element. Also, associtiavity, where (a+b)+c is the same as a+(b+c) and it doesn't matter which order you do those things. Also, some groups have commutative properties-- these are called Abelian groups, and that's if you have a+b then it's the same as b+a. Not all groups hav ethat.
+
+# Cyclic group
+
+A cyclic group is cyclic if there's a generator element. Here we're calling it small g. If every element in the group is g added to itself some number of times, then we call that a cyclic group with the g generator. The integers modulo p for any number p is a cyclic group.
+
+
