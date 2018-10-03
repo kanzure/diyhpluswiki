@@ -4,6 +4,8 @@ John Newbery (jnewbery)
 
 Digital signatures
 
+<https://twitter.com/kanzure/status/1047634593619181568>
+
 # Introduction
 
 Thank you to Anton and to everyone at Keio University and Digital Garage. I have an hour to talk about digital signatures, finite fields, ECDSA, Schnorr signatures, there's a lot of ground to cover. I'm going to move quickly and start from a high level.
@@ -54,4 +56,59 @@ A group in mathematics is a set of objects along with a binary operator which we
 
 A cyclic group is cyclic if there's a generator element. Here we're calling it small g. If every element in the group is g added to itself some number of times, then we call that a cyclic group with the g generator. The integers modulo p for any number p is a cyclic group.
 
+# Fields
+
+A field adds some more structure to a group. A field is a commutative group with a second binary operator x. That second binary operator is also closed, has an identity, has inverses (except for zero), and is associative and commutative.
+
+An example field is the real numbers, with addition and multiplication defined as normal-- that's an infinite field. The rational numbers, if you just take those, with addition and multiplication that's defined as normal. The integers from 0 to (n-1) with addition and multiplication defined modulo n this is known as a finite field.
+
+An interesting field we will talk about is Fp where p is a prime number. This is the integers modulo p. F13 is {0, 1, 2, ... 12}. 4+5 is 9, 8+9 is 17 but we wrap around so mod 13 that's 4.
+
+# Elliptic curves
+
+An elliptic curve is a curve of the form y^2 = x^3 + ax + b. In bitcoin, we use the secp256k1 curve. This is y^2 = x^3 + 7. So a=0 and b=7. If we draw out this curve we end up looking like this.
+
+# Elliptic curves over a finite field
+
+Instead of defining that secp256k1 curve over the reals, we actually define it over a finite field of integers modulo p where p is an enormous number here which is 2^256 - 2^32 - 2^9 - 2^8 - 2^7 - 2^6 - 2^4 - 1. It looks like a random distribution, it's difficult to intuit what it looks like, it looks like a bunch of dots on a page. But it still has some nice properties of what it would look like if it was over the reals.
+
+# Defining a group operation for the elliptic curve
+
+We can define a group operation for points on this curve. We define it as follows. To add two points, if we have a point P and another point on the curve Q, to add them we draw a line and we see where it meets the curve and then we mirror it on the x axis. So here, P + Q equals R. That's a binary operation in the group.
+
+To double a point, to add it to itself, here we double P. We find the tangent of the curve at that point, find where it meets the curve again, and then reflect over the x axis. You can do this every time you use a tangent you'll find the curve at some other point, but I'm not going to prove that.
+
+And the inverse under the group operation is its reflection in in the x axis. If we add P + Q together, we usee that an element plus its inverse-- that's our identity element, that's the only exception where you have a line between two points on the curve it wont meet the curve again.
+
+I'm not going to prove that this is a group operator on this set of points on the curve. I'm just going to claim it.
+
+# Generating a cyclic group
+
+Take any point G on the curve. G is for generator. And I'll add it to itself. And I'll keep adding it to itself until I come back to the same point. Every point I've otuched is a multiple of G. That set of points is a cyclic group. For secp256k1, we use a specific generator point, 55066263022... etc. I'm going to claim but not prove that this cyclic group is easy to add elements to each other or itself multiple times, but hard to divide. If I gave you an element in this group and ask you how many times you need to add G to get to this point, it will be really hard. Nobody has found a way to do this efficiently, as far as I'm aware.
+
+# Discrete log problem for an elliptic curve
+
+This finite field elliptic curve system we're going to claim that multiplication is easy but division is difficult. The private key is scalar x in the range 0 from n-1 where n is the order of the group, it's a 256 bit number. The public key is a point P on the curve where P = xG.
+
+Q: Why are we unable to prove this?
+
+A: People have tried to find an efficient way to break the discrete log problem, and as far as we're aware nobody has succeeded. That's our security model.
+
+If you have x, you can very easily find P which is a public key. It's easy to go from x to P. But the other way is computationally difficult.
+
+# Schnorr signatures
+
+If everything above was alien to you, don't worry. You don't need to know any of that, because you're not a cryptography. Put that in a box and throw the key away-- just know we have a system where it's easy to multiply, but difficult to divide. It doesn't matter what's in that box, we could substitute elliptic curves for something else. We're going to build on these properties and now talk about Schnorr and Schnorr signatures. We're going to start with the Schnorr identification protocol.
+
+If I have a scalar x which is my private key and it corresponds to a public key P, I can prove to you that I know what x is without revealing what x is. I can prove to you this in zero knowledge. I can make a proof but you won't learn anything else.
+
+# Zero-knwoledge proof
+
+A zero-knowledge proof requires three properties: completeness, the proof convinces the verifier. It requires zero-knowledge where the only thing you learn is that I know what x is, no other information is revealed. Also, soundness, which is that the proofs only work if I know the value.
+
+It has three steps for the schnorr identification protocol: it requires a commitment step, where ythe prover picks a nonce scalar k and commits to it by sending K = kG to the verifier. Then you send a challenge- where the verifier sends a challenge scalar e. Then I send a response, which is called s = k + ex. The prover sends the response scalar. Little k is a scalar, it's just a number, e is just a number you have challenged me with, and x is a private key. I've sent you a number.
+
+Why do we have completeness here? The completeness is whether my proof will convince you. You'll be convinced if this identity holds: sG = kg + exG. The verifier is convinced that the prover knows x if the identity equation holds. xG is P. The verifier can do this because he knows s, G, K, e and P. K was sent to the verifier. e because the verifier sent that to the other party. and P is the public key.
+
+Do we have zero-knowledge here? Why do you learn nothing? The transcript of the 3 step protocol is (K, e, s).
 
