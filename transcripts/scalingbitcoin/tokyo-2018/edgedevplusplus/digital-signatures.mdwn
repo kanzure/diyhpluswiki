@@ -122,6 +122,46 @@ Any questions about that?
 
 # Non-interactive Schnorr identification protocol
 
+How do we turn this into a non-interactive proof such that I can prove to the whole world at the same time that I know x? The only thing that the verifier did is provide a random challenge in one of the steps. The first one was a commitment and then there was a challenge step. If we could replace the verifier but instead use a random oracle that gives us a random number, then we can do away with the verifier. The random oracle simply provides a random number after the commimtent step, then we don't need a verifier. We treat a hash function as a rnadom oracle. After has a special meaning here; the prover can't know the output to a hash function before evaluating it. If they could do that then they could cheat just like colluding with the verifier. "After" means sequentially after. This changes it from an interactive proof to a non-interactive proof, and this is called a Fiat-Shamir transform.
 
+The identification protocol now has 3 steps as before: the prover picks a nonce scalar k, the prover calculates e = H(kG). In bitcoin we use sha256. But any hash function where you can't predict the input given the output. Then the prover computes the scalar s = k + ex. This is the same as before except our e is not provided by an external verifier, but instead created using a random oracle or the hash function. The proof is (s, e). Anyone can verify once again by checking sG = kG + exG. This is the same identity as before.
+
+Any questions about that?
+
+Q: How does the observer know how e was calculated? We're talking about the transform from the interactive proof to the non-interactive proof. The observer can see (s, e) tuples. How does this prove that you know what x is?
+
+A: Good question. You can share big K.
+
+Q: Okay, so big K is known.
+
+# Signature of knowledge over a message
+
+That was a non-interactive identity protocol. You proved to any observer that you know what x is, without revealing x. You can now extend this to creating a signature over a message. Since H is a rnadom oracle or a hash function and it returns different values for whatever you put into it, you can add extra inputs to that H function call, and you get a signature of knowledge over that message.
+
+So e = H(m || kG) where m is the message. The prover calculates s in the normal way, s = k + ex. The verifier checks that the identity holds and that e is indeed H(m || kG). What does this do? That seals the message under the signature. Once that signature is produced, you can't change the message afterwards without knowing the private key x. This gives you message integrity.
+
+And that's a Schnorr signature. It's the same identity but also putting a message into that hash message. Usually that message is going to be a hash of other details that you want to include in the signature.
+
+# ECDSA
+
+I am going to go over this quickly. I'm going to give the identities and the formula. It's a different digital signature algorithm. It also uses the discrete log problem over elliptic curves just like Schnorr. It was developed because Schnorr was encumbered by a patent for many years. ECDSA has non-linear signatures, so this makes threshold and adaptor signatures much more difficult. This makes scriptless scripts more difficult. There is no formal security proof for ECDSA. So that zero-knowledge demonstration from earlier, doesn't exist for ECDSA. Also, ECDSA signatures are malleable. There are many reasons why we would prefer to use Schnorr signatures and maybe in the future bitcoin will implement and deploy Schnorr signatures.
+
+# ECDSA signing
+
+The prover signs a message m as follows: set z as the leftmost bits of H(m) (the hash of a message). He then picks a random nonce scalar k. He sets K = kG and r as the x coordinate of K. So K is a point on the curve and he just picks the x coordinate, and then he sets s as the inverse of k multiplied by (z + rx). The ECDSA signature is the pair (r, s).
+
+# ECDSA verification
+
+The signature can be verified by setting z as the leftmost bits of H(m), and set u = z/s and v = r/s. If the x coordinates of uG + vP is equal to r, then the signature is valid. It's similar in some ways to Schnorr, but it's made just different enough to not be encumbered the patent.
+
+# Further reading
+
+* Borromean ring signatures paper by Greg Maxwell and Andrew Poelstra: <https://github.com/Blockstream/borromean_paper>
+
+* <https://joinmarket.me/blog/blog/from-zero-knowledge-proofs-to-bulletproofs-paper/>
+
+* <https://blog.cryptographyengineering.com/2014/11/27/zero-knowledge-proofs-illustrated-primer/>
+
+* <http://diyhpl.us/wiki/transcripts/sf-bitcoin-meetup/2018-07-09-taproot-schnorr-signatures-and-sighash-noinput-oh-my/>
 
 
