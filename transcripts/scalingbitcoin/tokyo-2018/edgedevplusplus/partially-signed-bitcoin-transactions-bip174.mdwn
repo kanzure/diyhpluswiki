@@ -32,7 +32,7 @@ There's a "global type" field, and there's currently only one, whic his the unsi
 
 And then there's "per-input types" that start at index 0 and move onwards. There's non-witness UTXOs where you have to include the entire transaction because you take the entire transaction, you get the txid to hash it, and then you check it's actually the same and it matches, and it's the hash of the transaction. For a segwit UTXO, you can work it around a little bit and only give it the serialized output itself, just part of a transaction. This is due to the fact that signature hashes in segwit include the value under the sighash. If I claim it's 3 BTC, then when the hardware wallet wants to sign, it says well this is 3 BTC and then verifiers will check this. If I lied to you and it's actually 4, then it will be an invalid transaction.
 
-There's also "partial signature" as part of per-input types; it includes a key and signature value. There's also a sighash type which is an advisory thing; the default is SIGHASH\_ALL where you hash the entire transaction and sign that. There's other sighash types as well, which other people have talked aobut today.
+There's also "partial signature" as part of per-input types; it includes a key and signature value. There's also a sighash type which is an advisory thing; the default is SIGHASH\_ALL where you hash the entire transaction and sign that. There's other sighash types as well, which other people have talked about today.
 
 Also there's "redeem scripts", which is recursively evaluated.
 
