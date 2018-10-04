@@ -110,5 +110,18 @@ It has three steps for the schnorr identification protocol: it requires a commit
 
 Why do we have completeness here? The completeness is whether my proof will convince you. You'll be convinced if this identity holds: sG = kg + exG. The verifier is convinced that the prover knows x if the identity equation holds. xG is P. The verifier can do this because he knows s, G, K, e and P. K was sent to the verifier. e because the verifier sent that to the other party. and P is the public key.
 
-Do we have zero-knowledge here? Why do you learn nothing? The transcript of the 3 step protocol is (K, e, s).
+Do we have zero-knowledge here? Why do you learn nothing? The transcript of the 3 step protocol is (K, e, s). K is the commitment that I sent you in step one. e is a challenge you sent back to me, and s is a proof or the signature. If someone is watching the protocol and writes down each message going back and forth, it would be (K, e, s) and that is the transcript.
+
+If the verifier colludes with the prover and tells her what e\_fake is, before she provides a K, then she chooses s\_fake randomly and set K\_fake = s\_fake * G - e\_fake * P. So the transcript is then (K\_fake, e\_fake, s\_fake). The transcript looks the same for a fake proof as it does for a real proof. If someone is an impartial watcher from outside and sees this fake proof, they can't tell the difference between the fake proof and the real proof. This fake proof tells you nothing about x. Your simulation proof can be produced without knowledge of x, and your simulation proof is indistinguishable from the real proof. It therefore tells you nothing about it.
+
+What about soundness? If I am able to produce a proof then I must know x. If the prover can reliably produce a proof for any challenge e, then she must know x. How do I prove this or show that Schnorr identification protocol has soundness? Imagine you are able to pause, fast-forward or rewind what the prover is doing. The verifier could "fork" the prover- the verifier could wait for the prover's commitment K, send challenge e\_1 to the prover and receive response s\_1. Then we rewind to the challenge step, send a different e, and then get s2 instead of s1. Just suppose the verifier had this secret power being able to go back in time. The verifier now has s1 and s2 and they could then calculate the value x and then work out the private key just by challenging twice after the same commitment. The verifier has extracted the private key x from the prover. If the verifier can take the private key from the prover, then the prover must have already had the private key. I can't take something from you that you don't already have.
+
+Imagine the prover going through this operation and forking himself and the prover can extract the key from himself. If the prover can create this signature, then he can learn his own private key, so he must know his own private key.
+
+Any questions about that?
+
+# Non-interactive Schnorr identification protocol
+
+
+
 
