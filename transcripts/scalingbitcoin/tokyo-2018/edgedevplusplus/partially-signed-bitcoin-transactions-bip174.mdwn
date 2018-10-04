@@ -34,6 +34,10 @@ Also there's "redeem scripts", which is recursively evaluated.
 
 There's also "witness script", and "bip32 derivation path" for each input. It can be any number of them; the key is the public key, and the value is the master fingerprint and an index array of indices that get you there. The master fingerprint is part of the extended pubkey that you were told about earlier. It just lets you identify it, no cryptographic guarantees.
 
+# PSBT RPCs in Bitcoin Core
+
+There's combinepsbt, decodepsbt, finalizepsbt, createpsbt, converttopsbt, walletcreatefundedpsbt, walletprocesspsbt. Once it's created, you can process it. walletprocesspsbt is where you hand it to another wallet and if it knows something about an input and an output it could fill it out and optionally sign it and then pass it off to the next machine. Once it's all done and all the partial signatures are finalized, there's finalizepsbt where you can then get the network-serialized transaction the thing you actually submit to the network. decodepsbt is useful for debugging and introspection.
+
 
 
 
