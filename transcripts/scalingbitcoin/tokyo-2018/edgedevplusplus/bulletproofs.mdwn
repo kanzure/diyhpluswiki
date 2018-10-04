@@ -1,0 +1,91 @@
+Bulletproofs
+
+Karl-Johan Alm (kallewoof)
+
+# Introduction
+
+Is there anyone here who doesn't know what bulletproofs are? I will not get to all of my slides today. I'll take a top-down approach about bulletproofs. I'll talk about what they are, how they work, and then go into the rabbit hole and go from there. It will start dark and then get brighter as we go. As you leave here, you may not know what bulletproofs are. But you're going to have the tools to figure it out. That's the goal here today. I think you guys are pretty tired. My voice is dying, too. So things are not great. But we will be doing some fun things here. I'll do the proofs and stuff we're doing.
+
+I wrote a tool for the purpose of learning bulletproofs, called aside. It's very narrow purpose, but it could be helpful in these situations. If you have sage math, I recommend that instead. People asked me why I wasn't using sagemath; well, I didn't know about sage math.
+
+# Acknowledgements
+
+Most of what I'm talking about today is based on Adam Gibson's (waxwing's) blog post "from zero (knowledge) to bulletproofs which is about 45 pages long. The bulletproofs paper is also about 45 pages long, which is interesting. Adam wrote down how he learned about bulletproofs, and I'll go through that, and then how I saw that. So you'll be seeing how I saw someone seeing how bulletproofs work.
+
+<https://joinmarket.me/blog/blog/from-zero-knowledge-proofs-to-bulletproofs-paper/>
+
+# Agenda
+
+The agenda includes bulletproofs top-down, then math stuff, then zero-knowledge proofs.
+
+# A problem that bulletproofs address
+
+Fungibility is a necessary property of sound money. If two separate one dollar bills were worth different amounts of money, then the dollar would be useless as a currency. In the same way, in bitcoin, if I had two coins that were both worth 1 BTC face value but they were worth something different on the market then that's really bad. Money doesn't work that way.
+
+Bitcoin has a problem because it's not very private. It's one of the least private currencies in existence. We can all check where all the coins are. It's all there on the blockchain. The problem is that you can deanonymize users on the blockchain, and this reduces fungibility. One solution is called [confidential transactions](http://diyhpl.us/wiki/transcripts/gmaxwell-confidential-transactions/).
+
+In confidential transactions, you can hide the amounts using something called a range proof and homomorphic commitments. One way that you can do analysis and deanonymization on blockchains is by looking at the values and seeing how much people are sending to who and when. But if you can hide the values, then you can gain a lot of privacy.
+
+The problem, though, is that confidential transactions are pretty huge. They are several kilobytes in size. You would be spending 10x more fees to spend a confidential transaction on the bitcoin network today if it was a deployed and activated feature.
+
+However, bulletproofs can shrink the confidential transactions and do a bunch of other cool things.
+
+# What bulletproofs really are
+
+Roughly speaking, bulletproofs are zero-knowledge proofs of faithful execution of arithmetic circuits.
+
+# The general idea
+
+You can use the replace inner-product argument to reduce the overall communication by a factor of 3. This eliminates the need ofr implementing commitment opening algorithm as a part of the verification circuit. It's some fancy schmancy multiparty stuff. It also helpful specifics like range proofs.
+
+We're going to talk about the inner product argument.
+
+For coinjoin or multiparty and as the people go up, you end up paying less money to be more private and be more secure. This is a pretty good privacy feature.
+
+There's also some specifics in the bulletproofs paper itself, like talking about range proofs, which is another part of confidential transactions. As you can see, there's lots to cover here.
+
+# General idea behind that
+
+Bootle's 2016 paper was actually building on a 2009 Groth paper. It improves the communication complexity from square root proportional to .... and the general idea behind that is the 1991 Pedersen commitments paper. You can tweak the pedersen commitments to give a public coin, a zero-knowledge argument, for the satisfiability of a binary circuit with N gates that require communicating order sqrt(N) group elements.
+
+* Bootle 2016 <https://eprint.iacr.org/2016/263.pdf>
+* Groth 2009 <http://www0.cs.ucl.ac.uk/staff/J.Groth/MatrixZK.pdf>
+* Pedersen 1991 <https://www.cs.cornell.edu/courses/cs754/2001fa/129.PDF>
+
+# What are bulletproofs?
+
+Bulletproofs are an optimization of confidential transactions, which makes confidential transactions practical for bitcoin transactions. Also, bulletproofs are an optimization of coinjoins (even with yourself) which makes them even more practical. Also, bulletproofs are a significant advancement towards better fungibility in bitcoin.
+
+# Mathsies
+
+Before we get into the fun part, we're going to go to the bottom part and talk about some math. There's tedious pages and pages and pages of math. It's straightforward. It's a long road. Terminology can also be scary. Don't let terminology scare you. But this is all very simple to understand if you do the work.
+
+# A note on curve points
+
+A scalar is a regular number, not on a curve, not an x and y coordinate. It's a huge number, like 32 byte huge. It could be that big. Say we have two scalars a and b. We just take a number and use it as a private key. If you take the number "2" and use that as your private key, that would be bad. But if you have a 32 byte value, or 256 bits, that's pretty good if you have entropy. And you multiply it by G, the generator, it turns that number into a curve point.
+
+We can use the scalars as private keys: aG is the public key for the private key a. We can combine them to form a new private key (don't do this at home) aG + bG is the public key for the private key (a + b). You can take two public keys and you can add them together. If you add them together, you get a third. We can also subtract one from another: aG - bG is the pubkey for (a - b). We can add pubkeys together. You might think this could mean you could do multisig, but this is broken when you do it with someone you don't trust because they could negate your key by saying their key is just the opposite of your key or something.
+
+# NUMS number
+
+NUMS just means, nothing up my sleeve. In particular, if P is our NUMS number, I don't know the x in the equation x * G = P. NUMS numbers are super simple to make, e.g. using a hash function like by doing H(G || i) can be G\_i for the vector of generators G where G is the "regular" generator.
+
+You can prove it's a NUMS number for something like "my name is kallewoof" because you don't know the private key that corresponds to that, or it would be incredibly unlikely for you to already know that private key.
+
+# Dot product, inner product
+
+Dot product and inner product are the same thing. For a = (a1, a2, ... an) and b similarly, the dot product of a and b can be calculated. Simlarly, with hadamard product between a b, ie.. the elements are pairwise multiplied but no summation occurs.
+
+
+
+
+
+
+# References
+
+* bulletproofs paper: <https://eprint.iacr.org/2017/1066.pdf>
+* <https://joinmarket.me/static/FromZK2BPs_v1.pdf>
+* <https://joinmarket.me/blog/blog/from-zero-knowledge-proofs-to-bulletproofs-paper/>
+* <https://diyhpl.us/wiki/transcripts/2018-02-02-andrew-poelstra-bulletproofs/>
+* <https://diyhpl.us/wiki/transcripts/blockchain-protocol-analysis-security-engineering/2018/bulletproofs/>
+
