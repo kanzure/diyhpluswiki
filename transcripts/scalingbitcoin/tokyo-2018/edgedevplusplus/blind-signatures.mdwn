@@ -2,6 +2,8 @@ Blind signatures
 
 Ethan Heilman (ethan\_heilman) (Commonwealth Crypto)
 
+<https://twitter.com/kanzure/status/1047648050234060800>
+
 See also <http://diyhpl.us/wiki/transcripts/building-on-bitcoin/2018/blind-signatures-and-scriptless-scripts/>
 
 # Introduction
@@ -35,6 +37,10 @@ Let's use blind signatures to make the ecash scheme have some anonymity. Alice b
 Q: If Alice sends the coin to multiple people, then the first Bob that talks to the bank can get the money.
 
 A: Correct. This is different from bitcoin. This is from 36 years ago. Bob might be running a merchant store on the internet. If he gets money from Alice then he has to go to the bank immediately and redeem the coin. Otherwise Alice might spend the same coin somewhere else.
+
+# Blind signatures are unlinkable
+
+Any blinded signature can be unblinded to any other serial number. A blinded serial number can't be linked to any serial number. If you want to say whether these two are related, a blinded serial number and then the serial numbers that were... I could always invent an r value that would relate them in that way. Since I can always invent an r value, then there's no way that a certain blinded serial number unblinds to a certain serial number. It's similar to one time pads. You can always invent a key that will relate a ciphertext and a plaintext; so you don't learn anything or any connection between the two of them.
 
 
 
