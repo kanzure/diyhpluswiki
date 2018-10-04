@@ -2,6 +2,8 @@ Bulletproofs
 
 Karl-Johan Alm (kallewoof)
 
+<https://twitter.com/kanzure/status/1047740138824945664>
+
 # Introduction
 
 Is there anyone here who doesn't know what bulletproofs are? I will not get to all of my slides today. I'll take a top-down approach about bulletproofs. I'll talk about what they are, how they work, and then go into the rabbit hole and go from there. It will start dark and then get brighter as we go. As you leave here, you may not know what bulletproofs are. But you're going to have the tools to figure it out. That's the goal here today. I think you guys are pretty tired. My voice is dying, too. So things are not great. But we will be doing some fun things here. I'll do the proofs and stuff we're doing.
@@ -76,6 +78,71 @@ You can prove it's a NUMS number for something like "my name is kallewoof" becau
 
 Dot product and inner product are the same thing. For a = (a1, a2, ... an) and b similarly, the dot product of a and b can be calculated. Simlarly, with hadamard product between a b, ie.. the elements are pairwise multiplied but no summation occurs.
 
+# To hide a value
+
+Say we have a value x which is a secret and we want to hide it. We start by saying x is our secret value. Now we can do x * G to get our public key if you want. G here is a generator. In bitcoin, we have one single generator. But here we will have lots of generators. Basically all of them are public and known to everyone. They're usually denoted using capital letters, like H, G and bold H for vectors of generators, etc.
+
+# Hiding vs binding
+
+A commitment scheme is "hiding" if a commitment C does not reveal the value it commits to, and the scheme is "binding" if after committing to C(m), you can't change your mind and open it as a commitment to a different message m2. It is proven that no commitment scheme can be perfectly hiding _and_ perfectly binding. This has been proven.
+
+Hiding is related to zero knowledgeness. Binding is related to knowledge soundness.
+
+# Generalizing 1 + 2 = 3
+
+In the equation 1 + 2 = 3, there's variables, an operation, and equivalence.... if this is a commitment, then this would be perfectly binding because I can't suddenly change any of this because you know all of the details and can verify it. But it's completely not hiding at all, because you know what it is, it's not good for privacy.
+
+But we could do something like x + 2x = 3x. This is actually perfectly hiding, I think. It's very nearly perfectly hiding. But it's completely unbinding because I can set x to be whatever I want and it would still be valid. So it's not binding at all.
+
+If I did x + 2x = 3, then we're back to square one. It's perfectly binding again, but it's also not hiding because you can simply solve for x.
+
+x + 2x = y is interesting but it's not helpful at all. We can keep going and try x + ax = bx, and then find out that a is b - 1 which isn't helpful here.
+
+We can say something + something is something again... but that's too abstract. But if I say that I have something, and I know what it is, but I add it to something else, and then I subtract a third thing from it, and I claim this is zero. I commit this to zero. This is actually useful, even if you don't know anything about those values. If I can do that, then I can also say the first two values equal the second value. That's pretty close to a confidential transaction. I can hide the value here, maybe. So if I say the inputs are the inputs on the left hand side and they add up on the left hand side, and you take all the outputs on the right hand side, then even not knowing anything about the values, I know that the transaction is not overspending. So that's useful.
+
+There's a problem though, which is negative values. I can create money by hiding negative values and only spending the positive values. So there's no range check in this example yet. We don't know if we're overflowing or underflowing.r.
+
+# Pedersen commitments in elliptic curve form
+
+A pedersen commitment is an information-theoretically hiding commitment scheme, which is binding under the discrete logarithm assumption. Opening a commitment means revealing the v value in C = rH + vG. So that's a commitment. G and H are generators. v is the hidden value.
+
+# Recap
+
+Generators are pre-defined, public nothing-up-my-sleeve numbers. E.g., secp256k1 curve G: x * G = public key P for private key x.
+
+Commitments: hides and/or blinds some other value.
+
+# Pedersen commitments again
+
+There's a homomorphism here. "A structure preserving map between two algebraic structures of the same type". For example, f(x + y) = f(x) + f(y). Pedersen commitments have a homomorphism as well.
+
+# Dramatization of zero-knowledge proofs
+
+I don't actually know the power rangers. They seemed appropriate for this. If we dramatize zero-knowledge proofs, we can get the following.
+
+P: the prover. She proves that she knows stuff. Some call her Peggy.
+
+V: the verifier, he verifies that hte prover knows what they claim to know.
+
+E: the extractor; a torturer; makes P spit out secrets, aka an emulator.
+
+S: the simulator; conjurer of tricks; a bold liar who tricks the verifier in various ways.
+
+O: the oracle; knows stuff no one else knows.
+
+Most people write these as P, V, E, S and O.
+
+# Zero-knowledge proofs criteria
+
+A zero-knowledge proof must have completeness (an honest prover must succeed in convincing the verifier), it must have zero-knowledgeness (the verifier must learn nothing about the secret from the proof), and knowledge soundness (the prover must not be able to convince the verifier unless the prover actually knows the secret).
+
+# Transcripts
+
+A transcript here is just a list of stuff that the prover and verifier tell each other. Interaction between prover and verifier is called a transcript. The order is crucial, for example, the verifier does not reveal certain values to the prover before the prover sends a value, and so on.
+
+# Schnorr identity protocol
+
+Schnorr identity protocol is a simple example of a zero-knowledge proof scheme. John Newbery presented on this earlier today. You have a secret value x, you have a commitment Q which is xG. The transcript is (R, e, s). THe prover sends R = kG to the verifier. The verifier sends random value e. The prover sends s = k + ex to the verifier. Then the verifier verifies sG =? R + eQ.
 
 
 
