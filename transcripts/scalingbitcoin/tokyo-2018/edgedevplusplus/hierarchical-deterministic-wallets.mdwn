@@ -1,0 +1,37 @@
+Hierarchical deterministic Wallets (bip32)
+
+James Chiang
+
+# Introduction
+
+My name is James Chiang. Quick introduction about myself. My contributions to bitcoin have been on the project libbitcoin where I do documentation. I've been working through the APIs and libraries. I think it's a great toolkit. Eric Voskuil is speaking later today and he also works on libbitcoin. I also volunteered to talk about hierarchical deterministic wallets.
+
+When we talk about bitcoin wallets, you always have some kind of secret or entropy you want to keep safe. One way to handle it and store it more easily is to use word lists. Obviously, you want to derive new fresh keys whenever you transact, so that's child key derivation. Also, there's a tree structure for standard recovery of the keys.
+
+# bip39: Mnemonic keywords
+
+<https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki>
+
+What we're doing here is we have some kind of entropy to encode words. So here we have 128 bits of entropy. But you can have any multiple of 32 bits all the way up to 256 bits. When we encode these words, we want to make sure we have this checksum part. There's a 4-bit checksum, first few bits of the entropy you begin with, the length of the checksum depends on your entropy length. When we concatenate the secret with the checksum, it has to be a multiple of 11 bits. They ultimately map to via dictionary to words. You can map your entropy to different language dictionaries or word lists.
+
+So you've generated entropy, you concatenated a checksum, so that if you mix up the words then that can be catched, and the resulting word list essentially encodes the entropy.
+
+# Mnemonics-to-seed (bip39)
+
+Imagine backing up your hierarchical deterministic wallet to a wordlist. This is not just a reverse process from before. You're taking the mnemonic passphrase and you pass it through a password-based key derivation function, which is a mouthful. You have a key and a message, and we do this 2048 times, to kind of make the bruteforcing of that a little more expensive. We end up with a 512-bit seed. Just to make that clear, that 512-bit seed is not the secret entropy we began with, but it's derived from it.
+
+You could create your own word sentence and as long as the checksum goes through, this derivation of that 512-bit value would be valid. Pretty straightforward, right?
+
+I can actualy demonstrate that in an example here. What I'm showing here is that this is a libbitcoin explorer, it's a command line tool. I'll go over that tomorrow. I just want to emphasize the process-- we generate entropy, using "bx seed", and then "bx mnemonic", and then "bx mnemonic-to-seed", and also there's "bx hd-to-public". I'm creating a new mnemonic word list with those 256 bits after running "bx seed --bit\_length 256". If I change the length of my original entropy, the length of my word list becomes shorter because decoding the entropy wouldn't be 1-to-1.
+
+That concludes the mnemonics part. Now we have this 512-bit seed that seeds the entire HD walle.t
+
+# Hierarchical deterministic wallets (bip32)
+
+<https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki>
+
+bip32 is based on deriving child keys. We're trying to generate new keys that means new bitcoin addresses. Maybe you're receiving multiple payments and you want htese payments to go to different addresses. Unfortunately, using a single address is bad because there are chain analysis techniques to track those coins and infer that those are the same owner. But if you use different addresses, that breaks down completely. You can derive via an index and a child key path, you can derive child keys from a bip32 master key.
+
+
+
+
