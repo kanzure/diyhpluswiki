@@ -2,6 +2,10 @@ Partially-signed bitcoin transactions (bip174)
 
 Greg Sanders (instagibbs)
 
+<https://twitter.com/kanzure/status/1047730297242935296>
+
+# Introduction
+
 Bryan briefly mentioned partially-signed bitcoin transactions (PSBT). I can give more depth on this. There's history and motivation, a background of why this is important, what these things are doing. What is the software doing?
 
 # History and motivation
@@ -37,6 +41,11 @@ There's also "witness script", and "bip32 derivation path" for each input. It ca
 # PSBT RPCs in Bitcoin Core
 
 There's combinepsbt, decodepsbt, finalizepsbt, createpsbt, converttopsbt, walletcreatefundedpsbt, walletprocesspsbt. Once it's created, you can process it. walletprocesspsbt is where you hand it to another wallet and if it knows something about an input and an output it could fill it out and optionally sign it and then pass it off to the next machine. Once it's all done and all the partial signatures are finalized, there's finalizepsbt where you can then get the network-serialized transaction the thing you actually submit to the network. decodepsbt is useful for debugging and introspection.
+
+# References
+
+* <https://github.com/bitcoin/bips/blob/master/bip-0174.mediawiki>
+* <https://github.com/achow101/HWI>
 
 
 
