@@ -64,4 +64,29 @@ Before execution, you have your scriptsig provided by your sender, and you have 
 
 For a k-of-n multisig, the scriptpubkey contains the number k (how many people need to sign) as one byte usually, and then all n public keys (this is 33 bytes each if we're using compressed pubkeys, or 65 bytes for uncompressed pubkeys), and then the number n (1 byte) for the number of total keys, and then OP\_CHECKMULTISIG (which is 1 byte). The scriptsig needs to include a dummy 0 byte because there's an off-by-one error, and then the corresponding signatures.
 
+# Computing vs verifying
+
+I'm going to talk about something kind of philosophical about computation and verification on the blockchain. A contract is a predicate. It takes inputs and it outputs either true or false. Bitcoin nodes are only interested in whether the contract evaluates to true. We're not interested in how it gets to true; just that the output is true and not false. Bitcoin does this using Bitcoin script, which is an interpreted language, and it's executed by every node. So we're doing a computation on every node, but it's only really interested in verification of the output, it doesn't really matter how we get there as long as it's all correct.
+
+Adding more computation workload to contract execution does not scale in a blockchain. Verification is much easier and more scalable than computation, especially if we have things like aggregate signatures or batch validation for multiple signatures. If we had every contract just some arbitrary program in some turing complete language, then that makes for a non-scalable blockchain. At the limit, a blockchain could use zero-knowledge proofs instead of script execution. At the margin, there are lots of technologies that can improve scalability by only committing minimal data to the blockchain. If you can provide a proof that the conditions have been met, then that is much more efficient and scalable.
+
+# Scaling contracts
+
+What are some examples of this? Only reveal the spending conditions at time of spend, like in p2sh, is good for scaling because the spending conditions don't need to be stored by every node before that coin gets spent. This is also true for p2wsh. The utxo set kept by every node doesn't need to store the spending conditions of every coin.
+
+We can batch multiple payments into one on-chain commitment, like in layer 2 such as lightning network. A single on-chain transaction can be a single proof of the final transaction state for tens of thousands of off-chain lightning transactions.
+
+We could create a script where we only reveal the branch of the contract that was executed, using things like merkleized abstract syntax trees (MASTs) or taproot. We don't have that yet, but we hope to get that in bitcoin in the near future.
+
+In the best case where everyone agrees, instead of showing a big script, just broadcast a single threshold signature and taproot and graftroot are examples of doing this. If you have a single signature, then you can batch validate that with all the other signatures in the block for example and that's really quick.
+
+You can combine multiple signatures int oa single signature, which is easily done with Schnorr signatures and threshold signatures. Also, you can use adaptor signatures and scriptless scripts to embed the conditions into the signatures themselves.
+
+# Privacy and fungibility
+
+Usually, scalability improves also mean better privacy for people transacting. Transactions look more uniform and similar, which is also great for fungibility.
+
+# Conclusion
+
+A bitcoin output can be locked with a contract. A contract is a predicate- it takes the transaction and additional data provided by the spender and returns true or false. Bitcoin uses Bitcoin script to encode contracts and the witness data. The witness data is additional data you provide to prove you can spend or have fulfilled the conditions of the contract. Script is a stack-based language that executes on all nodes. A blockchain is for verifying, not computing. We happen to use computing in script, but all we're really interested in are, are the conditions met? And that's verification.
 
