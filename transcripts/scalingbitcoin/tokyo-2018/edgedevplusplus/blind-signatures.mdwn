@@ -42,6 +42,32 @@ A: Correct. This is different from bitcoin. This is from 36 years ago. Bob might
 
 Any blinded signature can be unblinded to any other serial number. A blinded serial number can't be linked to any serial number. If you want to say whether these two are related, a blinded serial number and then the serial numbers that were... I could always invent an r value that would relate them in that way. Since I can always invent an r value, then there's no way that a certain blinded serial number unblinds to a certain serial number. It's similar to one time pads. You can always invent a key that will relate a ciphertext and a plaintext; so you don't learn anything or any connection between the two of them.
 
+Timing attacks are fairly powerful especially when there's a limited number of users, or where users behave in certain ways. Imagine every user in the system gets a coin and then immediately spends it. Timing attacks can reveal then which users are spending those coins. The bank doesn't really know for sure, but the anonymity set is not great in that scenario. These timing channels are very important to think about when using a system like this. You could have a system that has total unlinkability but it has only one user and then you always know what that user is doing. You need a crowd to hide in. The user behavior has to be such that it also provides a crowd, they shouldn't just instantly spend.
+
+# RSA blind signatures
+
+I am only going to be talking about RSA blind signature schemes. There's a large number of alternatives. There's BLS signatures have blind signatures components, there's many out there. BLS signatures are like 32 bytes. There are blind signatures out there. I'm talking about just RSA blind signatures because that's the first one that was invented. RSA is the original blind signature scheme and the easiest one to understand and the one that most people are using right now.
+
+# RSA signatures
+
+PK = (e, n) and SK = (d, N)
+
+RSA(PK, x) = x^e(mod N)
+
+You have a public key which is a value (e, n). And you have a secret key which is a value (d, N). All the operations are going to be done in mod N where N is the product of two primes. The important thing to take away is that you have two operations you can do here for RSA-1. You have the first one which raises some value x to the value e mod N and you have the second one which is RSA inverse which raises some value y to this value d which you see associated with the secret key mod N. If you choose some x and apply this RSA operation to it and then apply the inverse, what will end up happening is that you get x mod N back out because the e and the d will essentially cancel because they are inverses of each other and you will just get x.
+
+A really simple version of an RSA signature scheme is you take a message, you hash it, and then you compute the inverse RSA on this. You have to be very careful about the hash function used. There's a lot of important details. Nobody should go write code based on this slide. At a high level, you hash a message, you compute the inverse RSA operation and this gets you a signature. When you want to verify, you take the signature, and you do the regular RSA operation. Because they are inverses, you will end up with an output that is the hash of the message mod d and since you have that you can compare them.
+
+# RSA blind signatures
+
+For blind signatures, it's similar but with one extra step. You take the hash of the message and remember that blinding factor r? You're going to take r and raise it to e (essentially raising it to the public key) and you're going to multiply that against Hash(message). This is the blinded message or blinded serial number when we're talking about anonymous ecash.
+
+When you go to send this to be signed, the signature is this inverse RSA operation where you raise the blinded message to d (mod N) and when you work out the math it's (Hash(m)\*(r^e))^d mod N.... So it's Hash(m)^d * r (mod N). TO unblind it's another equation here. There's also a way to do verification.
+
+You're going to divide the r out. You're adding random noise and then subtracting or dividng random noise out... you just have to be careful about this because of the exponentiation to the d value. e is used because it stands for encryption and decryption because they are inverses of each other. If you were using RSA to do encryption, then the e would be the value you raised to to encrypt, and d would be the value you raised to for decryption.
+
+Does anyone have any questions on all that? I'm going to move on to another scheme which uses blind RSA.
+
 
 
 
