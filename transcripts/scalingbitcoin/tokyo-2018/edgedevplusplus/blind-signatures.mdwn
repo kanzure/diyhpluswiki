@@ -68,6 +68,18 @@ You're going to divide the r out. You're adding random noise and then subtractin
 
 Does anyone have any questions on all that? I'm going to move on to another scheme which uses blind RSA.
 
+# Blind decryption
+
+Say that Bob has a public key and secret key pair (PK, SK). Bob is going to encrypt two files using k1, k2 using AES encryption. The encryption of these files will be ciphertext 1 (ct1) and ciphertext 2 (ct2). Bob then uses his public key to encrypt the keys. z1 = RSA(PK, k1) and z2 = RSA(PK, k2) and publishes z1, z2, ct1, ct2. Alice sees these values. Alice then wants to get z2, she wants to get Bob to decrypt z2 without Bob knowing.... Alice blinds z2 and bz2 and sends it to Bob. Bob uses SK to blindly decrypt bz2... Alice unblinds bk2 and uses it to decryupt the file f2 using the unblinding function and the decryption function. Bob doesn't learn which of the files that Alice actually got the decryption on.
+
+This example is only for 2 files, but you could have many files. You could have a third-party where Bob encrypts files under a third-party's public key, and then Alice requests decryptions. This is a fairly valuable thing to do, like in the tumblebit protocol where a party can get decryptions on things without revealing what it is actually getting decryption on.
+
+# Conclusion
+
+We talked about anonymous ecash, blind signatures, building blind signatures using RSA, and blind decryption. ZeroLink uses blind signatures for coinjoin.
+
+https://github.com/nopara73/ZeroLink
+
 
 
 
