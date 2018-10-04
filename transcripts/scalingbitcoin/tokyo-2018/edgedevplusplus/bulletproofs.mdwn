@@ -144,9 +144,43 @@ A transcript here is just a list of stuff that the prover and verifier tell each
 
 Schnorr identity protocol is a simple example of a zero-knowledge proof scheme. John Newbery presented on this earlier today. You have a secret value x, you have a commitment Q which is xG. The transcript is (R, e, s). THe prover sends R = kG to the verifier. The verifier sends random value e. The prover sends s = k + ex to the verifier. Then the verifier verifies sG =? R + eQ.
 
+This is an example of a sigma protocol. The prover sends something, the verifier sends something back, and then the prover sends something back. This is why it's called a sigma protocol. I don't even know why they call it that. Are they trying to confuse me? But anyway.
 
+# Completeness
 
+Given a prover with a correct opening to a commitment C, does it always validate? With the Schnorr identity protocol, Q is the commitment to x, and if the prover knows x, there is nothing in the calculation s = k + ex that the prover cannot do, and the verifier will thus receive a valid solution for sG = R + eQ.
 
+I'll give you an example of a zero-knowledge proof that might be retarded but it will help you understand it. The transcript will be (R, e, z) where x is Hash(z). I'm proving knowledge about x here. x is the private key. But this zero-knowledge proof requires you to send me the preimage of x as a hash-value. So we need to have the z value be qual to the inverted hash of x. We can't prove anything, even if you have x, you can't prove it.
+
+If you can't prove that you have x even if you have x, then the zero-knowledge proof is broken.
+
+# Zero-knowledgeness
+
+Does the verifier learn anything about the secret after convincing the verifier that they know x, have they learned anything about x? In the case where the verifier already knows x, we have seen that already. What if they don't know x? Now we are going to talk about the simulator, the conjurer of tricks. The simulator is going to take control of the verifier's execution environment and we're going to do time leaps by creating the transcript and doing it out of order.
+
+The simulator first sets s and e to random values, and then they set R = sG - eQ and then they set the transcript to (R, e, s) and the verifier says sure and it checks the value and says it worked. But the simulator doesn't know the secret, and yet they can still make a proof for it.
+
+By changing the order of the transcript, I can create something that looks identical to a real proof, even though it's fake. You wouldn't be able to tell which is which. They look exactly the same. Because they look exactly the same, and the only thing I did to make a fake one was to change the order, it follows that you don't learn anything about the secret. All I did was change the order and proved to you something that was not the case. Changing the order does not create information, right?
+
+There's a slight note about the distribution here. Don't create zero-knowledge proofs without knowing this caveat.
+
+Any questions about zero-knowledgeness or completeness? Okay.
+
+# Knowledge soundness
+
+This is complementary nad opposite to proving zero knowledgeness. Remember the extractor? Say he takes control of the prover and tortures him or her in various ways. So what we do is that the idea is to manipulate the prover somehow so that he spits out the secret information (the witness). If we succeed, the prover must know the secret information. The extractor "debugs" the prover. He can start, stopl, rewind, and copy the states of the prover however the extractor would wish.
+
+In the Schnorr identity protocol case, the question is wheter does the prover actually prove that he knows x or could he somehow fake it? The transcript was (R, e, s) where s = k + ex and R = kG. Extractor runs the prover up until after the first step in the transcript. He saves the state, just like a video game he can save and reload later. He runs to the end. He can get back a random value s1... this is one round, he does this two times. Instead of going back to the beginning, he restores the state and runs it until the end again, to produce e2 which is random, and s2 which is k + e2x. We can now solve for x.
+
+By just doing this twice, I can get your private key. Isn't that great? How did I get the private key? This isn't normal. It's the most common error in cryptography, where you reuse the ephemeral key or the nonce. If k1 and k2 were different, then we would have more unknowns than equations.
+
+This proves knowledge soundness for the Schnorr identity protocol.
+
+# Summary
+
+You can prove zeroknowledgeness by manipulating the verifier such that they believe the proof, even though the proof is invalid.
+
+You can prove knowledge soundness by manipulating the prover into revealing the secret to us.
 
 # References
 
