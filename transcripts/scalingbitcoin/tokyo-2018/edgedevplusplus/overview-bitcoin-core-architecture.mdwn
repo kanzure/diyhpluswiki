@@ -2,7 +2,7 @@ Bitcoin Core architecture overview
 
 James O'Beirne (jamesob)
 
-https://github.com/bitcoin/bitcoin/tree/master
+<https://twitter.com/kanzure/status/1048098034234445824>
 
 # Introduction
 
@@ -131,4 +131,82 @@ validation handles modifying in-memory data structures for chainstate and transa
 Oddly, it also contains some utility functions for marshalling data to and from disk, e.g. ReadBlockFromDisk, FlushStateToDisk, DumpMempool, LoadMempool. This is probalby because validation.cpp is the result of refactoring main.cpp.
 
 Here's a diagram of how validation relates to the other regions here.
+
+# Regions: coins.cpp
+
+<https://github.com/bitcoin/bitcoin/tree/master/src/coins.h>
+
+<https://github.com/bitcoin/bitcoin/tree/master/src/coins.cpp>
+
+<https://github.com/bitcoin/bitcoin/tree/master/src/txdb.h>
+
+<https://github.com/bitcoin/bitcoin/tree/master/src/txdb.cpp>
+
+CCoinsView boils down to getting an unspent coin and seeing if it's unspent. The rest is just implementation detail.
+
+# Regions: dbwrapper.cpp
+
+This is an abstraction around the leveldb database. I'll talk about other storage mechanisms later in the deck. This allows us to obfuscate data, which allows us to avoid spurious anti-virus detection and various things to prevent people from getting in trouble for running a full node with all the arbitrary blockchain data.
+
+# Regions: script/
+
+<https://github.com/bitcoin/bitcoin/tree/master/src/script/>
+
+EvalScript is the script interpreter.
+
+# Regions: consensus/
+
+<https://github.com/bitcoin/bitcoin/tree/master/src/consensus/>
+
+This was an attempt to consolidate a lot of what dictates consensus, but almost everything in bitcoind dictates consensus. It defines the bip9 deployment struct, which is kind of interesting if anyone remembers from 2017.
+
+CValidationState is in there which is a little piece of state that gets passed around in places to accumulate DoS scores.
+
+# Regions: policy/
+
+This is for making assesments about transactions, such as whether a transaction is signaling replace-by-fee. It also has some code for doing fee estimation.
+
+# Regions: interfaces/
+
+This is a newer addition. This is the start of the numeration of all the interfaces in Bitcoin Core. This is part of an effort from ryanofsky to use more formalized messages. Orginally everything was running in one process but maybe one day all of the components will be running in different processes or maybe even separate code repositories. The first step of that is separating things out into different interfaces.
+
+# Regions: indexes/
+
+This is some work by jimpo (Jim Posen). Does anyone not know what the txindex is? It's a quick way to look up from the hash of a transaction into the raw data for the transaction. It's a useful thing to have if you're a block explorer. There's some additional indexes proposed, like marcinja did some work in #14053 to implement an address-to-transactions index. This thing actually makes use of the ValidationInterface construct.
+
+# Regions: wallet/
+
+This does what it says- it's logic for marshalling wallet data to and from disk via BerkeleyDB. Utilities for fee-bumping transactions, does coin selection, RPC interface for the wallet, and some bookkeeping.
+
+# Regions: rpc/
+
+This is where all the definitions for rpc functions live. It's fairly easy to add an RPC, just look at any of them for an example.
+
+# Regions: miner.cpp
+
+<https://github.com/bitcoin/bitcoin/tree/master/src/miner.cpp>
+
+<https://github.com/bitcoin/bitcoin/tree/master/src/miner.h>
+
+This is useful for constructing and generating blocks. getblocktemplate is how you distribute a block template to a mining tool to get everyone coordinated on the same block. And submitblock does what it says.
+
+# Regions: zeromq
+
+I was talking about this earlier.
+
+# Storage
+
+How do we store stuff in Bitcoin Core? Here's a tree of the file structure if you go into your data dir you're going to see a banlist, blocks/, chainstate/, and others.
+
+# Storage: .dat files
+
+The .dat files are basically just raw bytes of some serialized data structures. You can checkout serialization here: <https://github.com/bitcoin/bitcoin/tree/master/src/serialize.h>
+
+# A brief digression into serialization
+
+There's a macro called ADD\_SERIALIZE\_METHODS and there's some magic around how these structs are packed into raw bytes.
+
+
+
+
 
