@@ -56,3 +56,24 @@ Who enforces this contract? It's the miners on the bitcoin blockchain, and the f
 
 You can use proof-of-proof-of-work, it's a compact proof that the money you put into this lock stayed in the lock and wont be reorged out due to some short-term 51% attack. It's secure against reorgs. Paul Sztorc's drivechain model which was released recently- they have very long peg-out periods on the order of months. I'll get back to why it's so long in a moment. You can have shorter as well, but then your security buffer is shorter.
 
+In bitcoin, miners that do a 51% attack can't take your coins other than censoring a transaction or something.
+
+# Federated enforcement
+
+You can use [pay-to-contract](https://arxiv.org/pdf/1212.3257.pdf). You take a bunch of pubkeys, you tweak them by the hash of the public key appended to a script, and this script is something you will use to spend on the other side, the scriptpubkey. User directly gives funds to the federation wallet, using pay-to-contract (p2c). Before segwit, you could have only up to 15 participants in the multisig federation. Post-segwit, it's actually larger, it's n-of-67 multisig. But standardness rules; so you could only get up to 67 members in the federation. With fancier math, you could do unbounded, but many rounds requirement--- you could use pairing-based cryptography tricks and do m-of-n Schnorr signature but using ECDSA. The consensus algorithm would have to do more back-and-forth communication which increases time and latency and so on. For federated enforcement, you would do a batched withdrawal from the sidechain every few minutes on a schedule.
+
+# Putting it all together
+
+There's a lot of parts and pieces to build a sidechain. These pieces require careful selection, though. There's a lot of hype at the beginning about letting the miners do everything, like merge mine all the things. But you have to think about what you're trying to solve. Who do you trust? Do you trust miners? Or do you trust some companies? Do you trust other people? There are tradeoffs everywhere. I'm partial to the federated model, but I also like proof-of-work.
+
+There are also some failure modes to think about. Miners can censor federation funds. If miners detect it and they don't like it, then they can censor it. Also, miners can steal merge-mined funds. Also, more subtly, a merged-mined sidechain can degenerate into extension blocks. Before I said that sidechains have no consensus backwards-compatibility requirements... but if everyone is using a sidechain then it almost de facto becomes bitcoin, and if the miners cheat on the sidechain then the block should be invalidated on bitcoin, and at that point it's basically an extension block. Full nodes on the bitcoin network would then be required to run those new rules, and this might add consensus risks that you otherwise wouldn't have wanted.
+
+# References
+
+* <http://blockstream.com/sidechains.pdf>
+
+* Non-interactive proofs of proof-of-work <https://eprint.iacr.org/2017/963.pdf>
+
+* pay-to-contract <https://arxiv.org/pdf/1212.3257.pdf>
+
+* <https://github.com/ElementsProject/elements>
