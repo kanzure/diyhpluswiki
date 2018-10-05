@@ -2,7 +2,37 @@ Lightning network overview, lightning channel factories, discreet log contracts
 
 Thaddeus Dryja (Tadge Dryja) (tdryja)
 
-# Lightning network
+# Introduction
+
+I have quite a while to speak. I hope it's not too boring. I'll have an intermission half way through. It's not going to be two hours. It will be more like 80 minutes or something. We are going to talk about payment channels, unidirectional payment channels, lightning channels, homomorphic keys, hash trees, watchtowers, discreet log contracts, oracles, anticipated signatures, DLCS within channels, etc.
+
+I am Tadge Dryja. I work at MIT Digital Currency Initiative. It's a cool place. A few bitcoin developers work there. I wrote the lightning network whitepaper with Joseph Poon more than 3 years ago. I have no control over the lightning network. I'm not really working on it that much anymore. Other people are working on crazy stuff, that's really cool. I'm not even really working on discreet log contracts, instead I've been working on cryptographic accumulators for bitcoin and I've been working on that for a few months.
+
+I am not going to talk about multi-hop payments because that was covered in a previous talk. I will talk about the basic structure of payment channels, though.
+
+# Why payment channels?
+
+It's kind of complex: why do any of this? Why not just use bitcoin? That's a legitimate question. There's a lot of weird conspiracy theories- a lot of people hate lightning network, and that's fine you're welcome to not use it. Even at MIT, an incoming freshman was telling me how lightning was a conspiracy by big banks to take over bitcoin. But really? I ride a bicycle to work. Where's my buy out..? Anyway, the real reason is scalability. Every transaction in bitcoin has to be stored by all nodes.
+
+Satoshi posted on Halloween 2008, almost 10 years ago. He said he's been working on a new electronic cash system that's fully peer-to-peer (p2p) with no trusted third party. The first public reply was this person James A. Donald who said we very much need this system but the way I understand your proposal, it does not seem to scale to the required size. It was pretty interesting. He was right on the ball. So yeah, how do we scale this?
+
+# 1-way channel
+
+One way to think about bitcoin or the blockchain is that it's one wifi access point for the whole world. That doesn't scale very well. If you've been to big conferences, sometimes with 100s of people, wifi is pretty slow. You're all sharing the same transmission band for that medium. Similarly with the blockchain: you guys are all sharing the same blockchain and you compete for the scarce resources. In other networks, you break the network into hierarchies and you have routers and switches and you go between different points that way. If you're browsing the internet, then someone else doesn't see it. In the case of wifi, I can listen in. People might not be aware of that, and yes there's TLS and stuff, but if you're making DNS requests in this room then I can listen in on your wifi data and see that. Similarly with bitcoin, you can see the bitcoin data. So what about splitting it up?
+
+# Payment channels
+
+Let's make payment channels. Two people put some funds into a regular UTXO and they can move the funds between each other without updating tha UTXO. Who owns the UTXO changes, but it doesn't have to be broadcasted to the blockchain. There was an idea that was pretty old, before lightning, and these are incremental payment channels which are one-way channels. Transactions in bitcoin have a "lock time" field and you can say this transaction is only valid after a certain blockheight or after a certain time.
+
+The idea is this channel is just a multisig output, a 2-of-2 multisig signature requirement. Normally multisig is friendly multisig where I have maybe three keys and I need two keys of them to spend or I do them with a friend or there's an exchange company. But this is more like adversarial multisig where we're worried about someone trying to steal our money. The simplest way is to have a funding transaction. Your input is Alice's money and she has UTXOs from her wallet and she gives 1 transaction input, and she sends 10 BTC to an Alice-Bob 2-of-2 multisig. That's pretty risky, because if Alice sends it, Bob can disappear and Alice would not be able to access her coins. Before Alice broadcasts that, she can specify that she wants a refund transaction with a locktime set in the future. This refund transaction has an input which has the funding transaction's txid and index, and it has Bob's signature on it. Bob signs the refund transaction before the commitment/funding transaction is broadcasted. Alice then can put 10 BTC into the funding transaction knowing that there's this safety of the refunding transaction. There's some small loss for Alice in time and some small fees but this is a small cost compared to having no backup plan at all. Also there's a timelock and the channel has to be closed before that because otherwise the refund transaction will no longer be valid.
+
+This is restricted and this channel is one direction. Alice can keep paying Bob and Bob can't spend money back to Alice. The other restriction is that there's a set time period. Even though Bob knows he has those coins... in a week, there's a transaction which is locked and can't be broadcast but in a week it will be valid and Alice can use the refund transaction later. Before the end of the timeout, Bob needs to broadcast the most recent state or something. As soon as Bob gets the latest transaction, he can delete the earlier state. He never really needs to store the old ones because he would rather have more money.
+
+# 1-way channel outcomes
+
+Bob keeps getting half-signed transactions with more money going to him. The old transactions are useless and he deletes them. He needs to broadcast a new transaction before the refund transaction becomes valid. The refund transaction needs to be built before the commitment or funding transaction. You could use OP\_CHECKLOCKTIMEVERIFY to get around these problems... but basically segwit is what really enabled this to work.
+
+# Lightning channels
 
 * [Lightning network overview](https://diyhpl.us/wiki/transcripts/layer2-summit/2018/lightning-overview/)
 * [Hardening lightning network](https://diyhpl.us/wiki/transcripts/blockchain-protocol-analysis-security-engineering/2018/hardening-lightning/)
@@ -12,6 +42,28 @@ Thaddeus Dryja (Tadge Dryja) (tdryja)
 * [lightnig-rfc.git](https://github.com/lightningnetwork/lightning-rfc)
 * [mit-dci/lit.git](https://github.com/mit-dci/lit)
 * [c-lightning.git](https://github.com/ElementsProject/lightning)
+
+The goal of lightning is to make bi-directional payment channels that can stay open indefinitely. How can you do this? How do you make a refund transaction? If it's time-based then you have a limited time duration. How do you revoke old states from earlier in the channel? How do you get rid of that?
+
+There's some new timing-based opcodes that got put into bitcoin that helped us. One that is really big is OP\_CHECKSEQUENCEVERIFY which is sort of confusing and it doesn't sound like it has anything to do with timing. But it's a relative timelock opcode. Your input has to be at least this old in order to spend it. The timelock field on a transaction itself says that this transaction is valid "after Friday" or something. OP\_CHECKSEQUENCEVERIFY says this output is valid after it's 3 days old; it doesn't specify an absolute time, just a relative time. This is really important and useful. You might not know when the transaction is going to be confirmed in a block. You could specify number of block or number of seconds; and you say once this output has been confirmed, you can spend it after it has 1000 confirmations. How many confirmations does this output need before it's allowed to be spent?
+
+Also, since it's an opcode, you can mix it with ohter things. You could say if you have key A and sign you can spend immediately, and if you have key B then you can sign but you have to wait at least a day or something. This is a useful opcode that we needed to make lightning network a reality.
+
+# Revoke based on timing
+
+What you can do, and the way you can provably credibly delete a transaction is that... how can you do that? You can use timing. You use OP\_CHECKSEQUENCEVERIFY and use 2-of-2 multisig which can happen immediately, or you can have this other key and then you have to wait 100 blocks. This is a little confusing because the keys you use here might not be used by Alice and Bob; they are just new public keys. So there's 2-of-2 multisig: if these two keys sign together then this coin can be spent immediately. However, if this other key signs, then it can also spend, but it needs at least 100 confirmations. This allows timing windows where in one condition there's an immediate spend but otherwise there's a delay.
+
+So who generates these different keys for the revocation transactions? You make revocation transactions. You create a transaction which spends the funding amount output from early on in the protocol. Instead of directly spending to Alice and Bob in the revocation transaction, you make it more complex. Bob creates this transaction, signs it, and sends it to Alice. This is what sits on Alice's computer. The transaction that sits on Alice's computer does send Alice her coins and Bob his coins. But the rule is that Alice can sign and get these coins after 100 blocks, or Alice's revocable key and Bob's public key can sign together immediately to spend these Alice coins. And then Bob's coins just go directly to Bob, the same way as before. This transaction is held by Alice. A mirror image transaction is held by Bob, it's symmetrical but it's not the same exact transaction. It's sort of the same, it's the same template at least, except it's Alice and Bob flipped.
+
+So the transactions are revealed, in order to revoke. Either party broadcasts and has to wait. Alice gives Bob the AliceR private key. Bob gives Alice the BobR private key. Now if they broadcast the counterparty can take all the funds while they wait.
+
+# Add and delete states
+
+So that's how you keep updating lightning channels. You create the initial state. The parties create the second state where Alice sends coins to Bob or the other way around. They create the new state but before it's a credible payment they have to revoke the previous state. Both parties reveal the private key that they were using to make it a valid transactoin. Once they revoke it, they don't want to broadcast it, because they know they will lose all their money because their counterparty can immediately spend all of the outputs because they had been given the private key. It's just toxic data at that point.
+
+# Two-party indefinite payment channels
+
+Now you have two-party, indefinite channels based on the construction I have described. You still need to create a channel to pay. You need one transaction to open the channel, one transaction to clos ethe channel, and potentially two transactions to close the channel in rare circumstances like adversarial circumstances. Cooperative closes are more convenient, they are faster, and nobody has to ever know that this was a channel. It will just look like a 2-of-2 multisig that spends to two regular addresses and nobody will be able to tell it was a channel so that's pretty cool.
 
 # Discreet log contracts
 
