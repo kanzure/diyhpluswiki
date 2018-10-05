@@ -1,0 +1,33 @@
+Cross-chain swaps: Atomically swapping coins for privacy or cross-blockchain trades
+
+Ethan Heilman, Nicolas Dorier
+
+# Introduction
+
+We are Ethan Heilman and Nicolas Dorier. Ethan is from Boston University. Nicolas is from DG Lab and working on NBitcoin. Today we're going to be talking with you about atomic swaps for privacy and for cross-blockchain swaps. When we say atomic swaps, what do we mean? At a very high level, the idea is that it enables Alice and Bob to trade some cryptocurrency. But they shouldn't be able to cheat each other. The good part about being able to not cheat each other is that the trade is atomic. So it either goes through completely or not at all, but never partially. If it went through partially then one person would get the other party's money but the other party wouldn't get money; so it's really important to have atomicity in this type of trade. We want to be able to do this without having a trusted third-party. Usually, there's a custodian that does the swap for the two traders, which ensures fairness. However, with blockchain, we can do this without a trusted third-party. The blockchain acts as the third-party. As I said before, either the trades occur or both parties get their coins back. We assume the parties are malicious and they will do all sorts of crafty things to try to cheat each other. This protocol should work in the presence of malicious participants.
+
+# Use cases: cross-blockchain trades and privacy
+
+The first use case is a cross-chain atomic swap, which is an atomic swap in which someone has one cryptocurrency and the other party has a different cryptocurrency asset. It could be Alice and Bob and bitcoin and litecoin. Alice sends Bob litecoin and Bob sends Alice bitcoin.
+
+Another use case is using atomic swaps for privacy. This is useful for obfuscating a coin's transaction graph. Alice and Bob each exchange with each other 1 BTC so that the origin of the coins is not so easily determined by someone analyzing the blockchain graph data. This can increase the fungibility of bitcoin and makes it a better form of money. Alice and Bob trade bitcoin UTXOs of the same face value to increase privacy. This is identical to the cross-chain swap but it's a same-chain swap.
+
+# Atomic swaps within the same blockchain
+
+Let's look at a very simple atomic swap, within the same blockchain. There has to be a protocol for Alice and Bob to find each other, which has its own privacy implications of course. They have to find each other and then agree on the amounts that they are going to be using in the atomic swap. You could use two commitment transactions and then a third transaction where the swap is performed. You could also pre-sign the swap transaction thanks to segwit and the loss of txid malleability. The third transaction is where the swap occurs, but it is signed first, before the commitment transactions are funded or broadcasted. Notice that this is atomic, and it satisfies the atomicity requirement.
+
+This is a simple form of a coinjoin.
+
+* <https://diyhpl.us/wiki/transcripts/scalingbitcoin/milan/joinmarket/>
+* <https://diyhpl.us/wiki/transcripts/building-on-bitcoin/2018/coinjoinxt/>
+
+# References
+
+* <https://diyhpl.us/wiki/transcripts/bitcoin-core-dev-tech/2018-03-05-cross-curve-atomic-swaps/>
+* <http://diyhpl.us/wiki/transcripts/layer2-summit/2018/scriptless-scripts/>
+* <http://diyhpl.us/wiki/transcripts/building-on-bitcoin/2018/blind-signatures-and-scriptless-scripts/>
+
+
+
+
+
