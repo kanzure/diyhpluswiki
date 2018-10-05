@@ -1,0 +1,37 @@
+Bitcoin toolchain, unit testing & deterministic builds
+
+Marco Falke
+
+# Introduction
+
+Just to continue on what James said about the build system on Bitcoin Core... I am going to talk about deterministic builds. I am MarcoFalke and I also work at Chaincode Labs in NYC.
+
+# The build system
+
+The build system is based on autotools, so it should just work anywhere where autotools runs. Just run ./autogen.sh ./configure and then make, that's it.
+
+We recently added support for MSVC for Windows developers in the build system.
+
+For release builds, we use cross-compilation which is currently only supported on Ubuntu.
+
+# Bitcoin Core modules and testing
+
+To look at all the modules and targets that our build system supports, so James was talking about regions, but in the build system they are called modules. There's a few like util which takes care of logging and random number generation. And then there's crypto, which provides cryptographic primitives like hash functions. We have some libraries included directly. For convenience, we include univalue which is not commonly distributed on major distributions. We include it for convenience. We also include the curve library, libsecp256k1, and leveldb, because they are consensus-critical. We also have dependencies on system libraries, libcrypto (openssl's random number generator), and we use boost and some C++ language features.
+
+We also have a build target called libbitcoin-consensus. It was designed to provide just a library that takes care of all the consensus that is going on. You could, for example, every node, for some reason, consensus changes- maybe there's a soft-fork or hard-fork then you only update your library and you're running the latest consensus but you don't have to upgrade all your other software or your RPC interface or whatever. But right now, libbitcoin-consensus is really minimal and it can't deal with anything stateful. There's some stateless checks that are just simple transaction verification.
+
+We have another build target called bitcoin-tx which is a utility to create and modify bitcoin transactions. And finally, there are other targets including bitcoind, bitcoin-qt, and test\_bitcoin. They all pretty much depend on everything. bitcoind runs in the background, and bitcoin-qt is the GUI, and test\_bitcoin is a ton of test binaries.
+
+# Bitcoin Core testing
+
+A bit about testing... consensus rules must not change accidentally. I am not going to explain testing in general. There are obvious advantages for testing. In Bitcoin Core, the most important reason in my opinion is that we need to have some harness to check that the consensus rules do not change accidentally. Also, testing can help serve as design feedback and also documentation about what the expected behavior is. Also, testing is good for getting the nice and fuzzy feeling when travis-ci turns green.
+
+# Testing issues
+
+Mostly good line and function coverage, but not so good branch coverage, and we have even worse path testing coverage.
+
+<https://marcofalke.github.io/btc_cov/>
+
+
+
+
