@@ -2,6 +2,8 @@ A scalable drop-in replacement for merkle trees
 
 Benedikt Bünz, Benjamin Fisch and Dan Boneh (Stanford University)
 
+<https://twitter.com/kanzure/status/1048454406755168257>
+
 # Introduction
 
 Hello. Test. Okay. I am going to talk about accumulators for UTXOs. The previous two talks were a great setup for this. This is joint work with Ben Fisch who is also here today and Dan Boneh. I first want to advertise the Stanford Blockchain Conference (formerly known as BPASE) happening at the end of January 2019 at Stanford. Whether you give a talk or not, you should try to attend.
@@ -66,4 +68,24 @@ For class groups, there are no benchmarks yet, but they are getting used for ver
 
 # Wesolowski proof (Wesolowski 2018)
 
-We can use the Wesolowski to reduce the verification time which came up in the verifiable delay function developments. 
+We can use the Wesolowski to reduce the verification time which came up in the verifiable delay function developments.  You can also use proof of exponentiation efficiency here. Exponentiation of G vs 128 bit long division.. it's a gigantic speedup.
+
+# Fast block validation
+
+We can now do fast block validation and verification. Say I'm a miner and I want to compile my blocks. At the current state of the blockchain, the current accumulator state, and I remove a bunch of things with the stateless delete from the accumulator... so this is all the spends removed.. then I add the new transactions to the accumulator, and then I compile the new block, it has the headers still, and th transactions, and a BLS signature maybe so it's a small signature. And then it has these two values, so the half of the next state and the full next state, and this proof of exponentiation. What does a fully-verifying node have to do now? It has to verify the BLS signature which could be very fast, and it has to verify the two proofs of exponentiation which are also insanely fast in practice. You just have to check from there if you add s again you get here, and if you add n you get to the new accumulator state.
+
+# Performance
+
+What are some of the performance numbers? Take these numbers with a huge grain of salt. I did htis on my macbook using standard java libraries. For a merkle tree, an inclusion proof for 64 million things is like 20 hashes, so that's 8.5 microseconds. If I want to verify using this new Wesolowski, it's 0.3 microseconds, it's way faster than a merkle tree. For class groups, we don't know. Are they faster are they slower? The class group is smaller, so they might be faster or slower, it's hard to evaluate without having Pieter Wuille implement this.
+
+# Vector commitments
+
+Vector commitments are similar to accumulators. You could use this with merkle trees. It's a commitment to a vector, and I can open it at a position and tell you the vector at position x has a value and we build a new vector commitment that there were previous vector commitments from RSA but the verifier would require gigabytes of memory or linear size memory and ours basically requires zero size memory so it's efficient that way.
+
+# Short IOPs
+
+There's these zero-knowledge proofs like STARKs... or the class of zero-knowledge proofs called IOPs and at a high level, the prover makes a short commitment to a long proof, and then the verifier asks for some indices and then the prover sends the proofs and the merkle proofs and shows at position x the proof was this value and then the verifier can accept or reject them. The problem is that the merkle ptahs are quite long; we can replace this with vector commitments, and we can aggregate vector commitments and then this is basically like a few kilobytes instead of a bunch of merkle data. This reduces the proof size from... these numbers are from one setting, it's terrible to get concrete numbers here because you have to look at the concrete setting; for one large setting you could reduce the proof size from hundreds to dozens. Asymptotically it removes it as a factor of log(n). It makes the proofs shorter.
+
+# Q&A
+
+
