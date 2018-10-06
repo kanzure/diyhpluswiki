@@ -1,0 +1,79 @@
+Instantiating scriptless 2p-ECDSA: fungible 2-of-2 multisigs for bitcoin today
+
+Conner Fromknecht (Lightning Labs)
+
+maybe <https://eprint.iacr.org/2018/472.pdf> and <https://lists.linuxfoundation.org/pipermail/lightning-dev/2018-April/001221.html>
+
+# Introduction
+
+Alright. Thank you very much. Thank you Pedro, that was a great segue into what I'm talking about. He has been doing work on formalizing multi-hop locks. I want to also talk about what changes might be necessary to deploy this on the lightning network.
+
+# History
+
+For what it's worth, these dates are rough. Andrew Poelstra started working on this and released something in 2016 for a Schnorr-based scriptless script model. This gave you deniable swaps and the ability to do cross-chain transfers without having to reveal shared data, which is often in a payment hash. It doesn't link transactions. He later provided a construction for turning this into a lightning network replacement for hash-preimage challenges. This was in March 2017. Finally, the main win here is that as Pedro mentioned... ensures payment information is randomized at every hop. All the payments are settled in the reserve order in which they are propagated.
+
+In late 2017, Yehuda Lindell published an efficient 2p-ECDSA signing protocol. It got put on the side for a little bit while we were working on other things. This allows someone to do a 2-of-2 ECDSA multisig without updating bitcoin multisigs. All the old bitcoin nodes are able to verify these signatures. It's entirely backwards compatible. The anonymity set is now encompassed by now all the pay-to-pubkeyhash and pay-to-witness-pubkeyhash that exist today. It would blend in today to existing transactions out there.
+
+Later, April 2018, Pedro released the multi-hop locks paper which formaliszed the framework for LN hop decorrelation. It includes scriptless script construction based on the 2p-ECDSA protocol. When Schnorr gets integrated into bitcoin, we wont have to fork the lightning network to have them interop, and this will require no changes from the nodes and it wont fragment the network. At some point, the network will have to diverge based on this payment hash scheme as we get away from payment hashes entirely. It's probably better to do this while the network is younger and then be able to smoothly transition to Schnorr once it's fully integrated into the consensus layer.
+
+Today, we have some working 2p-ECDSA scriptless scripts.
+
+# Agenda
+
+I am going to give an overview of 2p-ECDSA. It will be a little technical but I hope I can deliver some insight. It's fairly involved and uses some heavy cryptography but hopefully this will be obvious to you and it will offer some opportunities to deploy scriptless scripts and othe rprotocols. In addition, I'll talk about benchmarks and deployment considerations and how we will go about deploying this.
+
+# 2p-ECDSA overview: Regular ECDSA
+
+Regular ECDSA can be defined in like 5 lines which is nice. The next slides will be the 2 party setting. So to begin with 2p-ECDSA overview.. the three links are at the bottom, it's Yehuda Lindell's paper, efficient RSA key generation and threshold pallier in the two-party setting from hazay, and a generalization and simplification of pallier's probabilistic publy-key system with damdgard and jurk.
+
+Alice has a private key and a public key, and Bob has his own .Each know a and b. Alice knows A and Bob knows B. They jointly create the public key Q = ab * G with private key ab, but neither knows ab outright yet... together they can create valid ECDSA signatures under Q. It requires two algorithms - KeyGen offline which setsu p Alice and Bob for participation in online signig protocol. It's more exepssnive, but it's only executed once. Then there's an online signing protocol which is more efficient and it requires two roundtrips and it doesn ot require scriptless scripts.
+
+# Keygen
+
+Basically, Alice and Bob exchange their public keys and provide a proof of discrete log that they have a proof-of-knowledge. We use a standard schnorr signature here that you know the secret key to these public keys. All this stuff is abridged here. Alice generates a Laillier keypair from a cryptosystem related to RSA and she provides a zero-knowledge proof that the key is constructed of these two primes p1 and p2 and this is so that she can't cheat Bob down the road. Alice encrypts her private key under PPK, creating ciphertext c. She sends PPK and c to Bob. Bob is going to store this. It's going to be a two-party private key. Alice also provides a zero-knowledge proof tha the ciphertext contains a small value. In fact, the ciphertext is much much bigger than the actual encrypted value. The implication there is that, because Bob only receives the ciphertext, he may not know the size of the underlying value so Alice needs ot prove that it's small. The fact that it's less than the curve order (secp256k1 in this case) and that it decrypts in a certain way. Lindell had to invent a new zero-knowledge proof for this, and it mixes two different cryptosystems. If you're interested in novel cryptography, check that out. Finally, Alice does a lot of proving to generate all these proves and the pallielrer pubkey. Bob receives all thes eproofs, and then they generate Q. The output is Alice saves 2p-ECDSA private key (a, PSK) with public key Q = ab & G. Bob saves 2p-ECDSA private key (b, c, PPK) with public key Q = ab * G. Surprisingly- this is not vulnerable to key loss. It might seem like if you loss these it might corrupt the channel but in fact that's not true because as long as Alice and Bob know that it's derived from an HD seed then they are able to redo the keygen protocol to ressurect the channel. I thought this was going to be a downside compared to Schnorr but it turns out it's not a problem for 2p ECDSA>
+
+# Signing
+
+So why all this Paillier nonsense? You're all probably asking this question. The main thing is that we can't add public keys and signatures in the same way as for Schnorr. They are not linear. This does not bode well for non-interactive aggregation. But Palliler ciphertexts exhibit partially-homorphoric properties. They are additive, and they are scalar-multiplicative where you can get the scalar times the original message. This is enough to create a signature under mostly encrypted data and then decrypt a nearly valid signature. All of these operations can be done wihtout private knowledge. All the parameters are n, whic his the pubkey that Bob kept around so that he can do these manipulations.
+
+ECDSA signature here is a (R, s) pair and then there's this k value and the x coordinate.... so to sign, Alice and Bob exchanges nonces with discrete log proof of knowledge. Bob then encrypts his inverse times the message and the other value which is the inverse of the nonce times the x-coordinate of the aggregate nonce and then times his private key. The interesting thing is that, he can combine a ciphertext and manipulate it using the transformations described earlier, and then here in color code purple means both parties are aware, and the red represents Alice knowing the value only and the other color represents Bob only knows the value. At the beginning, Bob had a in an encrypted form. He can manipulate it and send it back to Alice, she can decrypt it and then multiply it by the inverse of her nonce and this generates the signature. If you compare this to the simple ECDSA protocol, k is replaced by Alice-and-Bob k and the secret keys are replaced too. These equations are similar and this actually works as an ECDSA signature. The final step is making sure the s value is small.
+
+Scriptless script signing is similar but it requires an extra round to extract the secret data. The protocols are very similar so I'll omit the details. The details are in Pedro's paper.
+
+# Benchmarks
+
+For what it's worth, these were computed last night. I've been optimizing it over the last week on the flight and stuff. I tried to get keygen under 1 second but overall it's about 1.07 second. I was pretty surprised about this, I thought it would be slower. Given all the actual crypto and complexity of the keygen protocol, this is pretty great. The probably the slowest thing is the use of golang's bigint library whic his notoriously not constant time and has memory performance problems. I think this could be driven down by 2, 5 or 10x.
+
+Signing as you can see is under 30 milliseconds. That's pretty huge. As far as na online protocol, that works pretty well.
+
+Signing in scriptless signing, the allocation time and basically numbers across the board it's pretty promising. There's a lot of optimization work remaining.
+
+For what it's worth, this was tested on my laptop. It was single process, it was 2.8 Ghz Intel Core i7 16 GB 2133 MHz LPDDR3. It's single process, no network latency or serialization, I was using a non-interactive discrete log proof of knowledge nad proof of pallier l pallier key correctness. There's some golang code.
+
+<https://github.com/cfromknecht/tpec>
+
+<Mhttps://github.com/Kzen-networks/multi-party-ecdsa>
+
+# Deployment considerations
+
+There would need to be some script modifications on lightning network. The funding outputs are 2-of-2 multisig at the moment. This requires 2-of-2 signature to spend. The cooperative closes are where both parties agree to close it; it's not a unilateral close, it's just splitting the balance based on the latest state. There's also a commitment transaction which are pre-signed. In the offline update protocol, in lightning, you need a 2-of-2 multisig to update these commitment transactions and HTLCs. But all of this could be replaced with a single p2wpkh-looking output. The HTLC outputs use 2-of-2 multisig in non-standard HTLC scripts. The two types of HTLC scripts are the offered script and the received script. They are mostly similar, but it depends on which direction the HTLC is going across the channel, and both require a 2-of-2 multisig, or a timeout. It requires 2-of-2 ssig to spend offered-timeout and received-success clauses. This can be replaced with much simpler HTLC script.
+
+With scriptless 2p-ECDSA/Schnorr, we can remove payment hashes from HTLC scripts, and by extension we can remove preimages from witnesses so right there you're saving 52 bytes in many of the witnesses. Just in terms of space savings, those are fee improvements and ultimately less load on the blockchain as well, which is the whole point of this conference.
+
+# Funding output scripts
+
+Considering regular 2-of-2 multisigs, Schnorr 2-of-2 multisigs, and 2p-ECDSA 2-of-2 multisig... here's a table. The space is roughly halved; what was two keys is now one key and two signatures now one signature. This is a huge privacy win for non-advertised channels. If you are lightning node and you're advertising a channel, you're giving up some privacy. But if you're a private channel, then this gives a huge win, because funding transactions look like regular p2pkh or p2wpkh transactions. That's a huge win, especially as we move to a network where many mobile devices or a node you keep on your laptop is not going to advertise the nodes at all for routing. And finally, there's less bandwidth at the gossip layer because of the one less signature so that improves the network load situation in general.
+
+# HTLC scripts
+
+Here's a receive-HTLC witness script. You're probably looking at this and saying "oh shit". It's hard to reason about. When you're flipping pubkeys and verifying timelocks, that's totally unacceptable. But you could have a simpler receive-HTLC witness script with 2p-ECDSA, and it's all governed with a single signature, and the timeout clause will have an explicit parameter and other than that they are virtually identical. This is a 20% reduction in the script size, and that's basically- when you spend any HTLC outputs on this, that's a 20% reduction in the witness script size. It improves the readability of the script and it's easier to reason about what's happening here. In terms of witness sizes, I picked the receive-HTLC witness script because it highlights the worst case for closing channels unilaterally. In the success witness size, it's a 78% reduction in script size. The revocation witness is 30% smaller, and the timeout witness stays the same. You can expect similar improvements for the offered-HTLC scripts but it should be smaller.
+
+# Bidirectional 2p-ECDSA instances
+
+Channels are bidirectional. When you try to update the HLTC, you send all the updates and parameters to the other side of the channel, and then you send a batch of signatures that you create on that. If you noticed from Pedro's talk, when you do this, only one partry ends up with the signature and typically with a normal script multisig where you have Alice pubkey Bob pubkey then two signatures each could contribute theirs independently and that simplifies things significantly. So you have a single funding output on chain, and to spend from this and have either party initiate the ability to sign, you are going to setup two instances of the same key pair so that either party can update this. This will allow them to sign commitment transactions to spend from this output or either party would allow them to do cooperative close with this channel. Some of you might ask how does this apply to eltoo... on the commitment transaction level, they would share one key. It's roughly about the same.
+
+# Onion packets
+
+Here's the current onion packet data structure. Right now I'm able to read these data, and the 32 byte MAC covering everything, and then some authenticated and encrypted bytes at the end which get shifted around when each person decrypts. What's going to change is the data in the per-hop payload.
+
+
