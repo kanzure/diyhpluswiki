@@ -74,6 +74,6 @@ Channels are bidirectional. When you try to update the HLTC, you send all the up
 
 # Onion packets
 
-Here's the current onion packet data structure. Right now I'm able to read these data, and the 32 byte MAC covering everything, and then some authenticated and encrypted bytes at the end which get shifted around when each person decrypts. What's going to change is the data in the per-hop payload.
+Here's the current onion packet data structure. Right now I'm able to read these data, and the 32 byte MAC covering everything, and then some authenticated and encrypted bytes at the end which get shifted around when each person decrypts. What's going to change is the data in the per-hop payload. The new one will include a schnorr signature and the difference between the incoming and outgoing locks that Pedro described. The packet size grows by about 3x, but when you're constructing and decrypting these, the majority of the bottleneck is in asymmetric crypto operations like deriving ephemeral keys and so on. This scales linearly in the number of hops, and I got this down from quadratic back in February.
 
 
