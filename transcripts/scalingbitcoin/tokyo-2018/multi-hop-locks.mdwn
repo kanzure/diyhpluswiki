@@ -4,6 +4,8 @@ Giulio Malavolta (Friedrich-Alexander-University Erlangen-Nuernberg), Pedro More
 
 <https://eprint.iacr.org/2018/472.pdf>
 
+<https://twitter.com/kanzure/status/1048476273259900928>
+
 This is joint work with my colleagues. I promise I will talk slower than the last talk. In a multi-hop network, the security tool is a hash-time lock contract (HTLC) where the payment is conditioned on revealing the pre-image of a hash function. This is pretty much the main setup for the lightning network today. You can chain multiple hash timelock contracts to chain payments into a multi-hop situation even in the presence of malicious intermediaries.
 
 We have looked at a novel wormhole attack. The idea is to exclude intermediate honest users from successful completion. Intermediaries in the path can collude and prevent honest users from successful completion of the path. They can steal the transaction fees from the honest users. This attack can be generalized. The same conditoin along the path enables this attack. More intermedaries, more benefits. This is important because fees are the basis for the payment channel networks.
