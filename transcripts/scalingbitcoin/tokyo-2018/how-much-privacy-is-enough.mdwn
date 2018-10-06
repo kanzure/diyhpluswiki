@@ -63,3 +63,7 @@ Customers can be tracked. Use of change transactions and outputs breaks the priv
 # If you do use decoy schemes
 
 These decoy schemes might be viable if there's a very large anonymity set with like 5 million origins instead of 5 origins. Also, the decoy sets have to substantially overlap across all recent transactions otherwies you get a repeated common origin problem or whatever. And finally, you have to sample the decoys very carefully. There's been a sequence of one or two papers that showed the distribution by which monero sampled their decoys didn't line up with the distribution by which real people spend their coins. There was a gap. This is now somewhat fixed. With overwhelming probability in an old version of monero, the last transaction was the real transaction. This is a hard problem to solve and I don't know how to do it. If you take this approach, you need to do rigorous analysis about how much privacy you are providing, and you need to carefully understand where things fail, and you need to acknowledge the limitations.
+
+# Scalability
+
+Use a zero-knowledge proof of inclusion of a coin in the utxo set like zerocash does, or use layer two scalability and do off-chain privacy stuff. That might work.
