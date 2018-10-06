@@ -40,5 +40,10 @@ One of the most simple turing-complete systems is rule 110 by Stephen Wolfram. I
 
 * "Universality in elementary cellular automata" <https://git.io/vj6ew>
 
+Use transaction chaining to share memory between the transactions. <https://git.io/vj6rX> This can be done with constant block validation time, with a relatively minimal scripting language. We're not doing much, but this allows for running arbitrary computations on the blockchain.
 
+# Is this practical?
 
+For even simple computations, rule 110 string could be billions and billions of bits... so it doesn't give you much, since you can't run large programs like that on the blockchain. And the programs can't run in any reasonable time. What I think is important to show is that this correspondence, this possible correspondence, to be set between input and output, the possibility to set conditions on outputs, dependent on input state, and also possibility to get it over the program itself... so we can, many, practical things, such as demurrage currency, crowdfunding, authenticated states, decentralized exchanges, oracles that authenticate the UTXO state, and so on.
+
+<https://github.com/ergoplatform/ergo/blob/master/papers/yellow>
