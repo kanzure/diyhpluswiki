@@ -4,6 +4,8 @@ Mustafa Al-Bassam (University College London)
 
 paper: <https://arxiv.org/pdf/1809.09044.pdf>
 
+<https://twitter.com/kanzure/status/1048446183004233731>
+
 # Introduction
 
 I am going to be talking about fraud proofs.  It allows lite clients to have a leve lof security of almost the level of a full node. Before I describe fraud proofs, how about we talk about motivations.
@@ -52,3 +54,36 @@ The fraud proof would now consist of this, the pre-state root for the transactio
 
 You don't have to include the state root after every transaction; this saves block space but the fraud proof gets bigger.
 
+# The data availability problem
+
+If the data isn't available, then the fraud proof can't be generated. You could use erasure coding to solve this. It's a technique that lets you take some number of pieces of data, extend it to 2x the size, doubling the data, and then if you lose some parts of the data, then you can recover the whole data from some subset number of pieces, and in fact the pieces don't need to be consecutive parts of the data. It doesn't matter the ordering of the pieces, as long as you have the right number of them.
+
+# Naive data availability scheme
+
+You might require a miner to commit with the merkle root of the erasure coded version of the block data. If you do that, it means that for the miner to hide any piece of the block, they have to hide half of the block. Because if they hide just one piece here, then that piece can be recovered from the rest of the pieces. However, if they hide a bit more than half of the data, then the block cannot be recovered. Using this, you can build a sampling based availability scheme. It's no longer 100% availability problem, now it's a 50% availability problem. A client can randomly sample different pieces of the block. If you assume the miner has hidden 50% of the block or slightly more because they don't want the block data to be recovered, then there's a chance that the client will land on an unavailable piece, then the block is rejected. Clients would then gossip pieces to full nodes for recovery of the data.
+
+The problem is what happens if the miner incorrectly generates the erasure code? You have no way of recovering the data. The lite client would have to download the entire block and re-generate the erasure code to see if it's correct or not, but that's going back to square one. We want lite clients to not have to download the full block.
+
+# Multidimensional erasure coding
+
+Here, we're using three-dimensional erasure coding for simplicity but you could take it to higher dimensions. So if you use this, you have the original-- you have ot arrange all of the original data in the block into a square, and then you extend that data, and extend the square.... these columns and rows are extended individually using the erasure coding.  The fraud proof would be limited to a column or row. If any row or column is incorrectly generated, a fraud proof that the code is incorrectly generated is limited to that specific row or column, that's O(sqrt(blocksize)). Miner has to hide roughly 25% of the square to hide any pieces.
+
+What is the probability of a client landing on at least one of the available piece if the miner has hidden 25% of the square (if sampling without replacement)? 60% after 3 samplings; 99% after 15 samplings. After 15 samplings, there's only a 1% chance that the miner can fool a user into thinking that a block is available when it's unavailable. On average, miners would have to do 100x more PoW in order to generate that invalid block. But you could also have a high probability if you do more samplings.
+
+# Selective releasing of pieces
+
+What if a miner only releases pieces as clients ask for them? Remember, the moment that a miner releases 25% of the square, then a full node can recover the whole data. A miner might want to fool as many clients as possible without releasing 25% of the square. So they might want to release just under 25% of the square. What that would mean is that the miner could always pass the sampling challenge the first couple of hundred or thousand of lite clients. The exact number of that depends on ohw many samples each client makes... the exact number of how many clients can be fooled depends on how many samples they make each (s) and how wide the square (k), and whether the miner doesn't drop the connection to many of the connecting nodes that are making these sampling requests.
+
+# Preventing selective releasing of pieces
+
+We can prevent this by assuming an enhanced network model. Clients send requests anonymously. The order in which requests are received by the network are uniformly random (clients sampled are interleaved). For example, using a mixnet. This would mean that a miner would have the same probability of fooling all client,s including the first ones to ask for samples. The requests are unlinkable to the clients.
+
+# Block validity security assumptions comparison
+
+Let's compare the scheme to the assumptions that SPV nodes and full nodes make. An SPV client assumes 51% of the hashrate is being honest. SPV clients with fraud proofs ohave to assume there's at least one honest full node in connected network graph, that the maximum network delay to receive proofs (e.g. 5 minutes), and a minimum number of lite clients (few hundreds).
+
+# Conclusions
+
+It's quite efficient in the space, a state fraud proof would be quite small. Our computations are also efficient, taking a few milliseconds. The link to the full paper is here. I'll take questions now, thank you.
+
+<https://github.com/musalbas/smt>
