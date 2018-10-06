@@ -1,0 +1,37 @@
+Playing with fire: Adjusting bitcoin's block subsidy
+
+Anthony Towns (ajtowns)
+
+# Introduction
+
+First an apology about the title. I saw some comments on twitter after the talk was announced and they were speculating that I was going to break the 21 million coin limit. But that's not the case. Rusty has a civil war thesis: the third era will start with the civil war, the mathematics of this situation seem einevitable. As the miners and businesses with large transaction volume will both decide to reintroduce inflation so that you don't have to pay fees, fees just magically happen. And if you want to increase the subsidy limit, that will involve a fight. This is not a pro-inflation talk. This idea is not endorsed by Xapo, my employer. The fact that I work for a company involved in the 2x nonsense, I hope that will not taint the interpretation of this. I send patches to Bitcoin Core, but Bitcoin Core doesn't endorse this or anything else. And this idea is also not endorsed by me, and I would just like people to think about it.
+
+# Does bitcoin use too much energy?
+
+I don't want to get into flame wars, so I'm going to talk about bitcoin using too much energy.... subsidizing blocks with brand new money has two benefits: (1) a decentralized initial distribution of the currency vs a pre-mine or an auction, and this is much more fair than the alternatives. (2) Subsidizing payment for proof-of-work security vs transaction fees. These days, the main reason for the subsidy is that we're subsidizing the proof-of-work security and the prevention of reorgs and double spends.
+
+When people say that bitcoin uses too much energy, that's like people saying that as far as proof-of-work is concerned, bitcoin is too secure. By saying bitcoin should use less energy, you're basically saying that you want bitcoin to be less secure. That's what you're saying. If you want it to be less secure, you have to say I'm going to be taking more risk, is that going to be a visible amount of risk, or absolutely trivial?
+
+Why might you even think bitcoin uses too much energy? Let's turn to anecdotes and random stories that people have. The mainstream media pays attention to how much energy is getting used and people get concerned about that. Is that a strong indication of a problem, or is it just journalists making scary stories to get clicks? Another factor is that if you look at the bitcoin industry, a lot of the profits are made by mining hardware manufacturers. Is that because there's a lot of money going into it, or because it's a real essential value add?
+
+Over the past 8 months, while the bitcoin price has decreased from $20k to $6k, we have had a 7x increase in difficulty. Does a 7x increase in PoW indicate a "bear market"? If the price is flat, there's no huge investment going into bitcoin, then why is the security going up?
+
+Another factor is that blockchains with smaller PoW are not getting attacked. Why are we spending so much on PoW if the small ones aren't getting attacked? Some of them are getting attacked, but not all of them. Not even testnet is being constnatly attacked; Bitcoin Gold got attacked. It's not as trivial as testnet, but it's still significantly smaller than bitcoin.
+
+# Maths
+
+Can we analyze this in some objective way? Anecdotes are okay for getting introduced to the idea, but at an academic conference we would like to be more objective. The way to measure this might be the hashrate or the difficulty score, or electricity in kWh/year or gigawatts, or in the value or money measured in US dollars or real dollar terms. I am going to be using US dollars for this, not bitcoin or yen or Argentinian whatever. The idea behind US dollars is that the inflation level in real-terms is relatively constant.
+
+Here is the bitcoin difficulty graph on a difficulty axis. It goes up. There's not much else you can say from it. Here's a log graph of the block subsidy on a log graph. You can see the drop at the first halvening here, and the drop at the second halvening here. Otherwise you see huge peaks as the market price goes up and down. The problem with this is is that it tells us what you're paying for, but not what you get in terms of security. The spikes upwards are miners getting free profits.
+
+I like to look at hashrate vs value, an objective graph of the difficulty, the price and the reward schedule to say how many dollars of revenue does a miner get per terahash of hashrate. On a log scale, again, it gives a graph like this. Because miners get more efficient, the number terahashes you can do per dollar goes up over time. It's one of those graphs that goes up and towards the right. You can counter this by looking at the performance of individual miner hardware. As new mining hardware gets released, the amount of hashing you have to do to get one dollar of revenue still keeps going up. The nice thing about this graph is objective, it's not about speculating about what miners have deployed. All the numbers are objective from public data.
+
+ONe of the nice things from that graph is that you can see that as the economic theory says, that miners will essentially eat away at their own profits. If there's more money to be made from mining then they will do more mining until there's no more to be done. The rates for kWh there was $0.16 each. That might seem expensive, but the fact is that, it includes opex costs (cooling, staffing, etc) and capex not just opex, and it includes expected profits, and it needs to cover risk that difficulty will rise faster than expected, and mining isn't a completely efficient market. My guess is that the breakdown is 4c is electricity only, the rest on the slide.
+
+# Predictions
+
+From that structured analysis, can we make predictions? We need to make assumptions about the market price, miner efficiency, and electricity costs. My assumptions on market price, take them for what you will. I will assume that bitcoin is going to succeed and will scale up. I'm trying to be as conservative as possible, which is really not very conservative. I've done a log-log curve fit as a low support of prices. It still gives pretty high valuations, maybe they are lower than what you expect, maybe they are not. In particular, the current value is much lower than the current.....
+
+
+
+
