@@ -6,6 +6,8 @@ paper: <http://freico.in/forward-blocks-scalingbitcoin-paper.pdf>
 
 slides: <http://freico.in/forward-blocks-scalingbitcoin-slides.pdf>
 
+<https://twitter.com/kanzure/status/1048416249791668225>
+
 # Introduction
 
 I know that we're running late in this session so I'll try to keep this fast and get everyone to lunch. I have presented at Scaling Bitcoin four times now so I won't dwell on the introduction. I wanted to talk about scaling bitcoin directly on chain in a way that is compatible with all existing node deployments.
@@ -86,7 +88,13 @@ I am going to skip these last two slides, which show how to use the coinbase pay
 
 # Q&A
 
+Q: What is the sharding?
 
+A: In my shards, transactions only source inputs from one shard. Each shard is a separate consensus system. There's a mechanism for moving value between shards.
+
+Q: Are these the same miners?
+
+A: It has to be separate proofs-of-work for each shards. With traditional merged-mining, if you find a block it satsifies the others. You can reuse the haswork of a miner, but maybe it only solves for one shard but not another. Come find me at lunch.
 
 
 
