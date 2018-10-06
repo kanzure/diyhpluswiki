@@ -1,0 +1,54 @@
+Improving SPV client validation and security with fraud proofs
+
+Mustafa Al-Bassam (University College London)
+
+paper: <https://arxiv.org/pdf/1809.09044.pdf>
+
+# Introduction
+
+I am going to be talking about fraud proofs.  It allows lite clients to have a leve lof security of almost the level of a full node. Before I describe fraud proofs, how about we talk about motivations.
+
+# Motivations
+
+There's a large tradeoff between blockchain decentralization and how much on-chain throughput you can get. The more transactions you have on the chain, the more resources you need to validate the chain. If the blockchain is fast becoming big, then in theory more users will want SPV nodes or lite clients. I use the terms interchangeably. Instead of running full nodes.
+
+The problem with SPV nodes is that they will gladly accept invalid blocks from miners. They just check the accumulated PoW rule and they do nothing to validate that the transactions in the block are valid. They make a very large assumption that the majority of the consensus is honest. This is different from how full nodes work in bitcoin. If everyone was running an SPV node instead of a full node, then malicious miners could collude together to create money out of thin air. The only thing that the 51% attack can do right now is double spend transactions; they can't insert invalid transactions at the moment. But with SPV clients only, then they would be able to do that.
+
+How could we make it possible for these non-fully-validating nodes, these SPV nodes, to reject invalid blocks so that we don't have to trust miners? That's essentially what fraud proofs aim to do.
+
+# Fraud proofs
+
+This talk is based on the fraud proofs paper we released last week. This is a joint project with Vitalik and some other coauthors. The basic idea of fraud proofs is that you have a lite client and a full node and SPV nodes only download the block headers of the blockchain, they don't download transaction data except merkle proofs of certain transactions relevant to them. Full nodes download everything.
+
+With a fraud proof system, if a full node downloads a block and detects an invalid transaction, they could in theory send a proof to that SPV node that the block has an invalid transaction and then the SPV node could verify the proof and reject that block permanently. The problem with this is what if the miner only sends the blockheaders to the SPV client but doesn't actually publish the transaction data? In that case, it would be impossible for the full node to generate a fraud proof that the transactions are invalid because they don't know what the transactions are. You can end up in a situation where SPV nodes are accepting invalid blocks because nobody can generate a fraud proof for them.
+
+# Earlier discussions on fraud proofs
+
+The original bitcoin whitepaper briefly mentions the concept of "alerts" or fraud proofs. The idea of "alerts" (separate from the alert system) is that nodes could send warnings to SPV nodes that some block is invalid and this would prompt the SPV client to re-download the entire block and validate the transactions. In practice, this doesn't work because a full node could tell the SPV node to download all the blocks and you would have no way to find out if it is valid or not without downloading the blocks yourself and checking. In the worst case scneario, the efficiency of running this kind of SPV node requires the same kind of resources as running a full node.
+
+gmaxwell and petertodd have take nthis idea further by proposing "compact fraud proofs" where you wouldn't just alert lite clients about invalidity, but you would also prove that it's invalid and then you verify the proof. However, this requires a different fraud proof for each of the different ways to violate bitcoin rules. One fraud proof type for double spending, and one for block size, and so on.
+
+We are going to simplify this down to all one fraud proofs.
+
+gmaxwell has also discussed on IRC using erasure coding for data avialability with a scheme using "designated source" with PoW rate-limiting. His scheme relies on a designated source and rate limiting.
+
+# Generalizing the blockchain as a state transition system
+
+Let's talk about creating a fraud proof of the system with a single fraud proof. W eneed to generalize the blockchain as a state transition system. Every single transaction in the blockchain basically just reads or modifies the state of the blockchain. We have this state transition function. It takes the current state of the blockchain and the transaction you want to apply, and it retunrs a new state or if the transaction is invalid then it returns an error.
+
+Our goal is to find a way to prove these invalid state transitions to lite clients. We need a way to represent efficiently the entire status of the blockchain as a merkle root in a merkle tree. We could store this as a key-value store. If we imagine this store state as a key-value store, in the case of bitcoin, all the keys would be basically UTXO ids. But all the values would be a boolean that represents if the transaction is unspent or otherwise, or if it doesn't exist or is already spent. We also need non-membership proofs so tha tyou can prove that some UTXO does not exist in the state.
+
+# Representing the entire state as a merkle root using a sparse merkle tree
+
+We can use a sparse merkle tree to do this, which is all the rage lately. A sprase merkle tree is a merkle tree with an insanely large number of leaves. If you want to be able to represent every possible sha256 hash as a key, then this sparse merkle tree would need 2^256 leaves. And you might be wondering how is that possible to generate that? And it turns out it's quick to generate that because the vast majority of the leaves in this tree will be basically be 0, which is the default value in the tree. Because of the vast majority of the leaves in the tree are 0, then that means the vast majority of intermediate nodes in the tree will also be zero. You don't need to recompute every node in the tree; you already know the vast majority of the leafs in the tree will be zero. Merkle proofs will be O(log(n)) like in a regular merkle tree. To access key K in the tree, you access the Hash(K)th item.
+
+We can thus represent the entire state of the blockchain as a single merkle root, including all UTXOs. You can append this merkle root to the end of each block. A sparse mekrle tree is not the only way to represent a key-value store, you could also use a patricia tree.
+
+Now that we have the merkle root as a state, you could imagine the blockchain as a state root transition system. Instead of transitioning the state, you transition the merkle root of the state. You redefine the transition function and create a transitionRoot function that takes stateRoot, transaction and witness as inputs to this new function. It will take in some transaction and also witnesses, and returns the new state tree of the blockchain or an error. A witness of a transaction is simply the set of the mekrle proofs for the state root of the block that basically shows you all the parts of the state that the transaction accesses or reads. Using these witnesses, you can recompute the entire state root of the tree. All you need are the merkle proofs of the parts of the state that the transaction accesses, and you can figure out the new merkle root if you only modify that part of the tree. This allows you to find out the new state of the blockchain without requiring the entire state of the blockchain.
+
+What we can do with this is that we can do an execution trace in every block. We need to include the post-state root of the transactions in the block (every few transactions). W einclude the new state root after every single transition in the block. If you execute the transactions each, we can include the state root after every single transaction. This gives you an execution trace of the block. You don't actually have to include it after every transaction, you could also do it after every few transactions if you want to.
+
+The fraud proof would now consist of this, the pre-state root for the transaction, the transaction itself, the state root, all of the merkle proofs for the witnesses, and the transaction itself, and a few other itesm. A full node would send a lite client all of this data and that lite client can execute this function and if it finds out that after executing this state transition function is different from the per-state root in the block, then this means the fraud proof is correct and the block can be rejected.
+
+You don't have to include the state root after every transaction; this saves block space but the fraud proof gets bigger.
+
