@@ -96,5 +96,6 @@ Q: Are these the same miners?
 
 A: It has to be separate proofs-of-work for each shards. With traditional merged-mining, if you find a block it satsifies the others. You can reuse the haswork of a miner, but maybe it only solves for one shard but not another. Come find me at lunch.
 
+Q: Does a soft-fork to fix the timewarp bug kill this proposal?
 
-
+A: I had a discussion about fixing this off list, because there were exploits mentioned in that discussion. But it depends on what the soft-fork really does. In the timewarp domain, you limit how much you do in that. I had the flexcap gain limited to something like no more than 17% per period. You can do that kind of limitation in the timewarp bug fix. If you fix the timewarp bug in that way, then this would still work.
