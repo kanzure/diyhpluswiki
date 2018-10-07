@@ -4,7 +4,9 @@ Eleftherios Kokoris-Kogias, Philipp Jovanovic, Linus Gasser, Nicolas Gailly, Ewa
 
 (LefKok)
 
-<https://eprint.iacr.org/2017/406.pdf>
+paper: <https://eprint.iacr.org/2017/406.pdf>
+
+<https://twitter.com/kanzure/status/1048733316839432192>
 
 # Introduction
 
@@ -54,4 +56,12 @@ We want to decrease the latency, and there's a latency vs throughput tradeoff. W
 
 We construct two kinds of shards, there are shards that are small and some are insecure.. the client contacts those shards and accesses those value. You can either say that's fine for me my transaction is not important, or wait for a second layer of shards, which is actually big and tends to be secure probabilistically.  Optimistically-validated blocks.. this means that they are going to ... any .. that happen during validation, on the order of something like 1 minute. They have 1 minute to attack the small shards; but how much damage can they do? The client might decide optimistic validation is good enough. Only the final block is actually appended... the small blocks are just there for the clients to use if they want to go more quickly.
 
+# Evaluation
 
+We get the scale-out property. On throughput, we looked at the regular omniledger and also trust-but-verify omniledger. These results are for 1800 validators. Transaction confirmation latency in seconds for regular and multi-level validation (table).
+
+# Conclusion
+
+Omniledger allows for secure scale-out distributed ledger framework. We have a few modules including atomix for cross-shard transactions, byzcoinx is a robust intra-shard BFT consensus algorithm which could be deployed without sharding. We can get visa-level throughput and beyond. The trust-but-verify validation has no latency vs throughput tradeoff.
+
+<https://github.com/dedis>
