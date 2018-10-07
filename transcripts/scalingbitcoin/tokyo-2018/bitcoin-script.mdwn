@@ -90,6 +90,12 @@ Also in sighash flags, being able to fully merkleize a transaction so that you c
 
 Merkleized txid stuff was considered for segwit but there was some patent or something that threw them off? In coinjoin things like 100-of-100, you could do the entire thing, it would be interesting to show this script was included in the chain and that's all you need to know. Maybe we can still do it?
 
+With NOINPUT, you could-- spends from outputs... it only matters when you're spending. What you would do is say this is an address, any time funds get spent to that address, here's a redemption path that goes to some other destination. NOINPUT is not replay safe, they are automatically playable by anyone in the network. It requires a second transaction - wihch a lot of exchanges do anyway. That NOINPUT already exists in the chain because the availability is that as long as you have the blockchain you have that NOINPUT, so it's a forwarding address. Then maybe you can deactivate it through something with time, and maybe only reveal it if you want to keep that one fresh, then you throw them away when you have a new redemption path and that will still be just as good. This lets you emulate some account-like features. It's good for lightning or eltoo because it gets much closer to how lightning is being imploemented for account-based models where you use sequence numbers. You don't sign the output value, it's a complete forward to the new address.
+
+We should have a way of committing fee, and have something where the amount to an output is not signed so that you can say anything that is not in the committed fee goes to the "default" output. Now you have explicit fees. You're signing the fees. An output that is the default; the last output receives anything above that fee amount. This allows you to have a forwarding address based on NOINPUT. Always send any incoming funds to the new address. Would also help with watchtower stuff; if the output value is signed, you could in theory have a single NOINPUT signature that covers all of them, and need a single signature for all the watchtower storage, but they all have different output values, you can't really do that - but if you do that more explicitly then maybe that's explicit.
+
+Explicit fee could be a 2019 soft-fork.
+
 # Stack manipulation
 
 What does everyone think about in a new segwit version doing an append-only stack and then pointer regressive stuff? You could just jump address wise in the stack? No, stacks are harder to analyze. This is the witness, I'm pulling out the 5th thing in the witness data.
@@ -137,6 +143,8 @@ What are the smallest tiniest soft-forks you could do to test the waters?
 The only people who have comfort with soft-forks are unlikely to propose a soft-fork and produce software that would be adopted. People are going to fight anything that adds anything, especially considering the recent CVE. People are going to be for the next 6 months significantly more conservative. It's going to be another 6 months before people are even thinking about it. I don't think we're going to get any new soft-forks in the next year.
 
 Fixing timewarp as a soft-fork could get done in 2019. There could be consensus to do that. But should we? Timewarp bug existing might be okay. And maaku has found some interesting things in there to do with that.
+
+Explicit fee could be a 2019 soft-fork.
 
 # Sidechains
 
