@@ -2,6 +2,8 @@ The state of atomic swaps
 
 Thomas Eizinger, Lloyd Fournier and Phillip Hoenisch (CoBlox)
 
+<https://twitter.com/kanzure/status/1048790167283068929>
+
 # History
 
 This should be easy to follow. I want to start off with some history. The first mention of atomic swap concepts was in 2013 in a bitcointalk.org thread where people were wondering how to exchange coins between independent ledgers in a trustless way. There were a few comments on the thread every now and then asking has anyone implemented this. It was quiet until last year when people started doing atomic swaps last year. Lightning Labs did one for bitcoin-litecoin, and then there were some for bitcoin-ethereum, bitcoin-dogecoin, all kinds of things.
@@ -66,9 +68,12 @@ How to do scriptless scripts across curves? <https://diyhpl.us/wiki/transcripts/
 
 How can we uniquely attribute fault if we're in a multi-hop payment channel? This might seem like a big jump from doing all this on-chain stuff and then talking about payment channels, but really all this atomic swap stuff works in payment channels in the lightning network.
 
+How can we construct HTLCs or conditional payments in general without knowing the recipient upfront? What do we need for an HTLC or a conditional payment? It's a redeem address, a refund address, a timeout and a hash. The pubkey hash of whoever can take the money in the success case, and the one for the timelock case, and then the actual timelock and then the hash. The last three parts can actually be chosen by whoever constructs the conditional payment. But the redeem address needs to be constructed by whoever wants to receive the money. If we can somehow get rid of the redeem address, then we can get rid of a communication step between the two parties that want to do an atomic swap. Because then by removing that, you can just send this out there, and people can send an offer for atomic swaps for the conditional payment, and would you sell me this secret? You could build a whole market on selling secrets, it would be easy to build a decentralized exchange on top of this if we could figure out how to make a conditional payment that doesn't need the redeem address upfront but still guarantees only one person can receive it. If you take out the pubkey check in the first branch, then miners would figure out you can just take the money and forward it to myself. It's not as simple as just taking out the variable.
 
+# References
 
-
-
-
-
+* <https://diyhpl.us/wiki/transcripts/bitcoin-core-dev-tech/2018-03-05-cross-curve-atomic-swaps/>
+* <http://diyhpl.us/wiki/transcripts/scalingbitcoin/tokyo-2018/edgedevplusplus/cross-chain-swaps/>
+* <http://diyhpl.us/wiki/transcripts/building-on-bitcoin/2018/blind-signatures-and-scriptless-scripts/>
+* <https://diyhpl.us/wiki/transcripts/realworldcrypto/2018/mimblewimble-and-scriptless-scripts/>
+* zero-knowledge contingent payments: <https://bitcoincore.org/en/2016/02/26/zero-knowledge-contingent-payments-announcement/>
