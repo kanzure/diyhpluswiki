@@ -163,3 +163,18 @@ OP\_PUSHTXDATA was jl2012. You can push transactions into the stack. You can do 
 BitML compiles down to a set of transactions. It was a calculus bitcoin script, a functional language. You could specify like a revocation clause and a nested thing, like a second-level HTLC and it would output the entire transaction tree for you to sign. You could make a turing-complete bitcoin by turning bitcoin transactions into turing complete. The next step would be to take BitML and generate the daemon, output some protobufs, compile it into something, then boom you have a full-stack actual execution code of sets of bitcoin transactions.
 
 Zero-knowledge protocols that get compiled to a set of bitcoin transactions based on knowledge exchange.
+
+# Spork
+
+Probabilistic soft-fork where instead of you doing versionbits, you say that if the blockhash has some additional PoW below some threshold, then it activates. Then if the miner doesn't want to activate the fork then they have to abandon their block. The cool thing is that if you set it to 6 months, you'll always have an expectation of 6 months, but it could happen at any time. You could set a minimum like at least 3 months, then you have an expectation of 6 months to get your shit together. Doing it live. You do actually want people to be ready to process those transactions before any known point. This is only for soft-forks, not hard-forks.
+
+# Takeaways
+
+Sigops are dumb. We need to somehow figure out a way to optimize that.
+
+MAST and graftroot is dope. It's generally accepted as dope.
+
+Covenants are also dope and maybe some simple soft-forks might come in 2019 but not holding our breath. Committed fees or maybe timewarp fix. Explicit fee falls under restricted endorsement. Should you commit to an explicit fee rate, or an explicit fee? In the case of watchtowers, if you have 10 possible inputs and any of them could be spent in any combinations, so you have n^n possibilities... so fee rate would be better, but explicit fee would be more difficult. But fee rate would have malleability problems, like if someone adds something to your witnesses which are very big, and witnesses are actually malleable. The revocation case for the HLTC commitment takes any and all data, as proposed by Nicolas Dorier. Someone could put tons of garbage there but it would make their fee per byte really small. This would reuqire them to intercept the transaction broadcast and then do their manipulation. Every input could specify the fee they agree to pay, so it would be fee isolation. If you guess too much fee or something, then you need a default output where all the excess fees must go to that output. If the fee becomes an explicit output, and the inputs and outputs don't add up, then where should the fee go? Should it go to the default output. The output could be implicit, it could be committed to, but not in the transaction-- this would be a hard-fork. It can go in the coinbase transaction, actually. If you make it so that it goes into the coinbase transaction outputs then that would be one way to make it work, and then you could get all the fresh coins you want, you could get fresh coins from the coinbase. 600000 is the blockheight for the activation of the explicit fee soft-fork. Or the next halvening. This could be 666666 and be the evil soft-fork.
+
+
+
