@@ -51,3 +51,7 @@ We wanted to use this idea in our protocol, but the problem we had is that we ca
 # Trust-but-verify transaction validation
 
 We want to decrease the latency, and there's a latency vs throughput tradeoff. We give the client the option of lowering his security in order to get higher throughput and lower latency. This is only an option for the client. It's like the first layer of validation in bitcoin.
+
+We construct two kinds of shards, there are shards that are small and some are insecure.. the client contacts those shards and accesses those value. You can either say that's fine for me my transaction is not important, or wait for a second layer of shards, which is actually big and tends to be secure probabilistically.  Optimistically-validated blocks.. this means that they are going to ... any .. that happen during validation, on the order of something like 1 minute. They have 1 minute to attack the small shards; but how much damage can they do? The client might decide optimistic validation is good enough. Only the final block is actually appended... the small blocks are just there for the clients to use if they want to go more quickly.
+
+
