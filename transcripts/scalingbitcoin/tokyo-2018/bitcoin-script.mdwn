@@ -145,3 +145,11 @@ I would prefer sidechains with miners instead of federated multisig. Otherwise y
 The custodial agents could be a separate federation from whatever the implementation of the transaction validation federation. There's some flexibility that might be possible here.
 
 With the Sztorc stuff the withdrawals take multiple months, you could rescue coins with UASF in the event of a failure. UASF is the rescue plan, but the bitcoin users have to agree and do it. And they have to understand the nature of the dispute and have to do it timely; is it likely? or will it enforce a trend of miners doing nasty things? The idea of a sidechain was that it was supposed to be isolated.
+
+# OP\_PUSHTXDATA
+
+OP\_PUSHTXDATA was jl2012. You can push transactions into the stack. You can do opcodes to verify that, you can do vaults and pattern match over the structure of the transaction itself, which allows for covenants. You can restrict what the inputs did, and also reverse covenants. Chain.com did the stack-based way which was really sick. They also had pattern matching on the inputs as well, but nobody used that. jl2012 has the stack-based ones specified pretty well and they are pretty ideal. Do you allow the transaction only, the block, multiple transactions, previous transactions, transaction chains, the entire chain?
+
+# Languages
+
+BitML compiles down to a set of transactions. It was a calculus bitcoin script, a functional language. You could specify like a revocation clause and a nested thing, like a second-level HTLC and it would output the entire transaction tree for you to sign. You could make a turing-complete bitcoin by turning bitcoin transactions into turing complete. The next step would be to take BitML and generate the daemon, output some protobufs, compile it into something, then boom you have a full-stack actual execution code of sets of bitcoin transactions.
