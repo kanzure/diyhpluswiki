@@ -1,0 +1,74 @@
+The state of atomic swaps
+
+Thomas Eizinger, Lloyd Fournier and Phillip Hoenisch (CoBlox)
+
+# History
+
+This should be easy to follow. I want to start off with some history. The first mention of atomic swap concepts was in 2013 in a bitcointalk.org thread where people were wondering how to exchange coins between independent ledgers in a trustless way. There were a few comments on the thread every now and then asking has anyone implemented this. It was quiet until last year when people started doing atomic swaps last year. Lightning Labs did one for bitcoin-litecoin, and then there were some for bitcoin-ethereum, bitcoin-dogecoin, all kinds of things.
+
+# Why do I care?
+
+My name is Thomas Eizinger. I am based in Sydney. We are building the COMIT protocol, a decentralized protocol aiming to connect blockchains together. We chain up atomic swaps together because they are all linked together we can trustlessly exchange funds across multiple chains.
+
+# Conditional transfers
+
+The main building block for atomic swaps are hash-time-lock contracts (HTLCs). It's not the abstraction we should be talking about. Instead, we should talk about conditional transfers. We need a secret and a timeout to get the funds back when we don't want to reveal the secret. There are two major ways to achieve this- by using scripting languages like bitcoin script, or we could use "scriptless scripts" created by Andrew Peolstra which use adaptor signatures and transient private keys. I am sure we will see other ways to do conditional transfers.
+
+# HTLCs
+
+Here is a bitcoin script for an HTLC. It uses OP\_SHA256 and it checks whether the hash matches the expected hash. Everything after that is just a regular p2pkh transaction where you compare to a pubkeyhash and verify the signature at the end.
+
+# Atomic swaps
+
+How do atomic swaps work? We need four transactions, and 2 conditional payments. This is what it looks like. There's Alice and Bob and two separate ledgers like bitcoin and litecoin. Alice sends an HTLC that pays Bob. In bitcoin script, she puts one of those scripts, puts in Bob's pubkeyhash, she computes a secret and keeps it secret, hashes it, puts the hash into the script, then spends money to that address. Bob does the same thing, using the same hash that Alice used, but puts in a different pubkeyhash and pays Alice on the other chain. Alice sees this, takes the secret, redeems the money on the other chain, and by redeeming it she reveals the script and the secret and now Bob can redeem the coins on the other chain.
+
+# Optionality
+
+This is an unfair protocol: the problem is that if Alice is a greedy person, and Alice monitors the LTC:BTC exchange ratio, then she could just wait for the timeout of her HTLC and then take her money back. We have some money locked up on both chains. There's an exchange rate, and it can't change because it's on the blockchain. There might be a timeout of like 6 hours, and the actual exchange rate that you could get at a centralized custodial exchange might be quite different and maybe Alice wants to use that instead of continuing with the established atomic swap.
+
+Technically, Alice has an option that she didn't pay for. It's this freedom of deciding whether to take it in. In this case, Alice gets an option she didn't pay for.
+
+# Fixing the atomic swap protocol
+
+First we have to attribute the fault, then we introduce punishment into the protocol. There's a uniquely attributable fault that is important: if we want to punish someone, we want to be certain we're punishing the right person. We want to be sure that we can uniquely and with certainty identify the player we want to punish. In this case it's easy because Alice didn't release the secret, so we know we should punish Alice. Thankfully we're already in a system dealing with money. We could get Alice to lose something and this is how we could punish her. On which chain can we punish Alice? If this step doesn't happen, can we tell on the bitcoin chain whether the step has happened? The two chains are independent of each other, so we can't punish Alice for something she didn't do on the litecoin chain on the bitcoin chain. We need to take away some collateral from her if she didn't behave in the right way.
+
+# Atomic swap revision 1 with fairness
+
+What's the difference between revision 0 and 1? What we introduce is a second HTLC or a conditional payment where Alice instead of sending the HTLC that pays Bob on the bitcoin chain, she puts up collateral on the litecoin chain and she gets it back if she redeems the money.
+
+# Collateral design
+
+The collateral is a conditional payment, it uses the same preimage and hash she used in the other HTLC except the payout paths are reversed. In the case that the secret is presented, the money goes to Alice, and in the case the timeout is activated, the money goes to Bob. If Alice tries to wait until the timelock passes, the collateral goes to Bob. Alice is now incentivized to reveal the preimage to Bob. Now they no longer have to trust Alice to actually go through with the whole thing.
+
+But now Alice has to trust Bob, which is bad. Why does Alice have to trust Bob? If you look at the diagram, who forces Bob to do anything in this protocol? Bob could just wait for the timeout and then get free money. Who doesn't want free money? This is also not ideal.
+
+# Atomic swap revision 2 with fairness
+
+We introduce another tweak. What we actually want to achieve is that we want Alice to be able to take her collateral back but only as long as Bob didn't commit to the whole thing. For this, these two payments need to be in the same transaction. This could look like this: Alice sends an HTLC that pays Bob through the bitcoin chain, then she constructs a transaction that puts in her collateral, has an output that should be the sum of whatever Bob is willing to pay plus her collateral, she partially signs it then sends it to Bob, then Bob adds his funds, and then he sends it to the chain.
+
+Bob is now guaranteed that he has this transaction on his machine and he can add an output and an input at any time. If he sends it to the chain, then Alice is incentivized to take it out and thereby Bob gets his secret which is in the end what he wants. Alice can cancel the whole thing by spending the output somewhere else. As long as Bob didn't put it on the chain, it's not yet there. If Bob waits too long, Alice just spends it somewhere else. If Bob tries to include it, then it's rejected by the network as a double spend.
+
+# But we have lightning network!
+
+It's not quite true that LN solves this. You might argue the optionality exists because there's a six hour difference between the time the transaction gets into the chain and the time you have to refund it because of the timeout part. It's not effected by fast or slow transactions, it's caused by the underlying protocol being unfair. If the incentives don't match up, then no matter how fast your protocol, you could always delay revealing the secret and this delay in revealing the secret introduces this optionality.
+
+# Privacy
+
+Now that we have fair atomic swaps, let's talk about privacy. How can we make atomic swaps private? We heard about this idea called scriptless scripts which uses signatures instead of hash functions and this makes it indistinguishable from other transactions on the chain. So how could we use this for atomic swaps?
+
+Alice and Bob start off with their respective keys and some secret that only Alice knows at the beginning. Alice computes an address that contains Bob's private key plus some value t. Alice can do this without knowing Bob's private key. Bob locks the fund in a multisignature where they need both private keys in order to redeem the money. At this stage, neither of them can spend this money because Alice doesn't know Bob's key so she can't redeem the money she has locked. Bob doesn't know t, so he can't spend that money, or Alice's private key. Neither of them can spend. How do we proceed? Bob creates an adaptor signature, a sort of partial signature on this thing, but designed in such a way that in order to make it a fully valid signature, Alice has to include the value t in the signature. Alice completes the signature but she gets a fully valid signature for this transaction. But she's forced to reveal t in this case. This makes it so that Bob is able to learn the value t afterwards, and now everyone can spend their funds.
+
+This has the same exact properties as an atomic swap with HTLCs. Alice starts with a secret that she only knows in the beginning, but she can't take Bob's money without atomically revealing her secret. This is the only property we care about in the beginning. Both parties can take their money back because they had pre-signed nlocktime transactions for each other before beginning.
+
+# Open research questions
+
+How to do scriptless scripts across curves? <https://diyhpl.us/wiki/transcripts/bitcoin-core-dev-tech/2018-03-05-cross-curve-atomic-swaps/> What about between different chains with different curves? Is there a way to construct the signatures in a way that we can use scriptless scripts to perform atomic swaps across chains and curves even if the curves are different curves? Also, monero doesn't have an nlocktime feature. But at least if we can do the conditional part then at least we're one-step closer to doing atomic swaps.
+
+How can we uniquely attribute fault if we're in a multi-hop payment channel? This might seem like a big jump from doing all this on-chain stuff and then talking about payment channels, but really all this atomic swap stuff works in payment channels in the lightning network.
+
+
+
+
+
+
+
