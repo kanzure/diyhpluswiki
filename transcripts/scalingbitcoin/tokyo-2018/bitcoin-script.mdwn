@@ -1,3 +1,4 @@
+Featuring roasbeef
 
 # Agenda
 
@@ -85,6 +86,10 @@ For SIGHASH\_NOINPUT, use "application-speicifc keypairs". If you don't know wha
 
 You can do restrictive endorsements with this too. You can dynamically specify later dynamic set of signers, then later check in the input which of the scripts. Pick whatever inputs you want from my set of these, and then use that to go pick one of them. In the script, you could restrict which inputs you're spending. If you have NOINPUT, then you produce the signature specifying that it is one of these 10 in that slot, then someone else specifies it's one of those 10, then it limits the transaction to only the intersection of those inputs which gives it some interesting new properties for replay protection and lottery protocols. You've signed 100 transactions with just 2 signatures.
 
+Also in sighash flags, being able to fully merkleize a transaction so that you can expose a small part of it. It wouldn't effect the txid, but it would effect the wtxid or whatever you would use to sign. But you could say, merkleize the outputs so that you can show one of the outputs is going to be the one you asked for. This would allow you to do blinding without additional crypto.
+
+Merkleized txid stuff was considered for segwit but there was some patent or something that threw them off? In coinjoin things like 100-of-100, you could do the entire thing, it would be interesting to show this script was included in the chain and that's all you need to know. Maybe we can still do it?
+
 # Stack manipulation
 
 What does everyone think about in a new segwit version doing an append-only stack and then pointer regressive stuff? You could just jump address wise in the stack? No, stacks are harder to analyze. This is the witness, I'm pulling out the 5th thing in the witness data.
@@ -103,10 +108,40 @@ We need a new fuzzer and randomize the script you're producing, fuzz it, and see
 
 Bitcoin script is really complicated. It's not strictly interpreted; it's parsed somehow, and then interpreted. Think about OP\_IF then OP\_PUSHDATA and then an ELSE branch... there's weird stuff there. The way branches are handled are weird. The way conditionals are handled is weird. It's written in a way we can reason about, but that's not how they work.
 
+# Merkleized abstract syntax tree (MAST)
+
+Taproot and graftroot gives you MAST. You might still want a MAST construct, because MAST inside taproot is very useful. They compose. Taproot is the probably the thing you do first because it has a bigger impact, but then you still want a MAST mechanism for other reasons. With MAST, you get a merkleized script. MAST seems way more powerful than just 1-of-n scripts. I thought it would be like branches with multiplication and addition or something, and other operations, not just hiding different multisig situations.
+
+BLS signatures would be killers. Non-interactive signature aggregation and cross-transaction and cross-block aggregation. I think someone is working on a BIP with that, for some new curve or something. They released a BLS library. The risk to introduce new signatures is pretty low; you opt-in to it, so you take on that risk of the new signature scheme. If you do a MAST, then you don't even need to reveal what that key is, and if the other keys break then you could go to ECDSA if the other schemes are broken, as long as it's already in your MAST.
+
 # New languages
 
+Simplicity?
 
+# RSA
 
+There's something like CL signatures.. it's a proof of a signature on a committed value. They are based on RSA too. At some point Satoshi used RSA-512 and then he realized that's dumb. Unfortunately there's a high computation cost for RSA signature verification. zcash has this thing where they track the worst case block they can produce... they had a fix for quadratic hashing.
 
+# Fun with blinding
 
+Before tumblebit, it was blind signature verification on script itself. Jonas Nick has a few things, like ecash things. Any protocol where you're doing an exchange. Oleg had a thing a while back where he had a protocol with multisig where you have someone sign a transaction on your behalf but they wouldn't know what it was. You could have blinded multisig where you trust them to do a signature but you don't know what you're signing.
 
+# 2019 soft-forks
+
+Schnorr, new segwit version, SIGHASH\_NOINPUT, and OP\_CHECKSIGFROMSTACK. These two are relatively small in line diff. Maybe activate late 2019, early 2020. We haven't tested the waters since the last drama. Schnorr is more straightforward to do than NOINPUT. In terms of the behavior of the system changing, Schnorr changes the behaviorf of the system relatively minimally, and NOINPUT introduces tons of new functionality. In terms of review, it's easier to review NOINPUT. These two opcodes offer a lot of fungibility risk unfortunately. It's not just "don't accept those coins" but think about getting paid or a normal economy or think about where your dollars came from; every dollar is covered with cocaine, and eventually you're mixed with everything. That's the fungibility problem: if you have a weird condition, then your coins are going to be imposed by those conditions whether in a reorg or something. I'm personally okay with that but folks like Greg are vehemently opposed to that. It's like, buy coinbase outputs at that point. It's very old coinbase outputs that are non-fungible because they are worth a lot more than other coins that are spent in any other transaction.  It depends on how binding the covenants are. There would be a market for virgin unencumbered coins at this point.
+
+The low-s soft-fork... that one cannot be done. That's impossible, that's a hard-fork. That could break coins. That's an absolute no. Any transaction ever created that is valid, is still valid, except for the hard-fork to remove OP\_XOR or whatever.
+
+What are the smallest tiniest soft-forks you could do to test the waters?
+
+The only people who have comfort with soft-forks are unlikely to propose a soft-fork and produce software that would be adopted. People are going to fight anything that adds anything, especially considering the recent CVE. People are going to be for the next 6 months significantly more conservative. It's going to be another 6 months before people are even thinking about it. I don't think we're going to get any new soft-forks in the next year.
+
+Fixing timewarp as a soft-fork could get done in 2019. There could be consensus to do that. But should we? Timewarp bug existing might be okay. And maaku has found some interesting things in there to do with that.
+
+# Sidechains
+
+I would prefer sidechains with miners instead of federated multisig. Otherwise you're going to have frozen keys or confiscation. Once you have sidechains, then you're done and don't need further upgrades. Anything cool can go into new sidechains. Paul Sztorc has his recent drivechains, there's RSK, then there's Elements and the federated multisig approach.
+
+The custodial agents could be a separate federation from whatever the implementation of the transaction validation federation. There's some flexibility that might be possible here.
+
+With the Sztorc stuff the withdrawals take multiple months, you could rescue coins with UASF in the event of a failure. UASF is the rescue plan, but the bitcoin users have to agree and do it. And they have to understand the nature of the dispute and have to do it timely; is it likely? or will it enforce a trend of miners doing nasty things? The idea of a sidechain was that it was supposed to be isolated.
