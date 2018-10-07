@@ -2,6 +2,8 @@ Rebalancing in the lightning network: Analysis and implications
 
 Sebastián Reca (Muun)
 
+<https://twitter.com/kanzure/status/1048753406628655105>
+
 # Introduction
 
 This talk is going to be about rebalancing in the lightning network. I'll talk about the implications and about running a lightning node.
@@ -42,4 +44,10 @@ Now that we have some understanding of the rebalancing problem, I'm going to tal
 
 How does the amount of money locked impact the need for rebalancing?
 
+How does rebalancing costs add to the total costs of having a routing node? What is the optimal amount of money we must lock inside a node in order to be the most competitive? The rebalancing costs decrease linearly it's the inverse of amount of money locked and the financial costs increases linearly with the amount of money locked so you get this optimal amount of money where your node becomes the most competitive.
 
+How does the bitcoin fees impact the lightning network fees?
+
+# Conclusions
+
+All routing nodes in the LN will face the rebalancing problem and its costs. Routing nodes will be economically incentivized to correctly predict payments weather. Linear fees make sense in the LN. The optimal amont of money to be locked inside channels will grow with the bitcoin fees. Lightning fees will grow with bitcoin fees.
