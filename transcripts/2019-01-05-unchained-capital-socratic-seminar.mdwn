@@ -1,0 +1,310 @@
+Unchained Capital Bitcoin Socratic Seminar
+
+2019-01-05
+
+Socratic Seminar 87 at BitDevs NYC has all of the links on meetup.com available.
+
+<https://www.meetup.com/BitDevsNYC/events/256924041/>
+
+<https://www.meetup.com/Austin-Bitcoin-Developers/events/257718282/>
+
+<https://twitter.com/kanzure/status/1081674259880120323>
+
+# Last time
+
+Last time Andrew Poelstra gave a talk about research at Blockstream. He also talked about scriptless scripts and using the properties of Schnorr signatures to do all of your scripting. There was also talk about taproot and graftroot.
+
+J: The chaincode labs guys in NYC .. we had a lot of participation, it was very cool. John Newbery has been helping me to do Socratics. He goes through Bitcoin Core PRs and things like that. Tries to get everyone involved.
+
+JM: He's a very efficient person. He gets a lot done.
+
+J: Yeah, hats off to John Newbery.
+
+JM: When we started this, there was a signal group of everyone running meetups all over the world. He coached me a little bit, gave me some confidence. There were 3 people in the first one, and 4 people in the first one. Richard showed up both times.
+
+J: Our first time we met was summer 2013 and it was a video game shop in Chinatown.
+
+JM: Michael Flaxman was telling me about some of the first bitdevs meetups.
+
+PL: At the one in NY, there was about 120 people there. They had everyone introduce themselves. 5-10 seconds per person tops. Unchained started hosting a few events recently.
+
+# Introduction
+
+Bitdevs is a community for people interested in discussing bitcoin research and developments. We have a meetup that occurs once a month in NY. These are socratic seminars. In the weeks preceeding the event, we go and collate all of the interesting content and interesting research going on in the space. We put it together into a newsletter which you can find on the meetup page. All of these links are on the meetup page, then we gather and try to investigate these things and try to learn about these and work together to understand them. To give an idea of some of the content we look at, it's CVEs, research papers, IRC logs, technical blog posts, network statistics, pull requests in popular repositories like Bitcoin Core, lnd, joinmarket, etc. We sometimes look at altcoins but they have to be interesting or relevant in some way.
+
+The idea is that if you find something you want to discuss and it's not in the prepared list then you can send it to the organizer and you can even lead discussion on that topic. We can spend anywhere from 1-10min on a topic. We can give a setup on the topic, or someone else can, and if there's a question or a comment or opinion to be had then feel free to speak your mind. Don't feel concerned about being wrong- people can correct each other. We're all learning here. We try not to dessiminate bad information, but it happens. We try to catch each other.
+
+We'll start by going around the world and do 30sec-1min and you can say your name or what you're interested in, if you're organizing events and you wnat people to know, the idea is that if someone says something that interests you then you can hangout with them later. Then we go through the content. At the end of the meetup we have presentations like if someone is working on an open-source project or a company relevant to the space then we get them up here and let them get feedback from the community. Then we hangout afterwards. Once a month, that's the drill.
+
+No names in the transcript please.
+
+# Difficulty adjustment
+
+I like to start with hacks or CVEs or something. Lately we have seen some significant difficulty adjustments downwards. We haven't seen difficulty adjustments downwards to that degree since 2011 or 2012. These are very non-trivial, they were quite large. The question of hashrate importance can get lost when we talk about proof-of-stake and htings like that. Not too long ago, you guys probably seen this, <http://crypto51.app> assumes that you can rent hashrate. If you can rent hashrate at going market rates, how much does it cost to 51% attack these coins? How much could you make from doing these 51% attacks? It's just a cost, not how much you make. How much you make depends on what type of attack you launch, naturally.
+
+You can't rent enough hashpower on the market to 51% attack bitcoin. But some of the coins have gpu-friendly algorithms. There's a ton of rentable hashrate out there. When you have low market cap coins with low hashrates that are worth enough to attack, you run into dangerous scenarios. Like let's look at Ethereum Classic. 105% of the full hashrate is rentable. Nicehash is a hashrate rental service. You can rent more than enough hashpower for a very low cost here, for under $5,000. You can 51% attack Ethereum Classic. When you see the market in the state that it is right now, people are burned pretty bad etc., in normal scenarios attackers might be more interested in doing straight-up hacks of exchanges or wallet services or whatever. This is me opining here, but when prices go down and hashrate goes down, the attack surface for these 51% attack surface is...
+
+# Vertcoin
+
+So how many of you know about vertcoin? I don't know anything about it. They got hit real hard. There were a number of deep reorgs on the order of the largest one having a depth of 307 blocks. I think we did some of the math at the last socratic. It was like 50-60 blocks deep in bitcoin if you just match by time. 60 block reorg in bitcoin would be totally crazy. We figure we're safe around 6-7 confirmations. This is particularly apt when you're looking at these exchanges that are adding every shitcoin under the sun... they are very much exposed to these kinds of attacks. There's the cost of adding the coin itself, to get the node running, add infrastructure, but then you also now have to consider which I don't think exhcanges consider-- how dangerous is this for our customers? If coinbase adds vertcoin, then they say only need 10-50 confirmations, someone deposits coins, 51% attack occurs, a huge reorg, and all of the sudden coinbase lost some crazy amount of vertcoin or whatever. Their customers thought vertcoin was safe because maybe Coinbase Pro added it... An attacker can short the coin on the market, or they could do double spending. You can do a reorg where you get the vertcoin back, and you got bitcoin back. So maybe you also shorted, probably on another exchange.
+
+# The economic limits of bitcoin and the blockchain
+
+paper: "The economic limits of bitcoin and the blockchain"
+
+If I invest $100m in bitcoin hardware, I don't necessarily want to attack bitcoin and lose my future profits. But as the hashrate goes down, and the price goes down, there are some scenarios like miner exit scam scenarios. Eric calls them "collapse scenarios". Under which scenarios does it make sense for a miner to burn the house down? To forego the entire future income from their hardware? What kind of attacks might allow this to occur? This has to do with the cost of ASICs relative to the wider hashrate in the network. We're seeing a lot of older ASICs become more or less useless because they are not power efficient. If you're a miner and you've got a hoard of old ASICs, what are you doing with them? You don't throw them out, they are going to sit somewhere in storage. If at the same time that bitcoin hashrate's is coming down, you've invested in all of this future hardware, a huge amount of money that has been tied into hardware that is not returning any investment, and you've got this completely useless hardware as well. You can spin up this old hardware, and launch an attack to recoup the costs of your future hardware and previous hardware and burn the house down. You just want to make your money back. When you have all of this hardware sitting around, it poses an existential risk. There's economic sabotage attacks too like short selling, and a theoretical possibility that miners will want to exit scam. These are called "collapse scenarios".
+
+There's some mistakes- he thought that one day FPGAs will be made more efficient than ASICs. It might be possible to have something between an FPGA and ASIC, but it might be cost efficient or something. It's not entirely reasonable.
+
+Their source of income depends on the source of the attack. Maybe they were able to do some double spends on exchanges and get an OTC wire that is more or less irreversible in some circumstances. They could do double spending, and shorting the network at the same time.
+
+The challenge is coordination without being detected. If you attack an altcoin, it's easy to cash out to bitcoin. Vertcoin getting 51% attacked didn't make the news in bitcoin world. You have a stable store of value to cash out to. But if you're trying to attack bitcoin, you can only cash out to dollars, which is much harder because you have AML/KYC. And wire transfers aren't that fast. Bitcoin Cash and its forks might be more vulnerable to this. Although, they checkpoint everything so it doesn't matter.
+
+There are definitely smaller altcoins where it is very cheap to do 51% attacks. There might not even be derivative markets here. You don't need derivative markets for the altcoins because you can still do double spending attacks. Vertcoin's attack is something we could learn from. Their double spending attack is more a lesson to me that having a lot of small altcoins with low hashrates is not really helpful to the ecosystem.
+
+Max depth for reorg is a bad idea because the node won't be able to get on the right blockchain on the network, until later. An attacker can feed a private blockchain history.
+
+You have all these miners that could be doing something productive in mining and protecting the network. The mining rigs could still have value. Could they generate value in excess of their recovery value to do an attack on the network? The economic reason why this might be unlikely is that if they are not able to mine profitably, they are probably not sitting with a ton of capital resources or liquidity to be able to expend the energy because it requires real cost to do that.
+
+The energy that you get, you need a lot of energy to run these miners. Often they are at like $0.02/kwH. You can't get a giant burst on a short-term basis. No energy company is going to sell you $0.02/kWH and have it burst to however much you need in order to do a 51% attack for only like a week. They force you into 6 month, 12 month contracts. This is why all the miners went offline at the same time- you saw the difficulty adjustment go down significantly over 3 difficulty adjustments; those were all expiring contracts in China. When the energy contract is over, they say they aren't going to renew because the bitcoin market price is bad. This is how they have to plan. If you want to execute an attack on this like bitcoin, you would need not only the hardware, but an energy production facility like a hydroelectric dam or some insane array of solar panels where you have direct access. Nobody is going to sell you that much energy.
+
+I was talking with a miner producing at $0.025/kWH. The marginal cost was $0.06 or $0.07 or higher. They could not be profitable if their costs were above $0.06 all-in. If you're able to produce energy at a profit or to procure energy and mine bitcoin at $0.025, and if the marginal cost to produce is $0.05 then you have an economic incentive not to attack the network but to continue to act rationally and mine. There's this huge economic web that says if you can mine profitably, you will. If you can't mine profitably, and you can't find energy below $0.06 in that scenario, can you profitably attack it? It's not just gross, it's net of whatever you are spending.
+
+Do we have a guest to at what the breakeven price for bitcoin is for people mining at $0.025/kwH? I've heard the break-even price is $0.06/kWH. It's at around $3800 or so, for the 6 cents or below to be profitable. If there's another drop in the markets, the cost curves adjust. You're able to mine a larger share of it. There will still be profitable miners. The difficulty will come down, but the most efficient miners with the best hardware and best power contracts will stay around longer. When the price drops, there's more likely to be 51% attacks or other hashrate attacks. Right now the bottleneck is hardware, but eventually the bottleneck is going to be energy. It will be hard to get 51% of the energy necessary to attack bitcoin because hardware will be ubiquitous. It will get cheaper, better, faster. Energy will be the bottleneck. Producing like 51% of the energy, that's a really hard thing to do. Right now that's extremely hard. As it gets more difficult, it's going to be a much bigger bottleneck.
+
+Energy production is unusual because it has a natural diseconomy of scale. If you're building an energy production facility, you're not thinking about 51% attacking a cryptocurrency in the next 6 months. This is a 40 year capex project, and you're concerned if a giant customer goes away. If it's a nuclear facility, you can't make adjustments like oh I am just going to make 10% less energy because one of my customers is gone. Acquiring energy at scale is really hard. When power becomes your limiting factor, that's a really cool protection. This idea is from BlueMatt.
+
+# Blocksonly mode, mempool set reconciliation and minisketch
+
+gmaxwell bitcointalk post about blocksonly mode
+
+In Bitcoin Core v0.12, they introduced a blocksonly mode. This is where you operate a node and you only receive the blocks themselves. You don't relay transactions, so you know the amount of bandwidth that your node is using is going to be fixed at 144 MB/day. However, you might want to participate in the relay network and see unconfirmed transactions before they get into the blockchain. When you look at currently what is the thing that uses the most bandwidth in your node is the relay of transactions and p2p transaction relay. It works using the mempool. These roundtrips and data being passed back and forth is by far the largest consumer of bandwidth in your node. This is a bit of a problem, we want to always limit the number of resources to operate a node while still giving a node operator the greatest insight into what's going on in the network so they can avoid double spends and they can build blocks quickly. You want to know because you want to know. The question is, how can we address this huge bandwidth issue?
+
+In 2016, gmaxwell outlined a method of doing mempool set reconciliation. It gives you an idea just from the name. Suppose you have a few different mempools, after all there's never a universal mempool. We all see different parts of the network. Normally we do INV messages back and forth (inventory). But instead, what if you reach out to your peers and reconcile the differences in your mempools? Their idea is to use sketches, something in computer science that I was not familiar before. It's a set reconciliation scheme.
+
+sipa recently published a library called <a href="https://github.com/sipa/minisketch">minisketch</a> which is an optimized library for BCH-based set reconciliation. He went through some popular sketch schemes. Look at the sketch size factor for 30 bit elements- it's constant. It's really nice. This is an alternative to invertible bloom lookup tables (IBLTs), which are probabilistic and have failures. The old school SPV lite client scheme where you use a lite client and it uses bloom filters to update the set of unspent transactions in your wallet... it has serious privacy issues and so on, so it's not a useful thing for this particular use case. But minisketch is a great library, it has all kinds of useful documentation on how you can use this in practice and implement your own set reconciliations. This is useful for reducing bandwidth.
+
+What's the tradeoff, or is it a free lunch? What if we have an adversary with a poisoned mempool sending garbage data to another peer? Well, dosban stuff will kill that peer eventually. It won't propagate because it's invalid transaction data. With minisketch you need to do some computation on the client side to compute the sketch reconciliation.
+
+# Revisiting bip125 RBF policy
+
+Russell O'Connor wrote an email to bitcoin-dev about "Revisiting bip125 RBF policy". Using replace-by-fee, you can signal in your transaction that you may want to replace that transaction in the future with another transaction that plays a higher fee. It has some anti-DoS mechanisms in it. You can't just replace your transaction with one paying 0.00001 satoshi or whatever, there's minimums you have to comply with.
+
+The use case for replace-by-fee is pretty obvious, like if you send a payment to an exchange but it doesn't get confirmed on the blockchain fast enough. If there's a tree of pending transactions, my RBF transaction has been pinned. I would have to pay a lot to get the whole tree going, depending on how big that tree is.
+
+See also "CPFP carve-out for fee-prediction issues in contracting applications (lightning network etc)". If I'm signing commitment transactions or transactions that close LN channels and I'm not broadcasting right away, how do I predict the fee rate I'm going to pay? I don't know what the fee rate is going to be in a month. I need the pre-signed transactions. I need to talk to my counterparty to get their signature anyway. So the question is what do we do if we go for a month and the mempool spikes and the fee rate spikes. Maybe my counterparty tried to do a unilateral close against me to an old commitment, so my counterparty is cheating. In LN, what do you do? You have a justice transaction, it's a checklocktime delta where I have 144 blocks to prove that my counterparty cheated against me. So I have to broadcast the most recent commitment to close that channel. If that transaction doesn't get confirmed in that window, then your counterparty wins. Why not use replace-by-fee and child-pays-for-parent. In CPFP, you can spend the unconfirmed parent with a child and he can pay a high enough fee rate to pay for the whole package. But there are issues with both of these things in the lightning network context. You can't do replace-by-fee in LN because it's multisig and if the counterparty doesn't care then they aren't going to sign a new transaction for you or whatever. You can't do CPFP because of the nature of the scripts that are conditionally locking the outputs. These were previously called breach remedy transactions. Your counterparty could try to pin your justice transaction to a low fee-rate transaction, or do CPFP and then it's a fee competition between both parties.
+
+In BlueMatt's post, he mentioned you can't do CPFP on a commitment close transaction. But what could be done is that small outputs from both parties that are unrelated to the lightning commitments could be added ot the transactions. So you could both do unconfirmed spends of the commitments without signatures from your counterparty, but this exposes you to the transaction pinning attack where your counterparty could try to CPFP it and get it stuck and try to get it pinned.
+
+One solution is to add more relay policies. At the node level, you have relay policies which Bryan was talking about earlier like minimum feerate to relay transactions or replace-by-fee rules. These are not consensus rules. Each node can have its own version of these rules. One of the rules that would help prevent the problem BlueMatt identified is that, at various points, there have been discussions about solving the pinning problem by marking transactions as "likely to be RBF" where children of such transactions could be rejected by policy unless such a package would be near the top of the mempool. So if I try to do a pinning attack that would leave the transaction tree package with a low fee rate relative to other transactions on the network, that attempt would be rejected by nodes on the network. RBF isn't going to work because of the multisig aspect of these LN.
+
+Would ajtown's OP\_MASK cover the nsequence value so you can hide replace-by-fee?
+
+Replace-by-fee transactions are currently 5-6% of the transactions on the network. I was evaluating wallets and one of the criteria was RBF support. And it's not good. Even some of the big exchanges, I was executing RBF transactions and pending transactions in my own wallet for over a month. In some cases, some of the wallets actually credit my balance so it looks like I actually have double my balance. It's not an available balance, and I wasn't able to take funds in that time. But the confusion for the user is there from a usability perspective.
+
+Electrum handles replace-by-fee correctly. It's not a long list of which wallets support this. If we want large volume BTC companies like exchanges to adopt things like replace-by-fee they want to make sure the ecosystem supports it. It can't be just petertodd's opentimestamps server using replace-by-fee.
+
+jnewbery is looking for feedback on the replace-by-fee chapter in the Bitcoin Optech book or documentation. It's in progress.
+
+Some of these web wallets, even after one of the replace-by-fee transactions has been confirmed, the other one still contributes to a pending balance on the web interface, because it has a different txid even if it will never confirm. So some of these are pretty poorly built.
+
+MtGox blamed transaction malleability for their problems. Most developers think different txid, different transaction but you really have to look at all the utxos and see which transaction replaces each other. It's not trivially obvious. People think txid is a perfect identifier. And then they don't test that because it's a rare edge case.
+
+# txprobe paper
+
+"TxProbe: Discovering bitcoin's network topology using orphan transactions"
+
+Who knows about Chainalysis? There are operators in the network whose job it is to provide metadata to companies that have compliance programs and law enforcement agencies and other actors who are interested in knowing whose public keys are associated with which identities. Chainalysis sells you this information, they have a detailed map of the network. If a transaction has been associated with Coinbase, they will probalby know. At one point back in 2013, they had famously got caught up in this claim that they had deployed a non-trivial number of sybil "full nodes" across the bitcoin network. They were attempting to connect to every node in the network. Why would they do that? If you're running a full node and not running it over tor, then they figured they could tell which nodes were the source of the transaction. If an attacker has a connection to every single node in the network, and listening to all the INV messages, the first node to relay a transaction is probably the source of the transaction. A sybil attacker can deanonymize transactions in the network by sybil attacking the network and doing these attacks and analysis.
+
+These attacks are difficult to protect from. The characteristics of the network protocol in Bitcoin Core are such that a crafty attacker can leverage these characteristics to do different types of attacks. Another example is eclipse attacks, where I as an attacker attempt to saturate a node's connections so that they are only connected to me. They are only connected to me. If I do this with a miner, I can do selfish mining attacks; if it's a merchant then I can do double spending and they are in my own little universe. In your node, you have buckets of IP addresses and so on, and a lot of these attacks have been mitigated to some degree, and the mitigations that have been proposed were implemented. But based on how IP addresses get kicked out or pulled into buckets, an attacker with a reasonable number of IP addresses can saturate connections on a node just by kicking nodes out of each bucket. A lot of researchers spent some time looking at deanonymization attacks.
+
+Andrew Miller and some other researchers looked at how Bitcoin Core's mempool handles orphan transactions. In this context, an orphan transaction is when you receive a transaction but it doesn't have a parent. It's spending a utxo-- you have a transaction, and another transaction where the mempool doesn't have the parent. It's an orphan transaction. They investigated the mechanics of this buffer.  The MapOrphanTransactions buffer. They found a way to discover a way to execute an eclipse attack the important thing to understand is where are the edges in the network... if you're able to map the network, that's a critical piece of launching other types of attacks on the network. They weren't trying to figure out the source of transactions, but figuring out the connectivity of the network.
+
+If you have two sets of nodes and you want to figure out the connections between these two nodes or clusters of nodes, you can use marker transactions and flood transactions and other types. You use a flood transaction which is an orphan transaction and you send this flood transaction to a sector set. It's an orphan, so it goes in their orphan buffer. Then for the number of nodes in the sector set, you create n double spends that are parents of these flood transactions. If you have 10 nodes in the sector set, you create 10 conflicting parent transactions and you send those to the sync set. And then what you do is you send marker transactions to the sector set members, and depending on how quickly the nodes are responding to the INV messages about which they will or will not accept, you can deduce which nodes are connected to each other.
+
+Something like dandelion or delays on orphan transaction relay may be able to help mitigate this attack.
+
+# Dandelion (bip156)
+
+"What is the tradeoff betwene privacy and implementation complexity of dandelion bip156"
+
+Dandelion is another useful privacy development. There's a stem phase and a disperse phase. This is a separate relay protocol. It's called dandelion because it looks like a dandelion when you look at the network. Before dandelion, you would broadcast to all your peers. In dandelion, you broadcast with a stem phase and then later it becomes a fluff phase. Each hop during the stem phase is a coin flip as to whether it will go into the fluff phase.
+
+In dandelion there's a big tradeoff- this is a great stackexhcange post by sdaftuar. It relates to denial-of-service vectors. If someone sends me a bad transaction or bad block, we ban them, right? But the issue here is that because my immediate peers in my stem phase don't know what the transaction is, it might be invalid or maybe not something that would get into the mempool in the first place. A bad guy could leverage dandelion to DoS dandelion peers, to send garbage through these stem phases that wont actually make it into the mempool. So you have this DoS vector in protocols like dandelion. You want the privacy but you got this exposure to Dos. It's an unfortunate tradeoff.
+
+The takeaway here is that "if we don't have simpler solutions that owrk, is it worth implementing something akin to the current mempool logic to introduce dandelion into bitcoin core?" We don't know if it make sense. How do you encrypt it so that only.
+
+Dandelion is voluntary during the stem phase, it's not encrypted. Each node does a coin flip, you have to rely on the good behavior of the node you're connected to.
+
+What's the best way to send an anonymous transaction? Maybe use blockchain.info and use pushtx while using tor. Some mining pools have pushtx endpoints on the web which are custom home-built. I know luke-jr had one for a long time. Hitbtc has a credit card form for one, so you can pay for the broadcast of your transaction.
+
+# Statistics
+
+Let's do some statistics which is usually pretty fun. The number of utxos has gone donw, so probably a service has been consolidating their utxos. Not long after I looked at the graph, I saw that Coinbase tweeted that they moved 5% of all BTC into their cold wallet, and 25% of all LTC, and 8% of all ETH. So during this movement they were consolidating utxos. They have like 1% in their hot wallet.
+
+Every full node has to keep the current UTXO set in RAM. You want this lookup to be fast. You need this if you're a miner. If you need to have this in hard drives, then that's very slow. The size of the UTXO set is how much RAM you need on your box if you're a miner. So it's important that the utxo set size is low. If you want to run a fully validating node, you need the full utxo set. So by reducing utxos, you can reduce the total resource requirements.
+
+What are the storage requirements for running a pruned node now? When you are running a pruned node, what are you storing? What are you validating against? You validate the header, each transaction, but then you update your utxo set, and you throw away the extra data. You are fully validating, but you don't have an archive log of spent transactions, you only have the current state. You need the entire transaction for the utxo, because that's the tx hash, so you need that. At Breaking Bitcoin, someone made large transactions but only spent one output, and it just broke pruned nodes or something because of how it worked out. For reorgs, it's not completely pruned, you have a few hundred blocks.
+
+# Mempool statistics
+
+The mempool has been relatively quiet. We saw a bump on December 18th. Oh, that was Coinbase, same day as their tweet. At peak there was about 18 megabytes of transactions in the mempool on December 18th. That was the biggest spike. This is joechen's bitcoin mempool stats. I can post the link later. It's based on someone else's work, he's just repurposing it. It's color coded. For fee estimation, you could look at <https://whatthefee.io> or <https://bitcoinfees.21.co> or something. Some people use Bitcoin Core's fee estimator. Mempool-based fee estimation is something that has more recently cropped up in discussions in the community. At 830am CST, there's always a bump because that's when Bitmex does their consolidation. Sometimes people use vanity addresses- which is aa bad idea due to privacy problems of course, don't reuse addresses.
+
+So those 18 MB, would it take 18 blocks? Well, yes, assuming no new better fee rate transactions come in.
+
+What's the average mempool size? Well let's use joechen, go to the few year view, you can see the huge spike from late 2017. Good question.
+
+Block size has been consistent for the past month. You can see the witness size in there too, it's on <https://statoshi.info> it's very useful.
+
+# Asicboost
+
+There are two generally understood mechanisms by which miners can leverage what is now called asicboost. One is known generally as overt asicboost and the other is covert asicboost. This became particularly contentious topic back in 2016-2017 when segwit was attempting to be deployed. When you look at the header of a bitcoin block, it's 80 bytes. sha256 takes input in 64 byte chunks, it puts it throug ha compression function, and then there's a midstate which doesn't have as much entropy as the final hash. You can find collisions for those midstates. Because of the--... "The problem with ASICBOOST" by Jeremy Rubin. Here's your 80 byte header, you have the version bytes, previous block, merkle root, nbits, nonce. Sha256 has to break that down. At the 64 byte breakpoint here, we still have some of the merkle root which is kind of nubbed off into the 2nd 64-byte chunk. There's two pieces of data in this first chunk here that could be "rolled"- it could be modified without breaking consensus. So the first is the version field- it's not a consensus-enforced field, a miner can put whatever they want within constraints. The merkle root is determined by the order of the transactions and it's not consensus-enforced. Bitcoin Cash has a canonical transaction ordering. But even then they could probably still do covert asicboost. But because version rolling is overt, everyone can see that someone is rolling versions, it's overt asicboost. If you're changing the version constantly, the midstate will be, and the final hash will be different. It's possible to find inputs to the hash function that collide with that midstate, where you get collisions there. If you can find collisions at the midstate then you can reuse that owrk. If you can reuse the inputs, if you can ifnd these collisions, you're not going to be mining faster, but you will be gaining some amount of efficiency in your mining operation because you're using less power to get hash outputs because part of the function you don't have to do consecutively, you just have to do it once, find collisions there, and then you can continue on with the mining process. You can also do the same thing with the merkle root, which is more covert because ordering of transactions you can't necessarily know, but there are indications that miners are reordering transactions. Once a block is public on the network, it's not clear that a miner did that.
+
+This became contentious in 2016-2017 related to segwit because segwit has a second merkle root which is not put into the header of the block, which would have made it a hard-fork. So there's a new serialization format for the blocks where the signatures are stored in a new way. Because the signatures are not in the transactions themselves, there has to be an indication of where the signatures are. To make segwit a soft-fork, the merkle root is put in the coinbase transaction not in the header. So segwit broke covert asicboost because the transaction ordering technique no longer works, if you do reordering you can't gain that asicboost efficiency given active segwit.
+
+Greg Maxwell investigated some firmware and concluded that it had logic capable of performing asicboost. Bitmain probably didn't want to lose their 14% efficiency gain they got by implementing asicboost, so they had an incentive to block segwit's deployment. If you want to do overt asicboost, most people are okay with that. There's some software out there to do that, like slushpool's raain, and Bitmain also published an ability for their users to do this. Over the last couple of months, the number of blocks that have been produced with version rolled versionfields has increased. With version rolling, you're getting more nonce space. It's way more efficient than covert asicboost by orders of magnitude. Miners have an immense incentive to use overt asicboost, it's a huge efficiency gain. Miners are naturally competitive and they will do whatever they can to compete. As long as it's not creating perverse incentives to delay network upgrades, overt asicboost sounds okay to me.
+
+# Bitcoin playground
+
+This is a script playground where you can watch scripts be replayed basically in realtime, like the pushes and pops interacting with the stack. This is useful if you're learning about bitcoin script. Also there's btcdeb.
+
+# Output script descriptors
+
+This was an idea proposed by sipa. A private key inofitself does not transmit any information about the scripts which are conditionally locking the outputs associated with that key. There's not much information you can gleam from a private key on its own. The idea of output script descriptors is that it's appended to a private key and gives information about that key itself, like what's the script-- is it 2-of-3, 3-of-5, is it a pay-to-pubkeyhash, is it a pay-to-pubkey? It will even give you information on the derivation path so if it's a hierarchical deterministic wallet, and the account structure, etc. If you're importing and exporting keys, you really want to know this information. Especially with partially signed bitcoin transactions (PSBT), a new serialization format which helps with things like offline signing with a hardware wallet.
+
+PR 14477: Add ability to convert solvability info to descriptor
+
+These help your wallet figure out how to sign for the scriptpubkey.
+
+# PR 14955: Swithc all RNG code to the built-in PRNG
+
+bip66 was a soft-fork where the ... strict rules were enforced for signatures. OpenSSL had a bug where on Windows 32-bit vs 64-bit would disagree about signature invalidity. Bitcoin Core has been stripping out openssl for a long time. One of the places that it is still being used in Bitcoin Core is in some RNG scenarios. So getting rid of it and replacing it is pretty important. So what sipa has been working on is designing a context-dependent random number generator scheme where you have different tiers of RNGs that have performance tradeoffs based on how much randomness you need. You need a ton of randomness if you're generating a key, but sometimes you just need a random number. PR 14955 doesn't remove openssl but it does introduce other RNG schemes that will be in its place and it will be slowly deprecated over time. This is important work being done here.
+
+Bitcoin Core uses rfc6979 for the k value. When you're producing a signature, you need to produce some randomness and if it's insufficiently random or reused across signatures then an attacker can deduce your private key. There were a couple of bad wallets did this. I think the Bitcoin wallet for Android had this problem back in the day where they were seeding the RNG with bad entropy. Also, android securerandom wasn't secure, it was like bouncycastle or something. It was the library that people recommended which is ironic. Deterministic K reuse is why ps3 got hacked too. I think that was by geohot, same guy who did the iphone jailbreak? It wasn't bouncycastle on android actually, .. it was the Java Cryptography Application (JCA)...
+
+Any chance of BLS and pairing crypto getting into bitcoin? It doesn't have the K value there. Uh let's get Schnorr signatures first.
+
+# Stricter and more performant invariant checking in CheckBlock, PR 14837
+
+Stricter and more performant invariant checking in CheckBlock, PR 14837
+
+This was where the double spending bug was introduced. Refactoring consensus code is dangerous because it's really hard to get this right. We have to be careful. This is a pull request from Jeremy Rubin. He's adding additional checks to protect against the failure that occurred in that double spending CVE... This is changing consensus-critical code. There's a big debate in the thread about whether it's worth the risk in the first place. In this bug, a miner could produce a block that had a transaction that spends the same output a second time. The mempool checks are much more strict than just checkBlock. Folks considered the duplicate check was a tthe mempool level... but if a block was produced by a miner that includes transactions never propagated across the network, that duplicate duplicate check is needed. That was a failure of testing, peer review, and a general overall failure. This bug was introduced in v0.13, and v0.12 nodes would not have been effected by it and it would have caused a hard-fork or nasty split. Anyway, I just wanted to have a short discussion about modifying consensus code.
+
+libconsensus would be helpful because you need to be bug-for-bug compatible in a consensus network like tihs.  You can't write a nice yellow paper to make a specification for bitcoin... This is also an argument against multiple implementations of bitcoin consensus rules. If a block comes out tha thas a transaction that breaks some nodes but doesn't break other nodes, then you're causing a network split. That's a dangerous thing. The argument is that if we're going to have a failure let's all fail together.
+
+# Lightning stuff
+
+lnd, the go implementation of lightning funded by Lightning Labs, recently hit v0.5.1. There's some bigfuxes in here.
+
+Height hint cache: What happens if you have an open channel and for one reason or another, your node goes offline? What's the first thing you want to do when you come online? You want to check out your transactions, did your party attempt to do a unilateral close against you? So you check the blocks real quick, and then you go on your way. A lite client scenario is more of an ordeal here... you have to call out to a full node, you have to get your lite filters the client side filters, and you might have to go far pretty back in history. The height hint cache helps you cache the results of previous scans and start scans from where you previously left off. Useful performance improvement, pretty simple.
+
+Validating received channel updates: We were trusting nodes in the network to give us channel update messages from other nodes in the network that were not good, and we were not checking to see if what they were saying was true. So someone could lie to me about the state of a channel or if there was something wrong with it or if it was unroutable, and he could do that to such a degree that he could shift the way that payments were being routed in the network. From there, you can do nasty things like maybe some massive closure attack against the network or deanonymization attacks or something. This was a nasty vulnerability in lnd. So now there's some signature checks and making sure the messages are coming from who they are supposed to come from.
+
+Rate limiting: There were some other DoS vulnerabilities exposed. Older nodes were spewing out tons of channel update messages, causing DoS attacks against the nodes they were talking about. An old node could cause this problem, but so could an adversary. lnd will now rate limit peers that are requesting excessive amounts of data to ratelimit DoS attacks.
+
+PR 2006 Scoring-based autopilot attachment heuristic: This autopilot scheme will open a channel for you. It's not very smart, it looks at the network and weights nodes by the number of channels they have and then randomly selects a node to connect to based on this weighting. This ends up causing nodes that have a lot of channels are often selected by autopilot to open up a new channel, which is not good for network topology. But you could allow the autopilot scheme to have multiple heuristics by which to score nodes in the network, and then open up the channel on the network. This doesn't implement the other heuristics, but this is the framework allowing autopilot to be better. Also, c-lightning is doing its own autopilot scheme. This is a centralization problem and also it could cause routing problems if lots of nodes went offline or something.
+
+# PR 2313
+
+multi: Implement new safe static channel backup and recovery scheme, RPCs, and CLI commands
+
+We're spoiled with bip32 hierarchical deterministic wallets, you can recreate all of your keys from your seed. But with lightning you don't have that luxury. The commitment transactions are not deterministic, they are based on signatures and scripts and so on. The nature of lightning is that you can't have just a seed and from that reconstruct all the commitment transactions you've made with a counterparty. The danger here is that you've made a lot of commitment updates, you go offline, you lose your data and you don't have a backup, or your backup is old, if I try to broadcast an old state then it's going to look like to my counteprarty that I'm cheating which is bad. So the other guy is going to use breach remedy or justice transaction. All because my node didn't know about the latest state. Having sufficient backups to reconstruct the channel if you have some sort of failure at the node level is critical. Some people are using rsync, but this doesn't work if you're doing rapid commitment updates. So you might not stay in sync with yourself. So in this PR, roasbeef is working on doing static backups. You have some seed, and this only works for opens and closes right now. Ultimately there will be backups for individual commitments. This is just the beginning. Every time you do opens and closes, you're taking some seed and encrypting a backup file and dumping it somewhere. There's this whole recovery flow- I don't want to say anything wrong, I haven't read it closely. This is a "channels.backup" file.  This is the same problem with p2sh and redeemScripts.  Output script descriptors sure do cover p2sh.
+
+# pylightning: Add a plugin framework
+
+cdecker did a pull request introducing pylightning. This is a plugin framework for c-lightning. In lnd, you can create cookies or macaroons that have more limited access controls for RPCs where this user can only produce invoices can't actually spend coins in the wallet or something. If you're a merchant, you don't want your coins exposed in a hot wallet but you might want to be able to generate invoices s othat customers can pay you or something. In c-lightning, they are going for a plugin framework which are little scripts that can talk over json-rpc to the node. They have been working on adding this framework, kind of a flask-style. The plugins are written in python. You're communicating through a unix socket, it doesn't have to be python. It's json-rpc over a unix socket.
+
+cdecker gave a good talk about the architecture of c-lightning. Rusty said I know C and I'm a linux developer so I'll write it in C.
+
+Doesn't look like there's any authentication here. Good question. Maybe TLS over the socket or something.
+
+# Don't trust, verify: A bitcoin private case study (coinmetrics)
+
+This was a simultaneous fork of Bitcoin and zcash or a fork-merge or something. With zclassic, you have a shielded pool and zero-knowledge proof magic. In bitcoin, all the outputs are there and you can validate that coins are not being created out of thin air. In the shielded pool, assuming the zero-knowledge proofs and math holds, by validating proofs you should be able to know that coins are not printed out of thin air. The reason I'm bringing up this blog post is because there's interesting conversations to be had about modifications to bitcoin. It's been proposed that in theory we might want to see confidential transactions in bitcoin where we use additive homomorphism to mask the amounts in the outputs. I recommend reading the grin introduction for bitcoiners document on their github repository, it's a good introduction.
+
+The tradeoff you have to make is perfect binding vs perfect hiding. Confidential transactions rests on the discrete log problem. If you're hiding the amounts of outputs, we know right now that discrete log broken in bitcoin that transactions with signatures and address reuse then a quantum attacker can be able to steal those coins. But if not only the coins are conditionally locked with keys that use ECDSA scheme, you as an implementer of the scheme have to decide if the discrete log is broken, tha twhen the attacker leverages that mechanism, will they be able to decrypt all of the confidential transactions history, or will they be able to print coins and nobody will ever know? That's perfect hiding vs perfect blinding.
+
+With zksnarks, I think they picked perfect hiding. So if zksnarks are broken, then someone will be able to print zcoins or whatever they are called and nobody would be wiser, unless someone pulled them out of the shielded pool. Maybe zcash electric company is already doing that and causing silent inflation. For bitcoin, it could break the scarcity of the coins. But some people might prefer for perfect privacy. Some would prefer for the privacy features to be done on a sidechain. Some people want mimblewimble on a bitcoin sidechain. You have perfect hiding in the sidechain but perfect binding on the mainchain. You isolate any sort of shenanigans into that sidechain.
+
+Blockstream's new product Liquid.. they forked Bitcoin Core v0.14 and implemented confidential transactions and confidential assets. You could deterministically peg coins in there, mix them around privately, and then pop out. Masking the amounts in the outputs is not enough to give anonymity in the confidential transaction scheme of course, but it certainly helps.
+
+The first implementation of ring signatures was in bytecoin. There was no premine or whatever, but I think something liked this happened in dash as well actually... the folks who released the code had a fast miner that they kept to themselves, like something CUDA. They released the code, everyone started mining, and they were mining many orders of magnitude faster than everyone. So they had a head start on everyone. Okay, the guy who started dash was the one... But bytecoin was that they secretly mined for a while and said hey guys you haven't seen this it's been here the whole time. Monero also uses cryptonote. They use RingCT. They had an inflation bug that was found before anyone found it. But someone exploited it on bytecoin. They exploited it and then monero patched it. It's very easily detected.
+
+Stackexchange has a question "How do I use the CryptoNote inflation bug" - nobody seems to have answered that one hmm.
+
+# OP\_MASK
+
+bitcoin-dev post: Schnorr and taproot (etc) upgrade
+
+This lets you sign anything that matches this form, and you can mask certain parts of the transaction. This is instead of SIGHASH\_ALL or SIGHASH\_NOINPUT. Might be similar to Element's bitmask method. If you can MASK the sequence field, then you have replace-by-fee because your counterparty has already signed off on it. So then you would have it. I don't know how granular the masking gets. That's the part I was curious about. Lightning network whitepaper was originally written with SIGHASH\_NOINPUT. Roasbeef was saying you don't even need to sign amounts, which you could MASK, in which case that one signature is good for the entire channel state all the way through because the amounts are masked off. If they try to steal from you, you have the revocation hash and then you could fill in whatever you think is the fair thing. In segwit v1, if you have all of this, then lightning gets much simpler, because you don't have to send so much data back and forth. In watchtowers, if you're using an offline node or something, you can't do justice because you're not watching. But with a watchtower, you would give them the commitment or justice transaction and they would monitor the chain for you. The nature of lightning now is that the watchtower would need to keep every single commitment. So this is burdensome and annoying, but with eltoo they don't need to store all states, they can just store one state and rewrite it effectively. It's much more efficient in that sense. You could introduce better lightning protocols without forcing everyone to upgrade- when you do the handshake with your counterparty, if they are eltoo-savy then you can do that or another version or whatever.
+
+# References
+
+Bitcoin Core PRs:
+
+* <https://github.com/bitcoin/bitcoin/pull/14477>
+* <https://github.com/bitcoin/bitcoin/pull/14708>
+* <https://github.com/bitcoin/bitcoin/pull/14837>
+* <https://github.com/bitcoin/bitcoin/pull/14955>
+
+Optech Newsletters:
+
+* <https://bitcoinops.org/en/newsletters/2018/11/27/>
+* <https://bitcoinops.org/en/newsletters/2018/12/04/>
+* <https://bitcoinops.org/en/newsletters/2018/12/11/>
+
+[bitcoin-dev] Schnorr and taproot (etc) upgrade <https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-December/016556.html>
+
+[bitcoin-dev] CPFP Carve-Out for Fee-Prediction Issues in Contracting Applications (eg Lightning) <https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-November/016518.html>
+
+[bitcoin-dev] Safer sighashes and more granular SIGHASH\_NOINPUT <https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-November/016488.html>
+
+Minisketch: an optimized library for BCH-based set reconciliation <https://github.com/sipa/minisketch>
+
+Lightning:
+
+05.1 Release <https://github.com/lightningnetwork/lnd>
+
+c-lighting and lnd PRs:
+
+* <https://github.com/ElementsProject/lightning/pull/2121>
+* <https://github.com/ElementsProject/lightning/pull/2161>
+* <https://github.com/lightningnetwork/lnd/pull/2006>
+* <https://github.com/lightningnetwork/lnd/pull/2039>
+* <https://github.com/lightningnetwork/lnd/pull/2313>
+
+SLP39 Olaoluwa Osuntokun (Roasbeef), CTO of Lightning Labs <https://stephanlivera.com/episode/39>
+
+Research:
+
+MIT DCI's Cryptocurrency Research Review #1 <https://mitcryptocurrencyresearch.substack.com/p/mit-dcis-cryptocurrency-research>
+
+Simplicity: High-Assurance Smart Contracting <https://blockstream.com/2018/11/28/simplicity-github/>
+
+Pederson Swap: <https://github.com/apoelstra/scriptless-scripts/blob/master/md/pedersen-swap.md>
+
+TxProbe: Discovering Bitcoin's Network Topology Using Orphan Transactions <http://arxiv.org/abs/1812.00942>
+
+JuxtaPiton: Enabling Heterogeneous-ISA Research with RISC-V and SPARC FPGA Soft-cores <http://arxiv.org/abs/1811.08091>
+
+Batching Techniques for Accumulators with Applications to IOPs and Stateless Blockchains <https://eprint.iacr.org/2018/1188>
+
+Misc:
+
+Who controls Bitcoin Core? <https://medium.com/@lopp/who-controls-bitcoin-core-c55c0af91b8a>
+
+What is the tradeoff between privacy and implementation complexity of Dandelion (BIP156): <https://bitcoin.stackexchange.com/questions/81503/what-is-the-tradeoff-between-privacy-and-implementation-complexity-of-dandelion/81504>
+
+bitcoin script playground: <https://nioctib.tech/#/transaction/f2f398dace996dab12e0cfb02fb0b59de0ef0398be393d90ebc8ab397550370b/input/0/interpret?automatic=true>
+
+Information Security:
+
+Long-tail cryptocurrency is 51% attacked: Vertcoin edition <https://www.theblockcrypto.com/2018/12/03/long-tail-cryptocurrency-is-51-attacked-vertcoin-edition/>
+
+Let’s Not Speculate: Discovering and Analyzing Speculative Execution Attacks <https://domino.research.ibm.com/library/cyberdig.nsf/1e4115aea78b6e7c85256b360066f0d4/d66e56756964d8998525835200494b74>
+
+Grifter Journalist Jerry Ji Guo Jailed for Alleged $3.5 Million Bitcoin Heist <https://www.thedailybeast.com/grifter-journalist-jerry-ji-guo-jailed-for-alleged-bitcoin-long-con>
+
+Cryptojacking Malware Now Infects More Than 415,000 Routers Globally <https://www.digitaltrends.com/computing/415000-routers-globally-infected-with-cryptojacking-malware/>
+
+Timothy May RIP <https://www.facebook.com/lucky.green.73/posts/10155498914786706>
