@@ -4,6 +4,10 @@ James O'Beirne (jamesob)
 
 <https://twitter.com/kanzure/status/1048098034234445824>
 
+slides: <http://jameso.be/dev++2018/>
+
+video: <https://www.youtube.com/watch?v=L_sI_tXmy2U>
+
 # Introduction
 
 Alright guys, how are you guys doing? You guys look tired. Given your brains are probably fried, I am delighted to tell you that this talk will be pretty high level. I am James O'Beirne, I work at Chaincode Labs. I've been working on Bitcoin Core since 2015. I am in New York most of the time.
@@ -205,6 +209,13 @@ The .dat files are basically just raw bytes of some serialized data structures. 
 # A brief digression into serialization
 
 There's a macro called ADD\_SERIALIZE\_METHODS and there's some magic around how these structs are packed into raw bytes.
+
+# Leveldb
+
+Leveldb is a fast, sorted key value store used for a few things in Bitcoin. It allows bulk writes and snapshots. It is bundled wit hthe source tree in src/leveldb/ and maintained in bitcoin-core/leveldb.git repository on github.
+
+Leveldb has the block index, which is the tree of all the valid blocks we've seen. It also handles something called chainstate/, which is really just the UTXO set.
+
 
 
 
