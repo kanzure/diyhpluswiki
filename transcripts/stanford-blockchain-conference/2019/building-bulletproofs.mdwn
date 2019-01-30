@@ -104,4 +104,35 @@ So we use session types where we encode protocol states into the rust type syste
 
 <https://blog.chain.com/bulletproof-multi-party-computation-in-rust-with-session-types-b3da6e928d5d?gi=1903caddab87>
 
+<https://ristretto.group>
 
+<https://doc.dalek.rs>
+
+<https://doc-internal.dalek.rs>
+
+
+# Q&A
+
+Q: Is this all open source?
+
+A: Yes. The pieces are meant to be reusable.
+
+Q: What's your plan for applying this in the world?
+
+A: We're still talking about that. The confidential assets protocol is working and in its own library. We encourage people to use that. It's ready.
+
+Q: If anyone has a zero-knowledge statement they want to prove, they could use this system?
+
+A: We designed a language similar to TxVM. We designed it to work with transaction value flows. It's not with the goal for doing any potential proof of any statement ever, although you can do that with constraints. But this is designed for proofs over values and it restricts how you can create or destroy value. We prioritized safety and ability to reason about creation and destruction of value, over language flexibility. So this is designed specifically for financial transaction.
+
+Q: Who are the players in multi-party computation protocols?
+
+A: For the smart contract use case, I think probably the idea would be that since the proofs- you get log compression on the proof size. If you have a bunch of people who all want to have a proof of their contract execution included into some block or something, you could imagine having an untrusted dealer service where people can just register like if you want to submit a transaction instead of submitting to the chain you would phone up the aggregation service and it would group you together with other people who wanted to make transactions at the same time. Depending on the rate of requests, it could adjust the aggregation size and you could have pre-compression or filtering before you commit onchain data.
+
+Q: If I have a constraint system, and I built something for SNARKs or something, could I use that then? Is it plug and play? What if I wanted to change my SNARK constraints?
+
+A: There's no ability to plug in play a SNARK into a bulletproof constraint system. But we're talking with folks about a way to do a potentially shared common layer. Some SNARK use an arm-to-cs conversion, or some higher level language. We'd like to be interoperable with SNARKs in the longer run.
+
+Q: For aggregation for multi-party computation protocol, the dealer is assumed to be centralized?
+
+A: Yeah, there's actually multiple ways you can do proof aggregation. In Benedikt's paper, he outlined multiple ways. The most straightforward we thought was to have a centralized dealer. You don't have to trust the dealer to not leak your secrets, because the dealer only gets your commitments and the only thing you have to trust the dealer to do is to not go offline.
