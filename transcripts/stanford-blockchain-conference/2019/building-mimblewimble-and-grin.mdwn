@@ -86,3 +86,26 @@ But finally, switch commitments came back a few months ago. Tim Ruffing came bac
 
 The community is our last building block we'll highlight.
 
+# Future work
+
+In the near future, there's atomic swaps, relative locks, flyclient, and Dandelion++. For research, we're interested in vaults and covenants, RSA accumulators, scriptless scripts, and Boneh-Lynn-Shacham (BLS) signatures.
+
+# Flyclient
+
+<https://scalingbitcoin.org/transcript/stanford2017/flyclient-super-light-clients-for-cryptocurrencies>
+
+Flyclient was created by Lou Luu and Benedikt Bunz and presented at Scaling Bitcoin 2017. You store the MMR root in the block header to quickly check blockchain validity. There's two use cases for grin in issue 1555, one is light clients, and another is to quickly identify longest chain for full node (with near certainty). Download block headers in the background later.
+
+# RSA accumulators
+
+Batching techniques for accumulators with applications to IOPs and stateless blockchains 2018 <https://eprint.iacr.org/2018/1188.pdf>
+
+Right now in grin we use an MMR but we could use an RSA accumulator. The pro's are that it removes the MMRs, and the accumulator would have a fixed size. But the cons are the security assumption change, trusted setup, and it's not quantum safe.
+
+# BLS signatures
+
+Short signatures from the Weil pairing <https://www.iacr.org/archive/asiacrypt2001/22480516.pdf>
+
+The pro's are that you can do non-interactive kernel aggregation, and have potentially simpler multisignature schemes. But the downsides are that BLS signatures would break scriptless scripts, they are slower to validate than Schnorr signatures, and there's a new security assumption change which also requires consideration.
+
+<http://grin-tech.org/>
