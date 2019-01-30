@@ -26,7 +26,7 @@ Ed25519 has different behavior between single and batch verification. Two implem
 
 Tor had an issue like this, where onion service addreses in tor had to add extra validation, the cofactor problem had 8 addresses for the same server.
 
-Monero had a critical vulnerability due to cofactors where having a cofactor 8 meant that you could spend 8 times.
+Monero had a critical vulnerability due to cofactors where having a cofactor 8 meant that you could spend 8 times. See <https://www.getmonero.org/2017/05/17/disclosure-of-a-major-bug-in-cryptonote-based-currencies.html> for more details.
 
 Edwards curves are simpler, but they push complexity into the upwards into the protocol. As a curve designer, that's great for you, but implementation now becomes more complexity.
 
@@ -136,3 +136,5 @@ A: There's no ability to plug in play a SNARK into a bulletproof constraint syst
 Q: For aggregation for multi-party computation protocol, the dealer is assumed to be centralized?
 
 A: Yeah, there's actually multiple ways you can do proof aggregation. In Benedikt's paper, he outlined multiple ways. The most straightforward we thought was to have a centralized dealer. You don't have to trust the dealer to not leak your secrets, because the dealer only gets your commitments and the only thing you have to trust the dealer to do is to not go offline.
+
+<https://github.com/dalek-cryptography/bulletproofs/issues/198>
