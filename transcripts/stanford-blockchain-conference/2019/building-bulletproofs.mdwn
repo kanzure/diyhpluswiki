@@ -76,4 +76,32 @@ This allows us to make smaller and more efficient constraint systems. I'll show 
 
 A gadget is a term we use for a collection of constraints. You can build multiple gadgets together into one constraint system and make one proof over it. An example is a shuffle gadget where you want to prove that the outputs of the shuffle gadget are a valid output of the inputs. We could do this many ways, but we use a random challenge scalar and then use equality of polynomials when roots are permuted. If the equation holds for random x then the inputs must equal the others in any order. What we want to do is to represent this constraint using our constraint system API. I'll walk you through how we do that using the API we put in place (two\_shuffle).
 
+Full sample code: <https://github.com/interstellar/spacesuit/blob/2-shuffle/src/gadgets/two_shuffle.rs>
+
+# Cloak: Confidential assets with bulletproofs
+
+Shuffle gadget isn't that useful on its own. But if we use multiple other gadgets, we can make a confidential assets protocol using this constraints system. We use shuffle, merge, split and range to make confidential assets protocol. Merge proves that the outputs are either a merge or a move of the inputs into two values. The range is a check that the value is not negative, which is similar to the rangeproof in the bulletproofs paper but constructed using the constraint system API. Shuffle does secret reordering of values.
+
+Both the quantity and the asset type of all the inputs and outputs are kept secret. To an external observer, you can't tell what type or how many input amounts are, but you can verify that it is a valid transaction and that the inputs and outputs add up. As a prover, you have to make individual assets move between the shuffle, merge and splits and rangeproofs. I'll walk through what the prover generates to show you exactly how this transaction works.
+
+Suppose you're a prover, and you want to make a proof that your inputs and outputs align. First you want to prove there's a random shuffle where you reorder the input values by asset types. So you group the dollars together here. Then you want to merge all the assets of the same type together. This allows you to take the sum over each asset type. Then you shuffle again to move the non-zero items to the top. Then you split the amounts into the target amounts for the outputs. In the last shuffle, we prove that the output ordering is a valid permutation of the input ordering to that shuffle. It gets shuffled into the output ordering that we expect. Then the rangeproof shows that none of these outputs are negative, which is bad where you can create money out of nothing. This is the walkthrough that the prover does, and then you make a proof that all of these inputs and outputs are valid for the inputs to the gadget. You make that proof, and you give it to a verifier, and it just sees a 3-3 cloaked transaction which is indistinguishable from any other transaction. You can't tell what happened, but you can tell it is a valid transaction.
+
+<https://github.com/interstellar/spacesuit>
+
+The majority of the cost of running the cloak protocol is the rangecheck, and it requires vastly more multiplications than shuffle, merges or splits. This is not much more expensive than a typical confidential transaction proof for which you'd have to do a rangecheck for anyway.
+
+# zkVM: Zero-knowledge smart contracts
+
+It would be great if we could do more than just confidential assets. We're working on zkVM, a zero-knowledge smart contract language. Last year I presented on TxVM, which aims to have deterministic results, a safe execution environment. The zero-knowledge virtual machine zkVM takes a lot of concepts from TxVM but then adds confidentiality to it, which I think is pretty cool. We take concepts from TxVM like having values and contracts that are first-class types that have a law of conservation where you can't create or destroy value without satisfying strict checks. Also there's a deterministic transaction log so you can reason about what effects your transaction will have. Also, we have the ability to do encrypted values and contract parameters with bulletproofs, and contracts built with custom constraints, and we can protect asset flows with the cloak protocol.
+
+<https://github.com/interstellar/zkvm>
+
+# Aggregated proofs with bulletproofs using session types
+
+An aggregated proof is smaller and faster to verify than the underlying proofs that it aggregates. The difficulty is that this requires a multi-party computation protocol with multiple parties and a dealer in order to create an aggregated proof. This can be complicated because when we implemented the aggregator ptotocol, here's the chart of all the messages being passed around and it's hard to track state changes and it's important to do it in order and only once otherwise you might leak secrets.
+
+So we use session types where we encode protocol states into the rust type system, and you can make functions that consume the previous state for each party and dealer state and then output the next state. This actually statically ensures correct state transitions and you can eliminate multiple-evaluation attacks that leak secrets.
+
+<https://blog.chain.com/bulletproof-multi-party-computation-in-rust-with-session-types-b3da6e928d5d?gi=1903caddab87>
+
 
