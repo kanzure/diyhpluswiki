@@ -75,3 +75,17 @@ The UTXO set doesn't grow. Only the last version of the accounts is stored. We h
 # Performance benchmarking
 
 For ZK proofs, it was a combination of sigma protocols for discrete log relations. We use Bayer-Groth shuffle, and bulletproofs for rangeproofs. We did an implementation in golang. Here are some numbers for performance.
+
+# Q&A
+
+Q: How do you handle asynchrony? If two transactions come in at the same time and use the same... it seems like the accounts get updated after every transaction? Can asynchrony be handled when two transactions are issued with respect to the same state?
+
+A: Good question. It's one of the things we're trying to do. At the moment, what happens if two transactions use the same public key for their anonymity set then only one can get into the blockchain and the other one has to be redone again which isn't very nice. We're working on nice ways to handle that. If you have any ideas, we're happy to listen.
+
+Q: I have a question about plausible deniability. I think another output to hide the actual transaction.. but this output needs to belong to me, because I need to know the blinding factor to use this. Is that correct?
+
+A: The way we do it is that... when you get your output, you don't know the randomness anymore because someone else updated it. But that's okay because you have the secret key, and you can transform it into another one where you do know the randomness and do the bulletproof on that.
+
+Q: .. can I just choose a user and update his public key continuously, so this user would have a very long line of keys, and eventually he would lose track of those keys?
+
+A: Yes, that's a concern. We haven't thought of the best way to address that at the moment.
