@@ -65,3 +65,25 @@ Our solution is that we have an off-chain prover, and an on chain verifier. We m
 Let's take a deeper look at what happens inside the prover. Let's zoom into a transaction. All steps of the computation must be accounted for in the execution trace. So you still have to send each proof to the blockchain.
 
 This is what we're going to do. I think we have time for one more thing. So I'll show you the demo.
+
+# Summary
+
+The current decentralized exchange world maxes out at 50 trades/block even if the whole block is for settling trades. This is a work in progress, but with StarkDEX we are proposing verification on-chain can be done for over 10k trades/block. It's 13.5k gas per StarkDEX trade which is better than the current solution.
+
+# Q&A
+
+Q: What was the size of the proofs you have to submit on-chain?
+
+A: The smaller one which was for the 8000 pedersens... was 45 kilobytes. The larger one was 60 kilobytes.
+
+Q: And for 10,000?
+
+A: It would be less than 150 kilobytes. I'm trying to extrapolate there.
+
+Q: Do you see gains there?
+
+A: Yes, yes. These numbers are already better than what we had 3 months earlier, and we expect this to continue going down.
+
+Q: .. high-frequency trading... what's the delay? You have to wait for 10,000 transactions to batch? Once you have the 10k, you have to do your ... so I want to get an idea of the total delay.
+
+A: There's a difference between the... DEXes already doing this tell their customers this is what's going to happen, and customers are relying on that. Then you do have to wait for settlement. You can operate with a little bit of delay. To generate these proofs, we took a blockchain-bound and turned it into an AWS bound. So if you give us enough cores.... so there's almost, there's a limit to how much you can parallelize it. The lag time is like logarithm of n, if you give me enough cores that are fast enough and then I can probably settle 10,000 transactions within a few minutes. I need a lot of fast cores, but this has nothing to do with stuff you have on chain which is the main barrier here.
