@@ -2,6 +2,10 @@ Tight proofs of space and and replication
 
 Ben Fisch (Stanford University)
 
+<https://twitter.com/kanzure/status/1091064672831234048>
+
+paper: <https://eprint.iacr.org/2018/702.pdf>
+
 # Introduction
 
 This talk is about proofs of space and tight proofs of space.
@@ -98,8 +102,9 @@ When we want to prove this has a proof-of-space, we can't assume adversaries are
 
 From this, you can build a proof of replication by taking the labels on the last level and you use this as a one-time encryption pad, you XOR it with your movie file, and you get an encoded movie data file. Extraction in this very generic construction is inefficient, and it requires you to rederive the deterministic labels on the last layer to decode your movie.
 
-So how could we build something with efficient data extraction, given the caveats about composability from before? We start with the same construction, we tweak it, and we absorb the expander edges into the layers so that between the layers there's just one edge between nodes. A node in a given layer, does not have a direct dependency on any nodes in the previous layer, it just has an edge from the node with the same index in the prior level. The edges that were there before were absorbed into the ... from the same level. Then we reverse the direction of the edges on every level, and I'll explain the intuition for why we are doing this. The dashed edges basically correspond or indicate where you would XOR the higher level label with a key derived from the parents on the next level.
+So how could we build something with efficient data extraction, given the caveats about composability from before? We start with the same construction, we tweak it, and we absorb the expander edges into the layers so that between the layers there's just one edge between nodes. A node in a given layer, does not have a direct dependency on any nodes in the previous layer, it just has an edge from the node with the same index in the prior level. The edges that were there before were absorbed into the ... from the same level. Then we reverse the direction of the edges on every level, and I'll explain the intuition for why we are doing this. The dashed edges basically correspond or indicate where you would XOR the higher level label with a key derived from the parents on the next level. We're deriving an encoding of each label, so each label encodes the same index label on the previous level. The final level of nodes contains an encoding of the data inputs, and the data can be extracted efficiently by reversing this process. When we reverse this process, it can be completely parallelized so that it's much faster.
 
+So why do we still have this property of a proof-of-space? Say we forget one of the labels. Consider both its targets in this level, and also its dependencies. If we move it to the level right before, the targets of this node sort of become the dependency of the node on hte previous level. In order to re-derive this label, we needed still to have a label c9 because c14 encodes c9. It's the XOR of c9. But in order to re-derive c9, we need c10 which was you know part of the target set of c14 in the last level. The targets become dependencies of the node that we need to re-derive on the previous level, and the dependencies then become targets. We keep on switching the dependencies and targets. Why? The way we chose the edges came from the expander graph construction, which has the expander property, which applies to the size of the target and the dependencies of any deleted set of labels inherits this expansion property. The whole construction is in the paper.
 
 
 
