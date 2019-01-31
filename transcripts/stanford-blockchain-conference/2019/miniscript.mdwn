@@ -2,6 +2,8 @@ Miniscript
 
 Pieter Wuille (sipa) (Blockstream)
 
+<https://twitter.com/kanzure/status/1091116834219151360>
+
 Jeremy: Our next speaker really needs no introduction. However, I am obligated to deliver an introduction anyway. I'm not just trying to avoid pronouncing his name which is known to be unpronounceable. I am pleased to welcome Pieter Wuille to stage to present on miniscript.
 
 # Introduction
@@ -107,3 +109,51 @@ We also found an efficient algorithm to find the most efficient miniscript given
 # Demo
 
 <http://bitcoin.sipa.be/miniscript/miniscript.html>
+
+We also have a rust implementation. While writing this compiler, we ran a competition between Andrew Poelstra and myself. We tried to figure out who can come up with the more efficient one. In the end, we found that we had significant flaws in our constructions and it eventually converged, so that's good.
+
+# Spending in practice
+
+So far I have only really addressed dealing with constructing a script that is a composition of certain policies. But my original goal was more ambitious: how can we make different tools designed for different policies to interact? To explain that, I am going to start with talking about Andrew Chow's bip174 partially-signed bitcoin transactions. It's a key-value format with metadata with all the information you need to figure out how to sign the transaction and if necessary if it's a p2sh output it will tell you the reedemScript, you can encode bip32 HD paths that keys are derived from so that a hardware wallet can derive them on the fly, etc.
+
+There are 6 different roles associated with PSBT implementations. There's a creator that creates transaction templates, an updater that fills in information, signers that have access to private keys and can produce signatures, a combiner that combines them, a finalizer and extractor that produces a complete transaction. In practice, many of these roles happen simultaneously.
+
+In the typical PSBT workflow, it's really only the updater and the finalizer that need to understand anything about the input scripts. This is somewhat surprising. It does make sense because when signing you generally care about where the money goes not whether it was already yours. Worst case, it's not yours and your signature would be invalid.
+
+An obvious way of thinking about it is, well, we have a nice annotated policy form. So we could store it in the policy record in PSBT, and then others could actually sign. Actually this doesn't seem to be necessary, because not only is our policy language composable, but the subset of script is also composable. What this means is that you can actually, there's a very simple parser that you can write that given a script it will tell you the policy again. This means that we really don't even need to add any metadata to a PSBT to enable integration with it. This is somewhat of an artificial restriction, we could very much propose an extension for that, but overall it doesn't seem like we would gain that much by using a non-parseable or non-easily parseable script instead.
+
+# Interaction
+
+How do we imagine interaction to work? Scripts can be easily parsed back into an annotated policy, from which you can figure out which subsets of keys can sign. You can figure out what the policy does, and you can verify a policy ius a composition of a desired policy with another, and the composition is always sound. You can assemble a fully signed transaction from the signatures.
+
+The origin of this is from a discussion on signer logic for the rust-bitcoin library. We were wondering what to do for signing, and someone was very much against a template-based signing where you say these are the few types of scripts we support and only these are the ones that are supported. So we went on this roundabout way to design this thing and in the end we decided that really the language to describe the structure of a script can be the script itself as long as it is within this subset that we call Miniscript.
+
+# Conclusion
+
+I want to conclude by saying bitcoin script is mostly useful for simple policies but there's a lot more possible than what it is being used for. This is partly because it's hard to make things interact well. This sort of interaction could over time mean letting things like lightning client and a multisig client trivially interact without needing to read through all the protocol work. I'm not an expert on those details here.
+
+We can define a subset of script which can be generically signed for, can be constructed easily, and can be analyzed easily, and as long as we don't have common subexpressions it's reasonably efficient for many use cases.
+
+# Future work
+
+In the future, we need to open-source our implementations of the compiler and the parser. Right now the javascript compiler in the demo is not what you want to look at. Also, we want to integrate generic signer in common wallet software so we can immediately support PSBT or others. It could mean that I have a hardware wallet not even designed for these things but it will probably not give you a useful address in what is going on but at least some of them will likely support this without needing to know. And there are further optimizations that could be used to improve this. We used a relatively exhaustive approach to find all constructions but there's a whole bunch of things possible in script that we're not using.
+
+We can use lessons learned here for future improvements... only if there was an OP\_ROLL\_BACKWARD that rolls in the other direction, you could precompute a value that would be used multiple times and just re-insert into the stack. This is the only time that I will be working other ongoing work like future improvements to bitcoin scripting like taproot and MAST, which can both directly reuse the policy language. The annotations will be different, but this should make upgradeability easier as well. You can write the policy now, and in the future it will be translated differently in a future script version.
+
+Thank you.
+
+# Q&A
+
+Jeremy: Thank you very much. We have time for questions.
+
+Q: Why not call the subset of script, subscript instead of miniscript?
+
+A: I am I think notoriously bad at naming things. Originally I wanted to call it descript because it's script with something removed from it, and it interacted with our work on descriptors and people found it too confusing.
+
+Q: Since you can't reuse witness arguments in different expressions, you can't do p2pkh in this?
+
+A: Yes.
+
+Q: If you were to extend this, I think you could add ... things that would make it easier to reuse arguments. Is there a way to do that while still preserving composability?
+
+A: I would like to hear your opinions on this. In particular, about pubkeyhashes. In an earlier implementation, we had a pubkeyhash construction but if you think about it as expressing policies... the policy that a pubkeyhash implements is the same as the one, you do a hash at the top but there's really no reason why you would want a hash inside. Reusing witness things... we do have, say the wrapped W version of the hashlock. We found that actually the most efficient and really the only way you would want to do it if you also want to include a guarantee that the maximum size of the preimage is 32 bytes otherwise you might not be compatible across chains, then this is something that just takes a single argument whose size 0 refers to nonsatisfaction. So, there is a limited reasoning on reusing arguments in various places but they are all encapsulated within a particular combination of... I'm sure this can be improved.
