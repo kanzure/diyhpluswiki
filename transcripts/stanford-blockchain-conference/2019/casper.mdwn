@@ -2,6 +2,8 @@ Casper the friendly ghost: A "correct-by-construction" blockchain consensus prot
 
 Vlad Zamfir (Ethereum Foundation)
 
+<https://twitter.com/kanzure/status/1091460316288868352>
+
 I have one announcement to make before we start the session. If you feel like after all of these talks that the thing you really need is a drink, then there's help. Chainlink is hosting the Stanford Blockchain Conference happy hour at The Patio which is the most famous bar in Palo Alto. It doesn't mean that much, but it's good fun. It's at 412 Evans St in Palo Alto, from 5-8pm and it's an open bar. Thank you very much to Chainlink for hosting this.
 
 There seems to be a lot of excitement for this next session. We'll be talking about the future of ethereum. We will have Vlad and Vitalik. We'll do it slightly differently this time. Both will present and then we will have a Q&A and perhaps a tiny debate. Please give Vlad a warm welcome. We're very excited for the session.
@@ -66,8 +68,28 @@ Here's a code snippet from the CBC Casper GitHub. We have a bunch of different t
 
 So we defined sharded consensus values and then we defined a fork choice rule where from a set of protocol messages will give you a fork for every shard. This is something that if you read the CBC Casper Framework you will understand because the estimator is the main parameter of the CBC casper family.
 
+# Demo
 
+((see video))
 
+At the end of the day, the cool thing about the CBC Casper approach is that we can define rather complex fork choice rules without having to rethink consensus rules because it's all inherited from this framework about making decisions in consensus protocols. In this protocol, a node that is following a shard doesn't need to know everything about what's happening on a few other shards because the fork choice rule in that shard doesn't depend on the fork choice rule in the other shards and they don't need to receive all the messages from the other shards. They get some scalability from not receiving all the messages, which is the second sense of lite client, you don't get all the messages but only the messages that they decide are relevant to the decision you are making.
 
+# Future work in sharded consensus in CBC Casper
 
+We want to have a consensus value and fork choice rule that will allow us to have non-deadlocking on the ethereum virtual machine. If you allow the EVM to do cross-shard calls with synchronous calls, you can get into a deadlock where a contract is waiting for a return value and then another contract calls it and hten it waits and then you get into a cycle where everyone is waiting on each other. So we want a version of the EVM that is deadlock free. This will allow synchronous calls on the virtual machine across shards.
 
+We also need a load balancer so that the load on different shards will be balanced over time so you can't overload one shard and make it very expensive to participate or use that shard. Load balancing also reduces the overhead of the routing protocol because we get a lot of scalability from the routing protocol.
+
+# Explaining omitted discussions
+
+You might ask me, what about liveness? Liveness isn't really in scope right now because it's going to be something we work on for consensus protocols, and for sharded consensus protocols a similar solution would apply. Liveness strategies for blockchain will work for shard chains.
+
+Validity and data availability are often problems that we talk about when it comes to sharding. I don't think this is a consensus protocol problem. Consensus protcols are about making decisions in the presence of mutually exclusive options. Availability isn't a consensus protocol problem. You don't need availability for consensus.
+
+Validator rotation would be interesting, proof-of-stake too, and cryptoeconomics. Since these systems are dewsigned to be incentivized, we can leave those conversations for later. Also, you know, cause this talk is really just a distributed systems talk.
+
+# Conclusion
+
+Let me wrap up by going over the main takeaways.
+
+Binary consensus protocols cannot be sharded. Sharding consensus requires sharded consensus values. Sharding clients are light clients. Sharded consensus protocols exist. Sharding is a natural way to scale consensus protocols.
