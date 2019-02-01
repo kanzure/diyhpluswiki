@@ -74,7 +74,7 @@ So how are we going to map this to bitcoin script? The basic construction is pre
 - or(X,Y) turns into `<X> TAS <Y> FAS BOOLOR`.
 - thres(2,X,Y,Z) turns into `<X> TAS <Y> FAS ADD TAS <Z> FAS ADD 2 EQ`.
 
-TAS stands for "to alt stack" and FAS stands for "from alt stack. During execution, you have access to two stacks but the only operation you can do is move something from one stack to the other. So you have an alternate stack and the stack.
+TAS stands for "to alt stack" and FAS stands for "from alt stack". During execution, you have access to two stacks but the only operation you can do is move something from one stack to the other. So you have an alternate stack and the stack.
 
 # Optimizations
 
