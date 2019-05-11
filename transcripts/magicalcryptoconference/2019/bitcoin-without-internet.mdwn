@@ -48,5 +48,47 @@ RM: We haven't implemented a receiver, it's a good match for the blocksat satell
 
 RN: I think it's important to remember that most people don't need fast bitcoin. Miners have a speed problem because it's a race to show your new block. But as a receiver, your coins have been validated multiple times already. You are spending a coin that has already been validated. There's no speed problem there. You can take your time to send it out, the receiver can go through multiple hops and do multiple checks on validity. It's not like a line during the morning rush at Starbucks.
 
+EO: In the event of a reorg attack by an exchange that was attacked, could Blockstream blocksat protect against this?
+
+AB: One issue that has been along is with bfgminer and luke-jr.... you don't want your miner to not be mining, he had a feature in there which looks at the first one and if it's starts to mine something at a lower height than it previously mined, it takes that as a sign that something was wrong and switches to the pool. This kind of autoswitching could be interesting. It's one of those things where if you want to a participant in the network, you should make an economic decision that you're aware of the factors and if you're operating a miner then you're an economic actor. If the second one fails then you can rely on the first, and so on. Mining equipment should alert its owners when something strange is happening.
+
+EO: The network technologies you guys decide are ad hoc networks where the only limit to join is that people need to run the network. How do you incentivize or envision incentivizing participants to run these networks even when they are not actively transacting?
+
+RM: One thing that our co-founder said is that you can get some inspiration from bitcoin because it's a protocol that incentivizes its own use. Mesh networks have been around for a long time, why haven't they predominantly spreaded? With bitcoin we can get some inspiration for how protocols can inspire its own use, and get some incentives for running mesh nodes, even if it's not a lot of money, just like the lightning network sure you can make some money but just having that incentive of some trickle value will inspire people to go to a lot of trouble to run a node and there might be some approach like that for a mesh network.
+
+RN: I described in my talk, there's an easy way to pay someone to do something for you in the bitcoin realm. You can just add an extra output to your transaction and if they broadcast that transaction they literally get paid, because their payment is embedded in the transaction and they cannot split it. If there's value or demand there, then people will do it, in the same way that wifi hotspots get paid for using the hotspot. It's fairly simple to incentivize users.
+
+EO: Earlier today we heard a lot from people working on lightning network. Would these ntework technologies be applicable to lightning?
+
+AB: It's something we have thought about because of the availability of bi-directional satellites. You're really in a quite extreme high latency low bandwidth situation with these satellites. Lightning is designed to be bandwidth efficient, but there might be specific things that could be optimized for network behavior characteristics.  I think some of these use cases might benefit from the ability to receive offline. If you require continuous connectivity to receive.... but with lightning, it's source-routed. When you connect to a lightning node, it tries to download a full map of the lightning network for routing purposes. It periodically updates.
+
+EO: ... we did, and we cheated by ...
+
+RN: So you can send any data if you have a, despite those.. It takes just a little longer, but it's totally doable. You can have a Liquid-based bank in a small village and say this small village is in the mountains and has bad weather and it's just a disaster to get data out of that. Maybe there's some accounting and when the sky opens up, you get some fee and you can do some consolidation of those transactions. You could literally have a federated bitcoin pseudo-bitcoin village running that.
+
+AB: With high-frequency radio, one of the characteristics of lightning is that you need to maintain some TCP connection for the duration of the channel.
+
+RN: You always have to pick, like low bandwidth or high bandwidth and the constraints.
+
+RM: Lightning network is really about exchanging signatures. At the end of the day, it's mostly signatures being transmitted. There's down the road things like Schnorr signature aggregation. There are some opportunities to make lower bandwidth versions. It might not be the exact current protocol but it could be some low bandwidth versions of these protocols which would work over a mesh network or something. With mesh networks, mesh lightning is a mesh, it's a flat network, but it's an overlay network on a more-or-less centralized internet. The payment network and the communication network could be running on the same layer or same mesh network one in the same. There's advantages to that. Now your nodes aren't just for sending payments, but they also pay for the communication part of that.
+
+RN: That's the cool thing about radio. It's all light speed. The speed is the same. But the bandwidth for lightning is not that much for a single transaction. We were using a, it wasn't the greatest bandwidth protocol for that... if you're using....
+
+EO: When it comes to radio or satellite, what's the biggest hurdle in getting more people to actively participate in non-internet bitcoin?
+
+AB: It's probably ease-of-use in the sense that at Blockstream we have received many requests about this. It's kind of complicated. Someone has to find a lnd with these characteristics or something. They just want to pay money and get going, they don't want to hunt for parts or hardware. Pointing a satellite dish is also kind of difficult and there's some tools required to do that. It's a bit of a learning experience.
+
+RM: Gotenna shows that ... I think that's one important lesson to learn. There might be places that have problems with connectivity or expensive internet data rates. I think you will see adoption in those places before you see adoption in more developed areas.
+
+RN: I see disaster relief as a particular use case. It just helps out, right? The learning curve is a little bit high, and it's complicated stuff. It has as many buttons as possible. These things could be packaged by programmers who want to turn this into here's a parts list, just buy this stuff, you just load this software and boom. You are now in the relay system. I think because we don't see a lot of need there for these solutions, like people reaching out saying I really need this yesterday, therefore we haven't seen a lot of solutions being made easy.
+
+AB: ... and now, .. smartphone and.. and the other one is, hardware cost factors. Devices sometimes start out as like in the James Bond scenario where the satphone is extremely expensive. But maybe some devices like that do interesting survivability things for bitcoin but cost $500 or $1k will sell surprisingly well in this market, and this would provide funding to reduce the cost and iterate on this technology for other places in the world that really need it.
+
+RN: There's a very selfish motive for any bitcoiner to do something like this. It's like running a full node. Do you really need to run a full node? No, but you do it anyway. If you want to be a first class citizen, you run your own node. But if you're invested in bitcoin, then it is in your interest in helping to make the bitcoin network decentralized. Maybe this means also adding a satellite dish on your house, or doing other things. If you have a voluntary system, all the solutions are kind of going to be voluntary too. There is no government money going out to do this. There's no list of things you must do to interact with bitcoin.
+
+RM: Merchants are obviously enthusiasts, but once you see the bitcoin economy develop, you will see merchants that want to plugin just as a resiliency method. I think that is how things like that will get bootstrapped.
+
+AB: The internal bitcoin economy is not that big yet. It has potential to grow, though. The cost is one factor. Things we would take for granted in other markets we take for granted, like equipment versus internet equipment which is heavily subsidized. People in emerging markets sometimes skip entire generations of communication technologies. Most major currencies have lost 99% of their value over 100 years or less. The pain point that bitcoin solves is not the main problem that most people in developed markets are actively experiencing pain from. But in emerging markets, they are excellent use cases for bitcoin. So make things cheaper and easier to use. Make more resilient infrastructure.
+
 
 
