@@ -8,7 +8,7 @@ There are three main areas here. One is IsMine: how do I determine a particular 
 
 Right now IsMine is independent of the wallet, for some reason. It's not part of CWallet. It's fine to abstract it out. IsMine is relevant when a new transaction comes in and we want to see our balance. It's used for getcredit/getdebit functions from wallet outputs, it's used in a lot of places. When a transaction comes in, the wallet gets notified.
 
-{{2019-06-05-wallet-architecture.jpg}}
+[[2019-06-05-wallet-architecture.jpg]]
 
 # Legacy wallet architecture today
 
