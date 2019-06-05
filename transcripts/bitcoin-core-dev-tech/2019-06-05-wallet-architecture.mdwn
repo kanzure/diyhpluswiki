@@ -2,6 +2,8 @@
 
 Bitcoin Core wallet architecture + descriptors
 
+<https://twitter.com/kanzure/status/1136282460675878915>
+
 # Wallet architecture discussion
 
 There are three main areas here. One is IsMine: how do I determine a particular output is affecting my wallet? What about asking for a new address, where is it coming from? That's not just get new address, it's get raw change address, it's also change being created in fundrawtransaction. The third issue is wallet signing. Storage is not an entrypoint, it's just a way of implementing these things.
