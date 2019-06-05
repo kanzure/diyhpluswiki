@@ -92,4 +92,12 @@ We could ask for nits to be sent privately to PR authors. This would de-clutter 
 
 There is a regular "state of the repo" issue opened up regularly. Can you self concept-ACk your own PR?
 
+We used to have a way to list out trivial pull requests, instead of the big consensus changes. Right now our policy is to reject any PR that updates copyright headers or some other things. We've been drowning up in- there's a lot of fchanges like linters and things going into that. Does anyone use those tools locally? Are they useful? A bunch of them are broken on Mac. The UX of these tools are not super intuitive. I want something like "check everything since master". Right now I have to give it a range or some incantation I don't know. I have a simple script that I use. It should be something like "script/make\_linting\_easy.sh" or something.
+
+There's a massive header refactoring PR open right now. There was a problem with this one. There's a lot of time spent fixing and maintaining scripts to do things. The linters are useful because they do point at things we don't really look at usually. So there should be an easy button locally that fixes this up locally, and then submit a PR? I always keep a travis-ci tab open because I know it's going to blow up. But maybe a pre-commit git hook, and some tutorial on how to do that with two easy steps or something, that could help. It used to be that travis-ci was faster than my local computer but right now I think it's the other way around.
+
+We could spin up development VMs for reviewing PRs, automatically. So it would make it easier to build and run tests. Users could login with their github login oauth or something. For wallet tests, maybe just run wallet tests only. That would be nice. Sometimes it doesn't do that. Are you compiling with --disable-wallet?
+
+I am looking forward to seeing how these ideas pan out. John recently mentioned conflicts are an issue with respect to rebasing. So I started opening up my PRs in draft, then wait to see the conflicts, then decide whether I want to continue with that pull request.
+
 
