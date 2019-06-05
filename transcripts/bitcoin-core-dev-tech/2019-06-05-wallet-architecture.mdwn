@@ -8,6 +8,8 @@ There are three main areas here. One is IsMine: how do I determine a particular 
 
 Right now IsMine is independent of the wallet, for some reason. It's not part of CWallet. It's fine to abstract it out. IsMine is relevant when a new transaction comes in and we want to see our balance. It's used for getcredit/getdebit functions from wallet outputs, it's used in a lot of places. When a transaction comes in, the wallet gets notified.
 
+{{2019-06-05-wallet-architecture.jpg}}
+
 # Legacy wallet architecture today
 
 The wallet key store contains the private keys, scripts, watched things. IsMine gets queries, and then it itself queries the key store. That's how things work now. Then there's the keypool which has the HD key information, and really this is something that gets queried from time to time, asked to refill the key pool, and the key pool puts things into that blob of data. IsMine's only input is scriptpubkey. Then there's various overloads, one where you can give it a txout, so it looks up the txout and then passes the script into IsMine checks. The signing code actually also calls the wallet's keystore. The signing code uses a signing provider, but the signing provider is implemented by the key store. It's this thing where everything gets dumped in and queried from. But it's way too low level. It doesn't understand what is going on. You import a script, you import some keys, and it happens to know it can sign for it, so we are going to call it IsMine. It has no idea what things arei ntended to be... also, the keypool has keys but it doesn't have addresses, so it can't reason about what kind of address you'd like to have.
@@ -51,5 +53,4 @@ With regards to serialization... it's tightly coupled to CWallet and the databas
 There's quite a few tests that rely on dumb "IsMine" behavior. The functional tests. The entirety of the wallet, basically. There's a lot of things shared between these.
 
 Labels and addressbook, how does that interface now? We have a record that takes the address as a label. It's separate from adding script or whatever to the key store. Yeah, they're different. IsMine in the new one, has no such thing as "InMine solvable". It's either spendable, or watchonly. If you have a hardware wallet, we want to call it "spendable". For watchonly, maybe use multiwallet.
-
 
