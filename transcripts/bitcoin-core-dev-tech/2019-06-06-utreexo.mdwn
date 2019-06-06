@@ -1,0 +1,117 @@
+Utreexo: hash-based accumulator for bitcoin UTXOs
+
+<http://diyhpl.us/wiki/transcripts/bitcoin-core-dev-tech/2018-10-08-utxo-accumulators-and-utreexo/>
+
+<http://diyhpl.us/wiki/transcripts/mit-bitcoin-expo-2019/utreexo/>
+
+Utreexo paper <https://eprint.iacr.org/2019/611.pdf>
+
+<https://github.com/mit-dci/utreexo>
+
+# Introduction
+
+You still download everything; instead of writing to your UTXO database, you modify your accumulator. You accept a proof that it's in the UTXO accumulator, you put it in there yourself, you just don't remember it anymore. The end result is that you store less than a kilobyte instead of 4 GB or so. But the downside is that you need all these proofs. Worst case, the proofs basically double the download size. If you do IBD and have no caching, it's going to be close to 500 GB for IBD. But it's a pretty steep curve that if you have a few hundred megs for RAM and caching, the extra data goes down significantly. Once you're synced up, the caching doesn't help as much. Your just steady state extra data ends up being about 2x. The longer you keep running, the less overhead you have if you have enough memory because your peers can remember proofs overlap. These are giant merkle trees, and there's some overlap. But this is complex because you have to have a lot of state for each peers. It's like compact blocks, in that you have to remember what you sent to each person.
+
+So, I am working on it, and I'm interested in how to go about doing this. I was told just make a pull request to Bitcoin Core. I don't know. I have some test numbers in golang. It's not in C++. It basically goes into the bitcoin/blocks/ folder and just reads all the blocks and simulates an IBD with that. Long-term I do think utreexo is kind of cool and could be put into Bitcoin Core as an option. But this is a big change, so maybe it should be kept separately. So I don't know.
+
+# Q&A
+
+Q: How fast is it to validate proofs? Performance numbers?
+
+A: I haven't coupled it with signature verification yet. But super vaguely, just seeing on this computer regular Bitcoin Core does IBD in 6 hours. It doesn't take that long to do my simulation. Also my simulation is still single core. In theory, there shouldn't be much of a time penalty, because you're doing something like 8 billion hash operations throughout the initial block download (IBD) process.
+
+People have been talking about libconsensus forever, but it's hard because leveldb becomes part of it when you dig into it. But here, this might be something that could be separated.
+
+Q: Who creates the proofs?
+
+A: Right now, you need bridge nodes that can create proofs for you. Long-term, it's never going to happen, but it seems like a wallet's responsibility that if you have a UTXO then you keep your own proof. But that's not really going to happen, getting people to do that. A year ago, sipa was asking, all of these ideas for squishing the UTXO set down all die because you need a bridge node to link these p2p networks. One of these p2p networks is going to need proofs stuck on to the transactions, and the others will have no idea. So you need to look up the inputs, look up the proofs, attach those and forward it on. In this design, it's like an extra 8 GB to run a bridge node, and a bit more disk I/O but not too bad. It seems that if you're already running an archive node and if you have a lot of bandwidth then why not. It needs the merkle forest accumulator thing. It also needs a key-value store of outpoint to position in that tree. If it sees an input, okay, what's the outpoint, and where is it?
+
+Q: If I am using the accumulator, can I magically go back into the UTXO set and get that information?
+
+A: If nobody wants to talk to you, then you're kind of stuck. But if you want to go back to the previous way of doing things, you could migrate back.
+
+If you have the blocks on your disk, you would have to reindex, because insertion order matters. That would be kind of slow. It's like a rescan. You need height and index within the block.. no, we don't have that.
+
+Q: What's the performance on really shitty hardware devices? Your proposal would let those devices run with low memory, but do other things become expensive for them?
+
+A: Probably signature validation becomes a bottleneck. I have a slow laptop and it takes 20 minutes to verify a block. It's like core 2 duo. It's slow, but it's not the CPU, it's the disk. I want to add signature verification to my simulator.
+
+You not only know when these UTXOs get removed, you also know when new ones come in.
+
+Q: How do reorgs work?
+
+A: You probably store a bunch of old utreexo states, they are only a few hundred bytes, so probably store 5 ago, 10 ago, 20 ago, if there's a reorg then just rollback to that and restart. It should be possible to keep a few thousand of these old states. It would be cool to get it to be fully reversible not just something you undo and redo.
+
+Q: What about acceptance of transactions in the mempool?
+
+A: I haven't implemented the p2p syncing. The simple way is to give a full proof with every transaction in the mempool and everyone verifies it. That's significant overhead though. So you need to have an idea of what parts of the accumulator your peer has, and then send only those parts of the proof. The proofs change every block. Really the way to organize it is you have a bunch of transactions, you have a location pointe rwith every input, then you have got your accumulator state in RAM which is this binary tree kind of thing, so you have pointers in there, and you have one place where you store all of the proof data. When you update that when a block comes in, you sort of get your proof updates for free; if a hash changes, you have your one input, and it points to position 500,000 and then you modify your big forest and your hash changes.
+
+Q: So you can figure out if a block comes in and conflicts with stuff in your mempool, you can figure that out because the proof is no longer valid?
+
+A: It's not that it conflicts; every time a block comes in, you modify your accumulator.
+
+Q: So you might lose UTXOs?
+
+A: What do you mean?
+
+Q: Normally, when a transaction comes into the mempool, it proves that it fits on the tip. Then another one comes in and it proves as well.
+
+A: That's the same. You just have to make sure they are all unique. You verify the proof with respect to your state. You're getting a new proof, you're verifying that it fits in to your accumulator, and then you keep the data that...
+
+Q: Wait, so... your proof state is based on only confirmed transactions?
+
+A: Yes.
+
+Q: So what about a transaction that depends on other mempool transactions?
+
+A: There's no proof for that. If you have a transaction that depends on something that has not got into a block, there's no proof for that UTXO. That's the same as today. No proof, it's just in the mempool.
+
+Q: So when it's mined, you create the proof yourself?
+
+A: If it's created and spent in the same block, then you just do the proofs, it's created and spent in the same block. For transactions that were in the mempool together, for chained trees of transactions, the assumption is that the miner will add the proof for some of the chained transactions even 20-30 blocks later.
+
+Q: What is the size of the mempool for these proofs?
+
+A: In practice, it's not so bad because so many transactions are spending recent outputs. They also have overlapping trees mostly. So you just store the whole tree, and they overlap. The proofs are very small. It's exploitable, and if you want to be a jerk, you can get all of these really old UTXOs and get them to be spaced out. Even if they are on the left and all clustered together, the proofs overlap, but if you try and do griefing, you could get- worst case, it's like 2-3x the size of the transactions themselves like if you have tons of inputs. You could probably do worse. This was just from fooling around with random testing. You might be able to find a way to get 4x usage. But generally in the real world, transactions cluster really well.
+
+Q: Do the proofs have to be updated for new blocks?
+
+A: Yes, but in your memory, you're keeping a pointer to the location in memory. For each transaction, for every input, it's a pointer to say where in that forest that it points to. If someone asks you for a transaction proof, you say okay the pointer is here, I walk up to the root and I build it on demand. It's easy, it's just all the pointers inside it. When you're downloading a block, you're modifying all the stuff in the forest.
+
+Q: So the portion of the forest you're maintaining, serving everything in the mempool...
+
+A: You modify everything in that forest. When a block comes out, it might be modifying things you don't care about. You still have to modify, but you can choose to forget it immediately after. For some sections, you have to go down and recompute a bunch and you don't care at all and you throw it away, but in other sections nothing changes but closer to the top maybe it got changed at the root. It's a little complex, but CPU wise it's basically no overhead.
+
+Q: Does a wallet keep its own forest?
+
+A: It could. Since you're going to use a bridge node, I haven't implemented that. It seems like it would be hard to stop using bridge nodes.
+
+If you accept the fact that bridge nodes will forever be needed, it changes what this improves. What it's really doing is moving the UTXO lookup and management out of the full node, but moving it elsewhere where it is actually expensive but no longer on the critical path for block validation anymore. You could also chop up the bridge nodes and shard them. It's pretty easy to shard this.
+
+There are other things you could do with this, not in the paper. You could do an assumeutxo kind of thing, where you hard code the client with a starting UTXO set and it's one line of hex. Then assumeutxo becomes "here's the hash of the merkle forest" and you don't need to download anything, it's all set to go. Another thing you could do is if you have a desktop node, you could have a QR code, and then sync to a mobile device. You could also sync by copying the whole chainstate folder, it's totally doable but nobody does it. But some people might say, I don't want to do initial block download, let me go to blockchain.info and maybe it gives me a QR code or something- so it's a double-edged sword and we don't want that trusted party outcome really.
+
+If everyone is doing, every UTXO that your wallet holds, you keep a pointer into the sparse forest and you save it to disk as well, so you know I'm always keeping track of these UTXOs in the forest and I can find it.
+
+Q: What about a fingerprinting attack?
+
+A: Yeah, you could try to-- it would be expensive because you would have to make a lot of transactions.  If you accept a transaction with a partial proof, then oh you must have that. So you can try to figure out which part of the transaction they know. It's expensive because you need valid transaction. You can get knowledge by figuring out which parts of the proofs they have. More of a Chainalysis proposal I guess.
+
+There's a lot of other work on accumulators, like Benedikt Bunz's paper, which is in some way a much better accumulator. The proofs are constant-sized and you could prove a million UTXOs with a tiny proof. But there's trusted setup issues, or weird class groups which nobody knows how those work. It's also difficult or maybe impossible to run a bridge node. In utreexo, the idea is if you want to run a bridge node, you just modify your forest every time a block comes in, but in the other accumulators, if you want a proof for each UTXO that's 60 million things you need to modify separately every time a block comes in. It's like 60 million RSA operations, or it's actually 60 million RSA operations times however many operations are in the block, so you're in the millions or trillions of RSA operations per block. It's possible, but you need a data center.
+
+Q: You could break this into separate proposals. One is using accumulators for speeding up initial block download, and the other is the steady state where someone is running these accumulators.
+
+A: There are transitions you can do, so if you had-- people were talking about assumeutxo-- even if you don't use utreexo, it still makes sense to have this structure as a UTXO commitment in the code because you can download little chunks and verify it. People can hand you the UTXO set, and you can verify it incrementally, and then you get the full thing and now you're just a regular node. You can transition from a utreexo node to a full node by doing that same process. To do the other way, yeah it's kind of a rescan process so it's a little slow. It could be sort of like assumevalid.
+
+Often when I talk about this, people call this a UTXO commitment proposal. Well, no. We don't really want that. You could do it with that, but I don't know if you would want to.
+
+# Implementation options
+
+It could be an electrum model where you don't have message passing between clients. Maybe they are p2p and they gossip and send proofs between each other. But at the beginning why not a client that just connects to a server and talks with it? It doesn't trust the server, and it's way easier to code. I'm just trying to figur eout which things to start coding.
+
+You get rid of the UTXO database and plugin in there. Cory had a utxo hash set thing that he did. So maybe an RPC interface. That's cool, but you also have p2p stuff and you track all the proofs you've sent each peer. All the proofs change each block. If you send someone the proof... the wallet can be the same.
+
+There's a couple of refactorings where validation code is being cleaned up with interfaces. Keep an eye on those pull requests and ask them to add extra things so that we can add utreexo later so that we have the right interface.
+
+# Getting it merged
+
+Sounds like you should flesh this out on a fork branch of Bitcoin Core, without knowing if anyone would ever use this. I think the question is, how useful would it be? If you have a fast computer and slow internet, it's bad. If you're trying to do initial block download on a nice laptop on airplane wifi, this is way worse. But another case where it seems useful is like Casa node where we have raspberrypi that we want running a full node.
