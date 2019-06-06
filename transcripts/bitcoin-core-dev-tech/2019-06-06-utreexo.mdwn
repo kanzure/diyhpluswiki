@@ -8,6 +8,8 @@ Utreexo paper <https://eprint.iacr.org/2019/611.pdf>
 
 <https://github.com/mit-dci/utreexo>
 
+<https://twitter.com/kanzure/status/1136560700187447297>
+
 # Introduction
 
 You still download everything; instead of writing to your UTXO database, you modify your accumulator. You accept a proof that it's in the UTXO accumulator, you put it in there yourself, you just don't remember it anymore. The end result is that you store less than a kilobyte instead of 4 GB or so. But the downside is that you need all these proofs. Worst case, the proofs basically double the download size. If you do IBD and have no caching, it's going to be close to 500 GB for IBD. But it's a pretty steep curve that if you have a few hundred megs for RAM and caching, the extra data goes down significantly. Once you're synced up, the caching doesn't help as much. Your just steady state extra data ends up being about 2x. The longer you keep running, the less overhead you have if you have enough memory because your peers can remember proofs overlap. These are giant merkle trees, and there's some overlap. But this is complex because you have to have a lot of state for each peers. It's like compact blocks, in that you have to remember what you sent to each person.
