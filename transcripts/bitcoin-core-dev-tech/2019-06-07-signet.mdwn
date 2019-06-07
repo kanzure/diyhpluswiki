@@ -2,6 +2,8 @@ Signet
 
 <https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-March/016734.html>
 
+<https://twitter.com/kanzure/status/1136980462524608512>
+
 # Introduction
 
 I am going to talk a little bit about signet. Does anyone not know what signet is? The idea is to have a signature of the block or the previous block. The idea is that testnet is horribly broken for testing things, especially testing things for long-term. You have large reorgs on testnet. What about testnet with a less broken difficulty adjustment? Testnet is for miner testing really. One of the goals is that you want predictable unreliability and not world-shattering unreliability. Signet would be like a new series of networks. Anyone can spin up a signet; it's a public network but only people with the private key can create blocks. Anyone can create blocks but it would be invalid if you look at the coinbase. You could fool SPV clients I guess. You could have a taproot signet and spin that up, or a Schnorr signet, or whatever you want to do.
