@@ -1,5 +1,7 @@
 assumeutxo
 
+<https://twitter.com/kanzure/status/1137008648620838912>
+
 # Why assumeutxo
 
 assumeutxo is a spiritual continuation of assumevalid. Why do we want to do this in the first place? At the moment, it takes hours and days to do initial block download. Various projects in the community have been implementing meassures to speed this up. Casa I think bundles datadir with their nodes. Other projects like btcpay have various ways of bundling this up and signing things with gpg keys and these solutions are not quite half-baked but they are probably not desirable either. The thinking here is that we want to do something analogous and do it right and make it relatively safe. There's technically a slight change in the security module.
@@ -63,3 +65,21 @@ The advantage of having a big cache only comes in play when you're doing a lot o
 # Pruning details
 
 Pruning can happen aggressively for background validation chainstate since we don't expect reorgs (within 1 block of tip). Kinda marginal because of extra 3 GB chainstate.
+
+# utreexo stuff
+
+If you want assumeutxo that is the same structure as utreexo, you can do that without worrying about any caching because the point isn't having a tiny little node the point is so that I can incrementally download the entire UTXO set and then go from there as a normal node. So that's like using a smallish part of utreexo, it's basically some merkle trees at some point. You don't care about transitions in the accumulator state, you just have a single accumulator state and you want to verify UTXOs in there. You don't want to miss any UTXOs, either, but that's straightforward.
+
+Is there benefits from validating backwards? If a coin ends up in an OP\_RETURN then you don't have to verify the signatures in the past? Well, you still want to be in tune with everyone else. I don't know if the 10 different parallel validation things is useful, it seems like it's not useful but maybe. You can just set them to the number of cores you have. Well, you hardcode like 100 of them, and then you use as many up to the number of cores your CPU has.
+
+# Other changes
+
+There's a few places where instead of acting on a single chainstate, we just get all the relevant chainstates from the ChainManager. The actual diff in net\_processing is pretty minimal. Then there's some init/shutdown stuff, some metadata serialization about whether we have a or not... there's really not that much to it.
+
+The format of the RPC calls, it just writes out serialized bytes. It's reusing the same thing we use for getutxosetstats. We just go in order, for each in the leveldb. I think this works.
+
+# About phase 2
+
+Nodes would store some number of FEC-encoded chunks across n historical snapshots. In this version, assumeutxo isn't a scalar, but a list of height-hash pairs. How do we generate snapshots before assumeutxo updates? How many snapshots do we keep around anyway? Maybe we say every 40,000 blocks we generate a snapshot or something. I haven't really thought about it.
+
+The FEC-encoding solves the problem that-- for each node, we want each node to store a few versions of the snapshot, but the storage burden might be high. You don't want to retrieve your snapshot from a single peer. It's that you don't want to retrieve it from a single peer, not that you don't want to store it. If you didn't use erasure coding, someone could DoS the network and take out all the nodes that offer a specific snapshot of data. But in my mind, why wouldn't every node all have this data anyway?
