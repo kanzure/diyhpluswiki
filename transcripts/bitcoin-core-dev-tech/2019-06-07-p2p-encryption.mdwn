@@ -1,5 +1,7 @@
 p2p encryption
 
+<https://twitter.com/kanzure/status/1136939003666685952>
+
 <https://github.com/bitcoin-core/bitcoin-devwiki/wiki/P2P-Design-Philosophy>
 
 # Introduction
@@ -113,3 +115,56 @@ There's definitely something in between-- there's a difference between being abl
 There's a few cohices. Maybe we don't care about traffic analysis, maybe it's all random, and maybe it looks random to a CPU-constrained observer. I think the CPU-constrained observer is the most important threat model. As soon as the key exchange is done, everything really looks random, so why not take this low-hanging fruit of adding more bytes in the handshake? Well, they could just see your traffic spiked after receiving a bitcoin block and therefore you're running bitcoin.
 
 In terms of upgrade, don't underestimate making a new port and having that be the new protocol. Otherwise you're doing TLS and start TLS. In bitcoin, there's no reason to not keep binding new ports for every single protocol we want. We could say 8336 we assume that's v2... What if people want to use a different port? There's no reason to not use a different port. If you can't bind 8336, you can't bind something else. If a country blocks 8333, you cannot start a new node. You do a DNS seed, everything is 833x, you can't connect.
+
+You can do a DDoS by advertising a bunch of services, then all the nodes try to connect and make random connections to that service. I run a bitcoin node that uses a non-standard port, and it has literally never received a legitimate connection from a Bitcoin Core node. If you use the same port, then all this anti traffic analysis stuff is sort of worthless. You need to allow unique port numbers.
+
+Would it be useful to reuse the upper 32 bytes of that Poly1305 round? For encrypting the payload? Only for creating the poly1305 key. We always throw away that 32 bytes. As long as you don't mix it with the other key; you need to keep the two things separate. ChaCha20 just gives you as many random numbers as you want. The openssh proposal is stupid throwing away those things... I think it was an implementation choice that reduced a couple bytes of state they would have had to keep track of, it's a counter for a message and that's all you need. It made it a little faster, but not substantially. I might try to implement something there.
+
+# Next steps
+
+ChaCha20 has been merged. Poly1305 has been merged. The AEAD construct has been pull requested. It has test vectors, it has bench, it is stable. It needs total review by cryptography people. It's not new crypto but it is a new construct. It's not like walking on a frozen lake, but it's still similar to walking on ice. Needs more review and to build up momentum. It has a full implementation. It works, although it's not good.
+
+After the version handshake, you send the version message. After the crypto message, yes.
+
+As an alternative to using the elegator square 64 byte construction, you could be permitted to send a number of non-valid x-coordinates before the actual x-coordinate and then you use a poisson distribution for this. You read 32 bytes, is it a valid x-coordinate, yay go, and if not skip it and continue. I think this actually looks random. The sad point of this is that you end up with things on 32 byte boundaries that are also identifiable. Why not elegator squared?
+
+One of the properties should be that we have a dependency in terms of having external libraries or something..... I don't think that's necessary, and it also complicates.. not every project that wants to implement p2p protocols has the same resources to develop. We'd add it to libsecp256k1 if we do that.. Yeah, that's true. There's more concerns than just "can we implement it".
+
+Making it look random is not that much of a goal, especially if we go to this effort and leave the port the same. It seems clearly a boneheaded move. This is what gets detected now. If you run on that port, you get emails. This is what gets detected for "I want to identify people running Bitcoin but I'm not trying to block people running Bitcoin". This is just a really easy step, you just block port 8333 incoming. If someone is trying to mess with bitcoin, that's what you do on day one, not on day five. Well, we need to have something else, then blocking it just works. If we care about traffic analysis at all, then the first thing to do is randomize the ports.
+
+Well, then let's talk about randomizing the ports.
+
+Tor is a good example. It solves censorship resistance for a bunch of applications. I don't think we want to include censorship resistance techniques. It's a layering violation. But we are, to some extent. If there's low hanging fruit, then we can do it. But changing the port is low hanging fruit. Well, then we should have a real version field or magic byte string, this makes it much easier to upgrade to future versions. I see, that's a good point. This was the entire story of TLS upgrade sadness and you have to convince the person that you are talking in the new protocol and go to enormous lengths to make messages look compatible or incompatible to certain versions. Having a version field can result in a downgrade attack if you don't do it in the right way.
+
+Someone asked, if we do see an attack, would we randomize the port? Well, maybe you don't take the last step, but make it easily available, like making it an option. If I am internet gateway and I want to block internet traffic. I just block all the ipv4 listening ports. Port randmization doesn't help you when you have a small network. You need to name the attacker. What are you trying to mitigate? Comcast sending people emails because hey you have port 8333 open.. I've gotten emails from MIT about me running something on port 8333.
+
+We don't want to have a new port number for this specific thing because people have to update their router to allow port forwarding. We should keep the port they are currently using, because it's hard to get people to open it. But we should have a feature for randomization to be used in the future.
+
+How many nodes are behind NAT? What percentage of nodes are behind NAT? Most people when they run Bitcoin Core they don't open up the port and we turned off UPNP a long time ago. Luke-jr has some analysis of listening and non-listening nodes. Can't you use ipv6 for this? Europol said they would really like to use ipv6 so they can attribute copyright infringement to specific devices instead of just "somewhere in this home". Yeah it was my refrigerator.
+
+When do you do the rekeying bit step? The AEAD with ChaCha20 in general you're never supposed to reuse the same key with the same nonce. You need to rekey when the nonce hits the limit and starts to overflow. That's the max. To be safe and to follow other protocol practices, you usually rekey after 1 gigabyte of data. It's also up to the client in our case. The client can trigger or initiate a rekey by sending that bit. That means both sides re-hash or just hash the current symmetric key so it's perfect forward secrecy. When an attacker attempst to grab the key for various reasons, then....
+
+If the client doesn't do rekeying, what does the receiver do? If you flip the bit, then it means it must rekey. So if they don't do it, then you need to disconnect immediately. If the rekey comes on every message because of a CPU attack then you also need to disconnect.
+
+Q: Why strip authentication out of this?
+
+A: There is a form of authentication in the proposal. The proposal states that the clients or the implementations following the proposal must show the session id. The session id is currently an ECDH secret hashed into a specialized form into a string. That's after the handshake has been done. Each side can compare the session id. This is authentication although it's not practical, and you need to do that after every handshake with every peer is not practical.
+
+Q: Would it be practical to HD-derive these pubkeys you present, like given this pubkey you know you're talking to this guy?
+
+A: That's authentication. There's still bip150, which is an authentication scheme which is still valid with this proposal. The problem is, you need to understand how the current authentication happens. One way we do authentication on the internet is certificate authorities like TLS stuff. This doesn't work for bitcoin. The second one is the SSH form which is pinning down on first-use. I think it's also not something we should do. In ethereum, nodes have a public identifier. SSH does the trust on first use model. You connect, you get the fingerprint, you pin the fingerprint. If you have an attacker during that first connection then you're fucked I guess. Lightning publishes its own public key. In lightning, nodes have an identity, but in bitcoin they don't. You have to prove ownership of a travel. Electrum is trust on first use, too.
+
+We could have multiple uathentication schemes. One is comparing session ids which is sort of stupid. Another is bip150 where you do out-of-band share of the keys. Then there's the scheme that Pieter came up with once that I sadly can't find the link for anymore. It's awesome. Anyway, there are many potential authentication schemes.
+
+It would be interesting to use the lightning gossip system to connect bitcoin nodes. It's mixing abstraction. You can supply your own authoritative like, -- it could be external.
+
+People complain that it's not man-in-the-middle safe, which is true. But we can't build everything at once. But this is more complicated than that; in bitcoin, we're generally talking about not just authenticated connections but also an identityless system. If you assume your attacker can spin up their own nodes that have as much identity as the thing you are trying to connect to, then they can spy on you. There's a weak argument for encryption: it rules out certain kinds of attacks, but we should be careful about stating what its advantages are on its own. I like how you talk about how it is a building block, not something that immediately solves the other problems. I also like that it's a performance improvement, although that's a low bar.
+
+The blockchain data is public, but traffic is not meant to be public. This proposal doesn't make it private, but it's on the way. One simple attack is your ISP listening to your transactions. The ISP can do man-in-the-middle but that's extra work and maybe detectable or something.
+
+The opportunistic encryption, if you're an ISP doing man-in-the-middle listening to a connection, I can listen without the user having a chance to detect it. But after that, there are session identifiers. The ISP must take the risk that its tampering could be identified. Just the risk on identifyability will convince them not to do that. But to make that argument, you must talk about authentication. If you only do encryption and nothing else, then the argument doesn't hold. You need to bring authentication or at least the option of authentication into scope as "why encryption itself is useful". The absolute minimum for that is a session id, and that's enough for a security researcher to catch a big ISP doing it. Also, ISPs must calculate that there might be a covert authentication form not published because we obviously want to detect ISPs doing the wrong things.
+
+The biggest threat on the internet today is pervasive monitoring, and encryption makes it reasonably difficult for CPU-bound attackers. If you're running a service that is using an encrypted socket, I can just connect to you and now I'm your peer anyway.... This makes traffic analysis take actual effort.
+
+For encryption, you have to be in the middle. Perasive monitoring generally means you're not man-in-the-middle you're just monitoring packets. You can only decrypt if you're the peer or in the middle. If you're an ISP, you can install something on the router to listen to the traffic, manipulate packets, observe packets, no cost, no handshake nothing. But if you want to man-in-the-middle this protocol, you need to actively intercept the handshake and fix up the keys, track each peer, it's way more complex to do. Imagine you're a surveillance entity where what you get is a live dump of packets across the internet.
+
