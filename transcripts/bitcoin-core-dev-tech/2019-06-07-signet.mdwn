@@ -1,0 +1,65 @@
+Signet
+
+<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-March/016734.html>
+
+# Introduction
+
+I am going to talk a little bit about signet. Does anyone not know what signet is? The idea is to have a signature of the block or the previous block. The idea is that testnet is horribly broken for testing things, especially testing things for long-term. You have large reorgs on testnet. What about testnet with a less broken difficulty adjustment? Testnet is for miner testing really. One of the goals is that you want predictable unreliability and not world-shattering unreliability. Signet would be like a new series of networks. Anyone can spin up a signet; it's a public network but only people with the private key can create blocks. Anyone can create blocks but it would be invalid if you look at the coinbase. You could fool SPV clients I guess. You could have a taproot signet and spin that up, or a Schnorr signet, or whatever you want to do.
+
+# Q&A
+
+Q: It still does proof-of-work?
+
+A: The blockheader is still valid, yes. It still does proof-of-work. People are lazy and they want to support this in their software, but they don't want to go in and hack around their consensus validation software. Instead, they can keep this as is. How to store and download headers also stays the same, you don't want to change those things.
+
+Q: Is this regtest proof-of-work?
+
+A: It's like difficulty 1.
+
+Q: Then you could be easily be fooled by header changes?
+
+A: Yes, you can. This is for testing, so you shouldn't be connected to random nodes.
+
+Implementations do not need to implement the signature check and it works with all existing software. You have a coinbase output that has a signature saying my consensus is configured and you configure what the scriptpubkey is for that in the scriptsig. Instead of signing the transaction you sign the block. The changes are not very big at all. It's the same as transaction signing. There's a new signer that takes a hash and you create a signature. The hash is the blockhash.
+
+Q: Is your goal for people to spin up random signets, or for there to be a global one?
+
+A: One idea is to have a reliable signet that people can use for testing. This permanent signet would have a web interface and we could ask it to double spend you or something and then it would double spend your address. All of this is outside of the proposal, this is just a tool that does it. It's double spending as a service (DSaaS).
+
+You have a circular dependency- it can't be the blockhash. The best way would be to remove the witness commitment manually. In segwit, they set it to 0000 in the merkle... But you probably don't want to do that here because you still want to sign your coinbase. You could do something like, compute the would-be blockhash if that commitment was removed, and then that's what you sign. Zeroed out or removed, either way.
+
+You could sign the previous block instead of the current block. You sign everything except the signature itself of course, and probably the nonce in the header. The thing with this is that you are going to have to create a signature every time, because you are going to do PoW and do one signature per nonce. So you don't sign the nonce. You could do the signature, and then still roll the nonce. With difficulty 1, you're only going to do one on average anyway. It's going to be mainnet difficulty 1.
+
+# Regtest vs signet
+
+Regtest is bad, because anyone can go and make a billion blocks. You have to get the headers and then the block and then check the signature.
+
+What's so bad about having the signature in the header? Everyone would have to change their consensus code to be able to parse and validate this. It would be easier if they don't have to modify any software to use this. It could either be out of the box, or they make changes for signet. There's little motivation to add signature verification to different tools when this is not used in production for anything. It's literally only to test new protocols, or to test your exchange integration to be sure that you're handling reorgs properly- but you could use regtest for that case.
+
+You can run bitcoind enforcing signet, and you connect to your own node. You don't really care that you're vulnerable to-- because you're not checking, you're only getting blocks from your own node. The same is true for regtest, but anyone else who connects to that regtest network can blow away your blocks. You could just use regtest and only trust certain nodes, which means block relay would be from a single node running the thing.
+
+You don't need to protect a signet network though. On signet, you're still connected to a node that is validating. A node that is validating on regtest will see the reorg and see that it is still valid and consensus-valid, unless you do whitelist-only for regtest, which everyone would have to setup. Regtest is context-sensitive. Signet users still need to validate signatures, you connect to bitcoind running signet. So you do have to use the signet software, but they don't require other changes to their other software stacks if the new header format breaks something. You opt into a particular signet based on its scriptsig. It doesn't matter what software you run internally, but you use bitcoind as an edge router.
+
+What about having a regular header, and a separate set of signature? It's the segwit trick. How many changes is Bitcoin Core going to accept for this signet testing-only thing? It's super simple if it's just "a signature in a certain place". If you don't like it, you don't have to use it. Well, if it's going to be part of Bitcoin Core then that means we're maintaining.
+
+regtest has no proof-of-work? No, it has proof-of-work but it's one bit of work. You have to set it to zero. Half the time, you get it on the first try.
+
+If your goal is to have 10 minute blocks, you don't need to change the difficulty rules at all. You can just use the mainnet rules. And then the signer, if you have a high-profile signet somewhere, they have 10 ASICs available, they can choose a higher difficulty if they want and it will have that security. The difficulty will be exactly what the signer chooses or can produce. He can also choose minimal and it's less secure... The signer can have a cronjob and make a minimum-difficulty block at that time. You just mine the whole time, and it gets you to some difficulty.
+
+How are you going to do reorg on demand if the difficulty is exactly what they can do? Well, it will take 10-20 minutes to make the reorg. That's fine. It would be nice for faster reorgs. 10 minutes is only for difficulty adjustment.
+
+Have a chainparam serialization and make it easy to send that out. That's the pull request that someone was thinking about-- it's a custom chain like regtest but you can change all the chainparams to whatever you want, like a custom genesis or whatever. A configure arg or command line parameter that has the file for chainparams.
+
+# Applications
+
+It's superior in every way to testnet, I think. The only thing testnet is useful for is mining testing and testing miner equipment. If you want really fast blocks and really fast reorgs, then use testnet.
+
+If you are testing protocols like eltoo protocols across many different people, then regtest is way too fragile for that, and testnet is also way too fragile for that if you want to get anything productive done. But you still want to be able to do things like double spending as a service, because eltoo needs to be robust enough to be able to handle expected reorgs but not necessarily earth-shattering reorgs. Another application is that, as an exchange, I always wanted my customers to join regtest and test with my arbitrary reorgs.
+
+We can take bip-taproot and just slap it in there. We could either just run the branch itself on signet... or the signer can enforce other consensus rules and now those consensus rules are active there. Taproot can be a soft-fork and you can just say this soft-fork is enabled on this network, sure. During the development of segwit, there were a few different test networks for segwit called segnet. Not a typo, there was segnet and now there is signet. Nobody remembers segnet except Pieter.
+
+It's also useful for testing wallet software. Say an exchange running a semi-private signet. It's extremely common to visit exchanges and you look at their wallet code, and they aren't even checking for reorgs at all. So here's an easy way for them to check their work against reorgs. It could be very educational.
+
+# Implementation
+
+The pull request for signet is in limbo. I am planning on going back to it. There's an older implementation that modifies the blockheaders. I am going to replace that with something that doesn't do that. It doesn't seem too hard to do.
