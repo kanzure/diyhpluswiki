@@ -1,0 +1,115 @@
+p2p encryption
+
+<https://github.com/bitcoin-core/bitcoin-devwiki/wiki/P2P-Design-Philosophy>
+
+# Introduction
+
+This proposal has been in progress for years. Many ideas from sipa and gmaxwell went into bip151. Years ago I decided to try to move this forward. There is bip151 that again most of the ideas are not from myself but come from sipa and gmaxwell. The original proposal was withdrawn because we figured out ways to do it better. Since people have started to implement bip151, I decided to not alter that proposal because it would end up with confusion.
+
+So I have proposed v2 message transport protocol for the p2p network. This is a one-time chance to do things better, I think. I don't want to call it "p2p encryption" again because it has opportunity to do much more than just adding encryption.
+
+# Goals
+
+The goals are again to add opportunistic encryption; sometimes I regret not adding an authentication scheme into that proposal because people are still not super happy with the possibility of man-in-the-middle attacks. But it's a building block, and including everything into a proposal makes it too complex and there could be multiple authentication schemes and maybe picking one is not the best idea.
+
+It's also an opportunity to optimize the protocol. The goal isn't like censorship resistance.  It's just opportunistic encryption, not for censorship resistance. It has some nice properties of solving passive observers, but other than that it's more of a building block. Also, eliminate non-detectable message manipulation.
+
+# Handshake
+
+Let's go over how it works. Here's the simple overview. The current proposal is that an initiator sends a 32 byte pubkey without any message header or anything else, it's just pure 32 bytes to the responder. The responder reads the 32 bytes and then detects whether it's a version 1 message magic, and does it start with the version of the magic. If yes, then it's a v1 protocol handshake then it continues with v1 because we still want to use v1. If it's not containing the magic in the version, then it treats the 32 bytes as a handshake. Then it does an ECDH, then he sends back his public key, and then on the other side we do ECDH and have a shared secret.
+
+Q: Aren't public keys 33 bytes?
+
+A: Yes they are 33 bytes in general. We use only odd pubkeys, though. Why? Good question. Censorship resistance is not a property. I think gmaxwell came up with the idea to say okay, if we use a 32-byte only on pubkeys then it looks random, it's not random but it looks random. It's not as easy to identify. You can't do naieve traffic analysis anymore. You could do more advanced traffic analysis, but it's not just "match these bytes, oh it's probably bitcoin". The handshake otherwise would always be obvious to observers.
+
+Q: What's the more advanced traffic analysis?
+
+A: You would be able to see if there's many connections from a single IP, and maybe all of the 32 bytes are good ECDSA curve x-coords, and if they are all valid coordinates then it's more likely that it's using this protocol.
+
+Also, pubkeys are not allowed to start with magic, otherwise we would break backward compatibility. We do the handshake, and then it uses symmetric encryption. ECDH is also something that is already available in libsecp256k1. We do ECDH with our current secp256k1 curve. It's not new crypto in that sense.
+
+Q: Instead of sending an x-coordinate, just send randomness and hash it up?
+
+A: You can encode a public key in 64 bytes and then it really looks like random. I'm not sure it's worth it to do that, but it could be done. Allocators, right? Yes. Let's talk about that later. It's probably not worth it because there's so many other traffic analysis things you can do that are trivial to identify bitcoin traffic, like all the messages being roughly the same size or predictable sizes. You would have to send a constant stream of data or something. The biggest traffic analysis is looking at the size of packets and the timing and correlation of packets between nodes. Unless we're going to add in garbage packets to make the bandwidth look constant, then there's not much you can do there. This is not something that would be in Bitcoin Core but maybe something else on top of Bitcoin Core. Well then we would be the only application with constant bandwidth...
+
+# Custom AEAD construct
+
+Once you have a shared secret after the handshake, the proposal is to use ChaCha20Poly1305 for symmetric encryption, a custom AEAD construct. ChaCha20 is the stream cipher, and Poly1305 is the MAC. Also, some devices have hardware elements that do these instructions. ChaCha20 is merged in Bitcoin Core and Poly1305 is merged.
+
+# Message size
+
+Q: What about the performance between that and hashing the full message?
+
+A: That's a good question, let's skip forward to that. I gathered some traffic over a 24 hour period on a standard node, that means serving blocks. No changes to configuration parameters. There, we can see that almost more than 1/3rd of messages sent are below 64 bytes. So what I want to say with that is that most of the messages are very small, and more than one third is below 64 bytes. So it's worth optimizing for small messages. Prune peers it's a bit less. Is this because pruned nodes don't serve merkle proofs? INV just shoots out... for now. That's just btcflood.
+
+Why is blocktxn so much for Bitcoin Core send message bytes with prune during a random 9 hours? This was a long-running Bitcoin Core node. This is sent bytes. So you could be talking to a peer that doesn't have a good mempool. Block reconstruction fails all the time, and if it fails then it's going to be a lot of bytes more than compact blocks, so that ratio could make sense.
+
+Do we have these numbers in getnetworkinfo? If you disconnect from a peer, they are just gone. This is from debug log.
+
+So, it's clear that we have a lot of small messages.
+
+# AEAD performance
+
+There's an IETF proposal of ChaCha20Poly1305 which is good, but then OpenSSH took that proposal and improved it by encrypting the length field. The IETF proposal has the length unencrypted and it's very easy to identify packets. You can't pad with random data, it's a bit more straightforward. So OpenSSH changed it a bit and made encrypting the length be a part of the AD field. We took that and optimized it further for small messages, which is only a slight change. The change is visible here....  This is the openssh version, there's a handshake, there's two keys from the handshake, there's one ChaCha20 round, and then we derive the Poly1305 key, and then we do n ChaCha20 rounds for encrypting the payload. A ChaCha20 round is always 64 bytes so you need to do it anyway. So you would throw away 32 bytes of the Poly1305 key... but for each message, we do a ChaCha20 round for just encrypting 4 bytes length. So we don't use 60 bytes of a computational part, it's 4 bytes AD. In Bitcoin Core, we reuse that stream, so we can reduce one ChaCha20 round for a 64-byte message, or we only have to do it once every 21 times. The weird thing in ChaCha20 output is that it has a variable number of variable length blobs that come out. There's an IV that counts which message you want, and then there's a counter for the bytes within that. It seems that in ChaCha20Poly1305 OpenSSH one, they basically don't use the fact that all of these messages are variable length, they just generate the new message and use the first bytes. That seems simpler to treat ChaCha20 as a stream cipher and use the bytes that come out. The strema cipher is nice, it just stores the plaintext actual string position and you could calculate it upfront when you're not using the CPU and then store when you want to encrypt. You can use unused CPU time. This is the optimized version.
+
+So what are the numbers? Again, I haven't done thousands of queries. It's just one. I used an x86 i7-8700, and another on AARCH64. I compared hash (the existing double hash), bitcoin, and OpenSSH. The current version is 4 bytes checksum in every message, and the checksum is calculated by double hashing over the whole message and then truncate the whole thing to 4 bytes which is not super fast. That's why we can make the protocol faster by adding encryption, which is hard to understand. But it's not always faster.
+
+Hashing a one megabyte message takes more than double the time. So it's 3.8 milliseconds. What is bench reporting, seconds? Hashing a megabyte should be in a millisecond range yeah. Focus on the relative difference instead of the actual numbers. Encrypting a one megabyte message takes less time than using the hash method. On a large message, we don't benefit against OpenSSH. But on a 256 byte message there's a difference, and a 64 byte message has an even larger difference with OpenSSH and both are faster than the double hash method.
+
+The alternative proposal would be, not encrypting and dropping sha256. I don't think that's a good idea. It has been floating around on the mailing list though.
+
+For the performance, you can cache 2 MB of stream, for block propagation. I think in general using ChaCha20 has a lot of potential for optimizing in the future.
+
+# v1 vs v2 message structure
+
+v1 message: 4 bytes net magic, 12 bytes message command, 4 bytes length, 4 bytes double-sha256 checksum, variable bytes payload, and it's at least 24 bytes total.
+
+v2 message: 3 bytes encrypted length, 1-13 bytes message command, variable length bytes payload, 16 bytes MAC (message authentication code), and it's at least 20 bytes total.
+
+If you want to send with v2 something that is larger than 8 MB, then you need to split it up into packets, which would be a good idea anyway. You have to do it anyway. So gigameg blocks, we chunk those out. We also move away from the 12 bytes message command and use a single byte zero-12 identifying the length, so if the first byte is between 0 and 12 then it means a length then the rest is a standard-variable length encoded value. If it's above 12, then we identify it as a short id, so 13 could be INV etc but that table still needs to be made. We can use a single byte for sending a command rather than a string. This is a general optimization that has nothing to do with encryption.
+
+It's either 1 byte or 12 bytes. We don't want to eliminate string-based commands. If you're already going to have the optimization for most messages are going to be one byte, why not have a byte that says the next 12 bytes are command.  It's a bit different. That would mean you always have to send 12 bytes... No, you wouldn't ever actually do that unless you're sending a custom message. Can we not add more variable length stuff? What's wrong with variable length? This reserves 212 short IDs. Adding variable length stuff sucks, in general, in any protocol. This is an optimization you're not ever going to use, thus adding complexity to the protocol. So you could say 255 means the next 12 bytes are message command... This is not worth discussing. I don't want a parser that includes variable length command strings. I don't want to implement that. I really don't. I see the point, it's reasonable. We can discuss that further.
+
+Using the v2 message protocol, it means messages are not larger, they could even be larger due to the short command ID.
+
+Q: Do we really need a 16 byte MAC? Can we reduce that?
+
+A: We shouldn't. I would prefer 32 byte MAC. Poly1305 is a well-studied MAC and it has 16 byte outputs.
+
+Q: Well, I don't know anything about cryptography.
+
+A: Me either. Let's send it twice! ((laughter))
+
+We could say version 2 only supports INVs or something. But this brings special planning into this. The great thing with strings is that collisions are less likely to happen. Someone has to maintain the table of all the p2p messages. We already have a handshake and version negotiation. It doesn't matter if someone else is doing other p2p messages. We're not going to connect to those weird nodes anyway, right? If we use bytes only, then everyone has to update the BIP.
+
+Does the length include the checksum and the type and all of that? Or just the name of the command? The length is only containing the payload, just the payload. So you will have to understand how to parse the type because I can't just skip it. Right? You need to read the first byte, and then you can skip the rest. I also need to support the variable length type. You need to read the first 4 bytes so that you know how many bytes to skip. The encrypted length may need to be the size of the entire packet, but there's concerns about having a padding oracle..... That's the reason why the length is encrypted by a different cipher, to avoid people being able to infer information from it by observing how you respond to invalid messages. We need to think about that. In the openssh version, the MAC is not included in the length-- sure, that's easy, but for the variable things... That's a good question. It should include the size of the message command as well. The MAC doesn't matter, it's constant-sized. But I think the length needs to include everything of variable size. So you can packetize your stream by decrypting your length fields and not looking at anything else. It must cover the variable length. You could encrypt the first four bytes with a special cipher but this is not ideal.
+
+In v1, INV is a 61 byte message, and in v2 INV is 57 bytes.
+
+3 bytes for the length, giving 24 bits. The most significant bit is used for triggering a rekey. So we can only use 23 bits. The one bit reserved triggers a rekey which means we need to use the next key for the symmetric cipher.
+
+Longer messages could use multi-part messages, like gigablocks or whatever.
+
+Q: Have you done any benchmarking on constructing the MAC?
+
+A: It's in the code, if you run bench, it gives you Poly1305 benchmarks.
+
+Q: So those graphs you showed included Poly1305?
+
+A: They included two rounds of ChaCha20. It's not only ChaCha20, it's the whole thing, the whole stream cipher. It compares double sha against the AEAD construction.
+
+Q: The MAC covers the rest of the packet?
+
+A: The AD is just the encrypted length, and the MAC goes over everything including the id. It's the payload and the command, but yeah.
+
+# Open questions
+
+This is an opportunity to change the protocol. If there's other ideas then we should eventually work them into that proposal. I think we should call this "v2 transport protocol" rather than calling it encrypting. The question Tim raised yesterday is, what do we need to consider now so that we don't break future improvements in terms of when cryptography gets broken? Or downgrade attacks? Here, we start with sending a public key, but if it's a symmetric string then we fallback to v1, but now the first thing we send is basically random, so what if at some point in the future we want v3. How do we do that upgrade? At the moment it's not possible; send even keys? If we want to add another handshake, we could do that handshake first and then do a second handshake. We also have the service flag. We could add another port. We already support binding multiple listening sockets. The way to do it as an upgrade is if you want to do this v3 thing, then you first do the v2 handshake, then you negotiate using v2 messages to handshake v3.
+
+At the moment, the proposal seems like a between wanting encryption and it should look like random data but not too much because we don't want to invest too much bandwidth. Usually protocols start with what we have at the moment, like a magic string, some version number, and now we have optimized that away to look like random, and we encrypt the length to make it look like random. IETF doesn't encrypt the length because they assume message length should be visible or doesn't need to be confidential. At the beginning we send an x coordinate, which could still be distinguished. I think we should either go for 64 byte public keys to make them really-- then the entire protocol looks like random data, except you can do traffic analysis like timing and length. Or we pad stuff. Or we say this is not a goal, and we can have another magic string, and we don't have to encrypt length, and have a version number. We should pick what the goals are.
+
+There's definitely something in between-- there's a difference between being able to do trivial traffic analysis where you match on the first five bytes and knowing what it is, versus having to put in some quantity of CPU to figure out whether this is bitcoin traffic. This is a massive difference for many practical applications.
+
+There's a few cohices. Maybe we don't care about traffic analysis, maybe it's all random, and maybe it looks random to a CPU-constrained observer. I think the CPU-constrained observer is the most important threat model. As soon as the key exchange is done, everything really looks random, so why not take this low-hanging fruit of adding more bytes in the handshake? Well, they could just see your traffic spiked after receiving a bitcoin block and therefore you're running bitcoin.
+
+In terms of upgrade, don't underestimate making a new port and having that be the new protocol. Otherwise you're doing TLS and start TLS. In bitcoin, there's no reason to not keep binding new ports for every single protocol we want. We could say 8336 we assume that's v2... What if people want to use a different port? There's no reason to not use a different port. If you can't bind 8336, you can't bind something else. If a country blocks 8333, you cannot start a new node. You do a DNS seed, everything is 833x, you can't connect.
