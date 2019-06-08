@@ -4,6 +4,8 @@ Chris Belcher
 
 0A8B 038F 5E10 CC27 89BF CFFF EF73 4EA6 77F3 1129
 
+<https://twitter.com/kanzure/status/1137304437024862208>
+
 # Introduction
 
 Hello everybody. I invented and created joinmarket, the first really popular coinjoin implementation. A couple months ago I wrote <a href="https://en.bitcoin.it/wiki/Privacy">a big literature review on privacy</a>. It has everything about anything in privacy in bitcoin, published on the bitcoin wiki. This talk is about privacy and what we can do to improve it.
@@ -109,3 +111,15 @@ There was a paper a few months ago about "On the difficulty of hiding the balanc
 # Conclusions
 
 ON-chain privacy is really not great right now, and it can be broken fairly easily by anyone on their laptop if they are a fairly good programmer. There's a privacy/security tradeoff. We need to target both privacy and security. Payjoin is probably the best thing to work on to merge all the wallet clusters. The lightning network greatly improves privacy, although there are still some problems that can be improved. If you want more information about this, review my privacy wiki page that I worked on and give that a read if you're interested in this stuff. Thank you.
+
+# Q&A
+
+Q: In World War 2, the Germans didn't know that enigma was broken. They were so sure that it wasn't broken, and this was a cause of their defeat. How do you contemplate that we don't know, like what Chainalysis or Elliptic do know? They might not disclose certain research. How do we understand what the adversary is doing?
+
+A: For these transaction surveillance companies, they can have customers who are anyone. So you can leak information from the company and see what information they share with their customers. It can also be observed by the behavior of exchanges and which transactions they ban you for. These surveillance companies publish papers. You can read their papers on Google Scholar. They tell you how it works. This is where I got most of this information from. A lot of these heuristics weren't invented by them themselves. The common-ownership heuristic is actually in the bitcoin whitepaper and they were mentioned back in 2010 and 2011 on the bitcointalk forums. I think the leaks that exist today are scary enough and we should do something about them. That's my view.
+
+Wallet fingerprinting is a technique where wallets usually have differences in how they construct transactions, like a different nsequence value or different locktimes or they might choose their inputs differently or how they compose the transaction. You can tell which wallet made a transaction.
+
+Q: What about confidential transactions on Liquid?
+
+A: Confidential transactions are a technology where the amounts are hidden. Any kind of analysis about round numbers or unnecessary input heuristic, those things can't work. The downside is that far fewer people use Liquid. It's the same with Monero and zcash- because fewer people use it, you might have a lower anonymity set. I could see some people doing some transactions in Liquid, doing confidential transactions, and then withdrawing over a few transactions and that might be enough to break the link between their addresses. That could work.
