@@ -2,6 +2,8 @@ Bitcoin build systems and bitcoin build system security
 
 Carl Dong, Chaincode Labs
 
+<https://twitter.com/kanzure/status/1137347937426661376>
+
 I couldn't make it to Amsterdam this year, but I hope the graphics I have prepared for this talk can make up for my absence. Let's say you want to be a good bitcoin citizen and start to run your own bitcoin node. Say you go to bitcoincore.org, you click the download button, and you open the disk image and you double click on Bitcoin Core. Then you get this warning.... If you're as paranoid as I am, you got this download and you got this notification, are you sure bitcoincore.org is the right website? Is it a phishing scheme? What about bitcoin.com? That website sounds much more official, right? Wrong.
 
 Today I am going to go on a journey to go through bitcoin's build system, show you how to verify your bitcoin download is the right one and show you some improvements in the work. Going back to the downloaded disk image, maybe you will wonder where it came from and how it was made. We all know that software was source code at some point. In our case, we expect this to be the versoin from Bitcoin Core v0.18. Source code is fed into a toolchain of compilers, linkers and archivers which builds the source code into the binary format which is the disk image you downloaded. But how do we know that the binary we downloaded from bitcoincore.org corresponds to the Bitcoin Core v0.18 source code? How do we know that whoever uploaded this binary modified it to steal your coins and upload your keys?
