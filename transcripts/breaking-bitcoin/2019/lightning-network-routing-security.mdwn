@@ -4,6 +4,8 @@ Joost Jager, Lightning Labs
 
 D146 D0F6 8939 4362 68FA 9A13 0E26 BB61 B76C 4D3A
 
+<https://twitter.com/kanzure/status/1137740282139676672>
+
 # Introduction
 
 Together with my colleagues I am building lnd. It's one of the implementations of lightning. In routing, there's the sender of the payment, the intermediate routing nodes that forward payments, and a receiver. I would like to scope this down to looking at security just from the perspective of the sender.
@@ -51,5 +53,38 @@ Failure source identification-- unknown case, where the failing node just sends 
 * Why so many failure messages and variants?
 * Node fingerprinting
 
-Using a "fee insufficient" error can spread the failure or penalization to multiple nodes. So a smart node would probably try to spread the blame around. It could in fact choose a different error to minimize penalization. 
+Using a "fee insufficient" error can spread the failure or penalization to multiple nodes. So a smart node would probably try to spread the blame around. It could in fact choose a different error to minimize penalization.
 
+# Penalization rules
+
+So what nodes and what routes to penalize? Some solutions include well, let's just accept this as a limitation. Some routes we won't try even if they might work for us, and we just accept this. It considers how many alternatives there; maybe we can penalize aggressively and still get away with it? Maybe there's more advanced penalization algorithms, like "triangulation" of bad nodes similar to "Master mind" where you guess four colors and you get some information about which colors were in the right position and you use that to create the best next guess. Another option is to expand the protocol with additional info that allows us to identify which node is failing or delaying the payment.
+
+It's important to note that currently the lightning network is reasonably friendly, there's not that many nodes that are deliberately trying to frustrate payments but we're not sure how the network is going to develop. But we should consider how to prepare for more adversarial conditions on the network.
+
+# Extended failure message requirements
+
+We currently have a few features like previous hops have data obfuscated, and hops do not learn their position in the payment path. It's compatible with older nodes, ideally. In the future we might be able to have the error source identified as a pair of nodes. We would like to be able to identify a pair of nodes that could be blamed for the delay. If you have just a pair of nodes, that could be enough information. This idea is called penalization with node pairs.
+
+We could also add timestamp information in the failure messages.  You would do encrypt(HMAC || timestamp || reason), and then do onions on top of this. One problem with this is that the node can observe the size of the path and then compute how far they are in the path, which is a possible link. We might be able to do a format that has padding or something.
+
+We would also penalize nodes that fail HMAC and also its predecessor node. Usually the chain of HMACs in the failure message, we're able to narrow down the cause of the failure to a pair of nodes. This fits the requirements for a new style of message.
+
+For timing information, we can add timestamps at every hop. What it would look like is, this is really technical, here's the three hops for the channel id used. Every hop adds timestamp information in the return packets. You can then penalize node pairs where time difference is reported.
+
+For the settle path, the same new protocol can be applied. A message can be made in which we add timestamps similar for the failure path. All the errors that we see, like delays or failures on the successful payment or a failed payment, will be attributable to a single node pair and this information can be used to apply penalty to nodes. There's still some crypto work needed to determine the exact format. There's some options here but with some slight tradeoffs, but doesn't look bad.
+
+# Reputation
+
+In the future, what can we do with this? There can be a reputation model. The step is to update the model with the pair penalization information. There's a reputation model for the nodes you use. Bring it into a system that is able to control path finding for further attempts in the future. There are different ways to do this, like giving a node a unitless score where every node starts with 100 points and if something goes wrong we subtract some points. This is difficult to reason about because we're not sure what the scores really mean. We could use a machine learning model behind it, and do something like an optimal score based on previous history seen. You could also do a probability system in lnd; we tried to represent node reputations in ways that can be reasoned about. We express a probability about our next payment along this channel succeeding. We multiply the probabilities to get the probability of the whole route succeeding. We feed this into path finding to find the best route. This is no longer the best route in terms of price but also in terms of cost, success and the cost. There's also a "virtual attempt cost"- the cost of an attempt that you don't pay, but what is it worth for you to make one attempt less to make this payment? Senders gradually make their probabilistic reputation models more aggressive over time, and by doing this the network as a whole will become better over time. This might over time change the graph because right now penalties aren't that hard so routing nodes can get away with a lot of unbalanced channels or being offline. If we change this, then a routing node might think twice about accepting a perfect channel from a node that it's not sure will in the end serve well for forwarding payments. So you lose an incentive to connect indiscriminately to many nodes and use many channels. The graph might actually shrink overall.
+
+# Probing
+
+By making payments, you can learn something about the network and the graph like which nodes to use. Probing is a way to artificially gain more information about this. With probing, you send a payment to a receiver and you do it such that the payment hash to which the HTLCs is locked is unknown to the receiver. So when they receive it at the end, they are forced to cancel it because they don't know what the preimage is. You gain information about the intermediate nodes along the path. This doesn't bear the risk of making a payment; your money might get locked up for some time, and you could use a different amount like a much smaller amount to do an initial test of some route and use the outcome of this to feed into your reputation model and use it to improve your experience for future payments that benefits from the information that was observed while doing the probes.
+
+# Persistent storage and sharing
+
+We would like in lnd to start to persist this data. Right now it's only kept in active memory. We want these observations we make about payments to be stored on disk and we also want to store this in the most basic form possible which allows us afterwards to change parameters or even change hte model. it's possible to share data with others, and merge datasets for greater view of the network. But there's issues with authentication, privacy and gaming the system.
+
+# Conclusions
+
+Reputation management is important for reliable lightning payments. The current protocol contains gaps around bad node identification. The gaps seem to be somewhat fixable. The sender's reputation management strategies can shape the network and the long-term shape of the network. There are some possibilities of sharing reputational data between nodes so that nodes don't always need to be bootstrapped.
