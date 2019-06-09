@@ -4,6 +4,8 @@ Stepan Snigirev
 
 D419 C410 1E24 5B09 0D2C 46BF 8C3D 2C48 560E 81AC
 
+<https://twitter.com/kanzure/status/1137663515957837826>
+
 # Introduction
 
 We are making a secure hardware platform for developers so that they can build their own hardware wallets. Today I want to talk about certain challenges for hardware wallets, what we're missing, and how we can get better.
@@ -56,8 +58,8 @@ What if the attacker starts delaying the blockchain? He is sending the blocks wi
 
 Finally, it would be nice to have a backup communication channel if the attacker tries to completely disconnect our hardware wallet. Watchtowers could work, or any kind of notification to the user that something is going wrong here.
 
+# Trusted nodes and initial hardware support
 
+We can limit the behavior of the node to eliminate routing. We can only send and receive. The only way to lose the funds is routing through the nodes with the lightning payment. What we can enforce is to get a message signed on the hardware wallet with the key that we used to open the channel, and this message can be verified-- all hardware wallets support message signing, like "yes, I do want to send 1 millicoin with the payment hash of blah". Then you send it together with your other offers, your trusted node verifies it and then routes the payment. You can still receive payments without interacting with the hardware wallet. The trusted node can route the incoming receive request.
 
-
-
-
+You can sign a message and define the limit, like "please route payments up to this amount x" and the trusted node can enforce that at most you will lose that amount you specified. It still relies on the trusted node to behave properly, but at least I would say that there is some additional security that we can gain.
