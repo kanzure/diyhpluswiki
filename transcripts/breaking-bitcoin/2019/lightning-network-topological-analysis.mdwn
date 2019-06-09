@@ -2,6 +2,10 @@ Topological analysis of the lightning network
 
 Istvan Andras Seres
 
+paper: <https://arxiv.org/abs/1901.04972>
+
+<https://github.com/seresistvanandras/LNTopology>
+
 # Introduction
 
 Knowing the topology is not necessarily a vulnerability, but it gives you a lot of information. If I know Bryan's full node is connected to some other nodes, I will have an easier time to cut Bryan out of the network or launch attacks against him. Knowing the topology is not necessarily a vulnerability, but it's really strong information.
@@ -43,6 +47,26 @@ I then focused in our paper on network robustness. How robust is LN? In LN most 
 
 Let me introduce a percolation threshold which can assess network robustness. What we usually see with real-world networks is that we remove nodes, we attack nodes, we remove the node and the corresponding payment channel edges in the network. The networks are pretty robust up to a certain point called percolation threshold and we remove a single node and it collapses entirely.
 
+# Node removal attack
+
 There is an attack effect on path length. If we remove thirty high degree nodes then this ratio would increase dramatically to 3.3 so we would have a harder time routing payments in the face of a targeted attacks. Thankfully the bitcoin community liked our work, and some people in the network science community. It's great that more people started to look at lightning network topology.
 
-There was a follow-up paper from Elias Rohrer. In our work, we focused on node removal based attack. They instead proposed channel removal based attacks.
+# Payment channel exhaustion attack.
+
+There was a follow-up paper from Elias Rohrer. In our work, we focused on node removal based attack. They instead proposed channel removal based attacks. This attack is called a payment channel exhaustion attack and he showed that the lightning network is susceptible to this attack.
+
+# Node isolation attack
+
+A companion attack is the node isolation attack. You can deplete outbound capacity, which prevents a node from routing payments in the network, thus isolating them on the lightning network and they are now a useless participant on the lightning network. Elias showed that the lightning network is susceptible to such an attack.
+
+# Dynamic network analysis
+
+I made a snapshot of the network and argued about several properties only looking at the snapshot. Now instead we are doing an active analysis and we're creating snapshots or even a video of how the lightning network topology changes over time. Here's a nice graph of showing the average degree increases over time. I have a nicer graph where you can see that as long as the average degree increases then obviously the diameter of the graph decreases. Here you can see the mean average path length doesn't really change over time so routing doesn't get any better or any worse. The robustness of the network is kind of constant over time.
+
+# Other research
+
+* On the difficulty of hiding the balance of lightning network channels
+* Discharged payment channels arxiv.org/pdf/1904.10253v1.pdf
+* Sergi delgado-Segura et al arxiv.org/abs/1812.00942
+* Bitcoin timing analysis paper
+* Mccory, Gervais, off the chain transactions on eprint.iacr.org/2019/360
