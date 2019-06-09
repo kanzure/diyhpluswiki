@@ -1,0 +1,55 @@
+Security aspects of LN routing
+
+Joost Jager, Lightning Labs
+
+D146 D0F6 8939 4362 68FA 9A13 0E26 BB61 B76C 4D3A
+
+# Introduction
+
+Together with my colleagues I am building lnd. It's one of the implementations of lightning. In routing, there's the sender of the payment, the intermediate routing nodes that forward payments, and a receiver. I would like to scope this down to looking at security just from the perspective of the sender.
+
+# Goals of LN
+
+Why are we doing all of this? The thing we're looking to get to is a mobile app where you scan a QR code, you confirm the payment, you can have a slight delay no problem but you want the payment to be sent successfully every single time within seconds. There's nothing much more to it. Ideally you want a short delay. The payment speed is determined by the speed of nodes and network connections and routing path length. I will give a brief overview of how intermediate nodes get paid.
+
+# Delayed failed payments
+
+Sometimes you see a spinner and it keeps spinning and then after one minute it shows you that the payment timed out. This means one or multiple attempts have been made to make the payment. In the end, the payment didn't happen. All the routes tried didn't work out. There's sometimes a timeout of like one minute and then you give up, and you didn't pay. However, what could also happen is that you get the screen not after one minute but after days. What happens if you have a long route is that you lock your HTLC to a large number of blocks like 100s and if somewhere along the route then some node might not cooperate and hold on to the HTLC and during that whole time you don't know what happened; did the payment arrive at the sender or has it not arrived yet? This is difficult to explain to people because they expect the payment to work immediately or go directly and they don't expect this in-between state for a long time. A malicious node along the path can deny and delay payments from the neighbor node. So a bad node can fail any payment. On the way back, a bad actor can decide to delay as long as possible.
+
+# Delayed successful payments
+
+If it always failed, then it wouldn't be a big deal because you could get your money back. But a node can delay your settlement, and after a few days of waiting you can get a new payment sent notification. You could accidentally pay twice because maybe the recipient sent you another payment request in the mean time that you also paid. In this situation, you have to rely on the receiver to be friendly and to return your payment. He can delay on the way there or on the way back, like the sender might not learn that the payment went through in time before he makes another payment even if it really did go through. He could learn through another channel but LN can be arbitrarily delayed.
+
+# Defense
+
+We can defend against this. We look for the lowest cost route, we attempt a payment. If it succeeds, everything is fine. If it fails, we take information out of the failure and feed it into a system that manages reputation of nodes. This is not centralized, it happens on each individual lightning node. This information about node reputation is fed back into the next attempt to find a route. So we learn things from previous attempts to improve future payment attempts. It's really important to get the node reputation registry as good as you can, because it can help you avoid bad nodes from the past or help you settle a payment more quickly than otherwise. You could use a whitelist from someone you trust feeding it into your reputation system to find routes.
+
+I'd like to do this in a more decentralized way though. You should be able to make your own observations when you make payments and extract useful information out of this.
+
+# Updating node reputation: interpret outcomes
+
+Say you get a payment quickly, or after a few days. In each case, you want to ideally pinpoint the exact node that failed our payment. You want to learn some information from this. There's a hodl invoice problem where a receiving node can wait to cause it; the problem is that it is hard to distinguish between intermediate nodes that cause delay versus receivers that are causing delay in this process. If it was a slow payment, we want to know what is the source of the delay. As a sender, we know when we sent a payment and when we got the success message back so we can measure the time between there. But we don't know if that duration is not to our liking then which node actually caused the delay or it could even be multiple nodes. In case of failure, we have the same questions: which nodes caused the delay? Which nodes accidentally failed the payments? These could be different nodes, one node failed and another node delayed the payment. Failure reason and source node may be unavailable, but that information should be communicated to us.
+
+# Failure source identification
+
+A node that fails a payment does encrypt(HMAC || reason)) so that the other nodes can't read what they are forwarding back to the sender. They make an onion packet on the way back and the sender of the payment is unwrapping the onion at the end of the chain, and discovering why the payment failed and sees an HMAC that authenticates the source of the error.
+
+A channel might have a balance and it could be insufficient to carry the payment. This would be a temporary channel failure. It encrypts it, then it goes through the onion layers of further encryption for each hop, and the original user can decrypt everything and can blame a certain user for not having a channel balanced and they will be penalized or not used or something.
+
+It's not always that simple though. If the error is "fee\_insufficient" then it means that a node didn't receive enough fees. In lightning, every node charges a fee to forward a payment. That's the basis of a routing node. They advertise the fee they would like to use. So a node might take too much fee and not pay the remaining nodes. In this case, the forwarding node can blame the next node-- but if we see the fee insufficient, it might be the signer of the node or it might be one node before that could be the real source of the problem.
+
+There's also the "invalid\_onion" case, where it means that someone forwards information and says it's invalid and I don't have the keys to create an error message to send back to the sender. So in that case, the intermediate node signs a message saying there's an invalid onion problem on behalf of C because C doesn't have the keys to do this. So what should the originating node think about this situation? In this type of error, the originating node needs to take into account that it could be either of those two nodes that are to blame.
+
+There's also "final\_expiry\_too\_soon" case. In LN, these HTLCs get forwarded and they have different timelocks. The final node might have a timelock requirement of 10; so when it arrives to him, it should have at least 10 blocks left on the blockchain before it expires, and if it doesn't then he sends an error back. Any node along the way could have introduced a delay. It's hard to say who took much time to forward it.
+
+Failure source identification-- unknown case, where the failing node just sends back random bytes, and it's propagated to the originating node. It starts to look for a matching HMAC and it will never find it. So the last node is able to make the payment fail without the originating node being able to know which node in the route did this.
+
+# Consequences
+
+* Bad nodes have opportunities to fail and/or delay a pamyent without the sender being able to identify them easily.
+* Routing nodes seeking to optimize profit could use this to "downgrade" errors to minimize penalization.
+* Why so many failure messages and variants?
+* Node fingerprinting
+
+Using a "fee insufficient" error can spread the failure or penalization to multiple nodes. So a smart node would probably try to spread the blame around. It could in fact choose a different error to minimize penalization. 
+
