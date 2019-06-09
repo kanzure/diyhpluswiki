@@ -2,6 +2,10 @@ Lightning network security panel
 
 Olaoluwa Osuntokun, Justin Camarena, Matt Corallo, Michael Folkson
 
+<https://twitter.com/kanzure/status/1137758233865703424>
+
+# Introduction
+
 MF: I will start by thanking Kevin and the organizers. It's been an awesome event. Thakn you to the sponsors. SWithout them we wouldn't have the event. I have a few points. I run the London Bitcoin developers group. If you're ever in London or interested in speaking, please lookup londonbitcoindevs on twitter or reddit. There's a few being setup in boston and a few others around the world. Check those out. If you're interested in setting up a meetup, please contact me and I would be happy to help out. Also, John Newbery is doing amazing work in terms of encouraging people to contribute to Bitcoin Core. If you haven't contributed before, there's an IRC group every Wednesday where jnewbery will answer any of your questions and help you get started out. That's an awesome initiative.
 
 roasbeef: My name is laolu or roasbeef. I am CTO at Lightning Labs. I work on protocol stuff and impleemntation and some other hats are worn too.
@@ -13,6 +17,8 @@ MC: I've been doing protocol design work since bitcoin 2012 ish. I also have a l
 MF: We're still very early on lightning development right now. It's hard to judge it by the same yardsticks that we would bitcoin. Lightning is like 3 years old?
 
 roasbeef: It's like 1 year old on mainnet right now.
+
+# lnd
 
 MF: Laolu, what is your view of the security of lnd as an implementation?
 
@@ -26,6 +32,8 @@ MC: What problems?
 
 JC: Originally we liked lightning because we wanted to get away from on-chain problems like as a merchant if you have incoming payments often from users around the world, you have many of them sending partial payments or overpaying or sending you too much money. With lightning, we hoped it would make the experience better and that incoming payments wouldn't be underpaid. I think overpayment is a feature and it doesn't happen that often, except with c-lightning.
 
+# rust-lightning
+
 MF: Matt, you've taken a different approach with rust-lightning. It's not doing the same thing that lnd is doing. You're figuring out a niche to operate in. When you observe lnd, as a prolific Core contributor, what are your thoughts on how it has evolved and would you have done it differently?
 
 MC: There's two parts of that question. The first just being, yeah obviously I think they have been doing great work and that c-lightning, eclair and others have done great work among others. There's no help in me trying to compete with that just redundant wasteful effort. So as you mentioned, I was trying to find a niche that is useful for peopl ewho want to run their entire wallet on a machine that is only connected to the world on a serial cable no internet access required you could build something reasonably well maybe pseudo-internet connectivity but maybe not an IP stack like TCP/IP over that serial port. Your critical machine should be able to be somewhat offline. You can do more flexible things around how you do watchtowers. You might send encoded watchtower blobs to multiple watchtowers and get those watchtowers to agree they have seen this update before moving on, so you can distribute your security model a little bit there but that's obviously a lot more work on the user end, not an average user more like a developer user. lnd is not targeting a hardcore developer that wants to integrate it into their app and do a bunch of work themselves and very micromanaging exactly how data is stored and all those things. rust-bitcoin lets you do the micromanagement. The other angle of rust-lightning is that because of the library we've been able to do cool work with automated fuzzing and trying to analyze the state machines in automatic fuzz testing style ways where you throw garbage at the state machine and see if it is able to maintain state with the peer and do all sorts of weird things with your peers with something that is much harder to test with other implementations. That's been fun and interesting. I think oother things will get there eventually, and at the same time I don't have to worry about users and I odn't have support tickets and so on, which gives me time to work on other things.
@@ -37,6 +45,8 @@ OO: With rust-lightning, it's designed for that purpose. It's possible with lnd 
 MF: I feel like I should give Bryan at least 3 seconds.
 
 BB: No, we're good.
+
+# Multiple lightning implementations and development pace
 
 MF: Are you monitoring the other implementations or just one?
 
@@ -56,13 +66,15 @@ OO: Okay, we're cool. Let's not go into that.
 
 MF: Okay, you heard it here first. Golang is the language for lightning.
 
+# Deploying and using experimental features or other upgrades
+
 JC: I've looked at the other implementations- well not rust-lightning because it's not a node-- but eclair for example. One of the things we did was with turbochannels-- in a custodial context, we're able to setup a prefunded channel to a user and they are able to use lightning easily when the transaction is confirmed. I don't have to modify the network at all, it's between me and the other node. Another example is raising the channel size limit. We removed the limit, and any other node that wants to fund a bigger channel can do that with us. ACINQ did this with us, I think it was a 2 BTC channel.
 
 OO: There's a limit on the lightning network right now, and you can just lift the limit if you want.
 
 MF: That's the individual implementations covered. But what about a network level in terms of multiple implementations. cdecker has a github repo where he tests compatibility. Do any of you have views on the state of the lightning network in terms of cross-implementations?
 
-OO: Those test saren't fully encompassing, but that was just to ensure we could actually send payments. We've since discovered a bunch of quirks. We have not had close development with them but we do some cross-testing like this once in a while. We're definitely wanting to work on this. The cool thing about this is that you can have tarmigan based in Japan they were able to use those to have some rough certainty that things were partially compatible. I think we could do more with like fuzz testing like Matt said, to make sure your implementation can do the happy path and won't just crash if it gets random data. I think we'll investigate it more in the future. It's not just lnd-lnd, it's a big network and other software is out there. Otherwise you will have network segmentation and it won't be connected there.
+OO: Those tests aren't fully encompassing, but that was just to ensure we could actually send payments. We've since discovered a bunch of quirks. We have not had close development with them but we do some cross-testing like this once in a while. We're definitely wanting to work on this. The cool thing about this is that you can have tarmigan based in Japan they were able to use those to have some rough certainty that things were partially compatible. I think we could do more with like fuzz testing like Matt said, to make sure your implementation can do the happy path and won't just crash if it gets random data. I think we'll investigate it more in the future. It's not just lnd-lnd, it's a big network and other software is out there. Otherwise you will have network segmentation and it won't be connected there.
 
 MC: Fuzz testing isn't just for crashing. Rust-lightning has been doing protocol-level fuzztesting where the input from the fuzzer is used as a list of command to send payments, disconnect nodes, reorder messages, things you would only see if you had very strange internet behavior like during multipath. This exists, it's not common, but you can poke at a lot of these edge cases to really test the state machines and really test the behavior of the nodes. Do you read over a buffer when you deserialize something, things like that. I'd like to integrate other nodes into that, but it's hard to take free standing daemons that aren't libraries... maybe eclair will help wit hthat.
 
@@ -74,6 +86,8 @@ MC: Worst case, you fall out of consensus and everyone loses a lot of money.
 
 OO: Yeah the risks are different. If you mess up, close the channel. We know we have this base that we can fall back to.
 
+# Watchtowers and static channel backups
+
 MF: Let's move on to end user security, like watchtowers and static channel backups. Anyone want to talk about the current state and ideal future state?
 
 OO: Lightning wallets are hard because you have additional state. In bitcoin you have state like a seed and then you can recover UTXOs. But in lightning, if your state is out of date you can accidentally cause a breach. So we developed the channel backup concept so that you have the necessary information to close out the channel state fiarly if something goes wrong. It's something that lets you reconstruct the channel and go to the other party and close it out. It's a seed in a special file that is updated only when you open and close a channel. Between users, channels are pretty stable. Closing a channel is a pretty bad thing. Lots of users wnat to keep those open. In watchtowers, those were developed- like early versions back in the day by Tadge- but bitconner and I are developing a version too. This is pretty good for incentives and it's a disincentive for doing any funny business; you don't know how many towers are out there. It's an additional level of deterrence. We've seen some breaches on chain because of something, but it doesn't seem to be targeted. Maybe watchtowers are a nuclear weapon here.
@@ -81,6 +95,8 @@ OO: Lightning wallets are hard because you have additional state. In bitcoin you
 MC: Also, relatively small amounts in lightning right now. It's still too early to put lots and lots of money in lightning. Bugs have been seen. There's some questions about the spec not being there yet about fee estimation. If someone breaches, it's hard to punish them in the current design. These are all resolvable issues. It's still early, you just wouldn't expect to see large-scale exploitation.
 
 OO: We have a lot of code that we have tested and evaluated, but ideally the code is there as a deterrence. Hey we have the code don't do anything funny...  it's good to have that code there and sleep at night because we wrote it and tested it and we can catch some people cheating which is definitely good.
+
+# Payment channel limits
 
 MF: What about increasing the limits on the payment channels?
 
@@ -93,6 +109,8 @@ MC: When you really know your counterparty.... if they really try to steal your 
 MF: Have you seen the watchtowers at bitrefill?
 
 JC: I don't thin kany of those are production-ready. I think lnd has a pull request. I sleep better now that we have static channel backups. I sleep better at night, regarding our hot wallets.
+
+# Lightning hardware wallets
 
 MF: What about hardware wallets for lightning? It's a difficult problem. I don't know if you have spent much time looking at how hardware wallets would integrate with lnd. Is it too early?
 
@@ -108,6 +126,8 @@ MF: At a high level, if you're using a hardware wallet on the chian you just hav
 
 MC: Not necessarily monitoring, but you have to be online to route.
 
+# Automatic wallets
+
 OO: Well, you can have wallets make automated decisions for you. But you have to be careful about this because maybe it can steal all your money. You need verification that it is doing everything right. Definitely tricky to get that secure.
 
 JC: I recommend exchanges to do this at some point. For users, your node becomes a watchtower when you unplug your device or something. There's different models.
@@ -115,6 +135,8 @@ JC: I recommend exchanges to do this at some point. For users, your node becomes
 MF: Let's talk about the most controversial topic... on-chain fees.
 
 OO: Yeah.
+
+# Fee FUD
 
 MF: My question is, as a security guarantee the lightning network requires that a channel can be closed at any time. So don't you need a high fee?
 
@@ -132,6 +154,8 @@ OO: lnd will have that capability; say you have a low per byte fee and then late
 
 MC: That's another great thing about lightning. Just in general, because you have a lot of transactions you're making where you don't really care if it confirms soon. You can actually wait a day or longer for it to confirm. So you have that freedom. Right now, taking a transaction in 2 confirmations or something is super risky. In lightning, you can say hey you know what I'm just going to wait a day for this and I'm really sure it won't be reorged out.
 
+# Future improvements and scalability
+
 MF: What about signature aggregation and potentially opening and closing multiple channels in single transactions. I suppose the concern always is that if lightning was an absolutely amazing success, is that going to price certain use cases out of the lightning network? Or will we need block size increases?
 
 MC: We also just don't know. Lightning clearly improves the ability to fit more transactions on the chain. It improves function and lets certain small payment sgo through given a certain fee rate. But we don't know if lightning results in bitcoin scaling 10x higher or 1000x higher. It's probably not 10000x higher, we don't really know what the numbe ris. We need to deploy it, get users, see what happens. W edon't even know what bitcoin will look like in 5 years.
@@ -141,6 +165,3 @@ MF: Bitconner asks, is raven more scalable than lightning?
 OO: What? No. They do weird things like storing addresses and using the p2p network for gossip. So I'd say no. They are also much earlier. They have like 40 channels, and we have like 1000s. So very different scale.
 
 MF: Do we have time for questions?
-
-
-
