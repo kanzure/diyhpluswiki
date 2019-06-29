@@ -10,6 +10,7 @@ see also:
 
 * [Extracting seeds from hardware wallets](http://diyhpl.us/wiki/transcripts/breaking-bitcoin/2019/extracting-seeds-from-hardware-wallets/)
 * [The future of hardware wallets](http://diyhpl.us/wiki/transcripts/breaking-bitcoin/2019/future-of-hardware-wallets/)
+* [coredev.tech 2019 hardware wallets discussion](http://diyhpl.us/wiki/transcripts/bitcoin-core-dev-tech/2019-06-07-hardware-wallets/)
 
 # Introduction
 
@@ -115,7 +116,7 @@ The Sony Playstation attack-- they use ECDSA signing, and you're not supposed to
 
 # QR code wallets
 
-Constraining the unidirectionality of information. Bits can't flow backwards. The only place a decrypted key should be is in a running hardware wallet. There's a slip39 python implementation. Chris Howe contributed a slip39 C library.
+Constraining the unidirectionality of information. Bits can't flow backwards. The only place a decrypted key should be is in a running hardware wallet. There's a [slip39](https://github.com/satoshilabs/slips/blob/master/slip-0039.md) python implementation. Chris Howe contributed a slip39 C library.
 
 With multisig and each key sharded, can you mix the shards from the different keys and is that safe?
 
@@ -195,5 +196,33 @@ In our case for example, I was thinking about having a screen on the computer an
 
 Q: What about coinshuffle, or coinswap?
 
-A: I only know a little about this. For Wasabi wallet, it doesn't know which inputs correspond to which outputs because it registers them separately. You get back a blinded signature, and you give them a blinded output or something. They generate a blind signature and they don't know what they are signing. It allows the coinjoin server to verify that yes I signed something and this guy wants to register this output so it looks right and I should put it into the coinjoin. For all this communication they use Schnorr signatures because there you can use blind signatures. In principles this means you have two virtual identities that are not connected to each other; your inputs and outputs are completely disconnected even for the coinjoin server. They also generate outputs of the same value and then they make another section of the outputs with a different value so you can also get anonymity for some amount of change.
+A: I only know a little about this. For [wasabi wallet](http://diyhpl.us/wiki/transcripts/breaking-bitcoin/2019/breaking-wasabi/), it doesn't know which inputs correspond to which outputs because it registers them separately. You get back a blinded signature, and you give them a blinded output or something. They generate a blind signature and they don't know what they are signing. It allows the coinjoin server to verify that yes I signed something and this guy wants to register this output so it looks right and I should put it into the coinjoin. For all this communication they use Schnorr signatures because there you can use blind signatures. In principles this means you have two virtual identities that are not connected to each other; your inputs and outputs are completely disconnected even for the coinjoin server. They also generate outputs of the same value and then they make another section of the outputs with a different value so you can also get anonymity for some amount of change.
+
+Wasabi wallet supports hardware wallets, but not for coinjoin. Then the only remaining benefit of using Wasabi is having complete coin control and being able to pick coins to send to people.
+
+Q: How does Wasabi deal with privacy when fetching your UTXOs?
+
+A: I think they are using the [Neutrino protocol](http://diyhpl.us/wiki/transcripts/breaking-bitcoin/2019/neutrino/), they ask for the filters from the server and then they download blocks from random bitcoin nodes. You don't need to trust their central server at that point. I think it's already enabled to connect to your own node, awesome that's great. Cool. Then now you can actually get it from your Bitcoin Core node.
+
+# Lightning for hardware wallets
+
+Lightning is still in development, but it's already running live on mainnet. We know the software isn't super stable yet, but people were excited and they started to use it with real money. Not a lot of real money, it's like a few hundred bitcoin on the whole lightning network at this point.
+
+Right now lightning network works only with hot wallets with the keys on your computer. It's probably not an issue for us, but for normal customers buying coffee daily this is a problem. It might be okay to store a few hundred dollars on your mobile wallet and maybe it gets stolen, that's fine it's a small amount of money. But for merchants and payment processors, then you care about losing coins or payments, and you want to have enough channels open so that you don't have to close any and you won't have any liquidity issues on the network. You have to store your private keys on an online computer that has a particular IP address, or maybe through tor, and certain ports open, and you're broadcasting to the whole world how much money you have in those channels. Not very good, right? So this is another thing we're working on that would be nice to get the lightning private keys on a hardware wallet. Unfortunately, here you can't really use an airgap.
+
+You could partially use cold storage. You could at least make sure that when the channel is closed that the money goes to cold storage. There's a nice separation of different keys in lightning. When you open a channel, you should verify what address to use when closing the channel. Then even if your node is hacked, if the attacker tries to close the channels and get the money, then it fails because all the money goes to the cold storage.
+
+But if he is able to get all the money through the lightning network to his node, then you're probably screwed. To store these private keys on the hardware wallet is challenging, but you could have a .... he can also do a signed channel update. If you provide enough information to the hardware wallet, that you are actually routing a transaction and that your balance is increasing, then the hot wallet hardware wallet could sign automatically. If the amount is decreasing then you definitely need to ask the user to confirm. So we're working on that.
+
+# Schnorr signatures for hardware wallets
+
+The advantage of Schnorr signatures for hardware wallets is key aggregation. Imagine you're using normal multisig transactions, like 3-of-5. This means that every time you're signing the transaction and putting it into the blockchain, you see there's 5 pubkeys and 3 signatures. It's a huge amount of data, and everyone in the world can see that you're using a 3-of-5 multisig setup. Terrible for privacy, and terrible in terms of fees.
+
+With [Schnorr signatures](http://diyhpl.us/wiki/transcripts/sf-bitcoin-meetup/2018-07-09-taproot-schnorr-signatures-and-sighash-noinput-oh-my/), you can actually combine these keys together into a single key. So you can have several devices or signers that generate signatures and then you can combine the signatures and corresponding public keys into a single public key and a single signature. Then all the transactions on the blockchain and most of the transactions on the blockchain would look similar, just a public key and a signature.
+
+With [taproot](http://diyhpl.us/wiki/transcripts/bitcoin-core-dev-tech/2019-06-06-taproot/) (or [here](http://diyhpl.us/wiki/transcripts/breaking-bitcoin/2019/secure-protocols-bip-taproot/)), it's even better. You can add the scripting functionality there as well. If everything goes well, like in lightning maybe you and your counterparty are freely cooperating and you don't need to do a unilateral close. You could do a 2-of-2 multisig mutual close, and then it looks exactly like a public key and a single signature. If someone is not cooperating and things are going wrong, then you can show a branch in the taproot script that shows that you are allowed to claim the money but this script is only revealed if you have to go down this path. Otherwise you get a single public key and a single signature on the blockchain.
+
+We can use chips on a single hardware wallet device with different architectures and different security models, and put three different keys on there, and make sure we can spend the bitcoin only if each of these chips are signing in the hardware wallet. So one can be a proprietary secure element, and then a few other microcontrollers in the same hardware wallet, and the output is only a single public key and a single signature. We could also do one chip from Russia and one chip from China. So even if there is a backdoor, it is unlikely that both the Russian government and the U.S. government will cooperate to attack your wallet. From the user's perspective, it looks like only a single key or a single signature.
+
+
 
