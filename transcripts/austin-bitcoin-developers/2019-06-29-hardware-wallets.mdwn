@@ -26,7 +26,9 @@ I think we need several types of secure elements for different security models. 
 
 # Backdoors...
 
-There was a talk sometime ago about instructions in x86 processors where basically, they have specific set of instructions that is not documented and not--- they call it Appendix H. They share this appendix only with trusted parties ((laughter)). Yeah. These instructions can do weird things, we don't know exactly what, but some guy was able to find all of the instructions. He was even able to get privileges from the user level, not just to the root level but to the ring-2 level, complete control that even the operating system doesn't have access to. Even if you run tails, it doesn't mean that the computer is stateless. There is still a bunch of crap running under the OS that your OS doesn't know about. You should be careful with that one. On librem computers, they have not only this PURS but also Qubes that you can run and also they use the -- which is also open-- basically you can have ... check that it is booting the real tails. You should look at that if you are particularly paranoid.
+There was a talk sometime ago about instructions in x86 processors where basically, they have specific set of instructions that is not documented and not--- they call it Appendix H. They share this appendix only with trusted parties ((laughter)). Yeah. These instructions can do weird things, we don't know exactly what, but some guy was able to find all of the instructions. He was even able to get privileges from the user level, not just to the root level but to the ring-2 level, complete control that even the operating system doesn't have access to. Even if you run tails, it doesn't mean that the computer is stateless. There is still a bunch of crap running under the OS that your OS doesn't know about. You should be careful with that one. On librem computers, they have not only PureOS but also Qubes that you can run and also they use the -- which is also open-- basically you can have ... check that it is booting the real tails. The librem tool is called heads not tails. You should look at that if you are particularly paranoid.
+
+Librem computers have several options. You can eiher rune PureOS or you can run Qubes or tails if you want. The librem key checks the bootloader.
 
 # Decapping
 
@@ -349,6 +351,4 @@ These fingerprint scanners on laptops are completely stupid. Besides, an easy pl
 With statechains, you can transfer the private key to someone else, and then you enforce that only the other person can make a signature. Ruben came up with an interesting construction where on top of this you can do lightning transactions where you only transfer part of this money, and you can do rebalancing and stuff. But it requires Schnorr signatures, blind signatures for Schnorr, and if it does happen well it won't be for the moment.
 
 How we can help with this is that, we can provide the functionality on the secure element that extracts the key and then-- such that you are sure that the private key is moved. You need to trust the manufacturer still, but you can diverisificate the trust of it, so that you don't have to fully trust this federation that is enforcing this policy.
-
-
 
