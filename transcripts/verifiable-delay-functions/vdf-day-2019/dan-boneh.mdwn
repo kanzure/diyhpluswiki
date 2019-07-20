@@ -4,6 +4,8 @@ Dan Boneh
 
 video: <https://www.youtube.com/watch?v=dN-1q8c50q0>
 
+<https://twitter.com/kanzure/status/1152586087912673280>
+
 # Introduction
 
 I'll give an overview of VDFs and make sure that we're on the same page. I want to make sure everyone knows what it is that we're talking about.
@@ -134,3 +136,18 @@ I talked with Bram Cohen yesterday and he said from the competition he ran, the 
 
 The issue is that we don't know how much it can be parallelized, it could be that the class group operation itself can be parallelized. Justin, you had another comment? Yeah, nobody has ever done this. We don't know what the ASIC performance would be for a class group.
 
+How parallelizable is the class group operations? We would like to basically understand and extract all the parallelism we can out of the group operations so that we know how long would it take to actually run.
+
+Class groups were proposed in cryptography back in the 1990s but they have never been deployed. There's a lot of interesting work to be done here. For RSA I agree that a lot more is known. Since these groups are so easy to generate, you can switch these groups every few minutes. For RSA the large parameters means you have to pick them such that they aren't breakable in 50 years. But for a class group, we just have to generate a parameter large enough to not be broken in like a minute because they are so cheap to generate. In principle, maybe you can shrink the parameters such that it becomes faster than the RSA operation.
+
+What do we do about attacks on RSA groups or class groups? Look, class groups, computing the size of a class group- this is a very fundamental question in algebraic number theory. A lot of people have worked on coming up with better algorithms for this. They run in time L 1/2, whereas factoring runs in time L 1/3rd. This is not a new problem, and it has been studied quite a bit. It's a very fundamental problem.
+
+Class groups have no setup, but there's a slow group operation (meaning slow verification).
+
+Chia is going to be using this. We need to come up with a number to say whta is the right modulus size to use.
+
+# Open problems
+
+Problem 1: are there other groups of unknown orders? The goal is no setup and there should be efficient group operations. Class groups have a slow parallelizable group operation, and the RSA group has trusted setup. Maybe there's a group that is a better choice.
+
+Problem 2: These algebraic VDF constructions are not post-quantum secure. I don't know if we need to worry about that now. My calculations sohw that it is 30 years away. Why is not post-quantum secure? Shor's algorithm can efficiently compute groups, it's good at finding the order of groups. No group of unknown order will be secure against a quantum attack; the whole algebraic approach is inherently not post-quantum secure. Is there a way to do post-quantum VDFs efficiently? We could go back to the hash-based VDFs, but that requires recursive SNARKs. Is there a simple VDF that will also remain secure in the presence of a quantum adversary?
