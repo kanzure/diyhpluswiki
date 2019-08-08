@@ -1,0 +1,320 @@
+2019-02-09
+
+On-chain defense in depth (UCL CBT seminar)
+
+Bob McElrath (Fidelity Digital Assets)
+
+video: <https://vimeo.com/316301424>
+
+# Introduction
+
+It seems strange to come to a university and put PhD on my slides because in the finance world that's weird. I put it up there.
+
+Okay, so. I work for Fidelity Digital Assets. Just a couple words about this. Our lawyers make us say this: "This presentation is intended to be educational in nature and is not representative of existing products and services from Fidelity Investments or Fidelity Digital Assets."
+
+Fidelity Digital Assets is a new business unit where we are custodying bitcoin and hopefully soon ethereum, for institutional clients. We have a wallet infrastructure for holding bitcoin, and protection of these assets is important. Fidelity is a large company with $7t assets under management and we may end up with a lot of bitcoin in custody and it would be a tragedy to get hacked. So we want to do everything we can possibly do to protect against such an outcome.
+
+In that vein, a couple of years ago, this topic got kicked off by Emin Gun Sirer and some of his postdocs/grad students at Cornell. They wrote a [2016 paper called "Bitcoin Covenants"](https://fc16.ifca.ai/bitcoin/papers/MES16.pdf) which describes a mechanism that I am about to discuss.
+
+There are four other ideas for how to do this.
+
+# Vaults and clawback
+
+What is the basic idea we're talking about here? On-chain defense in-depth. We're going to do some things on the blockchain that will prevent other people from making transactions on the blockchain.
+
+The way we do that is with something called a vault. A vaulted bitcoin transaction has two phases and two transactions. First you send your coins to a vaulted address. I am using the new bc1 addresses here. Once the coin is in the vault, in order to spend it you must first unlock it. This address actually has a timelock on it and an extra encumberence that prevents people from stealing it from that address even if they have the private keys. The unlock transaction takes some time. You start with the vault, so Alice a customer deposits to the vault and then it sits there for some time. When you're ready to send it out to Bob over here, you send this unlock transaction and you have to wait. During that time, you have another option with a different set of keys to send the funds back to your vault. The idea here is that if a thief gets into your system  and steals your private keys, which is basically the worst case scenario. Here, they manage to get into your system and exfiltrate your private keys at which point they can do anything they want. This scheme prevents them from doing anything during this timeout. Say the timeout is 12 hours. If you put in a withdrawal request, then we wouldn't be able to satisfy that withdrawal request for say 12 hours. This is pretty standard in financial services: to have a wait between the time that you submit a withdrawal request and the time at which it is fulfilled and executed. That wait gives us a time during which we can see a thief trying to do the same thing. So we're watching the blockchain and we're looking for a thief to spend a transaction to spend the coins from the vault to the unlock, and if we see that in a way that we did not create, then we know something is going on and we can take some action like taking the funds and sending the funds back to another address that we control.
+
+That's the basic picture. This alternative spending mechanism we call a "clawback". This is an alternative to sending it to the thief.
+
+An example of how this would work is a script like this:
+
+    address = hash(
+        OP_IF
+            <Current block height + 72> OP_CHECKLOCKTIMEVERIFY
+            2 <Hot pubkey1> <Hot pubkey2> 2 OP_CHECKMULTISIG
+        OP_ELSE
+            2 <Clawback Pubkey1> <Clawback Pubkey2> 2 OP_CHECKMULTISIG
+        OP_ENDIF
+    )
+
+The challenge of the "vault" mechanism is to enforce that the vaulted address can only spend to the unlocked address that we created. This is how immediate theft can be prevented. Encumberence of a future output was termed a "covenant" by Eyal et al.
+
+If this unlock transaction has that script, and this is a pay-to-scripthash type transaction, and your address is a hash of the script. I have an if-else statement. There is a 72 block timelock, about 12 hours. First, we're going to check that this locktime has passed. Second, we are going to have a 2-of-2 multisig. During the course of a withdrawal normal, we would wait out this 12 hours and then send it off to the customer requesting the withdrawal. The else statement is the clawback with a separate set of keys. The idea is that the thief might steal the first set of private keys, but not able to steal the second set of private keys. If that happens, and the thief only steals the first set, then I can use the else condition and the thief cannot. Using this else condition, there is no timelock here, and I can send it to another address. By not having a timelock here, I have a window of 72 blocks where I do not have a race condition with the thief.
+
+There's another method where, if a thief sends a transaction, there's 10 minutes before it gets mined (roughly), and I could play a game where I try to double spend him during that 10 minutes. But then I am in a race, and I want to avoid that race because the thief is much more willing to burn coins to miner fees than I am.
+
+The timelock in the above script prevents that race. I have control during the 72 hour period, and the thief does not.
+
+The if-else statement is fairly straightforward, but the challenge of doing this is that you want to enforce that this vaulted address can only spend to the unlock address. There are two transactions and two addresses here, and they are tied together. So I have to enforce that the next transaction goes to this specific address, and that's the hard part. We generally can't do that in bitcoin today. But if you could, then you could prevent immediate theft from stealing the hot or cold keys.
+
+This form of encumberence was termed a "covenant" by Eyal and his collaborators in 2016.
+
+# Vault features
+
+The remainder of this talk is going to be dedicated to discussing several possibilities for achieving this mechanism. Come on in guys, grab a seat.
+
+* The vault -> unlocked unvaulting transaction starts a clock. This is one way to understand why two transactions are required.
+
+* The blockchain is the clock and enforces the policy.
+
+* We term the alternative, non-timelocked branch of the spend a clawback.
+
+* You have the opportunity to watch the blockchain for your own addresses, and see any unvaulting that you didn't create. You then have timelock-amount of time to pull your clawback keys from cold storage and create the clawback transaction.
+
+* Clawback keys are held offline, never used, and are more difficult to obtain than the hot/cold keys. ((There could even be a cost associated with accessing these keys.))
+
+* The target wallet for a clawback transaction needs to be prepared ahead of time (backup cold storage).
+
+This transaction that sends your funds from a vault to this unlocked address effectively starts a clock. We want to enforce a clock. The reason why it needs two transactions is that we're actually using the blockchain as a clock. The first transaction goes and gets mined into a block with a timestamp in that block. Then I have the blockchain via a relative locktime is counting the number of blocks that comes after, and that's when enforcement comes in. I don't know when the thief is going to steal the funds, so therefore I don't know when to start the clock. This is why it requires two transactions. The first transaction starts the clock.
+
+Q: Maybe I'm rolling this back just a bit, but I'm a bit hazy on what the scenario is. What is the threat scenario? What are those details?
+
+A: The threat is that I have a cold storage, thief somehow manages to exfiltrate my private keys, which normally means game over and all funds lost. This is a mechanism to actually save yourself in that situation. How they exfiltrate those private keys is subject to how exactly your wallet is built, and I am not going into the details of how Fidely built its wallet.
+
+Q: So the threat is simple capture of private keys.
+
+A: Yep, basically. It doesn't matter how they obtain them. There are side-channel attacks, insider threat attacks, signature vulnerability attacks, and certain circumstances where if you can convince someone in ECDSA to sign a message and reuse some nonce k then you can actually get the private key. There are multiple ways you can get the private key if there was some flaw in the software.
+
+Q: Do you have any statistics on this?
+
+A: Not in this talk, but there have been many hundreds of exchange hacks. It's estimated that 20% of all bitcoin in existence has been stolen. I'm making up that number off the top of my head, I'm probably wrong about it. It's a large number though. Just last week, the QuadrigaCX exchange in Canada claimed it was hacked. It was shutdown. $100 million was either lost or stollen by the founder. Nobody knows yet.
+
+Q: Is there a reason for focusing on working around the fundamental limitations in the security of the keys, the system, and focusing on this workaround?
+
+A: As opposed to what?
+
+Q: Rearchitecting the mechanisms by which keys are used or protected, and making them more consistent with the ways that keys are recommended to be used in cryptography in general.
+
+A: Well, here the idea is that we're using defense in depth: do both. This talk is focusing on what can we do on the blockchain. You can do a lot of things offline too, like Shamir sharding my keys, using multi-party computation to compute the signature, and we do use a lot of those tools. But that has already had a lot of focus around the industry, and on-chain defense has not. The valts discussed here are also not possible today because it requires upgrades to the bitcoin consensus rules. The purpose of this talk is to get people to think about this scenario. If we want to implement these changes in bitcoin, exactly what changes would we want to implement, and why? These are going to require at least a soft-fork. There's probably a soft-fork upgrade coming this summer which will include a few things I am going to talk about. I would very much like there to be a mechanism in there so that we could use vaults. It's a tricky question. Honestly, this talk doesn't have much of a conclusion. I am going to present several alternatives and I hope to raise people's awareness to think about it and maybe over the next few months we can get this into the next soft-fork.
+
+Or maybe it's just a terrible idea and we shouldn't use it at all.
+
+Q: ... more profitable for you to... delay this... in a system like this, ... you wouldn't be protected against that. You will... start blaming... either close that channel... I could... proof of.. transaction... and record the... to ... So these systems are also needed for... as for private keys.... important.. but also cooperation in second layers as well.
+
+Q: That's a different threat.
+
+A: This basic script structure I showed is also used in lightning channels. The way I am using it here is actually backwards compared to how it is used in lightning and plasma and other state-channel approaches. Here, the one with the timelock is the normal execution branch. In plasma or lightning, the one without the timelock is the default execution branch. In lightning, the one with the timelock is called an adversarial close of the channel. It's a similar construct and a similar use of features. I don't quite know off the top of my head how to incorporate this with state channels because of that flip. But we can discuss it afterwards.
+
+The vault features include a way to see the theft transaction, we see it and we know about it because we have other nodes watching the blockchain that are not connected to the system with which the thief stole it. This requires an online approach. It's appropriate for exchanges and online service providers, but not really appropriate an individual's phone.
+
+We're calling the alternative spend route a "clawback". That's the terminology here: vaults, clawbacks and covenants. You have the opportunity to watch the blockchain and observe for unvaulting transactions, at which time there is a timelock and the opportunity to broadcast the clawback transaction if that's what you wish to do. This gives you time to pull out the clawback keys and use them.
+
+The clawback keys are a different set of keys than the ones that the thief stole. Presumably these clawback keys are more difficult or costly to access than the hot key. So these are very cold keys or it might be a much larger multisig arrangement than your regular cold keys. The idea is that they stole your hot keys or even your cold keys, and these ones-- the clawback keys should be more secure because they are used less often and not used in the course of normal operations. This makes them more difficult to steal by an attacker who is watching your operation who watches how things are moved through your system can discover how keys are controlled and who has access to them and then attack those people. But the clawback keys should not be used, until you have to execute the clawback mechanism. If you see a theft like that, you probably want to shut down your system and figure out what happened and then later not use the system in the same way again without the vulnerability that the attacker exploited.
+
+Last point here, the clawback wallet-- the destination of the funds when I execute the clawback mechanism-- needs to be different from the original one. The assumption here is that the thief has stolen the cold wallet keys, or other things in addition to that. So I need to decide what the clawback should be doing, upfront, and where it should be sending the funds when I successfully clawback the funds from the thief. This can be another vault or some really deeply cold storage keys.
+
+For the rest of this talk, I will dig into some rather technical details about how to do this. Let me just pause here and ask if there's any questions about the general mechanism.
+
+Q: It sounds similar to the time period between the time a transaction happens in bank account, and the time of settlement, during which time you can "undo".
+
+A: Absolutely. Those kinds of timelocks are present all over finance. The way that they are implemented is that there is a central computer system that looks at the time on the clock and says okay the time hasn't passed yet. But these systems aren't cryptographically secure. If I hack into the right system and twiddle the right bit in the system, I can convince you the time is different and successfully evade that control mechanism.
+
+The notion of timelock itself is very old. Back in the old west, they would have physical mechanical clocks where the bank owner would leave and go home but first he would set the timer on the vault such that the vault wouldn't open up overnight when he wasn't there, only at 8am the next morning would the vault open. It's a physical mechanism. I actually have a photo of this in a blog post I wrote a while back.
+
+But yes, this is standard practice. You want to insert time gaps in the right places for security measures and authorization control in your system.
+
+Q: Do you have control over how many days or how much time elapses?
+
+A: Of course.
+
+Q: If I said I want it to be 72 hours, and you want it to be 12 hours, that's usually different from the banks.
+
+A: The time here is set by the service provider. All the transactions and timelocks are created by the service provider. This service provider is providing a service to the customers who are trusting them with their funds, whether an exchange or a custodian or something else. Everything happening here is set by the service provider. If you want those times to be different, then you can talk wit hyour service provider. If you want the timelocks to be short, then it's higher risk and you're going to have to ask about your insurance and etcetera etcetera.
+
+Q: Could miners theoretically.. by their mining power.. attack the timelock?
+
+A: No.
+
+Q: But it is measured in blocks?
+
+A: It is.
+
+Q: So if they stop mining....
+
+A: There are two ways to specify timelocks. This mechanism that I said here is OP\_CHECKLOCKTIMEVERIFY which is an absolute timelock. There's also a relative timelock specified in number of blocks. There's relative timelock, absolute timelock, block-based and clock-based. So by how you encode this number here, you can select all of those options. Here I am using a relative timelock, but here I am using a number of blocks.
+
+Q: ...
+
+A: The number comes from the miners putting timestamps in the blockheader, so if all the miners want to mess with this then they could. But that's your standard 51% attack. Nothing in bitcoin works if you have a 51% attack.
+
+Q: ... It could effect it to a lesser degree, like if 30% of the miners...
+
+A: If you want to speed up or slow down the timelock, then ...
+
+Q: ...
+
+A: If you're a miner, you can slow it down by turning things off. But presumably you want to turn things on. You can calculate the cost of doing that. Today, at whatever the hashrate is. In 2017, there was approximately $4b spent on bitcoin mining total. If I divide that by the number of blocks in 2017, then I can calculate how much each block is worth and then I can see the value of a transaction might be $10m and the cost of an attack is $x dollars. So I can set the timelock based on the ratio of those two numbers, like the cost of the attack versus the value of the transaction. What this means is that high-value transactions will have longer timelocks. This is frankly a very good risk strategy that I haven't seen many people in the bitcoin space use. Different value transfers should have different timelocks. It's a risk parameter.
+
+Q: You said there's a need for some fork to allow some functionalities.. what is the functionality?
+
+A: That's the rest of the talk.
+
+# Vaulting mechanisms
+
+There are four mechanisms that I know of that have been proposed so far. There are probably others.
+
+Remember, a vaulted UTXO is a UTXO encumbered such that the spending transaction must have a certain defined structure.
+
+* Eyal, Sirer, Moser, 2016: [OP\_CHECKOUTPUTVERIFY and bitcoin covenants](https://fc16.ifca.ai/bitcoin/papers/MES16.pdf)
+
+* Bob McElrath, [pay-to-timelocked pre-signed transaction (P2TST) and SIGHASH\_NOINPUT](http://web.archive.org/web/20180503151920/https://blog.sldx.com/re-imagining-cold-storage-with-timelocks-1f293bfe421f?gi=da99a4a00f67).
+
+* Johnson Lau: [OP\_PUSHTXDATA](https://github.com/jl2012/bips/blob/vault/bip-0ZZZ.mediawiki)
+
+* Russell O'Connor, Marta Piekarska: [OP\_CHECKSIGFROMSTACK](https://fc17.ifca.ai/bitcoin/papers/bitcoin17-final28.pdf) and <https://blockstream.com/2016/11/02/covenants-in-elements-alpha/>
+
+* Jeremy Rubin, 2019: [OP\_SECURETHEBAG](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-June/016997.html) or [here (also has more on NOINPUT and CHECKSIGFROMSTACK etc)](https://diyhpl.us/wiki/transcripts/bitcoin-core-dev-tech/2019-06-06-noinput-etc/)
+
+Eyal, Sirer and Moser wrote a paper in 2016 and showed it at Financial Crypto 2016. They proposed a new opcode OP\_CHECKOUTPUTVERIFY.
+
+The second mechanism is something I came up with a few months later where I described how to do this using pre-signed transactions. That allows you to basically do this mechanism without actually modifying bitcoin. I will talk mostly about that one since it was mostly my idea and I know a lot about it.
+
+jl2012 wrote a BIP about OP\_PUSHTXDATA where the idea is to take data on the transaction and place it on the stack so that you can do computation on the data.
+
+The last idea referenced here is from O'Connor and it's implemented in Blockstream Elements called OP\_CHECKSIGFROMSTACK. They had a paper in Financial Crypto 2017 about it. This mechanism essentially adds an opcode called OP\_CHECKSIGFROMSTACK and it literally checks the signature on the stack and there's a trick by which you can use that to implement a covenant.
+
+I am going to go through these one-by-one.
+
+# OP\_CHECKOUTPUTVERIFY (Eyal 2016)
+
+As the name implies, OP\_CHECKOUTPUTVERIFY examines a specific output and does computation on it. It's sort of like a regular transaction. I have placed a transaction template here. There's a pattern with placeholders, which could be pubkeys. This then encumbers the next output to say the script of the next output must be a script that matches this pattern.
+
+This checks the value, for instance. This lets you encumber the value and check the script pattern, which implicity lets you check the public keys or any other logical structure in the output script.
+
+Personally I think this is kind of complicated, and it's sort of like an ethereum-like approach to computation where you put everything on the stack and write a program to deal with it. This is not really how things are done in bitcoin. One of the ways we describe the difference between bitcoin and ethereum is that bitcoin requires proof-of-correct-computation for scripts, whereas ethereum actually does the computation on-chain. So my preference, I think the bitcoin's community preference is that rather than doing computation in the scrpits, which has scaling and privacy consequences, we should instead do the simplest possible thing to prove you did the right computation. At the end of the day, you can prove that you have done almost anything just by having a certain signature.
+
+# Pay-to-timelocked pre-signed transaction (P2TST) and SIGHASH\_NOINPUT
+
+I came up with the pay-to-timelocked pre-signed transaction (P2TST) proposal. The idea is the following. When you give someone a deposit address, instead of giving them an address to which you have the private key, you instead randomly generate a new private key at the time that they request the deposit. Then you create and pre-sign a transaction that does the vault unlocked send with one input one output. Then you delete that private key. As long as that key was really deleted, I have just created an enforcement where the funds have to move from this vault to the unlock because that's the only thing that exists at this point is the pre-signed transaction. Then I give the address for the incoming transaction on that pre-signed transaction to the user that wishes to make a deposit.
+
+This pre-signed transaction unfortunately depends on the pre-signed txids. So we have to wait for Alice to broadcast her transaction before we can do this. So this private key has to live for some time while we wait for Alice to send the transaction. That's a pretty big risk: during that waiting period, the private key could be stolen. We could talk about secure hardware and other options, though. But this is a risk on its own. If somebody is able to figure out how to obtain this private key, then it can evade the vault mechanism entirely which is not what we want. So instead of exfiltrating the private keys for the cold storage, they would just exfiltrate the pre-signing keys and this would completely evade the vault mechanism.
+
+There's a second idea here which is that you create a transaction called a P2TST which is a pay-to-timelocked pre-signed transaction transaction. It sends from the vault to the unlocked state. With this construct, your funds storage is now a set of pre-signed transactions instead of being keys. You have keys also, but your main control is the set of pre-signed transactions. Then there are new questions like what do I do with these pre-signed transactions and where do I put them.
+
+Instead of creating a key and delteing it, you could instead create a signature using a random number generator and then through the magic of ECDSA public key recovery you can compute the corresponding public key. I would have to break the ECDSA discrete log problem asumption in order to compute the private key. By using this technique, I have created a valid pre-signed transaction and I have enforced this policy now, having never had a private key at all. There's some caveats though, like this requires some changes to bitcoin either SIGHASH\_NOINPUT also with a flag like SIGHASH\_SCRIPTHASH and an allowance for pubkey recovery. Unfortnuately some of the upcoming [Schnorr signature proposals](https://diyhpl.us/wiki/transcripts/blockchain-protocol-analysis-security-engineering/2018/schnorr-signatures-for-bitcoin-challenges-opportunities/) explicitly do not allow for pubkey recovery techniques.
+
+Because the SIGHASH depends on the input txid, which in turn depends on the previous transaction's output address, which depends on the pubkey, we have a circular dependency that could only be satisfied by breaking our hash function. It's a circular dependency on the pubkey. I couldn't do this, unless I break my hash function. I can't compute the pubkey and then put it into the input hash that depends on the pubkey in the first place.
+
+# What's a SIGHASH?
+
+The way this works is that when you do EC recovery on a signature, you have three things really-- you have a signature, a pubkey, and you've got a message. Those are the three things involved in verifying a signature. The pubkey and signature are obvious to everyone here right? The message here is really the SIGHASH. It's a concatenation of a whole bunch of data extracted from the transaction. It depends on the version, hash of the previous outputs, and the outputs, and various other things. The signature authorizes that. What we want to do is not depend on the pubkey in the input. That creates a circular dependency where you can't do EC recovery.
+
+There's a proposal out there called [SIGHASH\_NOINPUT](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-December/016549.html) which was originally proposed for the lightning network where it would be nice to be able to take the set of outputs on the channel and be able to rearrange them, without making an on-chain transaction. If my transactions commit to the txids on-chain, then I can't do that. SIGHASH\_NOINPUT decouples your lightning transactions from those inputs and let you rearrange those, and therefore let you add more funds and remove funds from the transaction. I think it's very likely that NOINPUT will be implemented and deployed because it is so helpful to the lightning network. So, can we repurpose SIGHASH\_NOINPUT for a vault?
+
+# Schnorr BIP and SIGHASH\_NOINPUT discussion
+
+Brief interlude on Schnorr signatures. In elliptic curves, pubkey recovery is well known. In ethereum, there's even an opcode that does it, or a common function. The way you check signatures in ethereum is often you compute the pubkey and see if it's the same. So there is now a Schnorr BIP put out by Pieter Wuille. The way it works is the following: this here basically is the equation he proposes that is satisfied by Schnorr signatures in Schnorr.
+
+Schnorr signatures basically for those who don't know the history actually predate ECDSA signatures and unfortunately they were patented. Therefore they saw basically zero use whatsoever. At the time that Satoshi wrote bitcoin in 2007-2009, it was almost the same time that the Schnorr patent expired like in 2009 or 2010. But since there was no history or libraries that used Schnorr signatures, nobody used them. Schnorr signatures have a lot of advantages over ECDSA signatures. If you take two pubkeys and add them together, the sum of the signatures validates for the sum of the pubkeys. That's not something as easily done with ECDSA. This is very powerful for blockchain because blockchain has scalability problems in the first place. If I can smash all the signatures together and validate just one signature, that's a very big win for scalability.
+
+There's a lot of other fancy things you can do with schnorr signatures. They are linear, so you can add things to them. You can do native multisig inside of a Schnorr signature. There's a lot of reasons that people want this. A BIP has been proposed. The mechanism to get it into bitcoin has not been proposed yet, but the BIP describes what the sigantures are, how you get them and how you check them.
+
+Assuming that we get this BIP later this year, this still has the problem of committing to the public key and creating a circular dependency that again I cannot satisfy. The way that happens here is that they have intentionally put the pubkey inside this hash, and the reason for that is that they don't want people to be able to reuse signatures. The standard way of specify a Schnorr signature is slightly different, there's no pubkey in the hash there. For clarity, G is the standard basepoint, and (r, s) are the two components of my signature, H is the hash of the pubkey and message times my pubkey. So with this original proposal, you can do pubkey recovery. I can just put things on the other side of the equation and compute the pubkey, which is what I need for my pre-signed transaction idea.
+
+The reason why this formula was not chosen, in favor of this other, is that I can convert a signature any (r, s) into a signature on something else by shifting the s by an elliptic curve point. This means that I can basically take a signature off the blockchain and reuse it for a different transaction, which is bad, because it might allow someone else to send funds in a way that you didn't want them to. If I take this signature and shift it by this much, it's now a valid signature for something else. Whether this is okay reduces to the question, are there any transactions that reuse the same message value m? It turns out in practice that the answer is yes, there are. So one way this might happen is that-- if you have a service provider and someone is sending them a lot of funds, it's standard practice for someone to do a penny test where they send a small amount of funds first to check if things work, and the other thing that they will do is tranche transactions where they will divide up the total amount into several smaller denominated transactions in order to lower the risk on the entire transfer. If you're sending a billion dollars all at once, and it's all lost, then it sucks. If I divide it up into 10 parts, and I only lose 1/10th of it, then that sucks less. But the consequence of this is that you will end up having transactions with exactly the same value and exactly the same address. As much as we would want to say hey client please don't reuse addresses or send to the same address twice, we technically can't prevent them from doing that. There are good reasons why they probably would reuse addresses too. If I take two different transactions and I tranche it, say I send 100 BTC to the same address, twice, this is a case where I can reuse the signature. If we then move those funds to another cold wallet or something like that, the second transaction is now vulnerable. They can take the signature off the first transaction and apply it to the second and do some tweaks and have some monkey business going on. We don't want that. The reason why this works is because of SIGHASH\_NOINPUT. If we were to use SIGHASH\_NOINPUT, which allows for removing the txid from the input, then that is a circumstance underwhich the Schnorr signature replay would work. If we don't use NOINPUT, then this is not a problem.
+
+# Half-baked idea: input-only txid (itxid)
+
+I had a half-baked idea this morning to try to fix this. There's probably something wrong with this, and if so let me know.
+
+<https://vimeo.com/316301424&t=33m47s>
+
+The problem with pubkey circular dependency also comes from the input txids: the txid is defined as sha256d(nVersion|txins|txouts|nLockTime). Segwit also defines another txid used internally in the witness merkle tree (not referenced by transactions): wtxid = sha256d(nVersion|marker|flag|txins|txouts|witness|nLockTime) where the txouts are a concatenation of value|scriptPubKey|value|scriptPubKey.... and scriptPubKey(P2PKH) is OP\_DUP OP\_HASH160 pubkeyhash OP\_EQUALVERIFY OP\_CHECKSIG and scriptPubKey(segwit) is 0 sha256d(witnessScript), which references our pubkey, creating the circular dependence. However, let us define an input-only txid itxid where itxid = sha256d(nVersion|txins|nLockTime)). This is sufficient to uniquely identify the input (since you can't double spend an input), but does not commit to the puts. Outputs are committed to in sighashes anyway (and, if desired, modulo SIGHASH\_NOINPUT). This would allow us to use pubkey recovery and RNG-generated signatures with no known private key. This implies a new or modified txid index and SIGHASH\_ITXID flag. This doesn't seem to be useful for lightning's SIGHASH\_NOINPUT usage where they need the ability to change the inputs. This evades the problem of Schnorr signatur ereplay since the message m (sighash) is different for each input.
+
+The reason why we ended up with the circular dependency is because the pubkey is referenced by the txid. The txid is defined as mentioned above. Segwit also defines another txid called wtxid which adds a few more things including the witness program. Segwit takes a lot of the usual transaction data and moves it to a separate block, which removes the possibility of malleability. Signatures and scripts get moved to this extra block of data. So there's another merkle tree of this witness block that gets committed to.
+
+In P2PKH, the pubkeyhash gets hashed into the --- which creates the circular dependency. ((You can use P2PK to not require a pubkeyhash.))
+
+So what if we instead introduce input-only txids called itxid. I remove the outputs from the original txid calculation. This only involves the inputs. If I use this to reference which inputs I am actually spending, this would still uniquely identify the inputs I am spending. It doesn't say anything about the outputs. The outputs are tied to the signature hash in the transaction, if you desire it to, which ties them together. The outputs are then here in the witness tree. Everything is still committed to in the right way, in a block. I don't think there's a problem with that. This allows us to compute the pubkey and create pre-signed transactions, without actually having the private key.
+
+This is a bit complex. I literally had the idea this morning. You would have to change the txid index. Bitcoin is like a big list of txids. If I want to change that index, I basically have to double the indices. This will not go over well, I suspect.
+
+# Pre-signed transactions
+
+Your wallet is a set of pre-signed transactions, here. This is an interesting object for risk management. These objects are not funds in-of-themselves. There is a private key somewhere that is needed to do anything with them. But they can be aggregated into amounts of known denominations, such that they can be segregated and separated. It gives you an extra tool for risk management.
+
+These pre-signed transactions are less security-critical than private keys, and they are less costly to create than an entire private key ceremony. A key signing ceremony can be a multi-million dollar affair that is audited and has all sorts of controls around it to make sure we don't mess up.
+
+If an attacker steals just the pre-signed transactions, they don't have access to the funds because they also have to steal the keys with them. So you could back these up, you could put them with a lawyer or a custodian or something like that.
+
+There are downsides to pre-signed transactions. A responsible hard-fork that implements replay transaction cannot be claimed by a pre-signed transaction. If I change how transactions are signed, and I provably don't know the private key, then by definition I cannot possibly generate a valid signature to claim the coins on the other side of the hard-fork. These pre-signed transactions won't be valid on any fork that changes the sighash. I think hard-forks are a waste of time and people should stop doing them. But some people would say this is a nasty consequence of pre-signed transactions.
+
+I talked around at Fidelity about the "delete the key" idea, and generally that's not how things are done. Our cybersecurity people generally prefer to always backup keys just in case. You never know, put it in a really really deep vault. The biggest idea with delete-the-key is how do you know that the key was really deleted? Software and hardware mechanisms can evade the deletion.
+
+SIGHASH\_NOINPUT is generally unsafe for wallet usage. So, don't use it for wallets. The reason why it's okay for lightning is that lightning is a protocol with certain rules around it. People aren't just sending arbitrary funds at arbitrary times using SIGHASH\_NOINPUT to arbitrary lightning addresses; you have to follow the lightning protocol. That's why we run into the problem with penny tests and tranche testing. Whether we create tranches, it's the sender's decision and policy, not the receiver's. That's the root of the problem there.
+
+# Lau: OP\_PUSHTXDATA
+
+OP\_PUSHTXDATA seems to be created to neable arbitrary computation on transaction data. This is generally not the approach favored by most bitcoin developers, instead they prefer verification that a transaction is correctly authorized, rather than computation (which is more similar to ethereum). In my opinion, lots of fnuny things can be created with OP\_PUSHTXDATA, and there are many unintended consequences.
+
+This was proposed by jl2012. It's kind of a swiss-army type opcode. What it does is it takes the random data from the transaction and puts it on the stack and then lets you do a computation on it, like input index, input size, output size, locktime, fee amount, version, locktimes, weight, total size, base size, etc.
+
+This was proposed I think even before Eyal's 2016 paper. It's kind of gone nowhere, though. This draft BIP never became an actual BIP. Given the philosophy of "let's not do fancy computation in scripts" this proposal is probably not going to go anywhere.
+
+# OP\_CHECKSIGFROMSTACK
+
+The one that I am in favor of the most of the other 3, is OP\_CHECKSIGFROMSTACK. The way a vault works iwth this opcode looks like the following: you've got, so, you have this:
+
+script: OP\_OVER OP\_SHA256 pubkey 2 OP\_PICK 1 OP\_CAT OP\_OVER OP\_CHECKSIGVERIFY OP\_CHECKSIGFROMSTACKVERIFY
+
+initial stack: signature sha256(sigTransactionData)
+
+So you do two checksigverifies. The idea here is that I am going to put the initial stack here when I send the transaction will have the signature and hte hash of the transaction data. I am going to first check the signature that is on the stack, and the separate is that I check that I check the signature of the transaction itself. If the signature of the transaction is exactly equal to the one that is on the stack then this implies the transaction data is exactly the same as this transaction. It implicityl verifies that this transaction has a specific structure encoded in its sighash value.
+
+It's generally possible to create recursive covenants with this. Once you put this opcode in that encumbers the script of a next transaction, you can require that the next transaction has any structure at all. You can require it has another CHECKSIGFROMSTACK or another PUSHTXDATA in there or whatever. There might be uses for this.
+
+Another drawback of using these kinds of opcodes is that it's fairly obvious to everyone what you're doing; all your code ends up in the blockchain and now someone knows that you're doing vaults. This is revealed with every transaction, not just when you execute the clawback transaction. Any regular send reveals this information.
+
+# Taproot
+
+It would be awesome if there was a way to hide the fact that I was using a vault mechanism or using OP\_CHECKSIGFROMSTACK. Just in general, it is useful to hide the existence of an alternative clawback branch in the script.
+
+[Taproot](http://diyhpl.us/wiki/transcripts/sf-bitcoin-meetup/2018-07-09-taproot-schnorr-signatures-and-sighash-noinput-oh-my/) works by "tweaking" your public key such that your public key P is in fact public key P plus a merkleized abstract syntax tree of your script times the generator G.
+
+If you have the private key, then you can also sign for P=MG just as you could for P by tweaking your private key in the same way. When spending, we reveal the committed alternatives M in the scriptPubKey, along with the executedMerkle branch. But the remaining non-executed branches and alternatives remain private.
+
+This is good for optimistic protocols where the alternatives are used less frequently than the default case. Transactions are indistinguishable from a single-key P2PKH type output. Multisig can be done via MuSig with Schnorr, and an interactive threshold signature scheme exists that also results in a single signature.
+
+For a vault in taproot, the default script would be: (timelock) OP\_CHECKLOCKTIMEVERIFY/OP\_CHECKSEQUENCEVERIFY hotpubkey OP\_CHECKSIG.
+
+Taproot was proposed in 2018 by Greg Maxwell. The idea is that you can add alternative spending paths to your script. You do this by tweaking your public key, which is done here by addition. M is the merkle root of a merkleized abstract syntax tree of alternative scripts (MAST). MAST is where you take a big block of if-else statements and turn it into a single merkle tree.
+
+If you have a private key, you could sign by tweaking your private key in the same way. But the key might be constructed by MuSig or something. The interesting thing is that nobody can tell you tweaked the public key, if you don't reveal it. I can't take an arbitrary pubkey and claim I did this when I didn't; that would be equivalent to breaking the discrete log problem on ECDSA.
+
+By "optimistic" protocol I mean the alternatives are used less freequently than the default case. You can hide all kinds of stuff. With Schnorr signatures, you can do multisig in a single key and single signature. This is pretty darn fancy, and I am pretty happy about this. It would completely let you hide that you did this.
+
+Your vault script ends up looking pretty simple, which is just a timelock and a CHECKSIG operation.
+
+# Fee-only wallets
+
+You generally want to add fee wallets when you do this. If you create these pre-signed transactions or use covenant opcodes, this encumberence you create doesn't know anything about the fee market. Bitcoin has a fee market where fees go up and down based on block pressure. The time that you claim these funds or do a withdrawal request is separated in time from when the deposit happened and the fee market will not be the same. So generally you have to add a wallet that is capable of bumping the fees. There are many mechanisms of doing that.
+
+# Conclusions
+
+Vaults are a powerful tool for secure custody that have been around for at least 2-3 years and haven't gone anywhree. My read of the ecosystem is that most of the developers think it's a good idea, but we haven't done the work to make it happen. Fidelity would use vaults if we had these tools.
+
+Pre-signed transactions, modulo my itxid idea, are kind of undesirable because of delete-the-key. If you don't delete the key, then third-parties can steal that key. If you can use NOINPUT, then you can get around that.
+
+Of the new opcodes, the one I am most in favor of is OP\_CHECKSIGFROMSTACK which is already deployed in Elements and Liquid. It's also deployed on Bitcoin Cash. As far as I know, there's no issues with it. It's a simple opcode, it just checks a signature. But you can create covenants this way. There might be other ways to use this opcode. One of the ways in the original covenants 2016 paper was that you can make a colored coin with OP\_CHECKOUTPUTVERIFY. But what if colored coins get mixed with other coins? Well, you can enforce that this doesn't happen, using these kinds of mechanisms. This is one other potential use case for all three of the opcode proposals we have discussed.
+
+One of the reasons I like OP\_CHECKSIGFROMSTACK better is that it's simpler than the other ones, and it's less like ethereum, and it just lets me prove that you have the right thing. All three opcode options let you encumber things recursively, so it means that bitcoin would no longer be fungible: is that desirable?
+
+In all cases here, batching is difficult. This is one consequence of this. You generally can't take pre-signed transactions and combine them with other inputs and outputs. The signatures will sign the whole transaction. There are ways to do it such that you only sign one of the inputs and one of the outputs, but then if I do that and batch a bunch of transactions together then I don't really gain much from the batching. So batching requires more thought.
+
+1h
+
+# Related
+
+<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-February/015793.html>
+
+<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-August/017229.html> [or](https://www.coindesk.com/the-vault-is-back-bitcoin-coder-to-revive-plan-to-shield-wallets-from-theft) <https://twitter.com/kanzure/status/1159101146881036289>
+
+<https://blog.oleganza.com/post/163955782228/how-segwit-makes-security-better>
+
+<https://bitcointalk.org/index.php?topic=5111656>
+
+"tick method": <https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-August/017237.html>
+
+<http://web.archive.org/web/20180503151920/https://blog.sldx.com/re-imagining-cold-storage-with-timelocks-1f293bfe421f?gi=da99a4a00f67>
+
+<http://www0.cs.ucl.ac.uk/staff/P.McCorry/preventing-cryptocurrency-exchange.pdf>
