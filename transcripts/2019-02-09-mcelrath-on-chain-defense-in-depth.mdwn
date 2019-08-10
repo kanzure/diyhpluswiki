@@ -167,6 +167,10 @@ Remember, a vaulted UTXO is a UTXO encumbered such that the spending transaction
 
 * Jeremy Rubin, 2019: [OP\_SECURETHEBAG](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-June/016997.html) or [here (also has more on NOINPUT and CHECKSIGFROMSTACK etc)](https://diyhpl.us/wiki/transcripts/bitcoin-core-dev-tech/2019-06-06-noinput-etc/)
 
+* OP\_CAT + OP\_CHECKSIGFROMSTACK <https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-May/016946.html>
+
+* OP\_CHECKTXOUTSCRIPTHASHVERIFY <https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-October/016448.html>
+
 Eyal, Sirer and Moser wrote a paper in 2016 and showed it at Financial Crypto 2016. They proposed a new opcode OP\_CHECKOUTPUTVERIFY.
 
 The second mechanism is something I came up with a few months later where I described how to do this using pre-signed transactions. That allows you to basically do this mechanism without actually modifying bitcoin. I will talk mostly about that one since it was mostly my idea and I know a lot about it.
