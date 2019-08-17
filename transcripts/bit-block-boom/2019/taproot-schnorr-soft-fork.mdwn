@@ -38,5 +38,38 @@ Schnorr signatures have key aggregation where you can do 50-of-50 with 1 signatu
 
 There's also MuSig key aggregation. So we have our 3 keys, the 3 of us that want to be in this multisiganture, and we want to be able to have this aggregated key. I have glossed over how that works. One available technology to do that is called Musig. The Blockstream guys put out that paper. It's a way to combine those keys into one key. There are other proposals, too and people are working on this problem. The MuSig scheme and I believe all the other known ones, require off-chain interactivity. Alice and Bob and Charlie all have to work together outside of the bitcoin network to coordinate and get that key created and then signing as well.
 
+# Adaptor signatures
+
+You can also use adaptor signatures, which allow you to have this decoder light that lets you see something else there and that secret allows you to do some interesting things that nobody can detect except the party that has this detector light your partner in this scenario. By signing the coins, you're revealing additional information. This is basically invisible ink. You can do atomic swaps. For maximalists, that is not appealing, but perhaps you are swapping coins within the bitcoin network for fungibility purposes. You can swap between liquid and bitcoin, or to other chains of course, like swapping to an altcoin but why would you ever want to do that. An atomic swap means that if I am sending you bitcoin and you're sending me litecoin, then both of those operations happen or they don't happen at all. It's pretty cool because it's an atomic commitment protocol, and you could atomic swap into the Liquid network and then swap back and it would be embedded in the signature without revealing much information.
+
+Another example of adaptor signatures is coinswap, which is similar to coinjoin and tumblebit. It's a tumbler without revealing which coins are being swapped. I think I put tumblebit in the handout as well. Andrew Poelstra wizard level--- the ability to, his example is, I could give you a proof that I have a solution to a sudoku puzzle but not give you the solution but just prove to you in zero-knowledge that I have a solution. When you send me a bitcoin payment to reveal that sudoku solution, it's revealed in that payment. ((That's just a zero-knowledge contingent payment.))
+
+We can also implement Schnorr payment channels with adaptor signatures. There's also scriptless scripts, which a lot of the math people are working on.
+
+# Taproot
+
+Taproot is where you put a script in there. The simplified version is: it's the hiding of a script in a normal looking transaction using Schnorr signatures. Just like we were hiding atomic swaps, you could also hide a script in there, which enables some interesting things.
+
+There is no more spending to a key or to a script, because all addresses will be scripts and keys. The coins will be able to spent in one or either of those ways. So I've seen this termed as "pay-to-taproot" (P2TR). You can have the key in this scenario, the key can be a Schnorr signature like 1-of-1, 2-of-2, 5-of-7, etc. And you can spend using that aggregated key construction. You can also spend, though, using the script. The script can be multiple scripts, they could be large scripts, and we'll get into the metrics on that. It's hidden unless you use that script, in which case you reveal it after that the script was there and what path ytou have taken on this.
+
+This is the next version of segwit, it's segwit v1. The first version was segwit v0.
+
+What could we do with our hidden script? You can spend using the key path which is a 2-of-3, or you can have a fallback script like a series of fallbacks so that you can immediately spend using a 2-of-2 with your backup hardware wallet and maybe a third-party service that does some 2FA like a phone call to make sure that I actually wanted to sign. After six months, I could have a 2-of-3 with my mom, brother and bitstein and to recover the funds after 9 months I can have something like my lawwyer to recover the funds. Nobody can tell that any of this is going on, with taproot. We don't want to reveal the entirety of the script when we have to spend one of those scripts.  With MAST, you can reveal only the scriptpath you want. You can potentially have hundreds of scripts, and only show the one that you want to execute.  MAST is how you do that. This is great for privacy because people don't know I have those backup clauses, and I don't have to pay for the ones I don't use only the ones that I do use.
+
+# Other examples of taproot
+
+There's a bunch of examples related to exchanges and thresholds. There's telescoping multisig, which is either getting larger or smaller over time. You can start with 15-of-20 and then after a timeout you could have a script that is 10-of-13 and then I can go into a 2-of-3 eventually after a few more months for different business use cases. Additionally, there's the idea of a server honey pot that Blockstream wrote about a few years back. It's in the handout. Also, puzzles are an interesting one. There's a million dollar bitcoin game where there's all these pieces like with Shamir secret sharing shards hidden all over the world and there's teams trying to get those puzzle pieces and try to get the reward. Something like that might work, like collect the signatures.
+
+# Scalability benefits
+
+There are large multisig fee savings, like 30-75%. Multisig doesn't cost any additional amount in these scenarios. So why wouldn't you be using multisig? There's going to be a proliferation of multisig usage in the coming years, assuming these upgrades get adoption and get rolled out. Also, there can be more parties to the custody. You don't want to spend the money for an 11-of-15 because that's going to spend more to transact with; but the fact that you can transact with bigger multisig parties, it means that I think the average multisig set size is going to go up actually. Like revealing scripts that you wanted and not the others. There's also future batch validation with Schnorr signatures giving 2.5x faster block validations. If you want to run a full node or think that's important, then batch verification would be a huge win there.
+
+On the privacy benefits, the all outputs are indistinguishable. The cooperative (key spend) transactions path is also indistinguishable, and nobody can tell that you have a multisig behind it. You're not revealing that you're using multisig to all the participants, and all those negative things we talked about before. The fallback script lets you reveal something, but only if you tell it to.
+
+# Innovation benefits
+
+There are large multisig set sizes made possible by this. You can use up to 4 billion scripts. There are a lot of interesting things we can think about doing with that much free space. Segwit v1 with schnorr/taproot introduces a versioning field to taproot itself, which enables 256 versions of taproot. So you can use different features within each version of that, which is interesting because some people complain well isn't there 16 segwit versions- sure, but you can have subversions of those as well. MAST is just the first version of that.
+
+
 
 
