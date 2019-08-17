@@ -70,6 +70,30 @@ On the privacy benefits, the all outputs are indistinguishable. The cooperative 
 
 There are large multisig set sizes made possible by this. You can use up to 4 billion scripts. There are a lot of interesting things we can think about doing with that much free space. Segwit v1 with schnorr/taproot introduces a versioning field to taproot itself, which enables 256 versions of taproot. So you can use different features within each version of that, which is interesting because some people complain well isn't there 16 segwit versions- sure, but you can have subversions of those as well. MAST is just the first version of that.
 
+# Improvements
+
+You don't want to write taproot scripts by hand, or tapscripts. This is not easy to write in bitcoin script. Miniscript and script descriptors can help you write these policies at a higher policy, so you don't have to write all of the lower-level code. That's something being worked on.
+
+bip174 PSBT is the format in which you can pass around a partially-signed bitcoin transaction. You can pass the partial transaction to the different signing machines.
+
+Another thing is that Schnorr and Taproot help incentivize coinjoins. They also have been talking about cross-input signature aggregation where one input has one signature regardless of the number of inputs in the transaction. It's cheap, and you can get economies of scale rather than just to set a regular transaction with 1 input 1 output yourself. This incentivies people to do coinjoins .You will probably not be doing it overtly for privacy reasons, but probably for space savings.
+
+There's some interesting things around lightning and channel factories and being able to onboard a lot of people in a single transaction. These things are further in the future, and interesting, but I don't think they are big enough right now.
+
+# What is Schnorr/Taproot not?
+
+Taproot is not graftroot or g'root or graft'groot or whatever. Also, these proposals do not include SIGHASH\_NOINPUT or ANYPREVOUT. There is also another soft-fork called "the great consensus cleanup" to fix some other bugs, and that's not this. Also, people talk about quantum resistance, and this isn't that either. We talked about cross-input signature aggregation (one signature for the whole tx) and that's not that either. Also people talk about one signature for the whole block, but that isn't part of this yet.
+
+# Bitcoin upgrades
+
+How does bitcoin upgrade? I thought this thing was immutable. There's a lifecycle for possible consensus changes. Read bip1 to see how some of it works. There's an idea, then discussions, then a bitcoin improvement proposal, then getting even more feedback from the community, and that rolls into getting enough feedback on your implementation, and then people talk about how activation is going to happen, and then you need the network activation to really get going, and then eventually the users adopt some technology.
+
+Schnorr and Taproot are still collecting feedback. The implementation is ready, and it's going to happen. From what I'm gathering, there's not a lot of negative feedback about this, so perhaps it wont be too contentious.
+
+This upgrade is only 500 lines of consensus code, which I am not a Bitcoin Core developer, but I've been told this is not a large amount of code to review. This is always something you want to be safe about. This is going to be an easier technical upgrade for ecosystem partners like wallets or exchanges to adopt, because it's a matter of just flipping the segwit version up. Introducing segwit-- it was a bigger jarring change. Don't expect it to take too long to be adopted.
+
+This is completely opt-in, you don't have to know it exists or use it ever. So that's awesome. It's a backward-compatible soft-fork and that means the new version is compatible with the previous versions.
+
 
 
 
