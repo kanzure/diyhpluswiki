@@ -69,5 +69,25 @@ A hardware wallet is a tiny computer that only does a limited number of bitcoin-
 
 Electrum is currently the best UI to do multisig. It leaks your privacy, unless you run your own electrum server node as well. The default in electrum is to tell all of your information straight to Chainalysis. I'll just run through a few screens to give you an idea of how you can setup multisig. You create a wallet and name your wallet, and pick some options like multisig and other options. Then there's a nice slider for the threshold requirement, and they make a nice little pie chart.
 
+Coldcard forces you to register the other keys involved in the multisig wallet. ((The other way to do this would be to encrypt the device's private key by the two public keys of the rest of the setup, forcing that key to only be unlocked by knowledge of the correct other two public keys-- or ask for a signmessage from the other hardware devices to verify that the key is actually usable.))
+
+Different wallets have different levels of support for multisig. The Ledger device telling you "FEE: UNKNOWN" is really ridiculous. You need to see your change address, your receiving address, fees, your public keys, and so on.
+
+# Custodial multisig
+
+There's Coinbase, Xapo and Gemini. But these are non-starters for hodlers because not your keys, not your coins. But there's some collaborative custody things like Casa, GreenAddress, there are different levels of this sort of help with setting up with a multisig. They all have slick UIs unlike open-source tools such as Electrum. They have the key management expertise to protect some keys, and it also helps heirs figuring out how to get your coins after you die. Analysis paralysis is kind of avoided, because you just do whatever the third party says instead.
+
+The business model can be subscriptions or small percentage for signing with the backup key, or add on services like hardware devices or loans. I am not sure what Blockstream Green's business model is. The costs are privacy loss (using current techniques), no control over consensus rules, and they generally only support Trezor and Ledger right now but hopefully that changes as we get more good hardware wallets supported.
+
+# Commercial multisig products
+
+Unchained Capital vaults: I am just going to run through kind of how this works. They have a 2-of-3 multisig vault product where they manage at least one of the keys. Their whole thing is protecting keys, that's supposed to be their core competency.
+
+Casa Keymaster: it provides a slick mobile app to facilitate basic key setup and usage. It's 2-of-3 or you can pick 3-of-5. It's also seedless. They want to hold your hand, not your keys. It's a cool way of looking at it. By seedless, I mean the mnemonic gets thrown away. This was not originally how hardware wallets were intended to be used, but it's significantly simpler and they have some security experts on their team so I think they have thought it through.
+
+
+
+
+
 
 
