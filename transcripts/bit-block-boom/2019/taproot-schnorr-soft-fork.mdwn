@@ -1,0 +1,42 @@
+Taproot, Schnorr, and the next soft-fork
+
+Mike Schmidt
+
+# Introduction
+
+I am going to speak about this potential next version of bitcoin. Who here has heard of these words? Taproot? Schnorr? Who has heard these buzzwords these days? Yeah, so, the proposed next soft-fork is going to involve both of these technologies sort of interplaying. We want to talk about what are these technologies and how do we use thse things and why is it important that a bitcoin user or holder understands these technologies? What value does it add? This is going to be not technical enough for the technical people, and too technical for the non-technical people. I'll be at the dinner tonight at Three Forks if you want to talk about it.
+
+# Bitcoin Optech
+
+I contribute to bitcoinops.org, Bitcoin Optech. We try to facilitate communication between exchanges and the Bitcoin Core community. We build those relationships and we have a newsletter. I am not representing Optech for the purposes of this presentation. I was previously a web developer before I fell down the bitcoin rabbit hole a few years ago. I love bitcoin and I am excited to be part of the space.
+
+# Improving bitcoin
+
+How can bitcoin be better? Well, price. Number go up. We talked about that. What other enhancements might make sense that could support the number go up hypothesis and support the price from a technical perspective? If you ask some people, they might say scalability, or efficiency, or more on-chain capacity, cheaper transaction fees, and then maybe only paying for what you use and what I mean by only paying for what you usze this is a screenshot for blockstream.info block explorer, and you need to reveal this script regardless of whether you execute part of the script or all of it, and this can lead to paying large fees for using a complex script, or just not wanting to use the script in general. There are large scripts where you could have many conditionals and it becomes prohibitively expensive to spend. Scaling is one improvement we could talk about.
+
+Other people might say something like privacy. Since these scripts are visible, you can tell what kind of output a certain kind of spend is. This is not good for privacy. The scripts themselves are visible and you can see what the logic are, and you can see the keys of the participants not in a meatspace way but if it's a multisig then you can see which keys are participating. Also, you can tell what the number of required signers are, as this might give away information since different wallets use different default values for this. Scripts can also reveal the nature of a transaction. Everyone can see your script on the blockchain. You can tell that something like Bitgo is transacting or something like Blockstream Green since they do 2-of-3 and 2-of-2. Also, taking money out of the liquid network, you can see that because you can go look for 11-of-15 multisig scripts. Atomic swaps also have a certain transaction structure as well.
+
+Some people think scalability is important, others focus on privacy, and there's a third group that focuses on innovation. Scripts are expensive and therefore people aren't using them. There's a limited number of operations you can do in script, limiting the innovation you can have in the smart contracts. Bitcoin is this immutable thing and it's hard to add to. Also, capping the number of multisig participants. So you have scalability, privacy, or innovation.
+
+# Schnorr and taproot proposals
+
+"In our view, the benefits associated with this soft-fork are not likely to be controversial. It's a win for capability, scalability and privacy." This was from the bitmex blog post about the schnorr and taproot soft-fork proposal. So great, they can help with some of those problems but what the hell are they?
+
+All bitcoins are locked. Only the owner with the key can spend. But you don't just send your key out on the network to spend your coins, since someone else can see your private key and they would be able to spend. You prove ownership of the key by doing a signature. That's how you prove that you have the key. The signatures play the role between the key and the lock in this analogy.
+
+To look at this visually, here is a crude visualization and the technical people are rolling their eyes at me right now. So a public key fits a lock, and the signature is the thing that connects the private key and the public key and a message. We're replacing that digital signature, in Schnorr, with ECDSA and replacing that with a Schnorr signature. It's a different type of signature. You can continue to use ECDSA, it's backwards compatible.
+
+# Schnorr signatures
+
+Let's talk about Schnorr signatures. In an oversimplified nutshell, Schnorr signatures are a way of stuffing in more additional data into a signature itself. This is oversimplified but gives you an idea. There are some interesting things you can put in there. The first kind of hidden data you can put into a Schnorr signature is additional signatures. Say we have a 2-of-2 Schnorr signature address, and in order for the funds to be spent, they must first sign off of the transaction. So that's Alice and Bob and they both must supply the signature. But with Schnorr signature, you have Alice + Bob = Alice and Bob's signature. So the color here is to help you understand that that green encapsulates both the yellow and blue all in one signature without having two separate signatures.
+
+Some people might say, why would you ever choose ECDSA? Why not Schnorr from the get go? Well, that has to do with the fact that there was a Schnorr patent held for 20 years and it expired just around the time that bitcoin was released by Satoshi. So that patent stifled innovation for a long time, and I think that played a large role in why Satoshi picked ECDSA.
+
+Schnorr signatures have key aggregation where you can do 50-of-50 with 1 signature instead of 50 signatures in ECDSA CHECKMULTISIG. Schnorr signatures have other things as well; there's a linearity property where you can add signatures together and aggregate them into a single signature. Call this magic, I guess. We saw that we swap out the signature algorithm in that animation--- you can actually use existing private and public keys with Schnorr, which is great because you don't need a separate keychain for these private and public keys, you can use the existing infrastructure to build on top of Schnorr so we don't have to reinvent a lot of this stuff. Also, Schnorr signatures give some scaling space savings of 10%. These signatures are 10% smaller than ECDSA signatures. Also, there's a formal security proof for Schnorr and there's not one available for ECDSA. Finally, it's just better, just this category of things like the signature can't be malleated which helps with a variety of second layer protocols. It's simpler, and a few other things that I won't get into.
+
+# MuSig key aggregation
+
+There's also MuSig key aggregation. So we have our 3 keys, the 3 of us that want to be in this multisiganture, and we want to be able to have this aggregated key. I have glossed over how that works. One available technology to do that is called Musig. The Blockstream guys put out that paper. It's a way to combine those keys into one key. There are other proposals, too and people are working on this problem. The MuSig scheme and I believe all the other known ones, require off-chain interactivity. Alice and Bob and Charlie all have to work together outside of the bitcoin network to coordinate and get that key created and then signing as well.
+
+
+
