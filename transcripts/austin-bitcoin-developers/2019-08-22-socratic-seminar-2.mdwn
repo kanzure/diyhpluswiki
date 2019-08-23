@@ -1,0 +1,205 @@
+2019-08-22
+
+Austin Bitcoin Developers Socratic Seminar 2
+
+# Introduction
+
+Hello. The idea was to do a more socratic style meetup. This was popularized by Bitdevs NYC and spread to SF. We tried this a few months ago with Jay. The idea is we run through research news, newsletters, podcasters, talk about what happened in the technical bitcoin community. We're going to have different presenters.
+
+Mike Schmidt is going to talk about some optech newsletters that he has been contributing to. Dhruv will talk about Hermit and Shamir secret sharing. Flaxman will teach us how to setup a multisig hardware wallet with Electrum. He is going to show us how you can actually do this and some of these things we have learned. Bryan Bishop will talk about his vaults proposal that was recently made. So ideally we can keep these each to about 10 minutes. They will probably go over a little though. Let's get a lot of audience participation and really interactive.
+
+# Bitcoin Optech newsletters
+
+I don't have anything prepared, but we can open up some of these links and I can introduce my perspective or what my understanding is. If people have ideas or questions, then just speak up.
+
+# Newsletter 57: Coinjoin and joinmarket
+
+<https://bitcoinops.org/en/newsletters/2019/07/31/>
+
+<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-July/017169.html>
+
+Fidelity bonds for providing sybil resistance to joinmarket. Has anyone used joinmarket before? No? Nobody? Nice try... Right. So, joinmarket is a wallet that is specifically designed for doing coinjoins. A coinjoin is a way to do a little bit of mixing or tumbling of coins to increase the privacy or fungibility of your coins. There's a few different options to it. It essentially uses IRC chatbots to solicit makers and takers. So if you really want to mix your coins, you're a taker, and a maker on the other side puts up funds to mix with your funds. So there's this maker/taker model which is interesting. I haven't used it, but it looks to be facilitated by IRC chat. The maker, the person putting in money, doesn't necessarily need privacy, makes a small percentage on their bitcoin. It's all done with smart contracts, and your coins aren't at risk at any point, except in as much that they are stored in a hot wallet to interact with the protocol. The sybil resistance that they are talking about here is that, so, Chris Belcher has a great privacy entry on the bitcoin wiki so check that out sometime. He's one of the joinmarket developers. He notices that it costs very little to flood the network with a bunch of makers if you're a malicious actor, and this breaks privacy because the chances of you running into a malicious or fraudulent chainalysis type company, it's not that they can take your coins, but they would be invading your privacy. The cost of them doing this is quite low, so the chances of them doing this is quite high as a result.
+
+Similar to bitcoin mining, this is sybil resistance by burning energy for proof-of-work. There's two types of potentials for proof-of-work in this scenario against sybil resistance. One is that you can burn bitcoin, and the other is that you can lock up bitcoin, both of which is proof that you have some skin in the game. So you can prove both of these things on chain and it's a way of associating that you locked up these coins and you locked it up once for this IRC nickname and this gives you credibility to trade as a regular person. So you can't just have 1000 chatbots to snoop... It's 30 to 80,000 BTC. That would be the lock-up. This is locking up this much BTC to take up some total capacity of the joinmarket situation. It would be no worse than the current situation, where they have the capability to do it anyway, so this makes it more expensive. It also makes it more expensive for the average user, which is the downside. The cost of legitimate makers staking or locking up or burning their coins are going to be passed on to the takers. In the way that it is setup now, the mining fee is substantially more than what these makers are making by doing the fixing,s so the theory according to Chris is that people would be willing to take a higher fee for the mixing, because they are already paying 10x for the mining fees. I don't know how many coinjoins you can do in a day, but there's public listings of makers and what they will charge and what their capacity is. Some people are putting up 750 BTC and you can mix with them, and they charge 0.0001% or something. The higher cost is for sybil protection, it's a natural rate. If you're paying 10x more to process the transaction on the bitcoin network, then maybe you're willing to put in a few more sats to pay for this sybil resistance.
+
+Samurai and Wasabi wallet teams had some interesting discussions. They were talking about address reuse and how much does it really reduce privacy. I don't think it's a resolved issue, they are both still going back and forth attacking each other. For any of these coinjoins, they are all exposed to a certain extent to coinjoin. So there's always tradeoffs. Higher cost, some protection, still not perfect, a company could still be willing to lock up those coins. An interesting thing about that is that it increases the cost for Chainalysis services-- they will have to charge more to their customers; so this strips their margins and maybe we can put them out of business.
+
+# Newsletter 57: signmessage
+
+<https://github.com/bitcoin/bitcoin/issues/16440>
+
+<https://github.com/bitcoin/bips/blob/master/bip-0322.mediawiki>
+
+Bitcoin Core has the ability to do signmessage, but this functionality was only for single key pay-to-pubkeyhash (P2PKH). Kallewoof has opened up a pull request that allows you to have that same set of functionality with other address types. So for segwit, P2SH etc., ... I think it's interesting, and it's forward compatible with future versions of segwit, so taproot and Schnorr are included, would have the ability to sign the scripts with these keys, and it's backwards compatible because it has the same fnuctionality for signing a single key. Yeah, it oculd be used for a proof of reserve. Steven Roose did the fake output with the message, that's his proof of reserve tool. You construct an invalid transaction to do proof-of-reserve. If Coinbase wanted to prove they had the coins, they could create a transaction that is very clos eto a valid transaction but is technically wrong, but still with valid signatures. bip322 is just signing the message.
+
+All you can do with signing is prove that you at some point had that private key. If someone stole your private keys, you can still sign with your private key, but you no longer have the coins. You have to prove that you don't have it; or that someone else doesn't have it. Or that, at the current blockheight, you had the funds. That's the real challenge of proof-of-reserves, most of the proposals are about moving the funds.
+
+# Newsletter 57: Bloom filter discussion
+
+<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-July/017145.html>
+
+<https://github.com/bitcoin/bitcoin/issues/16152>
+
+There was some consernation here about disabling the bloom filter as a default in Bitcoin Core. Right now if you're using an SPV wallet or client, like Breadwallet using SPV, that's one of the major ones using SPV... The discussion was that in the previous week, there was a merged pull request that disables bloom filters by default. A newer version of Bitcoin Core would no longer serve up these bloom filters to lite clients. My Breadwallet wouldn't be able to connect to Bitcoin Core nodes and do this by default, but again someone could turn it back on.
+
+Someone was arguing that Chainalysis is already running all these bloom filter nodes anyway, and they will continue to collect that information. Many Bitcoin Core nodes are running nodes that are over a year old, so they aren't going to go anywhere soon. You will still be able to run some lite clients. I think Breadwallet runs some nodes too. You could always run your own nodes too, and serve those bloom filters yourself.
+
+Does anyone use a wallet or is aware that you are using a wallet that is an SPV lite client? Electrum doesn't do the bip37 bloom filters, it uses a trust model.
+
+Is the idea that bip57 will be on by default, to replace that? Is Neutrino going to be on by default? It is for btcd. I imagine bitcoind will have something similar. It's just network commands. You store a little bit more locally, with the Neutrino filters. You have to keep track. If there's a coinbase commitment or whatever, you're going to need to check that too. That would have to be a soft-fork.
+
+# Lightning news (Buck Perley)
+
+I am going to go through the lightning topics on the socratic seminar list. I was on a plane for a few hours yesterday, so I prepared some questions and hopefully we can spark some questions around those.
+
+## Watchtowers
+
+<https://blog.bitmex.com/lightning-network-part-4-all-adopt-the-watchtower/>
+
+Bitmex had something about running watchtowers. The nice thing about their article is that they go through the different scenarios when you're running lightning and what enforces good behavior in lightning. If you look at the justice transaction--- in lightning, when you have two parties that enter into the channel and rebalance funds constantly without having to publish a transaction, the way you enforce non publication of the older state is by a penalty or justice transaction. If someone tries to publish an old state, you can steal all of the funds from the channel as a way to punish them. This is called the justice transaction. One of the issues with this, and lightning in general, is that your node has to be online all the time because the only way to publish the justice transaction is if you're online and your node notices that the incorrect state had been published.
+
+lnd v0.7 was recently published with watchtowers available. What a watchtower is, is it lets you go offline. Basically, if you're offline, you can hire another node to keep an eye on the blockchain for you and they will publish the justice transaction on your behalf. There's some interesting constructions where you can pay back the watchtower so you can kind of split the punishment transaction funds that are in that transaction. They don't talk about that here in the article.
+
+One of the things that is interesting is comparing justice transactions to eltoo where they have SIGHASH\_NOINPUT. I thought that was an interesting point of discussion.
+
+Q: I upgraded my node so that I could utilize that functionality. How do you transact with other nodes and set them up to be a watchtower? It's not clear to me how that works.
+
+A: You have to basically find one, and you point your node at it and you say this is going to be my watchtower node. It does add this interesting aspect as to how the economics of lightning kind of.... the incentives of people to be routing nodes, and be routing funds and earning fees just for having good uptime. Casa published their node heartbeat thing where they actively reward people. I forget the mechanics of how they keep them honest. So you give them updates of the justice transaction; right now there's a privacy tradeoff. Without eltoo, they have to have every single state update in the channel. What's nice about eltoo is that you don't, you basically don't have to store all state. With eltoo, you don't need to remember the intermediate states, just the latest one.
+
+Q: So the other nodes are providing watchtower services for me; and unless I upgrade my node to have the watchtower, then other people can do the same thing. Do you have to open a channel?
+
+A: No, you're just giving them the raw transaction.
+
+Q: Are they encrypting the justice transaction?
+
+A: I'm not sure. There were mechanisms discussed to split it up even further. The idea was the watchtower would only be aware of your transaction once it is published; they wouldn't be able to know what the transaction details are, beforehand. They would constantly be watching the transaction and try to decrypt all the time.
+
+Q: Has anyone tried to commercialize any of this?
+
+A: Well, nobody has been able to commercialize anything about lightning. lnbig has locked up $5m in the lightning network and is making $20/month. At this point, you're just doing it for altruistic reasons.
+
+Q: One of the arguments is that if the bitcoin fees go way up, you have the benefit of having these routing nodes and channels already setup.
+
+A: Yes, but right now it's not a viable business. It could be in the future. Right now, my sense is that you're not making money on the fees, but you're making liquidity and this makes it more viable for your customers to use lightning. So really your business model is more about creating liquidity and helping utility rather than making money. The idea is that people would make fees as watchtowers, routing fees, increasing liquidity, and there's another business model where people can pay for inbound liquidity. Those are the three main lightning network business models that I know about.
+
+## Steady state model for LN
+
+<https://github.com/gr-g/ln-steady-state-model>
+
+## LN guide
+
+<https://blog.lightning.engineering/posts/2019/08/15/routing-quide-1.html>
+
+Is anyone here running a lightning node? Okay, a few. One of the big nods against lightning is that it's not super usable. Part of that they are trying to help on the engineering side with watchtowers and autopilot and new GUIs. Another big part of it is just, guides on how to run a lightning node. They go through useful flags that you could enable. If you ever just run on lnd cli help, it's a huge menu of stuff to be aware of. Any horror stories of headaches of dealing with lightning and things that would be helpful?
+
+Q: More inbound liquidity.
+
+A: What do you think could help that? Is there anything in the pipeline that would helpful?
+
+Q: Grease. If you download their wallet, they give you $100 bucks of liquidity. After you run out, you have to get more channels. It's kind of a strange incentive problem. It's kind of like a line of credit. Locking up funds is costly on the other end, so they need a good reason to think they should be doing this.
+
+One of the problems with lightning is essentially you have to lock up funds. In order to receive funds, you need to have a channel where someone has their own funds locked up. Otherwise, your channel cannot be rebalanced when you earn more on your side. If Jimmy has $100 of bitcoin on his side of the channel, and I have $100 on my side, someone can pay Jimmy up to $100 through me. Once he has made $100 and our channel has been rebalanced, he can no longer receive any more money. For on-chain payments, anyone can pay you immediately, and on lightning that's not the same. Liquidity is a major problem.
+
+They have one Loop server. It's basically submarine swaps. It's a tool that leverages submarine swaps, built by Lightning Labs, it's a way to take funds by your off-chain lightning wallet. You loop out by sending to another wallet which will send you on-chain funds and this will give you inbound liquidity. Or you can pay your own lightning wallet from on-chain funds. If you have seen those store interfaces where you can pay with lightning, or pay with on-chain bitcoin to the lightning wallet, for that they are using submarine swaps. It's not cheap either, because there are fees associated with. You get those funds back on chain, but you have to pay transaction fees at that point. And then there's fees associated with-- the Loop server is charging fees for this service, which is another business model.
+
+They have a mechanism called Loopty Loop where you recursively continue to loop out. You loop funds out, you get on-chained fnuds, you loop out, and you loop out again. You can keep on doing that and get inbound liquidity, but again it's not cheap, and it's not instant. So you're losing some of the benefits of lightning.
+
+## Static channel backups
+
+Lightning Labs was talking about its mobile app now. One of the interesting things about this update was that they have static channel backups to iCloud. I was kind of curious if anyone has thoughts on that. I think it's cool you can do cloud backup for these. It stores the state of the channel, including what the balance is. If your bitcoin node goes down, and you just have your mnemonic, that's fine. But with LN, you have off-chain states where there's no record of it on the blockchain. The only other record is the counterparty but you don't want to trust them. If you don't have backups of your state, your counterparty could publish a theft transaction and you wouldn't know about it. You might accidentally publish an old state too, which will give your counterparty a chance to steal all the funds in the channel, which is anothe rthing that eltoo can prevent. If you have the app on iOS, you're automatically updating these things and you don't have to worry about it, but you're trusting Apple iCloud.
+
+## Suredbits playground
+
+This is-- this lets you pay lightning micropayments for, you can pay for spot prices, or NBA stats, and if I were to press something... basically, it's paying for an API call for small requests. So it would be like almost an AWS on demand, that's how I think about it.
+
+## Boltwall
+
+<https://github.com/Tierion/boltwall>
+
+On the topic of API stuff, this was something that I recently just built and published called boltwall. This is nodejs express-based middleware that can be put in front of routes that you want protected. It's simple to setup. If you have your lightning node setup, then you can pass the necessary config in. These configs are only stored on your server. The client never sees any of this. Or you can use opennode, which for those who haven't used it, it's a custodial lightning system where they manage the LN node and you put your API key into boltwall. I think that's best for machine-to-machine payments.
+
+I used macaroons as part of the authorization mechanism. Macaroons are used in lnd for their authorization and authentication. Macaroons are basically cookies with a lot more fine grained detail. Web cookies are usually just a json blob that says here's your permissions and it's signed by the server and you authenticate the signature. What you do with macaroons, is they are basically HMACs so you can have chains of signed macaroons that are connected to each other. I have one built in here that is a time-based macaroon where you can pay one satoshi for one second of access. When I'm thinking about lightning, there's a lot of consumer-level pain points involved.
+
+Q: Why time based, instead of paying for a request?
+
+A: It depends on the market. Rather than saying I'm paying for a single request, you could say instead of the back-and-forth handshake, you get access for 30 seconds and be done with it until the time expires. I built a proof-of-concept application that is like a yalls (which is like a medium.com) for reading content where rather than paying a bulk amount for a piece of content, you say oh I'm going to pay for 30 seconds and see if you want to keep reading based on that. It allows for more flexible pricing mechanisms where you can have a lot more fine grained price discrimination based off of the demand.
+
+# Hardware wallet rant
+
+<https://stephanlivera.com/episode/97/>
+
+I have been talking about multisig on hardware wallets lately. We are going to start with something that is bad, and then show something better. Go ahead and fire up electrum. Pass the --testnet flag. We're not going to do the personal server stuff.
+
+<https://github.com/gwillen/bitcoin/tree/feature-offline-v2>
+
+<https://github.com/gwillen/bitcoin/tree/feature-offline-v1>
+
+<https://github.com/gwillen/bitcoin/tree/feature-offline>
+
+We have a Bitcoin Core full node here. We have QT up right now, but you could use the cli. There's a spendable component, and that's nothing because all I have is watchonly. I'm using Bitcoin Core for my consensus rules, but I'm not using it as a wallet. I'm just watching addresses, keeping track of transaction history, balances, that kind of thing. So we have electrum personal server running and bitcoin core running. So I boot up electrum and run it on testnet. I also set a flag to say, don't accidentally connect to someone else and tell them what all my addresses are. You put this in the config file, and also on the command line again just to be sure ... Yes, you could also use firewall rules which might be smart in the future.
+
+We can look at a transaction in electrum, so it's saying that I have this bitcoin which we can see I have here and my recent transactions and see that I received it. Now if I was going to receive more bitcoin, there's this cool "show on trezor" button. If I hit this, it pops up on trezor and it shows it. This is an essential part of receiving bitcoin; you don't ask for your receiving address on your malware-infected computer. You want to do this check on a quorum of hardware wallets. Do you really want to go to 3 different hardware wallet locations before receiving funds? If you're receiving $100m, then yes you do. If you're doing 3-of-5, and you only confirm on 2-of-5, then the attacker might have 3-of-5 but the 2-of-5 have confirmed they are the participants. Coldcard will do a thing where you register the group of pubkeys so that you know we're all in this... Coldcard has like 3 options, one is upload a text file with the pubkeys. Another one is that when you send it a multisig output, it will offer to create this and show you the xpubs, and ask if you want to register it; and the third one is trust whic his what the others do. Casa gives you all the xpubs... it's another way this works; you can put those into an offline airgapped electrum client never touches the internet, and it can generate receiving addresses. So you can say, well, this machine that has never touched the internet says that these xpubs will give me these addresses, so 2-of-5 plus offline electrum then maybe I'm willing to move forward. There's QR codes built-in for setting these up.
+
+I don't like when trezor is plugged into this machine, because I think the machine might be malware infected. But this device could be a fake trezor, it might be a keyboard that installs malware or something and I don't even see it type in the malware urls. If we have three different hardware devices, I want four laptops. One that is connected to the bitcoin network; and each of the other three laptops are connected to the hardware wallet. I pass them bitcoin transactions by QR code. That whole ecosystem of computer and hardware wallet can be eternally quarantined and never connected to the internet. So we can build a hardware airgap into this.
+
+I recommend a laptop because they have webcams and batteries. In this demo, we have to pick up the laptops and aim the screens at the cameras. A nice portable hardware wallet with a QR code scanner, you have to pick them up or something, that would be nice. With desktops, this is going to be painful because you have to lug your desktop to the safety deposit box. Do note that many banks don't have power outlets in their vaults, so you need a battery. Really any 64-bit machine should be fine. Historically, I used 32-bits, but tails is no longer compatible with that and some Ubuntu versions are complaining. In this demo, we're going to use native segwit, and it's a multisig setup so choose that option.
+
+Electrum is very finnicky. I hit the back button. I went back to see if this was the correct one and then I lost everything. I am using a hardware wallet with deterministic key derivation, so I can get back to that. The back button should actually prompt you and ask do you really want to undo all this work. The big warning is, do not hit the back button.
+
+You may have seen my twitter threads. I would accept a very bad hardware wallet, if it allowed multisig. Adding a second hardware wallet is only additive and can help protect against hardware wallet errors. On twitter, the wallet manufacturers said no big deal. There are three big issues with Ledger. It does not support testnet. They take the public key and they show the representation on mainnet, and they ask if you want to send there. It's not that they don't support it; they supported it in the past, and then they stopped supporting it. So, no testnet. They also don't have a mechanism for verifying a receive address. Only if you want to use it insecurely will it show you. The third issue is that they don't support sending either, because they don't do a sum of the inputs and the sum of the outputs thing. They don't validate what's change and what's going to someone else. They just show you a bunch of outputs and ask you whether they look correct, but as a human you have no idea of knowing what all the inputs and outputs are, unless you're extremely careful and very careful and taking notes. Otherwise they might be sending change to your attacker or something. Trezor can't verify that the multisig address belongs to the same bip32 chain; they can't verify the quorum, but they can verify their own key. So let's say it's 3-of-5, you can go on 3 devices that will say yes I'm one of the five on this 3-of-5, but you have to sign on 3 different devices so that you now know you're 3 of those 5. You can always prove a wallet is a member of the quorum, except on Ledger. They used to export the data without telling you what the bip32 path was, which is a huge hole. Most wallets can prove they are in a quorum-- do they understand one of the outputs is in the same quorum as the input? As far as I can understand, it's only Coldcard that understands that today. Trezor knows it's part of it, but they don't know which part. So if you're signing with a quorum of devices that you control with Trezor then you're not at risk, but if you have a trusted third party countersigning then it gets a little squirrely because they could be increasing the number of keys that a trusted third party has. Native segwit would have allowed us to do the xpubs out of order.
+
+Bitcoin Core can display a QR code, but it can't scan them. The issue has been open for like 2 years.
+
+2-of-2 is bad because if there's a bug in either of them (not even both) then your funds are lost forever and you can't recover it. An attacker might also do a Cryptolocker-style attack against you, and force you to give them some amount of the funds to recover whatever you negotiate.
+
+Each of these hardware wallets have firmware, udev rules, and computer-side things. Some of them are wonky like, connect to a web browser and install some shit. Oh god, my hardware wallet is connected to the internet? Well, install it once, and then use it only on the airgap.
+
+You need to verify your receive address on the hardware wallets. Don't just check the last few characters of the address on the hardware device's screen.
+
+When verifying the transaction on the Ledger device, the electrum wallet has a popup occluding the address. The Ledger wallet also doesn't display the value in the testnet address version, it's showing a mainnet address. I would have to write a script to check if this address is actually the same testnet address.
+
+Chainalysis is probably running all the electrum nodes for testnet anyway.
+
+I would like to say this was easy, but it was not. A lot of this was one-time setup costs. It's not perfect. It's buggy. It has issues. But it does technically work. At the end of the day, you have to get signatures from two different pieces of hardware. You can be pretty chill about how you set things up.
+
+Q: If you use the coldcard, can you get the xpub without having to plug in the coldcard?
+
+A: I think you can write xpubs to the sdcard.
+
+A: What I really want is... there seems to be some things like showing an address, which you can only do if you plug it in. A lot of the options are burried in the menus. Coldcard is definitely my most favorite.
+
+Q: The Trezor only showed one output because the other one was change, right? So if you were creating three outputs, two that were going to addresses that didn't belong to trezor or the multisig quorum, would it show the two outputs on the trezor?
+
+A: I think so. But only way to know is to do it.
+
+A: I was talking with instagibbs who has been working on HWI. He says the trezor receives a template for what is the change address; it doesn't do any verification to define what is change, it just trusts what the client says. So it might not be better than a Ledger. It just trusts what the hot machine knew. Ledger seems to do a better job because-- the trezor could be hiding the--- Coldcard is clearly doing the best job, so you can teach it about the xpubs and it can make the assertion for itself without having to trust others.
+
+# Vaults (Bryan Bishop)
+
+Cool, thanks for describing that.
+
+# Hermit
+
+<https://github.com/unchained-capital/hermit>
+
+Originally at Unchained we started with using Electrum. At that point, we weren't doing collaborative custody. We had all the keys, it was multisig. So in theory we had employees and signing teams using electrum, and it was a terrible experience. It was every day using electrum, it was always weird experiences. I also don't like how Electrum constructs these addresses.
+
+Today I am not going to talk about multisig, instead I am focusing on this new tool called Hermit. I want to give a small demo. I'll do a few slides. It's a command line sharded wallet for airgap deployments. There's some similarity to the QR code airgap wallets. At Unchained, we're focusing on collaborative custody where we have some of the keys and the customers have some of the keys as well. This would not work if we were using Electrum ourselves, it would be too painful. We had to build software that streamlines it for us. The net result is that we're protecting keys. There's a big difference between an organization protecting keys, and an individual protecting keys.
+
+In particular, for us, we're not a hot wallet oriented company. Our transactions are at least weeks if not months or years and planned in advance. We like to keep everything multisig and cold storage. We like airgaps. Hardware wallets have a temporary airgap, which can be nice. We don't want to be spending $1000s on HSMs to keep a number secret. The way we view it, we have so many devices scattered around the company for testing and so on-- every developer has many different devices of each type. These hardware wallets can't be more than $100 each, otherwise it's too expensive to trust new products. We don't like Trezor Connect where they know the transaction we're signing, that's deeply frustrating. Again, we're not individuals here, this is an organization. We're a company. We have to write some stuff down explicitly or else it will get lost. As a person, you might remember, but you should write down too. Also as an organization, we have to coordinate. As a person, you remember the keys, locations, things like that. You don't need to send an email to yourself to let you know to take step 2 in the process, whereas the company has this requirement. Most companies have employee turnover, we don't seem to, but we could. There's also a lot of information about us that is public, like the address of this commercial building. We have a lot of hardware wallets here at this location, but none of them matter. There's also scheduling issues like people going on vacation and other things. No single person can handle all the signing requests, they would burn out. So we have to rotate, and have uptime, and so on.
+
+So what are the options? Well, hardware wallets. We want to encourage customers to use hardware wallets, and hopefully there are better hardware wallets coming down the line. These are better than paper wallets. Because of the multisig product we offer, we believe that even bad wallets when put together have a multiplicative effect on security.
+
+Today, I don't think it's reaosnable to have customers using Hermit it's too much for them. They will probably use hardware wallets for the foreseeable future. We have been using hardware wallets and we would like to move to something like Hermit. One candidate we looked at and really liked was a project called Subzero at Square which was meant to be an airgapped tool and serve as cold storage. It's a really good product, but it wasn't quite sufficient for us. We needed something a little more complex.
+
+I am showing here a diagram of two different ways of thinking about protecting a key like multisig and Shamir secret sharing. Can you get some redundancy without using multisig? Sure, you can use Shamir secret sharing. There are some cool properties like 2-of-3 shares are required to be combined together in the same location. One amazing aspect of this scheme is that if you have one shard, you have precisely zero pieces of information. It's a discrete jump where as soon as you have n shards, you get it. It's not just cutting up pieces of a mnemonic or whatever, and reduces search space for an attacker. That's not how the secret shares work.
+
+SLIP 39 makes it more convenient to do encrypted Shamir shards with mnemonics. SLIP 39 was put out by the Trezor folks. As much as we poop on hardware wallets, I have to salute the SatoshiLabs team for being ahead of everyone and releasing foundational code like bip32 and implementing and doing it in an open source way. Reading their code was how I understood some of their ideas. Another thing they have done is they have released a 2 level Shamir shard system. You want to create a way to do Shamir secret sharding, without all shards being equal. You can distinguish more or less valuable shards or distribute them to people you trust more or less depending on the security level of each person or each group. So you can have a 1-of-3 secret, and the second group can have a different setup like 3-of-5. This is not multisig-- where you can do this asynchronously in different locations and you're never forced to be in one spot with all your keys. This is not that, but it gives you flexibility.
+
+I am going to give you a quick demo of what Hermit looks like.
+
+* [Creating a shard family](https://www.youtube.com/watch?v=tOc0GBjIK8Y&feature=youtu.be)
+* [Exporting/importing shards](https://www.youtube.com/watch?v=usBk-X3a4Qo&feature=youtu.be)
+* [Export a public key](https://www.youtube.com/watch?v=ut9ALBqjZbg&feature=youtu.be)
+* [Sign a bitcoin transaction](https://www.youtube.com/watch?v=NYjJa0fUxQE&feature=youtu.be)
+
