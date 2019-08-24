@@ -96,7 +96,7 @@ That's the first approach that comes to mind. Seems like there's consensus on th
 
 # A construction from hash functions
 
-You could build a verifiable delay function from hash functions. What you can do is you can build the VDF in the most natural way, which is where the public parameters are a parameters for a SNARK and the VDF is defined as a hash chain where evaluating sha256 repeatedly is going to take time T. But how do you verify the output was computed correctly? That's where SNARKs come in. But it turns out this is difficult to get to work correctly. The proof pi is a SNARK that the hashchain was computed correctly. Computing the SNARK takes more time than computing the chain, so you have to do something to counteract that. There was a paper by myself and Benedikt and others to show how to do this well, so that you can generate hte proof fast enough. The verification would be a verification of a SNARK proof.
+You could build a verifiable delay function from hash functions. What you can do is you can build the VDF in the most natural way, which is where the public parameters are a parameters for a SNARK and the VDF is defined as a hash chain where evaluating sha256 repeatedly is going to take time T. But how do you verify the output was computed correctly? That's where SNARKs come in. But it turns out this is difficult to get to work correctly. The proof pi is a SNARK that the hashchain was computed correctly. Computing the SNARK takes more time than computing the chain, so you have to do something to counteract that. There was a paper by myself and Benedikt and others to show how to do this well, so that you can generate the proof fast enough. The verification would be a verification of a SNARK proof.
 
 # Permutation polynomials
 
