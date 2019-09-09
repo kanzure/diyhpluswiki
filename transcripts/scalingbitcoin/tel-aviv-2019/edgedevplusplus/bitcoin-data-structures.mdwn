@@ -134,6 +134,11 @@ You can identify P2WPKH because it starts off as bc1, and it's the shorter versi
 
 The non-upgraded nodes are given an empty scriptSig. This works because of a trick in the scriptpubkey. For upgraded nodes, the nodes know where to go find the witness commitments. The witness field has a DER signature and also has a SEC pubkey in there. Those two things used to be in the scriptSig field. The nice thing is that the txid is based on the non-upgraded transaction, this serialization.
 
+# P2SH-P2WPKH
+
+What about P2SH-P2WPKH? They came up with this for backwards compatible. It's a way to make segwit backwards compatible. All wallets, even if they don't know about segwit, can spend to a segwit wallet. It wraps the entire segwit thing around p2sh. It looks exactly like a p2sh address. These are addresses that start with a 3. You might have seen some of these and suspected they were segwit addresses; you don't know, it could just as easily be a p2sh multisig or something.
+
+The segwit nodes will interpret this special rule: OP\_0 followed by 20 byte element is evaluated to mean that this is now evaluated as script elements. But this is still backwards compatible with pre-segwit nodes because OP\_0 would be put on top of the stack. There's two special rules used here, to make it all backwards compatible. Soft-forks means it's always backwards compatible, all the way back to before P2SH was originally implemented years ago. Even if you're a very old node, it would still work. You validate as much as you can, which won't be as much, but you will still see things as valid.
 
 
 
