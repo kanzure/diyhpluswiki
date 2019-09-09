@@ -2,6 +2,8 @@ Rebroadcasting
 
 Amiti Uttarwar (amizi)
 
+<https://twitter.com/kanzure/status/1171042478088232960>
+
 # Introduction
 
 Hi, my name is Amiti. Thank you for having me here today. I wanted to talk with you about rebroadcasting logic in Bitcoin Core. For some context, I've been working on improving it this summer. I wanted to tell you all about it.
@@ -60,4 +62,19 @@ The tradeoff of this-- of not having it perfectly precise, is that we would send
 
 On a poisson timer, approximately once per hour, rebroadcast selected transactions. Criteria for transactions is to use CreateNewBlock and mimic the way the miner would form a block. We limit to 3/4 max block weight because we want to leave room for the case where miners uses private prioritize and would discard other transactions. Also, we're going to apply a recency filter and say the transactions must be older than 30 minutes in order to be rebroadcast. So let's look at the top of the mempool, and if they have been around for a while then maybe the miners don't know about it and they need to be rebroadcast. So we get these transactions, we add them to the inv transactions to send, and then they are relayed to your peers just as all transactions are.
 
+In the current implementation, the wallet directly rebroadcasts transactions which is a layer violation. I'd like to pull out the rebroadcast functionality into the node and it's a better division of responsibility. All nodes will rebroadcast, and all transactions can be treated the same. This makes for cleaner code and gives stronger privacy guarantees.
+
+# Wallet resubmit
+
+With this new division of responsibility, the mempool can drop the wallet transaction because of the reasons we talked about like expiry, eviction, unclean restart. The wallet's responsibility is to make sure the local mempool knows about its transaction. Exactly once a day, the wallet attempts to resubmit the transaction to a mempool. It can send it once a day to its local mempool because it's no longer a privacy leak. The mempool will make sure that transactions it knows about are propagated to the network in a reasonable way using this new rebroadcast logic.
+
+This does leave room for an important edge case. The use case is that if you create a transaction with relay disabled, and you submit it to your mempool locally, in the current implementation it would rely on the rebroadcast in order for an iniitial successful broadcast. This can be problematic with my proposed changes for a low fee rate transaction. The way it would go is, you would disable p2p, you would create a transaction with a low fee rate and a several day confirmation target. You inspect it in your mempool, you think it's good to go, then you enable relay back on. With the new rebroadcast logic, it might be several days until that transaction is actually at  the top of the mempool and you would expect it to be confirmed, or it might be a short window of time before that would occur. You don't need your node online that much or to rely on the fact that the node will be online at that exact time to get the first broadcast out. In order to solve that, I introduced a set called setUnbroadcastTxIds to the mempool. This can keep track of whether the first relay was successful for transactions submitted, either via the wallet or by RPC. It's hard to define whether the relay was successful. The way I've done so is that if one peer asks for a getdata for that transaction, then we call it sufficient. We keep track of the unbroadcasted transactions and we include them in the rebroadcast set. That gives the privacy of the timer, but it also makes sure that the transaction makes it out.
+
+# Conclusion
+
+I wanted to give a shout out to functional tests. A lot of my time was spent writing functional tests. But I was surprised to learn so much about bitcoin by doing that. Mocktime for example. I'd have all these failures, and I learned about sendmessages thread and getdata and transaction time intervals and just from reading the logs-- this line, this line has taught me so much about bitcoin the "combine\_logs.py" trick. Tests are never glamorous to write, but I had a lot of fun.
+
+# References
+
+<https://github.com/bitcoin/bitcoin/pull/16698>
 
