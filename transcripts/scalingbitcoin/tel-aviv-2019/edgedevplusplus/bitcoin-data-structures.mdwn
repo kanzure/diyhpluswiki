@@ -140,6 +140,30 @@ What about P2SH-P2WPKH? They came up with this for backwards compatible. It's a 
 
 The segwit nodes will interpret this special rule: OP\_0 followed by 20 byte element is evaluated to mean that this is now evaluated as script elements. But this is still backwards compatible with pre-segwit nodes because OP\_0 would be put on top of the stack. There's two special rules used here, to make it all backwards compatible. Soft-forks means it's always backwards compatible, all the way back to before P2SH was originally implemented years ago. Even if you're a very old node, it would still work. You validate as much as you can, which won't be as much, but you will still see things as valid.
 
+# Other
 
+<https://github.com/jimmysong/programmingbitcoin>
+
+Note that fees are the inputs minus the output amounts. Each input has some number of satoshis from the previous transaction output. You add those up. Then you add up all the outputs. You need to be zero or positive, otherwise you're creating new coins which makes it invalid. If it's positive, then that positive amount is paid to the miners as a subsidy fee. That's how you incentivize miners to include your transaction.
+
+# Q&A
+
+Q: So we moved the signature from the scriptSig to the witness. How does this reduce the size of the transaction?
+
+A: Well first, it's optional to transmit this data to the other node. It's only if they want the data. Also, if you're an older node, you don't store any of the script witness data because you don't even know about it. In that way, it's less resource intensive. Newer nodes, though, can do validation. It's essentially the same transaction size. I think it's slightly bigger because of the witness marker and-- there's a couple of things there. With segwit v1, I think you get stuff like Schnorr which lets you aggregate signatures like for multisig. I think we're getting rid of DER signatures too.
+
+Q: I didn't quite understand the nBits field in the blockheader. Also, how do you calculate difficulty adjustment?
+
+A: The nBits field encodes a very large number into four bytes. If you encode the entire number, it would be 32 bytes. But compressing it to 4 bytes is very nice. You don't get quite the resolution you would get with 256 bits or whatever, but that's the idea. The formula that I showed you is a common way to encode a number that big. As far as the difficulty adjustment, the formula is in the book. You can essentially encode the number fairly--- I don't think I have it in the book's code. Or maybe I do. Okay, `calculate_new_bits`. The time differential value is how long it took over the last two weeks * 4. If it's greater than 8 weeks, set it to 8 weeks. The maximum it can increase is by 4. The minimum it can decrease by is 1/4th. The new target is, according to this formula, you take the previous bits times the time differential divided by 2 weeks and then the new target is going to-- if it's bigger than the max target, then it's set to the max target, and then you convert back to bits. All of this is in the book and you can read about how exactly that works. It doesn't have to be a multiple of 2 or anything, it's finely grained.
+
+Q: You skipped over the merkle root part of the blockheader.
+
+A: I hesitate to talk too much about it. For SPV, I think that's going to be dead soon. You can encode all of the transactions into a merkle tree and into a 32 byte value known as the merkle root of that merkle tree. There's a concept of a merkle parent, which is you take two hashes, you concatenate them, and in our case we use a double sha256 hash function on that value. If you have a whole list of them, you can take a merkle parent of every pair, and the merkle root is you keep doing that until you end up with a single merkle parent and that's your merkle root. You can validate that a particular hash is a member of the merkle tree by revealing the pairwise complement all the way up the tree and prove that a particular transaction was included in a merkle root. That has its own vulnerabilities of course; I think there was a CVE issued for that. This is why I think [neutrino](http://diyhpl.us/wiki/transcripts/breaking-bitcoin/2019/neutrino/) is really the future.
+
+Neutrino gives you a fingerprint on all the transactions in a particular block. If any of your addresses match that filter, then you just request the entire block and look for your transactions instead of the server proving that a particular transaction is a member of a block. There's privacy improvements by using neutrino. The server could otherwise cheat by telling you it's in there when it's not otherwise in there. A coinbase commitment might be required to commit to a particular filter, for Neutrino to work. So this would require a soft-fork.
+
+Q: How does the witness root thing work in the coinbase transaction?
+
+A: Coinbase transactions are different. They are the only transaction allowed to create new bitcoin. It has no inputs. It's supposed to have only one input and people can put anything they want into the scriptSig of that one input. If you look at the coinbase transaction for the genesis block, that's where Satoshi put his "Chancellor on the brink of second bailout for banks" message. The outputs, though, you can have as many of those as you want. You can put something into the coinbase scriptSig arbitrarily, like bip34. You can put a commitment to a filter in there. I think the current way is a witness commitment into --- is it the OP\_RETURN of the first output of the coinbase transaction? There's a commitment to the witness merkle root. Basically, you hack stuff into the coinbase whenever you want to add that. Again, this is something that everyone has to validate. It's a whole network cost when you put in a coinbase commitment. Greg Maxwell has pointed out that when you soft-fork something in and it ends up being a dud then it takes a hard-fork to remove it.
 
 
