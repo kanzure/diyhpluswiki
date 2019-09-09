@@ -2,6 +2,8 @@ Privacy concepts for bitcoin application developers
 
 Udi Wertheimer
 
+<https://twitter.com/kanzure/status/1171036497044267008>
+
 # Introduction
 
 You're not going to walk out of here as a privacy protocol developer. I am going to mention and talk about some ideas in some protocols that exist. What I find myself is that of really smart people working on a lot of pretty cool stuff that can make privacy easier and better to use. A lot of times, application developers or exchanges aren't even aware of those things and as a result the end result is that people just sometimes use bitcoin in very non-private ways because they're not aware of how to do privacy.
@@ -50,7 +52,7 @@ The next step that might be relevant to some applications, like for wallets, if 
 
 Giving the users the ability to connect to their own remote full node, such as their full node at home, then maybe the mobile wallet should let users connect remotely. Yes, this is about incoming transactions right now, but I'll get to sending in a moment.
 
-For some people, full nodes might not be a realistic option. At least a lot of the times, a good fallback might be client-side filtering like [Neutrino](http://diyhpl.us/wiki/transcripts/breaking-bitcoin/2019/neutrino/). Basically client side filtering means that-- each block has a deterministic filter, and your client checks the filter in the blockheader, and if it's interesting then it will download the full block and process it locally. Not a lot of data leaks there becvause there's a lot of transactions in each block and it's hard to tell which one you're interested in. There's some false positives, though. Which is probably good-- it tells you yes you should download a block but then you find nothing that is interesting to you, but that's probably good because it strengthens the privacy.
+For some people, full nodes might not be a realistic option. At least a lot of the times, a good fallback might be client-side filtering like [Neutrino](https://diyhpl.us/wiki/transcripts/breaking-bitcoin/2019/neutrino/). Basically client side filtering means that-- each block has a deterministic filter, and your client checks the filter in the blockheader, and if it's interesting then it will download the full block and process it locally. Not a lot of data leaks there becvause there's a lot of transactions in each block and it's hard to tell which one you're interested in. There's some false positives, though. Which is probably good-- it tells you yes you should download a block but then you find nothing that is interesting to you, but that's probably good because it strengthens the privacy.
 
 If you're going to do that, you should fetch blocks from different peers. Maybe use tor and switch tor circuits between fetching of each block this way you don't look like the same person doing it.
 
@@ -96,9 +98,25 @@ Another thing is UTXO selection. When you build a wallet, please let users selec
 
 <https://diyhpl.us/wiki/transcripts/bitcoin-adam3us-fungibility-privacy/>
 
+# Confidential transactions
 
+<http://diyhpl.us/wiki/transcripts/gmaxwell-confidential-transactions/>
 
+<https://diyhpl.us/wiki/transcripts/realworldcrypto/2018/mimblewimble-and-scriptless-scripts/>
 
+# Schnorr and taproot
 
+<http://diyhpl.us/wiki/transcripts/sf-bitcoin-meetup/2018-07-09-taproot-schnorr-signatures-and-sighash-noinput-oh-my/>
 
+Generally, Schnorr signatures and the Taproot proposal could allow for different transactions that do different things but they will look the same. It's useful. If you can think of, I don't know, maybe you use a very weird transaction type. It's usually easy to deanonymize you based on that, but using Schnorr and Taproot can enable those weird transactions to look like normal transactions. Another option is to make regular scripts use other realistic-looking branches that are impossible to reach, to increase the anonymity of what the real script is that you're using.
+
+# More resources
+
+<https://en.bitcoin.it/wiki/Privacy>
+
+dandelion <https://github.com/bitcoin/bips/blob/master/bip-0156.mediawiki>
+
+client side filtering: bip157, bip158 <http://diyhpl.us/wiki/transcripts/breaking-bitcoin/2019/neutrino/>
+
+Taproot <https://github.com/sipa/bips/blob/bip-schnorr/bip-taproot.mediawiki>
 
