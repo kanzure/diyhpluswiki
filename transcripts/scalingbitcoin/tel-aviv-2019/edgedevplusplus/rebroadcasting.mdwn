@@ -74,6 +74,20 @@ This does leave room for an important edge case. The use case is that if you cre
 
 I wanted to give a shout out to functional tests. A lot of my time was spent writing functional tests. But I was surprised to learn so much about bitcoin by doing that. Mocktime for example. I'd have all these failures, and I learned about sendmessages thread and getdata and transaction time intervals and just from reading the logs-- this line, this line has taught me so much about bitcoin the "combine\_logs.py" trick. Tests are never glamorous to write, but I had a lot of fun.
 
+I would like to persist the unbroadcast set to mempool.dat so that this can survive node restarts. I'm really curious to see what the bandwidth looks like on the network and see if it looks reasonable. I also have some follow-up pull requests like test framework improvements.
+
+# Open questions
+
+There's a few open questions I have around this.
+
+Are there any significant privacy implications for nodes that have varied mempool expiry settings? If a node has expiration set to not be the standard two weeks, or be set to less than that, and the wallet resubmits its transaction to the mempool and then the node rebroadcasts more quickly than expected. How much of a privacy leak is that? I find this question interesting and I haven't quite resolved yet.
+
+There's an interplay between software upgrades and policy changes. If a node has software and then there's not consensus changes but policy changes, as in a different view of the mempool, then what can happen with rebroadcasting transactions that used to be valid but would no longer be considered for a block no longer actually mined to be removed from the mempool, is that this transaction can kind of stick around forever. This is already a viable problem because it just takes one node to rebroadcast, but having stronger rebroadcast logic means this might occur more and nodes with older software might have mempools with transactions that can't be mined, which is not what we desire.
+
+# Thank you
+
+I just want to say thank you to a lot of people. I've gotten a lot of feedback and support.
+
 # References
 
 <https://github.com/bitcoin/bitcoin/pull/16698>
