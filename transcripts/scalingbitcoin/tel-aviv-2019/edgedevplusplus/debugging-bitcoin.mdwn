@@ -1,0 +1,80 @@
+Debugging tools for Bitcoin Core and debugging bitcoin
+
+Fabian Jahr
+
+# Introduction
+
+Most of the talks you here today and tomorrow are about Bitcoin Core. Actually writing code and fixing stuff, you'll have to learn some things that are on a practical level. That's basically what this talk is about. Even if you have a good understanding of how bitcoin works on a conceptual level, you run into things that might block your process of developing software.
+
+# Welcome to bitcoin
+
+So welcome to bitcoin. You're a junior bitcoin developer and you basically have to take your first steps. That's what this talk is for. We're going to talk first about preparations for debugging stuff from bitcoin, and then we're going to talk about some tools.
+
+# Preparations
+
+I really recommend you to install ccache which is a tool that caches things that you have already compiled. This is going to speed up your process a lot when you're developing, and it helps you not waste time on it. Another thing you should definitely do is set compiler flags like CXXFLAGS="-O0 -g" CFLAGS="-O0 -g". This sets the optimizations to zero. This means that it is easier to recognize your code when you look at it through a debugger.
+
+# Logging
+
+We're going to start with logging, like LogPrintf and std::cout. You can find this by reading the READMEs in the Bitcoin Core repository or by googling around. Sometimes you just want to log something. You would have to grep from debug.log for a specific thing you want to search for, often prefixing a logline with some weird unique token so that when you grep you can find it.
+
+The problem in my slide here is that you're running with -regtest and the debug.log file is actually the mainnet debug log file. This is like the first hint of the main message of your talk. There are different environments and contexts that you have to be aware of when you're developing locally. It's just going to happen to you that you're going to be in the wrong context. You're going to grep for something, or do fuzzy matching, you're going to miss something. You should always ask yourself, am I in the right file? If you're running something in regtest, then you need to find the debug.log file that is in the regtest folder and then you will see your expected output if it was executed.
+
+# Logging from unit tests
+
+When you run src/test/test\_bitcoin you should run with --log-level=all. You can't use LogPrintf() in the unit tests. INstead, the unit tests are running with boost and there you have to use BOOST\_TEST\_MESSAGE and BOOST\_CHECK\_MESSAGE. There's not much more to it. Well, you can't run the normal bitcoind. There's another executable compiled just for the unit tests, and that's testbitcoin out there. You have to run that with --log-level=all and then you see all of these messages.
+
+# Logging from functional tests
+
+Especially if you already have some experience with python, then this is really simple. This is not a compiled language. You don't have to think about so many steps there. You just use this self.log.info function to make logs. You see this all over the test\_runner.py so this is probably not going to be hard for you.
+
+Another thing you should think about is that you have to run tests directly, and not the test runner harness because it doesn't print out those messages in the harness.
+
+# Using a debugger
+
+How many here know what a debugger is? Most people. I'm just going to run through it very quickly. Most people use debugger like gdb or lldb or other debuggers. These are tools that all kinds of programmers use, and also Bitcoin Core developers. You start the debugger by pointing it to an executable, and then you set breakpoints and run the executable and then you can step through the code.
+
+This is straightforward if you know how to use gdb or lldb. You can set a breakpoint in any file. You can also specify function names and things like that. You can run the executable with the parameters you need, like --regtest and so on, and then you will see the results you want.
+
+# Debugging unit tests
+
+It kind of works the same way for unit tests as well. But you need to remembe rto use the testbitcoin executable and not bitcoind. Here, you can see that in the example on the slide, you set a breakpoint in some file that you're going to run into, and then you run it, and it stops at the breakpoint for you to investigate.
+
+# Debugging functional tests
+
+Functional tests in my mind were the easiest. Debugging in functional tests with python is quite simple, just drop in this line: import pdb; pdb.set\_trace(). There are other python debuggers but this one is distributed with python by default. But what about debugging the C++ code being executed by the functional tests?
+
+This is where it gets really interesting. This is the most interesting thing I can show you today.
+
+# Where is the bitcoind process?
+
+The problem here is that the functional tests which are python code, is launching and executing bitcoin instances and this uses a tempfolder as its datadir. It's kind of hidden away from you, through some python setup magic. You can't easily interact with it. To interact with it, you need a game plan.
+
+# Gameplan
+
+You need to run the functional test (not using test\_runner.py). It starts the bitcoind process for you. Then you need to stop that test. So for that we're going to use pdb.set\_trace(). Then we need to find the bitcoind process that we were running in the functional test, and attach to that process using lldb. Then we have to let that test continue, and then it runs until that breakpoint. The other thing is that we have to change the timeout because the functional timeouts have a timeout of 60 seconds, which doesn't give you a lot of time to debug it if you keep it in place.
+
+# Demo
+
+I'll show that to you here as a demo.
+
+Some tests run more than one instance. You have an array of nodes in the pdb terminal. If you have several nodes running in the test, you need to know which node you want to run to. You look at process.pid and this gives you the pid number that you want to lldb to attach against.
+
+We first used a pdb set\_trace then we jumped to the pdb breakpoint. Then we went over to lldb to attach to the running bitcoin node. Then we set a breakpoint and let the process continue.
+
+# Debugging contexts
+
+This is an overview of things to check for the different contexts. There's manual, unit tests and functional tests. The functional tests run unique bitcoin nodes in temporary workdirs. The unit tests, use testbitcoin. The manual tests, use -regtest and check the regtest debug logs not the mainnet debug logs.
+
+# Segfault tools
+
+On macosx, you have to specifically enable segfault tools. You need to use ulimit -c unlimited and then run in the same terminal session. Run the program until you reach the segfault. Find the core dump in /cores/ on your system. Make sure to clean up afterwards since these are pretty big and they accumulate quickly.
+
+# Conclusion
+
+<http://bit.ly/debugbitcoin>
+
+# Q&A
+
+bitcoin-core-pr-reviews group
+
