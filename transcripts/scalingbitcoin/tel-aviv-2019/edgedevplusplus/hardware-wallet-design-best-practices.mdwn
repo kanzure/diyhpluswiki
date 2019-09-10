@@ -2,6 +2,8 @@ Hardware wallet design: issues and best practices
 
 Stepan Snigirev
 
+<https://twitter.com/kanzure/status/1171322716303036417>
+
 # Introduction
 
 We have 30 minutes. This was a talk by me and Jimmy but Jimmy talked for like 5 hours yesterday so I'll be talking today.
@@ -110,6 +112,12 @@ Q: Do you think we'll see an open-source secure element?
 
 A: I don't think we'll see a real open-source secure element. The whole security industry is really caring about certification levels. They give you 3 points if you're closed source. There's an incentive to keep it closed source, just to get some free points. There might be some way to get something open-source and secure with like the RISC-V and open hardware initiative. As a community, we might be able to get this done. It would be nice to see a secure element that even if it is closed source, at least has the functionality for the bitcoin curve and HD key derivation etc. We're working on something like that with Java Card, and we're also talking with Ledger and Trezor and they are thinking in that direction. Another option is what Coldcard is doing, which is using a secure key storage element. It can't do cryptography, but at least it can store the secret there. You might be able to convince the manufactuer to open source the firmware of the key storage, and even if you can't verify it's running there, at least it could be open-sourced.
 
+Q: It's going to be an arms race of hardware security.
 
+A: Well, one option is to have disposable burner wallets that you throw away. Another option is to use heterogenous wallets, like have a hardware wallet with 3 chips from 3 different nations like China, Russia and United States. Or with Schnorr signatures, you can combine these keys together and what's the chances that all three governments will collaborate? They are already collaborating, don't worry.
 
+Q: ...
 
+A: The problem is that secure elements are pretty weak and they can't drive a display or other peripherals. Ideally you want a secure element that stores the secrets and also drives the trusted peripherals so that we can see what the secure element intended us to see. But at the moment it's not really possible. Ledger Nano X is using a secure element driving the trusted display, but there's still a man-in-the-middle in the screen driver.
+
+Sorry, can't take any more questions, so talk to me during the breaks.
