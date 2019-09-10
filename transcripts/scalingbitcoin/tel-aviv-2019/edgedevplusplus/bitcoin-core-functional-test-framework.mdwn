@@ -1,0 +1,66 @@
+Bitcoin Core functional test framework
+
+Fabian Jahr
+
+# Introduction
+
+I am not James Chiang. I don't tihnk we have changed the scheduling yet. I have taken over the talk from James. He has already given several great talks.
+
+# What are functional tests?
+
+A functional test is a test that tests functionalities or features of software from a user's perspective. You're testing the full stack of software. In bitcoin, it's a bit hard to define. I think you have to extend the definition from other software projects because you also have to think about the whole network. Another way of thinking about it is, that nodes that you interact with are also users who are just using their own nodes. You have to look at features from your perspective but also the network's perspective which you run as internal users.
+
+It tests the full stack. Usually these tests are pretty slow. If you run the functional testing framework or the full testing suite, you'll see it takes pretty long. In general, it takes longer than unit tests. You should pay attention to how you write the tests and how many you write. Usually I see people defer to writing functional tests, and it's easier for people to write python, but then it causes a lot of bloat. Just something to keep in mind.
+
+# When do you add or edit functional tests?
+
+In general, usually when you just want to test features that take multiple layers of the stack. This can be almost anything in Bitcoin Core. Briefly said, the main area where it's not something where you would edit the functional tests if you implement something new, is when you are refactoring and you never really changed any functionality that a user would see or notice. RPC tests are primarily functional tests.
+
+# Where are the files?
+
+Yesterday there was a talk about where the files actually are. You might find the unit testing files instead of the functional testing folders. You need to be in the test folder, but not the test folder at src/test/. It's just the test/ folder. There's a few different areas, like feature\_\*, interface, mempool, mining, p2p, rpc, tool, wallet. The tool\_\* tests are related tool\_wallet.py. There are interface tools that test the REST interface and the zeromq interface. The feature folder is for features that aren't really related to mining or the mempool or something.
+
+# Running tests
+
+You can run tests directly by running the python functional test file. You can also run the tests through the test harness, or you can do pattern matching and globbing on the test names through the test harness by using test/fnuctional/test\_runner.py and specifying either a file or the glob pattern.
+
+I find the --trace-rpc options which shows in stdout all the RPC inputs and outputs. Another interesting one is --nocleanup which can be quite useful, meaning it doesn't clean up all the log files. There's other ways to get log files, though, which I'll show you later.
+
+# Functional test framework
+
+The framework is under test/test\_framework/. These are the files that have helpful functionalities to help you write a test. There's various things that get reused. It's a typical software framework, basically. There's a few things like util.py, test\_framework.py, key.py, script.py, blocktools.py, mininode.py.
+
+util.py has asserts and other helpful functions.
+
+test\_framework.py is used in every functional test ;it implements BitcoinTestFramework class and every test is a subclass of this class.
+
+key.py helps with ECC math classes and functions.
+
+script.py is for generating transaction scripts.
+
+blocktools.py helps you to create blocks and transactions.
+
+mininode.py helps with P2P connectivity and running ondes.
+
+# Documentation and logs
+
+There's a few things to look for: docstrings, comments, and self.log.info(...) calls in the python source code. I think you should write docstrings and comments not just for others but also yourself. Descriptive function names is helpful for reading and seeing what's going on. Sometimes you write 20-30 lines of setup to get the network to the state that you want, and sometimes it's not easy to tell what the intention of all the setup steps were. So put in some comments and describe why you are setting up the network in that way.
+
+# Test class
+
+Usually you are making a subclass of BitcoinTestFramework and the name of the class is the name of the test. Then you do some overrides depending on what you need in the test, like set\_test\_params and run\_test. These are overriden in almost every test. The set\_test\_params function overrides test parameters, and run\_test is the actual implementation o fthe test. There are other things you can override, of course.
+
+# Node calls
+
+Every test is going to do node calls, like self.nodes[0].add\_p2p\_connection. You can refer to the nodes by index, but you can also assign names to these nodes. Most RPC calls are undefined methods, they are just thrown to the actual node running in the background. You can also use regtest RPC commands like generate for example.
+
+You're also going to see a lot of wait functions like waitforblockheight() so that you don't have to worry about race conditions.
+
+# p2p introspection
+
+Very often, you have to use sync\_all() sync\_blocks() which are functions that wait for things to sync up and can fail a test. You can go deeper and subclass the p2p interface class and redefine hooks on this, like do "onblock" event trigger functions that you can override and then you can act on these events with your custom event handlers like when a node or its p2p interface is receiving a block.
+
+# Examples
+
+I'll show you just one really simple example.
+
