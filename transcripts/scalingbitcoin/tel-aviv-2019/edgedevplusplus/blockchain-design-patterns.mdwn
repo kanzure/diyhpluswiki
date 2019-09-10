@@ -2,6 +2,8 @@ Blockchain design patterns: Layers and scaling approaches
 
 Andrew Poelstra, David Vorick
 
+<https://twitter.com/kanzure/status/1171400374336536576>
+
 # Introduction
 
 Alright. Are we ready to get going? Thumbs up? Alright. Cool. I am Andrew and this is David. We're here to talk about blockchain design patterns: layers and scaling approaches. This will be a tour of a bunch of different scaling approaches in bitcoin in particular but it's probably applicable to other blockchains out there. Our talk is in 3 parts. We'll talk about some existing scaling tech and related things like caching transactions and mempool propagation. We'll talk about some of the scaling proposals out there like taproot and erlay and other things in the news. In the third section, we talk about the more speculative bleeding edge crypto things.
@@ -19,6 +21,8 @@ I would say that when we think about scalability, one of the key restraints is--
 A second order concern, and alternative cryptocurrencies address this differently, is the issue of miner safety. Block propagation is important. If it takes a long time for blocks to get around the network, then the miners can use selfish mining. The longer it takes for miners to talk wit heach other, there's a longer period for bigger miners to get an advantage over smaller miners. We want the well-experienced large miners to be on the same playing field as a newer less well funded entrant to the mining ecosystem.
 
 When we talk about scaling, there's a few angles we're coming from. Everything that we talk about, we have to view from the perspective of where we're limited in the adversarial case instead of the average case. Often when we look at bitcoin network operations today, there are many optimizations that work super well when everyone is being friendly with each other. The relay network or the FIBRE network eliminates a lot of work for blocks, but we can't use those metrics to decide that it's safe to scale because these optimizations breakdown when the network is under attack. The limitation is, how do things perform when things aren't going well? Continuous observation of the network to give you data right now, doesn't give you data about how it behaves under attack right now.
+
+<https://diyhpl.us/~bryan/irc/bitcoin/scalingbitcoin-review.pdf>
 
 # Bitcoin today: UTXOs
 
@@ -105,6 +109,10 @@ Q: Does increasing the number of connected nodes, give privacy concerns to be co
 
 A: So the concern with connecting to more spy nodes is that, those nodes-- so if a spy node can create a lot of connections, then it can see where transactions are being broadcast from and infer things about their origin. By use of erlay, if you connected to more spy nodes and not more real nodes, then I guess that would make things worse. But if everyone is connected to more nodes, then transactions can get further into the network using fewer hops which gives less information to spy nodes even if they have more connections. Dandelion can resolve a lot of these issues too. If you have a mechanism to drop transactions from random places, being connected to more spy nodes is not going to harm your privacy.
 
+<https://diyhpl.us/wiki/transcripts/lets-talk-bitcoin-podcast/2019-06-09-ltb-pieter-wuille-jonas-nick/>
+
+<https://diyhpl.us/wiki/transcripts/tftc-podcast/2019-06-18-andrew-poelstra-tftc/>
+
 # Compact threshold signatures
 
 The next few slides are building up to a proposal called taproot but let me talk about some components first.
@@ -167,6 +175,8 @@ CHECKMULTISIG does have one big benefit over interactive signatures, which is th
 
 I think that's the last taproot slide.
 
+<https://diyhpl.us/wiki/transcripts/sf-bitcoin-meetup/2018-07-09-taproot-schnorr-signatures-and-sighash-noinput-oh-my/>
+
 # Revocations and SIGHASH\_NOINPUT
 
 Let's double back a little bit to lightning.
@@ -183,6 +193,8 @@ A: Yeah. I do. The existence of sighash noinput makes it harder in general to th
 
 Initially I was opposed to SIGHASH\_NOINPUT because I thought it would break a use case for various privacy tech. The fact that it doesn't break it, is not trivial. NOINPUT is difficult. Let's move on.
 
+<https://diyhpl.us/wiki/transcripts/scalingbitcoin/tokyo-2018/edgedevplusplus/sighash-noinput/>
+
 # Speculative improvements
 
 A lot of these improvements we're just going to only touch the surface level. If you want to ask questions or go deeper on a particular one, we're certainly happy to do that. But there's a lot of scalability proposals out there. Some of them are more interesting than others. We tried to cherrypick things that are very beneficial for scalability that we liked, and then some that are innovative or maybe they break things. Some of them we put them in here because they are extremely popular even though we don't like them.
@@ -192,6 +204,8 @@ A lot of these improvements we're just going to only touch the surface level. If
 Utreexo out of all of these are hte most practical and most realistic of the speculative improvements. Today one of the big bottlenecks with bitcoin is blockchain validation. In particular, you need a ton of disk space and you need to keep track of the set of coins that are currently spendable. With utreexo, we merkleize this whole thing and we keep one merkle root and we get rid of the need to keep a database. Today to run bitcoin consensus, you need database software and keeping things on disk. That's rough. Database optimization is incredibly involved and it's difficult to be certain that it's implemented correctly. If we switch to utreexo, then we can throw away our database software. Every time osmeone spends, they would provide a merkle proof showing that the coin was in the merkle root. This allows us to essentially keep things on disk. We can fit an entire blockchain validator on a single ASIC. We could create a chip that can validate the bitcoin blockchain just as fast as you can download it. The major tradeoff is that every transaction needs a merkle proof alongside it, which is a couple hundred bytes. There's a few ways to help with that though.
 
 Tadge did a talk yesterday on utreexo.
+
+<https://diyhpl.us/wiki/transcripts/scalingbitcoin/tel-aviv-2019/edgedevplusplus/accumulators/>
 
 # Client side validation
 
@@ -225,7 +239,9 @@ Q: A soft-fork from the perspective that all the nodes... but nodes that...
 
 A: Basically, you would get versioned outputs. Basically, if I'm on some soft-fork version, or even some hard-fork version, I have a different set of rules by which I accept outputs. When a sender sends me coins, I apply my rules to the history of those coins. You could get into situations where you have to ask someone to upgrade. If it's a soft-fork, then you don't have to ask them to upgrade they will blindly accept. If it's a hard-fork, that's another one. It allows you to add breaking changes to bitcoin without breaking everyone simultaneously. You break outputs progressively as they get spent in the new paradigm. It's an interesting model. I haven't thought about it before. I think that's an interesting property of client-side validation.
 
-# DAG based blockchain
+<https://diyhpl.us/wiki/transcripts/scalingbitcoin/milan/client-side-validation/>
+
+# DAG-based blockchain
 
 This is another popular one. Ethereum uses a not-correct version of something called Ghost DAG. The bitcoin blockchain is a straight line, if you get forks or competing blocks then only one of them wins. You discard everything else. I think there was a 2015 paper called "inclusive lbockchain protocols" which presented an approach using directed acyclic graph approach to blockchain. Multiple miners can release blocks at the same time, and then there's an algorithm to linearize those blocks and the invalid transactions you just ignore. The DAG approach solves particularly miner challenges. It allows you to have faster block times, lower safe confirmation times, it reduces the pressure on miners to have fast propagation. So fast propagation is no longer as important. It doesn't help with initial block validation, you still have to check every output every spend. That resource bottleneck doesn't change, therefore this isn't seen as true scalability at least today because it doesn't solve our biggest bottleneck.
 
@@ -234,6 +250,12 @@ Another thing that slows down DAGs from being accepted in bitcoin is that it's a
 Q: Would it be correct to say, a 51% adversary, block time isn't really reduced-- meaning the safe confirmation time?
 
 A: Yes. Correct. DAGs are only advantageous in terms of confirmation security if we're assuming that nobody has greater than 51% of the hashrate. If someone does have greater than 51% of the hashrate, then things are falling more back to meta incentives anyway.
+
+<https://diyhpl.us/wiki/transcripts/scalingbitcoin/hong-kong/braiding-the-blockchain/>
+
+<https://diyhpl.us/wiki/transcripts/scalingbitcoin/milan/breaking-the-chain/>
+
+<https://diyhpl.us/wiki/transcripts/scalingbitcoin/milan/chainbreak/>
 
 # Confidential transactions
 
@@ -244,6 +266,8 @@ Confidential transactions aren't an asymptotic hit to validation time or size. T
 If we had confidential transactions in bitcoin, and then you remove all the other things in bitcoin, you get left with mimblewimble which has some cool scalability like removing old unspent outputs. That's cool, but you would have to remove script from bitcoin. That's not going to happen. Bitcoin blocks arne't going to be replaced by mimblewimble blocks ever due to the loss of functionality.
 
 The other issue is that these things aren't quantum secure. Right now in bitcoin all of our signatures will be broken as soon as there are practical quantum computers that exist. If we had confidential transactions, then not only would the signatures be broken and coins vulnerable to theft, but also the soundness of the system would be in question. Anyone who claimed to own any maount of coins, just instantly everything is gibberish. petertodd has argued this is a benefit for something like mimblewimble-- if a quantum computer shows up, then every single output that ever existed on the mimblewimble chain can suddenly - to every value. So the entire chain then deletes itself. So that's pretty cool. That's kind of crazy. But it doesn't fit into the bitcoin ethos super well.... a very vocal segment of bitcoiners don't want everything to go away. So until we have a quantum secure version of something like bulletproofs or confidential transactions, my feeling is that it's not going to happen in bitcoin.
+
+<http://diyhpl.us/wiki/transcripts/gmaxwell-confidential-transactions/>
 
 # STARKs and general zero-knowledge proofs
 
@@ -287,8 +311,14 @@ In 2012 and 2013 a lot of bitcoin developers did a deeper dive into proof-of-sta
 
 Unfortunately, there are so many ways to approach proof-of-stake paradigms that it's hard to talk through because once you dismantle any implementation everyone is like "well yeah that was the broken one". At some point, I hope there's a proof-of-stake implementation that everyone likes and we can attack it directly. But it's just too much.
 
+<https://download.wpsoftware.net/bitcoin/pos.pdf>
 
+<https://download.wpsoftware.net/bitcoin/alts.pdf>
 
+<https://download.wpsoftware.net/bitcoin/asic-faq.pdf>
 
+# Multiple blockchains
+
+For scalability, you can have independent blockchains like bitcoin and litecoin. You don't need sharding or anything. As a dogecoiner, I don't need to care about what happens on the bitcoin blockchain. If we use cross-chain lightning, I receive doge not bitcoin, and that's scalability. We can have on-chain on multiple chains, and then each chain has a separate security domain and a separate chain and their own problems.
 
 
