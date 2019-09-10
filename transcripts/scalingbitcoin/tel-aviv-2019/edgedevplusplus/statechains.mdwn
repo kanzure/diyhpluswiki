@@ -1,0 +1,52 @@
+Schnorr signatures, adaptor signatures and statechains
+
+Ruben Somsen
+
+# Introduction
+
+If you want to know the details of statechains, I recommend checking out my talk from Breaking Bitcoin 2019 Amsterdam. I'll give a quick recap of Schnorr signatures and adaptor signatures and then statechains. I think it's important to understand Schnorr signatures to the point where you're really comfortable with it. A lot of the cool stuff in bitcoin right now is related to or using Schnorr signatures. I'll talk about adaptor signatures and I'll tie it into how I am using adaptor signatures in statechains to have multiple transactions occur simultaneously.
+
+# Statechains
+
+It's a federated sidechain with a 2-of-2 channel between the "statechain entity" and the users. You transfer entire UTXOs, one chain each. There's no split amounts. You have one statechain per UTXO. If you have 10 UTXOs, then you have 10 statechains.
+
+It's more secure than a federated sidechain in the sense that they can't freeze your coins at a low threshold. With a federated sidechain, if some percent of the federation refuses to sign your pegouts, then your coins are frozen. But this is not the case in statechains because you have an on-chain transaction that you can use for redemption of the coins. Statechains have minimal complexity because it's a linear blockchain moving from one person to one person to one person.
+
+You can swap between chains and you can also swap coins into smaller denominations.
+
+# Money can get stolen if not atomic!
+
+You need this to happen atomically. If one of these transactions doesn't go through, then this whole thing doesn't work and someone gets screwed. If it does work, then you can do things like [coinswap](http://diyhpl.us/wiki/transcripts/scalingbitcoin/tokyo-2018/edgedevplusplus/cross-chain-swaps/). Also, there's good suppport for lightning channel creation and this works with a form of a lightning network. You can create a lightning channel thing on top of statechains. Even if the statechain doesn't allow splitting of UTXOs, you can do it on a second layer like lightning.
+
+# Schnorr signatures
+
+<http://diyhpl.us/wiki/transcripts/sf-bitcoin-meetup/2018-07-09-taproot-schnorr-signatures-and-sighash-noinput-oh-my/>
+
+Everything we can do with elliptic curve cryptography boils down to a few simple concepts. Ring signatures, confidential transactions, pedersen commitments, adaptor signatures, mimblewimble, they are all related to this math. Bulletproofs too, but that's really complicated. All of these things are actually simple, if you know Schnorr signatures well. Don't just try to understand it, try to grok it.
+
+The only assumption that you have for elliptic curve cryptography is that you have these special numbers, curve points. You can only add and subtract these values, and nothing else. It's a form of math where you have just those two operations.
+
+We want to show that you can only calculate in one direction, and not be able to reverse the calculations. Something like 5A=E is bruteforceable because it's just xA=E. You can just do E - A = D and just do trial and error. Since we chose such a low entropy value, you can get the answer quickly. If you pick a bigger number, then it becomes very difficult. Now, it's literally impossible because the calculation takes forever. Even all the computers in the world would not be able to calculate this. But we still need to be able to calculate forward. Isn't that going to be slow for big numbers? It isn't, because you can do a little trick where you do doubling and then adding, so 2A + 2A = 4A and then 4A + 4A = 8A etc. This is a trapdoor function, the other way is impossibly slow.
+
+# Private and public keys
+
+We started out with a curve point. Everyone knows G. It's a generator. It's a NUMS nothing-up-my-sleeves number. Then you pick your private key, as a huge random number, and you multiply that by G and that's how we get a public key. This is essentially a pseudonymous identity on the blockchain. You create a new key for each transaction.
+
+How do you prove to somebody that you know a private key? You sign a message and then they have to verify the message. I am going to go through a broken method first, though. Say we pick another huge number r\*G=R. So then we calculate r + a = s where a is our secret. Then we give (r, s) to the verifier. So r + a = s\*G and this proves, supposedly, that you know the private key of A, which is the value "a". Why is this the case? There's two variables and you can't know both. The flaw, though, is that you can claculate r in such a way that a is actually not part of it. Instead of calculating r + a, you can calculate R - A + A which is just R. We can fix this flaw, and have the complete Schnorr signature protocol by adding the hash of R to the mix. Now it's impossible to cheat because e=H(R) depends on R. So now R appears on both sides of the equation, even if the R value isn't given to the verifier.
+
+# Adaptor signatures
+
+<https://diyhpl.us/wiki/transcripts/scalingbitcoin/stanford-2017/using-the-chain-for-what-chains-are-good-for/>
+
+<https://diyhpl.us/wiki/transcripts/chaincode-labs/2019-08-16-elichai-turkel-schnorr-signatures/>
+
+<https://diyhpl.us/wiki/transcripts/realworldcrypto/2018/mimblewimble-and-scriptless-scripts/>
+
+# See also
+
+<https://diyhpl.us/wiki/transcripts/bitcoin-core-dev-tech/2019-06-07-statechains/>
+
+<https://diyhpl.us/wiki/transcripts/scalingbitcoin/tokyo-2018/statechains/>
+
+<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-June/017005.html>
+
