@@ -259,6 +259,34 @@ STARKs can also be used to basically do batch validation. You can produce a STAR
 
 It's promising tech, and it's practical for a lot of purposes even right now. It's mindblowing and surprising that we can even do this. There's llots of ways in the immediate future that these types of things could be used to improve the scalability of the current system, and also they interact pretty well with the other proposals. Utreexo proofs could be replaced with STARK proofs. The utreexo proofs are small, but STARKs could do aggregation of those. Also, you can do it piecemeal and you don't need to get everyone to do that.
 
+At some point, this will be mature and efficient enough taht we will start seeing it in the blockchain and see real scalability improvements.
+
+# Sharding
+
+We have two slides left, sharding and proof-of-stakes. My two favorite things.
+
+Sharding is the idea is that we have the same coins and the same consensus ,but we push it into different validator zones where transactions can happen that not everyone needs to verify. Sharding overcomes the challenge of "everyone needs to see everything". Generally speaking, we only have one really widely accepted way of doing sharding and that's a federated sidechain and some multisig quorum that signs off on what happens off-chain. If the federation decides to steal the money, the mainchain has no way of knowing if the federation is being honest or not.
+
+There's also SPV proofs, which are generally considered to be not that viable or too risky. I personally don't think that miners should be trusted. Boiling any consensus down to an SPV proof makes me very nervous, I don't think we should go down that road.
+
+Another sharding proposal is plasma. I'm not comfortable with the security boundaries of plasma. Many of the plasma people will assert that the security model is identical to lightning which I don't think is correct.
+
+I've found that almost every sharding proposal can be broken by asking what happens if the shard does an information withholding attack. Just doing that analysis usually lets you figure out how to totally break the system.
+
+Q: What about gmaxwell's coin witness proposal? Use a STARK to prove the state of this sidechain without asking miners to vote or something like that.
+
+A: There's a lot of technologies that like-- fundamental tech steps that would need to be done.
+
+A: The challenge on that one is not just information withholding, but double spending. If you have multiple proofs that are all valid, and you see multiple histories that transpired. How do we pick which one transpired? If you combine sharding with STARKs, maybe you find some wiggle room to make it work.
+
+# Proof-of-stake
+
+Proof-of-stake is incredibly popular in the altcoin world. It's almost unconditionally popular. It falls back to traditional byzantine fault tolerance models. In proof-of-stake, you see 51% assumptions. Normally things fall away from incentive compatibility. I'm just going to say there's many issues.
+
+In 2012 and 2013 a lot of bitcoin developers did a deeper dive into proof-of-stake and identified a bunch of issues that transcend any particular issues. Like holding on to your keys after you spend your coins, that's a fundamental issue. Andrew wrote two papers about the fundamental challenges with proof-of-stake. I think it's fair to say since 2013 none of those issues have been addressed by proof-of-stake proposals.
+
+Unfortunately, there are so many ways to approach proof-of-stake paradigms that it's hard to talk through because once you dismantle any implementation everyone is like "well yeah that was the broken one". At some point, I hope there's a proof-of-stake implementation that everyone likes and we can attack it directly. But it's just too much.
+
 
 
 
