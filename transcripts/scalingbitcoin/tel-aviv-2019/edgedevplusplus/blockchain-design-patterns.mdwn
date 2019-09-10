@@ -235,6 +235,31 @@ Q: Would it be correct to say, a 51% adversary, block time isn't really reduced-
 
 A: Yes. Correct. DAGs are only advantageous in terms of confirmation security if we're assuming that nobody has greater than 51% of the hashrate. If someone does have greater than 51% of the hashrate, then things are falling more back to meta incentives anyway.
 
+# Confidential transactions
+
+Confidential transactions is the idea that you can replace the amounts with homomorphic commitments that hide what the amounts are, but they still bind to the amounts so nobody can pretend they are something they are not. Homomorphic means they can be added. Validators can add up all the inputs and all the output amounts and they can tell whether or not they balance to zero, by checking those homomorphic commitments, or by using a proof of zeroness.
+
+Confidential transactions aren't an asymptotic hit to validation time or size. They add a 650 byte object called rangeproofs. These originally used to be 3-4 kilobytes but thanks to bulletproofs they are now "only" 650 bytes each which is cool. They can also be accumulated across outputs so in some contexts it could be 700 bytes per transaction, but that's still not great.
+
+If we had confidential transactions in bitcoin, and then you remove all the other things in bitcoin, you get left with mimblewimble which has some cool scalability like removing old unspent outputs. That's cool, but you would have to remove script from bitcoin. That's not going to happen. Bitcoin blocks arne't going to be replaced by mimblewimble blocks ever due to the loss of functionality.
+
+The other issue is that these things aren't quantum secure. Right now in bitcoin all of our signatures will be broken as soon as there are practical quantum computers that exist. If we had confidential transactions, then not only would the signatures be broken and coins vulnerable to theft, but also the soundness of the system would be in question. Anyone who claimed to own any maount of coins, just instantly everything is gibberish. petertodd has argued this is a benefit for something like mimblewimble-- if a quantum computer shows up, then every single output that ever existed on the mimblewimble chain can suddenly - to every value. So the entire chain then deletes itself. So that's pretty cool. That's kind of crazy. But it doesn't fit into the bitcoin ethos super well.... a very vocal segment of bitcoiners don't want everything to go away. So until we have a quantum secure version of something like bulletproofs or confidential transactions, my feeling is that it's not going to happen in bitcoin.
+
+# STARKs and general zero-knowledge proofs
+
+In confidential transactions, we have a rangeproof attached to every output. This is an example of a zero-knowledge proof, specifically one to prove a range. The purpose of this is to make sure that ranges aren't going to overflow, that the values aren't going to be negative numbers and won't overflow.
+
+But in general, it's possible to prove anything you want in zero knowledge. This has been generally known since the 1980s. Since the early 90s, it was known to be possible to be done and within the bounds of the known universe. More recently in 2013 there's been a tremendous amount of development in really practical general zero-knowledge proof systems.
+
+STARKs are developed by Eli Ben-Sasson's and others here in Tel Aviv. STARKs are very fast to verify. They are asymptotically very small- they grow with the logarithm of the size of your program execution. Unfortunately, they have large constants like 10s or 100s of kilobytes. Practical STARK programs end up being 50 to 100 kilobytes. They are quantum secure, and they are fast to verify. They scale really well.
+
+One application of STARKs if they were to be much smaller would be a quantum resistant rangeproof which would be interesting, which could lead to a confidential transaction proposal for bitcoin. But they are much more general than this. In theory, you could prove script conditions. You could hide your amount but also your spending conditions. You get something like taproot without all the tricks and the interaction and all these caveats about how sometimes you still need to reveal your scripts.
+
+STARKs can also be used to basically do batch validation. You can produce a STARK proof of the validation of every single signature in the bitcoin blockchain for example. This is a little bit outside of feasibility but with special purpose ASICs you could probably produce such a proof. Now validation of every single signature comes down to validating this small STARK proof which is a few hundred kilobytes of size, rather than dealing with the 100s of gigabytes of data you presently need to do EC operations on. You could compress the whole blockchain signature validation workload into a single proof. We're stretching what's practical to encode; you would have to implement an entire script interpreter into a single zero-knowledge proof system which is very far away from our current ability to design programs.
+
+It's promising tech, and it's practical for a lot of purposes even right now. It's mindblowing and surprising that we can even do this. There's llots of ways in the immediate future that these types of things could be used to improve the scalability of the current system, and also they interact pretty well with the other proposals. Utreexo proofs could be replaced with STARK proofs. The utreexo proofs are small, but STARKs could do aggregation of those. Also, you can do it piecemeal and you don't need to get everyone to do that.
+
+
 
 
 
