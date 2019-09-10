@@ -2,6 +2,10 @@ Challenges of developing Bosminer from scratch in Rust
 
 Jan Capek (janbraiins)
 
+<https://braiins-os.org/>
+
+<https://twitter.com/kanzure/status/1171331418716278785>
+
 # Introduction
 
 Good morning everyone. My task is to talk about the challenges we faced while we were implementing a replacement for the cgminer software. We're doing it in rust. Essentially, I would like to cover a little bit of the history and to give some credit to ck for his hard work.
@@ -70,6 +74,34 @@ We wanted to make sure we could easily compile to an ARM board. Cross-compiling 
 
 The second hcallenge is that when you do an embedded application, you usually have IO pins that are memory mapped and you want to access those pins in a safe way. There's a guy who writes blogs on rust and how to do it in the valid domain in a safe way. While researching what he was working on, we discovered ther was a tool called svd-to-rust. SVD is a standard from the ARM embedded processors community, which defines the registers. Any manufacturer that produces such a chip should produce an SVD file, which is a hardware descriptor of your chip. With this SVD file, it's usually recognized by different IDEs. We were able to define our own SVD for our FPGA as well. We were able to generate safe rust code that allows accessing registers.
 
-Well, what's so challenging about accessing registers? You want to be safe, even at the bit level. You want to make sure that your application can't access reserved bits in the IO registers. 
+Well, what's so challenging about accessing registers? You want to be safe, even at the bit level. You want to make sure that your application can't access reserved bits in the IO registers.
 
+At some stage, these hardware devices are running linux. You have to have some source of interrupts. Writing kernel drivers is probably not the right way. It's kind of overkill. You just pipe your FPGA part to drive the hashboards, and you just want to get some notifications. In linux framework, there's userIO and there's a rust binding for this interface. Unfortunately, the UIO interface is not async. This is going to be a very common pattern that you'll run across; you find a good library and it's not async.
 
+There are two ways to deal with this. With the async approach, you can always have a runtime framework which you usually have to use to run the whole async application, which can dedicate specific threads for the parts of your application that are not async. For this specific case where we needed to do the UIO, we actually went the UIO thing, and we have implemented an async extension because we think it's beneficial for the whole ecosystem.
+
+# Other challenges
+
+When you're new to the rust ecosystem, you basically feel that the amount of packages available since they are centralized on craits.io, you can't decide which ones to use or which ones are the best or the most standard. We made a few decisions in this area. This might also change.
+
+First, the first thing you're going to face is logging. Doing logs right is a challenge. Doing them in an async way is challenging. Doing them in a structured way is challenging. We found a framework called s-log which fulfills all of these criteria.
+
+The other issue you want to deal with is error handling. This is still an open issue. There's a lot of development in rust for error handling. The standard library has some approach, obviously, to deal with errors, but it's not very comfortable. We found two crates.
+
+We found a bitcoin-hashes library was useful. It is stable and mature.
+
+You also need to communicate on the network level with some serialization framework. Currently the standard in rust is called stardev which either allows you to use existing backends and formats like json, or you can write your own backends. Very comfortable. The only limitation is that you're mapping your own model... into... and then, stardust's model. The problem is that if your model has types that are not easily mappable into the stardust model, then you're going to hit a wall a little bit but there are ways around it.
+
+The last and important thing is to choose an async framework. The standard is really tokio. But the problem is that latest tokio is not compatible with latest rust. They made a new alpha a few weeks ago with rust async support. Tokio is using other crates like m.io that does the abstraction for your operating system and when you talk with specific devices. Tokio is open-source. Everything here, these crates are all open-source. I'm just talking about, what are other people in the ecosystem choosing?
+
+# More challenges
+
+We're running the rust code on the ARM CPU. We have some FPGA part running a really lightweight driver to talk to the hashboards. The rust is just feeding this part with the work, not jobs.
+
+# Timeline of moving from cgminer to bosminer
+
+bOSminer, startum v2 simulator, ii-stratum-proxy.  We wrote a startum simulator and can simulate a pool and a mining device. We're planning to add a proxy as well. We want to simulate different scenarois where you are trying to translate between various protocols. ii-stratum-proxy is a simple proxy written in rust to translate stratum v2 to stratum v1 so that you can connect the miners to an actual pool.
+
+# Demo time
+
+Let's see if we can do a demo. Unfortunately, the university is filtering stratum. I tried 3333. Maybe it's doing that for a good reason.
