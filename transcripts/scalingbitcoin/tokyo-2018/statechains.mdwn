@@ -93,3 +93,7 @@ You could also succinctly store and relay statechain (per UTXO). All of the coin
 Another interesting one is that we could make the statechain entity not actually know what they are signing, if we were to utilize blind signatures. We could make it so that you're locking up money with the statechain entity with some transitory key X, and even though you're doing that, the statechain entity doesn't need to be aware of what coins they own. They just blindly sign whatever you tell them to sign- Bob goes to the statechain entity and sign a message please, but really it might be signing an off-chain eltoo-style transactoin that allows them to redeem the money. The statechain entity will not really be aware they are doing that, in the blind signature scheme. When a recipient receives money, they will need to verify all the blind signatures. The statechain entity has to publish the blind signatures they have made, and this is the trust here that they have made only those signatures and none others. Every time someone receives the money, they have to unblind the signatures themselves to verify whether the correct things were signed- you don't accept the money if that's not true.
 
 paper: <https://goo.gl/RWQ4ue>
+
+# See also
+
+<https://diyhpl.us/wiki/transcripts/scalingbitcoin/tel-aviv-2019/edgedevplusplus/statechains/>
