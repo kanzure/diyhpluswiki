@@ -2,6 +2,8 @@ Bitcoin Core functional test framework
 
 Fabian Jahr
 
+<https://twitter.com/kanzure/status/1171357556519952385>
+
 # Introduction
 
 I am not James Chiang. I don't tihnk we have changed the scheduling yet. I have taken over the talk from James. He has already given several great talks.
@@ -63,4 +65,22 @@ Very often, you have to use sync\_all() sync\_blocks() which are functions that 
 # Examples
 
 I'll show you just one really simple example.
+
+# Hints
+
+I talked about debugging and logging in my other talk. You can use "import pdb; pdb.set\_trace()" which you can use for debugging python. You can also attach pdb or lldb or gdb to a bitcoind instance once you pause the test. Another thing that was mentioned yesterday, was that you can look at all these logs in a combined function. It can be helpful to use combine\_logs.py and it will give you an aggregated log of all the nodes of all the RPCs you're using in the test which helps you figure out what's going wrong.
+
+# Get started
+
+test/README.md
+
+test/functional/README.md
+
+test/functional/example\_test.py
+
+There are 39 open issues on the Bitcoin Core github with the label "tests".
+
+test coverage: <https://marcofalke.github.io/btc_cov/>
+
+
 
