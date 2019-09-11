@@ -2,6 +2,8 @@ Threshold scriptless scripts
 
 Omer Shlomovits (KZen Research) (omershlomovits, zengo)
 
+<https://twitter.com/kanzure/status/1171690582445580288>
+
 # Scriptless scripts
 
 We can write smart contracts in bitcoin today, but there's some limitations. We can do a lot of great things. We can do atomic swaps, multisig, payment channels, etc. There's a cost, though. Transactions become bigger with bigger scripts. Also, it's kind of heavy on the verifiers. The verifiers now need to verify more things. There's also privacy issues because you put your contract publicly on chain.
@@ -119,6 +121,18 @@ We can also do a threshold ECDSA wallet. It's possible. There's key derivation i
 Another use case is coinjoin mixer. This is a byproduct. Coinjoin is basically where multiple people agree on inputs and outputs and they add their own inputs and outputs. Chaumian coinjoin can achieve this coordination in a more structured way. It's also possible to structure the way-- it's a coordination game for key generation, each one party can generate a local view and also... so maybe we're... way to get this consensus between parties off-chain that can later be used without a central authority.
 
 Another use case is atomic swaps. We can use scriptless scripts and adaptor signatures. But another construction depends on access structure secret shares can be swapped using "gradual release of secrets". This is not a perfect atomic swap, though.
+
+Another one is to use a payment channel network. This is the anonymous multi-hop locks paper that was mentioned earlier.
+
+Finally, a few years ago was a "Efficient zero-knowledge contingent payments in cryptocurrencies without scripts". They used 2p-ECDSA not the Lindell way but another way. This was a zero-knowledge contingent payment where it's an atomic swap but instead of switching one coin with another, you switch one coin with a proof of some statement. They jointly sign this transaction, and there's a zero-knowledge proof that the solution is encrypted by the signature. You get this information once the signature is broadcasted. This is really interesting and can be done today.
+
+# Research
+
+We're in a good place because this threshold cryptography is in a standardization process by NIST. There's some underlying assumptions on the network layer, like authenticated secure p2p communication and a broadcast channel. We had one idea of using the blockchain as the broadcast layer. It would be nice to have better accountability, and batch signing and verification.
+
+# Summary
+
+Threshold ECSA based scriptless scripts are practical today. They are possible now, they are practical to use in real life, and they hold strong security gaurantees and the focus of active research in the cryptography community.
 
 
 
