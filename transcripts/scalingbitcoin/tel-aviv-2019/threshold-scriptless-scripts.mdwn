@@ -68,7 +68,7 @@ Threshold ECDSA struggled with the same problem of linearity. It's not surprisin
 
 # Scaling Bitcoin 2018
 
-We gave a talk on "Instantiating scriptless 2p-ECDSA". Clasiscally you can replace a multisig with a single sig using 2p-ECDSA. Then there was "Anonymous multi-hop locks for blockchain scalability and interoperability". They define scriptless scripts over ECDSA by constructing this adaptor signature from Schnorr but for ECDSA. To do this, they also needed 2p-ECDSA. So it's common to both of these.
+We gave a talk on "Instantiating scriptless 2p-ECDSA". Clasiscally you can replace a multisig with a single sig using 2p-ECDSA. Then there was "[Anonymous multi-hop locks for blockchain scalability and interoperability](https://eprint.iacr.org/2018/472.pdf)". They define scriptless scripts over ECDSA by constructing this adaptor signature from Schnorr but for ECDSA. To do this, they also needed 2p-ECDSA. So it's common to both of these.
 
 Fast secure two-party ECDSA signing (Yehuda Lindell)
 
@@ -80,11 +80,15 @@ Threshold signatures are described as two protocols. It's key generation and sig
 
 # Two-party keygen from Lindell 2017
 
+https://github.com/KZen-networks/multi-party-ecdsa
+
 There's key exchange where at the end both parties agree on some public information, but then there's an ... we need to define or use a different... it adds some specific properties of homomorphism. I'll mention it in a second. It basically uses this.. property... that there's no leakage of x1 and x2.
 
 What can we do with this? Well, we can sign. We basically run another diffie-hellman key exchange to get... and then we do this kind of computation to... this is what I mentioned before. This is specifically.. this kind of... but eventually one party will send... and the other party will do some more computation.. and be able to... such that verification will succeed. We calculate that this is unforgeable so that no single party can forge a signature without having access to both parties at the same time.
 
 # 2p-ECDSA lock using MMSKM18
+
+https://github.com/KZen-networks/multi-hop-locks
 
 This is how to do adaptor signatures in ECDSA. The change is really minimal. When you're generating some random point, instead of using the generator of the elliptic curve, we just use the .... in order to... eventually the adaptor would be s', which is not an addition--- and multiplication. Multiplication is possilbe given you have s' and you need to do the inverse of t. It's similar but different.
 
@@ -104,7 +108,7 @@ We can build threshold ECDSA without any new security assumptions on top of ECDS
 
 What about interaction? There's a setup phase, let's say it's a one time thing.
 
-papers: L17, GG18, LNR18, DKLS18, DKLS19, CCLST19, SA19, DKOSS19
+papers: [L17](https://eprint.iacr.org/2017/552.pdf), [GG18](https://eprint.iacr.org/2019/114.pdf), [LNR18](https://eprint.iacr.org/2018/987.pdf), DKLS18, [DKLS19](https://eprint.iacr.org/2019/523.pdf), [CCLST19](https://www.math.u-bordeaux.fr/~gcastagn/publi/CRYPTO19_2pECDSA_extended.pdf), SA19, DKOSS19
 
 params: 2/2, t/n, t/n, 2/n, t/n, 2/2, n/n/, t/n
 
@@ -114,21 +118,23 @@ There's also open-source code for some of these. Some of these results are very 
 
 I want to just describe a few of the experiments and what we can do with these tools.
 
-With multisig using threshold ECDSA, we get privacy. The transaction looks completely regular. The on-chain cost is the same as a single signature transaction. We can even take it further, there's open-source code links here on the slides, for Kzen-networks on github.
+With multisig using threshold ECDSA, we get privacy. The transaction looks completely regular. The on-chain cost is the same as a single signature transaction. We can even take it further, there's open-source code links here on the slides: http://github.com/KZen-networks/multi-party-ecdsa.
 
-We can also do a threshold ECDSA wallet. It's possible. There's key derivation in there and so on.
+We can also do a threshold ECDSA wallet. It's possible. There's key derivation in there and so on. github: [gotham-city](https://github.com/KZen-networks/gotham-city) [blockchain-crypto-mpc](https://github.com/unbound-tech/blockchain-crypto-mpc)
 
-Another use case is coinjoin mixer. This is a byproduct. Coinjoin is basically where multiple people agree on inputs and outputs and they add their own inputs and outputs. Chaumian coinjoin can achieve this coordination in a more structured way. It's also possible to structure the way-- it's a coordination game for key generation, each one party can generate a local view and also... so maybe we're... way to get this consensus between parties off-chain that can later be used without a central authority.
+Another use case is coinjoin mixer. This is a byproduct. Coinjoin is basically where multiple people agree on inputs and outputs and they add their own inputs and outputs. Chaumian coinjoin can achieve this coordination in a more structured way. It's also possible to structure the way-- it's a coordination game for key generation, each one party can generate a local view and also... so maybe we're... way to get this consensus between parties off-chain that can later be used without a central authority. https://github.com/KZen-networks/ShareLock
 
-Another use case is atomic swaps. We can use scriptless scripts and adaptor signatures. But another construction depends on access structure secret shares can be swapped using "gradual release of secrets". This is not a perfect atomic swap, though.
+Another use case is atomic swaps. We can use scriptless scripts and adaptor signatures. But another construction depends on access structure secret shares can be swapped using "gradual release of secrets". This is not a perfect atomic swap, though. github: [atomic-lock](https://github.com/scriptless-scripts/atomic-swap), [centipede](https://github.com/KZen-networks/centipede/).
 
 Another one is to use a payment channel network. This is the anonymous multi-hop locks paper that was mentioned earlier.
 
-Finally, a few years ago was a "Efficient zero-knowledge contingent payments in cryptocurrencies without scripts". They used 2p-ECDSA not the Lindell way but another way. This was a zero-knowledge contingent payment where it's an atomic swap but instead of switching one coin with another, you switch one coin with a proof of some statement. They jointly sign this transaction, and there's a zero-knowledge proof that the solution is encrypted by the signature. You get this information once the signature is broadcasted. This is really interesting and can be done today.
+Finally, a few years ago was a "[Efficient zero-knowledge contingent payments in cryptocurrencies without scripts](https://eprint.iacr.org/2016/451.pdf)". They used 2p-ECDSA not the Lindell way but another way. This was a zero-knowledge contingent payment where it's an atomic swap but instead of switching one coin with another, you switch one coin with a proof of some statement. They jointly sign this transaction, and there's a zero-knowledge proof that the solution is encrypted by the signature. You get this information once the signature is broadcasted. This is really interesting and can be done today.
 
 # Research
 
-We're in a good place because this threshold cryptography is in a standardization process by NIST. There's some underlying assumptions on the network layer, like authenticated secure p2p communication and a broadcast channel. We had one idea of using the blockchain as the broadcast layer. It would be nice to have better accountability, and batch signing and verification.
+https://github.com/KZen-networks/white-city/
+
+We're in a good place because this threshold cryptography is in [a standardization process by NIST](https://csrc.nist.gov/Projects/Threshold-Cryptography). There's some underlying assumptions on the network layer, like authenticated secure p2p communication and a broadcast channel. We had one idea of using the blockchain as the broadcast layer. It would be nice to have better accountability, and batch signing and verification.
 
 # Summary
 
