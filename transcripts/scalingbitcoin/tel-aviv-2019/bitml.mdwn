@@ -4,6 +4,8 @@ Stefano Lande
 
 paper: <https://arxiv.org/abs/1905.07639>
 
+<https://twitter.com/kanzure/status/1171695588116746240>
+
 This is shared work with my collaborators and coauthors.
 
 # Smart contracts
@@ -48,6 +50,32 @@ Time commitment is useful for more involved contracts like a two-player lottery.
 
 This contract has a problem because it's extremely unfair to Alice. She can't guess Bob's entropy because Bob can use arbitrarily high amounts of entropy. So we constrain Bob to using a value of zero or one, so an honest player has at least a 50% chance of winning the lottery. Bob can commit to this secret. He will for sure win the lottery because of probability, but he will lose the collateral in the time commitment.
 
+# Compiler security
 
+How can we be sure that the BitML compiler doesn't introduce security vulnerabilities during compilation? One of our main results is that our compiler is computationally sound, so we can trust the compiler. We can trust the compiler, but can we trust the developers of smart contracts. Are they going to make errors when they design contracts?
 
+# Verification
+
+We have a way of doing automatic verification of contract properties. We can verify both contract-dependent properties (expressed as LTL formulae) and liquidity (funds are never frozen in the contract).
+
+# BitML toolchain
+
+We have a secure analyzer that can check the properties. There's a compiler that turns from BitML to a transaction then to standard bitcoin transactions. There are also benchmarks and tool demos. We showed some lotteries in the demos. There's a correlation between the number of players, the number of transactions, and the verification time. In particular, you can see a big jump in the number of transactions in the 2 player lottery and we were limited because scripts had to be max of 520-bytes, so we needed to use more than one step and because of that the verification time exploded but in other cases verification is a matter of seconds at most.
+
+In all of these use cases, the transactions are standard and are limited to 520 bytes of length.
+
+# BitML wishlist
+
+To conclude, I want to talk about some future developments of BitML that would make it more useful in practice. We're open to any type of collaboration regarding BitML. If you're interested, please talk with me.
+
+We want to overcome the fact that BitML is not "bitcoin complete" and it can't express every bitcoin contract. For example, a contract is fixed at compile time. We should be able to use sighash modes to let escrow express contracts like escrow funding where we don't care who adds the money, anyone can add money to a BitML contract in that case.
+
+We want to explore relative timelocks so that we can express time constraints relative to the last BitML case that was executed.
+
+We're also working on dynamic stipulation of subcontracts, which would allow BitML to express payment channels.
+
+We are currently working on executing BitML contracts off-chain because in the current execution model, each BitML step corresponds to a transaction that will change. This doesn't scale well, because a complex contract can require dozens of transactions on-chain. We want to move off-chain and have participants verify correctness of execution.
+
+Finally, we would like BitML over taproot. This would exploit forthcoming MAST and Schnorr signature proposals. Unexpected script branches remain off-chain, and this is more space efficient and increases expressivity (520 bytes limit). It's also private, so BitML contract execution won't hit the blockchain.
+i
 
