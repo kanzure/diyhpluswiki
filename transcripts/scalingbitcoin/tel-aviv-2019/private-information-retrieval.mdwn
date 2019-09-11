@@ -56,6 +56,9 @@ We do a temporal division of the blockchain. We have all-time data, then a month
 
 The user wants to look up an address. He goes to the PIR manifest. He needs to ask the server to make a query on the address PIR database. This is a query to the first database. Given the blockheight he gets back, he can query the merkle tree database. Once he identifies some transactions that he's interested in, he can finally query the actual raw transaction PIR manifest.
 
+The client performs interpolation search on these manifest PIR files.
 
+# Further improvements
 
+It doesn't seem quite practical yet. Every time the database changes, we need to recompute the PIR databases and transmit new manifest files to the clients. Interpolative search might be able to help skip manifest files. There might be a way to have a more fine granular separation of databases to clean things up.
 
