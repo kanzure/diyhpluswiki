@@ -88,6 +88,39 @@ This is the master graph and it shows you why OP\_SECURETHEBAG is so great. What
 
 Having run the simulation, what are the results. What we see instead is that, bear in mind this is powers of 2 on the vertical and powers of 10 on the horizontal. We see the mempool is 10x smaller when using OP\_SECURETHEBAG. We also see this red line represents the things we have now backlogged using OP\_SECURETHEBAG. They are fully confirmed and committed to, but you don't have an output you can directly spend from. It takes some time to clear those out when the spike goes down. We can see the mempool is basically empty for this entire period. Our mempool clears out significantly faster than without OP\_SECURETHEBAG. Before, OP\_SECURETHEBAG the mempool would never go back down because the mempool is saturated and things are added at least as fast as we can confirm transactions. You only have to do log(n) transactions, which are guessable once you know the leaf nodes. The extra fee required to prioritize pulling out one of those coins is basically constant because of that.
 
-I also did another adoption simulation.
+I also did another adoption simulation. Even if only one business adopts OP\_SECURETHEBAG, then they will have a massive benefit. Many tefchnologies need a lot of adoption in order to make an impact. But actually, this has a big impact for everyone regardless of how many people adopt it.
 
+# Summary: OP\_SECURETHEBAG is like a transaction bypass capacitor
+
+OP\_SECURETHEBAG smooths out the transaction backlog. You'll be able to get confirmations earlier, but spending will be more delayed. It soaks up excess transactions, and releases them later like a sponge. The private benefit is large even with small adoption. The private use will benefit the entire public. There's also reorg safety, by default doing lots of withdrawals is not reorg safe unless you're clever. With OP\_SECURETHEBAG, if it gets reorged out, you get a really big win-- it's secured by the anchor of when the original OP\_SECURETHEBAG payment was made. It's locking the coins to be spent in the way you specified. OP\_SECURETHEBAG helps you not get double spent.
+
+# What's the catch?
+
+I made a claim that there's no tradeoff. Let me present one more piece of information to prove that there's no tradeoff if you accept an assumption. Normally, multi-radix congestion controlled transactions... you can expand on a transaction and its children all at once, or you can do a binary tree. The claim that is probably true is that, given there's O(1) overhead in amortized work per input, and O(n) overall work, and without OP\_SECURETHEBAG the batch thing is O(n) also. In the worst case, we're not doing asymptotic work or something, this isn't like n^2 thing. Worst case, it's O(n) more work. The idea is that you can defer and wait for asymptotically chaeaper blockspace then it's going to be a constant amount more expensive. Smaller size verification of interiro node transactions compared to normal transactions (no signatures). The interior nodes are prunable, and they have some sort of optimal tree structure not just leaf nodes all at the end. You can apply some of these htings recursively across the tree. I think the expected overhead is just constant. If you're doing a transaction with more than a few outputs, it's always better to use OP\_SECURETHEBAG especially if you're a business and reliability is a concerned.
+
+# Advanced topics in OP\_SECURETHEBAG
+
+If you're doing inter-business traffic, where businesses are doing managed cashflow, they can manage the money and pay their other obligations. This makes liquidity between busisnesses is really quick.
+
+Instead of doing payments, you can open up channels. This is called ball lightning. You can create as many channels as you wnat, and they can be connected in whatever topology you want.
+
+You can unroll looped programs into finite steps with OP\_SECURETHEBAG. You can compile this into a finite form where you have a run limit such as a million years, and then you can compile this into a set of transactions using OP\_SECURETHEBAG to enforce the transitions between steps without requiring pre-signed transactions.
+
+Smart vaults: you can have a program that moves at a certain pace, and it can move a cold coin to hot storage, and once in hot storage you can send it to cold storage or after some timelock you can spend it to a customer. This is a failsafe design and all of the components are isolated from each other.
+
+You can have non-interactive channels.
+
+You can have coordination free decentralized mining pool payouts.
+
+# Summary
+
+OP\_SECURETHEBAG is great and it's the best thing ever. I'm going to skip about deployment. We could wait to deploy this, fees are low right now, but that's kind of like waiting to go to the doctor until you get cancer. Also, things are slow in bitcoin and if ew want this to happen then we need to think about it now. This is going to make hte long-term prospects of the fee market healthier.
+
+# Options
+
+This could be a tapscript extension, but since taproot is going to take a long time then maybe make it a custom opcode and deploy it sooner.
+
+# Next steps
+
+I could use help like sponsoring me as a researcher, or help review the BIP, or work on the implementation, or integrate OP\_SECURETHEBAG on the product, chime in on the bitcoin-dev mailing list, or tweet about it and ask questions.
 
