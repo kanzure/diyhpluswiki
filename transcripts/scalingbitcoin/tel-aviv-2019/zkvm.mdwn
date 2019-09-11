@@ -100,7 +100,43 @@ We use a pedersen commitment, and use a variable to construct a bunch of constra
 
 Negative value is mixed with an actual payment in the cloak. A variable defines a payment constraint with borrow + output. To deal with the negative value, the only way to deal with it is to mix it with others in the cloak. You leave the negative value on the stack, so the user has to find the appropriate amount to compensate when they compute their transaction.
 
+# Linear types + capabilities
 
+This is linear types + capabilities. We can express our requirements in an expressive way. This allows us to avoid bugs like confused deputy problem because we're not doing reflection.
 
+# ZkVM tradeoffs
 
+The VM is not turing complete. It's optimized for financial use cases and to borow from gmaxwell, "blockchain is important" so we try to minimize any computation on-chain. Ideally, you only see some signatures on the chain and maybe a zero-knowledge proof of a single instruction. Occassionally when parties in a payment channel don't cooperate, then maybe they reveal payment conditions and zkvm enforces that. This is explicitly not designed for arbitrary computation.
+
+Even though we have pretty efficient cryptography and compression of the blockchain state, but the amount of data you still have to catch up with is linear. So it's similar to bitcoin, if you want to catch up then you have to get all the blocks. The known ways for us to compress this amount of data, uses entirely different cryptography and more interesting assumptions which we don't use in zkvm.
+
+On the bright side, SVP clients which only have blockheaders and pieces of the UTXO set, and completely discarding and not verifying transactions, which is what they need to keep track of the utreexo proofs. If oyu're a lightclient with a payment channel and you want to watch the status of your channel, whether it's closed forcibly by the counterparty or just update the proofs, you need to transfer O(1) data but this will be reduced than the full transactions so you don't need to verify all transactions.
+
+If you have a trusted sourc,e then there's a standard way to bootstrap via utreexo roots. If you have a trusted root, then you don't have to replay all blocks from the beginning of time.
+
+# Privacy features of zkvm
+
+The asset types, claled flavors, are private. Asset amounts are private. Data parameters are private, and you can always make them explicitly public if you want. Anything that happens within the transaction, if you have one giant cloak instruction, the asset flow is also encrypted.
+
+What's not private are the programs (which are all available in plaintext) and the transaction graph where you can find UTXOs linked together just like in bitcoin.
+
+Taproot reveals only a script or program in the event of dispute and only then a specific branch is revealed. So including the program might not be such a big deal in zkvm.
+
+On the transaction graph, the alternative is to erase the links between inputs and outputs like zcash or monero. They impose some important scalbility tradeoffs. You have to store an ever-growing amount of data, like key images, to prevent double spending. This has nothing to do with cryptography; monero can use ring signatures, and zcash has to use this accumulator. You need to check that the -- is not there. So in the UTXO model, it's important that you can store only the things that you know are not spent. So that's why we don't have any transaction graph obfuscation on layer 1.
+
+But on layer 2, you could use coinjoin. This is the distinction between TLS and tor. TLS gives you data confidentiality between point to point, but if you want extra anonymity then you have to do some extra work which is how tor works. That's the last tradeoff.
+
+# Performance
+
+This thing is fast. We use less than 1 ms per output, up to 1000 tx/sec. This gives us ample room for CPU performance. Custom constraints are relatively cheap. Rangeproofs for output values bear most of the cost. Signatures and custom constraints have 1-5% overhead. Also, this scales with privacy. This is a rare place where the search for better privacy is aligned with performance. Aggregation saves space and time, but also helps with privacy. Proof size is log(n) so the marginal cost goes to zero. Also, you have free storage with utreexo
+
+# Conclusion
+
+We have a small, pure-rust codebase. zkvm + utreexo + blockchain, 7k loc schnorr + musig + keytree + bulletproofs. We have 14k LOC for curve2519 + ristretto255. Assumptions are ECDLP on curve25519, and Keccak (shake128) is a random oracle.
+
+<https://github.com/stellar/slingshot>
+
+<https://github.com/dalek-cryptography/bulletproofs>
+
+<https://ristretto.group/>
 
