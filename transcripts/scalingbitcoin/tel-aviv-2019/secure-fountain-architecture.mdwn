@@ -2,6 +2,10 @@ A secure fountain architecture for slashing storage costs in blockchains
 
 Swanand Kadhe (UC Berkeley)
 
+<https://twitter.com/kanzure/status/1172158545577594880>
+
+paper: <https://arxiv.org/abs/1906.12140>
+
 # Introduction
 
 I know this is the last formal talk of the day so thank you so much for being here. This is joint work with my collaborators.
@@ -87,6 +91,19 @@ Fountain codes were originally designed for a different task. Here, we're using 
 To do that, we're going to essentially use the header chain as side information to detect bad blocks. So we start in the standard way of the peeling decode,r then we need to pick a singleton block that is not XORed with anything, and let's compare its header with the header in the headerchain. If the headers match, then we take the payload of this block which is supposed to be transactions, and then compute the merkle root and see if the merkle root matches the one stored in the headerchain. If both of them match, then we're going to accept that block. But if they don't match, then it must be a malicious block and we're essentially going to delete it.n
 
 Malicious droplets are detected only when they become a singleton. Peeling is crucial in detecting malicious droplets.
+
+# Threat model
+
+The threat model is that some arbitrary set of nodes are adversarial and are giving you garbage data. We're assuming that there are at least a certain number of honest nodes, and the adversary is oblivious and cannot observe storage contents of the network and then choose to who to attack. In this model, we can show that if a malicious droplet becomes a singleton, it is rejected. OBlivious adversary cannot influence probability of decoding failure for honest droplets.
+
+# Comparison with existing solutions
+
+....
+
+# Numerical results
+
+....
+
 
 
 
