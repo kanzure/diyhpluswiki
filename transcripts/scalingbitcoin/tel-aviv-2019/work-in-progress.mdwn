@@ -1,0 +1,78 @@
+Work in progress sessions
+
+Scaling Bitcoin 2019 Tel Aviv "yesod"
+
+# Optical proof of work
+
+Mikael Dubrovsky
+
+I am working on optical proof-of-work. I'll try to pack a lot into the 10 minutes. I spent a year and a half at Techion.
+
+## Physical scaling limits
+
+Probably the three big ones are, there's first the demand for blockchain or wanting to use bitcoin more. I think more people want to use bitcoin. Most of the world does not have access to property rights. There's a lot of pent up demand for something like bitcoin. Bitcoin is $100 billion and offshore banking is $20 trillion. There is definitely demand, but that doesn't seem to be the bottleneck for now.
+
+Throughput seems like the bottleneck of this conference, so I won't address it.
+
+## Scalability of PoW
+
+The energy use of bitcoin has grown monotonically or even worse with the bitcoin market cap. Nobody really knows how much energy bitcoin is using. But we do know that we're getting centralization of miner often in countries where the governments are not ideal. People mine in some of these countries because they can make deals for better electricity.
+
+Part of the problem with electricity-based PoW is that it's centralized, open to partioning attacks, it's open to regulation in general since it's next to power plants and waterfalls. It's huge, it needs cooling, it can't be hidden. It's unfairly distributed especially geographically, and it excludes nearly all large cities which excludes most living people. Also you need a lot of electricity.
+
+## Redesigning the economics of PoW
+
+So instead of getting rid of PoW, can we change the economics for miners?
+
+Fundamentally what we want to do is just have for this conference, this is not an important slide to describe PoW. But looking at this problem creatively, there's nothing we know how to prove remotely other than computation. It might be ideal to just burn diamonds, but you can't prove you did it. So you're stuck proving some kind of computation. I think we're stuck with computation for now.
+
+We can try to pick a computation that the optimal hardware for this computation you get a better CAPEX/OPEX ratio where you pay more for the equipment and less for the energy. This ratio is just arbitrary. For ASICs, you're mostly paying for energy and much less for hardware.
+
+The benefits you would get of a high CAPEX proof-of-work would be that it would be hard to arbitrage compared to electricity. Access to capital is much more democratic. It scales better, it's geographically distributed, less partition attacks on the network, and the hashrate is more resilient to the coin price. This is a totally fake graph, but the hashrate follows the bitcoin price. The hashrate doens't grow all the time because people turn off their miners. If you buy a miner and it has a low operating cost, you wouldn't turn it off, so even if the price is volatile this hashrate wouldn't be volatile.
+
+## PoW algorithm design goals
+
+The high level goals for a new PoW would be to have an accelerated high energy-efficient hardware, let it be digitally verifiable even if the hardware is analog, and optimal on the hardware you're targeting, and have same or better security than we have now.
+
+## Silicon photonic co-processors
+
+There's a number of emerging platforms for analog computing, but this one is very promising because you can go to TMSC or Global Foundries. These kinds of chips are already commercial for processing data coming out of fiber. They do a fourier transform on the optical data in the silicon chip using waveguides made of silicon. This is already commercial and lots of companies are starting to do machine learning with this stack.
+
+The way a chip like this works is that you hvae a laser input, and there's multiple architectures for this, the light gets split, your bits are converted into light intensities, and then they go through a number of interferometers and you can set the tuning on interferometers to get a different transformation like a vector matrix multiplication, and you collect your output and convert it back to bits from light. If you have a good chip, you've saved a lot of energy in theory.
+
+We wanted to stick to something as close to hashcash as possible since it's easy to implement and people might use it. We didn't want to work with all-optical hashing because people probably wouldn't use it. We also didn't want to design a hash. We didn't want to use SGX or some trusted setup. And we wanted to use hardware that we can go to the foundry for.
+
+We composed a function that you can do on the optical chip with hashes. It's "HeavyHash" like = H(F(H(I))). It's more work to do this one hash, but it ends up being that the total hashrate of the system is lower so you're doing fewer sha hashes becaues you're doing vector matrix operations and instead of paying for those operations in electricity you're paying for them in chip space on the photonic chip.
+
+The requirement for the function F to be acceleratable on low-opex hardware like photonic chips, to preserve entropy, and be "minimal effective hard" property.
+
+## Progress
+
+We have some prototypes for these chips. Here's a bench prototype. We were going to bring this, but it got stuck in customs. We hope to publish a paper soon.
+
+## Feasibility for bitcoin
+
+Is it time to change bitcoin's PoW to optical proof-of-work? Probably not now, but these geographical centralization issues over time are going to be an issue and at some point bitcoin is going to hit a wall.
+
+# Offline transactions
+
+Daniel Marquez
+
+# Conditional transfer of tokens on top of bitcoin
+
+Thomas Eizinger
+
+# Signet
+
+Karl-Johan Alm
+
+# Miniscripts
+
+Andrew Poelstra
+
+# Vaults
+
+Bryan Bishop
+
+oh wait that's me (who types for the typer?)
+
