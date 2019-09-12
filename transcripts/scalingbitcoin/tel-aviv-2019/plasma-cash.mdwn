@@ -73,4 +73,11 @@ You also need to verify that the transaction format is valid.
 
 EnforceSpentTo is also required, which enforces UTXO is spent to the next state. I want to be able to go the next state, but also go back to the previous state in case someone challenges me. You can use PICK to dynamically construct the covenants with the scriptSig args.
 
+# Summary
+
+We have off-chain fixed-denomination payments. We can compress any amount of transactions to O(1) commitment on layer 1. The operator can censor, but he cannot steal under the liveness assumption. This requires restrictions on spending outputs, and merkle proof verification, and another thing.
+
+Plasma Cash unlike lightning has exploding history, but checkpoints or accumulators might fix this. On the other hand, plasma cash can receive payments when keys are cold, and it's capital efficient with collateral, and no on-chain transactions are required to transact. One downside might be that plasma cash requires fixed denominations.
+
+An accumulator or checkpoint might be able to compress all the inclusion proofs.
 
