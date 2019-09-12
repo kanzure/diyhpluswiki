@@ -2,6 +2,8 @@ Proof of verification for proof of work: Miners must verify the signatures on bi
 
 Kanta Matsuura
 
+<https://twitter.com/kanzure/status/1172142603007143936>
+
 # History lesson
 
 In the 90s, we had some timestamping schemes where things are aggregated into one hash and then it would be publicized later in the newspaper. This scheme was commercialized, in fact. However, the resolution of the trust anchor is very limited. It's one day or half-day at best. When we want to verify, we need to visit the online-offline database maintained by a trusted party to get the merkle inclusion paths. They assume verification or validation is assumed to be infrequent.
@@ -45,5 +47,29 @@ In many digital signature schemes like DSA based on the hardness of the discrete
 # Computational cost for honest nodes
 
 Are we going to have additional computational cost for honest nodes in this scheme? The answer is a resounding no. When we consider the nodes who generate transactions, there are no changes. The proof-of-overifiation mechanism is just naturally embedded. Nodes who generate a block, have a proprotional increase of component hashing (proportional to the number of the transaction outputs) but much smaller than the total PoW hashing, for both implicit PoV and explicit PoV.
+
+In most of the hash functions that can handle arbitrary length input, they have similar structure to the construction invented by Merkle-Damgard. From this scheme, we can easily increase the computational cost but not necessarily large.
+
+Nodes who are considering whether they agree to the newly reported block: if they are not interested in signature verification but interested only in the verification of the nonce, the use of the implicit PoV increases the computational cost; the node must verify the signature to compute the hash before verifying the validity of the nonce. SPV nodes who do not verify the signatures cannot verify the .....
+
+# Communication overhead
+
+No changes in the case of implicit PoV for communication overhead, however there is a marginal increase for explicit PoV. I'll skip this because of the time constraints here.
+
+We might consider individually verifiable explicit PoV, where we append all the PoVs or the hash of each PoV, etc, if we are willing to accept larger communication overheads. A lite client would just verify some of the PoVs or something, and then if their transactions are fine then maybe they trust the miner.
+
+# Summary
+
+Dishonest nodes may skip the verification of the signatures on transactions. Such behaviors may allow malicious transactions to be included in a new block, and reduce the ...
+
+# Future work
+
+* Advanced experimental evaluation
+
+* Advanced theoretical evaluation, especially the SPV security model
+
+* Proof of full verification: extend PoV so that we can verify someone else has confirmed there are no double spends. Extending PoV so that we can verifyu someone else  has done anti-malware operations on the scripts (like malware detection). Maybe more problems to be considered.
+
+
 
 
