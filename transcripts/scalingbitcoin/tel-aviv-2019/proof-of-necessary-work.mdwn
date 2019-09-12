@@ -66,10 +66,23 @@ The problem is that this only requires access to state. An adversary can reuse w
 
 Strawman: insert n in every updated leaf. New merkle paths then change unpredictably as a function of the nonce. If we could inject our nonce in all of the merkle paths, then we would be done. The problem is that we only alter half of them. This gives an epsilon of about 1/2.
 
-The new idea is to modify hash function by 'cloaking' it with p. The design challenge is to modify our hash function to use p 'almost everywhere', while outputting the same result as before.
+The new idea is to modify hash function by 'cloaking' it with p. The design challenge is to modify our hash function to use p 'almost everywhere', while outputting the same result as before. We want to take this hash function, make it output exactly the same thing on the output, but all the intermediate steps should be a function of this row which should be computationally unpredictable.
 
+We do the cloaking with a pedersen hash. This leverages some specific properties of Pedersen, namely the homomorphic properties. This doesn't add a lot of constraints into the proof system; it doesn't make the proof substantially larger. We do need to verify that this is an actual input; and this adds a linear amount of constraints, which can increase the proving time of our circuit.
 
+# Putting it all together
 
+We demonstrate how to cloak predicates with a nonce n, making information reuse impossible. What's the theoretical limits for this? For a 20 transaction predicate, there's like 6 million constraints, which means we lower bound our epsilon by 20% per block in our predicate when the implementing the previous ideas without optimization. It's the predicate of the whole block; we can use the cloaking technique for the rest of the computation namely things like the signatures, we use Schnorr, and some of the other stuff. That's really not that important, it is important I just don't go into it here because it's not the majority of the computation. We think it's promising that we can put epsilon down so low that we can have a negligble overhead for large miners.
 
+# Proof chains
 
+Proof chains from bitcoin-ng a few years ago are a similar idea. Discarding previous profos is wasteful, so can we do better? It's easy to extend this and get some throughput, like "Proof Chains" where we require miners to build on top of previous proofs up to some largest level, until they find one that satisfies the difficulty, then they publish it all on the chain and this means that some previous verification can be ... while keeping all the nice properties from Nakamoto consensus.
+
+# Related work
+
+An ideal proof system would require verifier succinctness (for efficient IVC), also be trustless (no trusted seutp), and also be quantum resistant. Recent work is rapidly approaching these capabilities. Since our modification are on the predicate layer, such improvements are complemetnary to our approach. Our work uses IVC as a completely black box. As long as you can use Pedersen, we can switch into any proof systems that have the same guarantees.
+
+# Future work
+
+We would like to generalize this to arbitrary proof system. We want to be watermarking some of these systems. We also want to design cloaking properties for other (faster) hash functions. We would also like to extend to full bitcoin functionality, which might require a soft-fork.
 
