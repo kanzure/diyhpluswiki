@@ -4,6 +4,8 @@ Kanta Matsuura
 
 <https://twitter.com/kanzure/status/1172142603007143936>
 
+extended abstract: <http://kmlab.iis.u-tokyo.ac.jp/papers/scaling19-matsuura-final.pdf>
+
 # History lesson
 
 In the 90s, we had some timestamping schemes where things are aggregated into one hash and then it would be publicized later in the newspaper. This scheme was commercialized, in fact. However, the resolution of the trust anchor is very limited. It's one day or half-day at best. When we want to verify, we need to visit the online-offline database maintained by a trusted party to get the merkle inclusion paths. They assume verification or validation is assumed to be infrequent.
@@ -69,7 +71,6 @@ Dishonest nodes may skip the verification of the signatures on transactions. Suc
 * Advanced theoretical evaluation, especially the SPV security model
 
 * Proof of full verification: extend PoV so that we can verify someone else has confirmed there are no double spends. Extending PoV so that we can verifyu someone else  has done anti-malware operations on the scripts (like malware detection). Maybe more problems to be considered.
-
 
 
 
