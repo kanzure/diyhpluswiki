@@ -54,6 +54,38 @@ We have some prototypes for these chips. Here's a bench prototype. We were going
 
 Is it time to change bitcoin's PoW to optical proof-of-work? Probably not now, but these geographical centralization issues over time are going to be an issue and at some point bitcoin is going to hit a wall.
 
+# A lucas critique of the difficulty adjusmtent algorithm of the bitcoin system
+
+Yoshinori Hashimoto
+
+## Introduction
+
+I am going to talk about our research project about difficulty adjustment algorithm. BUIDL is my employer in Japan. This is joint work with my colleagues.
+
+## Difficulty adjustment
+
+The difficulty adjustment algorithm is used to adjust the difficulty of the bitcoin system to achieve one block every 10 minutes based on recent hashrate.
+
+## Policy goal
+
+There's a winning rate, a global hash rate, and the block time is an exponential distribution with intensity W x H. The current bitcoin DAA adjusts the difficulty every 2016 blocks (every 2 weeks), and adjusts so that the block time is about 10 minutes. If block generation is too slow, then the winning rate is increased, and if it is too fast, then the winning rate is decreased.
+
+## Sample analogue
+
+If the hashrate was directly observable, it would be easier to determine an ideal winning rate. Still we can compute an estimation of the hashrate. Bitcoin DAA achieves the policy goal by using the estimated historical hash rate.
+
+## Miners' incentive
+
+If we change the winning rate, then mining profitability will also change. If we increase the winning rate, then it is easier to get the mining reward and more hashrate will be provided. This increases the global hash rate. For miners, it is easy to adjust the hashrate because they can do it just by turning on and off their ASIC machines. Change in winning rate also changes the hash rate.
+
+((.. I think he's reading from his notes, can we just copy+paste the notes into this document? Thank you.))
+
+## Policy suggestions
+
+We suggest upgrading Bitcoin DAA to Bitcoin Cash DAA which is a good candidate. There might be some other better one.
+
+<https://ssrn.com/abstract=3410460>
+
 # Offline transactions
 
 Daniel Marquez
