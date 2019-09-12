@@ -104,7 +104,22 @@ The threat model is that some arbitrary set of nodes are adversarial and are giv
 
 ....
 
+# Tackling block size variability
 
+One thing we can do is adaptive zeor-padding, while computing bit-wise XOR, a node zero-pads the blocks to the largest block among the d blocks.
 
+Block concatenation is a natural way to reduce variance in block size, to first concatenate blocks to form superblocks and then XOR superblocks and that encoding. Then ew can have the blocks almost equal size and we can save a lot.
 
+# Experimental results
 
+...
+
+# Conclusion
+
+We presented a secure fountain code architecture for reducing blockchain storage costs by orders of magnitude without compromising security of the network. This can be directly applied on top of bitcoin, without requiring a soft-fork or hard-fork.
+
+# Future work
+
+* How to dynamically change epoch length k?
+
+* How to reduce decoding complexity to be linear in k?
