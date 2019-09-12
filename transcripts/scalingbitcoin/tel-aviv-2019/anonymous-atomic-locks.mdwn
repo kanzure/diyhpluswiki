@@ -4,6 +4,10 @@ Pedro Moreno-Sanchez
 
 paper: <https://eprint.iacr.org/2019/589.pdf>
 
+<https://github.com/etairi/A2L>
+
+<https://twitter.com/kanzure/status/1172116189742546945>
+
 # Introduction
 
 I am going ot talk about anonymous atomic locks for scalability and interoperability in payment-channel hubs. This is joint work with my colleagues.
@@ -60,4 +64,11 @@ Atomicity is held, and unlinkability is not breached because the adaptor looks d
 A2L achieves atomicity and unlinkability. This has been formally proven in the UC framework. 2-party adaptor signatures can be instantiated with one-way homomorphic functions or Schnorr or ECDSA. This is backwards compatible with bitcoin. It's also compatible if bitcoin adopts Schnorr signatures.
 
 If you have noticed, it only requires signature verification and timelocks instead of HTLCs. This means that this is interoperable with scriptless cryptocurrencies like monero.
+
+This protocol is good for fungibility because the protocol results in a valid signature that is identical to any other transaction. Other information, like encryptions, are not included in the transaction itself that hits the blockchain.
+
+# Evaluation
+
+Either with Schnorr or ECDSA adaptor signatures are both more performant than tumblebit. With A2L schnorr, we have a computation overhead of 70 ms and 8x faster than tumblebit. With A2L ECDSA, we are 110 ms or 5x faster than tumblebit. A2L Schnorr in ocmmunication overhead is 3.5 KB, which is a 95x reduction, or with A2L ECDSA it's 5 KB or a 65x reduction from tumblebit. nThe number of operations and communication overhead are asymptotically reduced. Tumblebit uses cut-and-choose. Size of exchanged messages grows non-linearly in the security parameter.
+
 
