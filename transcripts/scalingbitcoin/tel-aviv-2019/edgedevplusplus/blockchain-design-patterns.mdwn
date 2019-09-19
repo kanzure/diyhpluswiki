@@ -139,6 +139,8 @@ Before I talk about taproot... Up til now, I have been talking about Schnorr sig
 
 But bitcoin isn't mimblewimble, and people use scripts like timelocks and lightning channels. petertodd has some weird things like coins out there that you can get if you collide sha1 or sha256 or basically any of the hash functions that bitcoin supports. You can implement hash collision bounties and the blockchain enforces it.
 
+(An explanation of the following Q&A exchange can be found [here](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-September/017316.html).)
+
 Q: Can you do timelocks iwth adaptor signatures?
 
 A: There's a few ways to do it, but they aren't elegant. You could have a clock oracle that produces a signature.
@@ -154,6 +156,8 @@ A: This is one way it's being proposed by mimblewimble; but this requires the ab
 Q: No, there's two transactions already existing. Before locktime, you can spend wit hthe adaptor signature one like atomic swaps. After locktime, the other one becomes valid and you can spend with that. They just double spend each other.
 
 A: You'd have to diagram that out for me. There's a few ways to do this, some that I know, but yours isn't one of them.
+
+<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-September/017316.html>
 
 For timelocks, it appears that you need script support. That's my current belief at this time of day.
 
