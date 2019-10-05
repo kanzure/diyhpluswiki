@@ -1,0 +1,60 @@
+Solving the blockchain trilemma
+
+Sreeram Kannan, David Tse, Pramod Viswanath
+
+We want to solve the blockchain trilemma. This is the result of collaboration over the last year between the three of us and many more people.
+
+# Blockchain trilemma
+
+What is the blockchain trilemma? Why should we be interested? Trust is a basic primitive in our society.
+
+Platforms that deliver trust on scale, essentially run the modern economy. Youtube, Apple iTunes, Amazon, they are all marketplaces that provide centralized trust at scale. The main friction with these platforms is that they are  centralized. The three points of the triangle are trust, scale and democratization.
+
+If you look at the edge between democratization and scale, this is in fact not new-- there are services like bittorrent which accounts for a large volume of internet traffic. But due to the inability to figure out incentives, they were replaced by other centralized services.
+
+If you look at the other edge here, it's services that provide democratization and trust like bitcoin and ethereum. It's a breakthrough in decentralized trust, but they are not scalable.
+
+# The promise
+
+There are many potential applications that can actually be run on a decentralized trustless platform. This could include payments, exchanges, gaming, social networks, internet of things, or prediction markets. Our core blockchain infrastructure is unable to support the scale required for every potential transaction conceivable. There are some projects trying to close that gap, and there's still a huge amount of progress required.
+
+# The blockchain trilemma
+
+This lets us phrase the key topic of this session, which is the blockchain trilemma which was popularized by Vitalik Buterin of ethereum. The three axis are decentralization, security and scalability. The trilemma asserts that it's impossible to get all three at the same time. No platform can be decentralized, secure and scalable. And indeed, this is one----  this comes from the experience of trying to build these platforms. Bitcoin and ethereum are decentralized and secure but not scalable. Then there are others like EOS, Tron and Ripple that are secure and scalable but not decentralized. Is there a way to get all 3 at the same time?
+
+# The three axes in detail
+
+What do each of these axes really mean? Unless we define it, we cannot achieve it.
+
+Decentralization means that any read-write access to the blockchain is controlled by some distributed mechanism like the amount of compute power you have or the amount of stake you have, like proof-of-work or proof-of-stake.
+
+Security means that you should be able to defend against adversaries that are adaptive to the public state. To be sure that you can comply with adaptive adversaries and incentive compatible.
+
+What does scalability mean? There are two aspects of scalability. You want bandwidth efficiency, and if you provide more bandwidth then your throughput should go up. So this has vertical scaling: the throughput scales with the amount of resources per node scaling. There's another type of scaling, which is horizontal scaling which is where as we get more and more nodes in the network then the performance should improve with a fixed set of resources per node, so that's horizontal scaling and computational efficiency. Each node can process 1000 transactions/second, but you have thousands of these nodes, so you should be able to process millions of transactions.
+
+The main question is, can we get all of these efficiencies, while preserving the other properties? Scaling, decentralization and security. So that's the main goal.
+
+# The blockchain trilemma is solved
+
+Our main claim is that we have an algorithm or protocol that achieves all these three properties called Trifecta. You can have a new platform which is decentralized, secure and achieves very high throughput. For example, in our implementations, we are already able to have 250,000 transactions/second. I'll let David Tse talk about vertical scaling.
+
+# Prism: Vertical scaling to physical limits
+
+<https://diyhpl.us/wiki/transcripts/scalingbitcoin/tel-aviv-2019/prism/>
+
+When we started to think about this, we focused on vertical scaling which is where you have a fixed number of nodes and you want to scale your performance up to the physical resource limits imposed by the network. It turns out that our solution to this problem gives a very strong hint on how to do horizontal scaling as well. I'll spend some time talking about the vertical scaling solution, and then explain how this can be extended to achieve horizontal scaling. This protocol that was invented to solve vertical scaling is called Prism and it will appear in the November London security ACM conference.
+
+# Physical limits
+
+First let's talk about physical limits. There's two types of physical limits. One is that you have a distributed network, and this network is connected together by pipes that have bandwidth limits and capacity limits. That's one example of a limit. So there's a network capacity. On the other hand, there's another limit, which is how long does information take to propagate through the netowrk mostly through multiple hops. There's a speed of light propagation delay. These two numbers impose a certain limit.
+
+When we started this research, we thought that any protocol can have a point in this two-dimensional figure: transaction throughput on the x-axis and confirmation latency on the y-axis. The network capacity imposes a limit on how much transaction throughput you can get, which limits how much you can push through. Transactions need to be exchanged between nodes. On the other hand, propagation delay places a lower bound on how much latency you can get.
+
+One question we had was, is there a way to find a protocol that goes from where bitcoin sits, as close to the point where transaction throughput and speed of light propagation delay are at their limits. I claim that we have found one. Knowing that, we claim that the protocol we found is a very natural generalization of Nakamoto longest-chain protocol which was the first blockchain protocol.
+
+# Longest chain rule
+
+Our protocol is a generalization of longest-chain. Let me explain how this works. Blocks are generated by miners and they get appended to the longest chain. The blocks play two roles: each block contains transactions, and two, and this is subtle, is that blocks actually vote for each other.
+
+
+
