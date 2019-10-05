@@ -66,4 +66,19 @@ I like to quote a 2018 study of bitcoin and ethereum (Gencer et al 2018). Even t
 
 How do we change this? Is it the only case that the only way we can do is say the way these systems work is that the more economic power you have, the more voting rights you have. How do you make money less useful? How do you prevent briberies and vote buying? How do you prevent this centralization and this rich getting richer effect where a small group of people have a large amount of monetary power?
 
+PoW and PoS are just means to decide who gets voting rights. Once you have voting rights, you can decide what kind of consensus system you're running. It's true that bitcoin has PoW. But you can mix and match things in many different ways. Let's use the right kind of vocabulary. PoW and PoS talk about who has voting rights. But what's the consensus protocol? Is it Nakamoto consensus, asynchronous, partial synchrony BFT, or what?
+
+# Scalable byzantine fault tolerance
+
+We were thinking about a decentralized trust architecture. The first layer is byzantine fault tolerance state machine replication (BFT-SMR). The middle layer is a smart contract layer like EVM or otherwise with different kinds of smart contract languages and execution engines. The third layer is distributed applications that run on top of it. This is not a new vision. This is pretty old, it comes from research in byzantine fault tolerance and state machine replication. Barbara Liskov did this work in the early 1990s. It developed extensively in the last 30 years. The high level approach of BFTSMR is this primary-backup paradigm where every node replicates state, and in every view there's one primary and a bunch of backups. There's a way to switch from one primary to another primary. What these systems have are these two properties-- they are always safe, and they have no disagreement, even if the system is completely async. When the system stabilizes and there's enough synchrony in the system, then it makes progress. All of this is done under the assumption that the adversary has less than 1/3rds of the votes in the system. It has liveness when the system stabilizes.
+
+SBFT is a scalable version of BFTSMR. This was published this year in DSN 2019 under Guy Gueta et al. It uses new algorithmic ideas and modern cryptography to get more scalability in BFT. We use collectors to avoid quadratic communication. We found that running systems that have a linear amount of communication is better at scale. You can also replicate the collectors, and have a group of collectors and then have fault tolerance between the collectors. We're using more modern cryptography in order to get smaller and faster signatures, so using the BLS signatures to reduce proof length. One of our algorithmic advances was to reach consensus in one round. Typically BFT systems take 2 to 3 rounds to reach consensus. But this work is unique because it requires only one round to do consensus, it's low latency and very efficient. And then we have a new correct view change protocol. This is an interesting theoretical result, but one of the first academic results that has been rigorously tested and studied with benchmarks and repeated with previous benchmarks used in the past on other projects. On 200 nodes, running real workloads like EVM smart contracts, we get 2x the throughput relative to previous types of systems.
+
+This work is now part of VMware's effort to build an enterprise-grade solution. It's available on github as Concord-BFT. One effort that we're doing at VMware related to blockchain and using this technology.
+
+# Conclusion
+
+I talked about a few things. Follow the money, ask yourself. I talked about academic pillars like economics, cryptograhpy, distributed computing, and governance. I talked about what is decentralized trust, and voting. I also talked about scalable byzantine fault tolerance.
+
+
 
