@@ -88,6 +88,17 @@ However, software vulnerabilities are relatively common. What's the worst softwa
 
 What I came up with was a valid transaction which when evaluated by a bitcoin node causes that node to execute a program written by that attacker. This is usually called arbitrary code execution or remote code execution. People used to call these network worms.
 
+Attacks that keep the blockchain valid are quite worse because you can't rally people to come together. You could distort what the node tells the user about the blockchain. You could perform an attack where transactions are being sent, and they just don't see those transactions. You could make invalid transactions appear valid and confirm. You go to an exchange and you send them a bunch of bitcoin, and the exchange sees it as a valid transaction but maybe it never gets confirmed in the chain. You could also do things like leak keys, compromise random number generation, replace pubkeys, etc. You could have transactions that specifically cause speculative execution side effects, too.
 
+I don't think this is likely to ever happen. It would need to work on different versions of Bitcoin Core and on different architectures. And conceivably, the evil code might be able to patch the code so that it's an invalid transaction but now Bitcoin Core treats it as a valid transaction and sends it out to other nodes as if it were. I'm not aware of any vulnerabilities in bitcoin that allowed arbitrary code execution. So I think it's an unlikely threat, but it's the worst case I could come up with. You could probably come up with something much worse.
 
+# Open questions
+
+What would happen if an inflation bug was exploited in bitcoin in 2019?
+
+Which bugs in this talk were the most dangerous- net splits, inflation, which ones?
+
+What countermeasures can we take to reduce the risk and the impact of a serious bitcoin software vulnerability exploited in the wild?
+
+An exploit that hits only some of the nodes is much worse than an attack that hits all the nodes.
 
