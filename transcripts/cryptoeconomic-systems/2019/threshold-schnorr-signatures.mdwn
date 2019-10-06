@@ -54,6 +54,52 @@ The simple way to depict this idea is to use secret sharing. They might want to 
 
 The solution to that is to do distributed key generation also for the nonce. So we do the same protocol for the distributed key generation, and we have to do this whenever we have a signing session. This means that signing is an interactive process. If we do that, we can do constant O(1) rounds.
 
+# History of DKG for discrete log
 
+This was originally proposed by Pedersen 1991 where he used a DKG scheme for dlog, based on Feldman's verifiable secret sharing. Then Gennaro, Jarecki, Krawcyz, Rabin in 1999 said the attacker can bias the key. They proposed a better DKG scheme using Pedersen's VSS. Pedersen's scheme uses Feldman's VSS, and then they fixed it by using Pedersen's VSS. Whatever. It's confusing. Even better, three years later, they figured out the 1991 scheme is actually good enough for Schnorr threshold signatures. The attacker can bias the public key or the other one, then for Schnorr threshold signatures that doesn't matter for them. That was found in GJKR 2002.
+
+# Trust assumption
+
+If you work on threshold crypto, you might ask what's the point and what are you trying to do. I want to show you why those two schemes fail in practice if you really want to apply them. There are two main issues. The first issue is that there's a trust assumption. All the schemes assume that k-1 is less than half of all the peers. This is an honest majority assumption, basically.  So k-1 must be < n/2. Let me explain to you why they need this assumption. I'll explain this by counterexample. Say we have a scheme without an honest majority, say 6-of-9. For unforgeability, this means that 5 malicious peers shouldn't be able to produce a signature. But robustness would say that 6 honest peers can produce a valid signature. So you can't achieve both unforgeability and robustness at the same time. But I think that's not true, it's the worst case assumption. The worst case is that there's only four good peers. But if there's only three bad participants, .... if I choose k=5 or something, it doesn't mean that 5 parties are malicious, it just means that's the maximum it can tolerate. Even if 5 people are malicious in the first scenario, then maybe I can't achieve a valid signature and this might be acceptable but what shouldn't happen is that those 5 parties can forge. I think this setting still makes sense. If you saw the talk yesterday, she talked about flexible BFT and the alive-but-corrupt nodes. I think that's exactly the setting we have here.
+
+Can we drop the assumption where we have the honest majority assumption? Unfortunately, no. The security proof relies on the fact that the majority of peers is honest. If you're a cryptographer, the idea is that the security reduction runs all the honest peers internally and it because it has a honest majority gets the shares from-- and it can use those shares to extract all the secrets from the attacker. This is how the induction works, and you can't make it work without changing the scheme in this strong setting.
+
+We have one idea for how to fix this, and this would be to use other commitments in Pedersen's verifiable secret sharing scheme which could enable some ability to extract some things even without having an honest majority. But it's a very early idea and we haven't deeply looked into it. Maybe it's a secure scheme, maybe not. We need to see.
+
+# Broadcast assumption
+
+Another issue is that the schemes assume a broadcast channel. They assume that every peer has a reliable and secure way of broadcasting messages to other peers. Reasonable assumption for robustness, but it's unreasonable assumption for unforgeability. If the network is broken, hten it shouldn't be the case that suddenly people can forge signatures. Actually, if you look at those schemes, you can see what happens. The attacker can split the view of his peers by splitting it into two worlds, where in each world he makes different claims about what peers are online or offline. What these protocols do is they reconstruct the secret nonces of the other parties.
+
+There is also an attack on unforgeability. Say the malicious broadcast channel elarns the nonce r, and the signature (R, s). The combined secret key is x = (something - something)/c.
+
+Malicious and offline are just two different things. If a peer is offline, you can't assume htey are malicious. This is like theory vs practice basically. Just because a peer appears offline, doesn't mean you should reconstruct his secrets in public. The simple idea to fix this is that instead of reconstructing the nonce, you could just reconstruct the partial signature that this peer is supposed to give. This looks like an easy fix and maybe it works, but maybe it doesn't work- we haven't tried to make a security proof yet but it looks okay.
+
+# Wish list
+
+This is my wish list for threshold signatures:
+
+* Should be a scheme that produces ordinary Schnorr signatures
+
+* No restrictions on the parameter k in k-of-n
+
+* It should be unforgeable even if the broadcast mechanism is malicious
+
+* It hsould be robust in a constant number of rounds, O(1)
+
+* We want reasonable message complexity
+
+* It should be secure in parallel sessions, which is actually a problem in the contetx of multisig even though I didn't mention it.
+
+# Bonus list
+
+It would also be nice to have asynchrony, deterministic nonces, look at the setup algoirthm, adaptive security, and accountability for threshold signatures.
+
+Deterministic nonces are interesting. In ECDSA, you choose your nonce by applying your hash function to the secret key and message to make sure you cna't screw up the randomness. If you do it deterministically, you leak your private key. On another project, we're trying to solve this with a zero-knowledge proof and I'm not sure it's a practical solution but it might work.
+
+We're also interested in looking at the setup algorithm. We've been looking mostly at signing, but for setup do we want asychrony? Maybe it can be more complex since it is run only once. We need to look at these properties.
+
+Adaptive security means that corruptive nodes aren't fixed at the beginning.
+
+Another interesting property is accountability. If you look at the threshold signature, then you should be able to tell which peers have signed and hwich haven't. But this depends on your setting as to whether you want this. An easy argument is that if you want your signatures to look like an ordinary Schnorr signature then you can't use this property.
 
 
