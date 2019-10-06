@@ -1,0 +1,59 @@
+The quest for practical threshold Schnorr signatures
+
+Tim Ruffing (@real\_or\_random)
+
+# Introduction
+
+It's great to be here. My name is Tim Ruffing and I work for the research team at Blockstream. This is a talk about practical threshold Schnorr signatures and our quest for constructing them.
+
+# Disclaimer
+
+First of all, this is work in progress. It's pretty early work in progress, mostly based on discussions with people at Blockstream. I describe the problem we want to solve, and we have some initial ideas, but they are very initial and I have tried to put one or two sentences about those ideas into the slides but nothing is really done yet. If you think what I say doesn't make sense, or the problem is already solved and you have looked in the literature already then please interrupt and tell me.
+
+# Threshold signatures
+
+What are threshold signatures? Say you have a group of n peers, and the idea is that if you have any subset of size k in that set, then they should be able to produce a valid signature and if you have fewer peers then you shouldn't be able to make a signature. So there's a few properties here, like unforgeability where a smaller set cannot produce a valid signature, whereas you also have robustness where k honest peers should be able to produce a valid signatures even if the other peers are trying to stop them. n-of-n is basically just multisignature, and that's a special case.
+
+# Why threshold or multi signatures?
+
+When you think about smart contracts, there's always a case where some funds are controlled by a set of peers. Payment channels are typically made between two parties. The funds are locked up and you need agreement from both parties to spend them, so this is a 2-of-2 scenario. Another scenario might be two-factor authentication which is 2-of-2. Bitfinex's cold wallet is 3-of-6 threshold multisig for their cold wallet to enhance security. If you look at our own products at Blockstream, we have an 11-of-15 Liquid watchmen functionaries. To send bitcoin into the Liquid sidechain, you pay a 11-of-15 multisig federation.
+
+# Goals
+
+The goal in this talk is to obtain threshold signatures that look like ordinary signatures. There are some reasons for this. First, they are much more efficient than the current multisig we have in bitcoin. Second, they also offer privacy advantages.
+
+# Taproot
+
+<https://diyhpl.us/wiki/transcripts/bitcoinops/schnorr-taproot-workshop-2019/notes/>
+
+Hopefully taproot will get deployed in bitcoin at some point. The basic idea is that your UTXO on the bitcoin blockchain reduces to a single public key and this public key has a secret key in it, but it also has a commitment to a script. This enables you to spend it in two ways. Either you can use key-path spending where you just sign by producing a signature, and nobody will ever notice that there was an extra script in there. It's great for privacy and it looks like an ordinary signature. If you really want to use the script and you don't want to use key-path spending, then you can do script-path spending by revealing g^x and then the script and then you can fulfill the script and whatever it requires you to do.
+
+The typical case in most smart contracts is that all parties agree. There are lots of rules but they are mostly for cases where parties go malicious or want to disrupt, but usually you just get agreement from all parties so you might as well use key-path spending using a threshold signature. Nobody will ever notice that there was a script involved or smart contract.
+
+# Schnorr signatures
+
+The signature scheme for ordinary signatures that we want here is Schnorr signatures. Maybe you have seen this before maybe not. The secret key is a simple scalar, an elliptic curve group scalar. The public key is g^x. So this looks like ECDSA so far, so you don't have to change key generation. For signing, you take a random nonce r and you compute a public nonce g^r and then you compute a challenge by hashing the public key and the nonce and the message, and then you compute this s value which is the second part of the signature where you multiply the challenge with your secret key and add the nonces. This is constructed from Fiat-Shamir protocol... so the signature is the public nonce and the s value. Verification is very simple; you re-compute this hash and you check the main equation and the exponent which you can do.
+
+<https://diyhpl.us/wiki/transcripts/sf-bitcoin-meetup/2018-07-09-taproot-schnorr-signatures-and-sighash-noinput-oh-my/>
+
+There's a draft called bip-schnorr, and then there's bip-taproot and bip-tapscript. Have a look, it's on github. They are written by Pieter Wuille and myself and many others. We have a full specification, we have reference code, design rationale, and so on. Everything you would expect to see.
+
+If you're interested, we need more eyeballs to look at this. Maybe go to this short url <https://bit.do/schnorr> - please have a look.
+
+# Naive multisignatures
+
+You could add up all the x values, and then add up all the r values. You could multiply the group points and get the sum of the exponents since everything is homomorphic here. Anyway, this is naive and it's not secure. There's multiple problems with it, and all the problems are solvable. The MuSig scheme fixes a lot of this, it was published in 2018 and concurrently there's the MSDL-pop scheme by Boneh, Drijvers, Neven in 2018 which solve the same problems.
+
+# From multisignatures to threshold signatures
+
+The simple way to depict this idea is to use secret sharing. They might want to use Shamir secret sharing. I won't explain how it works, because it's not important. But it gives you something like 2-of-3 multisig. So the party with a secret can make a 2-of-3 threshold secret sharing scheme. They create the shares, then send it to some parties, or maybe even himself to simplify the diagram. Since this is 2-of-3, even if one of those parties on the left or right hand side becomes unresponsive, two of the parties can reconstruct this secret value. It's not only that they can reconstruct it, they can actually do computations with it. This is how we basically use it within Schnorr signatures. This is only one of the steps to get it.
+
+# Distributed key generation
+
+.... So far I have described this for the secret key, and you can get a working scheme from that. We haven't done a security proof for this yet but it looks reasonable. If you do this only for the secret key for distributed key generation, then you probably get a protocol that doesn't have a constant number of rounds. So you get O(f) rounds where f is the number of disruptive parties. With 3-of-3, you don't need threshold signature scheme, you can just use a multisignature, so we're doing 2-of-3 threshold multisig here. You have to commit to the set of signers upfront, and maybe later you choose a signer that wants to go offline and then you have to restart. That's a detail that I don't have time to explain now.
+
+The solution to that is to do distributed key generation also for the nonce. So we do the same protocol for the distributed key generation, and we have to do this whenever we have a signing session. This means that signing is an interactive process. If we do that, we can do constant O(1) rounds.
+
+
+
+
