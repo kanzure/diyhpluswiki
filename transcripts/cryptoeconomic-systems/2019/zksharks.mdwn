@@ -1,0 +1,43 @@
+zkSHARKs
+
+Madars Virza
+
+# Introduction
+
+Indeed I am Madars Virza. I am going to talk about SHARKs. I am going to be talking about zero-knowledge SHARKs. It's actually something serious and it's related to non-interactive zero-knowledge proofs.
+
+# Non-interactive zero knowledge proofs
+
+zkproofs are protocols between two parties, a prover and a verifier. Both prover and verifier know a public input, but only the prover knows a secret input as a witness. The prover wants to convince the verifier that some relationship holds between the public input and the secret witness. This might seem very abstract, but it's actually extremely useful.
+
+These properties are typically formalized by completeness--- meaning that true statements have proof, and soundness--- false statements do not. Finally, there is the property of zeroknowledge. The verifier learns nothing about the secret witness beyond what is implied by the membership language. This is usually how non-interactive zero-knowledge works.
+
+But what I have told you is a lie. There is a theorem that this is impossible for interesting languages like NP languages, without any help at least. It becomes possible if you allow yourself some kind of common reference string (CRS). There is a one-time trusted setup that outputs a reference string. This reference string can be used many times by the prover and the verifier and prove the statements respectively.
+
+# Deploying non-interactive zero-knowledge systems
+
+So you have provers and verifiers that are geographically distributed. The question is, who generates the CRS? If it's generated maliciously, then the security properties break down. It's usually done in a cetralized setting. Maybe it's in your IT department that generates the CRS. If you want to use decentralized applications for your proof systems, then we better find out some way to generate a CRS.
+
+The good news is that for many proof systems, the CRS is actually random. Many proof systems have a random CRS. Many things look random like sun spots, stock market, or heuristics like sha256(0) or sha256(1). So we could instantiate bulletproofs by using a CRS but we're going to get it from sha256 or something.
+
+But there's also bad news: the most efficient proof systems have complex common reference strings that are not exactly random.
+
+# Non-interactive zero-knowledge landscape
+
+On the one hand there's NIZKs and non-pairing-based SNARKs like bulletproofs, STARKs, Hyrax, Aurora, Spartan, etc. Then there are pairing-based SNARKs like PGHR13, Goth16, Libra, Sonic, for which the CRS is complex and it reasons about the computation template and does tests based on this. In practice, the ones without any kind of secret setup tend to have slow verification (as statement grows) and/or large proofs. Bulletproofs are really nice for small statements like rangeproofs, but if you want to prove things about a million gate circuit then verification would take like a second. But STARKs are great but they have proofs that are 100s of kilobytes.
+
+With the computation template and complex CRS have quick verification and very small proofs in the range of 100s of bytes. Given that efficiency is desirable, maybe there's a way to get around the trusted setup.
+
+# Ideal world
+
+In an ideal world, we would have someone trusted like maybe your IT department does it. But in a real world, we're going to have many participants each of which contributes a share to the trapdoor of the setup. Then out comes the common reference string as a result. You would want the ideal world setup and real world setups to be the same. This can actually be achieved.
+
+The good part about this is that the constructions only require single point of success. It's not a single point of failure as in many systems, but rather we only need at least one participant to be honest and then the CRS has really been setup correctly. Collusion is probably likely to happen if certain individuals are in a room generating the setup like Putin and Trump and Snowden and Hillary or something.
+
+# Are ceremonies secure?
+
+Are these ceremonies secure? Is the trapdoor secure? I don't think anyone seriously thinks that 50 or 100 people ceremony had participants compromised or colluding. At the same time, there's an epistemological question like why should I believe that those 100 participants even existed? Do I know? In a hundred years, it becomes a myth. Did it really happen? Do I know anyone who participated? In 100 years, will anyone remember the prominent cryptographers from 2019? Maybe I should accept slower verification, or lower efficiency? Does it matter?
+
+There are scenarios where efficiency does matter. Sometimes the propagation speed and verification speed do matter. The propagation speed is dependent on how fast they can verify the transactions. There are also other participants in the system like miners or block producers. They need to get transactions fast and include them in blocks. Even more so, you need to verify the previous block to decide what to mine on top of. So verification is a security risk, there are incidents where people were doing SPV mining and they figured signature verification was too expensive so they turned it off or something. Ideally we would like miners to not do that.
+
+
