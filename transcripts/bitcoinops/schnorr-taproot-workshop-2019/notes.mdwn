@@ -152,7 +152,7 @@ A: It's a projection in 3-space. It's x, y and z. It's a different coordinate sy
 
 Are you familiar with projective coordinates? It's a re-parameterization of projective space, using a square scaling factor for x, and your scaling factor for y is a cube.
 
-Let's go over the answers: <https://github.com/bitcoinops/taproot-workshop/blob/master/solutions/1.1-Introduction-to-Schnorr-Solutions.txt>
+Let's go over the answers: <https://github.com/bitcoinops/taproot-workshop/blob/master/solutions/1.1-schnorr-signatures-solutions.ipynb>
 
 In 1.1.2, we wanted to check the inverse and check that ... so we're generating k and R, we're taking the x of R and the y of R. We're negating k by doing order minus k.secret, and then we're creating minus R from that minus K value. This will also return us an EC Key for that scalar. So we can easily do operations without thinking about the modulo. So then we take the minus R x value and the minus R y value. So we assert the R x value is the same as minus R x value. So then we assert SECP256K1\_FIELD\_SIZE minus R's y coordinate is the same as minus R's y coordinate.
 
