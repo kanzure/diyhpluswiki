@@ -1,5 +1,7 @@
 Socratic seminar #4
 
+<https://twitter.com/kanzure/status/1196947713658626048>
+
 # Wallet standards organization (WSO)
 
 Make an economic argument for vendors to join an organization and put in some money or effort to build the organization. The economic argument is that the committed members have some level of funds committed, representing some X number of users, and X billion dollars of custodied funds. This can then be used as a compelling argument to get each organization to join and bootstrap the standards body.
@@ -42,6 +44,11 @@ There aren't many strong incentives or pressures. Proof-of-keys Jan3 is kind of 
 
 Caravan or something like it is going to get popular, and it will work with the absolute minimum number of signers. Something like, it will push every other manufacturer, because oh it's not compatible with the tool that everyone uses. That's not a subjective thing; it either does owrk or it doesn't. If you want to do multi-hardware multisig, then you can't use that device-- period.
 
+It would be nice to finish the Shamir secret sharing BIP. Get the randomness right. The mnemonics side of slip39 is useful, great for trezor, but not sure how many other people are going to be using that. The underlying Shamir construction is almost 30 years old. The fact that we have no reference implementation for Shamir, is really weird. We're the first community to use Shamir for anything real, and we need to make sure we get it right the first time. With slip39 or not, we have a subset where we need to do a Shamir properly, safe reliable code no dependencies. This is a project that Blockchain Commons is also working on.
+
+Above a commitment to open-source, what is this open collaboration? Being able to fund developers, for example, or other people that could get some of this work done and do it right and architect it well and pay for a design shop. I've been circulating an open development blog post or proposal. The other thing we've been doing is Bitcoin Standup and is a protocol between the network nodes and the.... consensus side.. I'm trying to do that with, to be able to easily setup a consensus on a laptop, VPS or whatever, and ideally at somepoint a wallet-less implementation. Then have a tor connection, v3 authenticated, to a remote that can ask that to do different services on its behalf. We have this up and running on Mac OSX. You don't need to understand xcode to be able to run the app, so I'm looking for some more beta testers. We're also looking for people who aren't xcode people... what are the best practices for setting up a personal node? I have my own opinionated defaults as to all the things in bitcoin.conf, but there's no standard as to a lot of the values in what you should be doing for those settings in a node.
+
+We have had about two hours of intense extremely abstract discussion... How about we take a break for a little bit, and get started in 15 minutes?
 
 
 
