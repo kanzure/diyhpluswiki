@@ -1,0 +1,218 @@
+Austin Bitcoin Developers Socratic Seminar 5
+
+<https://www.meetup.com/Austin-Bitcoin-Developers/events/267941700/>
+
+<https://bitdevs.org/2019-12-03-socratic-seminar-99>
+
+<https://bitdevs.org/2020-01-09-socratic-seminar-100>
+
+# LSATs
+
+So we usually start off with a lightning-based project demo that he has been working on for a few months.
+
+This is not an original idea to me. This was presented by roasbeef, co-founder of Lightning Labs at the Lightning conference last October. I worked on a project that did something similar. When he presented this as a more formalized specification, it made a lot of sense based on what I was working on. So I just finished an initial version of some tool that put this into practice and let people build on top of this. I will just give a brief overview of what you can do with this.
+
+Quick outline. I'm going to talk about API keys and the state of authentication today. Then what macaroons are, which are a big part of how LSATs work.
+
+LSAT is a lightning service authentication token.
+
+Then we'll talk about use cases and a few of the tools like lsat-js and another one. Hopefully you can use those. A lot of the content here, you can see the original presentation that Laolu (roasbeef) gave and put together. Some of the content is at least inspired by that presentation.
+
+State of authentication today: Anyone on the internet should be familiar with our authentication problems. If you're doing login and authentication, you're probably doing email passwords or OAUTH or something. It's gross. You can also have more general API keys. If you create an AWS account or if you want to use a Twilio API then you get a key and that key goes into the request to show that you are authenticated.
+
+API keys don't really have any built-in sybil resistance. If you get an API key, then you can use it anywhere, depending on service-side restrictions. They add sybil restrictions by having to login through email or something. The key itself does not have sybil resistance, it's just a string of letters and numbers and that's it.
+
+API keys and cookies as well-- which was an initial form of what macaroons are-- don't have an ability to delegate. If you have an API key and you want to share that API key and share your access with someone, they have full access to what that API key provides. Some services will give you a read-only API key, read-write API key, admin-level API key, and so on. It's possible, but it just has some problems and it's not as flexible as they could be.
+
+The whole idea of logging in and getting authentication tokens is cumbersome. Credit card, email, street addresses, this is not so great when you just want to read a WSJ or NYT article. Why do we have to give all this information just to get access?
+
+So somebody might be using something that appears the right ways... like HTTPS, the commnication is encrypted, that's great.. But once you give them private information, you have no way to audit how they store that private information. We see major hacks at department stores and websites that leak private information. An attacker only needs to attack the weakest system holding your personal private information. This is the source of the problem. Ashley Madison knowing about your affair isn't a big deal, but someone hacking in and exposing that information is really bad.
+
+I highly recommend reading about macaroons. The basic idea is that macaroons are like cookies, for anyone who works with them in web development. They encode some information that shares with the server, like authentication levels and timeouts and stuff like that, to the next level. lnd talks about macaroons a lot, but this is not a lnd-specific thing. lnd just happens to use this, for delegated authentication to lnd. They are using macaroons, these tools are using macaroons. They are using macaroons in their loop service in a totally different way from their loop service. These could be used in place of cookies, it's just sad that almost nobody is using them.
+
+It works based on chained HMACs. When you're creating a macaroon, you have a secret signing key just like when you do cookies. You sign and commit to a version of a macaroon. This ties into delegation--- you can add new what are called caveats and sign using a previous signature and that locks in the new caveat. Nobody that then receives the new version of the macaroon with a caveat that has been signed with a previous signature, can change it. It's like a blockchain. It just can't be reversed. It's pretty cool.
+
+Proof-carrying changes the architecture around authentication. You're putting the authorization into the macaroon itself. So you're saying what permissions somebody who has this macaroon has, rather than putting a lot of logic into the server. So if you present this macaroon and it is verified by the server for certain levels of access, then this simplifies backend authentication and authorization a lot more. It decouples authorization logic.
+
+lsat is for lightning service authentication tokens. This could be useful for pay as you go billing (no more subscriptions), no personal information required, it's tradeable (with the help of a service provider)-- this is something that roasbeef has proposed. You can make it tradeable; unless you're doing it on a blockchain, you need a central server that facilitates it. Then there's also machine-to-machine authentication. Because of the built-in sybil resistance not tied to identity, you can have machines paying for access to other stuff without having your credit card number on the device. You can also attenuate privileges. You can sell privileges.
+
+I'll introduce a few key concepts to talk about how this works. There's status codes-- anybody who has navigated the web is familiar with HTTP 404 which is for resource not found. There's a whole bunch of these numbers. HTTP 402 was supposed to be for "payment required" and it took them decades to do this at the protocol level without an internet-native money. So LSAT will leverage this and use HTTP 402 to send messages across the wire.
+
+There's a lot of information in HTTP headers that describe requests and responses. This is where we're going to set information for LSAT. In the response, you will have a challenge issued by a server when there's an HTTP 402 payment required. This is a WWW-Authenticate header. There's also another one Authorized-request: authorization. The only thing unique to this is how you're going to read the values associated with these HTTP header keys. After you get the challenge, you send an authorization that satisfies that challenge.
+
+You pay a lightning invoice request using a certain BOLT. This gets put into the WWW-Authenticate challenge. The preimage is a random 32 byte string that is generated and is part of every lightning payment, but it's hidden until the payment has been satisfied. This is essentially how you can trustlessly second second-layer payments in an instantaneous ways. Then there's a payment hash. Anyone who has received a payment invoice has this payment hash. The preimage is revealed after you pay. This basically, the payment hash generated from hashing the preimage... which means you can't guess the preimage, from the payment hash. But once you have the preimage, you can prove that only that preimage could generate that payment hash. This is important for LSAT validation.
+
+Say the client wants to access some protected content. Say the server then says... there's no authentication associated with this request. I'm going to bake a macaroon, and it is going to have information that will indicate what is required for access. This is going to include generatig a lightning payment invoice. Then we send a WWW-Authenticate challenge back. Once you pay an invoice, you get a preimage in return, which you need to satisfy the LSAT because when you send the token back it's the macaroon and then a colon and then that preimage. Because what's happening is that the invoice information, the payment hash is embedded in the macaroon. So the server looks for the payment hash, and the preimage, and then he checks H(preimage) == payment hash boom it's done.
+
+Depending on what limitations you want to put on the paywall, this is stateful verification. You know that the person who has that preimage had to have paid the invoice associated with that hash. The hash is in the macaroon token.
+
+This helps decouple payment from authorization. The server could know that the payment was satisfied by using lnd or something, but this helps decouple it. Also it helps other services to check the authorization too.
+
+The current version of LSATs has a version identifier in the macaroons that it generates. The way that the Lightning Labs team has done it is that they have a version number and it will be incremented as functionality is added on to it.
+
+In my tool, we have pre-build configurations to add expirations. So you can get 1 second of access for every satoshi paid, or something. Service levels is something that the Loop team has been working on.
+
+The signature is made at macaroon baking time. So you have a secret key, it assigns a macaroon, and the signature gets passed around with the macaroon.
+
+This allows for sybil-resistant machine-to-machine invoices. HODL invoices are something I have implemented. HODL invoices are basically a way to pay an invoice without it being immediately settled. It's an escrow service built with lightning, but it does create some issues in the lightning network. There are ways to use them that doesn't hinder the network, as long as they aren't used for long periods of time. I was using this for one-time use tokens. If you try to access it, and an invoice is being held but not settled, then as soon as it is settled then it is no longer valid.  There's also a way to split payments and pay a single invoice but then you have some coordination problems. I think this is similar to the lightning-rod release that Reese did, which was for offline payments. They have a service where you can do trustless third party payments.
+
+I made lsat-js which is a client-side library for interacting with LSAT services. If you have a web application that has this implemented, then you can decode them, get the payment hash, see if there's any expirations on them. Then there's BOLTWALL where you add a single line to a server, and you put it around a route that you want to require payment for, then BOLTWALL catches it when you get a request. It's just nodejs middleware, so it could work with load balancers.
+
+NOW-BOLTWALL is a serverless framework for deploying websites and normal serverless functions; this is a CLI tool that will configure it. The easiest way to do this is btcpay and use deployment with luna node for $8/mo, and then you can configure NOW-BOLTWALL. Then using zyke which they have a free tier, you can deploy a server out there and they are running load balancers themselves. You can pass it a url yo uwant to protocol. So if you have a server somewhere else, you can just deploy this on the command line.
+
+And then there's lsat-playground, which I am going to demonstrate real quick. This is just the UX that I put together.
+
+LSAT would be useful for a service provider that hosts blogs from different authors, and the author can be convinced that the user paid and got access to the content- and that the user paid specifically that author, not the service provider.
+
+I'll put up some slides on the meetup page.
+
+# Socratic seminar
+
+This is going to be a rapid-fire run down of things going on in bitcoin development. I'll facilitate this and talk about topics, and pull some knowledge out of the audience. I only understand like 10% of this, and some of you understand a lot more. So just interrupt me and jump in, but don't give a speech.
+
+We missed a month because we had the taproot workshop last month. BitDevsNYC is a meetup in NYC that publishes these lists of links about what happened that month. I read through some of these.
+
+## OP\_CHECKTEMPLATEVERIFY
+
+<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-November/017494.html>
+
+This is Jeremy Rubin's work. The idea is that it's a covenant proposal for bitcoin. The idea is that the UTXO can only... ((bryan took this one)). This workshop is going to be at the end of the month. Says he is going to sponsor people so if you're into this then consider it. Because it can be self-referential, you can have accidental turing completeness. The initial version had this problem. It might also be used by exchanges on withdrawal transactions to prevent or blacklist your future transactions.
+
+## Watchtower BOLT
+
+It is pretty interesting. I was in London and met with these guys. They have a whole python implementation of this. It was nice and simple, not sure if it's open-source yet. There's like three watchtower implementations now, and they should be standardized.
+
+## PlusToken scam
+
+ErgoBTC did some research on the PlusToken scam. It was a scam in China that netted like 200,000 BTC. The people running it weren't sophisticated. So they tried to do some mixing... but they shuffled their coins in a bad way. They got caught. Some whitehat figured it out and was able to track where the funds left an exchange and so on. Here's a twitter thread talking about how the movement of these BTC might have affected the price. A month ago, some of the guys were caught. This guy's theory is that they arrested the underlings, and the guy with the keys didn't get arrested. So the mixing continued, clearly this other guy has the keys. They also had a bunch of ETH and it was moved like a month ago, and the market got spooked- the ETH price dropped. So maybe he took a big short position, then moved coins, rather than selling. 200,000 BTC is a lot, you can really move the price with this.
+
+PlusToken scammed $1.9 billion across all the coins, with just like a landing page. They had people on the streets going to these Chinese people saying buy bitcoin and we multiply it, it's this new mining thing. MtGox was like 500,000 BTC, which was 7% of the circulating supply at the time. So this might be 2-3% of the supply.
+
+The guy also appeared on a podcast where he talked about the tools he used to figure this out. This is an interesting topic. Coinjoins are going to be a topic on a lot of these. This is just one side of coinjoin.  Obviously the coinjoin he was using was imperfect.
+
+## txstats.com
+
+This is a transaction stats visualizer from BitMex research.
+
+Here's  murch reporting on some exchange dumping. He does wallet development for bitgo. He often talks about UTXO consolidation stuff. Someone dumped 4 MB of transactions at 1 sat/vbyte. Someone was consolidating a bunch of dust when fees were really cheap.
+
+Here's a lightning data site. Pierre had the number one node. It has capacity, different types of channel closes. BitMex wrote an article reporting on uncooperative closes, because you can see the force-close operations on the blockchain.
+
+Jameson Lopp has some bitcoin implementation comparisons. This is an analog. This is the different versions of Bitcoin Core like v0.8 and on. He then looks at how long initial block download takes, for the current blockchain.  There's another one for how long it takes to sync to the blockchain on the date it was released. There was a big drop-out when they switched from openssl to libsecp256k1. So it was hugely more performant.
+
+## Insecure shortcuts in MuSig
+
+This is about some of the interactivity in Schnorr MuSig. There's three rounds in this protocol. In this article, he is discussing all the ways you can mess up with it. MuSig is pretty complex and there's a lot of footguns, that's the summary here I guess.
+
+## ZenGo time-based threshold signature
+
+Multisig in concept is get a few different entities, where you can do on-chain multisig or off-chain multisig where you aggregate the signatures together and come together. These guys have something like that, but the keys rotate over time. You can have a scenario where all your parties lose a key over a given year, but since the keys are rotating, none of them lose a threshold amount over a certain amount. So the wallet would still be preserved even if all the people have lost their keys. This is called "proactive secret sharing". Seems like it would be more practical to do 3-of-5 and just setup a new 3-of-5 when 1-of-5 loses it. Binance likes this because it's shitcoin-compatibility that they like. Ledger too.
+
+## Attack on coldcard
+
+The way this attack works is that you can trick it into generating a change address into something like this... a derivation path where you take the 44th child, 0th hardened, and then the last one is a huge number. So you stick it on a leaf way on the edge of the private key, such that it would be hard to find it again if you look for it. You still technically own the coins, but it would be hard to actually spend them. So it was a clever exploit. Basically an attacker can convince your coldcard that it's being sent to "your" address, but it's really a random bip32 path or something. No hardware wallets currently track what change addresses they give out. So the idea is to restrict it to some lookahead gap.. don't go further than the gap or something. Or you might be on a website generating a lot of addresses, in advance, for users or payments or something. There was also something about 32-bit + 1 or something, beyond the MAX value.
+
+## Trezor bug
+
+Trezor had a bug where if you had a-- if you're trying to do a single-sig output, and then you had a multi-sig input and then multi-sig change, you could inject your own multisig change address or something. Your host machine could do this. This was like a month ago or a month-and-half ago. They don't show the change, if you own it. In this scenario, the multisig change address is something you don't own, and it should treat that as a double spend or something. This was a remote exploit. It treated someone else's multisig address as your address. It just wasn't included in fee calculation or something.
+
+## Monero thread
+
+Someone got a bad hash on their software. So it is a detective story trying to figure out what went wrong, like whether the website is bad or something. Turns out the binary was malicious. You can see the detective work in real-time. Someone was able to get the binary and do some analysis. Two functions were added; one of these would send your seed to the attacker. So if you ran this binary and you had any monero then the attacker now has that monero. It's pretty fascinating. The binary made it on to Monero's website. That's pretty terrifying. This is a good example of why you need to check signatures and hashes when you download a wallet. Monero was serving this to people who were downloading the software. It was getmonero.org that was serving malware. It's interesting that they got access to the site, and they didn't update the md5 hashes or something. Well, maybe they were thinking users would check against the website not the binary they actually downloaded.
+
+## SIM swappers arrests
+
+This was just a news article. SIM swapping is when you go into a Verizon store and say you have a number, and then they put your phone number on your phone and then you can steal someone's bitcoin or whatever. They use the usual questions like what's your maiden name and other public information.
+
+## Vertcoin 51% attack
+
+This has happened twice now. We had a discussion when this happened six months ago. Somehow this coin survives the 51% attacks. Why are they surviving? Maybe it's just so speculative that people are shrugging it off. What about bitcoin or ethereum being 51% attacked? So maybe it's all speculative trading, or the users are too stupid or something.
+
+## The role of dandelion routing in "breaking mimblewimble's privacy model"
+
+## Bitcoin Core 0.19.1
+
+There was some kind of problem right after v0.19.0, and then came out v0.19.1. There's some new RPC commands. getbalance is a lot better. A lot of RPC fixes. That's cool, so download that.
+
+## Remove OpenSSL
+
+OpenSSL was completely removed. It started in 2012. A lot of this sped up initial block download. Funny thing is that gavinandresen didn't like the idea. But it turned into a big improvement. It took a few years to completely remove OpenSSL, because it was supplying all the crypto primitives for signatures, hashing, keys. It took 10 years to remove openssl. The last thing needing it was bip70. They needed it for something.
+
+## Branch-and-bound coin selection
+
+It's a better way to do coin selection when composing transactions. You want to optimize for fees in the long-term. So he wrote his thesis to prove that this would be a good way to this. Murch also pointed out that random coin selection was actually better than the stochastic approximation solution.
+
+## joostjager - routing allow route ...
+
+You can pay someone by including them in a route, without them having to give you an invoice. Alex Bosworth made a library to do this. You have to be directly connected to them; so you can route to yourself to a person you're connected to.
+
+## Optional last hop to payments
+
+So here you can say, you can define a route by saying I want to pay this person and the last hop has to be from point n-1 to n. So if for some reason you want, like if you didn't trust somebody... So I wanted to pay you, but I wanted to choose who was the last hop. I don't know why you would want to do that, though.
+
+## lnrpc and other rpc commands for lnd
+
+## joinmarket-clientserver 0.6.0
+
+Does anyone actually use joinmarket? If I did, I wouldn't tell you. What?
+
+There's a lot of work going on joinmarket. There's a lot of changes there. The really cool thing about joinmarket- I have never used it-- it seems to offer the promise of having a passive hot wallet sitting there earning you a yield on your bitcoin. Joinmarket has maker-taker fees. Happy that people are working on this.
+
+## Wallet standards organization meeting
+
+This was a transcript Bryan made from a previous Austin Bitcoin Developers meetup.
+
+## Lightning on mobile: Neutrino in the palm of your hand
+
+He showed how to create a react-native app that could do neutrino. You want a non-custodial, full-participant mobile user to be a full participant in the network without downloading 200 GB of stuff. I think the main innovation is not neutrino but instead of having to write custom to build lnd binary for mobile, it's an SDK where you can just type "import lnd" and that's all you need to go.
+
+## New mailing list for lnd development that roasbeef announced
+
+Probably related to Linux Foundation migration...
+
+## Hashrate derivatives
+
+Jeremy Rubin has another project which is a hashrate derivatives platform. The idea is that you can timelock transactions either in minutes or blocks, and whichever one gets there faster gets the payout. It's an interesting way to implement a derivative. It's basically DeFi. So you could probably play with this if you had some bitcoin mining capacity. Over a month... Uh, well the market will price it. That's a good point.
+
+## New stratum protocol for mining pools (stratum v2)
+
+Here's some marketing speak about stratum v2.
+
+The more interesting thing is this reddit thread. The people from slushpool are in this thread with petertodd and bluematt. Some of the benefits are that it will help you operate on less than ideal internet connections. You get blocks and stuff faster I believe. One of the interesting things bluematt pointed out is that if you're mining you're not sure if your ISP is stealing some of your hashrate because there's no authentication between you and the pool and the miners.
+
+The protocol now will send blocktemplates ahead of time. Then when new blocks are observed, they will just send the previoushash field. They are trying to load the block template ahead of time, and then send 64 bytes to fill in the thing so you can immediately start mining. That's an interesting optimization. It's a cool thread if you want to learn more about mining.
+
+## lnurl
+
+This is another way of encoding HTTP invoices in HTTP query strings.
+
+## BOLT-android
+
+## Some LN hackathons
+
+## Bitfinex LN withdrawals
+
+## Aanlysis of bech32 bug
+
+A single typo can drive a lot of problems. One of the interesting things is that changing one constant in bech32 implementation will fix the problem. How did that guy find that bug? Wasn't Blockstream doing fuzz testing to prevent this? Millions of dollars of budget on fuzz testing.
+
+## Unequal coinjoins
+
+Some guy withdrew from Binance and withdrew and then did coinjoins on Wasabi. Binance banned him. So in the coinjoin world, there's discussion about how to deal with that. The fact that coinjoins are very recognizable. If you take money out of an exchange and do a coinjoin, the exchange is going to know. So what bout doing coinjoins with non-equal values? Right now coinjoins use equal values which makes them very recognizable. You just look for these unnatural transactions and you're done. But what about doing coinjoins with non-equal amounts so that it might look like an exchange's batching transaction or doing payouts to users? Coinjoiners are being discriminated against. The person who got slapped on their wrist was withdrawing directly into a coinjoin. Don't get me wrong, they don't like coinjoins, but also don't be stupid. Don't just send straight to a coinjoin. At the same time, it does show a weakness of this approach.
+
+Wasabi hosted a research club. Right after the coinjoin-binance issue, a week later Wasabi was doing some hosted youtube things to dig up old research on unequal amount coinjoining. This is an interesting topic. Someone has a reference implementation in rust, and the code is very readable. There's an 1.5 hour discussion where Adam is just grilling him. It's pretty good. He found a bug in one of the papers... he could never get his implementation to work, and then he realized there was an off-by-one bug in the spec in the paper, he fixed it and then got it to work.
+
+## Blind merged mining with covenants and OP\_CTV
+
+This is basically what Paul Sztorc was talking about when he visited us a few months ago. This is about having another chain secured by bitcoin which bitcoin would be unaware of, and there would be some token involved. Ruben's proposal is interesting because it's blind merged mining, which is what Paul needs for his truthcoin stuff. So you get another thing for free if we actually get OP\_CTV.
+
+An argument that some people make for any new features into bitcoin is that we don't know what else we might be able to come up with, to use this for. Like hte original version OP\_SECURETHEBAG which turned out you can do turing completeness with. Maybe it's a use case we want; but a lot of people think blind merged mining is not what we want- I forget why. A lot of thought goes into whether soft-forks should go in.
+
+## ZmnSCPxj on path privacy
+
+You can deduce a lot of information about what happened in the payments route. The first part of the email is like how you can use this to figure stuff out. So he talks about an evil surveillance on one node along the route, but if what if they are two nodes around the route. You can develop reverse routing tables if you have enough clout in the network. He goes into talking about some of the stuff that will happen with Schnorr, like path decorrelation and so on.
+
+
+
+
+
