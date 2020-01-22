@@ -6,6 +6,8 @@ Austin Bitcoin Developers Socratic Seminar 5
 
 <https://bitdevs.org/2020-01-09-socratic-seminar-100>
 
+<https://twitter.com/kanzure/status/1219817063948148737>
+
 # LSATs
 
 So we usually start off with a lightning-based project demo that he has been working on for a few months.
@@ -210,7 +212,90 @@ An argument that some people make for any new features into bitcoin is that we d
 
 ## ZmnSCPxj on path privacy
 
-You can deduce a lot of information about what happened in the payments route. The first part of the email is like how you can use this to figure stuff out. So he talks about an evil surveillance on one node along the route, but if what if they are two nodes around the route. You can develop reverse routing tables if you have enough clout in the network. He goes into talking about some of the stuff that will happen with Schnorr, like path decorrelation and so on.
+Not really sure how to pronounce his name. Zeeman? It's ZmnSCPxj. You can deduce a lot of information about what happened in the payments route. The first part of the email is like how you can use this to figure stuff out. So he talks about an evil surveillance on one node along the route, but if what if they are two nodes around the route. You can develop reverse routing tables if you have enough clout in the network. He goes into talking about some of the stuff that will happen with Schnorr, like path decorrelation and so on.
+
+## ZmnSCPxj on taproot and lightning
+
+This is just insane. This was a good one.
+
+## Bitcoin Optech newsletters
+
+c-lightning went from defaulting to testnet to defaulting to mainnet. They added support for payment secrets. You can do this thing, probing, where you try to route fake payments through a node and try to assess and figure out what it can do. You can generate random preimages and then creating a payment hash from that preimage even though it's invalid. I assume this is a mitigation for that.
+
+Here's a thread about what watchtowers have to store, in eltoo. One of the benefits of eltoo is that you don't have to store the complete history of the channel, only the most recent update. So do they have to store the latest update, or also the settlement transaction? Any comments about that? I don't really know eltoo well enough to speculate on that.
+
+c-lightning added createonion and spendonion RPC methods to allow for encrypted LN messages that the node itself doesn't have to understand. This lets plugins use lightning network more arbitrarily to send messages of some sort, and they are tor-encrypted messages.
+
+whatsat is a text/chat app. They are trying to get the same functionality over c-lightning.
+
+All three LN implementations now have multi-path payments. This allows you to... say you have one bitcoin in three different channels. Even though you have 3 BTC, you can only send 1 BTC. Multipath allows you to send three missiles to the same target. lnd, eclair and c-lightning all support this now in some state. Can you use this on mainnet? Should you even do it? It might be in phoenix. lnd's implementation has it in the code, but they only allow you to specify one path anyway. So they haven't actually tested it in something that people can run sending multiple paths, but the code has been refactored to allow for it.
+
+Andrew Chow gave a good answer about max bip32 depth, which is 256.
+
+Bitcoin Core added a powerpc architecture.
+
+There's now a rpc whitelist. If you have credentials to do RPC with a node, you can do basically anything. But this command allows you to whitelist certain commands. Say you want your lightning node to not be adding new peers on the p2p level, which would allow you to be eclipse attacked. Lightning should only be able to do blockchain monitoring queries. Nicolas Dorier says my block explorer only relies on sendrawtransaction for broadcasting. So you want to whitelist, this is per user credential. Do they have multiple user credentials for bitcoin.conf?
+
+This is why lnd is using macaroons. It solves this problem. You don't need to have a list of people in the config file, you can just have people that have macaroons that give them that access.
+
+Here's what Bryan was talking about, which is the year-end review. I encourage you to read this, if you're going to read only one thing it's the 2019 year-end review newsletter from Bitcoin Optech. Every month in the last year there's been some big innovation. It's really crazy to read through this. Erlay is really big too, like an 80% bandwidth reduction.
+
+Gleb Naumenk gave a nice talk at London Bitcoin Devs on erlay. He talked about p2p network stuff. I encourage you to check that out if you're interested.
+
+The script descriptor language is like a better version of addresses for describing a range of addresses. They sort of look like code with parenthesis and stuff. Chris Belcher has proposed base64 encoding it, because right now if you try to copy a script descriptor by default it wont highlight. It makes script descriptors more ergonomical for people who don't know what they mean.
+
+## BitMex LN tool
+
+Here's a tool from BitMex which is a live alert system for channels. This was the BitMex forkmonitor.
+
+## Caravan
+
+Unchained's caravan got a shoutout.
+
+## Anonymous coinjoin ransactions with
+
+This is a paper that wasabi dug out from like 2 years ago.
+
+## Luke-jr's full node chart
+
+The script to produce this is closed-source so you can't game it. But there's multiple implementations out there. I was suspicious of this because luke-jr is kind of crazy, but gleb seems to think it's correct. We're at the same number of full nodes as we were at in mid 2017. So that's kind of interesting. The top line is the total number of full nodes, and the bottom line is the number of listening nodes which will respond to you if you try to initiate a connection with them. You probably want to be unreachable for selfish reasons, but you do need to be reachable to help people sync with the blockchain. Mid 2017 might be peak segwit when people were spinning up nodes, or it might be related to the market price.  There was also a June price spike too. Maybe some of these are for lightning nodes. I bet a lot of people don't do that anymore.
+
+## Clark Moody's dashboard
+
+Moody's dashboard has a lot of real-time stats that you can see updating in realtime.
+
+## Bitcoin Magazine year-end review
+
+We had a 10% growth in the number of commits, an 85% price increase, bitcoin dominance went up 15%, our inflation rate is 3.8%. Daily volume went up. Segwit went from 32% to 62%. Value of daily transactions went up. The blockchain size grew 29%. Bitcoin node count plummeted, it went down, which is not so good. It might be because a lot of people had only 256 GB hard drives maybe that's why they dropped out... yeah, but pruning?
+
+## arxiv: new channel construction manuscript
+
+## List of hardware wallet attacks (from Shift Crypto)
+
+It's a pretty cool list. This is why you do multi-vendor multisig, maybe. This is pretty terrifying.
+
+## The pitfalls of multisig when using hardware wallets
+
+One of the ideas people don't realize is that if you use multisig and you lose redeemSripts or ability to compute them, you lose the multisig capability. You need to backup more than just your seed if you're doing multisig. You need to backup redeemScripts. Some vendors try to show everything on the screen, and some others infer things. Manufacturers don't want to be stateful, but multisig requires you to maintain state like not changing other multisig paricipants or swapping out information out from under you. If you're thinking about implementing multisig, look at the article.
+
+## bunnie's talk about secure hardware
+
+The big point of this talk was -- you can't hash hardware. You can hash a computer program and check, but you can't do that with hardware. So basically having open-source hardware doesn't really make it more secure necessarily. He goes through this big all the ramifications of that and what you can do. He has a device, a text-message phone that is as secure as he can make it, and the interesting thing is that you could turn it into a hardware.
+
+## CCC conference and talks
+
+## SHA-1 collission
+
+For $70k they were able to create two PGP keys, using the legacy version of PGP that uses sha-1 for hashing, and they were able to create two keys that had different user ids with colliding certificates.
+
+## Bitcoin Core fuzz testing
+
+There is a fuzz testing stats page, and then Bitcoin Core PR review group.
+
+## lncli + invoices - experimental key send mode
+
+It's just a way to send to someone, you can send to another invoice. They had this feature for like a year and then it finally got merged.
+
 
 
 
