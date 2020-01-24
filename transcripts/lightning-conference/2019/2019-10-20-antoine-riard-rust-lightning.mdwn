@@ -1,0 +1,67 @@
+Antoine Riard
+
+Deploying rust-lightning in the wild
+
+The Lightning Conference Day 2 (Stage 2)
+
+Video: https://www.youtube.com/watch?v=q6a1On5pirk
+
+# Intro
+
+Hi everyone, super happy to be here at the Lightning Conference. I’ve had an awesome weekend. Today I will talk on rust-lightning a project I’ve been contributing to for a year and a half. To get started, please take photos of the slides, not of me. So the story of rust-lightning. The idea was to build something really flexible, something really modular. That was TheBlueMatt idea. It got started in the beginning of 2018. I started to contribute September 2018. It is still ongoing work. It is built on top of the awesome rust-bitcoin ecosystem. We use the awesome andytoshi rust-bitcoin library. 
+
+# Why Lightning?
+
+So why Lightning? Why are we here? What do we want to build with Lightning? Do we want to reach Bitcoin promises of instant transaction, scaling to the masses, these types of hopes? Do we want to enable fancy financial contracts? Do we want to build streams of microtransactions? It is not really clear. When you are reading the Lightning white paper people have different views on how you can use Lightning and what you can use Lightning for? Why should you work on Lightning if you are a young developer? It is one of the most wide and unchartered territories. There are so many things to do, so many things to build, it is really exciting. There are still a lot of unknowns. We are building this network of pipes but we don’t know yet the how of the pipes. We don’t know what they will be used for, we don’t know where they will be used and by who. There is a lot of uncertainty. Right now it is single funded channels, really simple to understand. Tomorrow there are things like channel factories, multiparty channels… maybe splicing and a coinjoin transaction will open a set of channels. Maybe something like OP_SECUREBAG to do Lightning… There are a lot of efforts. So what are we going to send through these pipes? Are we going to send only HTLC or more complex stuff like DLC or a combination of DLC, conditional payments. If you follow [Lightning-dev](https://lists.linuxfoundation.org/pipermail/lightning-dev/) there is an awesome ongoing conversation on payment points and what you can build thanks to that. Where? Are we going to deploy Lightning on the internet? There are a lot of ideas on how to use Lightning to fund mesh nets and this kind of stuff. Or it could be a device and you are going to pay for what you consume from a stream. Maybe hardware security modules if you are an exchange, you are going to deploy Lightning on some architecture without a broadband connection. Who are going to use our stuff? I think that it is the biggest question to ask. You don’t have the same bandwidth if you live in New York or you live in South Africa or you live in Germany. People have different viewpoints on this, they have different resources. A basic consumer is not going to use Lightning the way a merchant is going to use Lightning, Lightning liquidity providers are going to set infrastructures. There are a lot of open questions. Who? What? How? When? We can look at the history of software engineering and how it solves these issues. I believe in the UNIX philosophy of doing something similar, doing something modular and combine the building blocks.
+
+# rust-lightning
+
+That is what I really like about rust-lightning. We are trying to build a modular library. It should be simple and you should be able to integrate it into your own stuff the way you want it. We have a real focus on testing and playing with fuzzers and burning a lot of CPU hours on fuzzing. It should be easy to plug in your own stuff. The c-lightning is building a lot of great plugins, it should be easy to integrate this kind of stuff, just an interface to write. And no dependencies. Since this summer we have no more dependencies in rust-bitcoin and the rust-bitcoin library. That’s really cool because tracking down what is going inside your library and your third party library and your dependencies. That’s a nightmare.
+
+# Anatomy of rust-lightning
+
+A quick look at the anatomy of rust-lightning. The main component is ChannelManager. It is going to receive keys from the KeysManager and then be able to generate a channel. Every update you get in your channel you should pass it to the ManyChannelMonitor, that is what we call watchtowers in the mainstream Lightning language. Your ChannelMonitor should be connected to the chain and at the same time you should have a PeerHandler which sends blobs of encrypted data to the Lightning network. All of these components, if you don’t like what we have done with the peer handler you can write your own peer-to-peer stack. If you don’t need the Router because you are going to maybe only do channels with a pre-set of people you can take out the Router. With the ManyChannelMonitor we have a default implementation for the backend of watchtowers, we don’t have the rest of the integration, you can rewrite yours. Really modular. Let’s go through every interface. 
+
+# Anatomy of a LN node: ChannelManager
+
+ChannelManager is our own implementation of the abstract interface, the ChannelMessageHandler. That’s the main component of every Lightning implementation is how you are going to despatch the message: opening a channel, updating a channel, closing a channel.
+
+# Anatomy of a LN node: KeysManager
+
+We have the KeysManager. That should just be a stub of code to plug with your wallet. We don’t want you to be forced to use a Lightning wallet, you should come with your wallet, you are already using this for onchain. You should just plug Lightning as a stack to your wallet. You are going to ask the user “Give me a secret and I’m going to do the Lightning derivation stuff for you.” If I’ve got outputs on the chain I’m just going to send events to your wallet “Hey. You have outpoints waiting for you on the chain to be used in your later transactions.”
+
+# Anatomy of a LN node: PeerHandler
+
+Peer managers, like I said it is really important, it is going to drive your whole implementation if you want to implement this stuff. You should react to network events and update the state of your Lightning node thanks to the message.
+
+# Anatomy of a LN node: ManyChannelMonitor
+
+Then you have the ManyChannelMonitor, something I’ve worked a lot on. Getting right the punishment stuff on Lightning is maybe one of the hardest parts. That is super easy to integrate with a ChannelManager or… You should just get updates from the offchain stuff to the onchain. If there is any onchain stuff, you read the preimage from someone claiming the HTLC and you pass the preimage to your offchain stuff so your offchain stuff is able to claim backward in the incoming channel what has been broadcast on the outgoing channel onchain.
+
+# Anatomy of a LN node: Router
+
+The last piece of software, the last abstract interface, the RoutingMessageHandler. We have implemented the component Router. All the gossip stuff. If you want to build a huge database to be able to have your own view of the network graph you should do it. If you have just a mobile device and you want a smaller one you can do it.
+
+# Anatomy of a LN node: ChainWatchInterface
+
+The last piece. It is more like integrating with onchain stuff. What is really hard if you have written any piece of Bitcoin software is getting right in case of re-org. If you already have a chain management tracker for your enterprise wallet you should be able to reuse this chain management stuff for your Lightning stuff. You should not have multiple servers doing chain tracking or chain management. You should be able to integrate this interface on top of a Electrum server or something like that. 
+
+# Scenario 1: An exchange
+
+I will go through some scenarios or use cases for how you can deploy rust-lightning. If you are an exchange you may want to have multiple nodes but if you have multiple Lightning nodes you should share the Router because with gossip there is no reason to have multiple routers from multiple Lightning nodes you own. You should have multiple watchtowers for your Lightning nodes. Every time you get an update in your channel you should do a copy of the update and have multiple watchtowers on different servers. If one goes down you still have all those watchtowers to be sure the state is going to be enforced onchain. Some things you should do if you are an enterprise or exchange or if you handle a lot of money. You should have multiple Bitcoin nodes because there are a lot of eclipse attacks, ways to trick your view of the blockchain on the first layer and steal your money on the offchain one. You should have multiple Bitcoin nodes and do reconciliation between what your different Bitcoin nodes see to be sure you see the real blockchain and not the fake one. If you are an merchant, you already have a big wallet with a lot of UTXO, you should reuse this exchange wallet with your Lightning daemon, you should be able to do this in a simple way. If you are an exchange, if you are a merchant, those are maybe the kind of things you want to do.
+
+# Scenario 2: Mesh net
+
+Let’s say you want to build a Lightning node for a mesh net which is an interesting exercise. If you are a Lightning node you don’t have broadband communication every time so you are going to do an update with another guy. Your watchtower is going to be connected to the broadband internet. Every time you can get a connection to the broadband connection through the mesh net you are going to send updates. In this kind of case you may want to have longer CSV on your commitment transactions, HTLCs, to offer you more time being offline. Your Bitcoin full node is going to run on the other side of the separation between mesh net and internet. If you are writing a router for the mesh net it is going to maybe be super simple so you may want to adopt that.
+
+# Scenario 3: Hardware wallet
+
+Let’s say you are a hardware wallet vendor and you want to split the different components. It is still ongoing work. Are we able to have a trusted device just owning the keys? We should be able to distrust the Lightning node, that is still an ongoing conversation. We don’t want a hardware wallet to be full of the Lightning protocol because they don’t have enough RAM to do it. You may want to despatch a component in a way to just have the KeysManager on the device and all the other components on a normal computer.
+
+# Scenario 4: WASM
+
+The last thing we have done is being able to run rust-lightning on WASM so you can run rust-lightning in your browser. There is a multicore process, there is a browser, there is a renderer, there is a plugin. You can imagine having a full Lightning node running in every one of your tabs and sending through the browser to your Bitcoin full node or your Lightning back end. Having a watchtower watching outside of your browser for your Lightning node running in your browser. Lightning over HTTPS should be a thing. I don’t see how people should use this because running money into your browser may not be a best idea. For small sums, for video games this kind of stuff it is less of a risk.
+
+# State of the project
+
+So the state of the project. We are almost done with the 1.0. In fact we are done with the 1.0, we are just implementing bumping and time incentive bumping of the fee rate of the transaction. It works on testnet with different implementations, lnd, c-lightning, eclair. We just wait for one object out of the 1.1 spec like an option simplifying commitments because we don’t like the update fee mechanism right now, it is hard mechanism to get right. New contributors are welcome. If you want to get started in Bitcoin protocol development and if you like Rust it is an awesome project. It is not hard, there are not years of software to understand. We just have the core of the protocol. It is super friendly, we have an awesome rust-bitcoin IRC channel. Just ping us there, people are super welcoming. Thanks to Chaincode for sponsoring this work, an amazing team. I am glad to be part of them. Thanks to The Lightning Conference, thanks to the volunteers who have given time. Questions? Thanks
