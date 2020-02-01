@@ -458,18 +458,39 @@ Q: Did you record your certified check presentation?
 
 A: I don't think there's video. I also need to go pick up lunch.
 
-
-
 <https://bitcoin.stackexchange.com/questions/92746/how-is-op-checktemplateverify-a-scaling-solution/92755#92755>
 
+# Other comments
 
-Questions:
+Say you are doing arb between Coinbase and Binance and they engage in a two-party deleted key. If either party deletes the key, then that's fine. You can also do a regular multisig, without deleted key. So you can already do that. For batched exchange-to-exchange payments, you can do that in a single UTXO already with netting, doesn't necessarily require OP\_CHECKTEMPLATEVERIFY.
 
-- Show me that the congestion control (non-interactive exchange-exchange arbitrage) is not possible without OP\_CHECKTEMPLATEVERIFY -- not convinced yet.
+Pile of unconfirmed transactions, use CPFP.
 
+You can't trust a sender to trustlessly send you money. You need a confirmed UTXO.
 
+With OP\_CHECKTEMPLATEVERIFY congestion control batch withdrawal tree, you still have an unconfirmed UTXO: the one that you can spend eventually with your real value is deep in the tree and the fee environment might be the case that it is too expensive to get to that point. So from the perspective of the user, it's still unspendable in the same way as an unconfirmed UTXO that the user can help get into the blockchain with CPFP. But it requires the exchange to have a bunch of UTXOs, and for the use case to allow the user to trust the exchange (or payer) to not double spend out from under you.
 
+Show me that the congestion control (non-interactive exchange-exchange arbitrage) is not possible without OP\_CHECKTEMPLATEVERIFY -- not convinced yet. The idea of using the mempool to communicate between two distrusting parties can be done in other ways too, such as in transactions that you never intended to get confirmed to send OP\_RETURN information or whatever, to establish an off-p2p-network other communication method. I am willing to say lightning payment channels isn't viable due to apocalyptic fee congestion channel closure fee issues for large numbers of payments between exchanges, but they can be aggregated together.
 
+Well, it is also batched payments for non-exchange use cases where you don't want to trust that someone won't double spend a UTXO out from under you.
+
+It's stupid wallets. Say I have received payment. My wallet says I have received payment. Now I have a UX problem: I have to worry about whether th e tree is in the block... I can arrange for funds with CPFP, all before I can spend it. I have 17 extra steps in my wallet before I can spend the funds that I presumably already have.
+
+With 2-of-2 multisig with secure key deletion, you can do the batch congestion thing without OP\_CHECKTEMPLATEVERIFY at all. The only problem is that it introduces an interactivity requirement to use a pre-signed transaction covenant here. So you can have a tree of transactions and do the batched congestion control thing anyway, with pre-signed transactions, with the added problem of an interactivity requirement.
+
+You can use the mempool to interactively establish channels with new peers. Especially if you can use the ECDH trick. One exchange can give the user a codeword that they type into another exchange's interface, to recover a communication channel created through the mempool. Well, you could also just paste a URI into another exchange's system and avoid the mempool. Then one exchange can query another one.
+
+What is the apocalyptic channel closure fee issue with lightning?
+
+# Back to the schedule
+
+We will go back to BIP review and implementation review later.
+
+# Lightning and channels
+
+What are the impacts of OP\_CHECKTEMPLATEVERIFY on lightning and channel technologies?
+
+I call this ball lightning. But it's a channel factory. Ball lightning is a real phenomena though. The core idea is you make a big tree of lightning channels. This is really cool because right now if you want to make a lightning channel, you need a transaction. But say the network is lopsided and you want to create as many routes as you want in an O(1) transaction, and then to redeem later you can pull them out. This spot fixes and adds liquidity into the lightning network. Here it makes it cheaper to do that because you're not competing for blockspace. Privacy, it helps too because nobody can see that you're opening those channels.
 
 
 
