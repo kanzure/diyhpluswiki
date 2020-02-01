@@ -187,15 +187,68 @@ Let's keep moving just so we can get through this session.
 
 We have left this 32-byte thing as the only defined one. If you have 33 or 34 bytes, you could define new types of OP\_CHECKTEMPLATEVERIFY as a soft-fork. The general mechanism for this is there. If you want to not commit to inputs, and propose that as a new one, that might be reasonable, but it would require a new soft-fork and there's a well-defined place for that soft-fork to go. We can add on a version byte for new semantics.
 
+# Implementation walkthrough
 
+I want to walk through the code. Let's do a 10,000 foot flyover. There's only a few commits.
 
+<https://github.com/JeremyRubin/bitcoin/commits/checktemplateverify>
+
+<https://github.com/JeremyRubin/bitcoin/pull/9/files>
+
+You can scroll through this in the next session or on your laptop as I go.
+
+# Add single sha256 call to CHashWriter
+
+It normally computes the hash of the hash. One hash is enough, though.
+
+# MOVEONLY: Move GetSequence/Output/PrevoutHash to primitives/transaction.h
+
+This functionality belongs in the transaction primitives where this is a defined hash for the transaction. This is where we want the templatehash stuff. As a wallet implementer it makes sense to pull these things into this area.
+
+# Refactor those utility functions
+
+These all get the double hash. We don't need a double hash though; so let's refactor those to just define the single hash we defined earlier. Then update the pre-computed transaction data to re-hash those again. These are all just setup commits. I think taproot has something similar to this.
+
+# Add StandardTemplateHash definition
+
+This is an important commit. Now we're adding a StandardTemplateHash. We need a new utility function called GetScriptSigsSHA256. Then we define the way of computing StandardTemplateHash. Maybe look at the skip scriptSigs check line. The skip\_scriptSigs thing. We also want to check, are the arguments passed in the correct order? We don't have type-safe hashes for bitcoin. Maybe a type-safe hash definition where you don't put the wrong hash into the wrong place, that would be a good pull request against Bitcoin Core.
+
+# Add SignatureChecker method for checking StandardTemplateHash
+
+In bitcoin, we have a notion of a signature checker which handles the abstract state of the world we might need to verify when validating the transaction like what's the current chain height. We have an abstract class so that we don't need a native version of that in script. This is a natural place for this code to go. We add a method that checks this. Are things being cached? Caching can come later. Caching is not part of validation. It comes later.
+
+# Add OP\_CHECKTEMPLATEVERIFY opcode as OP\_NOP4
+
+We define the semantics of OP\_CHECKTEMPLATEVERIFY in this commit. The code should be the same as in the BIP. There might be differences. I use a switch instead of an if statement. It makes it easier to add upgrades in the future. Other than that, there's not a lot to check here other than the meat of the BIP.
+
+# Precompute the StandardTemplateHash
+
+This is like it. That's the core of the BIP. These other things are like what are we doing with the BIP and how do we make the implementation better? So now we have some hash caching. We precomputed some of these values- can we pull those in? Can we just store the hash again and not re-hash during block validation? In block validation, there's some pre-computed data structures. You pre-compute things when you receive a block you can pre-compute these batchable things of the block and run other checks. You can run through and compute these hashes. So we're adding StandardTemplateHash to this existing pre-computed issue. So it hashes all the transactions. When you're doing this, it makes sense to do this. Script validity is a different data structure. A block comes in, you look at all the transactions- and from somewhere-  you get all these precomputed things filled out in a vector, then you check validity, and then you have this other stuff. To check it, we need the hash of the transactions. All of those hashes end up making their way into here. I'm all doing is adding a new one. Let's just look at it. The Precomputed data structure is here.... you have the hashPrevouts, the hashSequence, hashOutputs, then I have the hashes that I am adding that weren't there previously. I'm just adding a few things. The only one I'm adding is the StandardTemplateHash. I'm not adding that much space compared to what else is already in there. This has the witness hash hashes. The things you need to efficiently compute the sighashes in segwit. In the case where you have standard sighash flags. If you have different sighash flags, you need something else. This is a lot of caching stuff.
+
+# Make bare OP\_CHECKTEMPLATEVERIFY basic transactions are standard
+
+We add a standard type for this. Adds standard type TX\_STANDARDTEMPLATE. Adding a standardness rule is there just for efficiency. As soon as you need more than one input, the overhead in the segwit world is smaller, maybe you want to add it but add it later. Are there other types- like one where we have a few different options as a standardness type? In taproot, you will already have this. You can't have vaults in barescript though if you don't add it. For vaults, just doing it in segwit anyway. This is a carveout only for bare script, in the case where you care about efficiency like a congestion control tree.
+
+Q: can you elaborate more on why someone would want to use a bare op\_ctv basic transaction?
+
+A: Great question. If you're doing a congestion control tree, and you're trying to pay out 1000 people and you have a tree of outputs... You're trying to decongest the network. You want the maximally efficient way for one person to claim an output. You want a minimum overhead on-chain. If you use the smallest possible script to express the OP\_CHECKTEMPLATEVERIFY constraint, then you are most efficient. Doing it inside of segwit does it with another hash and then the witness. But if it's just a single input and there's a number of outputs, and it's just this basic OP\_CHECKTEMPLATEVERIFY, then that works for this congestion control tree case with no other conditions or sign-offs you want. So I think that's important for network plumbing to have that type defined. Does that answer your question?
+
+# OP\_CHECKTEMPLATEVERIFY deployment parameters
+
+This is a joke for now... Can we completely define the deployment parameters and get the logic correctly? The soft-fork starts March 1st. We're not going to start March 1st. I picked this months ago. I was thinking six months ago that March 1st is reasonable but it's not going to happen. We can change those dates and then it would be defined correctly. The controversial question is do we want to use bip9 version bits? It makes sense to use a non-controversial deployment strategy.
+
+# OP\_CHECKTEMPLATEVERIFY functional tests
+
+This one is interesting. These are tests that make sure it's working correctly. Writing tests that don't rely on other parts of wallet functionality is some kind of painful. You're manually constructing transactions to have a bare-minimum test framework for the pull request. In a later branch, I have tests where I just call an RPC and broadcast the transactions in some order. That's much easier to deal with and look at. For the sake of testing bare functionality, here's some tests. The questions to ask are, are these tests convincing to you? Are there other edge cases that are prime to be tested, and would you like to write those tests?
+
+# Modify script\_tests.json to enable OP\_NOP4
+
+There's a thing saying don't use OP\_NOP4, so we modify this. This is annoying. It's pretty simple. These files are compiled into the binary to get these actually through. I don't remember what it is. Someone more familiar with that should look into that.
 
 
 
 
 Questions:
-
-- purpose of covenants? What is the "covenant thesis"?
 
 - congestion control - the tree version-- who can withdraw first? How is this specified?
 
