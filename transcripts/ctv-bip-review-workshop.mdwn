@@ -177,6 +177,16 @@ Q: Is this source-specified CTV, rather than underfunded?
 
 A: You're not  necessarily specifying the source, you could do it if you want to. You can specify the source if it weren't a taproot output. You can specify the source but not the outpoint. Specifying a specific source is a weird thing; why are you enforcing coin selection or key selection on that other wallet? It's useful for protocols, but there's no obvious use case for this. In most cases, you want anyone to add whatever output they want to the transaction in the inputs. You don't care who pays you, you just care that you got paid. It doesn't really matter what person does this.
 
+Q: In Mike Hearn's lighthouse protocol, you could have people put money into the crowdfund and also take it back.
+
+A: It would be complicated to do something with that many state transitions. But you could build a UTXO accumulator script where at each step adds half a bitcoin into it. If it doesn't get to the terminal state, then some other action happens, or the money is only released once you get to this big point, but then the clawback mechanism is kind of hard. There's a lot of things you can do. I think we mentioned this on bitcointalk: the wrong way to engineer OP\_CHECKTEMPLATEVERIFY is to pick a well-defined application and then figure out how to do it in OP\_CHECKTEMPLATEVERIFY. It's better to pick a use case, and find out the OP\_CHECKTEMPLATEVERIFY way of doing it, because it might look differently. You can't map on this arbitrarily signing multisig thing to this; but you could say we're using OP\_CHECKTEMPLATEVERIFY with multisig on top of this, and this is the tied-hand oracle model where oracle can only do a few things like deciding how refunds get processed but they don't get to decide who gets the money. With the chain thing, you can preclude the case where someone decides to take hteir money back. Maybe clawbacks only happen once a month or at a specific time. There's a lot of nice things you can do, but you want to figure out the UX from a OP\_CHECKTEMPLATEVERIFY native perspective.
+
+Let's keep moving just so we can get through this session.
+
+# Upgrading OP\_CHECKTEMPLATEVERIFY
+
+We have left this 32-byte thing as the only defined one. If you have 33 or 34 bytes, you could define new types of OP\_CHECKTEMPLATEVERIFY as a soft-fork. The general mechanism for this is there. If you want to not commit to inputs, and propose that as a new one, that might be reasonable, but it would require a new soft-fork and there's a well-defined place for that soft-fork to go. We can add on a version byte for new semantics.
+
 
 
 
