@@ -17,6 +17,183 @@ workshop scripts: <https://github.com/JeremyRubin/ctv-workshop>
 
 slides: <https://docs.google.com/presentation/d/1XDiZOz52XyJc4LDSbiD9_JAaJobyF5QDGtR3O9qD7yg/edit?usp=sharing>
 
+# Introduction
+
+Howdy livestreamers. Can someone just tweet that the livestream has actually started? <https://twitter.com/JeremyRubin/status/1223672458516938752> Okay thanks.
+
+Welcome to the OP\_CHECKTEMPLATEVERIFY workshop. In the email I mentioned that we do have a code of conduct. It boils down to "don't be a jerk". Knowing most of you, that should be relatively easy to do, but if not then perhaps refer to the email. If you break the code of conduct, I will evict you and tell you to leave.
+
+I'd like to start out by making a big thank you to everyone who got us here. This has been a long project and there's a lot of support from the community that has come out from Binance, Digital Contract Design, Cypher technologies, John Pfiffer, Jim Calvin, Scaling Bitcoin, Tales from the Crypt, and DG Lab have all been big supporters of this work. I am very grateful. Also SF Bitcoin Devs has also helped with arrangements.
+
+# Schedule
+
+The schedule will include opening remarks, walking through the BIP, an implementation walk-through and talk about the code. We'll discuss BIP alternatives. Then we'll look at some demos and look at applications, then we'll talk about ecosystem and their support. Then we will break for lunch. Then we will discuss more ecosystem support looking at the mempool and how this new stuff will work at that layer. Then there will be an open-ended workshop session like BIP review and BIP Q&A that bleed in together. Then we will do an implementation review session to look at the code and make comments. Then I'll present my thoughts on deployment and have a discussion on what that should look like. In the evening, we have a dinner planned.
+
+There's an IRC channel which I will try to be roughly monitoring if anybody wants to submit questions. It's also a good way for remote participants to ask questions. It's a little better than twitter for questions. For WiFi, there's slips of paper floating around. For tweeting maybe use #bip119 as the hashtag.
+
+This is a worksho, so ask any questions that you have. It's designed to be a little more engaging and I don't want to just lecture the whole time.
+
+# Why are we here?
+
+The main goals today are to review bip119, we're going to learn about applications of OP\_CHECKTEMPLATEVERIFY, we're going to discuss deployment and the roadmap. We're all here because we want to improve what bitcoin is doing. That's a nice principle that we all share. I want people to leave and be excited about new projects.
+
+I thikn OP\_CHECKTEMPLATEVERIFY is one of the most exciting things in the ecosystem right now. It's a departure from what we were able to do before, and what we're able to do after it. There's a large set of things that people haven't been able to do due to complexity, which OP\_CHECKTEMPLATEVERIFY helps solve. There's some other proposals dealing with privacy and efficiency, but you can always make bigger transactions. The transactions might be too large. In limited cases, there's no new fundamentally new capability. OP\_CHECKTEMPLATEVERIFY lets you do new things.
+
+How are we going to prepare the ecosystem for this? What is each project going to do with OP\_CHECKTEMPLATEVERIFY?
+
+# What kind of "better"?
+
+What does better mean? Is it more scalable, is it more secure, are we giving more users freedoms? Are we eabling easier to design protocols? These are all ways that we can talk about better and I think everyone is going to have their own definition of better. I think we can all agree that we're generally here to make bitcoin better.
+
+# Quick demos
+
+I want to show a few quick demos. Let me start up some scripts and stuff. The purpose of this is not to go super indepth. You can hold your major questions. It's just to get everyone excited and thinking about what is the goal here.
+
+I have a UX that I cobbled together. It's neat, but not yet open source. All the mechanical parts are open-source right now. There's no private codebase other than the user experience. You have these scripts in the ctv-workshop repository.
+
+The scripts I made available-- there's one that creates a batch payment, one that generates addresses, one that generates blocks, one that sets up the chain, and one that sets up your node. You can use any of those.
+
+This is essentially a generic transaction viewer that I built. It allows you to load in a list of transaction hex along with some metadata for coloring. It lays out all the transactions and then gives you a UX which shows you where the bits and pieces are moving.
+
+For those of you on the livestream, I apologize that this is not publicly visible right now. Let me repoint the livestream. Now the livestreamers can join in the wonder.
+
+These marching ants around the transaction mean it's not in a block yet. It's still pending. That's what the animation is. The thick lines show that this is part of the transactions. UTXOs are round, and transactions are square. The thin lines are ways of spending a UTXO. The thin lines are possibilities. What I'm going to do is generate a slightly simpler program to look at.
+
+It's going to be creating a new vault. What we have is a program that allows you to say "I have a litle bit of BTC in coin storage and I want to move those coins into my hot wallet". However, I don't necessarily want to move it all at once and I don't want to have to go and access my cold wallet all the time because my cold wallet takes a week to access. So what you setup is a ratelimited control flow program that gives you a little bit of coins every once in a while.
+
+I'm going to mine a few blocks and play a few transactions. Let me broadcast this first transaction. It takes a few seconds to get processed and picked up. So we paid into a contract, we played the first step in that contract, which created two UTXOs: one which is a withdrawal contract, and another is a continuation of the vault program. So with the withdrawal, we can send to cold storage or we can send to hot storage. Okay, let's send it to cold storage.  Once that is confirmed, the other transaction gets removed. This is an undo-send functionality. We tried to send it, we pull it back to cold storage. This is a recursive program. It can have many steps.
+
+These contracts tend to be composable. If you have a standard CTV contract, you can take and plug it into another contract. Maybe cold storage is another CTV and you plug it into the module. These steps have to be pre-planned. We will get into the composition techniques a little bit later. I just wanted to show so that people have some context.
+
+The next demo I want to show is a batch payment. I'm going to go into my scripts directory and now I'm going to hit "generate addresses", which outputs some test data which is a bunch of addresses which are unique and random. If you leave it running, it's like 100 of them. I'm going to paste this into the batch payment API. You can do this using the same script in the repo essentially. Then I am going to click submit. What this does is create a batch payment. I'm going to start this in the background. This is the one that I have talked about a lot.
+
+This is in the context of congestion control. Say we have 20 addresses we're trying to pay, so if you want to broadcast a transaction that was to everyone.... if you wanted to pay everyone, you would have to do 20 work, but for each leaf node it's 3 work plus 4 work, it's like a total of 11 amount of work.
+
+Q: What is 12 work?
+
+A: It's the amount of chainspace required for any individual to claim their own output. The total amount of work is maybe 30% more because you have interior nodes. As an individual I want to get my own UTXO and ignore everyone else.
+
+So say we have two transactions, one is a commitment and one is a fan-out. For any person to claim, they have to do 100 work units in terms of space to get their UTXO. This allows existing exchanges to do it.
+
+With a radix of 1, there's a chain where one person gets paid out first. Then there's a strict ordering for who gets paid when. This simulates an annunity contract with a payout per step. You can also have an nSequence lock. This is also similar to a vault. This is a vault, and if you change what each step is a little bit, you can maybe think about having some abstract representation for some of these.
+
+# Why isn't bitcoin as-is sufficient?
+
+Taproot is going to make complex scripts easier, but transactions largely are not programmable. It's pretty limited in scope of what you're able to do. OP\_CHECKTEMPLATEVERIFY helps you expand that. Pre-signed transactions let you emulate this and we'll probably hear from some others here about that. But pre-signed transactions are hard to statically analyze as a third-party because you need to be a member of the n-of-n multisig to delete the key with the trusted setup.
+
+The pre-signed transactions require interactive setups. You're going to have denial of service attacks. With OP\_CHECKTEMPLATEVERIFY, I also have to hand you a tree of transactions and the redemption conditions. You have to have extra information in your wallet about this. This is no different from secure key deletion. It's impossible to prove that a key was deleted, whereas it is possible to prove that I have given you all the OP\_CHECKTEMPLATEVERIFY information and you can check there's no alternative spending path.
+
+It's both auditing as a party not party to the contract, and also being able to do non-interactive setup. Non-interactive setup and audit are somewhat the same thing. When you create a protocol, before you make the payment and actually broadcast it, send it to the participant and ask them to sign that you have received and then save to disk. That's an interaction at a legal liability perspective, versus interaction at a pure protocol layer. There's an important difference between the two in my opinion.
+
+The other issue is that if you want to use CHECKSEQUENCEVERIFY locks, you can't sequence events that are serial with that. There's some complexity around that and making timings well known.
+
+# Revisitng why we're here
+
+I think we spent too much time to go too in depth. I want to reiterate why we're here. Maybe everyone can say why they are here and what they are excited about. If anyone wants to introduce themselves...
+
+Secure key deletion vs opcode covenants. Prototype hardware device. Stepan Snigiriev has been teaching a class lately on this. We don't really care what the actual covenant mechanism is. The complexities around key management are substantial and independent of mechanisms.
+
+Here's why we're not here. You can disagree about this, but here we go. We're really not here to solve all bitcoin programmability problems. I think you can make the case that it would be really cool if you can run an abstract program over your transaction state. If that's what you want, then maybe look at ethereum. That's what they want to do, and they have spent a lot of time trying to make it work. We can discuss all those issues and things we might want to do, but discussion is different from solving. We don't want to say oh there's this one use case that is kind of interesting that we could do, and we want to make a leap forward in what we're able to do with bitcoin and get that out there, and try to do some follow-up features. OP\_CHECKTEMPLATEVERIFY is composable with new things that come along, it doesn't preclude you from using new things. If you were to add OP\_CAT then you can do a lot more. If you have something that checks if another script exists as another output you can get a lot of other interesting flexibilities. OP\_CHECKTEMPLATEVERIFY can do some of this, but not everything. Really we're here to prove that OP\_CHECKTEMPLATEVERIFY is safe if it is safe, and then figure out how we're going to deployment. We're more here to see if we can move the community forward.
+
+# BIP walkthrough
+
+I wanted to walk through the BIP. When I say walkthrough, I'm not going to do the line-by-line.
+
+The metaphor for bitcoin UTXOs is that UTXOs are little treasure chests that hold gold coins. Gold coins are nice because they are relatively small and uniformly shaped, such that if you have a bigger treasure chest you can fit more of these gold coins in it. What you do with a treasure chest generally is you open it up and you take the coins out, you get them all out and put some back into a new treasure chest. But if you have a covenant, essentially what you're saying is that these coins aren't just gold coins but these are actually special like a rare treasure that there's only a few of. If this is a special Jimmy Hendrix guitar, you don't want to keep it like the coins, you want to say the treasure chest should be a special treasure chest like a guitar case. This is why you want a covenant. What you're expressing is don't just treat this as random coins, have some other functionality about how to handle the coins. This is a little bit like a monad where you have some safe set of transitions and you put something inside, and then people-- you put something inside, you unwrap it like a burrito, but you want to wrap it in a safe way. If you leave it unwrapped, maybe you access it in a thread unsafe mechanism. Covenants are a good way of thinking about what are the safe way to move the assets around. The idealized covenant is a program that is attached to a transaction that observes all state in the world, everything in the world, and then says is this transaction based on looking at all the state in the world. That's really broad and arbitrary though. So we pair it down: what about covenants that just look at all the blockchain history we're able to access? So within this system, is the property still true? Well, what about only the states we define to be part of the system? Eventually you can pair down to something implementable. You can think about ethereum contracts being fundamentally like what is a turing complete covenant for moving coins around? You express all the conditions around coin movement, but they don't move directly just inside of wrappers that have programmatic constraints on what gets paid. In OP\_CHECKTEMPLATEVERIFY, we're asking what's a simple way to do this for bitcoin and says this is a guitar let's put it in a guitar case and propagate constraints like that. Saying thinsg like funds should split according to a pre-defined schedule. These can be somewhat recursive covenants too. So we're not trying to solve all the programming constraints, we don't want to build an omniscient oracle and try to get all the state in the world, but rather we're just working on something more practical and feasible. People have different expectations. You want to build something that doesn't rule out an oracle at a later step, but you want to allow the oracle to exist later. Rather than selecting from any possible transaction, maybe select from a set of 1 of 5 transactions.
+
+With that, let's actually get into the BIP. OP\_CHECKTEMPLATEVERIFY uses OP\_NOP4 (0xb3) as a soft-fork upgrade. It's sort of like a straightforward VERIFY NOP fork. If you have a new opcode you want to add, if you change the execution semantics of the VM, like you say we're going to put this new thing on the stack and then remove it, it's fundamentally incompatible with the previous version. But if you just verify a property with an assert, then it is compatible with previous versions. So then you can make the assertion mandatory and it makes it groovy and okay. So let's make it restrictive. Every time there's nothing on the stack, it fails. If there is something on the stack, then it should be exactly 32 bytes (the size of a sha256 hash). Say there's a well-defined hash function, StandardTemplateHash, matches on the stack, and if not, it fails. We can also as a policy rule reject non-32 byte hashes.
+
+Q: Why are you using NOP for those non-32 byte data?
+
+A: The reason not to fail is that at some point we might want to upgrade. Right now we have no version byte, but maybe someone can add a version byte later and maybe there's a new rule for hashing the transaction. You can think about it as hash flags, like the standard template hash.
+
+Q: Would this require a different script version?
+
+A: Every time we want a new template, we can have a new opcode, but we have limited number of opcodes, so this lets you version the data bytes and you can use the same opcode. That's more or less like a conservative implementation detail. Segwit and taproot have done similar things where they have a default version byte, and if the version byte is not the one in the standard, then we completely define it as "nothing" for now, which gives you more flexibility down the road. Wallets that don't want to lose their coins should just conform to the standard until we define the undefined behavior.
+
+The OP\_CHECKTEMPLATEVERIFY implementation is straightforward. It's an opcode. We check if there's enough things on the stack. We look at the size of the last element, and if it's 32 bytes, we check the standardtemplatehash using CheckStandardTemplateHash. Future upgrades can add more semantics with version bytes. But for now we exclude it from the mempool.
+
+The specification for the template hash is a little more nuanced. There are two different use cases that we have hashes for. The first case is where all the inputs to a transaction are segwit. If they are all segwit inputs, then what you do is you don't include the script. You know that they are all zero anyway, because in segwit the scriptSig is all 0, but the witness is a separate thing that doesn't get into the hash. This saves us from efficiency later on. This makes it more clear what the expectation is. It's a reasonable optimization to make. We'll revisit the details of the hash. The key thing is how we detect if there are scriptSigs.
+
+As a standard rule, not a consensus rule but a mempool policy rule-- if something is just a 32 byte hash with an opcode... that's standard. There's P2WSH and so on. So we add a new one, saying that a 0x20 byte hash and an opcode should be standard.
+
+# StandardTemplateHash rationale
+
+So we go ahead and hash the nVersion, nLockTime and maybe as I mentioned we hash the scriptSig hash. We hash the number of inputs, we hash the hash of all the sequences, we hash the number of outputs, we hash the hash of all the outputs, and we hash the input index- the index of the input that is currently executing. We could do this in any order and it would be functionally equivalent. But there's a nice optimization if we think about what is the general likelihood of what order these fields are going to be modified in. If you have a streaming hash function and you're only changing the last little bit, then you do less work. This makes it easier to write scripts and do validation. I don't know exactly how people are going to use this. I generally expect that the version is not going to change that frequently. I don't think that people are going to be using absolute locktime that much, and when they do, it will probably change infrequently. They won't be scripting absolute locktimes. Relative locktimes, on the other hand, are a different story. The number of inputs- you generally know the number of inputs, but you might want a flexible protocol where you change that, so it comes later. The sequences come next, because they might need to change based on the branch of a program being taken. The outputs hash changes a lot. The input index might change a lot, because in validation if someone expresses that it will come at a different index, we can hash everything and just change that last little bit.
+
+Why are we doing this partial merkelization where we hash the hash of the outputs? If you want a variable length encoding of a hash, you might have ambiguities. There's two specific lengths of hashes that can be used in OP\_CHECKTEMPLATEVERIFY. It also helps with future scripting capabilities where you want to add just one more output or something, it gives you compactness property.
+
+# Malleability
+
+In terms of malleability, we committed to all of the data in that hash that can effect the txid, except for the outputs. It's a restricive rule. The input index cannot effect the txid. In some cases, it kind of could. Why do we want this strict rule about malleability? When you fit into a use case as a basic standard CTV template, it means you can perfectly predict what all the txids are going to be in that tree. We want to keep the txids locked down. We want no malleability. We want to know exactly what the txids are going to be. We want to just have a filter over a list of expected transactions. If you want to monitor the chain for a arbitrary covenant system, how would you know if it was something you cared about? That's kind of complex. But with a simple OP\_CHECKTEMPLATEVERIFY scheme- and you could get more complex- you can just look for txids and run some basic logic at that point, rather than looking at every transaction and carefully analyzing it. Being computationally ennumerable... in order to numerate all the conditions for a OP\_CHECKTEMPLATEVERIFY contract, it's fundamentally O(n) because there's a known number and it's countable. There's some list that someone had at some point. You can reconstruct from that list of n states and get the exact tree. With an arbitrary covenant system, that's not true, and if you had many steps then tracking that outputs, it's not clear what the txids would be on the whole path, and you would need to track recursively and regenerate all the covenant states at each depth. It's messy. It's a lot of complexity to put on wallet implementers. Instead, having a list of txids that are known ahead of time is a lot simpler. You could, if you wanted to do more complicated scanning. It's also a bloom filter issue. With a list, you can put it into a bloom filter. But with an arbitrary set of transitions, there's no bloom filter that you would be able to construct to cheaply check if a block has something you're interested in, you would have to get the full block- which isn't necessarily bad because people should have more full nodes, but it makes processing more heavy for wallets.
+
+# scriptSigs hash
+
+This is a weird rule. It makes an odd constraint that you fundamentally can't put a OP\_CHECKTEMPLATEVERIFY script inside of a P2SH. The reason is that.. in OP\_CHECKTEMPLATEVERIFY, you have to commit to all the scriptSigs, and the scriptSigs point to the hash of the script. It's a hash cycle. The txid of the parent transaction in the input would point to the StandardTemplateHash in the parent outut. These create some hash cycle issues. Alternatively, we can say all scriptSigs must always be zero, but that seems unfair to say that OP\_CHECKTEMPLATEVERIFY is incompatible with the whole class of outputs. So instead, it's compatible but there's more hashing if you use it in those situations. There might be some use cases where you want to use a scriptSig.
+
+This gives us some kind of weird capabilities. If you imagine you know someone's exact scriptSig for spending an output in the transaction, then you know their signature. The signature commits to the output of that transaction. So you can kind of implement something that looks like OP\_CHECKINPUTVERIFY where you want to check that the other input is something you care about. There's some interesting things like that, but it's rather inflexible.  If people want that.  A P2SH can be committed to, like "if (spend coin with Alice's key) ELSE (spend coin with Bob's key) ENDIF CTV".
+
+We don't have OP\_CAT right now, but it would make things more powerful. A lot of the flexibility could come with this easy script change that people are already thinking about.
+
+# half-spend problem
+
+OP\_CHECKTEMPLATEVERIFY is generally immune to the half-spend problem. You have to opt-in to the half-spend problem. Imagine you did not commit to the input index, and you had a OP\_CHECKTEMPLATEVERIFY script that said I am going to spend from Alice to Bob and this transaction will have 2 inputs because you want someone else to add inputs to that transaction. Maybe you wanted that. If someone else shows up with the same OP\_CHECKTEMPLATEVERIFY, then those two outputs can be combined into the same transaction because of the lack of commitment to which index the inputs appear at. This can create a problem where the OP\_CHECKTEMPLATEVERIFY is used in a way that steals coins. We should say commit to which input index these things are meant to be at.
+
+Q: What about accounting for the obligations that each covenant requires, instead of letting one output satisfy multiple identical conditions from multiple inputs?
+
+A: Interesting.
+
+# Branching
+
+You can select a branch and execute one. You have a list of StandardTemplateHashes and we have the OP\_ROLL. For non-segwit, you need OP\_FROMALTSTACK. If you're not in the segwit world, then you can get rid of the OP\_DROPs. Segwit enforces a cleanstack rule. This is not enforced in bare non-segwit script where you can leave a dirty stack. In the segwit version... the reason for the OP\_FROMALTSTACK is a little simpler than typing OP\_ROLL twice. The alternative is that you have to have an additional byte which tells you how many templates there are, and then you OP\_ROLL.  If you had more than 256 things, you would need more than one byte. Actually, more than 16. So you only have one byte literals up to 16. So it saves you a byte in a number of cases. It's conceptually simpler to explain with OP\_FROMALTSTACK. It would probably be better to imagine we had taproot, where we could have as many scripts as we want.
+
+You can do bounded recursion too. This might be obvious. You can put one of these inside of another one. So you could have (H(pay to H(x) CTV) CTV). Each one can have timelocks; you can opt-in for singatures from different people at different times. Makes interactive protocols easier to define.
+
+# Literal checking
+
+A previous version of the BIP had literal checking where you would check that the element was on the stack was immediately from a push, the last push we did. This was setup in a way so that the rule could later be soft-forked out. It's kind of a little clever that we could easily remove this later if we wanted to, but enforce it at first. I got rid of this in bip119. It doesn't protect against a known issue, but it allows you to separately introduce OP\_CAT without enabling constructing things on the stack. This would make things safer. Once we get OP\_CAT, you can now construct things on the stack. Say we want OP\_CAT but not constructing templates on the hash, then maybe we want to include that literal checking rule. But a lot of developers have said it's arcane and makes writing script interpreters a pain and please don't do it. I originally included it to be more conservative. I'm generally in the camp of let's do more interesting things in bitcoin, so it's there, it's gone.
+
+# Unspecified CTV
+
+You can do "unspecified CTV". The scriptPubKey is CTV and the witness is H(anything). Why would you want to do this? You wouldn't want to do this in a future world where you can have a delegated witness type. Imagine a future of bitcoin where there's a script, and also another one which is delegate to another script. You could say delegate to another script, let them pick a script and execute a script. We can sign off with a key from a different template to execute. This is not "why would you do this", I'm giving you a list of things that are wacky that are things to review in the BIP not that you would necessarily want to do this. This is effectively anyonecanspend. You can already write OP\_TRUE, so this is just redundant, but it's just a weird thing I wanted to mention.
+
+# Bare script oddity
+
+Say you are using scriptSigs and they are committed. We can commit to inputs indirectly. It's possible to try to implement a little bit of an OP\_CHECKINPUT case, but only if the ohter inputs are non-witness or if they are witness then you can commit to the other programs but not your own input because it's already committed to itself. I would expect someone to come up with something fun to do with this. I don't think this imposes any safety issue. These are fundamentally non-recursive because you're picking an additional input you want to be with, but that input can't impose some condition on the outputs because that condition on the outputs is already enumerated inside of the template. Doesn't create crazy unbounded amounts of flexibility.
+
+# Underfunded CTV
+
+Why not have a list of things you are trying to audit, like Bryan said? Say you have an underfunded CTV. Maybe you have an output with 10 BTC in 10 outputs, and you only have 1 sat in the input. That transaction would not be able to broadcast. But if you have another input, you could say someone else should fund this. There could be a control path without funds, and someone else pays for it. You could imagine someone pays for lunch. I have an HTLC that lets me revoke after a week, and I put half of the BTC in one part, and someone else can showup and sign at different input indexes and combine into one clear condition. So the underfunded case is kind of interesting. You can commit to the number of people too. For accounting for each obligation in the way Bryan asked about, you would have to specify the number of obligations. You would have to introduce a lot of other functionality. The best way of doing that would in my opinion be to add some kind of explicit fee opcodes. There's other cases where you want to do a spend and "allow this much fee" or something. Unclear. This would let you write something where-- I have done SIGHASH\_SINGLE and someone else can claim the rest of this output, but not to fee. They can put it into something else, but not fee. I don't know why you would want that.
+
+Q: How is underfunded CTV different from anyonecanpay?
+
+A: It is anyonecanpay. I'm saying anyone can pay for half of my lunch. You both say "me" and then there's a race condition. Anyone can fulfill the other type of the contract. You can also use OP\_CHECKINPUT if you want to say this specific person. You as the second person for the underfunded case, you might want to say "me" but I don't want to express that everyone can join and pay for lunch, but I do want to say I will specifically pay for that lunch. You can have flexibility on the claim, but it is "anyone can claim" at that point.
+
+Q: So it could be, hey, my company will you pay for my lunch, rather than will anyone pay for my lunch?
+
+A: Yes. If you want to express that you can be spent to any output, then you should specify there should be 2 inputs can be this, and I am okay with being at input 0 or 1. If you want the unbounded case where you are spent at any index, then you need OP\_CAT to add whatever sequences are appropriate, add whatever number of inputs and outputs you want, then you just express that I want this company to have some limited set of coins. So that would be a more complex scripting primitive. While there's use cases for that, let's solve that. You can already do a lot, these are just weird edge cases you can't do as well.
+
+Q: Is this source-specified CTV, rather than underfunded?
+
+A: You're not  necessarily specifying the source, you could do it if you want to. You can specify the source if it weren't a taproot output. You can specify the source but not the outpoint. Specifying a specific source is a weird thing; why are you enforcing coin selection or key selection on that other wallet? It's useful for protocols, but there's no obvious use case for this. In most cases, you want anyone to add whatever output they want to the transaction in the inputs. You don't care who pays you, you just care that you got paid. It doesn't really matter what person does this.
+
+
+
+
+
+
+
+Questions:
+
+- purpose of covenants? What is the "covenant thesis"?
+
+- congestion control - the tree version-- who can withdraw first? How is this specified?
+
+
+
+
+
+
 
 
 
