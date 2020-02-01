@@ -1,7 +1,8 @@
 OP\_CHECKTEMPLATEVERIFY workshop notes
 
-
 # Reference materials
+
+transcript tweet <https://twitter.com/kanzure/status/1223708325960798208>
 
 livestream: <https://www.pscp.tv/w/1PlJQmRZWnZJE> and tweet <https://twitter.com/JeremyRubin/status/1223664128381734912>
 
@@ -343,12 +344,128 @@ A: You detect if a signature got produced. I believe if you see a valid signatur
 
 # Pre-signed transactions with secure key deletion
 
+This is work that I am doing with Spencer, Bryan and Bob. I am presently based in London. This is two projects from my PhD work. Like Jeremy said, it is possible to do covenants in bitcoin today. I think if we're going to propose a new mechanism to do covenants, then it's worth digging into the details about what is possible today, what are the security properties, and what do we really gain from introducing a new opcode or some other proposal? Hopefully this will help push forward any proposal that can make covenants work.
 
+## Basic idea
+
+The basic idea of a pre-signed transaction covenant is that you start by constructing a covenant transaction. You encode in that the conditions of your covenant. You can specify specific addresses, or maybe you want to specify something simple just like the version number of the transaction. You then sign this transaction with an ephemeral key. You commit to those conditions. Then you delete the key so that no new transactions can be signed for the address you specify during the deposit or commitment transaction. At some point before you create the covenant, you have to specify the deposit transaction and you need this to be a segwit transaction so that it has a static txid so that you can point to the output for the deposit. Once you sign the covenant transaction and delete the key, then you can broadcast the deposit or commitment transaction.
+
+## Security analysis
+
+I have a definition here of what I think a covenant is: it's an unbreakable commitment to a specific set of conditions that apply to the transfer of control of coins. The security of this setup relies on the secure key deletion technique. I would argue that there's a range of different security models you can get for your secure key deletion. I'll discuss that in a moment. It also depends on protecting your private keys before you have deleted them. Using a secure random number generator is also important. That security concern is equivalent to any other mechanism you would use for a covenant, though. Finally, instead of securing your private key, you then have to securely store the covenant transaction itself. This has a more limited attack surface, but you still have to do it.
+
+## Secure key deletion
+
+The main point to discuss is secure key deletion. An opcode covenant basically relies on the consensus security of bitcoin. But in this case, we're relying on the process of whoever is setting up the covenant and doing the key deletion. If you just had a single key used to sign the covenant transaction, then the security of the key deletion is only as good as that one process of deleting the key. But if you had for example, a multisignature output in your deposit transaction, then you can distribute the risk of failing to delete one key. If you use an n-of-n multisignature output in your deposit transaction, then only one of those key deletions really needs to happen. Then that way, you have a customizable security model for your key deletion. You can also get different guarantees of key deletions by using different signing devices like a disposable key and signing device that you incinerate later, or you can try to implement provable key deletion in your hardware device.
+
+## Class of possible covenants
+
+The class of possible covenants with pre-signed transactions is limited to the things you can specify by transaction templates. If you use this type of mechanism to make a covenant, then you have to think carefully about what sighash flags you use. You could make a uselessly-constrained covenant commitment by using ANYONECANPAY | NONE or ANYONECANPAY | SINGLE. But you have to be aware that those inputs and outputs can be repackaged into different transactions, and it's not that useful if you're building a tree of covenant transactions because you don't know the txids ahead of time.
+
+Alternatively, you can make a maximally-constrained covenant where you just sign with SIGHASH\_ALL where you commit to all the inputs and all the outputs. Most of the power comes from the script in the outputs of your covenant transactions.
+
+You can make a chain of covenant transactions that you have to pre-specify before you commit to it by broadcasting the deposit or commitment transaction. You can also do disjoint covenant commitments like OR branches. You can combine those arbitrarily, too. It's possible also to do multiple deposits but there's safety issues that you have to think about there, especially if you're in a multi-party situation.
+
+Before I talk about comparisons to opcode covenants, I just want to say it's possible to do a certain set of covenants today. It might be worthwhile in some applications, and it might not in some other applications. If we can elaborate on what situations it is useful to use the mechanism of secure key deletion, then we will know exactly what we're getting when we introduce something like OP\_CHECKTEMPLATEVERIFY. Among a set of trusted parties, secure key deletion is useful. But if you have multiple distrusting parties, then I would argue that OP\_CHECKTEMPLATEVERIFY is probably more useful there. It's not the key deletion that is the problem... everyone can locally make their secure key deletion as secure as they want. The problem is more about the communication complexity and interactivity. It's an availability argument. You have to be online to construct and then delete. If you're creating an address for your covenant transaction, you want to do that to as close to the activation of the covenant as possible, as close to the time that you're deleting the key so that your ephemeral keys are as short-lived as possible. With OP\_CHECKTEMPLATEVERIFY, you can have long-lived addresses. It is availability. One of the major differences between secure key deletion and opcodes, is that you have to construct the transaction, compute the txid, sign it, and then delete it. In a multi-party scenario, this becomes a pretty serious restriction because all n devices have to be offline. I have to go offline to retrieve a public key, I have to do this twice for every signing twice. We have prototyped with one device deleting a key. It's also for every transaction in the program graph. One advantage of this though is that you can construct multiple offline pre-signed transactions and nobody has to know they exist. This is an off-chain protocol. Whereas with an opcode you have to put those paths on the stack. But doesn't this make more toxic data to have these pre-signed transactions? Yes, it increases your attack surface only in so far as people know there are alternatives. In a post-taproot world, which has some benefits for pre-signing too, you're only paying log(n) data on the stack. If you huffman encode the probability of which branches are going to execute, then you're back to O(1) expected chain space for as many conditions as you want, within a probability distribution of the likelihood of your branches.
+
+There are differences not only from which you derive your security from (key deletion or bitcoin consensus), and then there's also privacy differences. If you're sure that you can't accidentally lose your ephemeral key when you use n-of-n, then it's safe to use n-of-n. But if some weird thing happens to your signing device, then you might want some tolerance for that. It's not about protecting from theft, it's protecting from device failure. You can always restart the protocol if the device fails. In a multiparty case, what happens if one of the parties walks away? You can do threshold delete-the-key where it's k-of-n instead of n-of-n.
+
+Q: In OP\_CHECKTEMPLATEVERIFY you have to expose the whole tree?
+
+A: No not actually.
+
+Q: Have you looked at BitML at all? We can talk about that later.
+
+... Bryan asked how to choose between standard templates... you use OP\_ROLL, and htat exposes the alternatives. But with taproot, you have a tree and put one in each branch. With taproot you learn nothing about the structure of the tree. With huffman encoding, you can imagine a left and right, and left is the most likely one, and the right one is the branch of the second-most likely script. So you can have a linked list style thing... and then the property you have is that if you sum up the expected values of the probabilities for the branch, then you would have something efficient in terms of space. Huffman encoding is just the easy one to explain. The downside is that people learn that this is the one that you thought is most likely, but generally you don't learn the length of the chain, except for the taproot value which is like 180 deep or something? You don't have to reveal the total structure. I think the other point is that, you asked, doe sthis require that you have that whole contract program on-chain. Not really, you can communicate it out-of-band, but it might be a well-known template and people could plug in inputs they know about and re-generate them.  If you wanted to blind them, you could add salts to them like an OP\_RETURN output or something. That transaction would then be blinded. You could also put it into the scriptsig.
+
+Let's say I wanted to construct a protocol that required a preimage to be revealed in order for this to be valid, one thing that I could do is say I'm in a case where it's a single input, and then I add a salt to my scriptSig that is just a PUSHDATA of 32 bytes of garbage and then I reveal to you the transaction template but I don't reveal to you the scriptSig nor the scriptSig hash. Then you know that, you reveal the scriptSig hash but not the preimage or something... So this solves this, giving you the ability to optionally blind the template, but by default anyone can recompute the template just by knowing the parameters.
+
+With pre-signed transactions, no information is revealed, but with OP\_CHECKTEMPLATEVERIFY there are some arguments revealed. Pre-signed transactions are great, then I would say OP\_CHECKTEMPLATEVERIFY is also great. Using taproot, generate your non-interactive protocol and then lazily use deleted-key with n-of-n Schnorr signature to make the version that is blinded in terms of alternatives so you don't reveal anything else in the tree. That gains more privacy. OP\_CHECKTEMPLATEVERIFY lets you optimistically spend, and collect signatures. From a resource allocation standpoint, you're forcing everyone else's node to bare your security premium... say you want something where you're confident that a sufficient set of keys has been deleted, and I'm forcing everyone else to eat this multisig that there isn't much network verification burden for OP\_CHECKTEMPLATEVERIFY. It's an upfront thing with OP\_CHECKTEMPLATEVERIFY due to the hashing, versus secure key deletion where it exists and you do it today and there's an ongoing cost. With Schnorr, we can use musig for n-of-n with one signature, but this benefits both.
+
+The main barrier to opcodes are that it's difficult to reach consensus for a soft-fork. Also, it is hard to analyze systemic risks. We can analyze specific risks, but how does that translate to the system as a whole? I am not sure how to do that. Also, what applications should be designed for? Is it broad use, narrow use? These don't preclude opcode covenants in any way, but it's something to think about.
+
+The main benefits of opcode covenants that I see is that you don't have the procedural overhead of dealing with the secure key deletion procedure. The security of the opcode doesn't depend on that process of key deletion. Wallet development might be easier. We already know how to handle private keys, but nothing really manages pre-signed transactions. In OP\_CHECKTEMPLATEVERIFY the watchtowers still have to know the pre-made transactions. It might be harder to design wallets in both cases. Proof-of-reserves is pretty easy with the opcode covenant because you still have the key, and you can prove your ownership of the key. This is harder to do if you have deleted the key. A covenant address can be a lot longer lived with an opcode, which is nice.
+
+# Vault custody protocol
+
+This wraps up our first project, which is describing secure key deletion covenants in general and what are the security properties of various covenants. The second project we're working on is a vault custody protocol. In theory, you can swap out the covenant mechanism to the one that you want. We have two types of vaults: a Moser-Eyal-Sirer vault, and then a simple push-to-cold-storage vault. We have a computer interface mediating communication between many different hardware wallets. We have a multisig hot wallet (active wallet). There's a recovery wallet which has strict rules about how many times you want to access those hardware wallets. Then there's a set of devices for the vault wallet, where you do the ephemeral key generation, signing and deletion. They will have to be right now custom hardware that we define for secure key deletion functions. Also you need a watchtower to monitor for any release of your vaulted funds.
+
+## Benefits of vault custody protocol
+
+It enforces gated access to your set of funds. The idea is to distribute those funds across many vault outputs and ratelimit the amount of unvaulting funds. In that situation, you limit how much risk you expose yourself to every time you want to access your funds. You retain the ability to adjust the security of your remaining funds because you can always sweep the remaining UTXOs into your recovery wallet.
+
+## Drawbacks of vault custody protocol
+
+It's a complex setup. There's high procedural overhead for users. They might require advanced domain knowledge to use this, or a team of engineers to build a custom wallet. Commercial hardware and software for the management of these covenants is not available yet, and the security analysis is pretty complex. We have two drafts of two manuscripts and if anyone is interested in this work then send me an email.
+
+Q: What are your main critiques of OP\_CHECKTEMPLATEVERIFY ?
+
+A: It's difficult to get a consensus for a soft-fork. It's hard to know what systemic risks you're introducing. Wallet implementation. Just specfying the design for the set of applications you want. Any change to bitcoin is inherently very risky. The application of covenants seems to be the most interesting in terms of what I've seen.
+
+I mentioned earlier about the ability to use standard checksigs... Deleted key is another type of covenant mechanism. We can use one or two of these at the same time. Any guarantees put into OP\_CHECKTEMPLATEVERIFY could be evaded by other mechanisms. That's one of my big concerns: why do we need three covenant mechanisms? Shouldn't one covenant mechanism be enough? I can't emphasize enough how complex the wallet actually is. It's stupidly complex. If you have a trezor, life might be good. But the active wallet has to be multisig, so that's at least two devices. You need a backup, so double that. You need a recovery wallet in case a theft attempt is detected, then you have the watchtowers, then the device that deletes the keys. You're talking a minimum of just like 6-8 devices, and finally you need the watchtower which you might operate yourself if you're sophisticated but less sophisticated users will probably want to outsource that. Do the sweep transactions get triggered automatically by watchtowers? Does it notify you? Does it have personally identifying information on the watchtower? Do I have to be available for the recovery attempt? All of that is independent of whether we use OP\_CHECKTEMPLATEVERIFY or deleted keys. All of those elements, like the active wallet vs the vaulted wallet.... All the trusted hardware stuff, you can throw that away, you have eliminated like one device out of 8. All the wallet handling stuff is simpler. All the logic for implementing a OP\_CHECKTEMPLATEVERIFY wallet, you inherently have the metadata. But for presigned... No, it's the same. I have the pre-signed transaction, or I have the metadata from OP\_CHECKTEMPLATEVERIFY. It's identical.  A wallet has to be able to inspect the outputs... If you're auditing for a third party, then you need OP\_CHECKTEMPLATEVERIFY.  A wallet is operated by one entity, they have everything. If I want to commnicate it to a third-party, then yes I need OP\_CHECKTEMPLATEVERIFY. If I have all the metadata as an operator... there's less metadata for OP\_CHECKTEMPLATEVERIFY ?  There's a difference between batch and vault. One of the prime use cases for vaults is making inheritance schemes. If you want to assign assets to your descendants and give them 1 bitcoin/month stipend, in that case, I'm going to give you these assets, you receive them, so you're getting them from a third party. It's not the vault you made, it's the vault someone else made for you. How do you vet that they didn't have the key? You would have had to be a part of that. In multiparty scenarios, you're right unless you come up with a good multiparty key deletion scheme... OP\_CHECKTEMPLATEVERIFY is going to be better, for multiparty. But a wallet is a single party. I'm going to book-end this. We have 15min before lunch.
+
+# Demos and applications
+
+## Compressed batch payments
+
+Right now in bitcoin you can batch payments together into a single coinjoin transaction or a non-coinjoin transaction with a fan-out with a bunch of UTXOs. You might have a small privacy hit. The number of signatures you need is drastically reduced, which decreases your fees. The key idea in OP\_CHECKTEMPLATEVERIFY is a two-phase commit.  The first phase is assign the inputs that you're going to spend, and then phase 2 is create the outputs. This is a little bit less efficient than the original batch payment transaction, but it's only O(1) extra work.
+
+What you gain from this is huge. If you had an incentive to not batch outputs because you think it's less likely to go in, then you're probably not going to ues batching and make space efficiency worse for everyone. But, you could say, I could guarantee that for a nominal fee rate, I can just get it confirmed, that's a pretty big win. Now I can pay top of the mempool fee rate for one input one output transaction. Later, we can pay non-peak fee.
+
+So the question is, who wants one of these things? Most people want a UTXO immediately. Here's an interesting case. How many people move coins from Binance to Coinbase? That's a pretty common use case. So for exchange-to-exchange, they can see that they can redeem an output and not need it right away. Exchanges could then manage cash flows. You get a time benefit, for arbing between Binance and Coinbase, it's batched up, and now there's privacy on whale-alerts.
+
+Q: Doesn't this peg your fee rate?
+
+A: Yes.
+
+Q: What if the two exchanges don't trust each other and one of them commits to only spending coins as that transaction, and then decides not to broadcast it?
+
+A: Fundamentally this presumes exchanges operate a node with an infinite mempool and any transaction they see that involves their address, they store that transaction. So the idea is that going between Binance and Coinbase, they will say here is the second transaction.
+
+The exchanges don't need to have pre-existing relationships... but you do, because you can send the transactions into the mempool. No, they just check it out of the mempool. Every user already has the withdrawal transactions. You already need this because you don't know the txid. The exchange emails it to the user and they can store that, submit it or whatever, or you can broadcast all the data to the mempool. The de-congestion goal isn't that you can't do this with the mempool.
+
+The primary benefit is that it's a non-interactive protocol between exchanges. Today in bitcoin, there's two things-- you pay someone, and you give them the option to pay someone else. Now there's two buckets: you pay somebody, and you can say, I can pay you and give you the option to pay someone else immediately which is how it works today, or you can say I'm going to pay you and here's a proof that you can eventually push data to the chain and get that payment option. But if you want to, for whatever reason like fee minimization, you can hang on to that and delay. It increases the economic utility of the chain.
+
+Q: Isn't this just equivalent to...
+
+A: We can pick this up later.
+
+Q: This is your biggest pitch for OP\_CHECKTEMPLATEVERIFY so it seems prudent to cover why this is impossible without OP\_CHECKTEMPLATEVERIFY.
+
+## Tree payments
+
+You just need a branch, you don't need the other stuff. The longer you wait, the less fee you will have to pay. Different people get paid out at different areas of the tree. Each user would pay for transactions in the path from the tree, and have multiple intermediate transactions that they broadcast. You have an arbitrary merkle root that you are verifying. A lot of this logic is shared.
+
+## Why do we care about this?
+
+Batching is the worst case if your layer 2 uncooperative closes. You're going to be contending with batches in the apocalypse scenario... it makes the argument that we have probabilities that we will do better by having some cooperative protocol up the stack, makes those claims stronger for lightning or layer 2. Yes, lightning could be better, but fundamentally they all decay into this in the worst case, so let's make sure they are good. This focuses a lot on making sure this is okay.
+
+## Simulation
+
+This walks through a simulation and shows what the mempool looks like with batching and without batching and how much better congestion is under different scenarios. The fundamental question is, what is this notion of scaling that we're trying to achieve? The thing that we want to focus on is how much is a user aware that there's a blockchain under this all. To the extent that the wallets can become nice UXs and we can load in proofs that we need, we can get transactions from a rational mempool etc, then does the user know that they are on a blockchain that has only one megabyte of transactions per block? Every protocol here makes different tradeoffs. Being able to postpone work lets you be fee-abstracted, and you can have an agent that tries to minimize fees by delaying the expansion later, and the less aware of fees you are the better in this case. What do we mean when we say scaling? Are you aware that there's a horrible database underneath this? OP\_CHECKTEMPLATEVERIFY promotes a cooperative case where they are able to better express which of their bandwidth is better and which is not.
+
+Q: For batching, why not just submit the batch tree? One way to think about batching is that it's an ability to transfer fee payment from the sender to the receiver. Child-pays-for-parent could do this anyway.
+
+A: Yes, that's one way of using it. It gives you the flexibility to decide different policies.
+
+Q: I could do that anyway with child-pays-for-parent.
+
+With OP\_CHECKTEMPLATEVERIFY, you can expand the payment bandwidth of the chain in a capacity in a way you can't do with CPFP. You can signal to miners a higher priority for transaction inclusion. But with OP\_CHECKTEMPLATEVERIFY, you can pay a vastly higher amount of people than you can today on-chain. If you're using CPFP for that purpose saying users can pay if they want, they can have unconfirmed outputs which is awful. If I'm trying to shove through a payment and I'm an exchange operator, I'll just replace-by-fee and RBF the whole thing. You don't need OP\_CHECKTEMPLATEVERIFY for that. With RBF, you're not increasing just total fee, it's also total fee rate. You have to pay O(n) more fee to get that bumped. It's a big amount that you're paying. It's a lot more fee than CPFP...
+
+Q: If your fee rate is monotonically increasing, then OP\_CHECKTEMPLATEVERIFY doesn't help.
+
+Q: Did you record your certified check presentation?
+
+A: I don't think there's video. I also need to go pick up lunch.
+
+
+
+<https://bitcoin.stackexchange.com/questions/92746/how-is-op-checktemplateverify-a-scaling-solution/92755#92755>
 
 
 Questions:
 
-- congestion control - the tree version-- who can withdraw first? How is this specified?
+- Show me that the congestion control (non-interactive exchange-exchange arbitrage) is not possible without OP\_CHECKTEMPLATEVERIFY -- not convinced yet.
 
 
 
