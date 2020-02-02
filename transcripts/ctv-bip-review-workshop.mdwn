@@ -726,13 +726,169 @@ Q: So what I expected was that, the safety criteria would be harder to evaluate.
 
 A: The security arguments are inherent. I will make a mea culpa that, I've been up here for a long time, but yes, those too. One of the major reasons for something simple and restricted is security. Introducing all these flexibilities into a script that you can introduce in validation, it opens the door for consensus failures and things that we don't fully understand how they might work. With OP\_CHECKTEMPLATEVERIFY we really understand the security perimeter around, and it doesn't violate many core assumptions about how transactions work. If you had an arbitrary covenant system, you could have all kinds of weird malleations that miners could apply because if it's being passed into the witness then anyone can manipulate a transaction in unknown ways. If you have a predefined set of end states, it's easier to verify that those end states are what you want. But if it's made through computation, it's much harder to prove that the end states you don't want aren't there, which means you're not trying to prove what's there but rather what's not there which is fundamentally harder. Something like OP\_CHECKTEMPLATEVERIFY makes more sense for a foundational layer, which is why the standard type that is defined is very limited. We don't really have super robust use cases for the other ones; we have good ideas, but we know some stuff we can do for the very restricted case like for layer 2 and vaults. We can do that today, let's keep it flexible enough to make new stuff. I think OP\_CHECKTEMPLATEVERIFY is a simple enough proposal, it's worth its weight in gold per line of code. It's not too complex, and it doesn't violate rules, and maybe it's worth advocating for this change. I think all of these factors point to OP\_CHECKTEMPLATEVERIFY being a reasonable change for bitcoin.
 
+Q: Do you have any stats on how much fee that batched payments would have saved during the fee market top back in 2017?
+
+A: The problem with empirical analysis on bitcoin is that it is a chicken-egg issue. Fees are really low right now, so a lot of this is like why should we care since blocks aren't full... But I thikn those arguments are weak because I want to live in a world where everyone is using bitcoin all the time. I think what makes it secure is having more people using bitcoin. You don't even want batching; batching adds security risks.
+
+Q: No specifically in 2017 when we went through fee events, and when exchanges made the switch to batching.
+
+A: The problem with batching is that it's easy to get wrong. There's some subtle security issues. If you do batching wrong, you can screw over the exchange. As you do incremental RBFs, you need to hold a property of common UTXOs... or a batch not having a common UTXO, and they can both be valid transactions. So batching with RBFs can be hard. It's not hard to do, you could say- analyzed all possible reorgs up to 12 blocks, and we set our confirmations for 12 blocks or more... But you could run into an issue where you confirmed one, but if that transaction was undone then this would enable a new batch or something, so you need to look for that for batches too. You always want an output that you chain the last one based on, which guarantees linearization and serializability.  So you should chain previous batches.  You also want to chain on recent deposits, as well, in your giant batches. In ethereum, you can't do that, but in bitcoin you can express the dependency order in which the transactions can get confirmed.
+
+We need some technologies that will let users who- you might not think that users know this implicitly, they couldn't tell you this- but in aggregate, markets know that bitcoin isn't efficient, so we need some new tech to be able to postpone confirmation and make the fee market more efficient precisely so that users will show up, in the infinite wisdom of markets that currently realize that bitcoin isn't efficient and therefore they don't want to use it.
+
+Q: The business model of all the people in the ecosystem has been to add more shitcoins, rather than making bitcoin better.
+
+A: That's out-of-band, we can't solve that.
+
+Q: If the idea is to get exchanges to implement it, that won't work. They don't care.
+
+A: Yes, but there are incumbents, and a newcomer might be able to offer lower fees and outcompete the established exchanges.
+
+Q: For vaults... In the wallet ecosystem, Trezor and Ledger spent a lot of time implementing shitcoins. All the devices are part of a multisig protocol and there needs to be mutual device authorization. If I have two trezors in a vault, they need to... most of the complexity is around knowing that the devices are doing the right thing.
+
+A: That's a fair point. With OP\_CHECKTEMPLATEVERIFY, say you have a high-order compiler, and then some third-party can say hey look here's a vault we programmed, we have a script, we have a server that compiled it, and maybe here's a zero-knowledge proof that it was compiled correctly, here's the thing. That's the minimum possible, but also you could compile it yourself. But you could say, look, I'm concerned that one lapto is hacked, so now I have multisig and now I'm running the compiler on all my devices to check that the script is correctly compiled. You can check a setup with OP\_CHECKTEMPLATEVERIFY and also audit after the fact.
+
+Q: That logic has to be in the hardware device or in the Trezor.
+
+A: I might be an extremist here, but I think there's no such thing as secure hardware. There's secure devices, though. What makes a device secure is that you know the provenance of it and so on.
+
+Q: Yes, but the question is "should you sign it". This is supposed to be part of the vault, and you want to ensure the funds are only going to the hot wallet or only back to the cold wallet. At the time that I am signing, you have to have the computer.
+
+There's protocol layer, and then there's audit/compliance layer. Those are two separate concerns. The protocol layer, I have these addresses from these people and they sent me a request for withdrawal, and then I make that. For them to have that money, doesn't require any further communication, it's already theirs. They have to learn the transactions maybe, but they have to learn those anyway. But getting authorization and approval for, would be for constructive receipt which is a legal doctrine that says if I hand you a dollar, that's a receipt, but if I send you a check via fedex then that's not constructive receipt. If I send by USPS, then it is constructive receipt. If it's a check, and I wrote a date on it, then that's also constructive receipt for that date being correct. I was trying to figure out how OP\_CHECKTEMPLATEVERIFY works into a constructive receipt case. So we email these things to your preferred email address, and we will retain a record for this so that if you inquire about this in the future we can provide it. That's already have exchanges operate; they legally have to provide these logs to you. You might have to go court otherwise, and so businesses provide this to you on demand. If the exchange goes out of business, and you didn't save the transaction and you didn't upload it to the Internet Archive, then you have a problem but that's the same as losing your private keys. You could setup watchtowers and send this data to those too. Nobody can interfere; you can even bake in a reward.
+
+Q: I'm trying to get to the point where we have a really good use case, and then this is a really good answer.  Maybe fees is the answer. Exchanges have the wrong financial  incentive for the fee use case. For vaults, the only people who do it are the hardware wallet manufacturers who sign it, and they also don't have incentive to build this hardware right now- they build shitcoins not bitcoin improvements.
+
+You separate the audit layer and signing layer. Then you can have an audit machine, and also signing devices and also a bitcoind. The vault wallet case is an attempt to get higher guarantees.
+
+If you can have one piece of hardware, or minimum quorum of that you personally set, to audit to know what you're signing, that this is sufficient to make this functional for some set of people. The goal is to ensure a higher degree of reliability. With a Trezor, you sign one thing. With two Trezors, you do multisig.
+
+With OP\_CHECKTEMPLATEVERIFY, I can hire an external third party auditor who has no involvement and can sign a certificate assuring that the protocol is complete and does the thing.
+
+I can build a wallet that is more insurable through better auditing... there's a few ways to do that. Another way is to define what's more secure. The way I try to define that is multiple points of compromise, compromising multiple devices. With multisig you'd think it's n-of-n. But when you do this, it's not so simple to figure out how many things need to be compromised to violate the properties of the vault.
+
+Q: I think there is going to be an evolution of hardware. They will get really good at partially signed bitcoin transactions, which they're not good at right now. At some point, your hardware instead of displaying the address you're sending to, will display the hash of the partially-signed transaction it's signing, and you could compare that with your audit statement from your external auditor or your multi-device auditing system's output.
+
+It has to know more about the tree. Where am I in the state system? It's not an auditing question. It's operational.
+
+Q: Is the question how to reduce the human cost so that a computational auditor can provide this?
+
+A: No the question is how to make the best case for OP\_CHECKTEMPLATEVERIFY. It's a different discussion than CTV.
+
+Q: If the reason you're pushing OP\_CHECKTEMPLATEVERIFY is for vaults, then you must talk about hardware.
+
+Well, it's more than about vaults. I'm going to want hardware that wants to show the hash of the pre-signed transaction. I'll be happy to show you the wrong hash and sign something else. I'm not going to sign the wrong hash because I have the other computers that I trust. So now you have cross-device mutual authentication, so device 1 knows what device 2 is doing. What? Not necessarily.
+
+Suppose that with OP\_CHECKTEMPLATEVERIFY you want a small hardware module and it can load a small amount of metadata about what your intent is, and then it can load a couple signatures to check. It can't compile anything or run anything. With CTV, eventually, with support, it would be possible to construct a zero-knowledge certificate that the compilation was correct. You can use compcert- certificate generating compilers. So you say here is the source code, here's a screen that shows the contract you're agreeing to, and here's a proof that this hash. So it's a simple device that checks ZKP. There's evil maid replace firming, and the certificate doesn't me any good. Evil maid attack.
+
+Hardware is difficult, so I am going to table the discussion. If you're going to say we want a vault, then we need to argue that OP\_CHECKTEMPLATEVERIFY makes this better. OP\_CHECKTEMPLATEVERIFY enables composable non-interactive programs which is a big deal. Now you don't need to move funds from Coinbase to cold storage, you can move them from cold storage to a vault. So one of the advantages is that when you do a pre-signed transaction, the device generates a pubkey and gives it to you. But when you use OP\_CHECKTEMPLATEVERIFY, there's a round of interactivity that is removed, because you already know the pubkeys in your vault because they haven't been replaced by an evil maid attack or other adversary.
+
+Non-interactivity is the thing. Being able to provide something and not have to get coordination, is a big enabler for all of this stuff. The hardware stuff is valuable in that we need to push to have more reliable hardware, but it seems like another angle in which we make bitcoin better. If we do get to better hardware, it doesn't invalidate OP\_CHECKTEMPLATEVERIFY and make pre-signeds look really viable.
+
+It's about implementing a wallet and knowing how it works. We can do the vault with 10 copies with bitcoind, and then we have to look at this and say is this actually better. We're talking about an enabling technology, and this is the barest layer. It's going to be five years before people build up around this. It's going to take a long time to have a robust technology stack that makes bitcoin usable. We have to get primitives right.
+
+What I heard out of this discussion was that the abstract argument about non-interactivity is really critical and it's a little difficult to get across. It's also a good argument. It's a little abstract as an argument. But this is the case for taproot; there's a lot of excitement by authority or something, but deep down it's just privacy and multisig, so it really that exciting? We need to have a primitive enabling it.
+
+Taproot is like OP\_CHECKTEMPLATEVERIFY in the sense that you're delineating things that can happen in the future. You can emulate taproot in OP\_CHECKTEMPLATEVERIFY, like if you say this transaction has to be confirmed with this child, and then you expand out the tree. There's a similarity, but taproot is more in script space. But being in the transaction space allows you to sequence and split funds, whereas keys don't let you do that.
+
+# Deployment discussion
+
+We have about 30 minutes left. I think it would be useful to shift into deployment and share some thoughts on what I think deployment could look like.
+
+Q: I know you have all these slides, but why not just go UASF user-activated soft-fork?
+
+A: We didn't get segwit because of a Core release, but rather for UASF. But we don't really know. All we know is that it could happen. Buried deployment, in our actual code base, once we know that something was deployed at a certain date, then we can set that date. One of the things is that we can set that date to be the earliest date at which we saw no conflicts, so we can push the buried deployment as early as possible. The truth is that we don't know what event caused segwit to get activated. We could argue that any of the activation mechanisms caused segwit to get activated, but honestly it's probably all of them. The number of people doing UASF influences how likely it is that a versionbit soft-fork is likely to activate. What's the threshold of people boosting the... so who activated it? I have no idea, can't tell you.
+
+Q: The goal is for this to be non-contentious, and then UASF doesn't matter. bip9 is easy and a good idea.
+
+Other soft-forks have used various mechanisms. We don't have a great track record on bip9. We have used other mechanisms in the past. BlueMatt sent a message recently. Luke-Jr says bip9 is a proven failure. So we should do bip9 and if it doesn't happen in a year, then after 6 months after that, we do bip8 with a 2-month horizon. I think this is naval gazing with rational arrogance: if only everyone was rational then they would all agree with me. I think people typically feel that way. The issue with bip9 is more about the proposed changes rather than the mechanism itself. Any mechanism would activate a change that everyone agrees to. So any mechanism that everyone agrees with for that everyone likes, will activate that change. This is fundamental for most reasonable mechanisms. In order to make a soft-fork, if it's during contentious times, it's probably going to be harder. We've learned some of these social dynamics and people have left the community- it's just not the same.
+
+Q: Why was segwit controversial?
+
+A: asicboost was a part of it, but no. I understand that narrative. The asicboost argument is like a 12x increase in computation, is that enough to block a feature that is helping to increase and improve bitcoin? Maybe. The broader context is that one group had one proposal, another group had another proposal, and both sides were passionately in favor of their own proposal. And then it blew up somehow.
+
+Q: If the change doesn't impact the miners, then they won't signal.
+
+A: The change has to impact the miner; they have to believe it improves the economics of bitcoin, improving the viability of mining. So anything has to effect the miners.
+
+Rehashing segwit2x is probably not the best use of our time here so let's move on.
+
+So my proposal is, let's just use bip9. It's there. OP\_CHECKTEMPLATEVERIFY looks pretty good. The implementation of it can be independent of taproot. I'm proposing to use bit 5, and taproot can use another one. In terms of start time, I don't have a proposal there. Is 95% a good threshold? I don't know. I don't advocate for lowering the threshold. I think 95% is a good way to do consensus. But what about 10% of the miners being checked out and not following along?
+
+I gave a presentation called [Spork](https://diyhpl.us/wiki/transcripts/stanford-blockchain-conference/2019/spork-probabilistic-bitcoin-soft-forks/). The sooner that you make the activation and there's reasons to... the sooner you make it, the less they care because it will activate anyway. If miners think this is going to activate sooner than later, then there's less of a game for delaying it themselves personally. So if we take Matt's proposal... if the miners aren't impacted, then they will make it the very end of the period. Miners are already heavily discounted for hardware cycles, so if we think that something is going to make mining a better investment for a future set of miners... but if it's a small set of miners saying it's bad for us, but bad for mining overall as an ecosystem... the question is what draws in the most investment capital into mining that makes us the biggest network? A lower threshold might be the answer then.
+
+If it's 95% threshold, then you actually only need like I don't know 89-85% of mining to signal to get it to activate it in a year, because in a year you have 26 rolls of the dice for a period to have enough signaling. What's the chance that one of those goes above 95% because you have 85% of the mining, it's pretty good. This is not specific to Spork, this is just bip9 versionbits. If you have 90% of miners approving in bip9 versionbits, then it will get deployed. It's not an obvious property, but if you do the math, the estimation at the bottom of this slide shows that.
+
+The point of spork was to say it is costly to signal, and you have to really consider it and not make it trivial.
+
+Here's four different timelines of what it could look like: now, soon, "soon", and later. I'll call "soon" maybe mid-term. Who wants this "now" in 4 months? This is the start and end of the activation window and then have enough signaling for it. You have from the point of time that you merge release parameters to the time that you make an actual release, that gives you extra time. So when do you open a mainline pull request saying this should go in? I was thinking maybe after this workshop we open the pull request in March.
+
+You don't want releases to have soft-forks. Historically we have had new soft-forks happen in minor releases backported to all the previous supported versions.
+
+There's a hangover from segwit activation and all this deployment discussion is a hangover from the segwit activation issues. I don't think we should wait for taproot. I think it makes more sense to parallelize and see what gets more review sooner. Taproot has more review, but the need for review in taproot is significantly greater than the need for OP\_CHECKTEMPLATEVERIFY. But the number of use cases for OP\_CHECKTEMPLATEVERIFY might necessitate more review. OP\_CHECKTEMPLATEVERIFY has no new cryptographic assumptions which makes it easier to review than taproot which fundamentally has new cryptography assumptions. There's one person in this entire audience I would look to for reviewing that cryptography. Getting that level of detailed review is really tough, and OP\_CHECKTEMPLATEVERIFY doesn't have that problem. The standard of review- if you're saying it's best to make one go through and see what the other is-- then OP\_CHECKTEMPLATEVERIFY would be better for that.
+
+Q: Say I am a lazy miner and I have hacked my cgminer code 3 years ago... and I want to know the absolute minimum lines of code that I can implement to just ignore all these transactions and not create invalid blocks. Do I have to implement all the lines of code that you have in my pull request?
+
+A: You only need to implement the opcode. You don't need any of the standardness anyway. All the standardness rules aren't required for miners, although a rational miner would want that, but a miner that doesn't have development capacity...
+
+Q: In your head, rough estimate, say we have n lines of code in the set of pull requests, how many are you selling to me the lazy miner?
+
+A: Can I play code golf? I can get it down. If I wanted to be aggressive, it could be probably done in 100 lines of code.
+
+Q: Okay, so that's what you're selling to me.
+
+A: I'd be happy to produce that; I'd rather have one implementation across the board.
+
+Q: Are there any smaller soft-fork proposals on the table?
+
+A: Maybe policy becoming consensus? But those are scary, like hey you have broken my old p2sh wallet or stuff. Matt proposes getting rid of OP\_CODESEPARATOR, who knows if they are used anywhere in p2sh scripts, right?
+
+Q: Say I am a lazy wallet author, and I want to ignore OP\_CHECKTEMPLATEVERIFY and let users deal with not seeing their transactions until they confirm in the blockchain.
+
+A: Fundamentally I think that exchanges early days using batching.. it's not too complicated, if they take the burden of making the second one get confirmed for lazy fee bidding or something, sure. Users call up exchange support desks and then they lose revenue basically. If there's ecosystem support and people get ready for it, that could be day 0, because there's no wallet changes required you just see things that look like normal transactions.
+
+Q: With the arguments that ... this will reduce miner fee revenue if this goes through.
+
+A: That's like saying toll revenue goes down because people carpool.
+
+Q: You don't have fee bidding wars because they are hidden.
+
+A: My fee rate on the small OP\_CHECKTEMPLATEVERIFY transaction can actually be a lot higher.
+
+The miners don't know that a given output is a tree is a tree... The service provider isn't going to pay 1000x more. Why would you pay more than the going rate? Paying saves you fees, to guarantee placement in the next block you can't do it, but there are fee rates that make it very likely. So pay that, but I am not going to pay 1000x that amount. At equilibrium, everyone would be paying the same amount they would have paid before. This is the topic of economic bundling. When you bundle economic goods, you can always provide more value by bundling.
+
+The other thing to remember here is that we have a lot of simulation of lightning which is another transaction compression mechanism. The simulations show that at scale the fees from lightning will be higher than if lightning did not exist. It's like the paradox where as something is more efficient then more people use it. So you get more users, more mining revenue, more fees. If it was the case that OP\_CHECKTEMPLATEVERIFY decreased miner revenue, then bitcoin would be better off having one transaction per block. A more fundamental point is that decreasing user fees with basically an unbound cap on user growth should inherently increase fees total because there's a difference between what I'm paying and what the whole network is paying and I can not shoulder that whole burden. Lightning does this: yes individually per payment and you can consider individual payments as users, yes the fees are pretty bad. But if you're based on the number of real users, your comparative goes up.
+
+Q: So what is the argument that total fees are going to go up if you make a bip9 proposal for activation. Make a solid argument that fees are going to go up.
+
+A: Well if you just say fees are going up, users might say they don't want that. But the nuance here is that users individually aren't paying much more. Communicating to users that your personal fees are going down is more urgent. Miners are more rational and can draw the connection. If there's a savvy miner, what you should argue is that your revenue will go up. Not necessarily that fees will go up. If you argue to the miner that this increases the ... that bitcoin as a currency, then that will increase their revenue. Just focus very specifically on the difference between inputs and outputs is too reductive. You want to convince them that the total utility of the network and the coins goes up.
+
+How are people feeling about OP\_CHECKTEMPLATEVERIFY ? I know we didn't go in depth for the actual implementation. But if there is nothing up my sleeve on what I presented, how is everyone feeling about deployment? Are we assuming all the mempool pull requests are part of this, or already in? I think the general way, even in taproot, there's no wallet support for taproot. Nobody has even started to look at wallet implementation of taproots. I don't know what the mempool would need for taproot in particular; I don't think there's any changes. Let's assume that the mempool stuff will be in progress for a while. I'm working hard to get it going before a soft-fork would be available. It's the tree case that is a little harder to work with, which entails general problems with mempool that other people are already working on. Assume develoment of mempool and everything continues in the pace it continues previously. Given that we don't outside this room; we should feel what we're comfortable with without gauging other people. Once code is final, how much time should we have? What do people feel about that? They all have the bip9 12 month standard activation period. Do people want to see a start date in this quarter, or one that is a half-year away? Are we thinking we want to wait another year? This informs me as to what makes sense to spend time on.
+
+Some people were upset about getting a BIP number... So opening a pull request about it on Bitcoin Core might be bad if it's too early because you don't want developers to dogpile and knee-jerk reaction, because then a year later the developers would say it's not ready yet, so the idea is to open the pull request when it is likely to be generally accepted by developers. A draft BIP doesn't mean anything; people get draft BIPs all the time. If you want a BIP number, it's just a low bar of review. I think people... it's gratifying when you get the thumbs up on github, but when there's a draft there, people should understand it's a living document that will be amended probably. I think opening a draft BIP is more like RFC style to put things up and invite feedback from the community and get more eyes.
+
+I think the only way to get around this whole process argument.. is to wait until another soft-fork deployment has happened. If everyone waited for that, then we would have no deployments. If I do it tomorrow, then people will viciously attack my character. If I open the pull request for this tomorrow, will tweet anything? No. Well, then it doesn't help me... The kneejerk reaction is going to say... If people come together and give a concept ACK, and these are people who have reviewed it and want it to go through, then that's fine. I'd want to make sure that developers would be willing to advocate for it.
+
+I've been thinking about vaults for a long time. I wrote a blog post in 2016 about it. I still haven't figured out the criteria for myself to figure out if any given vault mechanism is the right one. I think building a wallet would finalize it. When we have a functional wallet that does what we think it does, then that helps finalize this. There's a lot of organization, orchestration, watchtowers, stuff that has to be done. Once I understand those things and I think this approach is good-- and again there's many benefits for using OP\_CHECKTEMPLATEVERIFY over pre-signed transactions-- but as we got into writing a wallet, we discovered a number of things we were surprised by. It might seem simple, but there's a lot of complex details like building devices, wallets, watchtowers to control this, know it works, know your state, know the state of all the UTXOs, these trees are terrifying because how do you map that to a state machine... and the state space is large.
+
+The lesson to learn from is MERKLEBRANCHVERIFY. It was an opcode proposed by maaku proposed as an alternative opcode and there were two variants, one with MERKLEBRANCHVERIFY as a script opcode and one that was a segwit type, and it got subsumed into taproot. It never got deployed, it got subsumed into taproot. Short of code maintenance liabilities, taproot was really searching for a silver bullet that would solve all the problems for the things people would want. But that's bad because Mark said we should have MBV to make scripting more powerful and enable people to build new things, back in 2016, and had a well-thought out and well-reviewed proposal that could have gone through.... and then the segwit concussion was much stronger so people were even more afraid of these things. As a general principle, I would want to just do something that enables more competition and innovation. I think a lot of these questions about do we have exactly the right primitive. We're probably close enough that there's enough room for experimentation.
+
+Ultimately soft-forks are at the whims of a few set of people who have large followings. Ideally you want bitcoiners to be thinking for themselves, but these peoples comments can be hurtful for deployments. So creating a perception of a coordinated effort might be bad and not actually help. The only people who care to say something are people who are against the idea, which is detrimental to getting it through. I think bitcoin is for everyone and bitcoin review is also for everyone. If this is interesting to you and it solves a problem you care about, then you can individually make a difference by looking at it and saying something publicly.
+
+Sounds like you need an assurance contract for BIP approval, where either everyone pays or nobody pays, or the set of people say this is worthwhile or nobody posts their approval.
+
+Taproot became a search for silver bullet. People have quit bitcoin because of not being able to get a reasonable timeline on the things they wanted to build.  Some people had something clean enough that they thought was ready to go, but some other people said we don't want to support it because we're going to come up with something better. This argument becomes worse over time, and there's always one more thing you want to cram in. The other side of that too is that from a user perspective and bitcoin freedom perspective and shoving things on people, it's kind of unfortunate that we have to adopt Schnorr and Taproot at the same time. There are people really into schnorr and not so much taproot and now you have an inability to express a preference. I am personally okay with taproot and I think it's well-designed and should get in. To keep bitcoin pure, we should find small things that compose well and then allow people to express dissent without sinking the whole ship.
 
 
-- a covenant with output script template with masking? Instead of committing to the whole script, allowing certain variables.
-- reduce interactivity requirements for pre-signed transactions (n-of-n secure key deletion trusted setup) for batched payments (withdrawals from an exchange?)
-- market for computing the n^2 child-pays solutions?
 
 
 
+# Follow-up questions and issues
 
+* Are there any particular use cases that OP\_CHECKTEMPLATEVERIFY is overwhelmingly good for, that cannot be solved with current existing primitives? For example, is non-interactive vaults a better way to do vaults? Or do you still need some steps in your protocol to verify your keys with your hardware wallet devices anyway? How many rounds of communication are you really eliminating with OP\_CHECKTEMPLATEVERIFY?
+* Is congestion control possible with pre-signed transactions?
+* Besides exchanges, what are the other use cases for batched congestion control transactions?
+
+* market for computing the n^2 child-pays solutions? for miners. pre-compute and send this data around? miners pay for pre-computation optimization of transaction orderbook ordering?
+* a covenant with output script template with masking? Instead of committing to the whole script, allowing certain variables.
+* reduce interactivity requirements for pre-signed transactions (n-of-n secure key deletion trusted setup) for batched payments (withdrawals from an exchange?)
 
