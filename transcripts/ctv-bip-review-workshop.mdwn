@@ -462,6 +462,8 @@ A: I don't think there's video. I also need to go pick up lunch.
 
 # Other comments
 
+Marty from Tales from the Crypt sponsored lunch for us, and transiently Square who is sponsoring them.
+
 Say you are doing arb between Coinbase and Binance and they engage in a two-party deleted key. If either party deletes the key, then that's fine. You can also do a regular multisig, without deleted key. So you can already do that. For batched exchange-to-exchange payments, you can do that in a single UTXO already with netting, doesn't necessarily require OP\_CHECKTEMPLATEVERIFY.
 
 Pile of unconfirmed transactions, use CPFP.
@@ -480,7 +482,7 @@ With 2-of-2 multisig with secure key deletion, you can do the batch congestion t
 
 You can use the mempool to interactively establish channels with new peers. Especially if you can use the ECDH trick. One exchange can give the user a codeword that they type into another exchange's interface, to recover a communication channel created through the mempool. Well, you could also just paste a URI into another exchange's system and avoid the mempool. Then one exchange can query another one.
 
-What is the apocalyptic channel closure fee issue with lightning?
+Could we get a better description of the scenario for apocalyptic channel closure fee issue with lightning?
 
 # Back to the schedule
 
@@ -547,6 +549,189 @@ Q: With arbitrary computation-- with chains of arbitrary transactions, I can com
 A: You're correct. The reason for doing it this way is that if you want non-interactive protocols, you fundamentally have to roll it out on-chain. At the top level, it doesn't mean you're going to be signing ANYPREVOUTs... but if you want to be able to start doing these things, it's chicken-egg where coordination is so hard that we're probably not going to do it. Off-chain coordination is a little bit easier. Being able to express some of these logics on-chain, that would open the door for people being able to do it on-chain.
 
 Once you have OP\_CHECKTEMPLATEVERIFY the thing you add is a zero knowledge proof generator opcode and prove that you could have had other transactions but you prefer not to. Locktime might be difficult. If you opt into doing this with your script, you can just say hey this thing is equivalent and I obeyed all the rules. But you still need the kernel saying, we couldn't produce this. Eltoo says you can elide all the intermediate states. I'm confident that this will help you write eltoo things. But otherwise you would, essentially you wind up making eltoos that are agreeing to new contracts.
+
+You could say you have a branch that does play-by-play, like wait one block get one coin, and wait one block wait one coin. Or maybe one says wait 6 blocks and get 6 coins, or maybe you want to elide a few of those steps because you did in fact wait n steps. A rational mempool wouldn't have replace-by-fee, it would be "consider this other transaction as well" and then you would be able to pick which set of transactions is back. Say you had a batch that uses CTV and one that doesn't, then you as a miner might choose one that is higher fee rate but less overall fee. Depending on what the mempool backlog looks like, miners would either pick one that elides the state or doesn't elide the state. OP\_CHECKTEMPLATEVERIFY is a scheduler for picking your priority on the blockchain computer. Ew, I said blockchain computer.
+
+Q: Is there code for your metascript thing?
+
+A: No. It's just an idea I've been toying with. I got relatively close to metascript just writing in C++ just writing with C++ templates. Then I got ready to kill myself doing that because writing templates.
+
+Q: Do you need a language?
+
+A: I think starting with function calls would be smart, and then dress it up with a language. But the nice thing with languages is that there's a human readability aspect.
+
+# BIP review
+
+Q: Are we doing the right thing? We would have to figure that out before the BIP review in detail.
+
+A: That's part of the BIP review: should we be doing something else?
+
+Q: The mempool ecosystem support stuff. What's the urgency for that in this workshop, versus non-emergency because it will inevitably get enough attention?
+
+A: The urgency on the mempool stuff is that the mempool is not rational. It's a good attempt at being rational, but it's not. Most of the stuff that you might care about doing immediately you might not be able to do if the mempool is not sufficient. Overpaying is a simple solution. Since overpayment is so easy for fees, it's more like an academic concern well we want some robust way of writing smart contracts... so that's one reason why you might prefer to hear about mempools rather than fees. On the other hand, fees are fundamental to whether this approach can workout in the long run.
+
+There are three options. We can either skip ecosystem stuff and get into the BIP, or we can do wallets and fees, or we can do mempool. Or fourth option, we can do them all but do them fast.
+
+If you want to create taproot and you had a soft-fork for it, you wouldn't be able to use it until the mempool supports it because no miners would have it. You want code in the mempool that can accept transactions which is critical for accepting transactions. So the mempool has some inefficiencies, that make any sort of programming on the bitcoin blockchain almost impossible. So you have specific carveouts and things that handle specific cases. It's general, not jus to OP\_CHECKTEMPLATEVERIFY, but there's a lot of things in there. The software development of mempool and making it more rational to understand OP\_CHECKTEMPLATEVERIFY and other smart contracts. You would need these for pre-signed transactions. You can't submit a transaction and its child, unless the parent transaction was accepted. So that needs to get fixed in nodes. There's also some transaction pinning issues. There's not much public familiarity with these issues. This requires a lot of background reading to understand what's going on with mempool acceptance. It sounds non-controversial, so getting people to understand the controversial parts is more important.
+
+# Ecosystem support: Wallets and fees
+
+## Sending OP\_CHECKTEMPLATEVERIFY payments
+
+We'll talk about wallets on the OP\_CHECKTEMPLATEVERIFY sending side, and then on the receiving side, and then fees. One of the RPCs I created is called create\_ctv\_vault that builds that diagram I showed you. What we do is we build a OP\_CHECKTEMPLATEVERIFY script where we first pick our base cases. We pick our end states that we want our program to be in, and then we build backwards to get to the root of the tree. We start with the last little withdrawal, we build up all the way, and then we now have a hash that tells us this is the program that we want to run. Then what we do is, we say submit this to the wallet, for how to pay for this transaction. We figure that out, we construct that transaction, we sign for it, and then we have now a well-known transaction with the txid. Then we attach. It's like a linker. The first step is compiling, then we emit objects, then we link. Linking is where we get the txid for the root transaction and we propagate the txids down the chain. Now I have a txid for your parent, now put it into the input, and then put it into the bottom, then we send that back to the client so that the client has that blob of hex. Then you load that into your wallet software. That linking step can be a separate concern; you can just do the compilation step only, or you can create just the transaction that does it, or just do the linking. They are all separate concepts, but in an RPC you might want to do them all at once.  This is the inspiration for metascript where maybe we shouldn't write custom linkers every time we write a new program.
+
+We create the use cases we want... we create a use case for going from hot-to-cold, and one case for hot-to-hot which is undoable spend, and then one continuation of the vault where we go vault-to-vault, and one case where we go from vault-to-vault that's our recursive step. What's complex is that we go and find the hashes and compile into OP\_IF OP\_ELSE scripts and then we set our script witnesses appropriately to have that script.
+
+Q: So this is creating the templates and transactions in our wallet.
+
+A: Yes. We're just making the tree. We start at the bottom, and then work our way up and add each one piece by piece. The catch is that in our code, we have a base case- the conditional where, if we have no vault that we're trying to attach to, then do one thing a little differently. You can look at the details of what this is in the code to get more nuance. The linking step takes an optional integer because inside of our program we know what the COutPoints will be- because we can say 0 is the one for the vault-to-vault and 1 is for the undoable spend... but to the outside world, they could have put it for any index, so we allow it to be specified there which is messy but it's fine. Then we add the prevout. We know what the hash is, so we add it.
+
+Then broadcasting: so we've gone through the process; we found this program, we built it, it turned into an object, and then we linked the executable against a pointer. Now we want to broadcast it to a mempool. Fees have to be sufficient, it must fit within mempool limits, and the sequences/nLockTime must be "mineable". You can start broadcasting state transitions, essentially. If these things aren't true; if it can't go in the mempool yet or the fees aren't sufficient, then your local wallet can still track it, and it will wait for rebroadcasting logic which will rebroadcast once a day to try to broadcast again. Amiti is working on making that better. Rebroadcasting logic will eventually help in the case of the batch payment.
+
+Any more questions about sending?
+
+Q: Are you waiting to re-broadcast because you expect fees to go down, or are you re-broadcasting because it's not acceptable for the mempool yet?
+
+A: If there's a sequence lock, you can't put it into the mempool, and there's no mempool that will handle things that will soon be able to go into a block. You could imagine writing mempool code to do that, which is reasonable. You might want some miner with 1% of the hashrate to have some logic about optimizing for what things they are mining, and rescheduling and when they mine it or something.
+
+Wallets should already be doing these rebroadcast things. It's more important in the OP\_CHECKTEMPLATEVERIFY world that your wallet does this. It's more important in the OP\_CHECKTEMPLATEVERIFY world because the transaction can't be amended or replace-by-fee doesn't work.
+
+I think you can make the case that this should be a daemon as a separate process next to bitcoind. The idea of putting things in Bitcoin Core is that these are things that are important to get right for the ecosystem. Fee estimation is actually critical to bitcoin, so we do have fee estimation in Bitcoin Core. Predicting future fees and based on historical data, it's reasonable to put this into Bitcoin Core.
+
+Mempool relay fee could change dynamically in theory. Mempool is, I'll consider accepting this after it relayed. If it's sitting in my mempool, I'll continue to send it. Your mempool has special-case stuff for things that are your transactions. I don't know exactly what that interface is. But in general I think the wallet does not put things into the mempool it's treated as a separate unit. If you're a miner, you would obviously prioritize your own transactions. A payer's wallet software if they want to give a guarantee of payment, their job is not done after they broadcast it.
+
+## Receiving OP\_CHECKTEMPLATEVERIFY payments
+
+If you assume the "long chain" is sufficient fee to be in the mempool for relaying... the wallet will just show an unconfirmed parent, but they won't know the extra metadata that the wallet should trust this as basically confirmed. If the wallet properly understands CPFP, then they would understand that, and they would try to do a spend from their unconfirmeds. In Bitcoin Core wallet, you will do unconfirmed spends from your own transactions because they are considered change to your own wallet.
+
+If it's insufficient for the mempool, it depends. Some services have a less restrictive mempool policy. Maybe they can have a terabyte of mempool and they just keep everything they have ever seen and they write everything to disk. Some people have complained about blockchain.info doing that because it can interfere with replace-by-fee. If it's insufficient for the mempool, the user will need to submit the transaction to their wallet manually.
+
+How does the payee determine whether or not they have been paid? It doesn't seem onerous to say, you have communication with your.... Yes, I agree with you it's reasonable, I'm just presenting what it is. If you don't learn about it through regular broadcast and mempool, then someone needs to give it to you.  When you put something into the mempool not sure if you check if it's something that is yours, and prioritize it that way. I don't know.
+
+Once it's in the wallet, I think it should work kind of okay. You can manually do opportunistic CPFP where you do consolidation when fee is low. The unconfirmed parents I believe do get stored in your wallet. In a lightning context, you need to backup your node and use watchtowers, so it's not a new burden over what we already say you should be doing. If you lose your wallet metadata you can already lose funds today because of HD keys and non-HD keys and things like that. The point earlier is that if you don't have robust backup then the employer still has the obligation to provide it. In the case where you're batched with a bunch of people, like one of those 100 people would have to have that data.
+
+So the idea is to have a non-interactive out-of-bound... to provide proof that you have paid a wallet that has not upgraded yet. You already have this in bitcoin it's called blockspace. Email is a bulletin board. If you can't learn any data, then you can't use bitcoin. This is data you can learn outside of blockspace, you can learn it out-of-band.
+
+Bitcoin should not be viewed as robust storage. It's robust ability to validate storage. You could run a pruned node and throw away transaction data anyway. We also have proposals for txout proofs. OP\_CHECKTEMPLATEVERIFY is an on-chain txout proof. The txout proofs say we're not going to store this at all, and this pushes the obligation on to the clients to store their UTXOs and information but they get pushed to do more of the work. See also utreexo.
+
+Users should already be storing the unconfirmed transactions relevant to them, but wallets aren't necessarily used to having this responsibility and perhaps assume the transaction stays in various mempools on the network.
+
+## Fees
+
+So do you overpay, or wait for fees? This is really simple and works today. It's either expensive or slow and it's not flexible. This is the first order obvious answer: either wait, or overpay your fees. Most protocols can handle this.
+
+Child-pays-for-parent is the next obvious way of paying for fees. This uses a child transaction to subsidize their parent transaction. You get to bid the fee rate when you make that transaction. It turns out that the mempool is bad at this though, and there's pinning and relay issues.  And maybe needs carveouts for specific applications. Another drawback is that it requires that you spend the output you had. If you didn't want to spend that output, maybe it was for something else, and maybe you have to spend from your allowance to get your allowance is a little weird. It would be nice to treat it as two separate layers. Lastly, for CPFP, it's child-pays-for-parent not children-pay-for-parent so you don't get the optimal fee sharing. You have a slightly less optimal fee sharing structure because you're only looking at the best possible child, rather than the sum. So you basically have to overpay.
+
+Gas outputs fix one of the CPFP issues which is that your child was for something else. With a gas output, you just have an OP\_TRUE output. You have to include a dust amount on these outputs or something like that. If someone else comes along and says howdy ho I want to spend this as well, then your transaction gets removed, invalidating your bit because someone else is spending on the same path and now you get to bid on this again. There's a nice behavior around the atomicity of paying these fees.
+
+Gas inputs: this is the inverse idea. Rather than paying up the tree, you pay fee up the tree. So say you have some initial thing, and you add a new input to it that is fulfilling the same role. You specify all the inputs that can go in, and you can still get co-opted in the same way as before, like someone could be like instead of your fee I'll add one instead. If you had one part that got stuck, you can replace it with another thing. But this creates more gas outputs in the side transaction. You're pouring fee into the top, so the child pays for parent first ancestor acceptance problem goes away because you're able to get the parent confirmed. This is parent-pays-for-child basically. The issue with this is txid malleability. In this case, one thing that you might want to do is if you wanted to make use of this capability to check who's paying, you could say "it must be one of these people with this key".
+
+Here, gas just means fees. I'm calling it gas because I think there's more literature to this with computational input. Ethereum didn't come up with the word "gas". It's used in formal verification logic and like people trying to prove things and then you can only prove things in the coq theorem prover in a finite case except you know these common infinite things, so people use a gas or fuel argument that gets consumed and then you can objectively prove over it. The other reason I like "gas" is that it feels like you're pouring gas on the problem.
+
+The synthesis of gas inputs and gas outputs is gas I/O where we don't always want to create extra outputs, and we don't always want to have to get the worst of both worlds. You could combine them together-- so someone could add a gas output but it could be ripped out and someone can add a gas input. So it lets someone modify what's going to happen. If in the optimistic case you don't need any extra fee, that's fine, but in the pessimistic case where someone has to go and bump, then you only create the number of now unspent outputs corresponding to the number of interventions you had to make. It permits a lot of flexibility for how people are cooperating and paying fees. You can already make these long chains, and it's not fundamentally worse than what you're doing today.
+
+Q: Does this work with OP\_CHECKTEMPLATEVERIFY today because of the malleability?
+
+A: You can't express it today, without... You can express it today, and you can express it without third-party malleability which is what malleability typically means in the literature. But you can only get as good as n-of-n non-malleability which is that for those gas inputs you made a commitment to the segwit script. The members of the n-of-n set pick gas outputs from a set of UTXOs set aside at the beginning. So then within the n-of-n group they can pick that. They would be segwit CTVs for the gas output UTXO pool. It's minutia, but it does kind of work.
+
+Conditionalizing: you could imagine that you have the gas IO setup. But you could imagine it is conditionalized. Say you specify a different branch with different gas outputs and more fees, and this could be hidden from miners. This can be masked in taproot or without taproot. If it's not going through, you can do it with higher fees. With pre-signed transactions, you can sign a rainbow tree of transactions for different fees and then pick the one you want later. But this causes a huge blow-up and you should prefer CPFP etc.
+
+Time locked flexibility: It's another OP\_CHECKTEMPLATEVERIFY but with two inputs... in the first week, it has a certain plan but after a week you add the ability to add another input. You can slowly peel off signature by signature, if nobody else is around then maybe they don't care about malleability or something and maybe they pay the fee.
+
+New fee opcode: This is all garbage, right. It's a lot of complexity so why are we doing the fee stuff? Why not just have a fee opcode? What I presented to you is interesting for programmability separate from fees. But for just fees, then the long-term approach is that we probably want a fee opcode. This is not specific to OP\_CHECKTEMPLATEVERIFY. We might say, count my fee against this other transaction. This is much better for the ecosystem I think. You might want to say the outputs are only OP\_RETURNs and they have 100 block timeouts so no validity in a reorg... you might want to guarantee that your gas payment transaction is atomic with the rest. There's a few ways you might want to think about doing it; this is good for OP\_CHECKTEMPLATEVERIFY, good for lightning, good for a myriad of things where re-signing for a fee issue is a huge pain in the ass. So I think a new fee opcode is the way to go. What I like about this is that there's no reason we couldn't do this, and you can overpay on fees until we get there.
+
+What about a new general opcode? OP\_CAT could add more flexibility that would make it much easier to dynamically add a fee input or fee output.
+
+Q: Making a tree of transactions, using OP\_CHECKTEMPLATEVERIFY or otherwise.... the fee requirement has to be varying, not just going up monotonically.
+
+A: I think we want transactions to be confirmed faster, and OP\_CHECKTEMPLATEVERIFY helps you get that. You can confirm the root and get the other ones later. The fundamental question is, is interactivity a reasonable assumption? I think interactivity is not a reasonable assumption. If I am an exchange and I want to pay 10,000 customers. Being interactive makes this really hard or impossible, and therefore OP\_CHECKTEMPLATEVERIFY offers this and pre-signed transactions don't.
+
+Q: Fees are going up and down. I am trying to schedule when I want my payment. So I want to do something to pay less fees.
+
+A: It's not just that. It's faster confirmation. Say that fees are 100 sats/byte. Say I want to confirm 10,000 payments. When I go to issue those 10,000 payments, they are bidding against themselves in the mempool. You're driving a big surge in a feedback loop of fees for the mempool. With OP\_CHECKTEMPLATEVERIFY, you have 10,000 people and we do the two-phase commit. Rather than pay 100 sat/byte, I'm going to pay 200 sat/byte and get something small into the mempool and sometime later we can roll out the other transactions without paying more.
+
+The mempool is an orderbook for the fee rate, and yours is a dark pool orderbook for the fees.
+
+Fundamentally, this is an economics question. There are three issues. Fundamental economics issues aren't won by making arguments. You need empirical data or a strong model to suggest one way or another being better. We could argue back and forth on this all day like what are fees going to look like if people act this way or that way, honestly we won't know until we try. That's dangerous. Economics is self-referential system and to say that we can't know what happens until we try it is not enough to get this BIP deployed. We need to do better than saying we're changing the fee market in a good way. I have simulations suggesting that this is radically better. I have not come across a single argument that it is worse... well, except one argument. The argument that it is better, and maybe I havne't allocated time for this in this presentation, but here's some simulations based on a framework I published. If we look through this, I can show you what the mempool looks like over time for different scenarios.
+
+There's a market for confirmation, and a market for resolution chainspace for redemption. In a free market hypothesis, if you believe in free markets, allowing people to choose what they pay for a good and not aggregating goods inherently has to improve it. But what does this do for the network security? We have a huge problem: there's the "mine the gap" paper which shows that if we clean out the mempool, people will stop mining because people want to wait for the mempool to get filled back up. OP\_CHECKTEMPLATEVERIFY helps you have a band of things that need confirmation, and then OP\_CHECKTEMPLATEVERIFY lets you have a pool of things that can get confirmed and rolled out layer. This ensures there's sufficient mining rewards over a much longer timespan. It enables fee sharing over a longer period of time.
+
+BC: Instead of observing and having a requirement about a particular transaction being mined in the same block, what about having a particular txid being spent?
+
+A: The reason why I decided against that is because-- then someone waiting to be RBFed, you just subsidized these other transactions I actually wanted to do. I don't know.
+
+BC: This is a vague thing, but it feels like that in bitcoin it's very conservative and there's this idea that a transaction shouldn't be able to influence things that aren't any of its goddamn business.
+
+A: I think it's an exciting thing, maybe we should open a mailing list discussion about what that could look like. Instead of child-pays, it's more like "someone cared". This is really good for an abstraction between transactions being understood as intents and wills, and fees saying this should be sponsored by someone, and these responsibilities should be separated. The bigger issue with child-pays is graph traversal, which is why child-pays doesn't work so well. In order to look at the mempool, it makes mining and transaction selection an n^2 algorithm.
+
+For each thing you're considering including, if including it requires a lot of other things in the blockchain, then you add up the sum total and look at the fee per byte. The issue for this is that you need to traverse all the way up. With a new fee opcode, you would structure it as expressing the dependents directly and it doesn't propagate upwards. This is the difference between an idealized perfectly rational mempool, and this opcode runs in mempool code is really bad. I have some optimizations for mempools that makes this faster, and applies to the fee bumping opcode.
+
+BC: I think a lot of the same issues apply to fee-bumping as for child-pays.
+
+Fees are complicated. One thing that is true across anyone who is working across crypto spaces is that fees are complex. In every project, people are struggling to figure out how to pay fees. The first order solution is to overpay or wait. That's the status quo across the industry. However, I do feel good that there are some mechanisms that we can introduce over time that we can ameliorate this with over time.
+
+Is this economic change good for bitcoin? Is more people using bitcoin good for bitcoin? That's what this is doing: we're finding a way for people to use bitcoin. No, you're decreasing the total transactions going through... No, today you can never go back in time and use latent blocksace. Unfortunately there are blocks in the past that aren't full and you can never recapture that value. But if you can create a solid fat queue where a miner can always put in, creative a stack of transactions that are always getting put into blocks, you can increase the utility of that blockspace.
+
+The one criticism is the overhead: this is the equivalent of saying, operating systems are bad and you should run on bare metal because there's overhead from a scheduler. If you want ultimate performance, you would have no scheduler. That's a fundamental tradeoff. In the worst pessimistic case, OP\_CHECKTEMPLATEVERIFY decreases overall throughput because of the tree structure, but in the optimistic case it increases the usability of layer 2 protocols and it also lets you cut-through on transactions moving from one company to another. You can tell Coinbase to non-interactively open a channel for you with OP\_CHECKTEMPLATEVERIFY.  If you use radix=4 for the tree case, that's 1/(1-1/4n).. it's like 30% more... If there's a 50% more or savings with being able to use non-interactive setups for layer 2 protocols, then that makes sense. This will drastically improve chain utilization and it's a pretty good tradeoff. This is a question for people who work on layer 2 stuff: will this increase adoption of layer 2? If the answer is yes, then that should blow out the 30% we talked about earlier.
+
+Q: That sounds like a strong presentation of your argument... but it's a shift of the withdrawal from an exchange batching.. I'm suggesting that, as someone has identified a shift in your strongest argument.
+
+A: It's not necessarily a shift so much as I've been trying to build this from first principle up. We need to present batching because this is what everything devolves into. So I presented lightning and non-interactive lightning. You're building up a future where it's easy to do non-interactive initialization of layer 2 protocols. You can go to Coinbase and give them an address that opens a channel and they don't even have to realize that. So maybe they are payment pools and they spend into a payment pool or something. Prove the fundamental is good and not deleterious. But if you apply these probabilities up the stack about do we have optimistic cases, then it's really good.
+
+Q: I think that's the wrong approach. You've tried to find different use cases, which you have done great. I think that's detrimental to your effort. You really need a good use case for which OP\_CHECKTEMPLATEVERIFY is a really good answer. What I see instead is maybe we can do this and that. There's a lot of ways to do a lot of things. This isn't going to convince everyone, and it's terribly confusing. What would get it through is having a really good problem with a really good answer for which OP\_CHECKTEMPLATEVERIFY.
+
+A: There's running code. You can immediately do vaults and batch payments, you can do this already today.
+
+Q: You've done a good job, but we need to find out if any of these are killer apps.
+
+This is just software and it's open-source, and anyone can get it while cloning.
+
+If you want to do a soft-fork, you need to defeat the other ways to do this which don't require a soft-fork, you need an overwhelmingly strong use case that cannot be done.
+
+So is interactivity okay or not okay? Jeremy said no. We were talking about this-- what would other ways you could do this with pre-signed transactions? We were talking about that at lunch while you were getting food. Say batch payments and child-pays-for-parent are easy to do with presigned transaction and you need interaction for secure key deletion for the n-of-n setup. So it's that interactivity is the big difference and when that's clear, and it comes really clear in the second layer stuff.... I felt that your strongest argument had centered around those cases, and you explained that batching to get us up to thinking at that level.
+
+Batching is an abstract and strange place. How do you build a better wallet? Does deleting a key result in a better wallet? If you do CTV, is it any different? Is it a better wallet? This comes down to, can I make a security analysis around this that convinces someone that this is more secure? Or that some application is more better solved through OP\_CHECKTEMPLATEVERIFY?
+
+In lightning, you already need durable memory, in the same way you would need for OP\_CHECKTEMPLATEVERIFY.
+
+There's another big advantage to OP\_CHECKTEMPLATEVERIFY over pre-signing everything which is that if you want a vault that is somewhat dynamic that can pull stuff out at varying rates, you couldn't ever possibly sign...
+
+With OP\_CHECKTEMPLATEVERIFY you can have malleability and you can have different fees if you allow for malleability. How much slower is a signature than a hash? It's like 10-1000x slower. Maybe this is getting into the weeds into things that should be supported or hackery tricks of how to apply this stuff, but it should be possible to use these hashchain-style covenants by being careful about what you're pre-signing to, so that you can have a vault that was dynamic in terms of the actual amounts where you still have to pre-sign out this one linear thing through the whole thing where the amount can vary.
+
+One of the things I think is cool is that there's sort of... an optimizing compiler that optimizes how it compiles. If you have a program that has branches that exist more than once place in the program, you only have to compile them once. So say you want to emit a payment that is 10, 20, or 30, that is going to be the same branch each time. But yes, the txids do change in those, so you do need to link against those objects that's true. You don't need to link ahead of time, actually, if you had better separation between this is the output and this is the program.
+
+The hashchaining needs to be done through scriptpubkeys not the txids.... If you have dynamic logic at each step to figure out the txid, but the thing you preset ahead is what the scriptpubkey is of your output. So you could have a number of options in your scriptpubkey... No, it's all the same scriptpubkey and you know what these are going to be every step of the way, but you don't know what the exact amounts are going to be.
+
+... you could have the ability to write a limited set of pre-conditions and post-conditions and then you have a fixed list of pre-conditions and post-conditions. Pre-conditions can be things like, enforcing "this other transaction was mined". You express all the possible end states, and whatever end states you have that's what you have.
+
+You can do this with OP\_CHECKTEMPLATEVERIFY as you have envisioned it, where part of the solution is here how the other output scriptpubkey gets filled in, and then you OP\_CHECKTEMPLATEVERIFY the whole thing and it only enforces the one thing that it really wanted to enforce. That sounds correct. This makes it so that it is much more powerful than simply pre-signing transaction.
+
+Q: Why did we need to... why do we need to know the txid for our tree why? So why is that in your BIP?
+
+A: The underlying reason for that is that, in the use cases that OP\_CHECKTEMPLATEVERIFY is designed to really excel at, you want to be able to build layer 2 protocols on top of it. You also want to simplify wallet support. If you want to have both of those properties, not malleating the txid is actually quite useful because you can just tell someone here's the txids to monitor ,rather than here's some abstract representation of my program. For a lot of this with txids you can have bloom filters applied across the entire block.
+
+Q: But what lite clients look for today is scriptpubkeys, and maybe you want to work within that regime.
+
+A: Yeah, that's a fair counterargument. The issue is that, in a more general flexible thing, you can imagine malleating the scriptpubkey. Not if it's a segwit hash or something like that, but if you're doing stealth addresses or things like that. You can't just rely on SPKs in some case. Conner would know better about filters.
+
+A: It's all scriptpubkey.
+
+So fundamentally keeping the txids the same is not incompatible with scriptpubkeys, since they are fixed, but it's a simpler way of knowing what state you're at and what your options are. If you dynamicaly adjust fields, then you need to introduce logic to figure out what the change bit is. If someone is changing the amount of money or moving into the transaction, or I want to know the money going in... I don't want someone to be able to change that. If you want to change someone to be able to support that, it's OP\_CAT... But for prime order use cases, it's not like, it's not that useful and I think most of the time, you would be trying to squeeze it into something that isn't malleating txids.
+
+Q: It seems that transactions themselves malleate strictly more than scriptpubkeys.
+
+A: Yes, that's reasonable. That's fundamentally true because a transaction is composed of scriptpubkeys, so therefore it has to be more malleable. But this is in the weeds.
+
+Q: So what I expected was that, the safety criteria would be harder to evaluate. But the only thing I heard you say is that it would be easier to write clients to understand OP\_CHECKTEMPLATEVERIFY the way it is specified now.
+
+A: The security arguments are inherent. I will make a mea culpa that, I've been up here for a long time, but yes, those too. One of the major reasons for something simple and restricted is security. Introducing all these flexibilities into a script that you can introduce in validation, it opens the door for consensus failures and things that we don't fully understand how they might work. With OP\_CHECKTEMPLATEVERIFY we really understand the security perimeter around, and it doesn't violate many core assumptions about how transactions work. If you had an arbitrary covenant system, you could have all kinds of weird malleations that miners could apply because if it's being passed into the witness then anyone can manipulate a transaction in unknown ways. If you have a predefined set of end states, it's easier to verify that those end states are what you want. But if it's made through computation, it's much harder to prove that the end states you don't want aren't there, which means you're not trying to prove what's there but rather what's not there which is fundamentally harder. Something like OP\_CHECKTEMPLATEVERIFY makes more sense for a foundational layer, which is why the standard type that is defined is very limited. We don't really have super robust use cases for the other ones; we have good ideas, but we know some stuff we can do for the very restricted case like for layer 2 and vaults. We can do that today, let's keep it flexible enough to make new stuff. I think OP\_CHECKTEMPLATEVERIFY is a simple enough proposal, it's worth its weight in gold per line of code. It's not too complex, and it doesn't violate rules, and maybe it's worth advocating for this change. I think all of these factors point to OP\_CHECKTEMPLATEVERIFY being a reasonable change for bitcoin.
+
+
+
+- a covenant with output script template with masking? Instead of committing to the whole script, allowing certain variables.
+- reduce interactivity requirements for pre-signed transactions (n-of-n secure key deletion trusted setup) for batched payments (withdrawals from an exchange?)
+- market for computing the n^2 child-pays solutions?
+
 
 
 
