@@ -1,0 +1,56 @@
+Consensus protocol risks and vulnerabilities
+
+Bram Cohen
+
+# Introduction
+
+I am going to talk about why cryptocurrencies matter. I am going to take the skeptics side. I am going to start from a banker's standpoint why a lot of the things that cryptocurrency people land say don't make any sense.
+
+# Where are the engineers coming from?
+
+An engineer will look at something like Visa and say this is horrible. These are systems from 50-100 years ago. It's not using public key cryptography, it's not using secure hashes. It's a disaster and I can build something better. So they prototype something that is objectively better, and if everyone was using this then the world would be more secure, and this is a low bar given the technology used in the financial sector today.
+
+So they built a great thing- and then they are told, you can't just setup shop and that's against the law, and then the engineer rails about how regulators are holding back technology. That's where the engineers are coming from when they go on these triads.
+
+# Regulations aren't evil
+
+The problem is that engineers are missing a few hundred years of experience. We tried unregulated banking in the 1800s and it did not go well. There were crises every 10-15 years, they kept happening. If you're a banker, there's a straightforward business model of "oops we accidentally your whole account" and that's an effective business model if you're a banker, much easier than doing real work. More recently, the shadow banking sector- these things that were effectively acting as banks even though they weren't called banks- de-regulated themselves. There's some huge fraction of all tech in the finance industry is obfuscating leverage. It's taking leverage, and the math is making it disappear from the books. It's not gone, it's just gone from the books. This causes the whole system to be leveraged up again, and then we had another banking crisis.
+
+And then you have this general problem that if you start de-regulating it, you don't get engineers coming in and building stuff. You get some of that. But mostly you get scam artists coming in. Any random scam artist can make a product with a huge checklist of features that are amazing that they don't have to build, and engineers are by comparison hobbled by their actual quality rather than the scammer's self-reported quality. So this doesn't work, you can't just de-regulate.
+
+# Regulations are still getting in the way
+
+So what is the core of our issue here? What is the fundamental issue with de-regulation? The real issue is that you need a trusted third party. If you have a trusted tthird party, it would be better for it to be vetted and subject to punishment if they do something bad, rather than some total random that a reputation system is supposed to manage. Trying to get rid of this TTP is extremely difficult, and if you wanted to do this, yo uwould need a secure distributed database.
+
+How can you have a database that tracks how much money everyone has, without people being able to spam the system with fake peers and change people's balanceS? How is this supposed to be made to happen?
+
+It turns out that we can. Bitcoin does this. It has some problems. But it legitimately does in fact implement a secure distributed database.
+
+# Bitcoin feels like a step backwards
+
+Bitcoin has a lot of problems. When people are working with bitcoin.... bitcoin has some big improvements. It brings in public key cryptography, which is a low bar- it's absurd that we're not already using it everywhere... Bitcoin uses public key cryptography, secure hash based histories. You do this thing where the bank has a blockchain group that is supposed to be doing blockchain stuff, and they decide their job is to make the bank use secure hash based audit trails which isn't blockchain but a huge improvement, so I'm glad they are doing it. They should have done it 30 years ago, but I'm glad they are doing it now even though it has nothing to do with blockchain.
+
+Bitcoin's problem is that it feels like you're carrying around suitcases full of $100 dollar bills. Banks do provide security features. They have ways of slowing things down and reversing mistakes which makes things significantly less scary. However, they do it completely opaquely. They just decide how it is going to work. You as a retail customer of the bank gets no say in this. The bank makes their decisions about processes, and they won't tell you their decisions or what they are, they just do these things for you.
+
+But they're doing it better than bitcoin does today. However, it doesn't have to be this way. Cryptocurrencies can in real pragmatic terms do this better, like with appropriate smart transaction functionality, these cryptocurrencies can have these same security features in a transparent way and under complete end-user control.
+
+# Payment security feature example
+
+You could have a wallet that only pays to authorized payees. This is common in organizations: there are vendors and employees, and you don't want employees to be phished or embezzling money. You want them to have permission to make payments, but only to those vendors.
+
+You want something where you have a wallet and it can spend but only at some rate, and if it spends quicker than that rate then it is stopped from doing so. There's some way of going back and saying oh there was a problem, I'm going to clawback everything using this other procedure like getting a key out of cold storage, and I walk into a bank and do it, or something like this. This helps you fix things when you get hacked.
+
+On the flip side, what about having recovery material on a piece of paper, but you're worried about that piece of paper getting compromised. So you can have a system where what's on that piece of paper allows you to do a recovery process. If someone steals that key material, or someone gets access to it, and starts a recovery process, then you can stop it. It's the opposite side of a ratelimited wallet.
+
+These are examples of the kinds of things that banks do today, but badly and without end-user control, and these could be done better in cryptocurrency.
+
+# More thoughts
+
+
+
+----
+
+These transcripts are <a href="https://twitter.com/ChristopherA/status/1228763593782394880">sponsored</a> by <a href="https://blockchaincommons.com/">Blockchain Commons</a>.
+
+
+Tweet: Transcript: "Consensus protocol risks and vulnerabilities" https://diyhpl.us/wiki/transcripts/coordination-of-decentralized-finance-workshop/2020-stanford/consensus-protocol-risks-and-vulnerabilities/ @bramcohen @CBRStanford #SBC20
