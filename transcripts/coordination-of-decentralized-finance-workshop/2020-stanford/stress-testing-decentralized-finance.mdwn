@@ -108,6 +108,18 @@ We spent a bunch of time comparing governance in proof-of-stake and DeFi arguing
 
 We also talked about staking derivatives and how all these complex things are just ways to prevent lending activity and other capital flight type of things from removing network security. I think that's pretty much it. We spent a lot of time on those two pieces. We were comparing and contrasting, like if we go from 2017 to now, the vision that was sold then is quite different from what the current reality looks like.
 
+Q: I didn't realize validators in PoS systems were staking money from venture capital funds. That seems like a big incentive issue, because the purpose of staking is to disincentivize improper transaction validation. I know we touched on it a little bit, but I'd love to hear your thoughts on that.
+
+A: Once you have Binance or Coinbase as the main validator, then they can start censoring transactions once they have enough stake aggregated to them.
+
+Q: If I am a validator and not staking the money myself, maybe I don't care if I screw over the VC fund's staked transactions? Or maybe I misbehave in my staking validation, and my funds...... it's really a principal agent problem.
+
+A: ... there's proportional slashing, where you have to put up a bond proportional to the number of users you're delegating for, which disincentives you as a pool operator from doing double spending or something. This is a proportional slashing cosmos proposal. There are certainly disincentives and bad incentives there, and designing things around those is important. The key is to make sure the slashing probability... the expected returns from slashing is strictly negative, for the validator and the person whose assets they are validating for, at all time.
+
+Q: But the delegator and validator enter outside of the chain agreement, about how the liability of the slashing gets shifted? In that case, validators might still have incentive where they say basically in any circumstance if slashing you still carry the VC costs. So it's the same thing, as a highly leveraged transaction.
+
+A: Yeah, I guess the difference is that on-chain contracts can be enforced by consensus. In newer staking networks, the staking primitive is represented as a smart contract itself. The consensus mechanism is upgradeable in the sense that the contract can be upgraded. The addres can point to another contract that points to another contract that replicates interest rate models.
+
 ----
 
 These transcripts are <a href="https://twitter.com/ChristopherA/status/1228763593782394880">sponsored</a> by <a href="https://blockchaincommons.com/">Blockchain Commons</a>.
