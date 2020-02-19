@@ -110,7 +110,29 @@ We show that if (1) doesn't hold and (2) doesn't hold then you can "compress" a 
 
 Our attack consits of two epochs, times between commits on the main chain. There's epoch 1 where we choose a random subset of users. We launch a data unavailability attack. Then in the second epoch, the users will try to exit with their tokens. We prove that if Plasma is secure then the set of users who do not manage to exit has to be equal to the set of targeted users.
 
+We want short exits, and we don't want to have large non-uniquely attributable data unavailability faults.
 
+In our attack, users will try to exit with their tokens. At the same time users from that subset try to illegally exit with tokens that they don't have. This is after switching "off" the operator.
+
+Then there's a set of users that did not manage to exit. Who did not manage to exit? The honest users should be able to exit. If Plasma is secure, then these two sets should be equal.
+
+How do we compress those two sets? We compress(V) in the first epoch. Then we decompress in the second epoch. We apply the second epoch and we look at the set of users who managed to exit.
+
+# More in the paper
+
+The reality is more complex. It's in our paper.
+
+<https://eprint.iacr.org/2020/175>
+
+Generalization: our result also covers Plasma with some "collateral" on the operator, used to compensate for a dishonest operator.
+
+# Conclusion
+
+There are good theoretical reasons why the community is working both on Plasma Cash and Fungible Plasma. Some ideas for how to "get around" this impossibility result is the "defragmentation techniques" for Plasma Cash suggested by Vitalik Buterin.... where you try to merge coins. It works assuming that some users are cooperating with each other. It has some additional assumptions that we don't have in our paper.
+
+Then there's another way, "rollups". Then there's "semi-trusted committee for 'data availability'" like StarkDEX. Then they vote outside the blockchain whether the data is really unavailable by the operator.
+
+I think more work on formalization and extensions of Plasma is definitely needed at this stage.
 
 
 ----
