@@ -1,0 +1,56 @@
+PLONK: Permutations over Lagrange-bases for Oecumenical Noninteractive arguments of Knowledge
+
+Ariel Gabizon
+
+<https://eprint.iacr.org/2019/pdf>
+
+# Introduction
+
+One of the things you need when you design a zk proof system is that you need to know about polynomials. Two polynomials if they are the same then they are the same everywhere and if they are different then they are different almost everywhere. The other thing you need is how to get a good name.
+
+This started as a joint project with Protocol Labs and some others. Now we're developing it at Aztec. So one line introduction to zk-SNARKs.
+
+# zk-SNARKs
+
+Zero-knowledge SNARKs allow you to prove that you know some secret w without leaking information on w itself. When you don't care about this leak of information, then this proof of w can be much shorter than w itself. So that's zk-SNARKs in a sentence.
+
+# Trusted setup
+
+For these proof systems to be secure, they require some sort of setup phase before you start proving and verifying. Many times, this setup needs to be something called a "trusted setup" which means that the setup participants all share some randomness that their computers used during the setup, then they will have the power to forge proofs.
+
+This is a picture from the first zcash ceremony where someone is destroying the computer so there's no chance that the bits of randomness could ever be discovered, or at least significantly reduce the chance of retrieving those bits.
+
+This setup as you can see can be a painful process, in particular for the computer. What are our options in terms of what setup our SNARK will need? Until 2018, until very recently, it was very much "all or nothing". We had these per-circuit setup SNARKs which means that before starting a setup, you need to decide exactly what statements you want to prove.
+
+Two things- if all the setup participants colluded or something went wrong, then the setup is worthless. But say you want to make a small change in the type of statements you want to prove, then you have to throwaway the setup again. In fact, in zcash sapling at some point we decided that something in the circuit needed to be big endian not little endian or maybe the other way around, and the setup was restarted after a month because of this. 
+
+The other extreme is the types of things that Eli Ben Sasson and others are developing where there's no trusted setup. The setup is basically picking a hash function that we all agree on, and there's no secret trap door or collusion of participants. In the past few years, other proof systems with this property of transparent setup are coming up.
+
+# SNARKs with universal updateable setup
+
+Recently, there is a non-trivial tradeoff in how painful the setup procedure is. This is where Aztec is concentrating its efforts and this is the topic of today's talk. This is based on universal updateable setup, which yes does involve a trusted setup so if they collude they can forge proofs. But the setup is universal: if you want to change the statement you want to prove, then as long as it is fixed within a certain bound fixed in advance, then that's fine. Also, it's updateable where all setup participants were corrupt and shared with each other the secret randomness- then if any point someone honest comes and contributes more randomness to the setup then from that point on then the parameters are secure as long as that additional randomness doesn't get released.
+
+PLONK is a SNARK with this type of setup.
+
+# Benchmarks
+
+Let me give you some numbers. You can have this sort of setup without compromising even in some settings or some dimensions maybe even gaining compared to the best per-circuit setup SNARKs. So basically, we can beat Groth16 in proving time. These numbers are works in progress. If you look at the proof lengths, we pay sort of a factor of 3.5x in proof length compared to Groth16 (bellman). If you use the ethereum curve, then we have like half-kilobyte proofs. If you want to be a little bit safer, then it goes to 600-700 byte range.
+
+# PLONK: not just a restaurant chain
+
+We called the system PLONK: permutations over lagrange basis for equinomeninallwhatthehell non-interactive arguments of knowledge.  But it also refers to a chain of restaurants. Let me give some intuition about this, but I encourage you to search for PLONK on youtube to get more details.
+
+The first thing to understand is that basically all you need is a permutation check. What do I mean by that? How these things work is we start with a statement that we want to prove. We want to say, this zcash transaction is valid and we want to translate it into a statement about arithmetic circuits. I want to prove I know some numbers (a, b, c) in a way such that (a+b)\*c == 7. This statement is described by this circut, there's an addition gate, then c joins them in the multiplication. You can think that in this statement, there's six values involved. We have these two gates, multiplication gate and addition gate, and each gate has three values. The left wire, the right wire, and the output wire. Now what do we need to check about these six values? The first thing we need to check is the gate checks. We need to check for the addition gate, that the left and right is the output, and for multiplication that it is multiplying the inputs to get the output. The second thing to check is that we can call it the "wire check" or the "copy checks". These six values are not independent values. The output wire of the first gate should equal the left wire of the second gate. They are the same thing. So, this corresponds to the check that O1 = L2. So here it looks like one small innocent check but since we're not restricting the fan-out of our circuits then this can be a really huge thing, that is the output of some gate can be the left wire of some arbitrary subset of all the gates and it can also be at the same time the right wire of some other arbitrary subset of gates. So the wire/copy checks can be a really big thing. The third thing that we need to check is what has been called the "public input checks". We want to say that the output of the circuit is 7.
+
+The hard part here is the wiring checks. What I want to show you is that all these copy checks can be compressed to one single thing that we can call a permutation check. This idea of- the first time I saw it, was in Groth09. Think of writing all the output values in one long vector. If we want to check that O1 was equal to L1... if you think about it, that's the same as saying this vector is invariant under the permutation that flips the second and fifth location and leaves everything in place. So right, this vector v being an invariant under this permutation is exactly equivalent to L2 = L1. This is just one copy check, but however many copy checks you want to enforce among these values you can take one permutation that does a cycle over each sort of set of values you wanted to equal, and then be invariant under this permutation is exactly equivalent to enforcing all these copy checks.
+
+
+
+
+----
+
+<i>Sponsorship</i>: These transcripts are <a href="https://twitter.com/ChristopherA/status/1228763593782394880">sponsored</a> by <a href="https://blockchaincommons.com/">Blockchain Commons</a>.
+
+<i>Disclaimer</i>: These are unpaid transcriptions, performed in real-time and in-person during the actual source presentation. Due to personal time constraints they are usually not reviewed against the source material once published. Errors are possible. If the original author/speaker or anyone else finds errors of substance, please email me at kanzure@gmail.com for corrections or contribute online via github/git. I sometimes add annotations to the transcription text. These will always be denoted by a standard editor's note in parenthesis brackets ((like this)), or in a numbered footnote. I welcome feedback and discussion of these as well.
+
+Tweet: Transcript: "PLONK: Permutations over Lagrange-bases for Oecumenical Noninteractive arguments of Knowledge" https://diyhpl.us/wiki/transcripts/stanford-blockchain-conference/2020/plonk/ @relgabizon @aztecprotocol @CBRStanford #SBC20
