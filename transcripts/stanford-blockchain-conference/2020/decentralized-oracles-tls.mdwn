@@ -96,7 +96,7 @@ Going back to the general big picture, DECO has three phases. What we just looke
 
 After the three-party handshake, the prover can essentially prove the provenance of TLS ciphertext. Once that is done, the ciphertext can essentially be treated as cryptographic commitments. The prover then has multiple choices as to what to do with the commitment. The first option is to simply open the entire commitment by revealing the decryption key, and doing so proves the provenance of the plaintext but it's bad for privacy. This could be useful for some applications. Alternatively, the prover can prove things about the plaintext in zero-knowledge without revealing the decryption key.
 
-# Selecive opening
+# Selective opening
 
 Proving stuff in zero-knowledge for large ciphertext is impractical but there are some operations that we can do efficiently. For example, in the paper we proposed this scheme called "selective opening" which allows the prover to decrypt a part of the ciphertext. DECO supports block-level selective opening.
 
