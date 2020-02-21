@@ -1,0 +1,19 @@
+Question: what is a good general-purpose CAD representation format?
+
+If you have high-resolution constraints and very particular surfaces with particular curves, then it seems wrong to represent them as a collection of fine-grained triangles especially if the triangles don't actually correspond to the desired curvature.
+
+# Representation formats
+
+* implicitcad f-reps ? these might be two separate techniques.
+* tessellated polyhedral triangle meshes
+* NURBS
+* b-splines
+* bezier curves
+* CSG boolean representation (unevaluated)
+
+# Edge cases
+
+* high-resolution, smooth surface with particular exact shape that must be transmitted to the CAM/CNC tool with certain specifications
+* intersection of high-resolution curves between two surfaces
+
+
