@@ -182,6 +182,14 @@ You can prove zeroknowledgeness by manipulating the verifier such that they beli
 
 You can prove knowledge soundness by manipulating the prover into revealing the secret to us.
 
+# Vector pedersen commitments
+
+I only have 5 minutes left. You take the pedersen commitment and you can extend it to take a vector of that. Here, G is a vector of generators. When you have vectors together like this, it's implied that there's a dot product in between.
+
+We also generate a set of commitments for each of our m vectors of dimension N where N is not equal to m2. Have we revealed anything by showing the commitents to the world? The answer is no. The commitments are stil lperfectly hiding and they aren't perfectly binding, under the discrete log assumption.
+
+So we have a zero-knowledge protocol for vectors.
+
 # References
 
 * bulletproofs paper: <https://eprint.iacr.org/2017/1066.pdf>

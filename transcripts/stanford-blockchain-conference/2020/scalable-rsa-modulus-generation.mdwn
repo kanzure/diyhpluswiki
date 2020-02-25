@@ -2,6 +2,8 @@ Scalable RSA Modulus Generation with Dishonest Majority
 
 Megan Chen
 
+<https://twitter.com/kanzure/status/1230545603605585920>
+
 # Introduction
 
 Groups of unknown order are interesting cryptographic primitives. You can commit to integers. If you commit to a very large integer, you have to do a lot of work to do the commitment so you have a sequentiality assumption useful for VDFs. But then you have this compression property where if you take a large integer with a lot of information in it, you can compress it down to something small. It also has a nice additive homomorphic commitment property where the commitment of the sum is the sum of the commitments, and you can do accumulators and SNARKs with this property. We're having this little mini revolution in cryptography with this blossoming of research around groups of unknown order. There's this key idea like "proofs of exponentiation" which started with verifiable delay functions but now they're used with accumulators, vector commitments, polynomial commitments, SNARKs, etc. We're going to see a talk about a trusted setup for MPC which is super-exciting for this space because it's breaking a number of records.

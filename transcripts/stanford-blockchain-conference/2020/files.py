@@ -17,7 +17,7 @@ file_data = [
     },
     {
         "author": "Ed Felten",
-        "stub": "aribtrum-v2",
+        "stub": "arbitrum-v2",
         "title": "Arbitrum 2.0: Faster Off-Chain Contracts with On-Chain Security",
         "twitter": "@EdFelten",
     },
@@ -128,7 +128,7 @@ file_data = [
         "author": "Lei Yang",
         "title": "Prism: Scaling bitcoin by 10,000x",
         "stub": "prism",
-        "pdf": "http://diyhpl.us/wiki/transcripts/scalingbitcoin/tel-aviv-2019/prism/",
+        "pdf": "https://diyhpl.us/wiki/transcripts/scalingbitcoin/tel-aviv-2019/prism/",
         "twitter": "",
     },
     {
@@ -167,7 +167,7 @@ file_data = [
         "author": "Matteo Maffei",
         "title": "Atomic Multi-Channel Updates with Constant Collateral in Bitcoin-Compatible Payment-Channel Networks",
         "stub": "atomic-multi-channel-updates",
-        "pdf": "http://diyhpl.us/wiki/transcripts/scalingbitcoin/tel-aviv-2019/atomic-multi-channel-updates/",
+        "pdf": "https://diyhpl.us/wiki/transcripts/scalingbitcoin/tel-aviv-2019/atomic-multi-channel-updates/",
         "twitter": "@matteo_maffei",
     },
     {
@@ -212,7 +212,7 @@ file_data = [
         "author": "Daniel Cline",
         "title": "ClockWork: An exchange protocol for proofs of non-front-running",
         "stub": "clockwork-nonfrontrunning",
-        "twitter": "",
+        "twitter": "@rjected",
     },
 ]
 
@@ -228,7 +228,7 @@ for data in file_data:
     else:
         pdf = ""
 
-    sponsorship = "<i>Sponsorship</i>: These transcripts are <a href=\"https://twitter.com/ChristopherA/status/1228763593782394880\">sponsored</a> by <a href=\"https://blockchaincommons.com/\">Blockchain Commons</a>.\n\n<i>Disclaimer</i>: These are unpaid transcriptions, performed in real-time and in-person during the actual source presentation. Due to personal time constraints they are usually not reviewed against the source material once published. Errors are possible. If the original author/speaker or anyone else finds errors of substance, please email me at kanzure@gmail.com for corrections or contribute online via github/git. I sometimes add annotations to the transcription text. These will always be denoted by a standard editor's note in parenthesis brackets ((like this)), or in a numbered footnote. I welcome feedback and discussion of these as well."
+    sponsorship = "----\n\n<i>Sponsorship</i>: These transcripts are <a href=\"https://twitter.com/ChristopherA/status/1228763593782394880\">sponsored</a> by <a href=\"https://blockchaincommons.com/\">Blockchain Commons</a>.\n\n<i>Disclaimer</i>: These are unpaid transcriptions, performed in real-time and in-person during the actual source presentation. Due to personal time constraints they are usually not reviewed against the source material once published. Errors are possible. If the original author/speaker or anyone else finds errors of substance, please email me at kanzure@gmail.com for corrections or contribute online via github/git. I sometimes add annotations to the transcription text. These will always be denoted by a standard editor's note in parenthesis brackets ((like this)), or in a numbered footnote. I welcome feedback and discussion of these as well."
 
     tweet = f"Transcript: \"{title}\" {url} {twitter}"
     transcript = f"{title}\n\n{author}{pdf}\n\n\n{sponsorship}\n\nTweet: {tweet}\n"

@@ -4,6 +4,8 @@ Austin Bitcoin Developers socratic seminar 6
 
 <https://bitdevs.org/2020-02-12-socratic-seminar-101>
 
+<https://twitter.com/kanzure/status/1232132693179207682>
+
 # Introduction
 
 Alrighty, let's get started. Gather around. Phil could use some company here. Nobody likes the front row. Maybe the benches.  So I have a little different format for how I want to do it this week. Usually I cover a broad series of topics that I steal from the New York's meetup list. Going through that, I thought there was something that looked interesting which was the new taproot proposals that were finally posted by Pieter Wuille.
@@ -67,12 +69,12 @@ There's also some other information about serializing the different primitives i
 
 Tagged hashes...
 
-   18:04 < kanzure> for tagged hashes, in what situation is nonce reuse expected? like low-entropy nonces ..?
-   18:04 < aj> do you mean tag reuse?
-   18:05 < kanzure> "For example, without tagged hashing a BIP340 signature could also be valid for a signature scheme where the only difference is that the arguments to the hash function are reordered. Worse, if the BIP340 nonce derivation function was copied or independently created, then the nonce could be accidentally reused in the other scheme leaking the secret key."
-   18:05 < kanzure> this would only be true for low-entropy nonces right?
-   18:05 < aj> or if the nonce is deterministic
-   18:06 < kanzure> oh i see, i can see ways that deterministic nonces would conflict.
+    18:04 < kanzure> for tagged hashes, in what situation is nonce reuse expected? like low-entropy nonces ..?
+    18:04 < aj> do you mean tag reuse?
+    18:05 < kanzure> "For example, without tagged hashing a BIP340 signature could also be valid for a signature scheme where the only difference is that the arguments to the hash function are reordered. Worse, if the BIP340 nonce derivation function was copied or independently created, then the nonce could be accidentally reused in the other scheme leaking the secret key."
+    18:05 < kanzure> this would only be true for low-entropy nonces right?
+    18:05 < aj> or if the nonce is deterministic
+    18:06 < kanzure> oh i see, i can see ways that deterministic nonces would conflict.
 
 Let's move on to applications. Adaptor signatures.... useful for privacy in lightning so that each hop doesn't reveal preimages or let observers know what protocol was really occurring once things get on chain. Okay, so yeah. Cool.
 
