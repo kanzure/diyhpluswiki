@@ -1,0 +1,246 @@
+Chaincode Labs podcast with Pieter Wuille
+
+Part 1: https://www.youtube.com/watch?v=s0XopkGcN9U
+
+Part 2: https://www.youtube.com/watch?v=Q2lXSRcacAo
+
+# Part 1
+
+Jonas: Welcome to the podcast
+
+John: Hi Pieter
+
+Pieter: Hello John and Jonas
+
+John: Thank you for being the first guest on our podcast.
+
+Jonas: So far the most important guest we’ve had.
+
+Pieter: That’s an amazing honor. Thank you so much for having me.
+
+John: We’re here to talk about Bitcoin and Bitcoin Core development. We have Pieter Wuille as our guest who is a Bitcoin Core contributor of many years standing. Pieter you’ve had over 500 PRs merged into Bitcoin Core and I think over 11,000 review comments in the repo.
+
+Pieter: That is possible.
+
+John: That’s quite a lot over 11 years. No not quite, sorry. We’ll cut that bit so no one knows. Let’s say 9 years. 
+
+Pieter: I don’t like the implication.
+
+John: We have a few questions for you. The first question is of all of your PRs that you’ve done we’ve picked out a few that we think are interesting and we’d like to hear from you your inspiration for those and interesting thoughts about those. The first one we picked was headers first syncing. So can you first of all tell us what that is?
+
+Pieter: Sure. Historically in the Bitcoin protocol and Bitcoin Core implementation blocks were learned about and fetched from peers using the `getblocks` message which you would send to a peer telling them “Hey I know about this block hash. Tell me what’s more.” They would send you a list of block hashes and you’d start fetching them. At the end when you’ve done all of them you would ask again “What more blocks should I ask about?” This works fine as long as you are fetching blocks from one peer. The problem is this mechanism really does not parallelize well to multiple connections because there is no way to interleave. I guess you could come up with some complicated mechanism where I know this peer has these blocks and this peer has these blocks. I’m going to ask for one from each. It is really a mess because you don’t know where you are going. You start off at the beginning and you ask what’s next? There is huge attack potential there because a peer could just be like “Trust me I have a very good chain for you. In the end it is going to have high difficulty” but it just keeps giving you low difficulty blocks for starters. This was also a problem in practice. Around the time maybe 0.6, 0.7 this started to become an issue because downloading blocks started taking longer than ten minutes. That may have been a problem before that time even.
+
+John: You mean downloading the entire blockchain took more than ten minutes?
+
+Pieter: Yes. You’d start off downloading blocks from one peer. You’d ask one peer, intentionally you’d only ask one because we knew this mechanism didn’t parallelize. Then another peer would announce to you “Hey I have a new block” and you’d ask them “Give me that block.” You’d be like “I have no idea what its parent is, can you tell me something about its parent.” The result was that you’d basically start off a complete parallel second block downloading process with that other peer.
+
+John: That new block is called an orphan block?
+
+Pieter: That’s another issue that the pre-headers first mechanism had. You’d learn about blocks and have no way of knowing what its parents were until you had actually fully synced those parents. There used to be a pool where these downloaded blocks without parents were kept called orphan blocks unrelated to…
+
+John: Stale blocks?
+
+Pieter: Stale blocks which are just blocks in the chain that were abandoned because the majority hashrate forked away. Around the time of 0.7, 0.8, 0.9 I think we kept adding hacks on top of the block downloading mechanism trying to put heuristics to prevent it from having 8 connections and downloading all blocks from all of them simultaneously. At some point syncing got so slow that you’d end up with so many orphans that you could go out of memory while downloading. You’re still trying to catch up and you’re learning of all these new blocks that were just mined during the time you were syncing. They would all be kept in memory. Then we introduced a limit on how many of those were kept. The oldest ones would be deleted. That led to even more problems where those orphans were actually downloaded over and over again. Over all this was a mess and it was clear this wasn’t going to keep working. 
+
+John: For context this is 2013, 2014ish?
+
+Pieter: Possibly. This was fixed in 0.10. Headers first synchronization was introduced in 0.10. What it did was split the synchronization process in two steps. They were performed in parallel. One is where the normal synchronization process that’s just from beginning to end give me whatever was replaced with just synchronizing the headers. You’d build the best header chain by asking peers “give me headers. You have more headers, give me more headers.” The same mechanism as previously was used for blocks would now just be used for headers which takes in the order of minutes because it was at the time a couple of dozen megabytes, maybe a bit more now.
+
+John: The reason for that is the vast majority of time when doing an initial block download and initial sync is checking the signatures in the transactions.
+
+Pieter: Right. Plus actually downloading the data because headers are 80 bytes per block rather than… 
+
+John: 1MB at the time, 2MB now.
+
+Pieter: At the time they weren’t quite full yet. Then there would be a second phase which would just be a background process where during the main loop of Bitcoin Core’s network processing it would try to figure out which headers have I heard about from which peers and see this one has a chain that is actually better than my current fully validated block tip. It would ask for a couple of blocks there. By limiting how many blocks were asked of each peer this parallelizes quite well because I think there is a limit of maybe 8 or 16 blocks per peer that are ever queued up. You’d ask “You have this header chain, I’ll ask the next 16 blocks of you. Someone else has them too, I will ask for the 16 ones after that one from someone else.” Together with a heuristic at the time which was very simple but I think has worked fairly well which is we’d never download a block that is more than 1024 blocks ahead of our current tip. Because we’re starting to download blocks in parallel now from multiple peers and validating as they come in. We don’t have the problem of orphan blocks any more because we already have their headers by the time we ask for them. We know they are part of the best chain assuming that chain is valid. There is still denial of service concerns there but they are much less severe in a headers first model.
+
+John: One of the reasons that those DOS concerns are less is that the headers are very cheap to verify but expensive to create.
+
+Pieter: To construct, exactly. As a general principle you try to validate things with the highest cost for an attacker divided by cost of validation. You do those tests first and if you can bail out early this can massively reduce attack potential. In order to attack now you still have to first create an actual best header chain or of course sybil attack the node during its synchronization. There are some techniques to avoid that as well. Ignoring those we already have a headers chain so we can just ask for blocks from everyone in parallel, see when they come in. As soon as we have all blocks up to a certain point we can actually the run full script and transaction validation and continue. This heuristic we have is… the question is of course is how do you pick good peers? During IBD you don’t care so much about partition resistance. You’re still catching up with the network and you are not fully functional until you’ve caught up. Your primary concern is how do I pick fast peers to synchronize from? The mechanism we picked is never download a block that’s more than 1024 blocks ahead of your current tip. You have a window of blocks that starts at your current tip and 1024 blocks ahead. In that window you try to fetch blocks as possible from all your peers. If that window can’t move because of one peer, which means you have downloaded all the blocks in that window except blocks that are still outstanding in a request with one peer you would disconnect that peer. Conceptually this means that if you have one peer that is so much slower that it is preventing you from making progress that the other peers are allowing you to make, a factor of 10 slower than the rest or something, you would kick that peer and find another one. This mechanism works reasonably well and it will find decent peers. It can get stuck with moderate peers. If they are all equally slow this doesn’t do anything.
+
+John: There’s nothing to do?
+
+Pieter: You don’t know. It might be because your own connection is limited or you’ve picked rather bad but not terrible peers. In any case that mechanism is still being used today I believe.
+
+John: For that PR was that the first time we were tracking per peer state or per peer performance in order to do that kind of calculation?
+
+Pieter: I think so. There was per peer state before that. In particular to prevent the same transaction from being downloaded from multiple peers. There was already ask for caching where you’d at most ask for the same transaction once every two minutes or something. That already existed, that was there since forever. But as an actual performance optimization I think this was the first and maybe still the only real heuristic for finding good peers. As opposed to heuristics for safe, secure peers. There are a bunch of those nowadays when trying to create outgoing connections. When a new incoming connection comes but all our incoming slots are already full there are some heuristics that are used to determine is this peer better? Should we maybe consider kicking one of our inbound peers in favor of this new one? Their rules are don’t kick the last peer that have given you a block or prefer peers that are from a variety of network sources or so on. I think this 1024 window move prevention kicking heuristic is the only actual performance optimizing thing.
+
+John: I think in 0.17 there were a few checks added for peers that were obviously on a different chain. Or trying to follow different consensus rules from you.
+
+Pieter: There were a bunch of other rules added where we were concerned about islands of nodes connected to each other that would share the same consensus rules but they would all be surrounded by nodes with different consensus rules. They did not actually figure out that there were no blocks coming in.
+
+John: That was around the time of SegWit2x and Bcash hard forks which is I think where that concern came from.
+
+Pieter: Yes
+
+Jonas: For such a major change though this was actually pretty quick. You opened the PR in July 2014 and it was merged in October 2014. Compared to today’s review process that is a pretty quick turnaround for some major changes.
+
+Pieter: I think I started working on it significantly earlier than opening the PR though. I’m not sure. I remember it back then as a slow thing but it is all relative.
+
+John: How has Bitcoin Core development culture changed over those 8 or 9 years that you’ve been contributing?
+
+Pieter: It has certainly become harder. We started off with, Bitcoin Core had no tests at the time when I first started contributing. Testing meant manual testing like “I tried to synchronize and it still works.” There were no unit tests, no functional tests. I don’t know when the unit test framework was introduced. This was fairly early but it is limited in how much you can do with just these unit tests. The interactions between nodes, the first major piece of infrastructure that tested larger scale behavior was Matt Corallo’s…
+
+John: Pull tester?
+
+Pieter: Pull tester I think was just a bot that would test pull requests. But one of the things it did was have a test implemented in bitcoinj that simulated things like reorgs and so on and see that Bitcoin Core would follow the right path under all sorts of scenarios. It was much later that that eventually got rewritten in Python.
+
+John: That test still exists as [featureblock.py](https://github.com/bitcoin/bitcoin/blob/master/test/functional/feature_block.py)
+
+Pieter: Correct. That is now one of the many functional tests. There have been dozens added.
+
+John: I think about 130, 140 right now.
+
+Pieter: How do you call that? A dozen dozen?
+
+John: A score
+
+Pieter: A score is 20? 
+
+John: A gross, sorry. I apologize, we’ll cut that bit. I have one final questions on headers first sync which is did you see an immediate uptick in performance? If you hadn’t done that, if that hadn’t been done what would Bitcoin look like right now?
+
+Pieter: Not so long ago I think Bitmex published a report of trying to synchronize various historical versions and I was surprised to not see headers first make a bit difference there. As far as I remember there was no big difference between 0.9 and 0.10. At the time I believed it was an enormous difference. It would only download every block once. I don’t know why they didn’t observe that.
+
+John: It was possible that the methodology was that everything was in their local network or they had one peer.
+
+Pieter: Possibly. I think they synchronized from random peers on the network but I’m not sure. I remember it as a very big difference, in particular for IBD. Outside of IBD it wasn’t big.
+
+John: If you’re at the tip it doesn’t make a huge difference.
+
+Jonas: Ultraprune?
+
+Pieter: I can talk about what ultraprune is.
+
+Jonas: Go ahead.
+
+Pieter: This was in 0.8. Ultraprune is the name of the patch set I made that effectively introduced the concept of an explicit UTXO set to Bitcoin’s validation logic. Before that time there was a database that kept for every transaction output ever created whether or not it was already spent and even where it was spent using 12 bytes of data in the database per output ever created. 
+
+John: That is a txo set not a utxo set.
+
+Pieter: Right. It was mutable. It was a database from txid to list of its outputs and whether or not they were spent and where they were spent. By the time I started working on this this database had grown to several gigabytes. This was a problem. It was fairly slow but also the database was indirect in that when you wanted to do validation you had to go first check this database to see if those outputs were not already spent and if they weren’t you still had to go find the transaction in the block files to find those utxos. You wouldn’t be able to validate the script before you could fetch the utxo. Effectively your working set was this whole database plus the whole blockchain. This couldn’t work with pruning or anything. You had to have all blocks available because you were using the blockchain data as the utxo data. The motivation was someone had started working I think on a patch that would go through this database and delete all txids whose outputs were already fully spent. Clearly these weren’t needed anymore. Ultraprune started as a proof of concept of if we take this to the extreme how small can we make that database? Instead of storing something for every output why don’t we actually switch to something where you just store the unspent ones because those are the only ones you still need afterwards. Then there was this performance consideration where everything is indirect, we always need this indirection to the blockchain data. The utxos are actually small, they are just an amount and a small script usually. Why don’t we copy that to the database as well so everything you need for validation is right there? It depended on what kind of I/O speed you had. At the time it reduced the amount of data you had to access from several gigabytes to maybe in the tens of megabytes at the time. 
+
+John: If you extrapolate that to today it changes from 300 gigabytes or whatever the blockchain is to 3 gigabytes?
+
+Pieter: Something like that, exactly. This not only was a performance improvement it was fairly fundamental as a scaling thing because your utxo set hopefully does not grow as fast as your blockchain. There have been times in the past where it has shrunk. Not as much as I would like. The utxo set is much more correlated with actual usage while the blockchain is clearly append only and cumulative and ever growing based on activity. Of course ultraprune was combined with the switch from BDB to LevelDB. They were developed independently and then turned into one PR before being merged. This had the well known effect of having caused a fork in the chain in March 2013 I believe. So the problem here was that 0.8 was so much faster that miners switched over to it almost immediately but much of the network had not switched from 0.7 to 0.8. The BDB database that was used for the tx index with all this spending information in 0.7 had an issue and always had an issue that BDB requires you to configure how many lock objects you need. The number of lock objects is correlated with the number of pages in the database that are simultaneously affected by a single atomic transaction.
+
+John: Where a transaction here is a database update?
+
+Pieter: Correct. It has nothing to do with Bitcoin transactions. This is a database transaction and the whole update of applying a block to the database was done as one atomic update so that either the block would validate and you would be able to continue or there would be a failure and the whole thing would never be applied. Let me rant a bit about BDB documentation which tells you in guiding how to pick this number is run your database with a reasonable load and use this function to determine how many locks are used. There was no way you can predict ahead of time how many locks your actual absolute maximum is. This was combined with a bug in our code on the Bitcoin Core side that a failure to grab a lock would be treated as that block being invalid. Things would have been somewhat but not all that different if we wouldn’t have had that bug.
+
+John: The crucial difference there is that the block failed but instead of attributing that to a local failure in your own system you’d attribute it to a consensus failure.
+
+Pieter: Correct. It would just permanently mark the block as invalid when it somehow needed too many locks. This was non-deterministic across platforms. As we later found out even exploitable because during a reorg the whole reorg would be done as one atomic update which means that the number of locks you need is actually even proportional to the size of your reorg. This means that by feeding different forks to different nodes you could probably have always before 0.8 selectively forked nodes off by triggering this behavior. What happened was 0.8 which switched to a completely different database model as well as LevelDB which is a local database with no locking whatsoever. BDB is a cross process database system. What happened of course was someone produced a block that for a wide range of nodes on the network exceeded the number of locks that were needed. The network rejected the block but the miner that created it as well as a majority of other miners were all happily continuing because they were on 0.8 that had no concern about these locks. What had happened was we had unintentionally removed a consensus rule which was already consistent but still it shouldn’t have been removed without being aware of it and thereby actually introduced a hard fork. It is debatable whether it is a hard fork given that the old code was actually inconsistent with itself all the time. In any case it caused an actual consensus failure on the network. Miners quickly agreed to temporarily revert back to 0.7 which allowed overwriting a chain with one that everybody would accept. 0.8.1 was released that in 0.8 added something simulating the locks limit that BDB had in the hope that people could use 0.8.1 that had the same restrictions or at least similar restrictions.
+
+John: Miners could use 0.8.1 so they wouldn’t be creating blocks that old nodes would reject.
+
+Pieter: This was temporary. I believe in two or three months this rule expired and I believe it took until August 2013 until another block was produced that might have triggered the 0.7 issue. By then the network had largely updated to 0.8 and later versions.
+
+John: Ok. There’s really a lot to dig into in all of that. My first reaction would be I’m a little hesitant to call that a hard fork which I think you said. I don’t think the word hard fork has much meaning in this context really.
+
+Pieter: Yeah I agree. Let’s keep it as an unintentional consensus failure.
+
+# Part 2
+
+John: Ok I have a bunch of questions from that. One is what are the lessons from that?
+
+Pieter: One of the things I think learned from that is specifying what your consensus rules is really hard. That doesn’t mean you can’t try but who would’ve thought that a configuration setting in the database layer you are using actually leaked semantically into Bitcoin’s implicitly defined consensus rules. You can attribute that to human failure of course. We should’ve read the documentation and been aware of that.
+
+John: Would testing have caught this?
+
+Pieter: Probably things like modern fuzzing could’ve found this. Who knows right? There could be a bug in your C library. There can be a bug in your kernel. There can even be a bug in your CPU.
+
+John: In your hardware, anywhere.
+
+Pieter: Exactly. We can talk about the boundary in trying to abstract the part of the codebase that intentionally contributes to consensus but it is very hard to say clearly this code has no impact on consensus code because bugs can leak. I think one of the things to learn there is you really want software that is intended for use in a consensus system where not only you have the requirement that if everyone behaves correctly everybody accepts the right answer but also that everybody will disagree about what is an invalid piece of data in lockstep. 
+
+John: That condition is much harder.
+
+Pieter: That’s much harder. It is not a usual thing you design things for. Maybe a good thing to bring up is [BIP66](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2015-July/009697.html) DER signature failure. You also had getting rid of OpenSSL on the list of things to talk about. Validation of signatures in Bitcoin’s reference code used to use OpenSSL for validation. Signatures were encoded in whatever data OpenSSL expects. 
+
+John: Let’s take a step back and talk about Satoshi implementing Bitcoin. Satoshi wrote a white paper and then produced a reference implementation of Bitcoin. In that reference implementation there was a dependency on OpenSSL that was used for many things.
+
+Pieter: Correct. It was even used for computing the difficulty adjustment I think. It was used for signing. At some point it was used for mining.
+
+John: OpenSSL is a very widely used open source library. It has been deployed in many applications for many years. It wasn’t a bad choice to use OpenSSL.
+
+Pieter: I think it was an obvious choice from a standard software engineering perspective. It was a very reasonable thing to do without things we’ve since learned. What this meant that was even though ECDSA and secp256k1 curve have nicely written up specifications it wasn’t actually these specifications that defined Bitcoin signature validation rules. It was whatever the hell OpenSSL implemented. It turns out what OpenSSL implemented isn’t exactly what the specification says.
+
+John: And isn’t exactly consistent across different platforms.
+
+Pieter: Exactly. What we learned is that the OpenSSL signature parser, at the time, this has since been fixed, at the time allowed certain violations of the DER encoding specification which is a way of structured data in a parsable way that ECDSA specification refers to. OpenSSL used the I think now widely considered bad idea philosophy of being flexible in what you expect and being strict in your output exactly because of the inconsistencies it introduced. OpenSSL allowed signatures that violated the spec. This didn’t mean that this permitted forging a signature. Someone without a private key still could not construct anything that OpenSSL would accept. The problem was that someone with a private key might construct a signature that some versions would accept and others wouldn’t. Indeed in one of these permitted violations of DER it had a bound on the size of a length field and that bound was 32 bits for 32 bit platforms and 64 bits for 64 bit platforms. You could construct a signature at the time that says “The length of this integer is the next 5 bytes.” Those 5 bytes would just contain the number 32 or 33.
+
+John: To get a bit more specific. When we create a signature in ECDSA we have two values, a r value and a s value. Together that forms a signature. When we talk about encoding we’re talking about how we put those values into bits that we transmit across the network. DER encoding has a bunch of fields as well as the r and the s fields which are saying this is the length of the thing…
+
+Pieter: It would start by saying “Here is a concatenation of two things and it is this many bytes.” Then it would say “The first element is an integer and it is this many bytes.” Then you would actually have the data. “The next thing is an integer. It is this many bytes and here is the data.” Then Bitcoin adds a signature hash flag at the end but that is not part of the DER thing. This encoding of the r and s values could either say “It is the next n bytes up to 126” or something but if it is more than that it would include a marker that says “The length of the next field is given in the next n bytes.” The maximum length of that indirect size field was platform dependent in OpenSSL.
+
+John: So what do you do about that? You’ve discovered that Bitcoin is inconsistent with itself.
+
+Pieter: In a similar way that 0.7 and everything before it were inconsistent with itself due to this BDB lock issue. This was a much more concrete thing. You’d know exactly that I can construct a signature that these platforms will accept and these won’t. This wasn’t non-deterministic, this was deterministic. It was just dependent on the platform. The problem was fixing this wasn’t just a database update, this was implicitly part of our consensus rules. So what we needed to do was fix those consensus rules. That is what BIP66 was designed to do. The full rationale for BIP66 wasn’t revealed until long after it was deployed because this was so trivial to exploit. We did keep that hidden for a long time. BIP66’s stated goal which was correct in part was being able to move off OpenSSL. Let’s switch to a very well specified subset of signatures which everybody already produces. The signing code that people were using was sufficiently strict apart from a few other implementations this was generally not a problem. There were concerns at the time about miners that didn’t actually do full validation which would have made it even easier to broadcast such a signature on the network and get it included. That was interesting. Again taught us that even when you think you have a specification of what your consensus rules are everybody would’ve thought there’s this document that specifies ECDSA and secp256k1, that is our specification. It turns out it wasn’t. 
+
+John: Consensus is slippery and touches everything.
+
+Jonas: When you’re sitting on an exploit like that, when you’re aware that something is open for exploitation how does that change the process and how do you think about coming up with a solution? You have a time constraint I guess.
+
+Pieter: Given it had been there for a long time there are trade-offs like who do you tell? How fast do you move to fix this because moving too fast might draw suspicion, moving too slow might get exploitable. Really these things always need to be considered on a case by case basis.
+
+John: I think that brings us nicely to the third PR or family of PRs that I have on my list or projects that you’ve contributed to which is libsecp. Can you give us a bit of background on what the genesis of that project was and where it came from?
+
+Pieter: It is not actually known I think why Satoshi picked the secp256k1 curve which was standardized but a very uncommon choice even at the time. I don’t dare to say when, maybe 2012, a post on Bitcointalk by Hal Finney about the special properties that this curve has and presumably why it was picked because it had this promise of accelerated implementation. What this was a particular technique that would allow faster implementation of elliptic curve implementation using an efficiently computable endomorphism. I won’t go into the details unless you want me to but it is a technique that gives you a percentage speedup for multiplication. It also makes certain requirements on the curve that not everyone is as happy with. It also gives you a small speedup for attackers but generally you want an exponential gap between the time it takes for an attacker and honest user anyway. Hal made this post saying “I looked into actually how to implement this particular optimization for the curve. Here is a bit of the math.” I think maybe he had some proof of concept code to show it but I was curious to see how much speed up is this actually going to give. I first tried to look at can I integrate this in OpenSSL itself? Because OpenSSL didn’t have any specialized implementation for this curve nor for this optimization technique in general. I started doing that but OpenSSL was an annoying codebase to work with to say it mildly. I thought how about I just make my own implementation from scratch just to see what the effect is. This started as a small hobby project thinking about… To be fair it is a much easier problem if you are only trying to implement one algorithm for one curve compared to a general library that tries to do everything in cryptography. I had the option of picking specific field representation for how are you going to represent the x and y coordinate. I learned some techniques from how other curves like ed25519 were implemented. I used some of those techniques. I started off by only implementing this optimized construction actually. It turned out when I was done it was maybe a factor of 4 faster than OpenSSL which was a very unexpected result. I hadn’t imagined that with fairly little work it would immediately be that much better. I guess it made sense just by being so specialized and being able to pick data structures that were specifically chosen for this curve rather than generic. You get actually a huge advantage.
+
+John: At this point this was still just a …
+
+Pieter: Yes. This was 2013 probably.
+
+John: Just a personal project. You weren’t thinking about it being part of Bitcoin Core.
+
+Pieter: I open sourced this. It attracted some contributions from Greg Maxwell, not Hal Finney, Peter Dettman who is a major contributor to the Bouncy Castle cryptographic library who by now probably came up with half of the algorithms in libsecp. Sometimes incremental improvements, sometimes original research and algebraic techniques to optimize things here and there. That has pushed the performance every time a couple of percent here and there, it adds up. It was assembly implementations for some routines added by people. After a while including lots and lots of testing that was added I think in 0.10. The signing code was switched in Bitcoin Core to it and then 0.12 the validation code was switched to it. This was after BIP66 had activated and we knew the rules on the network are exactly this DER encoding and nothing else. Interestingly by that time this efficient endomorphism GLV optimization was made optional and off by default in libsecp because of potential concern about patents around it. It is kind of ironic that this project started as an attempt to see the benefit was of this optimization and in the end choosing not to use it. But despite that it was still a very significant performance improvement over OpenSSL.
+
+John: Did you feel some urgency after BIP66 to move across to libsecp?
+
+Pieter: Not really. There was until very recently this vague concern that OpenSSL is a huge library with a huge attack surface. It was not designed with these consensus like applications in mind. At least as far as the signature validation parsing went I think at the time we felt that now we understand the scope of what OpenSSL does here and we had restricted sufficiently. We were fairly confident that that exactly wasn’t going to be a problem anymore. It was more the unknown unknowns for all the other things. I don’t know how fast, I don’t remember.
+
+John: To enumerate some of the benefits of switching to libsecp. It is extremely well tested. It has almost 100% code coverage I believe?
+
+Pieter: I think so.
+
+John: It is much faster than OpenSSL.
+
+Pieter: I think OpenSSL has caught up a bit since.
+
+John: There are many things about libsecp that make the API safe for users I think.
+
+Pieter: It is very much designed to be a hard to misuse library so it doesn’t really expose many low level operations that you might want from a generic cryptographic toolkit. It is designed with fairly high level APIs in mind like validate a signature, parse a signature, create a signature, derive a key and so forth.
+
+John: And lots of thought about constant time and avoiding…
+
+Pieter: Yes it was also from the start designed to be side channel resistant or at least the typical side channels you can protect against in software namely not having code paths that depend on secret data, not having memory accesses that depend on secret data. Despite that actually from the start it didn’t actually do that. There was some timing leak in very early code that was probably very hard to exploit. There was some table with precomputed values and you need to pick one of them based on secret data which is a problem. I think what we did was spread out the data so that there’s one byte of every table entry, say there’s 16 table entries, the first 16 bytes contain the first byte of every entry. Then the next 16 bytes contain the second byte of every entry and so on. You would think now it needs to access all groups of 16 bytes and given reasonable assumptions about architectures that generally have cache lines of 64 bytes you would think it is going to access every cache line so there shouldn’t be any leak anymore. It turns out there is a paper that actually shows even in this case you leak information because the first byte and the second byte… things in a cache line there is a very small difference in timing when they are available they can be observed. The fix is actually access every user conditional move construction where you actually read through every byte always.
+
+Jonas: As you talk about the history and certainly you’ve forgotten more about Bitcoin than most of us will ever learn, as you go back and you think about Satoshi’s reference implementation what are things that you would imagine you would want to do from the beginning? Things that are baked into the software that are difficult to shake even now as you’ve made contributions over the years that you would want to have done differently from the beginning?
+
+Pieter: You mean in code design or actually how Bitcoin works?
+
+Jonas: I think either. I think in terms of code design putting most of the code in one file wasn’t particularly helpful from the beginning. In terms of design choices.
+
+Pieter: It is of course slow to change things but I think given enough time if you are just talking about code design questions, if we have agreement we need to move to this other design we can do it whatever it is. You mention of course everything in one file in the 2010 codebase, the wallet and the consensus validation were all in one file including direct calls to the UI. That was really hard to reason about. The wallet tracking which outputs had been spent was actually done through a callback from the script verifier that would tell the wallet “Hey I’ve seen a validation with this input.” This was really hard to reason about. Of course these days there is a lot more complexity so I don’t want to claim that it is today easier to reason about things. Relative to its complexity and how much it was actually doing it was fairly hairy back then.
+
+John: Yeah I think we’ve made enormous strides. There’s a well defined interface between the wallet and the node so we can be confident that it is not involved in consensus.
+
+Pieter: Yes exactly. There is still a lot of work to do there too but I think we are getting there. Your talk about how Bitcoin could have been designed differently, that is a very hard question because you inevitably run into philosophical questions like if it were to have been designed differently would it have taken off? Especially if you go into questions like economic policy. That’s really hard to guess. I think there are lots of things we have learned. The concept of P2SH, what was clearly not present in the original design, it could have been done in a much simpler way if there would’ve been something like P2SH from the beginning. Yet it seems so obvious that this is preferable because before P2SH if you personally have some multisig policy, nobody was using multisig at the time, I guess that was part of the reason. But if you would’ve wanted to use a multisig policy to protect your coins with a device or cold storage key and an online key you would’ve somehow needed to convey to anyone who wanted to pay you to construct this script that includes your policy. That is annoying for multiple reasons like a) that is none of their business, why do I need to tell you “Hey look I’m using a multisig policy, it just for my own protection.” Secondly you would be paying the fees for paying to my complex script. That should not have been a concern of yours either. Lastly everything you put in an output leaks into the utxo set and as we now know the size of the utxo set is a critical scaling parameter of the system.
+
+John: I’ll add fourthly you would have really long addresses which would be kind of annoying.
+
+Pieter: Exactly you would need a standard for conveying that information that would be variable length inevitably if you go for big scripts. I don’t even think that all of these advantages were talked about the time when P2SH was created. I think it was just the last one. We have no address for this, it is really hard to create one. We can make it simpler by hashing the script first. I think the other advantages were things that we’re only realized later, how much of a better design this is. Of course we have since iterated on that, SegWit I think is clearly something that should have been done from the beginning. The fact signatures leak into the txid made it really hard for all kinds of more complex constructions. At the same time Bitcoin was the first thing in its class and it is unrealistic to expect it to get everything right from the beginning. Thankfully I think we’ve learned very well how to do safe upgrades to some of this.
+
+John: I agree entirely that this isn’t really an exercise for faulting Satoshi for the mistakes. But if I could wave a magic wand SegWit from the genesis block would be great because then the block could commit to the signatures, the wtxid whereas now it doesn’t.
+
+Pieter: In SegWit it does. In SegWit there is a coinbase output that contains a hash with the root of a Merkle tree that commits to all wtxids. 
+
+John: Right, yes. But you don’t know that until you deserialize the transactions from the block which is a little bit annoying.
+
+Jonas: How do you think about how to spend your time on Bitcoin? There are so many ways to get nerd sniped and so many directions you could contribute to. What are you excited about and then how do you feel the pull of your personal excitement versus the pull of what’s necessary for someone like you to contribute to Bitcoin?
+
+Pieter: That is a good question, I don’t have a good answer. I try to work on things I’m excited about but sometimes this also means following through on something after you’ve lost some of the excitement about it because you have worked on this and people expect you to continue. It is a hard question. I expect this in general in open source to be a problem. There is no set direction and ultimately people choose how to spend their own time themselves. What am I excited about? I’m happy with the progress we’ve made with Taproot review and how that is going. I’m excited to see that progress further. There are some interesting changes people are working on related to the peer-to-peer protocol, things like Erlay that I contributed to. There are too many things to mention.
+
+John: I think Taproot, Schnorr plus Erlay is a good start for things to get excited about. Shall we wrap up there? Thank you Pieter.
+
