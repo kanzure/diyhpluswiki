@@ -1,0 +1,117 @@
+Name: Kevin Loaec and Antoine Poinsot
+
+Topic: Revault Bitcoin vaults
+
+Location: Honey Badger Diaries (podcast)
+
+Date: April 24th 2020
+
+Video: https://www.youtube.com/watch?v=xDTCT75VwvU
+
+# Transcript (abridged)
+
+Aaron: So you guys built something. First tell me are you a company? Is this a startup? What is the story here?
+
+Kevin: My personal interest in vaults started last year when Bryan Bishop published his [email](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-August/017229.html) on the mailing list. I was like “That is an interesting concept.” After that I started engaging with him on Twitter proposing a few different ideas. There were some limitations and some attacks around it. I didn’t go much further than that. At the end of the year a hedge fund reached out to my company Chainsmiths to architect a solution for them to be their own custodian while in a multi-stakeholder situation. They are four people in the company and they have two active traders that move funds from exchanges back to their company and stuff like that. They wanted a way to be able to have decent security within their own fund without having to rely on a third party like most funds do. I started working on that in December and quickly after that I started to reach out to other people who could help me. I reached out to Antoine and his company Leonod to help me build out the prototype and figure out the deep technical ideas about the architecture. Then Antoine helped me with the architecture as well to tweak a few things. Right now it is still a project that is open source and there is no owner of it as such. It was delivered as an open source project to our clients. Right now we are considering making it a product because it is just an architecture, it is just a prototype. Nobody can really use it today, it is just Python code, it is not secure or designed to be secure right now. We are trying to look for other people, companies that could support us either as sponsors or whatever for building the implementation. Or setting up a separate entity like a spin off of our company just to focus on that.
+
+Aaron: I’m not sure what the best order is to tackle this. Why didn’t they just use Bryan’s vault design?
+
+Antoine: It is a single party architecture and ours is multiparty architecture.
+
+Aaron: Is this the main difference? The main benefit is that it can be used by multiple people at the same time?
+
+Kevin: It is a lot of things in the way it is designed. One of the differences is that in Bryan’s implementation you need to know how much funds you are receiving before setting up the vault. You are already pre-signing the spending transaction and then you delete your private key. On our architecture you don’t need that. The vaults are just addresses that are generated in advance. Any money you receive is already behind a vault. You don’t need to know in advance how much money you are going to receive. You can already give an address to an exchange and whatever money you receive is in the vault. That is the major difference. It is very important in a business situation because you don’t necessarily know how much money you are safe keeping. 
+
+Aaron: Let’s get into how it actually works then. To understand this would it make sense to start with how Bryan’s design works and then get to yours or do you think it would be better to start with yours and forget about Bryan’s?
+
+Antoine: It is quite different so I think it is better to get straight to ours. There are a lot of differences.
+
+Aaron: Explain to me how it works. It is a vault. There are three of us. We want to hold our money safe somehow. We want to stop people from stealing it. What do we do?
+
+Antoine: From a high level viewpoint it is an architecture that uses pre-signed transactions and revocable transactions. We called it Revault. Let’s take the company who hired Kevin to make this architecture and who the implementation is for. There are four stakeholders in the company. Two of them are traders that do the day-to-day management of funds. They might send Bitcoin to some exchanges. How it works is any of the stakeholders give an address to receive some Bitcoin to anyone. When they receive the coins they pre-sign 4 transaction. There are the emergency transactions, these spend from the vault which is a 4-of-4 multisig and pays to a timelocked 4-of-4 multisig with other static keys that are always the same. For vault transactions we can generate other keys. This one is pre-signed and shared between the stakeholders in order to revoke. If there is something nasty going on they can always broadcast the emergency transactions which lock funds to a deep vault. 
+
+Aaron: This transaction is timelocked? Who holds the keys to address that it sends to? The same four?
+
+Antoine: Yes but since they are not intended to be used they can be stored in a physical safe in different locations and hard to be accessed. The idea behind these addresses is that they are extra secure and maybe also hard to be accessed.
+
+Aaron: The idea behind these addresses is that they are extra secure. Maybe also harder to reach. You can’t spend from it easily. They are somewhere in the world and behind thick doors with locks.
+
+Antoine: There is both a timelock and it takes time to access those keys.
+
+Aaron: That is the emergency transaction. 
+
+Antoine: Then there is a transaction chain to be able to spend from the vault. We are going to use Segwit transactions of course and start by signing the last one of the chain. There is another emergency transaction for what we call the unvaulting transaction, the one that initiates the spend. This one pays to either the 4-of-4, the same keys, another emergency transaction can be used. Or it pays to the two traders after a small timelock. Like one hour. There are two transactions here which spend the unvault transaction. If you are in the middle of unvaulting a vault you can still broadcast the emergency transaction. You spend from the unvault one. There is the cancel transaction in case the traders broadcast an unvault transaction to spend the vault and one of the stakeholders doesn’t know about the spend. To prevent this it will broadcast the cancel transaction which cancels the unvault to another wallet.
+
+Aaron: We’ve had the emergency and we’ve now had this spend from the vault. The idea here is that if not all four stakeholders agree then any of them already have a pre-signed transaction to send the money back to the vault?
+
+Antoine: There is only one way to spend from the vault. It is by broadcasting the unvaulting transaction. There is no other transaction which is signed by the four parties. The only way is to broadcast the unvaulting transaction which will reach maturity of the timelock only if all the stakeholders agree about this spend. The spend is presented as what we call the spend transaction and spends from the unvault. It has to be shared among the stakeholders. The traders should advertise they are willing to spend the unvault before. There are a few tweaks but that is the general idea.
+
+Kevin: The difference with a normal 4-of-4 is around the business operations or at least operations in general. All of the four pre-signed transactions are signed after some funds have been received. When you receive funds nobody can spend them. First you need the four stakeholders to pre-sign the emergency revaulting transaction and the unvaulting spending transaction. These transactions are already pre-signed and shared between the stakeholders. But then when the traders actively need to spend a transaction you don’t need to wait for the four people to agree with you. That is the whole point, not to annoy every stakeholder every time you need to spend some money. If two people agree on a destination address you can broadcast the transaction. But what Antoine was saying about the four people need to agree, when only two people sign to spend a transaction you have a timelock. During this time any of the four people can trigger the emergency or the revaulting transaction. If you want approve by default but if something goes wrong you can trigger revocation. That can be enforced by watchtowers and things like that because they are all pre-signed transactions. You don’t need to be a human being checking every transaction all the time.
+
+Aaron: That makes sense. It inverts the permissions. 
+
+Kevin: You still need to have the four stakeholders to pre-sign the transaction at the beginning. You cannot have funds that are received and spent without somebody knowing about it. As soon as they are received they are unspendable until the four people have pre-signed transaction. That is also important. It cannot bypass the four signatures. We do this check at the beginning instead of at the end like a 4-of-4 would do.
+
+Antoine: A big point that we can easily forget is that it reduces the incentive of trying to steal or to attack the stakeholders. If it was only a 4-of-4 multisig or another multisig scheme, I get the four keys and I get the Bitcoin and I can spend it. With this architecture even if you attack one stakeholder or many of them the network can be externalized. Emergency transactions can be broadcast from anywhere. In the case of a broadcast of an emergency transaction all of the wallets of the stakeholders and all of the watchtowers will broadcast all of the emergency transactions of all the vaults thus blocking the funds for one month without the possibility of getting it. It reduces the incentive of an attack.
+
+Aaron: You have coded this up? Is it ready to be used? What is the status of it?
+
+Antoine: The architecture is almost final I think. I am going to write a [post](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-April/017793.html) to the mailing list to get some feedback from other people, other Bitcoin developers. Maybe we overlooked something. We can’t be sure but the state of implementation is a toy implementation, a demo which doesn’t even have a user interface. I did run some functional tests so it works. Maybe we overlooked something.
+
+Aaron: You have mentioned this trading desk. What are other good examples of companies that could use it?
+
+Kevin: For now we haven’t pushed the idea down to individual use for single person. But for any multiparty situation this is better than anything else that is used today. That applies for exchanges like replacing their current cold storage for example. That works for ATM operators who need to move funds between ATMs. You can have checks on whether the addresses are really owned by the ATMs and having the watchtower do that. Having some timelocks enforced which is doable when you are refilling ATMs. It works for pretty much anything. Any company who would have Bitcoin as an asset. For example, my company Chainsmiths doesn’t do any trading or anything like that but we could have some Bitcoin as an asset somewhere. It is better to have this kind of architecture where the CEO can spend the money without having to ask everybody but still have some sanity checks doable by the CFO. Pretty much any institution would benefit from using an architecture like that.
+
+Antoine: We still assume that it will be used by an institution or a company because we don’t protect against bad intentions of one of the stakeholders like the refusal to sign which would not put the funds at risk but would block the operations. Or key deletion. We assume the user will be a company which already has agreements between the stakeholders. This can be another agreement which can be enforced by the legal system outside of the Bitcoin network.
+
+Aaron: Are there any exchanges or any companies that are using vaults right now? The idea is not that new. 
+
+Kevin: You are right. The idea of vaults is not new. The problem is that there is no implementation so far. At least no production ready implementation. All we have is prototypes. Also they are not very practical for different reasons. I think the state of the art so far was Bryan’s implementation which as I said you need to know the amount before receiving the funds. You pre-sign all your derivation tree depending on the amount. That is not very practical. I guess that is the main reason. Another one is that it is really hard to deal with advanced scripting on Bitcoin. It doesn’t have to be really advanced. We are using OP_CHECKSEQUENCEVERIFY and even that is not supported by PSBT or Bitcoin Core if you want to do the transaction manually. It is a nightmare to deal with basic opcodes because nobody uses them.
+
+Aaron: What is your timeline? When will we see stuff like this in use? What do you need?
+
+Kevin: I think we need time so we can build it. We need people. To get people you need money. That could take a lot of different forms. We do believe that this would benefit anybody in the Bitcoin ecosystem. We will probably see more strategic investments. Maybe xchanges helping to fund this research or this implementation. If not getting some VC funding to see how far it can go. There are a lot of companies like BitGo and Unchained Capital that have a business out of 2-of-3 multisig. They are making money. I guess it makes sense to push the game forward and increase the level of security you can offer. Of course it really depends on how we can push that idea forward. So far we have been talking of 12 months to build a proper, production ready implementation. It is not something you can deliver in a month.
+
+Aaron: It is one of the big challenges for Bitcoin still, securing the exchanges. We need something like this. When are you going to post this to the mailing list?
+
+Antoine: Tomorrow I think. I begin to think of what I am going to write.
+
+Aaron: Let’s get back to the design for one minute. What would need an attacker need to steal in order to steal the coins? What is the stuff he would need?
+
+Antoine: The four private keys of the stakeholders. With this you can bypass the vault architecture because you don’t need pre-signed transactions anymore. The four private keys from the emergency deep vault, in this case you can try to make all the vaults broadcast all of the emergency transactions. After one month there would be the race between the stakeholders and you. There is a co-signing server in the process.
+
+Aaron: Would it be a race or would it be a RBF battle to infinity?
+
+Antoine: If I stole the private keys from the emergency deep vault and I spend from it after one month I would not signal for RBF. It is just a race.
+
+Aaron: It is still up to miners in the end of course.
+
+Kevin: Exactly that is a race.
+
+Antoine: You would have to make all the stakeholders accept a spend to an unauthorized address. That is why we are posting to the mailing list, to get some feedback and another point of view.
+
+Aaron: With Bryan’s first design one of the things the attacker could do is steal the key and wait until the unvault transaction was broadcast by the original owner. You kind of hide in the bushes. That is not possible here?
+
+Kevin: We have the same issue but we solve it with a co-signing server. The co-signing server doesn’t add any risk but the co-signing server is making sure that a spending transaction can only be signed once. You hope the server is enforcing that. If it doesn’t again that is a race condition. That is the case in Bryan’s implementation as well. 
+
+Aaron: What is the co-signing server?
+
+Kevin: Let’s start with Bryan’s implementation. In Bryan’s vault the funds first go to the hot wallet and from the hot wallet you can spend it to wherever you want. The thing is before the hot wallet can spend it there is a timelock. In the meantime if you see funds going to your hot wallet and it is not you who triggered it you can put it back in the vault. If this timelock expires then anybody with the private key of the hot wallet can spend the funds whatever. That is the race condition between whoever owns the vault and the attacker after the expiry of the timelock. In our architecture how we solve this is that the spending transaction from the hot wallet equivalent we have needs to be broadcast at the same time as the unvaulting transaction it is spending from. We ensure that way that the timelock is enforced and the transaction is visible for the duration of the timelock for all the stakeholders. We enforce that, there is a revocation window. That doesn’t mean that the Bitcoin network will mine this spending transaction. Somebody could broadcast at the exact block where it expires a competing transaction. To avoid that we have a server, a very dumb server that needs to co-sign every spending transaction but will only do it once per UTXO. This means that the transaction that the stakeholders will see when they broadcast at the same time the parent will be the only one signed to spend from it. Sadly it is not perfect.
+
+Aaron: What if this server goes offline?
+
+Kevin: Then the funds cannot move, they are locked. This is better than being stolen. That is not perfect. If the server signs whatever you send it without enforcing this rule 	of only once per UTXO then we were back to the same problem of the race condition. Today we don’t have a way of enforcing that on the blockchain yet. We don’t have CHECKTEMPLATEVERIFY. Without something like that we can’t enforce that a transaction will signed only once. This is our solution to it.
+
+Aaron: Who owns the signing server? You guys or someone else? 
+
+Antoine: It is self hosted and non-custodial. The company deploying the architecture will be deploy a co-signing server and another server will hold the signatures for all the stakeholders. For them to share them and to make sure they use the same fee rate for all the transactions, otherwise the signatures are not valid. There are some servers to set up for the companies to use the architecture.
+
+Antoine: The fee rate was the fun part. As always with the pre-signed transaction scheme if you sign the vault transactions and it can be changed afterwards you have to make a bet on what the fee rate will be if you need to broadcast the transaction. To work around this we used for all the revaulting transactions, the two emergency ones and the cancel one, we leverage the fact that there is one input and one output. We use SIGHASH_SINGLE SIGHASH_ANYONECANPAY. Since there is only one input and one output we are not subject to the bug. This allows us to be able to add another input and another output in order to bump the fee rate at the moment of broadcast. All the stakeholders will share signatures. The stakeholders don’t have the same transactions anymore but they share signatures will SIGHASH_SINGLE SIGHASH_ANYONECANPAY. Once they get the signatures of all the other stakeholders they append one with SIGHASH_ALL to avoid malleability and to avoid a simple attack which would allow anyone to decrease the fee rate by appending another input and output which isn’t balanced. If they need they can add another input.
+
+Aaron: This is not the new SIGHASH output?
+
+Antoine: No this is available today in Bitcoin. We made the choice of not waiting for everything. This is SIGHASH_SINGLE and ANYONECANPAY.
+
+Aaron: I would have to see it written down to really analyze it. Maybe people listening are better at figuring it out on the go. Something like this is definitely necessary. We need better security especially for exchanges and big fund holders. I am looking forward to your dev mailing list post.
+
+Antoine: In the meantime I have written about it in the README of the [demo implementation](https://github.com/re-vault/revault-demo). It is well documented. There is a doc directory with the structure of all the transactions and a README with an overview of the architecture.
