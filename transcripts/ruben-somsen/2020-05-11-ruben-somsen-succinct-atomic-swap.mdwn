@@ -1,0 +1,59 @@
+Name: Ruben Somsen
+
+Topic: Succinct Atomic Swap (SAS)
+
+Location: Ruben Somsen YouTube channel
+
+Date: May 11th 2020
+
+Video: https://www.youtube.com/watch?v=TlCxpdNScCA
+
+SAS resources: https://gist.github.com/RubenSomsen/8853a66a64825716f51b409be528355f
+
+# Intro
+
+Happy halvening. Today I have a special technical presentation for you. Basically what we are going to do is cut atomic swaps in half. I call this succinct atomic swaps. 
+
+# Motivation
+
+First let me tell you my motivation. I think Bitcoin is a very important technology. We need to find ways to utilize it at its maximum potential without sacrificing decentralization. In order to do that you need to come up with some smart ways to do more with less. That is the protocol design that I try to come up with. In line with that I came up with this.
+
+# Going from four transactions….
+
+What we are going to do is take atomic swaps which are a protocol where you have a UTXO on two chains and you want to swap them. Or maybe on the same chain. You could think Bitcoin to Litecoin or even two Bitcoin UTXOs where you want privacy and that is why you swap them. The protocol that works today is four transactions. You have a preparation transaction on the first chain. Then you have another preparation transaction on the other chain. It is generally a multisig in both cases. You have some kind of timelock. They do a swap. We are taking that and we are bringing it down to only two transactions. You might think how is that possible? You are going to find out.
+
+# Setup Alice
+
+Let’s get started. We start with Alice who has some Bitcoin on the Bitcoin blockchain. She wants to prepare this for transfer for a swap with Bob. What she does is she locks it up, Alice’s key and Bob’s key and they lock it up together. She is not actually sending her Bitcoin yet. This is the transaction that is going to be on the blockchain. This is an output that is locked and it can be unlocked by Alice’s and Bob’s signature but she hasn’t actually sent it yet. Before we actually put this on the blockchain we make some preparatory transactions. The first one is almost the same. It is again Alice and Bob but this one has a one day timelock. This is a timelock that is on the transaction level meaning that this transaction cannot even go onto the blockchain until one day has passed. From this transaction we create a transaction where the money goes back to Alice. This is necessary because if Alice sends this to the blockchain and Bob doesn’t do anything Alice needs a way to get her money back. This one has a relative timelock. Meaning that first the transaction in the middle here has to go to the blockchain. Then this transaction where Alice gets her money back can be sent to the blockchain two days from starting this whole process. There is a star \* there. What does the \* mean? It is an adaptor signature. Meaning that if Alice wants to broadcast this, remember both Alice and Bob put a signature on it, Bob’s signature is only valid if Alice reveals the secret to Bob. This is something that adaptor signatures can do. What you have to remember here is if this transaction ever goes to the blockchain Alice is revealing a secret which we call AS here. Finally we have this other transaction which shouldn’t ever go to the blockchain unless Alice is completely not paying attention, where Bob gets the money. The only reason for this one is to make sure that Alice actually does something and doesn’t sit on it and do nothing. At this point we have a guarantee that either Alice gets her money back and she reveals a secret or Bob gets the money. Alice knowing that she will actually respond in time and get her money back in time is ready to send this to the blockchain. Now this first transaction goes onchain.
+
+# Setup Bob
+
+Now it is Bob’s turn. Bob knowing that he will either learn the secret or get the money, he locks it up on the other chain, let’s say Litecoin, with two keys, Alice’s secret and Bob’s secret. 
+
+# Refund
+
+What that means is that if the Bitcoin atomic swap side goes to the blockchain like this then AS, Alice’s secret is revealed to Bob and Bob gets his money back on the Litecoin chain. Because of this guarantee Bob is secure in locking up his money with these two keys with no timelock whatsoever. 
+
+# Swap
+
+From this point on we do the swap. How do we do that? We create another transaction where the money simply goes to Bob but again it is an adaptor signature. This time it is Alice who wants Bob to reveal secrets in order to send this transaction to the blockchain. What that means is that Bob can now claim the money at the top but he has to reveal Bob’s secret to Alice. If he goes ahead and does that and sends this to the blockchain, Bob has the Bitcoin at the top and Alice at the bottom, she learns BS, Bob’s secret. Now Alice has control of the bottom transaction, Bob has control of the top transaction. However we are doing three transactions here not two so what is going on here? First three transactions is already better than what we have today because we have four transactions right now so this is already an improvement. We can do even better. How do we do that? We just don’t send that transaction to the blockchain but instead Bob gives Bob’s secret to Alice and now Alice has control over the coins on the Litecoin side and Alice does the same thing, gives Alice’s key to Bob. Now Bob has control of the Bitcoin at the top. 
+
+# Bob should be online
+
+In two transactions they both have control over the money but there is one caveat which is this transaction still exists. There is still the possibility for Alice to send this transaction to the blockchain and reclaim the top Bitcoin. However because of the way we have the timelocks constructed Bob can simply be online, pay attention and respond if Alice ever tries to do this. She first has to send the middle transactions to the blockchain and then that final refund transaction where Alice would get her money back. If the second transaction here in the middle, this A+B and a 1 day lock, goes to the blockchain Bob simply responds and since Bob knows both keys A and B he can send it to himself at that point. There is this online requirement where Alice can’t get the money if Bob is paying attention. We assume and hope that Alice doesn’t try. This is very similar to how Lightning Network works. If that is indeed the case then we did an atomic swap in two transactions. 
+
+# Negative
+
+The negative is the online requirement for one of the two parties, in this case Bob. There is this state. You have to remember the secrets that you learned during the process. This is different from running a regular Bitcoin wallet where you do a backup once and then you have all your own money. In this case you actually have to make sure you backup those secrets or you definitely have them in case something goes wrong, on your phone or whatever device you are using. That’s a little bit more work that you have to do there. That is very similar to how the Lightning Network works today as well. It is a good compromise considering what you get in return. Only two transactions instead of four. 
+
+# Positive
+
+It works today, that is a good thing. You can do this with MuSig and Schnorr. That will be the most efficient way of doing it without any weird math that you have to do. Recently Lloyd Fournier, he came up with a way to do a single signer ECDSA adaptor signature. That allows you to do this today. If you utilize that kind of technique then you can do adaptor signatures with single signatures on the Bitcoin blockchain today. That’s really cool. Lloyd also helped me out by reviewing this Succinct Atomic Swap that I created so I want to thank him for that. Another advantage that it is two transactions not four which is great. It is scriptless so you don’t really have anything huge going to the blockchain. It really is in the case of MuSig one signature, in the case of ECDSA two signatures going to the blockchain per transaction. It is asymmetric meaning that one of the chains only has one transaction going onchain at any time even if the protocol fails. That is nice because if one of the two chains is more expensive to use, let’s say you go from Litecoin to Bitcoin, then you want to have Bitcoin be the place where only one transaction takes place. That is more efficient. The other thing already mentioned is that one of the two chains doesn’t require a timelock. That might be good if there are some blockchains out there that don’t have any scripting whatsoever including timelocks. Lastly there is something called Payswap which might be useful to do with this protocol. [Payswap](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-January/017595.html) is an idea by ZmnSCPxj on the Bitcoin mailing list where you have a payment where you send a full output to one person and the change, which is normally inside of the same transaction, is an atomic swap. I might be sending 1.5 Bitcoin to somebody for buying something and in another transaction that is seemingly unrelated that person sends me back 0.5 because I only intended to send 1 Bitcoin let’s say. The nice thing about this is now you don’t really have any connection between the amounts. The amounts are different now. It is as obvious as if you were to do an atomic swap where the amounts are the same. You do a payment and an atomic swap in one and that gives you an additional amount of privacy. This protocol wasn’t very practical before because it required four transactions. But now you could maybe do it in two transactions or three if you don’t want the online requirements.
+
+# Maybe
+
+The last thing is that maybe, I’m not sure about this, we could use this to swap in and out of Lightning in one single transaction. The way that would work is imagine you have a Lightning route from Alice to Bob to Carol. What you want to do is create a payment from Alice to Carol where depending on whether the payment goes through or not either Alice’s secret is revealed or Carol’s secret is revealed. It is not how Lightning works today. It is a change and it is an open question whether or not this is possible or whether there is something that makes this impossible to do this over routing. I’m not sure what the answer is there. If it is possible that would be really cool. You could make a payment onchain and have a Lightning payment go through on the other end and make that be atomic so both things go through or neither. Both in and out of Lightning. Hopefully that works but I’ll need some feedback on that. Please let me know if you are willing to look into this and think it may or may not work.
+
+# Resources 
+
+If you want to learn more. This was a brief overview of how it works. I have a full [write up](https://gist.github.com/RubenSomsen/c9f0a92493e06b0e29acced61ca9f49a) where you will find the details of this protocol as well as all of my other work including my work on statechains. I also have some write ups on blind merged mining or at least a variant that uses a fee bidding structure where only the highest paying person gets to put his hash into the blockchain. That is interesting. And also perpetual one-way peg which is a way to do sidechains without having the store of value property that you are used to from Bitcoin. It is an interesting thing that I am hoping to present about at Bitcoin 2020 conference in San Francisco. This will hopefully happen in a couple of months but we will see what happens. The situation right now is tricky. You might be able to find me there. If I do go there and you go there as well I’ll see you there. Thank you very much for listening and have a nice day.
