@@ -1,0 +1,112 @@
+Name: Wasabi Research Club
+
+Topic: CoinSwaps
+
+Location: Wasabi Research Club (online)
+
+Date: June 15th 2020
+
+Video: https://www.youtube.com/watch?v=Pqz7_Eqw9jM
+
+Wasabi Research Club: https://github.com/zkSNACKs/WasabiResearchClub
+
+# Intro (Aviv Milner)
+
+Today we are talking about CoinSwaps, massively improving Bitcoin privacy and fungibility. A lot of excitement about CoinSwaps so hopefully we can touch on some interesting things.
+
+# CoinSwaps (Belcher 2020)
+
+https://gist.github.com/chris-belcher/9144bd57a91c194e332fb5ca371d0964
+
+This is a 2020 ongoing GitHub research paper that Chris Belcher has been working on. You can view the original file here. It is heavily based on the 2013 [work](https://bitcointalk.org/index.php?topic=321228.0) by Greg Maxwell. 
+
+# Wasabi Research Club
+
+Just a reminder of what we have been doing. Wasabi Research Club is a weekly meetup that tries to focus on interesting philosophical papers, math papers, privacy papers around Bitcoin. We cover different topics. You can see [here](https://github.com/zkSNACKs/WasabiResearchClub) we have covered a lot of different topics in the last few months. We went on a hiatus because I was mostly the one organizing these things. It became a lot less formal in April and May with casual conversations. Most recently we are very happy to say that [Wabisabi](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-June/017969.html), the outcome of all of this discussion and work, we have this new protocol draft that has just been finished by a lot of people on this call. That is very exciting. Now we are getting back into the swing of things with regular discussions on papers. Last week we talked about CoinSwaps as a broad idea. What are CoinSwaps? Why do we want them? What are some ways we could use CoinSwaps? Today we are looking at a specific protocol for CoinSwaps which is Chris Belcher’s 2020 paper. Find out about what we are doing on our [GitHub](https://github.com/zkSNACKs/WasabiResearchClub). 
+
+# CoinSwaps (Belcher 2020)
+
+https://gist.github.com/chris-belcher/9144bd57a91c194e332fb5ca371d0964
+
+Like any good privacy paper the CoinSwap paper begins with prose. “Imagine a future where a user Alice has bitcoins and wants to send them with maximal privacy so she creates a special kind of transaction. For anyone looking at the blockchain her transaction appears completely normal with her coins seemingly going from address A to address B. But in reality her coins end up in address Z which is entirely unconnected to either A or B.” The big thing that Belcher is talking about is the concept of covertness.
+
+# Property - Covertness
+
+What is covertness? We talked about this last week. We say a protocol is covert if a passive bystander is not able to differentiate a user of the protocol with a regular everyday user who is not engaged in the protocol. For Bitcoin this means not revealing any sort of smart contract behavior in the address format or the transaction format. If we care about covertness we have to admit that Coinjoins are not covert. What do we mean by that?
+
+# ZeroLink Coinjoin
+
+When we look at a Coinjoin we can say individuals participating in a coinjoin are anonymous between themselves. There is a probabilistic uncertainty on which blinded output belongs to which participant. There is no question to the passive observer that what is going on before them is a Coinjoin. These three individuals are engaged in some sort of privacy enhancing technique. In that way a ZeroLink Coinjoin is not covert. We know people who use Coinjoin and who don’t use Coinjoin and they are very distinct.
+
+# Covertness
+
+Why is covertness so critical? This is brought up immediately in the paper. Belcher says “… imagine another user Carol who isn’t too bothered by privacy and sends her bitcoin using a regular wallet which exists today.” It doesn’t consider privacy at all. Because Carol’s transaction looks exactly like Alice’s and Alice does care about privacy, Alice is doing these covert CoinSwaps, Carol’s transaction is now possibly Alice’s transaction. You can’t be certain that Carol herself is not engaged in some privacy protocol because it looks just like Alice. Carol’s privacy is improved even though she didn’t change her behavior and perhaps has never even heard of this software. She doesn’t care at all about CoinSwaps but because Alice is engaged in these covert privacy protocols she is actually shielding Carol as well. This is a huge property. Coinjoin in a sense does offer this property in a very small amount. If Coinjoin participants are engaged with average everyday users, those average everyday users are getting obfuscated coins. When they give those obfuscated coins to other users, obfuscated coins are everywhere. 
+
+What do we mean by covertness in light of CoinSwaps? If we have Alice in orange and Bob in yellow, when they are doing a CoinSwap between each other, they are sending their addresses to a special address that looks like your average plain pay-to-public-key address or pay-to-witness-public-key address. From that address they are switching ownership from one to the other. The critical thing here is that on the blockchain these two graphs of Alice’s coin going to this brown address and then to this yellow address is completely unconnected. There is no merging from the graphs from these two sides. They are completely separate graphs. No one knows that this is happening. The end result is that whatever Bob’s history is now Alice is inheriting it. If Bob is a British individual who likes to buy shoes online his history is now going over to Alice who is then going to behave totally differently. Any forensic company who is trying to cluster those behaviors and say “This graph looks like Bob”. This will be met by a completely different user behavior because actually it is Alice. This is totally covert. 
+
+# CoinSwap, Belcher
+
+Here is Belcher talking about CoinSwaps in the very beginning. You can see that he outlines it very clear here. At the bottom the same chart that was on a previous slide. The critical thing to understand is that CoinSwaps are non-custodial. Alice is not giving her coin up to Bob hoping that Bob doesn’t steal that coin. They are using hash timelocked contracts. As soon as Bob claims Alice’s coin, Alice’s coin is now able to claim Bob’s coin. This is not very different from the Lightning Network. This is heavily based on the 2013 protocol by Gregory Maxwell. Back then Maxwell had to use many more transactions and they weren’t covert at all. If something fishy was going on this transaction was different to an average transaction. This is not the case with Belcher’s work.
+
+# ECDSA-2P
+
+How is Belcher making it covert? If Maxwell couldn’t make it covert how is Belcher doing that? He is using a clever trick called ECDSA-2P. This is two party elliptic curve digital signature algorithm. What it essentially is a 2-of-2 multisignature address but it looks the same as a regular single signature address. Any address can be converted into a two party ECDSA. You can use it with pay-to-public-key-hash (P2PKH), you can use it with pay-to-script-hash wrapped pay-to-witness-public-key-hash (P2SH - P2WPKH) or you can use it with the new bech32 pay-to-witness-public-key-hash (P2WPKH). There is a big point that Belcher makes here. This shows a lot of where he comes from. I haven’t said a lot about Chris Belcher because everyone in the chat knows about him. He is the [privacy wiki](https://en.bitcoin.it/wiki/Privacy) maintainer. He is the [Electrum Personal Server](https://github.com/chris-belcher/electrum-personal-server) maintainer and a [Joinmarket](https://github.com/JoinMarket-Org/joinmarket-clientserver) maintainer. He is probably one of the top three people in this space working on privacy. You’ll notice something very smart here. He says that although “Schnorr signatures with MuSig provide a much easier way to create invisible 2-of-2 multisig but it is not as suitable for CoinSwap.” Why would a more secure, simpler protocol that all the new hype is talking about, why isn’t that the way to go? The answer is simple. Because not enough people are using this address. What Belcher really wants is users who are using CoinSwap to look like an overwhelming majority of average people on the network. He wants people to look like everyday old school P2PKH or the newer P2SH wrapped P2WSH. He doesn’t want to use a new format that is used by a small number of people. 
+
+# Covertness
+
+The property of covertness that is important here is the one that I have highlighted here in green. It is the special addresses. We need a 2-of-2 multisig but we don’t want to reveal that it is a 2-of-2 multisig because 2-of-2 multisigs comprise of a super minority of both Bitcoin amounts and Bitcoin addresses on the network. What we would like to do is look like any wallet, blockchain.com wallet, Wasabi wallet, Mycelium wallet, Coinomi wallet, every other common wallet. None of those wallets are offering 2-of-2 multisig. That is quite rare. He solved this with 2 party ECDSA. 
+
+# Amount Correlation?
+
+The second thing we have to ask is how are we going to avoid amount correlation. The problem you have is if an adversary starts tracking an address of AliceA at Point A they could unmix the CoinSwap easily by searching the entire blockchain for other transactions with amounts close to the amount that Alice is using. If it is 15 Bitcoin then that forensics company is going to watch for other addresses that are doing transactions with exactly 15 Bitcoin. This would lead them to address AliceB. We can beat this amount correlation attack by creating multi transaction CoinSwaps. What does that look like?
+
+At the top Alice is going to swap with Bob. She is going to have her 30 Bitcoin. She is going to swap it over to Bob who is going to receive the 30 Bitcoin. Bob is not going to give Alice a single UTXO. Instead Bob is going to give Alice a cluster of UTXOs that amount to 30 Bitcoin. As you can see here now we are introducing not a single CoinSwap but a triple CoinSwap, a multicoin CoinSwap. The net result is that it is much harder for anyone on the outside to find those UTXOs that amount to 30. Especially if Alice herself doesn’t have a single UTXO but several UTXOs that she is exchanging for other UTXOs. As it turns out with this protocol there are no limitations with both merging UTXOs in a CoinSwap but also branching UTXOs in a CoinSwap. You really don’t know if Alice is getting 1 UTXO, 2 UTXOs or 12 UTXOs. That is how Belcher proposes that we prevent amount correlation.
+
+# Property - Trustlessness
+
+Let’s talk about trustlessness. We talked about covertness, let’s talk about trustlessness. A protocol is trustless if it neither jeopardizes the security nor the privacy of the users’ Bitcoin and their Bitcoin history to any single party. The Coinjoins we’ve talked about in the past, in particular ZeroLink Coinjoins are trustless specifically ZeroLink Chaumian blind Coinjoins are trustless because the users do not give the central coordinator any additional information about their addresses. There are other protocols that don’t do this blinding and that of course is not trustless. With the ZeroLink Coinjoin they are trustless. ZeroLink Coinjoins rely on the users having to sign the transactions. If a user believes they are being screwed over and do not get their amount of Bitcoin back they simply don’t sign and there is no risk to the user losing Bitcoin. CoinSwaps are not trustless by default. It is not the security of the Bitcoin that is of concern, it is the privacy of the Bitcoin. Whenever you do a CoinSwap you are engaging with one other individual. How do you know that that other individual isn’t Chainalysis or some forensics company? How do you know that individual isn’t going to comply or collude with a bad actor? Clearly you don’t know if the person you are collaborating with is going to rat you out because they know your history of coins. How does Belcher deal with this problem?
+
+# Routing CoinSwaps
+
+He introduces this idea of routing CoinSwaps. This diagram here isn’t very accurate, there is a more accurate diagram in a second but the idea is sort of there. Here what you can imagine is three participants are doing CoinSwaps between each other. First Alice is doing it with Bob and then with Bob’s coin Alice is doing it with Carol and then finally with Carol’s coin she receives that back. The idea here is that coins are bouncing around from multiple participants such that one participant can know a particular link but in order for Alice’s coin to be deanonymized all of the participants in this CoinSwap must collude together to deanonymize her. If this is starting to sound very similar it is because this sounds almost exactly like Lightning or Tor. The fact that we are onion routing, we are doing this multiple times with multiple participants so every participant is just one link to the final destination means this is very secure.
+
+This is a better diagram. You can imagine that on the left is Alice’s coin and she is switching it for the brown coin. Now she has that brown coin she switches it for a blue coin. She has a blue coin and she switches it for a green coin. Finally she switches it for one last coin and that is the coin she is deciding to spend from now on. The important thing is that all of these links need to be broken in order for her privacy to be broken. Brown, blue and green must collude together to break her privacy.
+
+If Alice wants to avoid trusting Bob or Carol or Dan she can trust none of them by essentially trusting all of them and as long as all of them don’t collude in a conjunction format, all collude together, she is pretty much ok.
+
+# Multi-Transaction and Routing
+
+Then we have to combine these two concepts together. In the paper Belcher has this drawing here where Alice has her multiple coins, she is swapping them with Bob’s multiple coins. Then she has Bob’s multiple coins and she is swapping it with Charlie. Then she has Charlie’s coins and she is swapping it with Dennis. And so forth until she is ready to spend those coins. The graph is completely broken and Alice has not trusted Bob, Charlie or Dennis. The amount correlation is very hard to perform. 
+
+Here is a slightly better diagram I think than the one Belcher gave. Just because he was constrained. You have these CoinSwaps for different coins of the same total amounts. These CoinSwaps continue indefinitely. Belcher does make a point that most people will trust one swap. I think that is an interesting point. Most users will trust one or two swaps and won’t need to do many swaps. I don’t know if it is a particularly sound thing to suggest because it does present problems with motivated actors performing a sybil attack though he addresses that later on.
+
+Here is another diagram. He also talks about what happens if Alice has a single UTXO of 15 Bitcoin. Alice will need to do a branching CoinSwap where she doesn’t swap for a single coin, she swaps for 6 of Bob’s coins. Those coins are then swapped for Charlie’s coins and Dennis’ coins. They are swapped at different times with different participants. Not all 15 coins are going in the same path, they are actually branching out to different individuals altogether. It makes timing and amount correlation very hard. At the end Alice ends with a bunch of coins from Edward and Fred.
+
+If Alice has 2 large coins and she needs to consolidate them but she doesn’t want the history of those 2 coins to be merged, she can again do this same thing by switching them for Bob’s and Charlie’s coins and then finally merging those coins together because Bob’s and Charlie’s histories are less critical than Alice’s history. 
+
+# Breaking change output and wallet fingerprinting heuristics
+
+Now Belcher is talking about breaking change output and wallet fingerprinting heuristics. The first thing we should talk about is breaking the change output. Equal output Coinjoins easily leak change addresses unless they are swept with no change. We know that any equal output Coinjoin has this problem where this some change and that change is what we call toxic. This isn’t a problem with CoinSwap because any Bitcoin you have you can find a maker, an individual who has Bitcoin and is willing to match your amount in exchange for some fee. CoinSwap doesn’t have that change output heuristic. This brings us to the next point which is the wallet fingerprinting heuristic. 
+
+# Fingerprinting Heuristics (randomness)
+
+I put in brackets the concept of randomness. BTCPay Server has an interesting transaction output ordering. When you use the BTCPay Server and you send money from within BTCPay Server what it will do is randomly organize the inputs. Typically when you look at businesses that get a lot of inputs or coins into their business, when they want to spend they will order by amount, by reverse ordering, high to low or low to high, or they will order by the time the Bitcoin has arrived in the wallet. But BTCPay Server didn’t do that. They decided to do it randomly. They took all their inputs and it is random, it is not by time and it is not by amount. You might think “This is brilliant. Use randomness and now BTCPay Server adds some privacy for the merchants that use that service.” Unfortunately that is not the case, it is the opposite. Very few people use randomness. The result is that randomness is a fingerprint. Belcher pointed this out. He says “we can break this heuristic by having makers randomly with some probability send their change to an address they’ve used before.” He is talking here about a different heuristic, addresses being reused are likely payment addresses. For example I want to pay you money and I am likely to reuse your address. But change addresses are always brand new. He is saying why don’t we just have a small probability of change addresses being reused on purpose? Again some people might say “Shouldn’t we never reuse an address?” but what Belcher is saying is totally correct. We should be behaving like the crowd so that forensic companies cannot say anything probabilistically or statistically about our particular protocol. Wasabi did a very similar thing I think for RBF a few months ago. We found out that around 7 percent of bech32 spends have RBF enabled. We made it so that Wasabi wallets have 7 percent of the time transactions with RBF. It is not random, it is looking similar to what other people are doing. Another great heuristic he attacks is the script type heuristic. He says why don’t we purposefully make the address format look like the address format of the rest of the network. This is quite clever though there are downsides to not using the most efficient address format because that results in higher fees.
+
+# Additional Topics
+
+There were a lot of other things to talk about in this paper. It likely merits a part 2. I was hoping Belcher would be here to answer some questions. Let’s leave it there for now.
+
+# Questions/Comments
+
+Q - What should be the end goal of Bitcoin privacy, the end user experience? Could you describe it? I could describe what the end user experience could be. Very small Joinmarket 2-of-2 Coinjoins so that every transaction is a Coinjoin. Large Coinjoins provide a lot of privacy but it would take 20, 40 or 60 minutes before you can spend your coins. What it would like for CoinSwaps?
+
+A - I think with privacy or anonymity networks you are trying to smell user behavior and figure out where users are. I don’t see one solution fits all where everything is solved. You still have privacy problems. Let’s say you are a merchant. You are getting all these payments from people that are doing these CoinSwaps. The graph is really obfuscated. Now you have all these payments, what do you do? I think for large businesses and users Coinjoin is still the most effective because it crushes the graph. It makes the graph incredibly hard to unravel. 
+
+Q - I am not familiar with the different wallet fingerprints. What kind of fingerprints?
+
+A - I can talk about that in depth. I fingerprint a lot of wallets. I can look at the blockchain with pretty good accuracy and figure out which user is using which wallet. It is everything. When I see a transaction in the blockchain what kind of address format? Is the change address a BIP 69? Is it indexed steganographically or is it randomly indexed? That gives something away. What is the locktime, is it zero or is it a recent block? What is the nSequence? What is the version number of that transaction? Is the change address reused like blockchain.com? That is an easy one. Sometimes I notice that a wallet will pay to… outputs. Only a couple of wallets offer that advanced feature. I immediately know what is going on. The transaction fee, what kind of number is it? Is it a whole number or is it a partial number? When I look at the blockchain is it based on Electrum’s fee distribution or Bitcoin Core’s fee distribution? Does the user get to manually pick or are there three base options? These are things that are pretty quickly revealed. There are probably 20-30 qualities of a transaction and the problem with having a lot of qualities is that if you repeat qualities you become a snowflake which means you become unique. No other wallet is going to have the same 20 qualities that you do. For that reason someone like me, I have a pretty easy time deciphering transactions to which wallet based on nothing but one transaction.
+
+Q - If everything else fails the transaction graph gives the final clue of what happened here.
+
+(Wallet fingerprinting was also discussed at the London BitDevs [Socratic Seminar](https://diyhpl.us/wiki/transcripts/london-bitcoin-devs/2020-05-05-socratic-seminar-payjoins/) on Payjoin.)
+ 
