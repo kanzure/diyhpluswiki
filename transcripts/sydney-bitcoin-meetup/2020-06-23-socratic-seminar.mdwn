@@ -1,0 +1,296 @@
+Name: Socratic Seminar
+
+Topic: Agenda in Google Doc below
+
+Location: Bitcoin Sydney (online)
+
+Date: June 23rd 2020
+
+Video: No video posted online
+
+Last month’s Sydney Socratic: https://diyhpl.us/wiki/transcripts/sydney-bitcoin-meetup/2020-05-19-socratic-seminar/
+
+Google Doc of the resources discussed: https://docs.google.com/document/d/1TKVOScS0Ms52Vwb33n4cwCzQIkY1kjBj9UioKkkR9Xo/
+
+The conversation has been anonymized by default to protect the identities of the participants. Those who have expressed a preference for their comments to be attributed are attributed. If you were a participant and would like your comments to be attributed please get in touch.
+
+# Succinct Atomic Swap (Ruben Somsen)
+
+https://gist.github.com/RubenSomsen/8853a66a64825716f51b409be528355f#file-succinctatomicswap-svg
+
+Succinct Atomic Swaps are an alternative way of doing atomic swaps. They can be useful in certain cases or they can be less useful depending on what you want to do. I will try to take you through how it all works. These are the slides that maybe some have you seen a [video](https://diyhpl.us/wiki/transcripts/ruben-somsen/2020-05-11-ruben-somsen-succinct-atomic-swap/) of already. If you have any questions just interject and I’ll answer them. I will try to pause here and there so you can ask questions. Why am I spending bunch of time looking at protocols like this? At a high level I think Bitcoin is a very important technology that needs to grow in ways that don’t really hurt decentralization. There are not many ways to do that. You can increase the block size but that isn’t something that doesn’t hurt decentralization. That is off the table for the most part. The question becomes what can we do with this blockchain resource in such a way that you do more with it without it becoming less decentralized. My focus on that has led me to research a bunch of topics. My [statechains](https://medium.com/@RubenSomsen/statechains-non-custodial-off-chain-bitcoin-transfer-1ae4845a4a39) work is part of that where you have this trade-off of using a federation but you do it in such a way where decentralization is not preserved but tries to make the best trade-off possible where you do rely on a third party but as little as possible. Succinct Atomic Swaps fall in that same category of me looking at how can we do better? My example is going to between Bitcoin and Litecoin. I think some people get confused and are like “This is an altcoin thing. It helps altcoins.” I want to mention ahead of time that atomic swaps are very general. You do them within the Lightning Network even. You can do them between Liquid and Bitcoin etc. It happens to be something that is blockchain agnostic. You can use it with any blockchain you want but it is very obviously useful within Bitcoin. Also for privacy swaps where I have a Bitcoin, you have a Bitcoin and then we swap it in such a way that it is not noticeable onchain that we did so. That can give a huge privacy boost.
+
+The general atomic swap protocol is actually four transactions. You have a preparation phase on one chain and a preparation phase on the other chain. Then you have the second transaction where you actually do the swap. You reveal some secret then the swap goes through on the other side as well. This is four transactions. What I want to show here is how to do it in only two transactions. There are two tricks to this. One side of it is that we have an asymmetric swap where one side is more complex while the other side is very simple. The other side of it is a Lightning type channel where you have to watch the blockchain for a certain transaction. That cuts the protocol down from 3 to 2 transactions. The second part can actually also be done in a traditional atomic swap but the nice thing here is because it is asymmetric you only watch the blockchain for one of the two sides. As I’ll point out again later the protocol itself is already set up in such a way that you can make an non-expiring channel without adding any extra overhead. Any overhead is already there because of the way the protocol works. It is elegant to do it within this protocol. 
+
+I am going to describe what the setup is. Later on I will have a more complex slide that really shows the actual in depth protocol and all the onchain stuff. This is a high level overview to give you a better idea of what we are doing here. The first setup is let’s say on the Bitcoin side. Alice wants to lock up some Bitcoin with Bob and she doesn’t do so yet but she creates the transaction that can go to the blockchain later on. From that point on, Alice and Bob have to agree ahead of time how to spend this UTXO that will get onto the blockchain at some future time. The first thing they do is they create a transaction where you send it to Alice and Bob again with a timelock of 1 day. From that point on you send it to yet another timelocked transaction but this one is a 2 day timelock, 1 day after the middle transaction goes on the blockchain this transaction becomes valid. This is a refund transaction where just the money goes back to Alice. If this whole thing went to the blockchain it just meant Alice got her money back. Alice locks her money up with Bob and then she gets it back. There is a \* as you might have noticed. The \* is an adaptor signature where if Alice sends this transaction to the blockchain reclaiming her money she reveals a secret which we call AS, Alice’s secret, and Bob then learns this. There is a reason why we would want to learn that which we will get to. There is one more transaction which shows that if Alice does absolutely nothing Bob gets the money. The reason for that is to really make sure Alice after a couple days reveals this secret. With this current setup Bob knows that he will either learn this secret or he will get the money. Obviously Alice not being crazy will broadcast this to the Bitcoin blockchain. Just to clarify what we are doing here is not yet a swap, this is the setup. The setup means that if worst comes to worst the parties stop responding, stop communicating with each other, what happens? In that case you want it to revert back to normal. What we are doing here is we are reverting it back to normal by allowing Alice to just get her money back. At this point Alice is ready to send this Alice and Bob (A+B) transaction to the blockchain because she has a guarantee that she will get her money back assuming she pays attention and is faster than that Bob transaction at the end. Now that this transaction is on the blockchain Bob is basically guaranteed to learn Alice’s secret. Because of that Bob just broadcasts this transaction on say the Litecoin blockchain where he locks up the money with Alice’s secret and Bob’s secret. If everything stops working out Alice is forced to send this transaction to the blockchain, the transaction that gets her money back and reveals Alice’s secret. Once Bob learns Alice’s secret then he also gets his refund on the Litecoin blockchain because he already knows BS and know he also learns AS. He has the complete secret.
+
+The next step is going to be doing the actual swap. What we want here is the opposite to happen. Instead of AS being revealed and Alice getting her money back we want Bob to get the money and BS to get revealed to Alice. How do we do that? We create another transaction to Bob and that transaction if Bob sends to the blockchain will reveal BS. Because this one has no timelocks it happens before everything else we have created thus far. This enables the swap. Now if this transaction goes to the blockchain, BS is revealed, Alice already knowing Alice’s secret and now also knowing Bob’s secret gains control over the transaction on the Litecoin side. Bob if he has sent this to the blockchain, now he has the money on the Bitcoin side. This is a three transaction protocol. The main point here is that this already better than the original atomic swap. With the original atomic swap you would have 4 transactions. Here on the bottom side, nothing happens. It is just one single transaction and the key is split into two parts. Either Bob gets it or Alice gets it because they give one of the parts to each other. The next step would be how to turn this into a 2 transaction variation. What we do is we don’t broadcast this transaction at the top. We give it to Bob but Bob doesn’t broadcast it and instead Bob just gives Bob’s secret to Alice. Bob knows he could broadcast it and get the money, he is guaranteed to receive it but he doesn’t do so and he just gives the secret to Alice. Alice now has control over the Litecoin transaction and Bob if he sends that transaction to the blockchain would also get control over the Bitcoin transaction. However instead of doing that Alice gives Alice’s key to Bob. Now the swap is basically complete in two transactions. They both learn the secret of the other person on the other side of the chain. This would literally be a 2 transaction swap. But there is still this little issue of this transaction existing where Alice gets her money back. This timelocked transaction still exists. What this means is that even though the protocol has completed in 2 transactions there is still a need for Bob to watch the blockchain to see if Alice tries to get her money back. The way the timelocks are set up, particularly with this relative timelock at the end there, what this means is that Alice can send this middle transaction A+B (1 day lock) to the blockchain but in doing so Bob will notice that the transaction goes to the blockchain. Since Bob has Alice’s key he can spend it before the third transaction becomes valid. Bob will always be able to react just like a Lightning channel where one party tries to close the channel in a way that is not supposed to happen. The other party has to respond to it. It requires Bob to be online in order for this to be a true 2 transaction setup. 
+
+To go through the negatives, there is an online requirement for Bob, not for Alice. As soon as the swap is complete Alice is done but Bob has to pay attention. If he doesn’t Alice could try funny. There is an introduction state. We’ve got these secrets that are being swapped. If you forget the secret or if you lose the information that was given to you you will no longer have access to your money. That is different to how a regular Bitcoin wallet works where you have a seed, you back it up and when you lose your phone or something you get your backup. That is not the case here. Every time you do a swap you have some extra secrets and you have to backup those secrets. The positives are that this all works today. You can do this with ECDSA. Lloyd’s work, I am going to call this 1P-ECDSA but I’m not sure if Lloyd agrees. You can do a very simple adaptor signature if you have a literal single key that is owned by a single owner. Using that we can do adaptor signatures on ECDSA today. It only requires 2 transactions as you already know. It is scriptless or at least it is mainly scriptless. There is one way to add another transaction to it that isn’t completely scriptless in order to make it a little bit cheaper to cover the worst case scenario where Alice locks up her money and Bob does nothing. If you want it to be completely scriptless it can be. It is asymmetric. That has some advantages. You could think of this as one blockchain doing all the work and the other blockchain literally do nothing. This allows for two things. The first thing is that you can pick your chain. This is the cheaper chain, maybe some altcoin chain and this is the more expensive chain like the Bitcoin chain. On the Bitcoin chain you do the simple version of the swap. On the altcoin chain you do the complex version. If something goes wrong then the cheaper blockchain will bear the brunt. It is without any timelocks. That is really nice because that means that there is no timelock requirement on one of these two blockchains. I think Monero is one example that doesn’t have timelocks. It is very compatible with even non-blockchain protocols where you have some kind of key that has ownership or you can transfer ownership. This can be very useful for [Payswap](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-January/017595.html)  or other privacy protocols and people are talking about these on the mailing list today. How to do atomic swaps for privacy. Hopefully Succinct Atomic Swaps can be part of that. A way to do it more efficiently. One thing I still need to point out. We can make use of MuSig on ECDSA on the Litecoin side of things. The problem with ECDSA is that you can’t do multisig signing or at least without 2P-ECDSA which is a more complex protocol in order to signing with a single key. In this case we are not really signing anything. We just have this one transaction on the blockchain. There are two secrets. Part of one of these secrets gets revealed to the other party but at no time do two people need to collaborate to sign something. There are no transactions that are spending it. We can use MuSig here and replace this key with M in this case and have it be the MuSig of AS and BS. On the blockchain this bottom transaction looks like a very basic transaction like if you were making a payment from a single key. It would be indistinguishable without any advanced 2P-ECDSA or Schnorr. We can do this today.
+
+What exactly are the requirements for the alternative coin? It doesn’t need to have timelocks, does it need Script?
+
+You just need some kind of key transfer mechanism, a signature scheme where you can send money from one key holder to another key holder, that is sufficient. You don’t need anything else. I can barely think of anything that it wouldn’t be compatible with.
+
+You could even have M as the key to your sever. A SSH key, you could swap ownership for that. It doesn’t even have to be a blockchain or an asset.
+
+That’s right. It is weird that you could do those things.
+
+What are some of the practical applications that someone might use it for? Instead of Bosworth’s submarine swaps? Can you give some examples?
+
+MuSig makes one of these transactions indistinguishable from any other regular transaction. Another interesting observation for use cases is that this MuSig side, the simpler side of the two in the swap, can be funded by a third party. Normally the problem is that you need to create some kind of transactions that occur after this transaction goes onchain but because this is just a single transaction you don’t have to worry about what the txid is or something. You just need to create that one single transaction. You can imagine doing some kind of swap where I create a transaction where somebody pays me but that pays into a swap. Then I can swap. As a merchant you can receive money and then you can immediately swap with it. That is something that is not possible today without either using this Succinct Atomic Swap protocol or in a way that doesn’t preserve privacy. You have some advanced scripts that you make use of and then it is very obvious that you did a swap. That is one unique case.
+
+It might give people more privacy when they are paying a merchant. Instead they are paying a Succinct Atomic Swap. Is that one example?
+
+Yes that would be one example of something that is possible with this.
+
+It looks like a normal address but the atomic swap is this joint key address from somewhere else. You are getting that money straight into your Lightning and some other market maker is getting the actual Bitcoin onchain.
+
+That is right. You can do that with Succinct Atomic Swaps very easily without revealing any privacy. You can already do it but if you did it today it would be very obvious you are doing it.
+
+You said timelocks weren’t needed but at least one of the chains should support timelocks?
+
+That’s right. Timelocks are not needed on one side of the swap but on the other side of the swap it is absolutely necessary. 
+
+How does it differ from Chris Belcher’s [CoinSwap](https://gist.github.com/chris-belcher/9144bd57a91c194e332fb5ca371d0964)? They are similar in quite a lot of ways. How are they different?
+
+It is the same thing basically. What Chris Belcher is working on is using atomic swaps to maximize privacy. The atomic swap itself wasn’t really novel. This is a drop-in replacement for regular atomic swaps. It is orthogonal. Chris Belcher can choose to use this protocol depending on what he ends up with. One of the things that this protocol doesn’t do well is multiparty swaps. If you want to do something like Alice pays Bob providing Bob pays Carol providing Carol pays Dave, that seems impossible or is at the very least difficult with this protocol. It depends on what Chris ends up doing, whether or not a Succinct Atomic Swap makes sense. If you just do a swap between Party A and Party B it seems Succinct Atomic Swaps are more efficient. There are no downsides to doing it. They might be some trade-offs that are hard to argue about but because of the asymmetry it might be better or worse in terms of who takes the risk. With a swap you always have a risk where you do the setup and then one of the parties disappears and one party might end up paying more. With the asymmetry the side that has all the complexity bears all the cost if things go wrong. You can imagine a protocol where all the complexity is at the client side. There is a server, a swap server for privacy, where you suggest a swap to them and they give you an equal amount of some other UTXO. Assuming the server has some kind of reputation where you know the server isn’t going to back out of the trade, they don’t have any risk. The client has to suggest the swap and if the client disappears it is on the client to bear all the cost. It depends on what you are doing. If you want to do it the opposite way, if you want the swap end up on the opposite side then the server needs to open the channel and now you have a DOS vector. It depends. In certain cases it is just more efficient, that is the bottom line.
+
+You mentioned the altcoin side only needed to be a private key. Could this be used then to buy an encryption key to decrypt some data that you might be selling or something like that? Does it literally just need a private key? Those guys at Suredbits were very interested in PTLCs because they were trying to sell encrypted data with keys to decrypt it.
+
+I think there is no need for this specific protocol there because the main thing here is that you have this either Alice gets the full key or Bob gets the full key. In the case of encryption one person already knows the key and the other person needs to get it. I think that goes more into zero knowledge protocols where you have the key that is the encryption of something you are interested in and you have to prove that if they learn the key they can decrypt the thing that interests them. Greg Maxwell wrote an [article](https://bitcoincore.org/en/2016/02/26/zero-knowledge-contingent-payments-announcement/) about it. 
+
+It was about selling sudoku puzzles.
+
+You encrypt some data and then you prove in zero knowledge that the encrypted data is a solution to what you are looking for. Through Bitcoin you buy the key that allows you to decrypt the data. I happen to know that at Blockstream they are working on a MuSig related protocol that also would be helpful for that. A hint to what is coming in the future. I don’t think they have published that paper yet. That will be interesting.
+
+One point I skipped over which is interesting. Because this protocol is simple to set up on one side without any timelocks whatsoever you can use this to buy coinbase UTXOs. You can imagine one person wanting to have some coinbase coins. Let’s say I want to buy 1 coinbase Bitcoin. A miner has to mine this UTXO and create a transaction output that has 1 Bitcoin in it. They do so with the AS + BS setup using MuSig so it looks like a single key. Before they start mining it first we do the setup. Now the miner starts mining and eventually they will mine a coinbase transaction with this AS + BS transaction in it and they complete the swap. With a coinbase transaction you can’t spend it until 100 blocks have passed. Now you are not really spending it, you never have to send it out to the blockchain afterwards so you can change the ownership of the coinbase transaction before 100 blocks have passed. You can do a swap into a coinbase transaction. That is cool. Regarding swapping in and out of Lightning in a single transaction it might be possible, maybe not. You can imagine on Lightning having a route from Alice to Bob to Carol. You have some kind of onchain transaction where it is Alice’s secret and Carol’s secret. Depending on whether the money goes from Alice to Carol, Alice learns Carol’s secret or Carol learns Alice’s secret. This is not how Lightning works today because normally what you do is reveal a single transaction. In this case what you do is reveal a secret if the payment goes through and reveal a different secret if the payment doesn’t go through. I’m not sure if that is compatible with routing. If it is then it might be an interesting way to do swaps in and out of Lightning that are more efficient than submarine swaps. If I’m not mistaken submarine swaps require two onchain transactions every time you do it. 
+
+You are not sure if you can do it on Lightning? If it is just A to B you definitely can. It is just the hop that is in question?
+
+I think that is right. If you are interested in reading more of the details you can go to tiny.cc/atomicswap. I also have some links to some of my other work. Statechains, PoW fraud proofs, blind merged mining, perpetual one-way peg. These last two I wanted to present at the Bitcoin 2020 conference in San Francisco. Because of Corona that didn’t happen. I have a full presentation that I am hoping to present at a conference but maybe I should present it online. That might be something we can go over at some other meetup as well.
+
+# Bitcoin Optech 98
+
+https://bitcoinops.org/en/newsletters/2020/05/20/ 
+
+We had Bitcoin Optech 98 but one of the key items on there was Succinct Atomic Swaps so we will skip over that one and go to the next one.
+
+# CoinSwap
+
+https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-May/017898.html
+
+It is looking at how we can use atomic swaps in such a way that we increase privacy. It goes through different setups you can create. One of them would be on one side you give somebody 1 Bitcoin and on the other side you give somebody 3 UTXOs, 0.1, 0.2 and 0.7. You can do these fan out swaps and you can make swaps depend on other swaps. You can do swaps in a circle where Alice gets Bob’s money, Bob gets Carol’s money, Carol gets Alice’s money and things like that.
+
+An onchain Lightning payment?
+
+That is what atomic swaps are in essence. It is an onchain version of what you are doing offchain on the Lightning Network. Generally speaking that is what I have wondered about atomic swaps, where are they more useful than Lightning? Currently with things like Coinjoin there are definitely some issues there. For instance you have these change outputs that you then cannot use anymore or you can’t use it in combination with the outputs that did get coinjoined. Maybe you can take the change outputs and swap those to get privacy in your change as well. Very generally speaking you are paying onchain fees for your privacy. With the Lightning Network your payments are private but you are not mixing up your coins. I guess that would be the use case. It is not fully efficient in terms of onchain space but that is what you pay for in order to get privacy. 
+
+There is a section around the differences as well. One of them is liquidity because of the payment size on the Lightning Network and because it is onchain. 
+
+Chris Belcher is focused on privacy and predominantly onchain stuff. He does discuss the differences between Lightning here but the use case he is most interested in “I have a transaction history behind my coin and I want to swap with it say Stephan’s”. If a Chainalysis comes along they are like “These are Stephan’s coins, I’m tracing them through the network” but actually Stephan and I swapped our coin history. That’s the crux of the idea. He does talk about the danger of you and me swapping but Stephan is actually the adversary or Chainalysis. 
+
+It is kind of like a dust attack.
+
+If I swapped my history with you Stephan and you are malicious then I am telling you what my coins are which isn’t great for privacy. He talks about routing CoinSwaps where you have a group of people and as long as they are not all colluding it is safe to do the CoinSwap.
+
+He layers on the fidelity bond idea as well to try to make it harder for someone to do the sybil thing. A cool idea, definitely going to take a lot of work to make this happen. 
+
+Do they all have to be the same amount like Coinjoin?
+
+I think it can be split up. You could have the same amount but from different chunks. 
+
+That is right. You can split it up. You can do [Payswap](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-January/017595.html) where you are swapping and paying at the same time. Your change output is what is getting swapped back to you. Now the amounts are not exactly the same anymore. Those are all methods to make it a little less obvious. If you literally swap 1 Bitcoin for somebody else’s Bitcoin. In that case first you would have to wonder if a swap is happening or not. Is someone just paying 1 Bitcoin to somebody? The second thing would be who could this person have been swapping with? That depends on how long the timelock is and how many 1 Bitcoin transactions have occurred. Every 1 Bitcoin transaction has occurred in that period, that is the anonymity set as opposed to Coinjoin where your anonymity set is literally just everybody within that specific transaction. That has some potential to have a larger anonymity set. The other thing that is interesting is that the anonymity set is not limited to Bitcoin itself. If you do a cross chain swap it means that every transaction on every blockchain could’ve been the potential source of your swap. If a lot of people do these cross chain swaps that makes the anonymity set even larger and makes it more complex to figure out.
+
+That is definitely a big use case of atomic swaps. Say you want to use zero knowledge proofs on Zcash or use Monero to get some privacy with your Bitcoin and then get it back into Bitcoin. Does that bring strong benefits? Or use a sidechain with confidential transactions on it. This seems like a useful use case.
+
+There was a Chainalysis presentation where they talked about things like that. If you really do it properly then maybe but a lot of these anonymity coins are not quite as anonymous as you think. If you do the really obvious thing where you go in and go back out and somebody saw you go in and out it is also not anonymous. If you are doing swaps it is maybe better to try to set up the swaps with Coinjoins and CoinSwaps so you don’t rely on going to this other place and swapping it round. I’m not sure to what degree that is useful, maybe it is.
+
+The other thing with that kind of approach is timing analysis. It depends on how it is done but it can be unmixed if people are able to look at what is coming in and coming out.
+
+I suppose the challenge is finding that person who is happy to swap say Monero, Zcash or Liquid for your Bitcoin. You could be leaking privacy finding that counterparty.
+
+I suppose there is going to be a market for that. If you are willing to pay for it there will be a market. If the market is not very liquid you are going to have to pay more. I guess you are concerned that in your search for your swap partner you might be leaking information. That is a tricky one. You have definitely got to be careful. 
+
+# Custody Protocols Using Bitcoin Vaults
+
+https://arxiv.org/abs/2005.11776
+
+Last month we spoke about this vault idea. This was a paper on vaults and covenants. As I understand the idea is that if you are being stolen from out of this vault you limit your loss and you have a watchtower that spends it all into a safe secondary address. If you are an exchange you might want to secure your coins in the vault this way.
+
+We had a [Socratic](https://diyhpl.us/wiki/transcripts/london-bitcoin-devs/2020-05-19-socratic-seminar-vaults/) on this in London a few weeks back. It was very interesting. You talked about what people are trying to achieve but everyone has very different scenarios, different number of parties, whether they want to get access to their coins quickly, there are so many different dynamics in play. Also these designs are vastly improved with something like Jeremy Rubin’s CHECKTEMPLATEVERIFY which obviously isn’t in Bitcoin now. Bryan (Bishop) was saying he has built a vault design using that and Kevin (Loaec) was like “I’m not spending anytime on that until it is in Bitcoin. It might not ever get in Bitcoin.”
+
+The trick is that you want to signal what you are going to do with the funds so that onchain you can see this is what is going to happen and you can respond to it if that is not what is supposed to happen. That the general way you can look at these vaults. You are signaling the money is about to move and then if it is not what you intended you can claw it back.
+
+Bryan’s idea was if you wanted to send money you’d send it in drips. If one drip went to a destination that was not your intended destination then you would stop any future transfers. Instead of losing your whole stash you would just lose that first installment of the funds you were sending.
+
+# Elichai Turkel response to the Rust discussion at last month’s Socratic Seminar
+
+https://gist.github.com/elichai/673b031fb235655cd254397eb8d04233
+
+We had a [discussion](https://diyhpl.us/wiki/transcripts/sydney-bitcoin-meetup/2020-05-19-socratic-seminar/) last month at the Socratic whether Rust should ever get into Core and when, if and when. One of the conversations we had last month was that we didn’t see any rust-bitcoin nodes on the network. Elichai is saying in this the Rust guys don’t think that is a good idea and they don’t want any rust-bitcoin nodes on the network. My view was if you are going to be introducing this new language which is a big deal for Bitcoin Core perhaps there should be some live Rust nodes on the network to work out kinks and any problems with using Rust on a full node implementation. 
+
+There aren’t many live running non-Bitcoin Core nodes are there? There is libbitcoin and stuff like that…
+
+A very small percentage. There is Bcoin and roasbeef’s btcd and libbitcoin. They have a few nodes on the network.
+
+Bitcoin Knots too. Some people run that. The Wasabi guys run Knots?
+
+Luke Dashjr’s full node. It is a very small percentage. I don’t think it is bad for the network. It would be a problem if one of them was massively used and was starting rival Bitcoin Core as the full node that everyone is using.
+
+That wouldn’t be a problem either. You want to run the node that everybody is running. You want to be on the network that everyone else is on If you run some alternative version of Bitcoin then you risk of getting forked off the network. If everybody is running this alternate version that is not Bitcoin Core then that is what Bitcoin became. It is like firing Core in a sense. I don’t think that is ever going to happen. You are putting more trust in the consensus of some alternate fork. That is the problem. There is such a huge incentive to be where everybody else is that it makes no sense to run an alternate client. You can say “I am going to run Bitcoin Core and I am going to run rust-bitcoin or something” but if you do that you are doubling your validation cost. It is like doubling the block size or something. I guess it is just CPU, you can save on bandwidth costs at least. That is not great either in terms of validation cost. It is a natural effect that everybody picks what everybody else is picking.
+
+There is an interesting comment that Elichai makes that rust-bitcoin is used in production by many users just not for Bitcoin Core. It is used on other things. Lots of us are running [electrs](https://github.com/romanz/electrs) (Electrum server). That is a good example.
+
+I didn’t realize electrs was using rust-bitcoin.
+
+I have never run rust-bitcoin in my life but I do run electrs.
+
+That runs on Bitcoin Core too? You connect electrs to Core? I’m not sure I’ve never used it.
+
+Elichai’s point is that it is using the rust-bitcoin library but there is no current full node implementation using rust-bitcoin.
+
+There is a full node [implementation](https://github.com/paritytech/parity-bitcoin) in Rust written by Parity. The Ethereum people wrote a full node Bitcoin implementation in Rust. It exists. I don’t know if everyone runs it, it looks like it isn’t maintained. 
+
+rust-bitcoin is a library. It is a library. Maybe someone has made a little node using rust-bitcoin against the recommendations or for an experiment.
+
+Jameson Lopp did some [tests](https://blog.lopp.net/bitcoin-node-performance-sync-tests/) on alternate implementations. The last one I saw, Parity was completely stalled and not able to sync up.
+
+It has several advantages. It can connect to a Bitcoin Cash node at the same time.
+
+How exciting.
+
+It does say rust-bitcoin supports consensus code, fully validating blockchain data but you shouldn’t do it.
+
+I don’t know if anyone actually uses it like that. The recommendation is against that. 
+
+This library is “simply unable to implement the same rules as Core”
+
+It doesn’t have the same rules. In Core there are all these rules for signatures, it doesn’t do that I don’t think. It uses secp256k1, the C library, whatever is in there it has. But I don’t think it uses these very Bitcoin specific things that were put in there as part of consensus. You need the Bitcoin consensus library.
+
+The line you are pointing to is just a warning saying “Don’t run alternate implementations”. 
+
+# Fanquake blog post on Subtleties and Security
+
+https://blog.bitmex.com/subtleties-and-security/
+
+I don’t think fanquake is on the call. He had a really great post. 
+
+Let’s add it to next month’s in case he attends next month. It would be good to get him to go through it. 
+
+I need to get him on the podcast at some point.
+
+# London Socratic on BIP-Schnorr (BIP 340)
+
+https://diyhpl.us/wiki/transcripts/london-bitcoin-devs/2020-06-16-socratic-seminar-bip-schnorr/
+
+We did a Socratic last week on BIP-Schnorr and Tim Ruffing did a presentation the following day on multisig and threshold sig schemes with Schnorr. It was a really interesting conversation on the history of Schnorr, how the idea evolved, what the risks are today of implementing it. Pieter had some comments on how he was more worried about people building things on top and the problems that might ensue with things people build rather than the actual Schnorr implementation. We talked a little bit about [libsecp256kfun](https://github.com/LLFourn/secp256kfun) too. The [video](https://www.youtube.com/watch?v=uE3lLsf38O4) is up, the [transcript](https://diyhpl.us/wiki/transcripts/london-bitcoin-devs/2020-06-16-socratic-seminar-bip-schnorr/) is up. Tim said it was a shame you weren’t on the call Lloyd because we could’ve discussed hash function requirements for Schnorr signatures. You had that academic poster we looked at a couple of months ago on hash function requirements for Taproot and MuSig.
+
+# Delay querying DNS seeds in Bitcoin Core (PR 16939)
+
+https://github.com/bitcoin/bitcoin/pull/16939
+
+When we start a Bitcoin node up from scratch it obviously has to have some way of working out who all the other Bitcoin nodes are so it can talk to them and share transactions and blocks. The original way that it used to work back in Satoshi’s day was that there was a IRC channel that all the clients would log on to and talk to each other over IRC. That was obviously the best way of doing it but IRC servers didn’t like that and thought it was a botnet. The modern way we have is a few developers run what is called DNS seeds. You can do a DNS query and get a list of a bunch of peers on the network that are running bitcoind and connect to them via that. In case the DNS doesn’t work there are also some fixed seeds that get shipped hardcoded into bitcoind that it will use if it can’t find anything else. Once you are on the network then you start querying for what other peers are on the network. You keep a record of that so you don’t have to do this every time. But the basic way the code worked before this patch was that it would start up your node and then it would try connecting to a peer. Most of the time that peer has disappeared in the meantime. It would sit there trying to connect for maybe ten seconds, five seconds or something like that. It would fail and then it would try another one, that is another 5-10 seconds gone. By the time you have tried 5 peers that is like 30 seconds gone. At which point it says “You don’t know any good peers. I’ll query DNS.” This effectively meant that every time you start your Bitcoin node, even if it knows tens of thousands of other peers to try, it will still do a DNS query which kind of gives away the fact that you are running a Bitcoin node if nothing else did. Once you have been on the network for a while you have got a list of tens of thousands of other peers. If you have a list of that many peers at least try a few for five minutes before trying to query the DNS to get more stuff. So that’s pretty much the summary.
+
+It is to use those DNS seeds less at a high level? 
+
+It is to use them less as long as there’s no apparent reason why you need them.
+
+How much of a worry is it that you are relying these DNS seeds when you first boot up your node? At an extreme level if you are trusting them to give you IP addresses and they give you IP addresses that they own then it doesn’t really matter what you are doing with the initial block download and all the verification because you have been gamed right from the beginning.
+
+The nodes are all run essentially by well known devs. In that kind of sense they are a trusted source of information. Or at least hopefully not malicious. When you start up bitcoind at first it will query all the nodes. As long as one of them is giving you good data that should mean you get onto the real network. Anytime after that you will query in blocks of three. As long as you don’t have three of them that are all co-conspiring to be evil and you don’t happen to pick those three by bad luck then you are probably good. It is a centralized thing so you are much better off if you get onto the P2P network via a friend who has been on it for years or some other way like that. That would be a `-connect` argument with your friend’s IP address.
+
+# DNS seed policy
+
+https://github.com/bitcoin/bitcoin/blob/master/doc/dnsseed-policy.md
+
+I think there needs to be some edits to that DNS seed policy because it wasn’t clear without going into the documentation or the code that you are spreading that trust amongst multiple seeds in all cases. That’s important especially as we get more DNS seed operators, [Wiz](https://github.com/bitcoin/bitcoin/pull/19284) has just become a new DNS seed operator. As we add more then it is going to be harder to monitor that one or two don’t turn malicious so it is important to be getting IP addresses from as many seeds as possible to reduce that risk. Do you agree?
+
+I’m not sure if there is a sweet spot. If you open it for all of them it is maybe too broad.
+
+If you have so many seeds that you can’t check any of them then it is worse than having a few seeds where you can check that they are behaving reasonably well. I agree there is probably some sweet spot. I’m pretty sure at least one of the seeds is hidden behind Cloudflare. That means that if Cloudflare decides to be malicious with bitcoind stuff then they have got that avenue to be malicious. Presumably everyone is going via their ISP or Google or whoever’s DNS, that is an attack point as well potentially. 
+
+There is also a privacy concern coming up because normally you can’t see a seed who is asking you. There is an extension in DNS where you can see a part of the client IP address, the client network part, where it is coming from.
+
+Hypothetically if there was a malicious seed who only gave you bad peers. Wouldn’t you periodically come across other peers on the network? Or would you be contained into this malicious network?
+
+If the peers in your database are all malicious then those malicious peers will only tell you about other malicious peers. How will you ever find one that is a good one? You will have asked three DNS seeds for peers in the first place. You’d need all of those to have given you bad peers in the first place and you’d have to not accidentally query DNS again. It is an attack vector but it is probably one that you have to be somewhat specifically targeted to get attacked that way.
+
+It relies on you not using the `-connect` flag to specifically connect to a known peer that you know.
+
+I wouldn’t think that too many people would do that. If you are a beginner running a full node for the first time you are not going to know to do that. At the moment all of those seeds are serious Bitcoin people you really would hope would never turn malicious. As you expand that group of DNS seeds then I suppose it is always a risk. That is why you would need to be calling multiple of them.
+
+It is a longer term risk. Maybe you could argue have we seen that kind of attack in the wild yet? How much effort should be put into protecting against this thing? 
+
+One way to address this danger is to go out of band and check a block explorer that you do have the latest block. But this is doing stuff outside of Bitcoin Core software, outside of the protocol. Again beginners just aren’t probably ever going to do that. It is more of a beginner type question than someone who knows what they are doing and can do some basic sanity checks once they have caught up with the blockchain tip.
+
+It would be hard to maintain that for a long time. As soon as someone sends a transaction even on the normal network, the counterparty is not going to get that transaction because they are on a different network. It would require a lot of things to all be malicious for anyone to be successfully fooled by it.
+
+Once you are on that fake network you are basically owned. You are owned by that attacker. That attacker can do anything. You could send a transaction out and the attacker could say “This transaction is in a block” with no proof of work on a fake chain.
+
+What if you tried to receive some Bitcoin?
+
+Matt Corallo did a [PR](https://github.com/bitcoin/bitcoin/pull/16762)  a while ago that was one of his this is how we could use Rust to improve bitcoind. This was having a block downloaded that downloads block headers over HTTP instead of the P2P network. It is a centralized way of checking that the headers are you getting over the P2P network are actually what other people seem to see as the best most work chain. If you were eclipsed and being fed bad blocks that would almost certainly have less work than the real chain. You would then be able to find via these HTTP served things which can then be secured by HTTPS in a centralized manner and at least give you an alert that you’ve been eclipsed and you don’t know what is going on. I think he has had a couple of other ideas like that. There is a [PR](https://github.com/bitcoin/bitcoin/pull/18988) that Antoine Riard that generalizes a bit and is not all in Rust. 
+
+The AltNet PR?
+
+Yeah that one. 
+
+That would be a cool idea to have alternative checks of these things. Maybe you would check your block height or some other thing in some other way. That would tip you off that something is wrong.
+
+If you are running a node that you expect to be visible to everyone else you can look it up on [Bitnodes](https://bitnodes.io/). 
+
+You are only on that if you are listening.
+
+If you’ve got an open port.
+
+I don’t think it is capturing all the Tor only nodes as well. If you are going to Tor only then you might not appear.
+
+Let’s say there are long term core developers who are running tonnes of nodes. Is there any way of monitoring the behavior of those DNS seeds to ensure that they don’t go malicious? It is certainly hard. But trying to detect that they are trying to put you on a fake chain and then flagging that the DNS seed has gone malicious.
+
+You could make every node or DNS seed put a digital signature on anything they send you. If they send you BS you could go on Reddit and complain “This guy sent me this with this public key.”
+
+I don’t think you need a digital signature to go on Reddit and complain.
+
+That would be flagging after the fact. My question was how do you flag it before a victim gets screwed by a malicious DNS seed.
+
+If your software can determine this guy is malicious and you have the signature you could forward the signature to everyone else saying “This guy sent me this bogus thing. Don’t use that guy.” It is really easy to change your identity on the network anyway so I don’t know if it makes sense.
+
+You can only forward things to everyone else if everyone else is on the P2P network. This is trying to get them on the P2P network in the first place. I think that falls down there.
+
+Because the idea is you are already in the malicious world and you are not connected to the good people.
+
+There is also another problem if your DNS resolver, the DNS server you have set in your configuration is malicious then you could answer with the wrong nodes for every seed node.
+
+# secp256kfun library
+
+https://github.com/LLFourn/secp256kfun
+
+My library is there. It is self explanatory. If you interested in making experimental cryptography in Rust check it out.
+
+How are you building it? Are you taking Pieter’s library libsecp library and translating the core parts into Rust? Where are you starting from?
+
+The individuals from Parity who wrote the alternative Rust Bitcoin node also wrote a pure Rust translation of it. The translation work was not done by me. If they hadn’t had done it I would never have done it. It is not guaranteed to have fidelity with the original C code so it is a risky choice. For experimentation it is decent enough. That is what I am using. On top of that I have so far only implemented BIP 340, ECDSA and the adaptor signatures for those. That is all that is there on top of the base secp library.
+
+Have you found any problems with their code that you have had to fix in terms of security stuff?
+
+With their code? One interesting thing, I did find a tiny [issue](https://github.com/bitcoin-core/secp256k1/issues/720) with the real secp library while doing it. I found some logic in the ECDSA signature code which was actually incorrect. I made an issue and they fixed it. One of the interesting features about this library is that it marks elliptic curve points as zero or non-zero. This is a scalar known not to be zero. That is important in various ways. Sometimes zero is an illegal state for a public key to be in. A public key can never be zero. What I found that was the signing code for libsecp256k1 allowed zero in a certain circumstance where it should not have. And also disallowed zero in a circumstance where it should not have. The logic of my library, when I was implementing ECDSA it showed me there is an error here. You can’t do it like that because this is meant to not be zero but it is actually zero. The compiler told me this is wrong and I said “This is wrong. How did they do it in libsecp?”
+
+Elichai said in the London [Socratic](https://diyhpl.us/wiki/transcripts/london-bitcoin-devs/2020-06-16-socratic-seminar-bip-schnorr/) they had a bunch of mistakes, the Parity implementation. One of them was they “replaced a bitwise AND with a logic AND which made constant time operations non-constant time.” He seems to think there were loads of mistakes.
+
+They had some mistakes for sure. There could be more. I can see some things where they have cut corners and not done it properly. There has been a huge amount gone into the C library by Pieter Wuille, Elichai and the rest of the squad. A huge amount of work and a lot of it has been done towards constant time and different kinds of side channel attacks. That work is nowhere near as good in that Parity library. The one he is talking about has been fixed obviously but there could be other problems with it. I didn’t find any problems with it. There have been problems found with it. There could be more. At least in my usage of it, when you multiply a curve point by a scalar it produces the right curve point which is pretty much all I need.
+
+The alternative is to build it from scratch. If it was really bad code. It sounds like it is not too bad.
+
+It is a pasta without too much thought going into it. It is literally the same code when they replace a bitwise AND with a logic AND. Obviously it is not the same thing. You cannot literally translate C into Rust. There were some corner cases where that doesn’t make sense and you really have to put some thought into how that should be done. They made some mistakes on. I am very glad it exists. I thank the Parity people, the Ethereum people for creating that. Without that I wouldn’t be able to build that library. I am very happy with how the library is done. Don’t use this to make a wallet or a node. That goes without saying. It is good for messing around and building proof of concept protocols. I am really excited about all the protocols coming into Bitcoin, Layer 2 protocols etc. This is a good way to have some code to do some testing on those ideas.
+
+# Generalized Bitcoin compatible channels
+
+https://eprint.iacr.org/2020/476.pdf
+
+Maybe we can talk about this paper next time. I am interested in people’s opinions on the paper. It is a way of getting symmetric state into Lightning. When you have Lightning nowadays you have two parties that both have a different transaction that represents the state for them. This paper is a trick to get it to symmetric state without eltoo. Eltoo has symmetric state. This proposal also has symmetric state. It uses adaptor signatures. It is a nice trick to do that. I would be interested in people’s opinions on this paper next time.
+
+Is there a short blog post version of that paper or mailing list post?
+
+I don’t think so. It was by some academics. I don’t think they have made a post about it. I can give the rough summary. Instead of having different transactions representing each person’s state, a transaction is the way to identify who put the transaction down. If transaction A goes down that means Alice put the transaction on the blockchain. If transaction B goes down it means Bob put the transaction on the blockchain. The A transaction has a path for punishing Alice if it is the revoked state. The B transaction has a path for punishing Bob if it is the revoked state. Instead Alice and Bob both have the same transaction but they have different adaptor signatures on the inputs of that transaction. When Alice or Bob post it it is the same transaction with the same ID but they reveal a different secret to the other party. That secret allows for the revocation to come in in a symmetric way with symmetric transactions rather than asymmetric transactions. That’s the summary. They give a more full academic explanation in there. It is a little bit tough but think about that idea and I would be interested to hear what people think about it.
+
