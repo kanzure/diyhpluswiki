@@ -1,0 +1,180 @@
+Name: Antoine Riard
+
+Topic: A Schnorr-Taproot’ed Lightning
+
+Location: Advancing Bitcoin
+
+Date: February 6th 2020
+
+Video (paid access): https://www.advancingbitcoin.com/video/a-schnorr-taprooted-lightning,11/
+
+Slides: https://www.dropbox.com/s/9vs54e9bqf317u0/Schnorr-Taproot%27ed-LN.pdf
+
+# Intro
+
+Today Schnorr and Taproot for Lightning, it is a really exciting topic.
+
+# Lightning architecture
+
+The Lightning architecture for those who are not familiar with it. You have the blockchain as the underlying layer. On top of it you are going to build a channel, you have a HTLC and people are going to spend onions to you. If you want to be paid you are going to send an invoice to the sender. 
+
+# What should we design Lightning for?
+
+What should we design Lightning for? When we are doing Lightning design spec, we are pouring a lot of brainpower into it and everyone has a different view of what Lightning should be. Should Lightning be a fast, payment transaction system? Should Lightning be optimized for microtransactions? Is Lightning really cool because you get instant finality of your transactions? Is privacy the reason we are doing Lightning? Lightning may have better privacy properties. When we are talking about privacy for Lightning it would be better to have the privacy of the base layer in mind. On the base layer you are going to broadcast transactions. There is an amount, it is not encrypted. There is an address, it is not encrypted. You are going to link inputs and outputs in the UTXO graph. 
+
+# What’s the privacy on the base layer?
+
+Privacy for the base layer is not that great that today. Lightning may be a way to solve privacy. 
+
+# What’s the privacy on Lightning?
+
+But on Lightning there is a payment path. Lightning nodes have pubkeys tied to them and that is an identity vector. With HTLCs you may reuse a hash, there are a lot of different privacy vectors. Privacy is I think really important if you want censorship resistant money. 
+
+# Why should we focus on privacy?
+
+“Cryptography rearranges power, it configures who can do what, from what” [The Moral Character of Cryptographic Work](https://web.cs.ucdavis.edu/~rogaway/papers/moral-fn.pdf) (Rogaway)
+
+If you don’t have privacy I can bribe or blackmail you because I know how you are using this tech. That is a huge vector of attack. There is this awesome paper by Philip Rogaway. I encourage everyone to read it.
+
+# EC-Schnorr: efficient signature scheme
+
+`Keypair = (x,P) with P= xG and ephemeral keypair (k,R) with R = kG`
+
+`Message hash = e = hash(R | m) and Signature = (R,s) with s = k + ex`
+
+`Verification = sG = R + eP`
+
+You can see Schnorr and Taproot as a privacy boost. The reason to modify the consensus base layer which is a lot of work, there are a lot of people involved, there has to be a good motivation for doing this. Schnorr is a replacement for ECDSA. Originally Satoshi didn’t get Schnorr into Bitcoin because there were some patent issues. Schnorr is really awesome because there is linearity in the verification equation of Schnorr. Linearity means it is easy to sum up components. It is easy to sum up signatures, it is easy to sum up pubkeys and it is easy to sum up nonces between different parties.
+
+# Taproot: privacy preserving Script Tree
+
+`Taproot pubkey: Q = P + tG with Q and P curve points`
+
+`t is the root of a Merkle tree where each leaf is a hash of a script`
+
+`Spending witness provides Merkle proof and script`
+
+The other big new consensus upgrade proposal, nothing has yet been adopted by the network, Taproot is the idea of building a Merkle tree of every leaf of the Merkle tree is going to be a script. You are going to commit the root of the Merkle tree inside the pubkey. That is cool. Now when you are going to spend a Taproot output you have two options. The first option is to use a keypath spend. The other option is to reveal one of the scripts plus a Merkle proof. This Merkle proof lets the network verify that this script has been committed with the initial commitment of the scriptPubKey, the pubkey of the transaction spend.
+
+# New consensus properties
+
+What are the new consensus properties of this upgrade? Linearity is the one we are going to use for this talk. With Taproot we have cheap complex scripts. Another advantage is under the Taproot assumption, if everyone agrees, you don’t have a disagreement, they can spend a Taproot output in a cooperative way so the script isn’t seen by any external observer.
+
+# More Schnorr-Taproot resources
+
+There are BIP numbers for [Schnorr](https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki), [Taproot](https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki) and [Tapscript](https://github.com/bitcoin/bips/blob/master/bip-0342.mediawiki). I encourage you to read the BIPs. There are also more resources on AJ Town’s GitHub [repo](https://github.com/ajtowns/taproot-review). 
+
+# Channel: “Plaintext” closing
+
+`P2WSH output: 0 <32-byte-hash>`
+
+`Witness script: 2 <pubkey1> <pubkey2> 2 OP_CHECKMULTISIG`
+
+Right now you are going to broadcast a funding transaction onchain. This funding transaction is going to be a pay-to-witness-script-hash (P2WSH). When you close the channel every peer of the network is going to see that was a 2-of-2. By revealing the script you are going to leak that you were using Lightning. How can we solve this?
+
+# Schnorr Taproot -Channel: “Discreet” closing
+
+`Taproot output: 1 <32-byte-pubkey>`
+
+`Witness script: <MuSig-sig>`
+
+We can embed the script in a Taproot output. This way if both parties agree to do a mutual closing you are not going to be able to disassociate this Lightning funding Taproot output from another Taproot output.
+
+# Channel: Worst-case closing
+
+Going further, even if we disagree ideally we would like the channel to not be seen by any party. The blockchain cares about faithful execution of the contract but ideally you shouldn’t learn about the amounts because amounts are part of the contract.
+
+# Schnorr Taproot -Channel: Pooled Commitment
+
+I think you can go further with this idea. You can encode the commitment transaction in its own Taptree and every Tapscript would be a HTLC. This Tapscript would spend to a 2nd stage transaction. This 2nd stage transaction would have two outputs. One output paying to the HTLC and the other one paying back to the Taptree minus the Tapscript spend. I think maybe SIGHASH_NOINPUT would be a better fit for this construction but there is a way to make the channel discreet. The blockchain shouldn’t learn about you doing some kind of offchain construction.
+
+# HTLC: Payment hash correlation
+
+Every HTLC part of the payment path reuse the same Script hashlock ie
+
+`OP_HASH160  <RIPEMD160(payment_hash)>  OP_EQUALVERIFY`
+
+Going further right now we are using a payment hash. Any HTLC part of the payment path is reusing the same hash. If you are a Chainalysis company and you are running spy nodes on the network or you are running big processing nodes and these nodes are part of the same payment path they are going to be able to guess “graph nearness” of the sender and receiver. That is really bad because right now payment paths are quite short given the current topology. Ideally we would like to use a different hashlock for every hop. 
+
+# Schnorr-Taproot: Point Time Locked Contract
+
+`partial_sig = sG = R + H(P | R | m)P`
+
+`adaptor_sig = s’G = T + R + H(P | R | m)P with the T the nonce tweak`
+
+`secret t = adaptor_sig - partial_sig`
+
+There is this cool idea of scriptless scripts by Andrew Poelstra who was speaking earlier today. With a scriptless script you are going to tweak the nonce pubkey with a secret. When one of the parties is ready to claim the secret she has to reveal it to unlock the output. 
+
+# PTLC protocol: setup phase
+
+(See diagram in slides)
+
+The protocol works like this. You are going to build an aggregated pubkey of 2-of-2. One of the parties is going to submit a modified nonce pubkey. Alice is going to send a partial sig to Bob. Bob is going to send his partial sig… When Bob is ready to claim the output he has to reveal the secret. That is a way to atomically exchange funds against a secret. You can reuse this primitive to build a world like Lightning payment paths. PTLC, point timelocked contracts, should be the replacement for HTLC. There will be three phases. The first phase, setup, you send a curve point to every part of the payment path.
+
+# PTLC protocol: update phase
+
+(See diagram in slides)
+
+The second phase is the update phase. You are going to exchange 	partial sigs between every hop of the payment path.
+
+# PTLC protocol: settlement phase
+
+(See diagram in slides)
+
+The last phase is the settlement one. Dave is going to reveal the secret that lets Carol learn about her own secret which is going to let Bob learn about his own secret. Bob is going to claim the PTLC from Alice. Alice is going to learn the final secret. This final secret can be reused to solve other issues. 
+
+# Invoices: proof-of-payment
+
+Right now when you are going to succeed a payment on the network you are going to learn the preimage. The preimage can be used as a proof of payment. But it doesn’t tell you who is the original sender. Every hop of the payment path can claim in front of a judge “I was the guy who made the payment. I have the preimage.” If you are able to also submit the invoice you can’t associate between parts of the payment path.
+
+# Schnorr Taproot Invoices: proof-of-payer
+
+Reusing the z value (zG has been signed by the receiver) of the PTLC protocol, you will be able to have this unique secret value. This unique secret value is only going to be learned by the original sender. This could be cool because you could use this to trigger a second stage contract or some kind of consumer protection escrow, something like this.
+
+# Onion-packet: simple payment or MPP
+
+MPP has been presented by Joost. Right now MPP is cool to solve liquidity issues but it may be a weakness for privacy because you may be able to do payment paths intersection between the different MPP used if a spying node of part of all MPP payment paths. Ideally you want to use a different value for this payment path. 
+
+# Schnorr Taproot onion packet: Discreet Log AMP
+
+There is the idea of using the same cryptography trick of Schnorr linearity. Before to set the payment path Alice the sender will offset the curve point received from Dave, the last hop of the payment path, by her own secret. You are going to send shards of the secret through every onion part of the atomic multipayment path. Only when all of them are locked at the last hop, is it going to be possible to combine the shard secrets and claim the payment.	
+
+# HTLC: stuck payments
+
+There is another issue right now which is being discussed on the [mailing list](https://lists.linuxfoundation.org/pipermail/lightning-dev/2019-June/002029.html). You send a payment, one of the hops on the payment path is going to be offline or not available. To cancel the payment and wait to send another one you have to first wait until the HTLC timelock expires to get the funds back to the original sender. Ideally you want a way so that the sender can cancel the payment without waiting. 
+
+# Schnorr Taproot HTLC: cancellable payments
+
+You can do this again thanks to the PTLC construction. The last secret is only going to be revealed by Alice when Dave, the receiver of the funds, is going to acknowledge that he received every payment packet. If you do this this is really cool because it may allow you to build higher level protocols, some kind of forward error correction. The idea is you are going to send more packets than needed to fulfill the payment. Thanks to this it is going to better UX because if one of the packets fails you still have more packets to pay the payee.
+
+# HTLC: simple hash-time-locked-contract
+
+The last thing that we can also build thanks to Schnorr… Right now HTLCs are pretty cool but they are pretty simple. There is only one timelock, there is only one hash. Maybe people are interested to have different hashes. One of the hashes is submitted by an escrow. It may be an arbiter in any contract. I am Alice, I am interested to get a shipment of some goods. I am funding a payment today but I never received my goods. You may be able to insert an escrow into your HTLC. By doing this it would mean every hop part of the payment path has to support the advanced HTLC. Worse it is going to learn the semantics of the contract.
+
+# Schnorr Taproot: end-to-end payment point contracts
+
+What you can do is instead of this is have payment point constructions. The idea is you still use scriptless scripts but you add other primitives thanks to key aggregation or ECDH. You can also do DLCs which is just a curve point. We may be able to build a wider class of HTLC packets or conditional payment packets. I foresee in a few years people doing futures or options on top of Lightning. This class of payments is going to be confidential. Only the endpoints are going to learn about this.
+
+# Protocol-side, no silver bullet, a lot of tricks
+
+Schnorr and Taproot, it is not a silver bullet. There are a lot of other leaks like when you are doing channel announcements on Lightning right now you are doxing yourself by linking a Lightning pubkey identity and onchain UTXO. In a few years people are going to wake up and say “This Lightning pubkey was linked to a domain name.” Then you will be able to link between a domain name and an onchain UTXO which is really bad. Even if we do PTLC for the payment path we still have issues with the CLTV delta which is the same on every hop. Also the amount stays the same minus the Lightning fees for every hop. Ideally we may want to implement further tricks like random CLTV delta routing algorithms or pad the payment path to always use 10 hops or 20 hops even if it is costlier. That may be better for privacy. Right now people are working on dual funded channels for Lightning. We may do Coinjoin for every funding transaction which would be really cool. Schnorr and Taproot are going to take more than one year to get integrated into Lightning. This will be only the start for building really consistent privacy for Lightning. 
+
+# Application-side, building private first apps
+
+Privacy is going to be the default for Lightning, I hope so. If you are going to build applications on top of this you should have this holistic approach and think “I have this Lightning protocol which provides me a lot of privacy. I will try to not break privacy for my application users.” You should think about integrating with Tor, identityless login or identityless tokens, that kind of stuff. I think that is a challenge for application developers building on top of Lightning but I think it is worth it. I am excited, Schnorr and Taproot have been proposed as BIPs and should be soft forked into the protocol if the community supports it. If you are interested to contribute to Lightning you are really welcome.
+
+# Thanks to Chaincode
+
+Thanks to Chaincode for supporting this work. Thanks to Advancing Bitcoin.
+
+# Q&A
+
+Q - How do you see Taproot being implemented in Lightning? Is it still Lightning?
+
+A - There are multiple ways. First you can integrate Taproot for the funding output. Then you can use Taproot for the HTLC output part of the commitment transaction. You can also use Taproot for the output of the second stage HTLC transaction. There are at least multiple outputs that can be concerned with Lightning. I think the first is to fix the funding output because if you do this we will benefit from the Taproot assumption. Using Taproot for commitment transactions you are still going to leak that you are using Lightning. Maybe we could use the pool construction I was talking about but that is harder stuff. I would chase this one first.
+
+Q - You said Lightning has privacy guarantees on its protocol but developers should make sure they don’t ruin the privacy guarantees on top of the base Lightning protocol. Do you see a tendency that applications are taking shortcuts on Lightning and ruining the privacy?
+
+A - Yes. Right now there is this idea of [trampoline routing](https://diyhpl.us/wiki/transcripts/lightning-conference/2019/2019-10-20-bastien-teinturier-trampoline-routing/) which is maybe great for user experience but on the privacy side it is broken. What gives us a lot of privacy in Lightning is source routing. Going to trampoline routing means the person who does the trampoline routing for you is going to learn who you are if you are using one hop and worse is going to know who you are sending funds to. There is trampoline routing, if you are not using privacy preserving Lightning clients… Nobody has done a real privacy study on Lightning clients. Neutrino, bloom filters, no one has done real research. They are not great, there are privacy leaks if you are using them. There are Lightning privacy issues and there are base layer privacy issues. If you are building an application you should have all of them in mind. It is really hard. Using the node pubkey I don’t think is great. I would like [rendez-vous routing](https://lists.linuxfoundation.org/pipermail/lightning-dev/2018-November/001498.html) to be done on Lightning to avoid announcing my pubkey, having my invoice tied to my pubkey and my pubkey being part of Lightning. And channel announcement of course. I hope at some point we have some kind of proof of ownership so I can prove I own this channel without revealing which UTXO I own. 
+
