@@ -1,0 +1,341 @@
+Name: Socratic Seminar
+
+Topic: Agenda in Reddit link below
+
+Location: Chicago BitDevs (online)
+
+Date: July 8th 2020
+
+Video: No video posted online
+
+Reddit link of the resources discussed: https://old.reddit.com/r/chibitdevs/
+
+The conversation has been anonymized by default to protect the identities of the participants. Those who have given permission for their comments to be attributed are attributed. If you were a participant and would like your comments to be attributed please get in touch.
+
+# Tainting, CoinJoin, PayJoin, CoinSwap Bitcoin dev mailing list post (Nopara)
+
+https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-June/017957.html
+
+….
+
+They see you spending it, they could think that is the coin you used on the darknet market.
+
+Who is “they” here? Is it a third party, a surveillance company?
+
+Yeah Chainalysis or something. It is a very binary thing. It is a clean coin that you withdrew from an exchange or you get a “dirty” coin that could be linked to nefarious activity. A Coinjoin, you are one of a hundred participants. When you see a coin coming out of a Coinjoin you don’t know what its history is. You just know that it was used in a private manner. 
+
+I do want to point out one distinction. If you do a Coinjoin your coins will be identified for two reasons. One if it is receiving any of the inputs of the transaction that were connected to the darknet market or any other taint. You are still going to be assigned a fractional… Suppose one tenth of the inputs of the Coinjoin were considered tainted, 10 percent of your funds are related to taint, it will say 100 percent is related to CoinJoin if they are able to identify it for that reason. That is how it happens in the industry right now.
+
+Being involved in a CoinJoin at all gives your UTXOs an interesting flavor from the point of view of people who consume blockchain analysis information. That may be discounted, that may be irrelevant but we have already seen examples where users of exchanges have had to go through additional hoops to continue using their account after their coins have been identified to be exiting to a CoinJoin.
+
+It sounds like it depends on what use case you are trying to target. If you have a blacklisted UTXO what would you want to use? Would you want to use something like PayJoin or CoinSwap to offload the UTXO altogether? Or something like CoinJoin with its probabilistic distribution?
+
+What you want to do is you want to use coin control and you want to consume blockchain analysis data so that you can have maximum flexibility where you can maintain pools of clean and dirty coins where according to your best guess their taint scores… Some coins are going to be fine for settling things with friends of buying stuff from individuals. Other things, if you want to engage in some activity that brings you face to face with more stringent compliance requirements then you have cleaner UTXOs that you would use for that purpose. I think the goal is to understand how these techniques work and set yourself up to adapt to their existence in a flexible way. That is my opinion.
+
+I think nopara is trying to explain here that if you are the party with the clean coin you have two options. One where you are doing a CoinJoin where you get one tenth of someone’s taint or do you want to do a PayJoin or a PaySwap where it is going to be binary. You either get a new clean coin and you mix anonymity sets with that or you get a 100 percent dirty coin that you now own and you have to deal with the complications with that. It is different threat models.
+
+If you had a clean coin why would you want to CoinSwap? 
+
+Say I bought 1 Bitcoin off Cash App and I want to anonymize it for later, I want to make it a dirty coin later. They won’t know that it was my dirty coin. I can’t just withdraw it to a darknet market, I want to mix it first.
+
+# WabiSabi
+
+https://github.com/zkSNACKs/WabiSabi/blob/master/explainer.md#wabisabi-by-analogy
+
+WabiSabi is what the Wasabi team is working on right now as a replacement for ZeroLink. ZeroLink is what all the current CoinJoin implementations use, a way to coordinate centrally a big CoinJoin transaction. Right now the limitation is that all the outputs, or at least the mixed outputs, all have equal amounts. You can’t really send in a CoinJoin and do fancy stuff. What they are working on is so you can coordinate one with arbitrary amounts, arbitrary transaction formats. They are two thirds the way there they say. They have figured out a way to make the protocol completely private and you can punish bad actors. You can do any amount of inputs and outputs and arbitrary amounts with that. They have also just today released what they are working on for the actual protocol, the messages people are sending and how they do it anonymously to preserve privacy and punish and ban other users. Now they are starting to work on transaction formats which once they have something settled on that it will be a lot more telling what the actual privacy properties you can get with this is. There was a long Block Digest podcast [episode](https://www.youtube.com/watch?v=U6WdW0Zbo9U) that went into the weeds on all this. I highly recommend a listen. It is really interesting the ideas they have going forward and how it works. One of the switches from ZeroLink, ZeroLink uses blinded digital signatures. Going through this I realized, digital signatures are nice for a third party to verify but since they are only using signatures for authentication they realized they could just use [anonymous credentials](https://eprint.iacr.org/2019/1416.pdf) that gives much better properties. Your wallet could be doing a CoinJoin for every send and receive. That could change the game for Bitcoin privacy.
+
+The number one limitation that this seems to lift is the uniform UTXO amount. You can have very large amounts. Is that right?
+
+Currently with Wasabi every output is around 0.1. With this ideally you could mix 1 Bitcoin a lot simpler. Or you could do a send in there. I have 1 Bitcoin, I want to send to my friend, I don’t need to mix before sending to make it anonymous. I could just send it and he won’t know where it is coming from.
+
+I haven’t looked at this one in particular. My question is if the intent is to mix arbitrary amounts how do you prevent someone from trying to trace your change really easily? 
+
+You will always have toxic change, that is an unsolvable problem. With this you get nicer properties because with a current CoinJoin you can do the math and see that these 2 0.1s and a 0.5 and you can see which one that is. With arbitrary amounts they do the math in one of their Wasabi Research Clubs but it kind of gets impossible to calculate if there are enough inputs, outputs and participants because it almost gets too hard for any computer to calculate the different outcomes and all the subsets. If you make it of sufficient size it is going to be really hard to do that.
+
+Does the protocol allow users to get guarantees about some kind of complexity parameter without committing so they can abort if the complexity factor parameter is too low? It seems like you could accidentally leave a transaction that has a solvable subset sum problem.
+
+I haven’t looked into the actual protocol yet but you could always just not sign the actual transaction once it comes to you if you don’t like it. I assume that is your way out.
+
+# MAD HTLC (Tsabary, Yechieli, Eyal)
+
+https://ittayeyal.github.io/2020-06-22-mad-htlc/
+
+https://bitcoinops.org/en/newsletters/2020/07/01/
+
+Since we last talked there has been a lot of security analysis done on the Lightning Network and how it behaves in different scenarios that the blockchain can be in. Let’s start by talking about how a HTLC is set up and what you can do with the HTLC itself in terms of trying to clawback money that you should have sent to your peer. One paper that has come out this last month is called “MAD-HTLC” which is an alternative proposal to the traditional HTLC that we all know and love. MAD stands for Mutually Assured Destruction. If somebody tries to cheat you, say Alice is paying Bob and Alice is trying to get her money back even though she paid Bob, it is another measure that Bob can use to make sure Alice doesn’t get the funds that she stole. The authors say it turns out the security of hash timelocked smart contracts relies on the good intentions of blockchain miners or at least their short sightedness. It is based on the assumption that miners, those businesses that make money from energy are altruistically mining. This is going to be a reoccurring theme we are going to talk about throughout this BitDevs. What incentives do miners have under certain situations for these offchain protocols? They talk about what a HTLC is and they describe the attack here. The attack takes place when Alice, the victim, tries to get the HTLC tokens by submitting her transaction. Bob who is attacking her responds with a transaction of his own that offers sufficiently higher fees. As a miner you always want to be maximizing profit, you see a better fee you say this is the one I want. Incentivizing miners to prefer his transaction over Alice’s, miners simply wait for the timeout phase of the HTLC to elapse and include Bob’s transaction. This results in Bob getting the HTLC token, miners get a higher fee and Alice gets nothing despite being the rightful owner of this Bitcoin. There is a key thing here in that Lightning protocol developers traditionally see HTLCs as waiting for the HTLC timelock to elapse. Alice can claim the funds right away, Bob can claim the funds after say 1 day. The paper authors argue that if the fee is high enough the miners may prefer the wait 1 day to get a higher fee on this transaction rather than claiming Alice’s fee right away. That breaks the security model of the HTLC that we use when thinking about how Lightning works. The authors also argue here that the fees don’t have to be that high, you can spend 1 dollar and yield 10,000 dollars. I think they are extrapolating a bit here. That is what the authors claim. They have an alternative proposal to fix this problem of miners wanting to take Bob’s time delayed transaction with a higher fee rather than Alice’s right away. What they do is add a second hashlock that Bob is required to solve. If the miners have both of these preimages they can just take the funds for themselves rather than have Bob get that money that he is stealing from Alice. That’s where the mutually assured destruction part of this is coming in. Alice doesn’t actually get the funds that she is rightfully owed but Bob doesn’t get them either. It is the miner that gets them. The miner is happy at the end of the day. Alice and Bob are sad. Hopefully it is a deterrent to keep Bob from engaging in this ploy to get around the incentives we set up around the Lightning Network. 
+
+The whole Lightning model is I offer you a HTLC and you can redeem the HTLC onchain if you present a witness with the preimage. The timelock is really an arbiter. Alice has the option to redeem the HTLC and when the timelock is expired Bob can claim back the HTLC with the timelocked transaction. That’s not what Lightning implementations are doing right now but ideally if you are Alice and you see your HTLC is going to expire in 10 blocks you are going to go onchain and broadcast the HTLC success transaction with a lower fee. You wait 3 blocks, you increase the fee, you wait 2 or 3 more blocks to increase the fee. Once you are near to expiry you burn the whole HTLC value in fees. That is the way to deter attack. I don’t think people are going to do this. There is another [paper](https://eprint.iacr.org/2020/774.pdf) which is quite similar to this one on “Timelocked Bribing” which is exactly the same issue. It has been written by the ETH Zurich group. At the end of the day it is not only attacks, when you are operating Lightning nodes you can see mempool congestion. If you have mempool congestion you should increase the fee rate. You can’t really disassociate between an attack and mempool congestion. 
+
+One thing I was wondering with this research is because they make such a big deal about doing the game theory calculation, do the game theory calculations take into account the behavior of Alice and Bob? Or is it just the miners? Is it possible to express the strategy that you mentioned?
+
+Here is the issue. If you want to save 1 Bitcoin HTLC maybe you need to be able to burn 1 Bitcoin in fees. Right now you can’t use the HTLC locked in value and burn it as fees. Assuming we have something like the [anchor outputs](https://github.com/lightningnetwork/lightning-rfc/pull/688) proposal you should have 1 Bitcoin ready to burn as fees in the worst case scenario. Mutually assured destruction through fees. If you try to attack me I am going to try to burn as much as you can gain in fees. To do this, for any HTLC you are going to route through your channel you need code to bump a UTXO. I don’t think people are going to be 100 percent covered. It will be like fractional reserve.
+
+We don’t need to complicate the smart contract anymore because this devolves back down to you can always pay more in fees and then you end up with a race to the bottom either way. You don’t need mutually assured destruction smart contract magic to do that. 
+
+I think there is a reduction in that this is an attack against anyone who is asking for block space. You want to use the chain but there is maybe 10,000 people who are going to fill the blocks for the next 10 blocks. At the end of the day it is a market and you are competing with every other potential participant and you must be ready to increase the fees. Until the timelock has expired you shouldn’t see the HTLC as lost. 
+
+# Flood & Loot: A Systemic Attack on the Lightning Network (Harris, Zohar)
+
+https://arxiv.org/pdf/2006.08513.pdf
+
+This is another idea for attacking the Lightning Network. They have a nice graphic down here that sums up the attack. On the left hand side there is the attacker’s source node and then on the right hand side we have the attacker’s target node. The attacker controls both of these endpoints. They are going to send transactions through the Lightning Network to pay themselves. That is the setup here. The idea is they are going to get these three nodes that they are routing this payment through and try to steal their money. This is the flooding phase that the authors intended. You flood a bunch of direct peers that you have and on the way back of claiming these HTLCs you loot these victims and take their money. There are four phases to this attack: the setup phase, a normal Lightning payment that you set up. You tell your victims you would like to pay this attacker node. You go through this setup, maybe they need to talk to some other people. The interesting stuff happens here at Step 3, Accepting Payments. A reminder, the attacker controls both the target node and the source node. What they are going to do is reveal the preimage here on the attacker’s node, give it to this guy, this guy is going to give it to this guy, this guy is going to give it to this guy and then the victim is going to give it to the attacker’s source node. But the attacker is not going to clear the HTLC off of their transaction. They are going to play dumb basically and say “That’s not right, I don’t know what you are doing”, just go unresponsive. The only remediation that the victim has for the source node playing dumb or going unresponsive is to broadcast a transaction to the chain. These transactions can get very big if you initiate a bunch of these HTLCs which means you need to pay a lot of fees to be able to claim these HTLCs onchain. We have talked about the flood portion, now we will talk about the loot portion. If all of these victim nodes at the same time have say 400 HTLCs on their transactions, that is a tonne of HTLCs. Then they all have to go to the chain at the same time because this source node here is not playing nice with any of its peers and is well connected. There could be a sudden increase of transactions in the mempool which drives up fee rates. That means that people may not be able to claim these HTLCs onchain. There are two related proposals here. Is this the one where the attacker waits out the timelock? There are two paths on the HTLC, there is the hashlock path and the timelock path. I think the trick with this attack is that if you take the timeout path you can bump the fee rate that allows you to get the transaction confirmed. 
+
+These kind of attacks, you can force the other party to broadcast its own commitment transaction and in this case you can set it up. Transactions right now are malleable. Post anchor outputs you will be able to malleate second stage transactions on your own commitment transactions. It would be easier to do these kind of attacks with anchor. But it doesn’t change that much, it is super easy to force the third party to broadcast its own commitment transaction.
+
+With the HTLC timeout transactions you can actually use replace-by-fee (RBF) on the timeout transactions? 
+
+Yes if you broadcast your own commitment transaction… to timeout a HTLC, anchor lets you do this on both commitment transactions.
+
+You would be able to RBF by 1 satoshi per byte or something like that. One more satoshi per byte than your peer’s fee rate and a rational miner would include your transaction over theirs. 
+
+How do you know your counterparty’s fee rate? Right now the fee rate is locked down because it is negotiated. But post anchor output you won’t know the potential fee rate of your counterparty. Again that is a race. That is game theory where you don’t know the move of your adversary assuming you don’t observe the P2P network. 
+
+Another flavor of these attacks on the Lightning Network of exploiting people that are directly peered with you and the attacker setting up the source and target of a Lightning Network payment.
+
+Are you able to somehow gain an advantage in a race with your counterparty? It sounded like you were saying there is an asymmetry in the feasibility or effectiveness of using RBF but I don’t really understand how that works in this context.
+
+You are taking two different spending paths on the HTLC. If you are on the timeout path you do not need your counterparty’s signature to be able to claim the funds. Whereas if you are claiming funds on the preimage path I do believe that both parties have to provide signatures on that, is that right?
+
+Not really. It does not depend on the path. Right now you have one commitment transaction for Alice and one commitment transaction for Bob. It is an asymmetric state. If Alice wants to broadcast her own commitment transaction and to spend the HTLC output her second stage transaction is locked down, not Bob’s one. You reverse the situation for Bob’s commitment transaction. If Bob has an anchor output he will be able to increase the fee rate even if Alice broadcasts her own commitment transaction.
+
+I thought for some reason you need two signatures on the HTLC-success transaction and in the `commitment_signed` message I thought you had to relay HTLC signatures to your peer?
+
+I don’t understand this part of the spec. 
+
+It sounds like we all need to go and look at the exact details of how the various spending paths for the HTLCs work. I think one of them is unilateral and the other one needs cooperation from both parties.
+
+Yes because it is not a OP_CLTV it is nLockTime. You can change the script to introduce a OP_CLTV in the script to force an offchain covenant. It is low level script design. It is an optimization. You win one onchain byte for one round of interactivity.
+
+# Disclosure of a fee blackmail attack (Rene Pickhardt)
+
+https://lists.linuxfoundation.org/pipermail/lightning-dev/2020-June/002735.html
+
+Let’s move onto this cousin I would say of attacking the Lightning Network. This is more or less very similar to what we just talked about. Instead of the attacker getting the funds it is a blackmail situation. Nobody can claim the funds but you can negotiate with your counterparty, you get half I get half sort of thing. I think Rene Pickhardt had a good TL;DR here. This attack demonstrates why opening a channel is not an entirely trustless activity. You actually do need to have a little bit of trust with your peer. With this attack the attacker will reliably only be able to force the victim to lose this amount of Bitcoin. 
+
+“It is not clear in practice how the attacker could gain this amount or parts of it as this would involve not only game theory but also rather quick communication between attacker and victim and customized Lightning nodes which at least for the victim would be unlikely to exist. None of the suggested fixes seems to be satisfying though the current solution of lowering the maximum amount of HTLCs that can be currently in flight seems to be a reasonable start for now”
+
+He talks about this Flood & Loot attack which we just went through about stealing the HTLC outputs of victims. In the blackmail attack he describes a way to force the victim to lose almost all of its funds due to high onchain fees which can be used to blackmail to victim. The meat and potatoes of the attack is during a fee spike, let’s assume fee estimators go from 1 satoshi per byte up to 150 satoshis per byte. The attacker spams the channel with the maximum number of HTLCs that the protocol allows. The HTLCs can be of very small values but need to be bigger than the dust limit so that they can be claimed onchain. He says here you can 483 HTLCs on a commitment transaction. That’s a lot of outputs, that’s a lot of HTLCs hanging on to a transaction which increases the fee rate needed to get it included onchain. Once the HTLCs are all set up the attacker will stop signing commitment transactions. In the beginning this is not suspicious because the HTLCs will take time to settle anyway. But also when fees go down and the victim who funded the channel wants to update their fees to move the fee rate down the attacker will not do that. “No we are going to stay at the 150 satoshis per byte, that’s the way it is. If you want to pay me to take our fee rate down I am happy to be paid to renegotiate fees with you. Otherwise tough luck. You are going to have to bite the bullet and pay the fees to the miners to get your transaction onchain.” Not a great situation. You could maybe consider this a design flaw with the current Lightning protocol. You have this collaborative fee negotiation going on. If you have a malicious counterparty they may not always play nicely with you and may try to exploit you in certain situations.
+
+I think we will be able to remove the `update_fee` in the long term because that is a malleability vector. You offer your counterparty a malleability vector in your transaction. I hope at some point we will be able to provide some kind of minimal fee to be sure the transaction propagates through the network and do a CPFP or something like this. To actually bind dynamically the fee to the transaction and not try to predict the future. 
+
+How does that introduce a malleability vector, this negotiating fees? 
+
+I might be able to decrease the fee rate of your transaction. By tricking your fee estimator to drive down the fee rate so low that your transaction is not going to propagate on the network. 
+
+It sounds like this is at a higher conceptual level where the fee calculation should be exogenous to the core protocol. The protocol itself should be independent of the details of fee calculation. There is a canonical form for each transition. The actual logic of the contract. 
+
+It shouldn’t be blurred with the contract?
+
+I have never heard the term malleability vector. That is a very interesting way to frame it. 
+
+We should remove this idea of fee negotiations, each party should manage its fee by itself. You should be able to set the fee rate of your commitment transaction as you want without cooperation from the other party.
+
+Rene’s takeaways, 3 and 4 are what really resounded with me. Don’t overpay in fees for commitment transactions because you can’t foresee the future anyway. It is a lose, lose I guess because you are probably not going to guess right. Don’t add HTLCs for which the onchain fee is higher than the HTLC’s value. I like to call these economically viable HTLCs. If it is not going to work onchain it is inherently going to rely on trust in your counterparty because you can’t revert to the blockchain to enforce these things.
+
+I can broadcast a commitment transaction and claim the HTLC later, you don’t know the fee rate of the future. Economically rational is the dynamic notion.
+
+# Pinning: The Good, The Bad, The Ugly (Antoine Riard)
+
+https://lists.linuxfoundation.org/pipermail/lightning-dev/2020-June/002758.html
+
+This is related to a lot of this higher level work on fees on Lightning. The game theory of the Lightning Network really relies on how fees interact with things and how quickly we can get things included in the blockchain to enforce these HTLC contracts. This mailing list post is talking about how the mempool works in Bitcoin. A mempool is where we collect transactions before they get included in a block. We usually prioritize them by fee rate so if you have the highest fee you are likely to be included in the next block. If you have a low fee it may be a few days before your transaction is included. We saw this behavior play out in the 2017 rampant market speculation that was going on. As Antoine says here the “Lightning security model relies on the unilateral capability for a channel participant to confirm transactions.” That means I don’t care what my peer thinks in my Lightning channel, I want to go to the chain now and he can’t do anything to stop me. That is a fundamental property that we need in Lightning to make the security model work. “This security model is actually turning back the double-spend problem to a private matter” which I thought was a really interesting insight here. “… making the duty of each channel participant to timely enforce its balance against the competing interest of its counterparties.” Not the entire Bitcoin ecosystem is responsible for enforcing say consensus rules, it is you that is responsible for enforcing the rules of your channel. There is nobody else that can help you modulo maybe watchtowers or something like that. As a byproduct of this from the base level you need to make sure we have effective propagation and timely confirmation of Lightning transactions because it is a cornerstone of the security model of Lightning. This is where it really starts to get interesting. Antoine points out here that “network mempools aren’t guaranteed to be convergent”. If somebody is running a Bitcoin node in Japan, somebody is running one in San Francisco, there is some network latency, one transaction is propagated to you faster on one side of the world. Another conflicting transaction is propagated faster on the other side of the world. You could end up with two different states of the world and then reject the other person’s state because it conflicts with what you see. You think it is invalid because you saw something else first. Order matters when keeping a local mempool. As Antoine says here “If subset X observes Alice commitment transaction and subset Y observes Bob commitment transaction, Alice’s HTLC-timeout spending her commitment won’t propagate beyond the X-Y set boundaries.” They will have two different states of the world. One set of the Bitcoin nodes will think the transaction is invalid, another set will think it is invalid and we won’t come to any sort of convergence on what mempools are. The whole point of a blockchain is to converge on a set of UTXOs over a long period of time. This is why we need confirmations to make sure that history is final onchain. A proposal that Antoine has is being able to unilaterally and dynamically bump the fee rate on any commitment transaction is a property that we need to ensure the Lightning Network’s security model is fully realized. “Assuming mempool congestion levels we have seen in the past months, currently deployed LN peers aren’t secure against scenario 2a and 2b.” One of these scenarios requires work at the base layer. 
+
+You explained a scenario where there is a partition in the network and Alice cheats by broadcasting a revoked state. On the partition that sees that Bob’s penalty transaction will work on the partition that saw Alice’s cheat attempt. But on the other partition they don’t see Alice’s cheat attempt so it doesn’t matter that Bob’s transaction doesn’t go onchain. 
+
+The attack scenario is not on stealing revoked channel states, it is stealing HTLCs. If I give you a preimage and I block you from confirming onchain your commitment transaction to redeem this incoming HTLC. I learn a preimage and I am going to timeout the HTLC. I am going to double spend you effectively in a routing scenario where it is Alice, Bob and Carol. Carol releases the preimage to Bob. Bob doesn’t update the channel state, goes onchain and broadcasts multiple different versions of his own commitment transaction. In that way Carol won’t be able to propagate her own version of the commitment transaction. There are different versions of this scenario, different ways to make it better. There might be risk for the attacker but someone can always have two commitment transactions between the time before you receive the signature for the next commitment transaction and the time you release the revocation secret. I can use these two versions of the commitment transaction and partition the network into two subsets. If I know your Lightning full node I can be sure that you are not going to learn about my commitment transaction, the valid one. Then when the timelock expires I increase the fee rate of my own commitment transaction so it is confirmed by the miners. The HTLC at the end of the day, the timelock is absolute. It is not relative to when the parent transaction gets confirmed onchain. 
+
+I need to think about in a more granular manner. The only attacks I foresee before this conversation were that cheat attempt and also the wormhole attack where you steal fees but this is a different scenario that I hadn’t thought about. 
+
+In Lightning the original paper was talking about revoked states but I think the most serious attack scenario in Lightning is trying to steal HTLC inflight. There are different ways to do this. You can target a routing node or you can target someone receiving a payment as a final node. It is not about ordering or masking a revoked state, it might be about leveraging a revoked state to block confirmation of your valid and honest commitment transaction to steal a HTLC from you. 
+
+Alice’s commitment transaction, Bob’s commitment transaction will spend the same UTXO. With the current Bitcoin Core mempool policy if you broadcast a transaction that is double spending a transaction that you already have in the mempool will Bitcoin Core reject that new transaction?
+
+It depends. If it is a RBF (replace-by-fee) one?
+
+I’m saying it is not. 
+
+If not it will be rejected.
+
+In this example with Alice’s and Bob’s commitment transactions they are not RBF. 
+
+They are. Commitment transactions are RBFable. You are using the nSequence of the input as a watermark, the commitment number or something like this. 
+
+You can’t RBF in practice because you need cooperation from your counterparty?
+
+The thing with update_fee, your counterparty knows the fee of your commitment transaction. 
+
+But you need the cooperation of your counterparty to RBF a commitment transaction?
+
+Yes but you don’t do this in practice. The Lightning model is if my counterparty is not responsive I am going to go onchain. Starting from this point I am not going to talk to my counterparty anymore for this channel. I am not going to sign a new commitment transaction with a higher fee rate. 
+
+I can RBF Bob’s commitment transaction if I am Alice?
+
+Assuming Alice’s commitment transaction fee rate is higher. [BIP 125](https://github.com/bitcoin/bips/blob/master/bip-0125.mediawiki), there are five rules. You need to pay for bandwidth, network bandwidth replacement and you need to pay to increase the fee rate compared to the already in the mempool transaction. We need to work on the base layer which is quite frustrating.
+
+# Bitcoin Optech on “New attack against LN payment atomicity”
+
+https://bitcoinops.org/en/newsletters/2020/04/29/#new-attack-against-ln-payment-atomicity 
+
+David Harding wrote this. He puts in concrete terms the different sorts of attacks on Lightning. You can have “preimage denial” which is Mallory can prevent Bob from learning the preimage by giving the preimage settlement transaction a low fee rate that keeps it from getting confirmed quickly. If Bob is only looking for preimages in the blockchain he won’t see Mallory’s transaction while it remains unconfirmed. The key thing with this preimage denial attack is Bob doesn’t have a mempool. He can only see what is in the blockchain. If Mallory, being malicious, gives a transaction a low fee it can look like the payment preimage has been revealed and Bob doesn’t know it. Mallory can steal Bob’s funds here. The second thing David talks about is prior to broadcasting the preimage settlement transaction she can prevent miners and Bitcoin relay nodes from accepting Bob’s later broadcast of the refund settlement transaction because the two transactions conflict which is just what we were talking about. They “both spend the same input (a UTXO created in the commitment transaction). In theory Bob’s refund settlement transaction will pay a higher fee rate and so can replace Mallory’s preimage settlement but in practice Mallory can use various transaction pinning techniques to prevent that replacement from happening.”
+
+The scenario described by David there, it is the first scenario described in Antoine’s mailing list [post](https://lists.linuxfoundation.org/pipermail/lightning-dev/2020-June/002758.html). Since then we have discovered a new scenario of pinning on the commitment transaction. Those are the most concerning ones and not fixed by anchor output. 
+
+There are three proposed solutions. Require a mempool, beg or pay for preimages and settlement transaction anchor outputs. It is interesting stuff. A lot more scrutiny on the Lightning Network security model in the last month so we can build a more resilient network.
+
+The TL;DR of all this Lightning stuff, is it you should probably trust your peers you have channels with?
+
+If you have a large amount of money you either really want to know your stuff with Lightning or you want some sort of trusted relationship with your direct peers.
+
+There is a cool built in security mechanism in Lightning, some kind of proof-of-stake. If I want to steal 1 Bitcoin from you I need to commit 1 Bitcoin onchain. I think that is one reason we don’t see that many attacks on Lightning. Right now if you open big channels, open them with people you know, entities you can assert identities. Work in progress.
+
+What are the next steps? As far as I understand there isn’t a solution to the transaction pinning attack?
+
+There is a solution, package relay which we are working on. Package relay has been discussed on the Bitcoin Core side for years now. That is quite heavy work. There is still talk on the design of it. Right now the peer-to-peer plan is already full. People are working on [BIP 339](https://github.com/bitcoin/bips/blob/master/bip-0339.mediawiki), witness transaction ID, better DOS improvements, Erlay also. All of these have interdependencies. There is a lot on the peer-to-peer side. 
+
+What is package relay?
+
+Right now I am going to send you one transaction, you have your full node, I have my full node. I announce a transaction and you fetch this transaction. The idea of package relay is I am going to send you two transactions to be sure that the fee rate of the parent transaction is high enough to get into your mempool. It is kind of lowering the CPFP logic onto the P2P layer.
+
+It is just broadcasting multiple transactions at the same time?
+
+You want the mempool evaluation of them to be atomic. 
+
+# BIP draft: BIP 32 Path Templates (Dmitry Petukhov)
+
+https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-July/018024.html
+
+This is similar to a wallet descriptor but it is kind of like a BIP 32 xpub descriptor, what valid BIP 32 paths to use with this xpub. What this lets you do is say if you are developing a wallet and your wallet only uses an account at index 0 with HD purpose 84, 0 and 1 for if it is change or not. In that example 0 to 5000, for the coin index, this makes it a lot easier for other wallets to be compatible with each other. Right now if you import an Electrum wallet into another wallet you will need to rescan and randomly search around to try to find the coins. With this you say exactly where your coins are going to be because it comes from this wallet with this descriptor. On Wasabi there is a lot of pushback on going off the most minimal implementation of BIP 44 where you are just using the purposes, the default account, zero and one for if it is change or not. This allows you to get outside of the box with that stuff and use it in more creative ways without other wallets not being able to find it unless they explicitly look for those random things. You just tell them my coins will be here, you should look here. I think that will be huge for backups and wallet interoperability. 
+
+The challenges with these things are always standards of standards. That cartoon where “let’s make a new standard that everyone uses but everyone is still using their own standard.”
+
+This is kind of a standard on top of a standard, not an additional standard. 
+
+I think in this case we are decontextualizing things. The original BIP 32 idea was that there would be a shared context that implementations would use to define HD keychains. That dream has not come to pass. It has not been possible to just rely on agreement in the community for how to structure a deterministic keychain. Stuff like this where it is like “Let’s give up and make it code” that is a good step in the right direction for sure. There is another proposal, I forget the exact number, where you can derive additional seeds. You can start with a single entropy input and you can essentially masquerade as fresh entropy to various applications. You have applications that require some entropy input and there is no way to unify them under a single keychain because that is a coordination problem so instead what you do is move that to the user and the user can control how that derivation happens and express it using code.
+
+# Reimagining Secret Sharing (Bellare, Dai, Rogaway)
+
+https://eprint.iacr.org/2020/800.pdf
+
+I thought this was a very cool paper that tackles an approach to secret sharing where you include some extra cryptographic guarantees. Probably one of the main things this does is it designs a system that actually commits to the secret that you are sharing. You have a message and you want to share it out amongst a bunch of participants, what this does is allows you to recover at most one secret from the shares. This has not been an explicit design goal of other systems. Shamir’s Secret Sharing and verifiable secret sharing have a slightly different property that they can actually be malleated to produce wrong secrets because they don’t actually commit to the secret that they are sharing. This fixes that. It also aims to be useful at the application level. It provides you with some primitives that you could implement in order to give you for example if you want to create fresh shares after the initial share distribution. The API is designed to allow you to do that. You could add additional randomness later on and create new shares that can be combined with shares that have already been created. It is a well written paper. I wouldn’t be comfortable commenting on the cryptography in it. 
+
+It seems to add some engineering considerations to actually using these sharing schemes.
+
+It is giving you a new set of primitives that are a little higher level. 
+
+Some impressive authors. 
+
+It is worth reading though it is not trivial. 
+
+# Scaling Verifiable Computation Using Efficient Set Accumulators (Ozdemir, Wahby, Whitehat, Boneh)
+
+https://eprint.iacr.org/2019/1494
+
+This one is a little bit arbitrary, I was just clicking through the Cryptology mailing list the other night to see what was going on. This is the first time I have seen something called a Pocklington certificate which is an efficient way of proving primality. The point of this paper is to construct an accumulator that is suitable for compiling small… systems which is the standard NP language that is used to construct ZK SNARKs. One of the cool things about this is instead of using an approach to certain structures in verifiable computation, traditional structures like Merkle trees which require a SNARK implementation of something like SHA256 they use entirely arithmetic hashing operations except for a small non-arithmetic hash function that is used for bootstrapping. The point of the paper is to allow for this accumulator which is just a set, a set that supports certain operations, and you can easily prove there is membership in the set. You can easily prove there is non-membership in the set to a computationally bounded verifier. It uses some novel techniques to get this and it gets better performance at larger batch sizes than the existing ones. The reason to look at this paper if you are not deep in the crypto world is twofold. One, it has some really clever ideas that are elementary. Two, it has a really great high level overview of how you actually build a ZK SNARK which was quite informative. There is a chance that would be implemented in some altcoin at some point but potentially something like this could be used to create a very nice closed membership system as well. You could use something like this in an extension chain perhaps to Bitcoin. 
+
+An application in cryptocurrency would be like determine if my transaction is in a block without actually seeing the full block? A block is a member of a certain blockchain. What would the use case be?
+
+That is the idea. You could say “We want to go to gigameg blocks, we are going to swallow that pill. We don’t want that to impose large costs on our nodes who are verifying the integrity of the chain.” A system like this can be used to make an argument for the correctness of the calculation of the UTXO set. You could output at the end a calculation of the UTXO set with efficient querying and have a guarantee that it was correctly computed from the consensus rules. It can be incrementally updated, that is the basic idea here.
+
+I think Zcash might be playing with some of this stuff now. I know Benedikt Bunz who is a researcher at Stanford who had a proposal called flyweight I think it was called that played on accumulators.
+
+There is a Utreexo [proposal](https://eprint.iacr.org/2019/611.pdf) from Tadge Dryja. Getting smaller accumulators would be great because that would be less bandwidth. It could be used there. Not only for onchain stuff but also for non-consensus stuff. 
+
+Absolutely. Anything where you have an untrusted but computationally strong service and you want to rely on this service to do some computation. The mode that we might like is you have some system at your house that is keeping up with all the consensus rules and it is producing small digests. Your phone is consuming these digests directly from your home service to make sure its view of the network is sound in some well defined sense. It doesn’t necessarily just have to be for global consensus it can be for keeping consensus between devices with different resource budgets. 
+
+# Time Dilation Attacks on the Lightning Network (Gleb Naumenko, Antoine Riard)
+
+https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-June/017920.html
+
+Right now for a Lightning channel if I am broadcasting a revoked state or if I am trying to close a channel and redeem a HTLC you need onchain access. You need to view the chain. We know that since the beginning of Lightning you need to watch the chain. What we didn’t know is eclipse attacks against Lightning nodes are far more worrying because I can announce the block on the real chain but I am doing so with a slowdown in announcements. Accumulating this slowdown the view of the chain by your Lightning node is going to be 20 blocks back. When I know that your view of the blockchain is 20 blocks back I am going to close the channel and the revocation delay is going to be 19 blocks. I am going to withdraw the funds and you are not going to be able to punish me. When your Lightning peer reaches the same height the timelock is going to already be expired. You need to see the chain but you also need to see the chain in a timely manner. Time is super important in Lightning. The cool thing about these attacks is you don’t need to assume hashrate for the attacker. Your counterparty doesn’t need to be a miner. 
+
+They control when you see blocks and they exploit that fact to steal funds from you.
+
+You should see the blockchain height as a system clock, the system clock of your Lightning channel. If I can trick this clock you are going to be in trouble. I can steal funds using different scenarios. 
+
+# On the Confidentiality of Amounts in Grin (Bagad, Vijayakumaran)
+
+https://eprint.iacr.org/2020/723.pdf
+
+This is talking about Grin which is a privacy blockchain, it is an implementation of Mimblewimble.
+
+They looked at the confidential transactions in Grin. They took advantage of the fact that Grin has a partially traceable blockchain. They were looking to see if they could come up with reliable bounds for the amounts in outputs even though they were obfuscated on the blockchain layer you could still see that this was a coinbase output that started with this much money and based on how people spent it combine different outputs together. This is a range for what amount of funds could be contained in these outputs. Largely the key takeaway is especially more than one hop away from coinbase there is not much you can tell. It wasn’t a substantial revelation in terms of them being able to see a lot of information in my opinion. Nevertheless it does remind you that if you do have a blockchain that has a transparent graph or a largely transparent graph, confidential transactions does not mean that it is literally any value. The paper points out to all extents and purposes more than one away from coinbase you don’t really need to think about it. Something to think about in a research sense but it is not super important for people to care about that much. 
+
+Looking at the abstract, “in a March 2020 snapshot of the Grin blockchain we find that out of the 110,149  unspent regular transaction outputs 983 of them have less than 1800 grin. On the other hand, 95 percent of the unspent regular transaction outputs in the snapshot have an upper bound which is at least 90 percent of the total Grin supply at their respective block heights. We conclude that while our method does not violate the confidentiality of the amounts in most of the outputs on the Grin blockchain, the amounts in some outputs can be estimated to be in a narrow range.”
+
+They are starting to probabilistically chip away at the privacy of the amounts in Grin. 
+
+The most important takeaway from the paper is that even when we talk about confidential transactions and how we “hide” amounts, there are nuances to this. I wouldn’t say from this confidential transactions in Grin have severe limitations, I would more remind people that it does not perfectly hide the amounts. Most researchers agree that you should think of Mimblewimble as an efficiency first protocol not a privacy first protocol.
+
+There were some experimental results around breaking cut through a few months ago. Somebody had set up infrastructure to observe transaction flow in Grin and reconstruct a huge chunk of the transaction graph. If you couple that with high confidence estimates of amounts then that is getting pretty close to being able to trace amounts through a transaction graph. I don’t how close it is but I wouldn’t be surprised if it was possible to get surprising results.
+
+A year ago someone released a paper saying that as a mempool observer they were able to deanonymize like 96 percent of Grin transactions.
+
+That is what I was referring to. It was the transaction graph that they were talking about. They were able to observe transactions pre cut through. People didn’t really understand that when transactions are gossiped if you have a well connected node you can see transactions in this gossip form before they are included in a block. If Grin users were cooperatively merging transactions prior to gossiping them then that would change the story a bit. 
+
+Or if they implemented some of the privacy stuff that has been implemented on Core with regards to hiding the source of transactions.
+
+Do they have a Dandelion protocol?
+
+Dandelion is dead pretty much. It was too complex. Being sure you have a secondary mempool for your Dandelion transactions and making sure it is not DOS-able was not possible. Maybe with a lot of engineering and reworking of Core internals but at this point there is no active work. 
+
+I believe Mimblewimble did implement Dandelion. I know that the proponents for Dandelion in the Core ecosystem backed away. There is this great [post](https://bitcoin.stackexchange.com/questions/81503/what-is-the-tradeoff-between-privacy-and-implementation-complexity-of-dandelion) by Suhas Daftuar. He laid out some of the reasons why Dandelion hasn’t been implemented on Core. 
+
+Working on package relay, Erlay, Dandelion that is a lot. P2P stuff can be really messy.
+
+# Blockchain is Watching You: Profiling and Deanonymizing Ethereum Users
+
+https://arxiv.org/pdf/2005.14051.pdf
+
+This is talking about the trade-offs that are made between the UTXO model and the account model. With the account model you have this longstanding identity I’d guess you’d say onchain. Ethereum is trying to figure out how to retain privacy in an account model system. 
+
+At a high level account based has worse privacy than output based because of “tainting” a specific output it taints the whole address. 
+
+Lightning is kind of an account based model. Right now it is two parties but at some point if you have multiparty channels there are maybe lessons to learn from this kind of stuff. 
+
+# Counting down Thunder: Timing Attacks on Privacy in Payment Channel Networks (Rohrer, Tschorsch)
+
+https://arxiv.org/pdf/2006.12143.pdf
+
+This is using timing side channels to identify payment source and destination. It is a bit different to attacking the timeout. 
+
+I listened to a summary of it on Block Digest. From my understanding it is someone does a whole bunch of payments, they first create a graph of latency for every node and then with that they do a bunch of payments on a bunch of nodes. Through that they can map out exactly where people are and create a network graph. Figure out where a payment is being routed through and deanonymize them that way.
+
+They are using the Lightning communication layers, gossip and ping, to do latency maps of every node. Doing another map with payment paths and overlapping the two maps, something like this?
+
+They are also looking at the locktime deltas to try to guess what the position is in the route.
+
+That is interesting but we are already discussing staggering the gossips and ping/pongs on the Lightning communication layer for other reasons but this would be great.
+
+# Decentralized Lightweight Detection of Eclipse Attacks on Bitcoin Clients
+
+https://arxiv.org/pdf/2007.02287.pdf
+
+There was one really cute suggestion to include Bitcoin blockchain information in HTTP headers that you are getting from random clicks around the internet. It paints this picture of a world where so many people care about Bitcoin security they are including special HTTP headers in random responses. You go to Wikipedia and it is telling you Bitcoin data. 
+
+They don’t make the distinction between link layer attacker and in protocol attacker, somebody messing up the address the receiver is receiving to. That is cool but you can also open a connection to blockchain.com, a HTTPS connection. If it is ubiquitous…
+
+# Supply Chain Attacks Against Ledger Nano X Wallets
+
+https://blog.kraken.com/post/5590/kraken-security-labs-supply-chain-attacks-against-ledger-nano-x/
+
+Kraken Security Labs posted this today. They identified a supply chain attack against Ledger Nano X wallets. There are two variants they were able to uncover. They go into how the architecture of the Nano X works and they have a nice video here showcasing how you could use this debugging protocol that is enabled by default when the Nano X ships. Then the protocol is turned off immediately the first time you plug in the Nano X. If this is not turned off you can use the Nano X as something that you did not intend it to be which is a hardware wallet. In this video they show how you can end up using the Nano X to fire up a web browser on your computer and go to kraken.com. It is showcasing what the exploit can do. Kraken.com obviously isn’t the worst thing in the world but you can imagine going to whatever site, downloading whatever malware. The Nano X is acting as a keyboard so it is giving access to whatever a keyboard can do and presumably a clever attacker could download some malware.
+
+The malware can slow down the blocks and if you have a Lightning node you could do time dilation attacks.
+
+That is a much more subtle one. I think you just get a clipboard utility that replaces Bitcoin addresses with the attacker’s Bitcoin address.
+
+Has Ledger commented on this? What is their approach for managing this debug mode for the non-secure processors?
+
+I believe both of these are patched, I did not look into the details of the patches though. Upgrade your Nano or your Ledger products if you have one.
+
+They [tweeted](https://twitter.com/Ledger/status/1280871274764537857) out about ten hours ago saying their latest firmware update fixes this.
+
+It was an oversight it sounds like.
+
+The second flavor of this attack is called blinding the Ledger. The Ledger has a GUI on it where you can see your Bitcoin address and whatever coin you want to spend etc. You press ok to issue a transaction. The second attack is making it look like your Ledger screen is not working. Nothing appears and the idea here is you have malware on your computer that is saying your Ledger is broken, press button X, button Y in this order and it will fire back up. In reality the Ledger is working fine, the display is just off and by pressing those buttons you issued a transaction to the attacker’s Bitcoin address. Your money gets stolen that way. They are not the worst vulnerabilities in the world but it is good to be fixing stuff like this. It would take quite a bit of effort to pull off these two attacks. The TL;DR in terms of buying hardware wallets is buy from trusted stores, they have a page on ledger.com to verify transactions with the Nano X. If things are acting funky it is probably best to unplug the wallet, be cautious and read some stuff to figure out what is going on. They have a bunch of technical details down here, I am not going to go into them. It goes into the design of the board, how you are hooking up the Ledger etc. It is good to see Kraken putting some money into protecting everybody that uses various security related products in the crypto ecosystem.
+
+You normally want to air gap your wallet to protect your keys but in this case you are air gapping it to protect your computer.
+
+That is a funny reversal.
+
+That’s it for Socratic Seminar 10 from Chicago BitDevs. Thanks for coming and participating.
