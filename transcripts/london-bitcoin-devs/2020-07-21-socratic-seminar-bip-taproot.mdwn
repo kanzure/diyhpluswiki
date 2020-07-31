@@ -1,0 +1,588 @@
+Name: Socratic Seminar
+
+Topic: BIP Taproot (BIP 341)
+
+Location: London BitDevs (online)
+
+Date: July 21st 2020
+
+Video: https://www.youtube.com/watch?v=bPcguc108QM
+
+Pastebin of the resources discussed: https://pastebin.com/vsT3DNqW
+
+Transcript of Socratic Seminar on BIP-Schnorr: https://diyhpl.us/wiki/transcripts/london-bitcoin-devs/2020-06-16-socratic-seminar-bip-schnorr/
+
+The conversation has been anonymized by default to protect the identities of the participants. Those who have given permission for their comments to be attributed are attributed. If you were a participant and would like your comments to be attributed please get in touch.
+
+# Introductions
+
+Michael Folkson (MF): This is a Socratic Seminar on BIP-Taproot. Sorry for the delay for the people on the YouTube livestream. This is in partnership between London BitDevs and [Bitcoin Munich](https://www.meetup.com/Bitcoin-Munich/). We were going to have two events on the same day at the same time so we thought rather than have two events clashing we would combine them, have the same event and have people from both London and Munich on the call. But there are people from everywhere not just London and Munich. A few words on Bitcoin Munich. It is the original Bitcoin meetup in Munich. I’ve had the pleasure of attending a Socratic last year, the week before The Lightning Conference. It has been around for years, certainly a few more years than we have at London BitDevs. Socratic Seminars, we’ve had a few in the past, I don’t need to speak about Socratic Seminars. Originated at BitDevs in New York, discussion not presentation, feel free to interrupt, ask questions. Questions, comments on YouTube, we will be monitoring the YouTube, we will be monitoring Twitter and IRC \#\#ldnbitcoindevs. If you are watching the livestream questions and comments are very welcome. There will be a transcript as well but please don’t let that put you off participating. We can edit the transcript afterwards, we can edit the video afterwards, we are not trying to catch people out or whatever. This is purely for educational purposes. The subject is Taproot, Tapscript is also fine, [BIP 341](https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki), [BIP 342](https://github.com/bitcoin/bips/blob/master/bip-0342.mediawiki). We have already had a [Socratic Seminar](https://diyhpl.us/wiki/transcripts/london-bitcoin-devs/2020-06-16-socratic-seminar-bip-schnorr/) on BIP-Schnorr so we’ll avoid Schnorr generally but it is fine to stray onto Schnorr because obviously there is interaction between Schnorr and Taproot. What we won’t be discussing though is activation. No discussion on activation. Maybe we will have a Socratic next month on activation. If you are interested in activation join the IRC channel \#\#taproot-activation. We start with introductions. If you want to do an introduction please do, who you are, what you are working on and what you are interested in in terms of Taproot stuff.
+
+Emzy (E): I am Emzy, I am involved in running servers for Bisq, the decentralized exchange and I am really thrilled about Taproot and learning more Bitcoin in depth.
+
+Albert M (AM): I am Albert, I am an information security consultant and I am also interested in the privacy aspects of this new proposal.
+
+Pieter Wuille (PW): I’m Pieter, I work at Blockstream and on Bitcoin and I am one of the co-authors of the proposal being discussed.
+
+Auriol (A): I am Auriol. I am just curious as to how the conversation has transitioned over the past year. On the topic I am very interested in the privacy aspects of this new technology.
+
+Elichai Turkel (ET): Hi I’m Elichai, I work at DAGlabs and I work on Bitcoin and libsecp. I hope we can get this in the next year or so.
+
+Will Clark (WC): I am Will, I have been working with goTenna doing some Lightning stuff over mesh networks. Like Albert and Auriol and I am interested in the privacy benefits to this.
+
+# Introduction to MAST
+
+MF: There is a [reading list](https://pastebin.com/vsT3DNqW) that I shared. What we normally do is we start from basics. For the people, there are a couple of new people on the call, we’ll start with MAST and discuss and explain how MAST works. Absolute basics does someone want to explain a Merkle tree?
+
+WC: It is a structure of hashes where you pair up the hashes. You make an even number of hashes and if you’ve got an odd number then you will duplicate the last hash. You pair them up in a binary tree structure so that you can show in a logarithmically expanding size a path along the tree.
+
+MF: Basically we are trying to combine a lot of information within a tree structure. A hash condenses anything, the contents of a whole book, an encyclopedia into just one small digest. With a tree you’ve got a bunch of hashes all on leaves in the tree and they get hashed up pairwise up until the top of the Merkle tree which is called the root. It is a way of condensing a lot of information into a very small digest at the top which is effectively the root. If that is a Merkle tree what was the idea behind MAST?
+
+AM: A Merkle tree is a structure of inputs and outputs combined with the coinbase?
+
+PW: That is one use of Merkle trees in Bitcoin but not the one we are talking about here. 
+
+A: Different conditions that are covered in Merkle tree, instead of combining all that information into a single hash, it separates out different hashes so they can remain individualistic as opposed to combining information and revealing too much about all information in one lump sum.
+
+E: I understand that it is if you have different contracts for moving value on Bitcoin you can reveal only one of the paths in the Merkle tree and use this without showing the other paths that are possible.
+
+MF: Let’s go through the reading list then because there are some interesting intricacies around MAST and it dates back to 2012, 2013 as most things do. The first [link](https://diyhpl.us/wiki/transcripts/london-bitcoin-devs/2020-06-16-socratic-seminar-bip-schnorr/) is the Socratic Seminar that we had on Schnorr before. Then there is the [transcript](https://diyhpl.us/wiki/transcripts/london-bitcoin-devs/2020-06-17-tim-ruffing-schnorr-multisig/) to Tim Ruffing’s presentation. Tim Ruffing presented last month on Taproot and Schnorr multisignature and threshold signature schemes. Then we have links on MAST.
+
+# Aaron van Wirdum Bitcoin Magazine article on MAST (2016)
+
+https://bitcoinmagazine.com/articles/the-next-step-to-improve-bitcoin-s-flexibility-scalability-and-privacy-is-called-mast-1476388597
+
+MF: The first link is that Aaron van Wirdum Bitcoin Magazine article on MAST. That is a good intro to what MAST is. He describes it as essentially merging the potential of P2SH with that of Merkle trees. He gives a primer of Merkle trees and says that instead of locking Bitcoin up in a single script, with MAST the same Bitcoin can be locked up into a series of different scripts which was effectively what Emzy was saying.
+
+# David Harding article on What is a Bitcoin Merklized Abstract Syntax Tree (2017)?
+
+https://bitcointechtalk.com/what-is-a-bitcoin-merklized-abstract-syntax-tree-mast-33fdf2da5e2f
+
+MF: I found a link which I will share in the chat which was David Harding’s article from 2017 on what is a Bitcoin Merklized Abstract Syntax Tree? That has some info that I hadn’t previously seen before which included the fact that Russell O’Connor is universally credited with first describing MAST in a discussion. Russell is apparently on the call. That first idea of MAST, perhaps Pieter you can talk about the discussion you had back then?
+
+PW: I really need Russell here because he will disagree with me. I seem to recall that the first idea of breaking up a script into a Merkle tree of spendability conditions is something that arrived in a private discussion I had with Russell a number of years ago. In my mind it has always been he who came up with it but maybe he thinks different.
+
+# BIP 114 and BIP 116 MAST proposals
+
+https://github.com/bitcoin/bips/blob/master/bip-0114.mediawiki
+
+https://github.com/bitcoin/bips/blob/master/bip-0116.mediawiki
+
+MF: Some of the ideas around MAST, there was BIP 116 which was OP_MERKLEBRANCHVERIFY, that was from Mark Friedenbach. There was also BIP 114 which was another detailed BIP from Johnson Lau on Merklized Abstract Syntax Trees. There did seem to be a considerable effort to get MAST formalized back in 2016,17. When MAST was being finalized, we’ll come onto Key Tree Signatures which you discussed at SF Bitcoin Devs at around the same time, there did seem to be an effort to get MAST into Bitcoin even before SegWit. Perhaps Pieter you could enlighten us with your thoughts on these BIPs and some of this work done by Johnson Lau and Mark Friedenbach?
+
+PW: I think they just didn’t have enough momentum at the time. There were a lot of things to do around SegWit and it is hard to focus on multiple things. It is really hard to say what causes one thing to get more traction than others. I think both BIP 114 and MERKLEBRANCHVERIFY were more flexible than what is now included in BIP 341. MERKLEBRANCHVERIFY didn’t really construct a Merkle root structure itself in script validation but it enabled you to implement it yourself inside the script language which is more flexible. It can do something like grab multiple things from a Merkle tree. Say you have a thousand keys and you want to do a 3-of-10 out of it for example, this is not something that BIP 341 can do. At the same time by not doing it as part of a script but as part of a script structure you get some efficiency gains. It is hard to go into detail but you get some redundancy if you want to create a script that contains a Merkle root and then verifies against that Merkle root that a particular subscript is being executed. It is a trade-off between flexibility in structure and efficiency. 
+
+MF: Russell (O’Connor) is here. The very first conversations on MAST, can you remember the discussion? Was is it a light bulb moment of “Let’s use Merkle trees and condense scripts into a Merkle tree”? I saw that you were credited with the idea.
+
+Russell O’Connor (RO): It goes back to some possibly private IRC conversations I had with Pieter back in 2012 I believe. At that time I was musing about if we were to design a Bitcoin or blockchain from scratch what would it look like? I am a bit of a language person, I have been interested in Script and Script alternatives. I was like “This concatenation thing that we have, the original concatenation of scripts idea in Bitcoin doesn’t actually really work very well because it was the source of this OP_RETURN bug.” It is weird to do computation in the scriptSig hash of that concatenation because all you are doing is setting up the environment for the scriptPubKey to execute in. This is reflected in the modern day situation where even in SegWit there is no real scriptSig program in a sense. It just sets up a stack. That is the environment for which the scriptPubKey runs in. I am a bit of a functional programmer so alternative functional programs where the inputs would just be the environment that the program runs in and then the program would execute. Then when you start thinking that way, the branches in your case expressions can be pruned away because they don’t have to show up on the blockchain. That is where I got this idea of MAST, where I coined the name MAST, Merklized Abstract Syntax Trees. If you take the abstract syntax and look at its tree or DAG structure then instead of just hashing at as a linear piece of text you can hash it according to the expression constructs. This allows you to immediately start noticing you can prune away unused parts of those expressions. In particular the case expressions that are not executed. That is where that idea came from. Eventually that original idea turned into the design for [Simplicity](https://blockstream.com/2018/11/28/en-simplicity-github/) which I have been working on for the last couple of years. But the MAST aspect of that is more general and it appears in Taproot and other earlier proposals.
+
+MF: Russell do you remember looking through the BIPs from Johnson Lau and Mark Friedenbach? Or is it too far away that you’ve forgotten the high level details.
+
+RO: I wasn’t really involved in the construction of those proposals so I am not a good person to discuss them.
+
+MF: Some of the interesting stuff that I saw was this [tail call](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-September/015028.html) stuff. An implicit tail call execution semantics in P2SH and how “a normal script is supposed to finish with just true or false on the stack. Any script that finishes execution with more than a single element on the stack is in violation of the so-called clean-stack rule and is considered non-standard.” I don’t think we have anybody on the call who has any more details on those BIPs, the Friedenbach and Johnson Lau work. There was also Jeremy Rubin’s [paper](https://rubin.io/public/pdfs/858report.pdf) on Merklized Abstract Syntax Trees which again I don’t think Jeremy is here and I don’t think people on the call remember the details.
+
+PW: One comment I wanted to make is I think what Russell and I talked about originally with the term MAST isn’t exactly what it is referred to now. Correct me if I’m wrong Russell but I think the name MAST better applies to the Simplicity style where you have an actual abstract syntax tree where every node is a Merklization of its subtree as opposed to BIP 114, 116, BIP-Taproot, which is just a Merkle tree of conditions and the scripts are all at the bottom. Does that distinction make sense? In BIP 340 we don’t use the term MAST except as a reference to the name because what it is doing shouldn’t be called MAST. There is no abstract syntax tree.
+
+MF: To clarify all the leaves are at the bottom of the trees, as far down as you need to go.
+
+PW: I think the term MAST should refer to the script is the tree. Not you have a bunch of trees in the leaves which is what modern MAST named proposals do.
+
+RO: This is a good point. Somebody suggested the alternative reinterpretation of the acronym as Merklized Alternative Script Trees which is maybe a more accurate description of what is going on in Taproot than what is going on in Simplicity where it is actually the script itself that is Merklized rather than the collection of leaves.
+
+PW: To be a bit more concrete in something actually MAST every node would be annotated with an opcode. It would be AND of these two subtrees or OR of these two subtrees. As opposed to pushing all the scripts down at the bottom.
+
+MF: I think we were going to come onto this after we discussed Key Tree Signatures. While we are on it, this is the difference between all the leaves just being standalone scripts versus having combinations of leaves. There could potentially be a design where there is two leaves and you do an OR between those two leaves or an AND between these two leaves. Whereas with Taproot you don’t, you just take one leaf and satisfy that one leaf. Is that correct?
+
+RO: I think that is a fair statement.
+
+Nothingmuch (N): We haven’t really defined what abstract syntax tree means in the wider setting but maybe it makes sense to go over that given that Bitcoin Script is a Forth like language it doesn’t really have syntax per se. The OP_IF, ELSE, THEN are handled a little bit differently than real Forth so you could claim that that has a tree structure. In a hypothetical language with a real syntax tree it makes a lot more sense to treat the programs as hierarchical whereas in Script they are historically encoded as just a linear sequence of symbols. In this regard the tree structure doesn’t really pertain to the language itself. It pertains to combining leaves of this type in the modern proposals into a large disjunction.
+
+PW: When we are talking about “real” MAST it would not be something that is remotely similar to Script today. It is just a hierarchically structured language and every opcode hashes its arguments together. If you compare that with BIP 341 every inner node in the tree is an OR. You cannot have a node that does anything else. I guess that is a difference. 
+
+MF: Why does it have to be like that? 
+
+PW: Just limitation of the design space. It takes us way too far if you want to do everything. That is my opinion to be clear.
+
+RO: We could talk about the advantages and disadvantages of that design decision. The disadvantage is that you have to pull all your IF statements that you would have in your linear script up to the top level. In particular if you have an IF then ELSE statement followed by a second IF then ELSE statement or block of code you have two control paths that join back together and then you get another control paths. But when you lift that to the Taproot construction you basically enumerate all the code paths and you have to have four leaves for those four possible ways of traversing those pairs of code paths. This causes a combinatorial explosion in the number of leaves that you have to specify. But of course on the flip side because of the binary tree structure of the Taproot redemption you only need a logarithmic number of Merkle branch nodes to get to any given leaf in general. You just need logarithm space of an exponential number of explosion cases and it balances each other out.
+
+PW: To give an example. Say you want to do a 3-of-1000 multisig. You could write it as a single linear script that just pushes 1000 keys, asks for three signatures and does some scripting to do the verification. In Taproot you would expand this to the exact number, probably in the range of 100 million combinations there are for the 3-of-1000. Make one leaf for each of the combinations. In a more expressive script you could choose a different trade-off. Just have three different trees that only need 1000 elements. It would be much simpler to construct a script but you also lose some privacy.
+
+MF: I see that there is potential complexity if you are starting to use multiple leaves at the same time in different combinations. The benefit is that you are potentially able to minimize the number of levels you need to go down. If every Tapscript was just a combination of different other Tapscripts you wouldn’t have to go so far down. You wouldn’t have to reveal so many hashes down the different levels which could potentially be an efficiency.
+
+PW: Not just an efficiency. It may make it tractable. If I don’t do 3-of-1000 but 6-of-1000 enumerating all combinations isn’t tractable anymore. It is like trillions of combinations you need to go through. Just computing the Merkle root of that is not something you can reasonably do anymore. If you are faced with such a policy that you want to implement you need something else. Presumably that would mean you create a linear script, old style scripting, that does “Check a signature, add it, check a signature, add it, check a signature, add it” and see that it adds up to 6. This works but in a more expressive script language you could still partially Merklize this without blowing up the combination space.
+
+RO: I think the advantage here is that we still use the same script language at the leaves and we get this very easy and very powerful benefit of excluding combinations just by putting this tree structure on an outer layer containing script. Whereas to get the full advantages of a prunable script language it means reinventing script.
+
+MF: We’ll get onto Key Tree Signatures but then you do have to outline all the different combinations of signatures that could perhaps satisfy the script. Pieter had a slide on that SF Bitcoin Devs [presentation](https://diyhpl.us/wiki/transcripts/sf-bitcoin-meetup/2015-08-24-pieter-wuille-key-tree-signatures/) that we will get onto later which had “First signature, second signature”, the next leaf would be “First signature, third signature” and the next leaf would be “Second signature, third signature”, you did have to outline all the different options. But I don’t understand why you’d have to do that in a script sense. Why do you have to outline all those different combinations? Why can’t you just say “I am going to satisfy a combination of Leaf A and Leaf D”? 
+
+PW: You are now talking about why can’t you do this in a linear script?
+
+MF: Yeah
+
+PW: You absolutely can. But it has privacy downsides because you are now revealing your entire policy when you are spending. While if you break it up into a Merkle tree you are only revealing this is the exact keys that signed and there were other options. There were probably many but you don’t reveal what those were. The most extreme is a linear script. Right now in a script language you write out a policy as an imperative program and it is a single program that has everything. The other extreme is what BIP 341 is aiming for, that is you break down your policy in as small pieces as possible and put them in a Merkle tree and now you only reveal the one you actually use. As long as that is tractable, that is usually very close to optimal. But with a more expressive language you have more levels between those two where you can say “I am going to Merklize some things but this part that is intractable I am not going to Merklize.” We chose not to do that in BIP 341 just because of the design space explosion you get. We didn’t want to get into designing a new script language from scratch. 
+
+A: How do you know that a Merkle root is in fact the Merkle root for a given tree? Say it is locking up funds for participants, how are participants sure that it is not a leaf of a larger tree or a group of trees? Is there a way to provide proofs against this? What Elichai suggested is that it is as if you are using two preimages. He says that it would break the hash function to do this.
+
+ET: Before Pieter starts talking about problems specific in Merkle trees, there could be a way if you implement the Merkle tree badly that you can fake a node to also be a leaf because of the construction without breaking the hash function. But assuming the Merkle tree is good then you shouldn’t be able to fake that without breaking the hash function.
+
+PW: If a Merkle tree is constructed well it is a cryptographic commitment to the list of its inputs, of the leaves. All the properties that you expect from a hash function really apply. Such as given a particular Merkle root you cannot just find another set of leaves that hash to the same thing. Or given a set of leaves you cannot find another set of leaves that hash to the same thing. Or you cannot find two distinct set of leaves that hash to the same thing and so on. Maybe at a higher level if you are a participant in a policy that is complex and has many leaves you will probably want to see the entire tree before agreeing to participate. So you know what the exact policy is. 
+
+A: You are talking about collisions correct?
+
+PW: Yes collision and preimage attacks. If a Merkle tree is constructed well and is constructed using a hash function that has normal properties then it is collision and preimage resistant. 
+
+MF: In the chat nothingmuch says does it make sense to consider P2SH and OP_EVAL discussions? That helped nothingmuch understand better.
+
+N: I think we are past that point.
+
+MF: We talked a little about P2SH. We didn’t discuss OP_EVAL really.
+
+N: To discuss Auriol’s point, one thing that I think nobody addressed is and maybe the reason for the confusion is that every Taproot output commits to a Merkle root directly. So the root is given as it were. What you need to make sure is that the way that you spend it relates to a specific known root not the other way round. For the P2SH and OP_EVAL stuff it was a convenient segue for myself a few years ago reading about this to think about what you can really do with Bitcoin Script? From a theoretical computer science point of view it is not very much given that it doesn’t have looping and stuff like that. Redeem scripts and P2SH add a first order extension of that where you can have one layer of indirection where the scriptPubKey effectively calls a function which is the redeem script. But you can’t do this recursively as far as I know. [OP_EVAL](https://github.com/bitcoin/bips/blob/master/bip-0012.mediawiki) was a BIP by Gavin Andresen and I think it was basically the ability to evaluate something that is analogous to a redeem script as part of a program so you can have a finite number of nested levels. You can imagine a script that has two branches with two OP_EVALs for committing to separate redeem scripts and that structure is already very much like a MAST structure. That is why I brought it up earlier.
+
+# Pieter Wuille at SF Bitcoin Devs on Key Tree Signatures
+
+https://diyhpl.us/wiki/transcripts/sf-bitcoin-meetup/2015-08-24-pieter-wuille-key-tree-signatures/
+
+MF: This is your talk Pieter on Key Tree Signatures. A high level summary, this is using Merkle trees to do multisig. This is where every leaf at the bottom of the tree are all the different combinations. If you have a 2-of-3 and the parties are A, B and C you need a leaf that is A, B, you need a leaf that is A, C, you need a leaf that is B, C. Any possible options to get a multisig within a Merkle tree structure.
+
+PW: Key Tree Signatures was really exploiting the observation at the time in Elements Alpha, we even unintentionally had enabled functionality that did this. It didn’t have Merkle tree functionality and it didn’t have key aggregation. It didn’t have any of those things. But it had enough opcodes that you could actually implement a Merkle tree in the Script language. The interesting thing about that was that it didn’t require any specific support beyond what Elements Alpha at the time had. What BIP 341 is do is much more flexible than that because it actually lets you have a separate script in every leaf. The only thing Key Tree Signatures could do was a Merkle tree where every leaf was a public key. At the same time it did go into what the efficiency trade-offs are and how things scale. Those map well. 
+
+MF: It could be implemented straight on Elements Alpha but it couldn’t be implemented on Bitcoin Core. It needed OP_CAT?
+
+PW: Yes it couldn’t be implemented on Bitcoin at the time and still can’t.
+
+MF: There are no plans to enable OP_CAT anytime soon?
+
+PW: I have heard people talk about that. There are some use cases for that. Really the entire set of use cases that Key Tree Signatures aim to address are completely subsumed by Taproot. By introducing a native Merkle tree structure you can do these things way more efficiently and with more flexibility because you are not restricted to having a single key in every leaf. I think historically what is interesting about that talk is the complexity and efficiency trade-offs where you can look at a graph of how does the size of a script compare to a naive linear script. The implementation details of how that was done in Key Tree Signatures aren’t relevant anymore. 
+
+MF: There are no edge cases where perhaps you get more efficiency assuming we had OP_CAT using a Key Tree scheme rather than using the Taproot design?
+
+PW: The example I gave earlier is the fact you might not be able to break up your script into leaves.
+
+MF: The privacy thing.
+
+PW: This is a more restricted version of the more general Merkle tree verification in Script that you would get with OP_MERKLEBRANCHVERIFY for example. I think in practice almost all use cases will be covered by Taproot. But it is not exactly the same, this is correct.
+
+N: I think a lot of this goes away under the assumption that you are only spending an output once. A lot of what you can benefit from reusing an element of your tree for different conditions are more efficient if you are going to evaluate that script multiple times. That doesn’t really make sense in the context of Bitcoin.
+
+PW: I am not sure that is true. You want every spend to be efficient. It doesn’t matter if there is one or more. I agree that in general you are only going to reveal one but I don’t think this changes any of the goals or trade-offs. 
+
+N: Let me be a bit more precise. If you have a hypothetical system which has something like OP_MERKLEBRANCHVERIFY you can always flatten it out to a giant disjunction and create a Taproot tree for that. Everyone leaves a specific path through your reusing tree. If you are only ever going to reveal the one leaf then what matters is that that final condition is efficient. 
+
+PW: What you are calling reuse is really having multiple leaves simultaneously. 
+
+N: Yes.
+
+PW: There is a good example where there may actually be multiple cases in one tree. That is if you have some giant multisignature and an intractably large set of combinations from it. The example of a 6-of-1000 I gave before, you may want to have a Merkle tree over just those thousand and have a way of expressing “I want six of these leaves to be satisfied.” I don’t how realistic that is as a real world use case but it is something feasibly interesting. 
+
+N: That is a definitely a convincing argument that I didn’t account for in my previous statement.
+
+MF: That covers pre-Taproot.
+
+# Andrew Poelstra on Tales From The Crypt Podcast (2019)
+
+https://diyhpl.us/wiki/transcripts/tftc-podcast/2019-06-18-andrew-poelstra-tftc/
+
+MF: Let’s move to Taproot. This was an interesting snippet I found on Tales From The Crypt podcast with Andrew Poelstra. He talked about where the idea came from. Apparently there was this diner in California, 100 miles from San Francisco where apparently the idea came into being. Perhaps Bitcoiners will go to this diner and it will become known as the Taproot Diner. Do you remember this conversation at the diner Pieter?
+
+PW: It is a good morning in Los Altos.
+
+MF: So what Andrew Poelstra said in this podcast was that Greg was asking about more efficient script constructions, hiding a timelocked emergency clause. So perhaps talk the problem Taproot solves and this jump that Taproot gave us all that work on MAST.
+
+PW: I think the click you need to make and we had to make was that really in most contracts, in more complex constructions you want to build on top of script, there is some set of signers that are expected to sign. I have talked about this as the “everyone agrees condition” but it doesn’t really need to be everyone. You can easily see that whenever all the parties involved in a contract agree with a particular spend there is no reason to disallow that spend. In a Lightning channel if both of the participants in the channel agree to do something with the money it is ok that that is done with the money. There is nobody else who cares about it than the participants. If they agree we are good. Thanks to key aggregation and MuSig you can represent the single “some set of keys and nothing else”. These people need to agree and nothing else. You can express that as a single public key. This leads to the notion that whatever you do with your Merkle tree, you want very near the top a branch that is “this set of signers agrees.” That is going to be the usual case. In the unusual case it is going to be one of these complex branches inside this Merkle tree. There is going to be this one top condition that we expect to be the most common one. You want to put it near the top because you expect it to be the most common way of spending. It is cheaper because the path is shorter the closer you set it to the top. What Taproot really does is taking that idea and combining it with pay-to-contract where you say “Instead of paying to a Merkle root I am going to pay to a tweaked version of that public key.” You can just spend by signing with that key. Or the alternative is I can reveal to the world that this public key was actually derived from another public key by tweaking it with this Merkle root. Hence I am allowed to instead spend it with that Merkle root.
+
+MF: There is that trick in terms of the key path spend or the script path send. The normal case and then all the complex stuff covered by the tree. Then effectively having an OR construction between the key path spend and the script path spend.
+
+PW: Taproot is just a way of having a super efficient one level of a Merkle tree at the top but it only works under the condition that it is just a public key. It cannot be a script. It makes it super efficient because you are not even revealing to the world that there was a tree in the first place. 
+
+MF: And with schemes like MuSig or perhaps even threshold schemes that key path spend can potentially be an effective multisig or threshold sig but it needs to be condensed into one key.
+
+PW: Exactly. Without MuSig or any other kind of aggregation scheme all of this doesn’t really make sense. It works but it doesn’t make sense because you are never going to have a policy that consists of “Here is some complex set of conditions or this one guy signs.” I guess it can happen, it is a 1-of-2 or a 1-of-3 or so but those are fairly rare things. In order for this “everybody agrees” condition to be the more common one, we need the key aggregation aspect.
+
+MF: There is that conceptual switch. In this podcast transcript Greg says “Screw CHECKSIG. What if that was the output? What if we just put the public key in the output and by default you signed it.” That is kind of a second part. How do you combine the two into one once you have that conceptual key path ands script path spend?
+
+PW: The way to accomplish that is by saying “We are going to take the key path, take that key and tweak it with the script path in such a way that if you were able to sign for the original key path you can still sign for the tweaked version.” The tweaked version is what you put in the scriptPubKey. You are paying to a tweaked version of the aggregate of everyone’s keys. You can either spend by just signing for it, nothing else. There is no script involved at all. There is a public key and a scriptPubKey and you spend it by giving a signature. Or in the unusual case you reveal that actually this key was tweaked by something else. I reveal that something else and now I can do whatever that allowed me to do.
+
+# Greg Maxwell Bitcoin dev mailing list post on Taproot (2018)
+
+https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-January/015614.html
+
+MF: One of the key points here once we have discussed that conceptual type stuff is that pre-Taproot we thought it was going to be an inefficiency to try to have this construction. The key breakthrough with Taproot is that it avoids any larger scripts going onchain and really doesn’t have any downsides. Greg says “You make use cases as indistinguishable as possible from the most common and boring payments.” No privacy downsides, in fact privacy is better and also efficiency. We are getting the best of both worlds on a number of different axes.
+
+PW: I think the post explains the goals and what it accomplishes pretty well. It is a good read.
+
+# Andrew Poelstra at MIT Bitcoin Expo on Taproot (2020)
+
+https://diyhpl.us/wiki/transcripts/mit-bitcoin-expo-2020/2020-03-07-andrew-poelstra-taproot/
+
+MF: There were a few parts to this presentation that I thought were good. He talks about what Taproot is, he talks about scripts and witnesses, key tricks and then the Taproot assumption. I thought it was a good quotable Taproot assumption “If all interested parties agree no other conditions matter.” You really don’t have to worry about all that complexity as the user as long as you are using that key path spend. 
+
+`C + H(C || S) = P`
+
+N: Since some people already know this and some people don’t maybe it makes sense to dwell on this for a minute so everybody is on the same page for how it works. It is really not magic but it kind of seems like magic the first time you see it.
+
+MF: Can you explain what the equation is saying?
+
+N: The basic details are that public keys are elements of the group that you can define on top of the secp256k1 curve. You can multiply keys by scalars which are just numbers basically. If you take a hash function which gives you a number and you derive something like a public key by multiplying that number by the generator point, then anybody who knows the preimage of the hash knows the equivalent of a secret key as it were. You take a public key that is actually a public key in the sense that those numbers are secret, not known except to the owner. C would be that key and you can always add that tweak which is the hash of C and the script times G to derive P which is a new key. Anybody who knows the secret underlying C, what is the discrete logarithm of C with respect to G, anybody who knows that, under MuSig that is only a group of people, are able to sign with the key P because they also know the diff between the two keys. That takes care of the key spend path. Anybody who can compute a signature with C can compute a signature with P because the difference between them is just the hash of some string. But then also anybody who doesn’t necessarily know how to sign with C can prove that P is the sum of C and that hash. The reason for this is that the preimage for the hash commits to C itself. You can clearly show here that P is the sum of two points. One of them is the discrete logarithm of that point as a hash and that hash contains the other term in the sum so it is inconceivable unless somebody knows how to find second preimages for the hash, to be able to tweak the key in that way and still be able to convince people that really the hash commits to the script. Because the hash does that, the intent of including an additional script in the hash is to convey to the network that that’s one of the authorized ways to spend this output. I hope that was less confusing and not more confusing than before.
+
+MF: That was a good explanation. I also like the slide that Tim Ruffing at his London Bitcoin Devs [presentation](https://diyhpl.us/wiki/transcripts/london-bitcoin-devs/2020-06-17-tim-ruffing-schnorr-multisig/) that has that public key equation and shows how you can get the script out as well as satisfying it with just a normal single key.
+
+`pk = g^(x+H(g^x, script))`
+
+PW: Maybe a bit confusing because that slide uses multiplicative notation and in everything else we have been using additive notation. This exponentiation that you see in this slide is what we usually call an elliptic curve notation. `g^x` we usually write as `xG`, well some people. There are often interesting fights on Twitter between proponents of additive notation and multiplicative notation. 
+
+MF: When you first hear of the idea it doesn’t sound plausible that you could have the same security whilst taking a script out of a public key. It almost feels as if you are halving the entropy because you have two things in the same key. You actually do get exactly the same security.
+
+PW: Do you think the same about Merkle trees that you are able to take more out than you took in? You are absolutely right that entropy just isn’t the right notion here. It is really not all that different from the fact that you can hash bigger things into smaller things and then still prove that those bigger things were in it.
+
+MF: I understand it now. But when I first heard of it I didn’t understand how that was possible. I think it is a different concept because I understand the tree concept where you hashing all the leaves up into a root but this was hiding…
+
+PW: Ignore the tree. It is just the hash.
+
+MF: It is the root being hidden within the public key. But that didn’t seem possible without reducing the entropy.
+
+PW: The interesting thing is being able to do it without breaking the ability to spend from that public key. Apart from that it is just hashing.
+
+RO: I just want to make a minor comment on the very good description that was given. You don’t have to know the discrete log of the public key in order to manipulate signatures operating on the tweaked public key. In fact when you are doing a MuSig proposal no individual person ever really knows the discrete log of the aggregated key to begin with and they don’t have to know. It is the case that in Schnorr signatures it is slightly false but very close to being true to say that if you have a signature on a particular public key you can tweak the signature to get a proper signature on the tweaked public key without knowing the private key. The only quibble is that the public key is actually hashed into the equation. You have to know the public key of the tweak before you start this process but the point is that no one has to learn the discrete log of the public key to manipulate this tweak thing.
+
+PW: This is absolutely true. On the flip side whenever you have a protocol that works if a single party knows the private key you can imagine having that private key be shared knowledge in a group of people and design a multiparty protocol that does the same thing. The interesting thing is that that multiparty protocol happens to be really efficient but there is nothing surprising about the fact that you can.
+
+MF: Is there a slight downside that in comparison to a normal pay-to-pub-key, if you want to do a script path spend you do need to know the script and if you want to do a key path spend you do need to know the pubkey? There is more information that needs to be stored to be able to spend from it. Is that correct?
+
+PW: Not more than what you need to spend from a P2SH. It just happens to be in a more structured version. Instead of being a single script that does everything you need to know the structure. Generally if you are a participant in some policy enforced by an output you will need to understand how that policy relates to that output.
+
+MF: With a pay-to-script-hash you still need to have that script to be able to spend from that pay-to-script-hash. In the same way  here you need to know the script to be able to spend from the pay-to-taproot.
+
+# AJ Towns on formalizing the Taproot proposal (December 2018)
+
+https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-December/016556.html
+
+MF: The next item on the reading list was AJ Town’s first attempt to formalize this in a mailing list post in 2018. How much work did it take to go from that idea to formalizing it into a BIP?
+
+PW: If you look at [BIP 341](https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki) and [BIP 342](https://github.com/bitcoin/bips/blob/master/bip-0342.mediawiki) there is only a very small portion of it that is actually the Taproot construction. That is because our design goal wasn’t make Taproot possible but it was look at the cool things you can accomplish with Taproot and make sure all of those actually work. That includes a number of unrelated changes that were known issues that needed to be fixed such as signing all the input amounts that we have recently seen. Let me step a back. When Taproot came out first me personally, I thought the best way to integrate this was to do all the things. We were at the time already working on Schnorr multisignatures and cross input aggregation. Our interest in getting Schnorr out there was to enable cross input aggregation which is the ability to just have across multiple inputs of a transaction just have a single signature that signs for all of them instead of separate ones. It turns out to be a fairly messy and hard problem. Then Taproot came out and it was like “We need to add that to it because this is clearly something really cool that has privacy and efficiency advantages.” It took a couple of months after that to realize that we are not going to be able to build a single proposal that does all these things because it all interacts in many different ways. Then the focus came on “We want things like batch verification. We want extensibility. We want to fix known bugs and we want to exploit Taproot to the fullest.” Anything else that can be done outside of that is going to have to wait for other independent proposals or a successor. I think a lot of time went into defining exactly what.
+
+MF: Perhaps all the drama and contention of the SegWit fork, did that push you down a road of stripping back some of the more ambitious goals for this? We will get onto some of the things that didn’t make it into the proposal. Did you have a half an eye on that? You wanted as little controversy as possible, minimize the complexity?
+
+PW: Clearly we cannot just put every possible idea and every possible improvement that anyone comes up with into one proposal. How are you going to get everyone to agree on everything? Independent improvements should have some form of independence in its progression towards being active on mainnet. At the same time there are really strong incentives to not do every single thing entirely independently. Doing the Merklization aspect of BIP 341, the Taproot aspect of it and the Schnorr signature aspect, if you don’t do all three of them at the same time you get something that is seriously less efficient and less private. It is trade-off between those things. Sometimes things really interact and they really need to go together but other times they don’t. 
+
+# John Newbery on reducing size of Taproot output by 1 vbyte (May 2019)
+
+https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-May/016943.html
+
+MF: One of the first major changes was this post from John (Newbery) on reducing the size of the pubkey. The consideration always is we don’t want anyone to lose out. Whatever use case they have, whether they have a small script or a really large script, we don’t want them to be any worse off than before because otherwise you then have this problem of some people losing out. It seems like a fiendish problem to make sure that at least everyone’s use case is not hurt even if it is a very small byte difference. I suppose that is what is hanging over this discussion and John’s post here.
+
+PW: I think there is something neat about not using 33 bytes when you can have 32 with the same security. It just feels wasteful. 
+
+MF: That’s John’s post. But there was also a conversation I remember on a very basic key path spend being a tiny bit bigger than a normal key path spend pre-Taproot. Is that right?
+
+PW: Possibly I’d need to reread the post I think.
+
+MF: I don’t think this was in John’s post, I think that was a separate discussion.
+
+PW: It is there at the bottom. “The current proposal uses (1). Using (3) or (4) would reduce the size of a taproot output by one byte to be the same size as a P2WSH output. That means that it’s not more expensive for senders compared to sending to P2WSH.” That is part of the motivation as well. Clearly today people are fine with paying to P2WSH which has 32 byte witness programs. It could be argued that it is kind of sad that Taproot would change that to 33. But it is a very minor thing.
+
+# Steve Lee presentation on “The Next Soft Fork” (May 2019)
+
+https://bitcoinops.org/en/2019-exec-briefing/#the-next-softfork
+
+MF: There was this presentation from Steve Lee at Optech giving the summary of the different soft fork proposals. There were alternatives that we can’t get into now because there is too much to discuss already. Other potential soft forks, Great Consensus Cleanup was one, there was another one as well. There is a timeline in this presentation which looks very optimistic now of activation maybe 6-12 months ago. Just on the question of timing, there seems to have been progress or changes to either the BIPs or the code continuously throughout this time. It is not as if nothing has been happening. There have been small improvements happening and I suppose it is just inevitable that things are going to take longer than you would expect. There was a conversation earlier with a Lightning dev being frustrated by the pace of change. We won’t go onto activation, these changes taking so long. Andrew Poelstra [talked](https://diyhpl.us/wiki/transcripts/mit-bitcoin-expo-2020/2020-03-07-andrew-poelstra-taproot/) about the strain of getting soft fork changes into Bitcoin now that it is such a massive ecosystem and there is so much value on the line.
+
+RO: In order to activate it you need an activation proposal. I think that might be the most stressful thing for developers to talk about maybe.
+
+ET: That is true. I remember that about a year ago I started to work on descriptors for Taproot and I talked with Pieter and I was like “It should probably get in in a few months” and he was laughing. A year later and we as Russell said we don’t even have an activation path yet.
+
+MF: I certainly think it is possible that we should’ve got the activation conversation started earlier. Everyone kind of thought at the back of their head it was going to be a long conversation. Perhaps the activation discussion should’ve been kicked off earlier.
+
+ET: I think people are a little bit traumatized from SegWit and so don’t really want to talk about it.
+
+MF: A few people were dreading the conversation. But we won’t discuss activation, maybe another time, not today.
+
+# Pieter Wuille mailing list post on Taproot updates (no P2SH wrapped Taproot, tagged hashes, increased depth of Merkle tree, October 2019)
+
+https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-October/017378.html
+
+MF: The next item on the reading list, you gave an update Pieter in October 2019 on the mailing list. The key items here were no P2SH wrapped Taproot. Perhaps you could talk about why people wanted P2SH wrapped Taproot. I suspect it is exactly the same reason why people wanted P2SH wrapped SegWit. There is also tagged hashes and increased depth of Merkle tree. 
+
+PW: Incremental improvements I think. The P2SH thing is just based on adoption of [BIP 173](https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki) and expecting that probably we don’t want to end up in a situation where long term use of Taproot is split between P2SH and native because it is a very slight privacy issue. You are revealing whether the sender supports native SegWit outputs or not. It is better to have everything into a single uniform output type. Given the timeline it looked like we are probably ok with dropping P2SH. The 32 bye pubkeys, a small incremental improvement. The tagged hashes was another. There was one later change which was changing public keys from implicitly square to implicitly even for better compatibility with existing infrastructure which was maybe a couple of months after this email. Since then there haven’t been any semantic changes to the BIP, only clarifications. 
+
+RO: Also adding the covering the input script by the signature was very recent. 
+
+PW: Yes you’re right. That was the last change.
+
+RO: I am assuming it was changed.
+
+PW: Yes it was.
+
+MF: We wanted P2SH wrapped SegWit because we were introducing bech32, a different format. What was the motivation for wanting P2SH wrapped Taproot?
+
+PW: The advantage would be that people with non-SegWit or non BIP173 compliant wallet software would be able to send to it. That is the one and only reason to have P2SH support in the first place because it has lower security, it has extra overhead. There is really no reason to want it except compatibility with software that can’t send to bech32 addresses.
+
+ET: I thought another reason was because we can and it went well with the flow of the code.
+
+PW: Sure. It was easy because SegWit was designed to have it. The reason SegWit had it was because we wanted compatibility with old senders. Given that we already had it it was relatively easy to keep it.
+
+RO: There is also a tiny concern of people attempting to send Taproot outputs to P2SH wrapped SegWit outputs because currently those are just not secure and can be stolen.
+
+PW: You mean you can have policy rules around sending to future Taproot versions in wallet software while you can’t do that in P2SH?
+
+RO: People might mistakenly produce P2SH wrapped Taproot addresses because they have incorrectly created a wallet code that way. If we supported both then their funds would be secured against that mistake.
+
+PW: That is fair, yeah. 
+
+# Pieter Wuille at SF Bitcoin Devs on BIP-Taproot and BIP-Tapscript (December 2019)
+
+https://diyhpl.us/wiki/transcripts/sf-bitcoin-meetup/2019-12-16-bip-taproot-bip-tapscript/
+
+MF: This is the transcript of Pieter’s talk at SF Bitcoin Devs, this was an update end of 2019. There was a conversation you had with Bram (Cohen) and this is talking about being concerned with facilitating future changes, things like Graftroot which we will get onto. But then also making sure that existing applications or existing use cases, things like colored coins which perhaps you might not be interested in at all yourself and perhaps the community generally isn’t. How much thought do you have to put into making sure things like colored coins aren’t hurt, use cases that very few people are using but you feel as if it is your responsibility to make sure that you don’t break them with this upgrade?
+
+PW: This is a very hard question for me because I strongly believe that colored coins make no sense. If you formulate it a bit more generally I think there is a huge amount of potential ideas of what if someone wants to build something like this later? Is there some easy change we can make to our proposal to facilitate that? For example the annex thing in BIP 341 is an example of an extensibility feature that would enable a number of things that would be really hard to do otherwise if it wasn’t done right now. In general I think that is where perhaps the majority of the effort in flushing out the details goes, making sure that it is as compatibility with future changes as possible. 
+
+MF: What is the problem specifically? Can you go into a bit more detail on why partial delegation is challenging with Taproot?
+
+PW: That is just a separate feature. It is one we deliberately chose not to include because the design space is too big and there are too many ways of doing this. Keep it for something after Taproot. 
+
+# Potential criticisms of Taproot and arguments for alternatives on mailing list (Bitcoin Optech, Feb 2020)
+
+https://bitcoinops.org/en/newsletters/2020/02/19/#discussion-about-taproot-versus-alternatives
+
+MF: There hasn’t been much criticism and there doesn’t appear to have been much opposition to Taproot itself. We won’t talk about [quantum resistance](https://bitcoin.stackexchange.com/questions/91049/why-does-hashing-public-keys-not-actually-provide-any-quantum-resistance) because it has already discussed a thousand times. There was this post on the mailing list post with potential criticisms of Taproot in February that is covered by the Optech guys. Was there any valid criticism in this? Any highlights from this post? It didn’t seem as if the criticism was grounded in too much concern or reality.
+
+PW: I am not going to comment. There was plenty of good discussion on the [mailing list](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-February/017618.html) around it.
+
+# Andrew Kozlik on committing to all scriptPubKeys in the signature message (April 2020)
+
+https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-April/017801.html
+
+MF: This is what Russell was alluding to. This is Andrew Kozlik’s post on committing to all scriptPubKeys in the signature message. Why is it important to commit to scriptPubKeys in the signature message?
+
+RO: I don’t actually understand why it is a good idea. It just doesn’t seem like a bad idea. Maybe Pieter or someone else can comment.
+
+PW: The commitment to all the scriptPubKeys being spent?
+
+MF: Kozlik talked about this in certain applications. So it is specific to things like Coinjoin and not necessarily applicable to everything?
+
+PW: Right but you don’t want to make it optional because if you make it optional you are now again revealing to the world that you care about this thing. I believe that the attack was something of the form where you are lying to a hardware wallet about which inputs of a transaction are yours. Using a variant of the amount attack… I believe it is I do a Coinjoin where I try to spend both outputs from you but the first time I convince you that only one of the inputs is yours and then the second time I convince you that the other one is yours. In both times you think “I am only sending 0.1 BTC” but actually you are spending 0.2. You wouldn’t know this because your hardware wallet has no state that is kept between the two iterations. In general it makes sense to include this information because it is information you are expected to give to a hardware wallet. It is strange that they would not sign it. I think it made perfect sense as soon as the attack was described.
+
+# Coverage of Taproot eliminating SegWit fee overpayment attack in Bitcoin Optech (June 2020) 
+
+https://bitcoinops.org/en/newsletters/2020/06/10/#fee-overpayment-attack-on-multi-input-segwit-transactions
+
+MF: This was a nice example of Taproot solving a problem that had cropped up. This was the fee overpayment attack on multi input SegWit transaction. Taproot fixes this. This is nice as an example of something Taproot clearly fixes rather than just adding functionality, better privacy, better efficiency. It is a nice add-on.
+
+PW: It was a known problem and we had to fix it. In any successor proposal whatever it was. 
+
+# Possible extensions to Taproot that didn’t make it in
+
+Greg Maxwell on Graftroot (Feb 2018)
+
+https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-February/015700.html
+
+AJ Towns on G’root (July 2018) 
+
+https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-July/016249.html 
+
+Pieter Wuille on G’root (October 2018)
+
+https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-October/016461.html 
+
+AJ Towns on cross input signature aggregation (March 2018)
+
+https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-March/015838.html
+
+AJ Towns on SIGHASH_ANYPREVOUT (May 2019)
+
+https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-May/016929.html
+
+MF: The next links are things that didn’t make it in. There is Graftroot, G’root, cross input signature aggregation, ANYPREVOUT/NOINPUT. As the authors of Taproot what thought do you have to put in in terms of making sure that we are in the best position to add these later? 
+
+PW: We are not. You need a successor to Taproot to do these things period. 
+
+MF: But you have made sure that Taproot is as [extensible](https://bitcoin.stackexchange.com/questions/96951/what-are-the-different-upgradeability-features-in-the-bip-taproot-bip-341-prop) as possible.
+
+PW: To the extent possible sure. Again there are trade-offs to be made. You can’t support everything. Graftroot and cross input aggregation are such deeply conceptual changes. You can’t permit building them later. It is such a structural change to how scripts work. These things are not something that can be just added later on top of Taproot. You need a successor. 
+
+MF: I thought some of the extensibility was giving a stepping stone to doing this later but it is not. It is a massive overhaul again on top of what is kind of an overhaul with Taproot.
+
+PW: Lots of things can be reused. It is not like we need to start over from scratch. You want Schnorr signatures, you want leaf versioning, you want various extensibility mechanisms for new opcodes. Graftroot is maybe not the perfect example. It depends to what extent you want to do it. Cross input aggregation, the concept of script verification is no longer a per input thing but it is a per transaction thing. You can’t do it with optimal efficiency, I guess you can invent things. The type of extensibility that is built in is new opcodes, new types of public keys, new sighash types, all these things are made fairly easy and come with almost no downsides compared to not doing them immediately. Real structural changes to script execution, they need something else.
+
+MF: And perhaps these extensions, we might as well do them because there is no downside. We don’t know the future so we might as well lay the foundations for as many extensions as possible because we don’t know what we will need in future.
+
+PW: Everything is a trade-off between how much engineering and specification and testing work is it compared to what it might gain us. 
+
+# Taproot and Tapscript BIPs
+
+https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki
+
+https://github.com/bitcoin/bips/blob/master/bip-0342.mediawiki
+
+MF: There is BIP-Taproot. BIP-Tapscript as I understand, BIP-Taproot was getting too long so there was a separate BIP which has a few changes to script. The main one being get rid of CHECKMULTISIG and introducing CHECKSIGADD. CHECKSIGADD is for the multisignature schemes where multiple signatures are actually going onchain. It is more efficient for batch verification if you are doing a multisig with multiple signatures going onchain. Although the hope is that multisig will be with MuSig schemes so that multiple signatures won’t go onchain.
+
+PW: Exactly.
+
+MF: The design of CHECKSIGADD, it is like a counter. With CHECKMULTISIG there was no counter you, just tried all the signatures to see if there were enough signatures to get success from that script. But CHECKSIGADD introduces a counter which is more efficient for batch verification. Why is there not an index for keys and signatures? Why is it not like “Key 1, Key 2, Key 3 and Key 4” and then you say “I’m providing Signature 2 which matches to Key 2.” Why is it not designed like that? 
+
+PW: Again design space. If you go in that direction there are so many ways of doing it. Do you want to support arbitrary subsets up to a certain size? You could imagine some efficient encoding of saying “All possible policies up to 5 keys I can put into a single number. Why not have an opcode that does that?” We just picked the simplest thing that made sure that multisignatures weren’t suddenly not a lot more gratuitously inefficient compared to what existed before because the feeling is if you remove a feature you need to compensate with an alternative. Due to OP_SUCCESSx it is really easy to add a new opcode that does any of these things you are suggesting with really no downside. 
+
+MF: You could do an indexed multisig using CHECKSIGADD?
+
+PW: Using OP_SUCCESSx you can add any opcode. The focus is fixing existing problems and making sure batch verification works but beyond that anything else we leave. Actually new features we leave to future improvements.
+
+N: The ADD variant of CHECKMULTISIG, that also addresses the quadratic complexity of CHECKMULTISIG? It is not just for batch verification?
+
+PW: There is no quadratic complexity in CHECKMULTISIG?
+
+N: Doesn’t it need to loop for the signatures and the keys?
+
+PW: No because they have to be in the same order. It is inefficient but it is just at worst proportional to the number of the keys given. Ideally we want something that is just proportional to the number of signatures given. It is unnecessarily inefficient but it is only linearly so. There were or are quadratic problems in for example in pre SegWit if you have many public keys, each of them would individually rehash the entire transaction. The bigger you make your transaction your amount of data hashed goes up quadratically. But that is already fixed since SegWit. 
+
+RO: I believe OP_ROLL is still quadratic even in Taproot. 
+
+PW: I think it is just linear but with a pretty bad constant factor. 
+
+RO: The time to execute an OP_ROLL is proportional to, can be as large as the size of the script. So a script that contains only OP_ROLLs has quadratic complexity in terms of the length of the script.
+
+PW: Right but there is a limit on the stack size.
+
+RO: Of course.
+
+PW: Without that limit it would be quadratic, absolutely. Also in theory a different data structure for the execution stack is possible that would turn it into O(n log(n)) instead of O(n^2) to have unbounded ROLLs. 
+
+# Bitcoin Core BIP 340-342 PR 17977
+
+https://github.com/bitcoin/bitcoin/pull/17977
+
+MF: This is the PR open in Bitcoin Core. This is all the code including the Schnorr libsecp code. My understanding with this is that ideally certainly if you have sufficient expertise is to help review the Schnorr [part](https://github.com/bitcoin-core/secp256k1/pull/558) in libsecp. If not that then start reviewing some of this very large Taproot PR in Core. I am thinking about trying to organize a PR review club maybe just taking a few commits from this PR. I know we covered a couple of the smaller ones earlier.
+
+PW: I think if you ignored the libsecp part it is not all that big, a couple of hundred lines excluding tests. 
+
+MF: That is doable for a Bitcoin Core PR review club. Perhaps trying to do the Schnorr code in libsecp is too big. I don’t know if we could narrow that down, focus on just a few commits in the libsecp Schnorr PR. I think either you or Greg said on IRC anybody with C++, C experience is useful in terms of review for that libsecp stuff because the cryptography is on solid ground but you need some code review on that libsecp PR.
+
+PW: I don’t remember saying that.
+
+RO: I think Greg has said that. The difficulties with the libsecp C code will come from not the cryptography but from C.
+
+MF: C specific problems, in terms of the language.
+
+RO: Yes
+
+MF: I did split it into a few commits. There are quite a few functional tests to look at on the Taproot PR. I am trying to think of an accessible way for people to start delving in and looking at the tests and running the tests is often a good first step. 
+
+# Bitcoin Stack Exchange question on Simplicity and Taproot
+
+https://bitcoin.stackexchange.com/questions/97049/in-theory-could-we-skip-the-proposed-taproot-soft-fork-activate-simplicity-inst
+
+MF: Shall we talk a bit about Simplicity? There was a Bitcoin Stack Exchange on why not skip Taproot and just merge in Simplicity. Why aren’t we doing that?
+
+RO: I don’t know. That seems like a great idea to me (joke). Simplicity is not completed yet and not reviewed and totally not ready. It might good to go with someone that is actually completed and will provide some benefit rather than waiting another four years, I don’t know.
+
+MF: Is that possible longer term? I know that on the Stack Exchange question Pieter says you’d still want Taproot because you can use Simplicity within Taproot. I know you talked about avoiding a SIGHASH_NOINPUT soft fork with Simplicity. If Simplicity was soft forked in you could potentially avoid the SIGHASH_NOINPUT, ANYPREVOUT soft fork.
+
+RO: You can’t get the root part of Taproot with Simplicity. You can’t really program that. The fact that you can have a 32 byte witness program and spend that as a public key is something that is not really possible in Simplicity. 
+
+PW: I think the biggest advantage of Taproot is that it very intentionally makes one particular way of spending and creating scripts super efficient in the hope to incentivize that. You get the biggest possible policy based privacy where hopefully nearly everything is spent using just a key path and nothing else. If you just want to emulate that construction in another language be it Simplicity or through new opcodes in Script you won’t be able to do that with the same relative efficiency gains. You would lose that privacy incentive at least to some extent.
+
+RO: Because the root part of Taproot is not something that is inside Script. It is something that is external to Script. Even replacing Script isn’t adequate. 
+
+MF: But if you were to get really wacky you could have a Taproot tree with Script and Simplicity on different leaves. You could use one leaf that is using Simplicity or another leaf that is using Bitcoin Script?
+
+RO: Yes and that would probably be the natural state of things if Simplicity goes in that direction into Bitcoin.
+
+MF: Because you’d only want to use Simplicity where you are getting a real benefit of using it?
+
+RO: Simplicity is an alternative to Bitcoin Script. The leaf versioning aspect of Taproot allows you to put in alternatives to Bitcoin Script which don’t have to be Simplicity, any alternative to Bitcoin Script. That is both an upgrade mechanism for Taproot but it also implies this ability to mix a Tapleaf version for Script with a Tapleaf version for Simplicity with a Tapleaf version for whatever else we want. 
+
+MF: The benefits would be being able to do stuff that you can’t do in Script. What other benefits, why would I want to use Simplicity rather than use Script on a leaf of my tree other than to get functionality that I can’t get with Script? Is there efficiency with a Simplicity equivalent of Script in some cases?
+
+RO: I think the extended functionality would be the primary benefit, extended features is the primary benefit for using Simplicity over Script. It is possible that on a head to head competition Simplicity might even beat Script in terms of efficiency and weight. That is probably not the case. I suspect that when things settle down Simplicity will not quite to be able to beat Script at its own game. It is a little bit early to tell whether that is true or not.
+
+PW: It also really depends on what kind of jets are implemented and with what kind of encoding. I suspect that for many things that even though it is theoretically possible to do anything in Simplicity it may become really exorbitantly expensive to do so if you need to invent your own sighash scheme or something. 
+
+# Update on Simplicity
+
+https://blockstream.com/2018/11/28/en-simplicity-github/
+
+MF: Can you give an update on Simplicity Russell? What are the next steps? How near is it to being a potential soft fork proposal for Bitcoin?
+
+RO: I am basically at the point of Simplicity’s functional completeness in that the final operation called [disconnect](https://github.com/ElementsProject/simplicity/pull/50) which supports delegation is implemented and is under review. That’s at the point where people who are particularly keen to try out Simplicity in principle can start writing Simplicity programs or describing Simplicity programs. There are two major aspects that still need working on. One is that there is a bunch of anti-malleability checks that need to be implemented that are currently not implemented. This doesn’t affect the functional behavior but of course there are many ways of trivially denial of service attacking Simplicity. While Simplicity doesn’t have loops you can make programs that take an exponential amount of time. We need a mechanism to analyze Simplicity programs. This is part of the design but not implemented to analyze programs and put an upper bound on their runtime costs. There is also various anti witness malleability checks that need to be put in. These are not implemented but they are mostly designed. Then what is unfortunately the most important for people and things that come to the end of the timeline is “What is a good library of jets that we should make available?” This is where experimenting on Elements Alpha and sidechains, potentially Liquid, will be helpful. To try to figure out what are a good broad class of [jets](https://medium.com/blockstream/simplicity-jets-release-803db10fd589), which are intrinsic operations that you would add to the Simplicity language, what sort of class of jets do you want? I am aiming for a very broad class of jets. Jets for elliptic curve point multiplication so you can start potentially putting in very exotic cryptographic protocols and integrating that into your language. I’d probably like to support alternative hashing functions like SHA3 potentially and stuff like that. Although that has got a very large state space so we’ll see how that goes. The things that would inform that come from trying Simplicity. As we explore the uses of Simplicity people will naturally come up with little constructs that they would like to be jets and then we can incorporate that. It would be nice to get a large understanding of what those jets that people will want earlier because the mechanisms for soft forking in new jets into Simplicity are a little bit less nice than I was hoping for. Basically I have been reduced to thinking that you’ll just need different versions of Simplicity with different sets of jets as we progress that need to be soft forked in.
+
+MF: So a Tapleaf version being Simplicity and then having different Simplicity versions within that Tapleaf version? I know we are getting ahead of ourselves.
+
+RO: Probably what would happen. The design space of how to soft fork in jets has maybe not been completely explored yet. That is something we would want to think about.
+
+N: This is about jets and soft forking actually. From the consensus layer point of view it is only down to the validation costs right? If you have a standard set of jets those are easier for full nodes to validate with a reasonable cost and therefore should be cheaper? Semantically there should be no difference from interpreting and executing jets? Or is it also what needs to be included on the blockchain? Can they be implicitly omitted?
+
+RO: Originally I did want to make them implicity but there turns out to be subtle… Simplicity has this type system and there is this subtle problem with how jets interact with the type system that makes it problematic to make jets completely implicit in the way that I was originally thinking. The current plan is to make jets explicit and then you would need some sort of soft forking mechanism to add more jets as you go along. In particular, and part of the reason why it is maybe not so bad, in order to provide the witness discount…. The whole point of jets is that these are bits of Simplicity programs that we are going to natively understand from the Simplicity interpreter so we don’t have to run through the Simplicity interpreter to process them but we are going to run them with native C code. They are going to cheaper and then we can discount the costs to incentivize their use. The discounts for a native Schnorr signature, it takes maybe a hour to run Schnorr signature verification on my laptop written in pure Simplicity. Of course as you add arithmetic jets that comes down to 15 seconds. But of course we want the cost to be on the order of milliseconds. That’s the purpose of jets there. In order to provide that discount we have to be aware of what jets are at the consensus level.
+
+MF: Are you looking at any of these things that didn’t make it into the Taproot soft fork proposal as potential functionality that jumps out as a Simplicity use case? We talked about SIGHASH_NOINPUT but it is potentially too early for that because we’ll want to get that in before Simplicity is ready. The Graftroot, G’root, all this other stuff that didn’t make it in, anything jumps out at you as a Simplicity functionality first use case?
+
+RO: It is probably restricted to the set of things that would be implemented by opcodes. SIGHASH_NOINPUT, delegation are the two things that come to mind. This is what I like about Simplicity. Simplicity is designed to be enable people to do permissionless innovation. My design of Simplicity predates SIGHASH_NOINPUT and it is just a natural consequence of Simplicity design that you can do SIGHASH_NOINPUT. Delegation was a little bit different, it was explicitly put into the Simplicity design to support that. But a lot of things, covenants is just a consequence of Simplicity’s design and the fact you can’t avoid covenants if you have a really flexible programming language. Things like Graftroot and cross input signature aggregation, those things are outside of the scope of Script and generally not enabled by Simplicity by itself. Certainly Simplicity has no way of doing cross input aggregation. You can draw an analogy between Graftroot and delegation. It has a bit of Graftrootness to it but it doesn’t have that root part of the Graftroot in the same way that Simplicity doesn’t have the root part of Taproot. 
+
+MF: Covenants is a use case. So perhaps richer covenants depending on if we ever get CHECKTEMPLATEVERIFY or something equivalent in Script?
+
+RO: CHECKTEMPLATEVERIFY is also covered by Simplicity.
+
+MF: Soft forks, you were talking about soft forks with jets. Is the process of doing a soft fork with jets as involved as doing with a soft fork with Bitcoin?
+
+RO: It would probably be comparable to soft forking in new opcodes.
+
+MF: But still needs community consensus and people to upgrade.
+
+RO: Yes. In particular you have a lot of arguments over what an appropriate discount factor is.
+
+MF: I thought we could avoid all the activation conversations with Simplicity.
+
+RO: The point is that these jets won’t enable any more functionality that Simplicity doesn’t already have. It is just a matter of making the price for those contracts that people want to use more reasonable. You can write a SHA3 compression function in Simplicity but without a suitable set of jets it is not going to be a feasible thing for you to run. Although if we are lucky and we have a really rich set of jets it might not be infeasible to write SHA3 out of existing jets. That would be my goal of having a nice big robust set of midlevel and low level jets so that people can build these complicated, not thought of or maybe not even invented, hash functions and cryptographic operations in advance without them necessarily being exorbitantly costly even if we don’t have specific jets for them.
+
+# Q&A
+
+MF: I have been very bad with YouTube because I kept checking and nothing was happening. But now lots of happened and I’ve missed it. Apologies YouTube. Luced asks when Taproot? We don’t know, we hope next year. It is probably not going to be this year we have to sort out the activation conversation that we deliberately avoided today. Spike asks “How hard would signature aggregation to implement after this soft fork?” We have key aggregation (corrected) with this soft fork or at least key aggregation schemes. We just don’t have cross input signature aggregation.
+
+PW: Taproot only has it at the wallet level. The consensus rules don’t know or care about aggregation at all. They see a signature and a public key and they verify. While cross input aggregation or any kind of onchain aggregation, before the fact aggregation, needs a different scheme. To answer how much work it is that really depends on what you are talking about. 
+
+MF: This is the key aggregation versus signature aggregation conversation?
+
+PW: Not really. It is whether it is done offchain or onchain. Cross input aggregation necessarily needs it onchain because different outputs that are being spent by different inputs of a transaction inevitably have different public keys. You cannot have them aggregated before creating the outputs because you already have the outputs. So spending them simultaneously means that onchain there needs to be aggregation. The consensus rules need to be aware of something that does this aggregation. That is a very fundamental change to how script validation works because right now with this conceptually boolean function you run on every input and it returns TRUE or FALSE. If they all return TRUE you are good. With cross input aggregation you now need some context that is across multiple inputs. In a way and this may actually be a good step towards the implementation side of that, batch validation even for Taproot also needs that. While BIP 341, 342, 340 support batch validation this is not implemented in the current [pull request](https://github.com/bitcoin/bitcoin/pull/17977) to Bitcoin Core. Something we expect to do after it is in because it is an optional efficiency improvement that the BIP was intentionally designed to support but it is a big practical change in implementation. It turns out that the implementation work needed for that is probably a step towards making cross input aggregation easier once there are consensus rules for that.
+
+MF: Janus did respond to that question “are you referring to MuSig or BLS style aggregation?” MuSig we are hopefully getting but BLS style aggregation we are not with proposed Taproot.
+
+PW: BLS lets you do non-interactive aggregation. That is not something that can be done with Schnorr.
+
+MF: On the [PR](https://github.com/bitcoin/bitcoin/pull/17977) Greg Sanders says Taproot functional tests, he’d suggest explaining the whole “Spender” framework that’s in it? It took him a couple of days to really understand it. Who has written the functional tests on Taproot, is it you Pieter?
+
+PW: Yes and Johnson Lau and probably a few other people. They were written a while ago. Other people have contributed here and there that I forget now. It does have this framework where a whole bunch of output and input functions are passed. It creates random blocks that randomly combines these into transactions and tries to spend them. It sees that things that should work work and shouldn’t work don’t work.
+
+MF: Now Greg understands it perhaps he is the perfect candidate for the Bitcoin Core PR review club on Taproot functional tests. Volunteering you Greg. Janus asks about a source for BLS style aggregation being possible with Schnorr. Pieter you’ve just said that is not possible?
+
+PW: It is not. If by BLS style aggregation you mean non-interactive aggregation then no. There is no scheme known based on discrete logarithm that has this. We’d need a different curve, different security assumptions, different efficiency profile for that. 
+
+MF: Greg says “Jet arguments will likely be very similar to what ETHerians call “pre-compile”. You can technically do SNARKs and whatever in EVM but not practically without those.”
+
+RO: Yeah that sounds true to me. Again I would hope that with enough midlevel jets that even complicated things are not grossly expensive so that people would be unable to run them. That is going to be seen in the future whether that is true or not. 
+
+MF: Spike said “Wuille said he started looking at Schnorr specifically for cross input aggregation but they found out it will make other stuff like Taproot and MAST more complicated so it was delayed.” That sounds about right. That is the YouTube comments. I think we have got through the reading list. Are there any other last comments or any questions for anyone on the call?
+
+# Next steps for Taproot
+
+RO: Recently I got excited about Taproot pending activation and I wanted to go through and find things that need to be done before Taproot can be deployed. This might be a useful exercise for other people. I found a dangling issue on [BIP 173](https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki), SegWit witness versions. There was an issue with the insertion bug or something in the specification. I thought it would be easy to fix but it turns out it is complicated. As far as I know the details for BIP 340 are not complete with regards to synthetic nonces although unrelated to Taproot the fact that Taproot depends on BIP 340 suggests that BIP 340 should be completed before Taproot is deployed. I guess my point with this comment is that there are things that should be done before Taproot is being deployed. We should go out and find all those things and try to cross them off. 
+
+PW: I do think there is a distinction to be made between things that need to be done before Taproot consensus rules and things that need to be done before wallets can use it. Something like synthetic nonces isn’t an issue until someone writes a wallet. It won’t affect the consensus rules. Similarly standardization of [MuSig or threshold schemes](https://diyhpl.us/wiki/transcripts/london-bitcoin-devs/2020-06-17-tim-ruffing-schnorr-multisig/) is something that needs to be done, integration with descriptors and so on. It is not on the critical path to activation. We can work on how the consensus rules need to activate without having those details worked out. The important thing is just we know they are possible.
+
+MF: Russell, do you have any other ideas other than the one you suggested for things we need to look out for?
+
+RO: Nothing comes to mind but it wouldn’t surprise me if there are other issues out there. I didn’t even think about the design for a MuSig protocol. Pieter is of course right when he says these aren’t necessarily blocking things for Taproot but it feels like an appropriate time to start on them and it is things that everyone can do.
+
+MF: The conversation with someone in the Lightning community, that there is so much other stuff to do that we don’t want to work on Lightning post Taproot given that we don’t know when it is going to be activated. I don’t think there is anybody on the call who is really involved in the Lightning ecosystem but perhaps they are frustrated with the pace or perhaps want some of this to be happening faster than it is. There are lots of challenges to work on Lightning. There were two final links on the reading list. On the reading list I had Nadav Kohen’s [talk](https://diyhpl.us/wiki/transcripts/lightning-conference/2019/2019-10-20-nadav-kohen-payment-points/) on “Replacing Payment Hashes with Payment Points” and I also had Antoine Riard’s [talk](https://diyhpl.us/wiki/transcripts/advancing-bitcoin/2020/2020-02-06-antoine-riard-taproot-lightning/) “Schnorr Taproot’d Lightning” at Advancing Bitcoin. Any thoughts on Lightning post Taproot? There has been a [discussion](https://diyhpl.us/wiki/transcripts/london-bitcoin-devs/2020-02-04-andrew-poelstra-miniscript/) on how useful Miniscript can be with Lightning. Any thoughts on how useful Simplicity could be with Lightning?
+
+RO: I am not that familiar with PTLCs (point time locked contracts) so I am not too sure what details are involved with that. Simplicity is a generic programming language so it is exactly these innovative things that Simplicity is designed to support natively without people needing to necessarily soft fork in new jets for. Elliptic curve multiplication should already be a jet and it is one of those things where I am hoping that permissionless innnovation can be supported right out of the box.
+
+MF: If they are using adaptor signatures post Taproot and scriptless scripts there is not much use for Miniscript and not much use for Simplicity?
+
+RO: Adaptor signatures are offchain stuff and so is outside of the scope. Simplicity can take advantage of it because it has Schnorr signature support but it doesn’t have any influence on offchain stuff. I can say that there has been some work towards a Miniscript to Simplicity compiler. That would be a good way of generating common policies within Simplicity and then you could combine those usual or normal policies with more exotic policies using the Simplicity combinators. 
+
+MF: To go through the last few comments on the YouTube. “You can do ZKP/STARKs and anything else you want for embedded logic on Bitcoin for stuff like token layers like USDT, protocols soft forks are specifically for handling Bitcoin.” I don’t know what that is in reference to. Jack asks “Do PTLCs do anything with Taproot?” The best PTLCs need Schnorr which comes within the Taproot soft fork but you are not using Taproot with PTLCs because you are just using adaptor signatures. “Covenants would make much safer and cheaper channels” says Spike.
+
+RO: I’m not familiar with that. It is probably true but I can’t comment on it.
+
+MF: There is another PTLC question from Janus. “Will it still be necessary to trim HTLCs when using PTLCs on Taproot. Tadge mentioned that they complicate matters a bit.” I don’t know the answer to that and I don’t think there are any Lightning people on the call. That is all the YouTube comments, No questions on IRC, nothing on Twitter. We will wrap up. Thank you very much to everyone for joining. Thanks to everyone on YouTube. We will get a video up, we will get a transcript up. If you have said your name or introduced yourself then I will attribute your comments and questions on the transcript but please contact me if you would rather be anonymous. Good night from London.
+
