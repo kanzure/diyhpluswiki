@@ -1,0 +1,330 @@
+Name: Socratic Seminar
+
+Topic: Agenda in Google Doc below
+
+Location: Bitcoin Sydney (online)
+
+Date: July 21st 2020
+
+Video: No video posted online
+
+Last month’s Sydney Socratic: https://diyhpl.us/wiki/transcripts/sydney-bitcoin-meetup/2020-06-23-socratic-seminar/
+
+Google Doc of the resources discussed: https://docs.google.com/document/d/1Aw_llsP8xSipp7l6JqjSpaqw5qN1vXRqhOyeulqmXcg/
+
+The conversation has been anonymized by default to protect the identities of the participants. Those who have expressed a preference for their comments to be attributed are attributed. If you were a participant and would like your comments to be attributed please get in touch.
+
+# Intro
+
+For anyone who is new, welcome. This is the Bitcoin Sydney Socratic. In normal times we do two meetups per month. One is an in person Bitcoin Sydney meetup for those of you in Sydney you are welcome to join us. We don’t know exactly when our next in person one will be. This is the other one that we do every month. Obviously the timezone works for people in Asia and Europe as well and obviously Australia, New Zealand people. We share the list, here is our [list](https://docs.google.com/document/d/1Aw_llsP8xSipp7l6JqjSpaqw5qN1vXRqhOyeulqmXcg/).
+
+# Subtleties and Security (Michael Ford, BitMEX research)
+
+https://blog.bitmex.com/subtleties-and-security/
+
+This was a summary of a bunch of the work done on Core over the past five or six months. It was mainly focused on build systems and trying to improve the security of our binaries and our build processes. A lot of stuff when it comes to build systems can be very finicky. There are a lot of peculiarities. It is easy to miss a flag or not turn something on and have that affect something else, two or three hops down the line and you don’t even realize it. This was a summary of some of those changes. Some of them were very simple but it existed in the codebase for quite a long time. The first one here, where our security and symbol checks had been skipping over bitcoind. Essentially once we run our Gitian builds to produce releases we have some scripts that perform some security checks and then `symbol-check` is essentially checking the binary dependencies looking for certain symbols. If we are building with stack protection it might check the symbols in the binary to see whether there is a stack protector symbol in there somewhere. But essentially since these scripts have been introduced they had never been run against bitcoind because in a quirk in our Makefile. If you open the [PR 17857](https://github.com/bitcoin/bitcoin/pull/17857)  you’ll see that the fix here was essentially deleting one character or two characters if you include the whitespace. When these were being run because of the use of the \< character there, `bin_PROGRAMS` is essentially a list of binaries, they get passed into the script but because of the way that Python handles the arguments if you pass them in using this \< character the first argument would be skipped over and the checks wouldn’t get run against it. That always happened with bitcoind. However this isn’t as severe as it sounds because bitcoind is a subset of bitcoin-qt and the checks were always being run against that. As far as we are aware there is nothing malicious that we could’ve missed in this case.
+
+The next one is also another subtle one. There have been longstanding issues with ASLR and Windows binaries. It has come up in our repository a few times before in various mailing lists. I can’t remember why I was looking at this exactly. I think I was going to add some tests for it. Then I noticed that when I added the test one of our binaries was actually failing the test which was unexpected because we thought everything was fine. It turned out it was the bitcoin-cli binary. It came down to that binary wasn’t exporting any symbols. At build time the linker would strip away a certain part of the binary that is actually required on Windows if you want ASLR at runtime. This didn’t happen in any of the other Windows binaries because they are all exporting libsecp256k1 symbols. The CLI binary doesn’t do that, it doesn’t use any libsecp256k1 symbols. The fix here was again another simple one, basically just adding a directive to the linker to export the main symbol out of the CLI binary. Then at link time it wouldn’t strip away this certain part that it needed for ASLR at runtime. That was a fun one to track down.
+
+The sysctl stuff is kind of boring and the effects weren’t that interesting. This was a follow on to some of the work that was done after removing the OpenSSL RNG. There was a new module added to our RNG that collected entropy from the environment. One of the ways it collected entropy was via this sys call. It would go and look at stuff like the amount of CPUs you have or how much RAM you have or what files are in certain directories, lots of random things. However in our build system we had some checks that would look to try to figure out if the host you were building for, Windows or MacOS or BSD, we would run these checks to see if that system call was available. The way we were checking for it was failing on MacOS. Then obviously at build time we wouldn’t compile in the code that would make use of those calls. There was no real impact because this code had never been released. It was fixed before it made it into the 0.20 release that only just came out. This was another case of something subtle where it looks like this is working everywhere and the detection is ok. It turns out on MacOS because the way we were detecting it was slightly different to other BSDs and it was failing.
+
+I’ll go quickly through this last one. This is a case of Apple’s documentation claiming that the linker would do a certain thing if you passed a flag. This flag was `BINDATLOAD`. According to Apple’s documentation if you link with this flag it would instruct the linker to set a certain bit in the binary header and then at runtime the loader would look at the binary header, see that bit and would modify its behavior to bind all of the binary symbols at load rather than lazily when they are first used. However when you actually pass this flag to the linker and build a binary it doesn’t set this bit in the header which is obviously contradictory to the documentation. It was unclear whether this was a bug in Apple’s linker or whether we were misunderstanding something. I eventually sent a few emails back and forward to this guy Nick Kledzik who is one of the people that works on the linker and loader at Apple. He came back with a clarification about how the behavior is meant to work and that we could disregard this flag and this header to all intents and purposes. However we can’t check whether it is working by looking for the bit, we have to look at some other output when you run a different tool on the binary. This was just a case of the documentation being incorrect and thus when you are looking at this sort of stuff you can’t even necessarily trust the documentation to instruct you on what to do. 
+
+Are you excited about Apple moving over to ARM and the stuff you are going to have deal with?
+
+Not particularly excited. We’ll see how significant it is and what we may or may not have to do or work around in six months or maybe a year. In general it is not entirely clear even what the future is for us releasing MacOS binaries because it is essentially getting harder and harder for us to be able to build and distribute binaries in the completely reproducible, trustless manner that we’d like to. Apple is introducing these notarization requirements where we would have to build our binary and then send it to Apple servers so they could notarize it. Then they would send it back to us and that’s the only way we could distribute a binary out to end users that would run on their Macs. Obviously doing that sort of stuff is tricky for us especially if it requires more official things like having an organization. I guess we already do that in some part because we have code signing certificates but I think the direction that Apple is going is making it harder and harder for us to continue or want to continue releasing Mac OS binaries. I know some of the developers are getting less enthused about having to deal with all of Apple’s changes and distribution requirements. But in general the ARM stuff is interesting. I haven’t looked at it a whole heap.
+
+The concern with notarizing is that you are assuming some kind of liability by signing off a binary and sending it to Apple? What is the actual concern there?
+
+One of the concerns is also that it is essentially a privacy leak. When the end users actually run those binaries on their machines the OS will essentially ping Apple’s servers with information asking it whether these binaries are ok to run. This is another thing we don’t necessarily want. I think the other problem may be due to reproducibility. It depends how Apple modifies the binaries when they do the notarizing, whether we can incorporate that into our reproducible build process. I know for a fact that we would never distribute binaries that could not be reproducibly built by anyone else that wants to run the same binary. Those are two concerns. There might be more. There are a few [threads](https://github.com/bitcoin/bitcoin/issues/15774) on GitHub with related discussion as well.
+
+Part of the reproducibility concern is that the end user is not able to go through all that same notarizing process through Apple? Or they wouldn’t need to go through Apple to reproduce it, it is just they wouldn’t be able to do it in the same way that the Bitcoin Core developers do it?
+
+At the moment we release our binaries, the source code is available, anyone can follow the same process we do and get an exactly identical binary to the one that we release. However if as part of this requirement we’d build that binary but then have to send it off to Apple they would maybe modify it in some way, give it back to us and we would have to incorporate something that they gave back to us then end users could try to go through the same process but it wouldn’t really work.
+
+On the blog post, there are four bugs that you go through in the blog post. They all don’t seem to be massively severe to put it mildly but they are all things that you expect to be caught. The first one isn’t severe because as you say bitcoind is a subset of bitcoin-qt. There was no problem with that one but you still expect that to be caught. The second one, this was data positioning inside of process address space. This is a concern around a private key being stored in a deterministic address space or a predictable address space. If an attacker had access to your machine they could extract the private key?
+
+ASLR is one runtime security feature. The purpose of it is to try to make it harder for attackers if they were able to say exploit a binary in some way to exploit it further. The addresses or the location of certain data in the address space of the binary is randomized at load. It was working fine for all the rest of binaries, it was only bitcoin-cli. I guess in general we want all of our hardening techniques to apply equally across all of our binaries. There are ways to detect this after build. You can look for whether certain bits have been set in binary headers or other tooling output. We were looking for those and had been for some time. They were all set to what they were meant to be set to but it turned out that the runtime requirements were slightly different to what we understood them to be. Even though we were already testing for certain things that didn’t catch this issue.
+
+The concern is that it is generating a private key using the bitcoin-cli. Apart from privacy the only thing you’ve really got to worry about are the private keys in terms of an attacker accessing your machine. Everything else is pretty public in terms of blockchain data, blocks etc.
+
+Sure.
+
+The address space randomization only makes it harder to exploit something. It is not that it is avoiding it. It is not that black or white.
+
+The other two, entropy problems was the third one. The fourth one, my understanding was from the blog post they just haven’t the documentation even now. They have told you that it works a certain way but that’s not the way it is outlined in the documentation, is that right?
+
+Yeah. The man page for Apple’s linker still says that if you pass this flag the linker will set some bit in the program header but it does not do that.
+
+Have you thought about chasing them? What is the process of trying to get Apple to update their documentation?
+
+I conversed with the guy that works on the linker at Apple. I assume that if they were concerned about it he would probably tell someone to update it.
+
+It is certainly not your responsibility. So basically these four things, they are not hugely severe but they are all things that you wouldn’t expect to be happening at this point in the maturity of Core certainly when you are interacting with things like Apple. And something could pop up in future that is similar that could be really severe.
+
+The one counterpoint I’d make is that a lot of this stuff can change over time. Three or four years ago that `BINDATLOAD` flag may have worked exactly as is written in the man page. It just happens as of two years ago it suddenly didn’t work that way. You could have some assumptions or tests for behavior that worked at a point in time that then may not work because something beneath you is changing. 
+
+# Generalized Bitcoin-Compatible Channels
+
+https://eprint.iacr.org/2020/476.pdf
+
+https://suredbits.com/generalized-bitcoin-channels/
+
+This is a cool idea. It is about taking the way Lightning works today which is with asymmetric state, each party has their own commitment transaction which is different to the other party’s commitment transaction with a different transaction ID and different script. Essentially the Lightning mechanism uses that to identify who posted the transaction on the blockchain. If it is an old transaction, the transaction has been revoked, it allows that person to be punished. The idea here is to keep the Lightning Network transactions symmetric. Both parties have the same set of transactions that they could post on the blockchain but what is different is that when they post them they have different signatures. The system identifies who posted a transaction and who to punish by the signature on the transaction rather than the transaction itself. This is a nice idea for several ideas. In my opinion the main motivator is that it is much simpler. If you are implementing it you have less objects to deal with and less complexity which can lead to software bugs and so on. The next benefit is that the transactions end up being smaller because there is less state to keep around in the transactions and less complicated update and settlement process. The place where it shines is in the punishment branch. In this system if you put down an old state, what first happens is we figure out that this state is old. You have a relative timelock where the other party has some time to use the signature that you put down that identifies you as the perpetrator. The other party is able to extract a secret key from that because it is an adaptor signature. They extract the secret key and they can use that secret key to punish you if that has been revoked already. If you have a bunch of HTLCs on a transaction that has been revoked it is much simpler to settle and take all the money. With the punishment one you may have to do a single transaction per output. Per HTLC that is inflight at that revoked state you may have to do an individual transaction for each of them whereas for this one you figure out whether it is punishable or not and if it wasn’t you carry on to settling all the rest of the outputs onchain if they are not revoked. I am really keen on this idea. I am looking at maybe attempting to build it starting next month but I am looking for feedback from anyone on anything about what they think about this paper. People who are more familiar with Lightning than me and the actual implementation.
+
+Why is it that you normally in Lightning need to have one transaction per HTLC you are settling? 
+
+It is a good question. When you push the transaction onchain the HTLCs may already have been revoked. When you put a revoked transaction onchain the HTLC outputs then have three paths. One is redeem, one is refund and one is it has been revoked. Depending on who put it down you have another transaction that spends from the HTLC output and that determines whether it goes into the redeem with a secret or the refund path. But if I put it down and I know the secret I can use the secret right away and put it into another state on another transaction. If you want to redeem all these things you may have to make an individual transaction for each of those other outputs that I put down. They are about to change it because of this anchor outputs idea. You never have an unilateral spend.
+
+I think one of the things with the way it works at the moment is if you have got a HTLC then there is either the timeout and refund path or the reveal the secret and get paid path. But if you are publishing a transaction near the timeout then you want to be able to say “I know that this might be revoked but I want to guarantee that unless someone has been cheating that I get my money and that we don’t have this delay while we figure out if someone is cheating and that puts us over the time limit so now I can’t get paid.” I think that is why there are the two layers there. The term that is used is layered commitments. I think that is going to be the challenge to have work with this approach. The problem with not doing it that way is that the overall timeout of the HTLC has to decrease at each step by the time you are going to allow somebody to detect cheating at each step. If you are saying “I don’t want to have to detect cheating every five minutes, I want to be able to check it every two hours” the difference between the overall HTLC timeout on each step ends up being the two hours for one guy, the two days for another guy, the five minutes for another guy. That makes the overall timeouts of the HTLCs really long. 
+
+This is one of the issues I really wanted to know more about. It has obviously been discussed because it is the same way eltoo works?
+
+Yeah eltoo doesn’t work that way. There is a [post](https://lists.linuxfoundation.org/pipermail/lightning-dev/2020-January/002448.html) of getting it to work despite that with the ANYPREVOUT stuff. (Also a historical [discussion](https://lists.linuxfoundation.org/pipermail/lightning-dev/2015-November/000339.html) on the mailing list)
+
+You can actually circumvent this problem in eltoo?
+
+In eltoo with ANYPREVOUT as long as ANYPREVOUT doesn’t also commit to the value of the transactions. This was discussed in around 2016 to come up with the way the current stuff works. 
+
+I was thinking that this seems like quite a big problem. But it seemed to also be a problem with the original eltoo paper. I looked at the original [paper](https://blockstream.com/eltoo.pdf) and I couldn’t find anything talking about it. 
+
+As far as I can see it is totally a problem with eltoo and it hasn’t been discussed at any point.
+
+On the previous answer to the question, it is like a worst case analysis. This transaction could go on there, I don’t think it necessarily has to be there but each of those transactions needs another revocation thing in it. I think that is the way they get their numbers from. But they could be wrong and I could be wrong.
+
+At least the general idea is that there is a second transaction that needs to occur before the whole HTLC revocation process is played out. Because of that secondary transaction you get this problem of not being able to spend multiple revoked HTLCs at the same time.
+
+Yes and it doesn’t help you if it is a valid state. It seems to be the same if it is a valid state. You still have to go through all the transactions. It is not an optimization there, it is an optimization saying “We can exit early on the punishment.” This is the question. Is it actually worth doing that double layer of first punish and then settle. Right now the way Lightning does it is punish and settle at the same time to avoid this layering of timelocks. Is that still the right way to go? You still use the new mechanism that they’ve provided in the paper but don’t do their double stage revocation. That is the thing I am wrestling with.
+
+Doesn’t this all go out the window with eltoo because there is no punishment?
+
+I think it does go out the window with eltoo.
+
+Going back to that original post on generalized channels, how Lightning works now is that I have a commitment transaction with a timelock on my output and the counterparty has a timelock on the output on their commitment transaction. They are not symmetric. I am struggling to understand how those transactions are identical in this design.
+
+They are identical because the commitment transactions are the same.
+
+Are they adding a timelock that is unnecessary to one of the outputs or are they taking away the timelock that were there on each party’s output?
+
+It is necessary but it can be circumvented in eltoo apparently. Each commitment transaction is the same for both parties and then the output on that can be either revoked, give all the money to the person who was not the perpetrator or if it is valid it spends to the real commitment transaction or the state transaction you could call it. The commitment transaction is very boring and bland. It just has an output which if the guy has revealed his adaptor signature secret and his revocation key, when he puts it down he reveals the secret and he has also revealed the revocation key over the communication channel in Lightning then the other guy who is not the perpetrator can just take all the money from the output. He knows both the private keys of the OP_CHECKMULTISIG so he can take the money. But if he doesn’t, if it is a valid state then on a relative timelock it spends to a state transaction that has all the HTLC outputs on it and the balance outputs of the two parties. That is how they manage to keep it symmetric. 
+
+# Flood & Loot (Harris, Zohar)
+
+https://arxiv.org/abs/2006.08513
+
+This was published mid June and then revised early July. To outline the attack, the idea is you are an attacker, you want to steal money from people, you set up your channels. The idea is that you would have the target node and the source node. You set up your channels and you push through as many possible payments as you can based on how many HTLCs you can do and then you are waiting for the timelock. Because all those transactions are happening at once you can spring the trap and steal from everyone because everyone is trying to claim at the same time. Every HTLC has its own output as opposed to the other approach where it is one for the whole channel.
+
+An attacker tries to create as many channels as possible with victim nodes and the attacker also creates a node that is able to receive funds. What the attacker now does is tries to create as many HTLCs as possible, payments that are targeted to the receiving node. That is also a node that controlled by the attacker. He uses the channels that he just created with all the victim nodes. The target node waits until all the HTLCs have reached the target node and then it sends back all the secrets to the victim node that need that secret to claim the transaction from the attacker. The target node is left without any open HTLCs but at the same time the source node that created all the transactions doesn’t respond to the secrets from the victim nodes. The source node is turned off. As the timeout approaches for all the HTLCs all the victim nodes will try to broadcast their transaction at the same time because they want to close the channel. Some of those broadcasts will fail to enter the Bitcoin blockchain because of congestion and the attacker will then wait, bust the expiration of those HTLCs and by using the replace-by-fee policy raise the fee of its own transactions to a higher one he can then claim that victim’s transactions and steal money that way. It is a kind of a denial of service attack because you try to create a situation where suddenly a lot of people try to close channels at the same time. If your read the paper you will see that with the current block weight you need a minimum of 85 channels that close at the same time to be able to steal some funds. The amount of funds you can steal increases if you have more channels. This is all based on simulations. Apparently it starts at 85 channels and if you are able to close down more channels than 85 at the same time you are able to steal substantially more funds.
+
+The crucial point I missed there is that you stop responding. Every other node out there thinks “I need to go to chain and I have no other way to deal with it.” The concern would be that people might not want to put funds into Lightning because you are now risking money. Previously a lot of people might have thought if other people open channels to me that is not a risk but really there is a risk to that especially once you start routing through that channel. Probably worthwhile talking about the mitigations as well. Some of the Lightning implementations are limiting the number of HTLCs. The other one is anchor outputs and reputation though obviously there is a concern around reintroducing layers of trust there. Any comments on mitigations?
+
+I still haven’t got my head around all this replace-by-fee stuff works together in this attack.
+
+The replace-by-fee is used in this attack by the attacker at the moment the victim tries to broadcast the current state of the channel and close the channel. If you wait until the HTLC has expired then that broadcast is still in the UTXO. You need to use a higher fee as an attacker to be able to be the first to claim the funds.
+
+The other crucial point they mention in the paper is that if you are the innocent victim node all you have is the pre-signed commitment transaction from back when the attacker was talking to you. You can’t now re-sign that because you can’t re-sign it on your own.
+
+One of the mitigations as always in these papers is the reputation based behavior. 
+
+That’s not a good pathway to go down because you don’t want the whole network to become permissioned and reinsert all the same permissioning that we are trying to get away from.
+
+There is already some reputation based behavior in some of the clients. c-lightning is a little bit more hardcore and rightly so. I think lnd already has a small local database on the client itself keeping reputation…
+
+The BOS scoring.
+
+Does anyone know what the problem is with reducing the number of unresolved HTLCs? Would that be a big deal?
+
+I think that would mean less functionality because now there is less routing that can happen through the network. 
+
+I don’t think it is a limiting factor right now but in the future if Lightning started to grow exponentially it would limit the number of transactions.
+
+It just adds more restrictions to the types of payments that can go through Lightning. If you are allowing loads of really tiny HTLCs and as a routing node you are collecting tonnes of really small HTLCs you are helping the network by routing loads of different types of payments including small ones. The problem is when you go onchain with so many HTLCs obviously the fee is so much higher because you are taking so many HTLCs onchain. The number of bytes are so much higher than it would be if you were just going to chain with a few HTLCs.
+
+# Chicago BitDevs transcript on various Lightning Network attacks
+
+https://diyhpl.us/wiki/transcripts/chicago-bitdevs/2020-07-08-socratic-seminar/
+
+They went through a bunch of Lightning Network attacks including Flood & Loot. There was this Bitcoin Optech [link](https://bitcoinops.org/en/newsletters/2020/04/29/#new-attack-against-ln-payment-atomicity) talking about the different types of attacks on Lightning. Someone said “you either really want to know your stuff with Lightning or you want some sort of trusted relationship with your direct peers” at this stage. Another attack that they went through was stealing HTLCs inflight which at least in my eyes was a more concerning one and something I hadn’t really thought about before. It has always been obvious that fees are going to be a problem if you are forced to go back onchain and onchain fees are really high. Right from the beginning that has been obvious that it is a problem. But it hadn’t really clicked with me this stealing HTLCs inflight if you are an attacker who has one node earlier on in the route and one node later on in the route, whether you withhold the revealing the preimage or play tricks with some of the intermediary nodes. 
+
+That is similar to the wormhole attack, the idea is that you jump through and skip everyone in the middle.
+
+That only allows you to steal the transaction fee right?
+
+The wormhole attack is just fee that you are stealing.
+
+I think it is an optimization not an attack. It is a way of optimizing the route adhoc and getting paid for it in my opinion. Everyone still gets the money.
+
+No you are stealing the fee.
+
+You steal some fees because you skipped some nodes in the route. If you are delivering a parcel and instead of passing onto the next delivery man you just deliver it straight to the guy yourself. You get the fees in the middle, it sounds good to me. I don’t know why it is an attack.
+
+You are tricking those nodes into locking up their capital when they are honestly seeking to route a payment. Thinking that they are providing a route that is needed on the network and then tricking them when they are acting honestly to lose out on the fees that they could’ve perhaps got elsewhere. 
+
+Maybe I misunderstood the attack. You can lock up money with that attack?
+
+You lock up money anyway because you need to lock up the money for the HTLC until the payment comes through.
+
+Now I get it, I never understood what the attack was. The attack is like a denial of service attack. You lock up their money, you’re skipping them and stealing their fee.
+
+They are performing the service and they are not getting the fee in return.
+
+To some extent I agree that you get paid for offering a better route. It is a funny way of looking at it. The only cost the victim incurs is the cost of having those funds locked up and not getting the fee. It is not really stealing.
+
+They could be routing another payment that is actually needed and getting the fee for that. They are locking up capital and they are not receiving fees that they could be receiving elsewhere.
+
+Opportunity cost.
+
+# Following the Blockchain.com feerate recommendations (0xB10C)
+
+https://b10c.me/mempool-observations/3-blockchaincom-recommendations/
+
+I thought this was a really cool post but I can’t remember all the specifics of it. For a long time people were saying “Are Blockchain lying about how many transactions they do? Are they really one third of the network in terms of transactions?” According to this article that is a fair estimate based on the fingerprinting. 
+
+I guess the one thing to point out is how shocking that these transactions can be fingerprinted so easily. One third of transactions, it is obvious where they are coming from. That in itself is quite shocking.
+
+What’s so good about this Blockchain wallet? Why does everybody use it? I have never used it myself.
+
+It is like a first mover advantage. They were so early that so many newbies used them and never moved off to another wallet. They have blocked up a lot of things by not having SegWit etc. 
+
+Part of it was also they were one of the first easy wallets in general and they were also a web wallet. You go to a website and it is really easy to sign up. All the newbies did it. People who have money with them, their value went up quite considerably because it was very early on in Bitcoin’s life, that is what caused them to have a lot of money on there. I find it surprising that those users also create a lot of onchain transactions at the same time. That part is a little confusing to me. I am not surprised that there is a lot of capital locked up with them. 
+
+They are non-custodial? It is like a web wallet client side wallet thing?
+
+Yeah but the security of that is questionable. Now they have an app as well. They didn’t in the past. It was the web wallet mainly that got them a lot of popularity and was relatively easy to use.
+
+That is scary.
+
+They even had a poor implementation of Coinjoin at some point. It was completely traceable. They were not a bad company at that time in the sense that they were trying to do these things.
+
+# BIP 118 and SIGHASH_ANYPREVOUT
+
+https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-July/018038.html
+
+Is anyone not familiar with NOINPUT/ANYPREVOUT as of a year ago, basic concept?
+
+Personally I know what they are trying to do. I’m not familiar with the exact differences between NOINPUT and ANYPREVOUT and I haven’t really followed the recent stuff on how it has changed. I know ideas are being merged from the two.
+
+There is the motivation in the [BIP](https://github.com/ajtowns/bips/blob/bip-anyprevout/bip-0118.mediawiki) now that is probably good context to read. The basic idea is you want to spend some Bitcoin somewhere then you obviously have to sign that or else everyone could spend it because it wouldn’t need a signature. When you create any of the signatures by any current way with SegWit or with legacy pre-SegWit stuff or with pay-to-script-hash or with Taproot as it is proposed so far without ANYPREVOUT, you are committing to the txid of the transaction that you are trying to spend. The txid is made up from hashing the scriptPubKeys and the amounts and everything else. At the point where you have made a signature you then have to commit to exactly how the funds got into whatever transaction is going to end up with onchain. What would be nifty to be able to do is to come up with a way of spending transactions where you don’t know quite how they got there, you just know that they got there somehow or other and they are going to be yours. If you are writing a will you want to be able to say “All my money goes to my children and it is not going to matter if the money ended up in this bank or a different bank or if it is gold buried on your property or whatever.” The executor can take your will and its signature and say “This is sufficient proof for whoever cares” and execute your will and testament that way. What we’d like to do is have something similar for Bitcoin smart contract stuff where you can say “No matter how someone tries to cheat me on my Lightning channel I want to just send this signature to these watchtowers who will pay more attention to the blockchain than I can be bothered doing and will send these funds directly to me if there is any cheating that happens. It doesn’t matter how that cheating happens.” That was the original use case of NOINPUT when Joseph Poon I think proposed it originally for Lightning. Then the whole eltoo thing is based on “If there is ever some state published I want to be able to update that to a new state and it doesn’t matter if it is an old state from 5 minutes ago or from a year ago or however long. No matter which of those gets published I want to be able to do a single signature and end up with the current state.” That is the more current motivation for it. The idea here is that when you are doing a signature you are no longer signing the transaction ID that is going to be spent because you don’t know that yet, instead you will sign some sort of description of what the transaction is going to be. For ANYPREVOUT that includes things like the scriptPubKey that is going to be spent or the actual script after it has been unhashed and unTaproot’d. And maybe the value and other stuff like that. It is still signing that it is your funds, it is just not signing that it is this particular set of your funds. That has different risks. For the will example that means you are going to be able to take all the money from all the bank accounts not just the one bank account that you were thinking of when you wrote the will. In the same way with ANYPREVOUT it means that that single signature can possibly spend funds from one UTXO or from many UTXOs that all satisfy the same conditions. It requires a bit more care to use this sort of signature but if you are doing complicated smart contract stuff like eltoo then you need to take that sort of care anyway. It seems like a reasonably good fit. 
+
+There was also a discussion around script path and key path?
+
+The way Taproot works is that you can have a key path or many script paths for a single scriptPubKey that goes into a UTXO. I say “You can spend this bit of Bitcoin with this key just by doing a signature or by following this script or this different script or this other script.” The way we’ve set Taproot, when you define a new SegWit version the key path is pretty much set in stone from when you define it. Say we activate Taproot tomorrow you can’t say “Right now these particular signatures are valid but in the future some different signatures will be valid. We don’t know what those are yet so in the meantime just accept any signature.” because that would obviously be completely insecure. The only way we can accept signatures that we haven’t defined yet and that we are going to define in future in a soft fork friendly way is to put it in the script path or to set up new SegWit versions. ANYPREVOUT doesn’t want to use up an extra SegWit version, it wants to be as minimal as possible so it goes in the script path which has a different leading byte for the pubkey that gets put in the script. There is a special code so that you can just reuse the main pubkey that you use for Taproot without having to repeat it too much. By using that special class of pubkeys or specially tagged pubkeys that means you have opted in to allowing ANYPREVOUT on that script. It also means that if you don’t want to opt in to ANYPREVOUT you can do stuff as normal with Taproot and no ANYPREVOUT signature will ever be valid for those coins that you have used. You don’t have to worry about the extra risks that ANYPREVOUT may introduce.
+
+Is my understanding correct that these discussions with Christian (Decker) on NOINPUT means that these proposals are being merged and getting the best from both?
+
+There is not a real conflict between the proposals apart from the naming. The NOINPUT original proposal was we want to have this functionality and we’ll do it when the next version of SegWit comes along. The next version of SegWit is hopefully Taproot. The original way it was proposed meant that eltoo would’ve had to have been a CHECKMULTISIG script path rather than key aggregation Schnorr key path potentially. It is not technically any worse than what the original concept was by having to go through the script path. It is just the next progression now that we have some idea what the next version of SegWit should look like. 
+
+There was a small change to sighash in Taproot wasn’t there to facilitate a new sighash flag in a future soft fork?
+
+The fact that we have allowed for unknown public keys. The public keys that Taproot understands are 32 bytes. Instead of starting  with `02` or `03` it is just the 32 bytes that follow that and that’s it. When we put them in script we have just said that stuff that doesn’t match this default we will accept it full stop. You can use any signatures so don’t put in a pubkey of that sort until it is defined how it should behave. These pubkeys are going to be 33 bytes with the first byte being `01` and that is going to limit how they can be signed but 33 bytes with the first byte `77` can be something entirely different with a different sighash or a different elliptic curve. It could be a different size of elliptic curve. It could be 384 bits instead of 256. Or whatever else turns out to be a good idea eventually. There is also the specification for how stuff gets hashed. There has been a fair bit of effort put in to making sure that we won’t accidentally have hash collisions between hashing for one sort of message or a different sort of message. Hopefully that should be good. 
+
+It is certainly going to be a strong contender for a future soft fork assuming we get Taproot. Maybe a soft fork with Jeremy Rubin’s [CHECKTEMPLATEVERIFY](https://arxiv.org/pdf/2006.16714.pdf).
+
+The code isn’t updated for the latest tweak to the ANYPREVOUT BIP that doesn’t commit to the value with ANYPREVOUTANYSCRIPT any more. It is still missing some tests but assuming the code can be written and the tests can be made to pass then I don’t think there needs to be any special delay to get it activated. In theory we should be able to activate multiple forks at once with BIP 9 and BIP 8 and whatever else.
+
+There could be signaling in different ways?
+
+There are at least 13 version bits that can all be used at the same time if necessary. We could have bit 5 signaling for Taproot and 6 signaling for ANYPREVOUT should Taproot activate. Then 7 signaling for CHECKTEMPLATEVERIFY. Then 8 signaling for [CHECKBLOCKATHEIGHT](https://github.com/luke-jr/bips/blob/bip-cbah/bip-cbah.mediawiki) via the annex. I forget what my next favorite one was.
+
+What is CHECKBLOCKATHEIGHT? I haven’t heard of this one.
+
+You put the tail of the hash of a block at a particular height in the annex. Your transaction is not valid if the tail of that block at that height doesn’t match it.
+
+It is to connect a transaction to a specific block?
+
+Yes. If the blockchain gets re-organized your transaction is not valid anymore. Or if there is a huge hard fork or whatever you can make your transaction valid on one side but not on the other. As long as the hard fork still respects this rule of course.
+
+I think Luke Dashjr wrote a BIP on that a while back which was implemented in a very different way.
+
+It was via an extra opcode.
+
+Is that optional, the annex thing? Is it optional or mandatory?
+
+I’m not quite sure what you are asking. The annex is something that you can optionally add to a transaction but once it is added to the transaction every signature commits to it. Once you’ve added it if you take it away or change it in any way then the signatures become invalid. 
+
+Are you using the annex as part of this proposal?
+
+Which proposal?
+
+ANYPREVOUT.
+
+No ANYPREVOUT still commits to the annex. This was talking about the CHECKBLOCKATHEIGHT idea.
+
+Let’s say you have eltoo all spec’d up and designed. Is there a way given that we have Taproot happen first to change Lightning channels to eltoo channels without going onchain. I couldn’t see how to do it since you have to commit to a new public key type. Is there a way to do it?
+
+The problem is that if either party had kept any of the previous penalty Lightning revoked commitment states then they could still publish those and those wouldn’t be replaceable via an eltoo thing. I think you’d still want to go onchain and bump the pubkey or the UTXO or whatever. That is pretty much the same problem with if you’ve got eltoo and you want to go from having 5 people in the channel to having 6 people in the channel. 
+
+Bob McElrath wrote a [paper](https://arxiv.org/abs/2006.16714) (further discussion on [Twitter](https://twitter.com/hodl_squirrel/status/1280606618372182016?s=20)) advocating for enabling SIGHASH_ANYPREVOUT for ECDSA so he could do covenant signatures where it looks like you are paying to a pubkey but in reality the private key of it is not known. A specific signature for it is known in such a way that you can spend it.
+
+Can you explain how the pubkey recovery covenant signature stuff works?
+
+The general idea is that you can create a pubkey in such a way that you don’t know the private key but you do know a single signature. You create a signature beforehand so you know the transaction that you wanted to create and you reverse the ECDSA math in such a way that you come up with a single pubkey that is valid for that specific signature. Now if somebody sends money to that pubkey you can only spend it in one way because you only have the signature, you don’t have the private key. The reason this doesn’t work today for ECDSA is because you are committing to the txid of the output that you are spending. There is a circular reference there where you want somebody to pay to a pubkey and then you want to spend from that pubkey with a signature but the signature has to contain the txid which contains that pubkey. It is a circle there. In theory if you had ECDSA plus ANYPREVOUT you could do this because now you are no longer signing the txid. I would be able to give you a pubkey, you would send money to it and then provably I would only be able to spend it in one way. It would act very similarly to OP_CTV with the one upside being that the anonymity set is better because it just looks like a regular pubkey instead of a very obvious OP_CTV transaction. It seems to me like it is cleaner to just put everything on Schnorr.
+
+That’s not compatible with Schnorr because we have chosen to have the Schnorr signature commit to the pubkey. Even if the txid signature doesn’t the Schnorr part of it does. That’s the dependency on ECDSA. If we didn’t do that or if we put in some way round it then it would work fine for Schnorr as well. The other thing about it is if you are just looking at it at the academic maths level then it looks just like a normal signature. When you look at it from the Bitcoin level you’d have to opt in to being able to spend it this way somehow. The fact that you have opted in would then distinguish it from all the other transactions. Maybe if we did some big upgrade, with Taproot we are doing a big upgrade where we are hopefully going to have everyone using Taproot because it is better in a bunch of ways. Everybody is using Taproot and most people are using the key path so everyone is going to be doing the same thing there. If we go to SegWit version 2, 3, 4 and there is a big reason for everyone to switch to that then maybe we can make ANYPREVOUT the default there and then everyone is doing it and it is indistinguishable. I think we are a long way away from being able to make it a default. There are potential risks of doing ANYPREVOUT compared to how we do things now. If those risks are real and cause actual problems if people aren’t ridiculously careful then we don’t want to inflict that on everyone using Bitcoin and have problems result from it. But maybe it will turn out that there aren’t really any risks that aren’t trivially mitigable. Maybe it is a good default some time in the future.
+
+I totally overlooked that it would still be obvious that you are opting into ANYPREVOUT even with ECDSA. That makes it pointless in that sense.
+
+It is still interesting in an academic sense to think about what should be the default for everyone to do in future that gives you big anonymity sets and lots of power and flexibility. But it doesn’t seem practical in the short term. The way Taproot activation is going the short term seems kind of long.
+
+# Thoughts on soft fork activation (AJ Towns)
+
+https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-July/018043.html
+
+This was building off Matt Corallo’s [idea](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-January/017547.html) but with slight differences. Mandatory activation disabled in Bitcoin Core unless you manually do something for that. One of Matt Corallo’s concerns was that there are all the core developers and are they making a decision for the users when maybe the users need to actively opt-in to it. The counter view is that the Bitcoin Core developers are meant to reflect the view of the users. If the users don’t like it they can just not run that code and not upgrade.
+
+There are a billion points under this topic that you could probably talk about forever. Obviously talking about things forever is how we are going at the moment. We don’t want to have Bitcoin be run by a handful of developers that just dictate what is going on. Then we have reinvented the central bank control board or whatever. One of the problems if you do that is that then everyone who is trying to dictate where Bitcoin goes in future starts putting pressure on those people. That gets pretty uncomfortable if you are one of those people and you don’t want that sort of political pressure. The ideal would be that developers think about the code and try to understand the technical trade-offs and what is going to happen if people do something. Somehow giving that as an option to the wider Bitcoin marketplace, community, industry, however you want to describe it. The 1MB soft fork where the block size got limited, Satoshi quietly committed some code to activate it, released the code seven days later and then made the code not have any activation parameters another seven days after that. That was when Bitcoin was around 0.0002 cents per Bitcoin. Maybe it is fine with that sort of market cap. But that doesn’t seem like the way you’d want to go today. Since then it has transitioned off. There has been a flag day activation or two that had a few months notice. Then there has been the version number voting which has taken a month or a year for the two of those that happened. Then we switched onto BIP 9 which at least in theory lets us do multiple activations at once and have activations that don’t end up succeeding which is nice. Then SegWit went kind of crazy and so we want to have something a little bit more advanced than that too. SegWit had a whole lot of pressure for the people who were deeply involved at the time. That is something we would not like to repeat. Conversely we have taken a lot more time with Taproot than any of the activations have in the past too. It might be a case of the pendulum swinging a bit too far the other way. There is a bunch of different approaches on how to deal with that. If you read Harding’s [post](https://gist.github.com/harding/dda66f5fd00611c0890bdfa70e28152d) it is mostly couched in terms of BIP 8 which I am calling the simplest possible approach. That is a pretty good place to start to think about these things. BIP 8 is about saying “We’ll accept miners signaling for a year or however long and then at the end of the year assuming everyone is running a client that has lock in on timeout, however that bit ends up getting set, we’ll stop accepting miners not signaling. The only valid chain at that point will have whatever we’re activating activated.” Matt’s modern soft fork activation is two of those steps combined. The first one has that bit set to false and then there is a little bit of a gap. Then there is a much longer one where it is set to TRUE where it will activate at the end. There are some differences in how they get signaled but those are details that don’t ultimately matter that much. The decreasing threshold one is basically the same thing as Matt’s again except that instead of having 95 percent of blocks in a retarget period have to signal, that gradually decreases to 50 percent until the end of the time period. If you manage to convince 65 percent of miners to signal that gives you an incremental speed up in how fast it activates. At least that way there is some kind of game theory incentive for people to signal even if it is clear that it is not going to get to 95 percent.
+
+There is a bit of concern and I think Greg Maxwell voiced it on Reddit, that maybe if we are talking about two year activation it is going to be demotivating for the people working on this because it is going to be such a long time period. There is a point to be made for too long also not being good.
+
+I am happy either way. Trying to go super fast and dealing with the problems of that doesn’t really bother me. Taking a really long time is kind of annoying but I don’t find it that problematic either. It has already taken a long time. The benefit of taking a really long time is that we can be pretty confident that if we get pretty clear consensus to do it after 6 or 12 months that I expect we would have, then spending 2 and a half years or however long getting people to upgrade to new software will make it pretty certain that every single node and every single business that is going to be running the new software. At that point there is no chance of having any major “Lock up your funds. There has been a 7 block chain split and we don’t know what is going to happen. You can’t make transactions” and the whole Bitcoin economy has to stop and deliberately react. Even if like with SegWit we get to the point where it turns out there is no need to stop and react if we do things fast we can’t be quite 100 percent sure of that in advance. That means that we’ve got to have all the press people try to make it clear that there is a reason to start paying attention and forcing everyone using the currency to pay attention is kind of the opposite of what we want. I want this to be stable and Bitcoin be something that people can rely on without having to constantly think about what is going to be the next parameter change is kind of the point. I think 99.9 percent of nodes have upgraded some time in the last four years going by Luke’s stats from the other day. Four years definitely seems completely long enough and two and a half years seems like plenty of time to me too. But it could well be that given even a bit of notice 3 months is plenty of time. I don’t see how there is any way of knowing what timeframe is perfectly safe and what timeframe isn’t without trying it. Obviously if you get it wrong when you try it out that is going to be a pain. But maybe that pain is something you have to accept as a growing pain. 
+
+I think that is a good argument that you don’t really want people to think about upgrading and ideally want that to be a natural consequence and everyone be upgraded without feeling pressure.
+
+The ideal thing is for the miners to do the upgrading because they are the ones who are getting paid on a daily basis to keep Bitcoin running. If it is upgrading the pool software from 7 pools or something then that shouldn’t be hard. In theory unless there is someone specifically hurt by Taproot or someone is trying to stop Bitcoin from upgrading because they are short Bitcoin and long altcoins or something all of this discussion shouldn’t really matter. But we don’t know that none of those things are happening. 
+
+There is a concern there that you wouldn’t want miners to activate it if the majority of the users haven’t also activated it. There is this theoretical chance that users are not upgraded, miners are upgraded, it activates and then miners could theoretically revert it and steal. There is no way of getting around users having to upgrade I would assume.
+
+If miners upgrade and no users do and then miners revert it is not really a problem because none of the users would’ve used the new features because they haven’t upgraded. If some of the users have upgraded and the miners have activated then there might be a problem because those users won’t be following the most work chain that everyone else is following now. They could get scammed more cheaply on that shorter chain that they are following.
+
+Why would they be following the shorter chain in that case?
+
+They won’t consider it the shorter chain because they don’t see the invalid chain that has got more work applied to it. They will be following the shorter chain because it is activated. This is assuming that the miners just stop following the rules, not that they re-org the chain to some different point at which it hadn’t activated and stop signaling. 
+
+That’s a good point that users are not only opting in by running the software but also accepting payments with the new soft fork.
+
+As soon as they upgrade their software to the stuff that checks the activation back in history they will consider it activated on all the blocks more or less. It doesn’t matter if they upgrade after it has activated but that will still catch the miners cheating. They don’t need to have upgraded in advance. 
+
+On the question of defaults, people present different ideas here. The code would already be in Bitcoin Core and it would just be set to activate at a certain time versus the other idea which is more like the user has to actively opt in to it.
+
+There are three parts to making Taproot live on Bitcoin. One is merging all the code. At the point where we merge all the code then that lets us do tests on it but unless there is a bug it doesn’t affect any of the live transactions. It doesn’t enforce the rules, it doesn’t do anything on Bitcoin itself. The second step is we add activation parameters. At that point that is something that anyone who can compile Bitcoin can almost certainly change two lines in the source and recompile to get to the point where it is not activated or there are some different parameters. There is still the option to say “Screw the Bitcoin Core developers, they are being stupid. We need to do something different.” If everyone gets consensus on that then things will mostly work ok. Once the activation parameters are in then whatever the conditions of activation have to actually happen whether that it is timeout or whether it is miner signaling or whatever.
+
+It sounds like you are a bit depressed at the state of the discussion going around in circles. 
+
+I wouldn’t say depressed, I’d say cynical.
+
+For me it seemed obvious after all the chaos of SegWit there was going to have to be this discussion that was likely to be longwinded. Maybe we should’ve tried to kick off this discussion earlier and maybe there is a lesson for future soft forks to get that activation discussion started earlier.
+
+Ideally if we get something that works for Taproot and cleanly deals with whatever problems there are we can just reuse it in future. I think it would be fair to say that at least some of us have specifically delayed discussing activation stuff because we expected it to be a horrible, unfun discussion and conflict and tedious debate rather than fun coding kind of thing. But it is obviously something that we have to go through. We need to get an answer to the question and I don’t see an obvious way of doing that without discussion. Dictating stuff is the opposite of what I want.
+
+The hope is that after this brainstorming phase people will start coalescing around particular ones. At the moment the number of proposals just keeps increasing. You would hope once we have that brainstorming phase then people will start coalescing around two or three options. Then we’ll be able to narrow it down. I think I am optimistic. I can see why you’re a little cynical. I think it was inevitable it was going to take a long time.
+
+Just take a straw poll on the mailing list and be like “Everyone says aye. Which one? Here’s your three choices, off you go” (Joke) What is needed? Do we need enough people to coalesce around one particular method and then everyone says “This is the one we are going with”? What do you guys think is needed?
+
+I think that is a great question.
+
+I think that the work that [David Harding](https://gist.github.com/harding/dda66f5fd00611c0890bdfa70e28152d) and [Aaron van Wirdum](https://bitcoinmagazine.com/articles/bip-8-bip-9-or-modern-soft-fork-activation-how-bitcoin-could-upgrade-next) are doing is really valuable. We need to have some structure and as I said I think this is the brainstorming phase. There is going to be loads of different proposals. Some of them are going to be very similar and people won’t really care about eventually ditching some of the proposals that are very similar to other ones. The only thing I am worried about is if people have really conflicting views on what happened with SegWit. “This proposal should definitely happen because otherwise SegWit wouldn’t have happened.” Or disagreements on what the history of SegWit activation was. I think that is the only thing I might be worried about. I think everyone wants Taproot so I don’t think people are going to want to continue with these crazy discussions for a really long time delaying Taproot.
+
+If you want to get more time wasted then there is a IRC channel \#\#taproot-activation.
+
+As a relative newcomer to the space, I thought that the whole Taproot process was handled magnificently. The open source design and discussion about it was so much better than any other software project in general that I have seen. That was really good and that seems to have built a lot of good support and goodwill amongst everyone. Although people may enjoy discussing all the different ways of activating it it feels like it will get activated with any one of those processes.
+
+One thing I might add is that we have still got a few technical things to merge to get Taproot in. There is the updates to [libsecp](https://github.com/bitcoin-core/secp256k1/pull/558) to get Schnorr. One of the things that Greg mentioned on the \#\#taproot-activation channel is that the libsecp stuff would really like more devs doing review of code even if you are not a high level crypto dev. Making sure the code makes sense, making sure the comments make sense, being able to understand C/C++ code and making sure that there isn’t obvious mistakes not including the complicated crypto stuff that has probably already had lots of thought put into it. Making sure APIs make sense and are usable. Adding review there is always good. The Taproot [merge](https://github.com/bitcoin/bitcoin/pull/17977) and the [wtxid relay](https://github.com/bitcoin/bitcoin/pull/18044) stuff, both of those are pretty deep Bitcoin things but are worth a look if you want to look into Bitcoin and have a reasonable grasp of C++. Hopefully we are getting a bit closer to a [signet merge](https://github.com/bitcoin/bitcoin/pull/18267) which is a more reliable test network than testnet is hopefully. There should be a post to the [mailing list](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-March/016734.html) about some updates for that in the next few weeks. I am hoping that we can get Taproot on signet so that we can start playing around doing things like Lightning clients running against signet to try out new features and doing development and interaction on that as well sometime soon. 
+
+Is the first blocker getting that [Schnorr PR](https://github.com/bitcoin-core/secp256k1/pull/558) merged into libsecp? That code is obviously replicated in the Bitcoin Core Taproot PR. But is that the first blocker? Get the libsecp PR merged and then the rest of the Taproot Core PR.
+
+I’m not sure I would call it a blocker so much as the next step.
+
+The Taproot PR used to be quite a bit bigger than it is now. It also included an interim libsecp update that had non Schnorr related changes. We yanked that out, got that merged in. There were a few other refactoring type changes that were also part of the Taproot PR that I think now have all been merged. Now in the Bitcoin Core repo the Taproot PR is basically just a merge of the Schnorr PR into libsecp and then Taproot stuff. We are not going to pull that code into the Core repo obviously until it is merged into the upstream libsecp repo. That is where the review needs to go.
+
+Thank you everyone for joining. We’ll do a similar thing in about a month’s time. We will make up a list and feel free to add in things to chat about. I’ll put the Meetup page up on normal channels.
+
