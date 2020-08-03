@@ -1,0 +1,96 @@
+Name: Karl-Johan Alm
+
+Topic: Signet Integration
+
+Location: Advancing Bitcoin
+
+Date: February 6th 2020
+
+Video (paid access): https://www.advancingbitcoin.com/video/signet-in-practice-integrating-signet-into-your-software,5/
+
+Slides: https://www.dropbox.com/s/6fqwhx7ugr3ppsg/Signet%20Integration%20V2.pdf
+
+BIP 325: https://github.com/bitcoin/bips/blob/master/bip-0325.mediawiki
+
+Signet on Bitcoin Wiki: https://en.bitcoin.it/wiki/Signet
+
+Bitcoin dev mailing list: https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-March/016734.html
+
+Bitcoin Core PR 16411 (closed): https://github.com/bitcoin/bitcoin/pull/16411
+
+Bitcoin Core PR 18267 (open): https://github.com/bitcoin/bitcoin/pull/18267
+
+# Intro
+
+I am going to talk about Signet. Do you guys know what Signet is? A few people know. I will explain it briefly. I have an elevator pitch, I have three actually depending on the height of the elevator. Basically Signet is testnet except all the broken parts are removed. There is no real mining but who needs mining in a test network? We don’t need decentralization in a test network so why bother? If you are a miner testnet is great for you. If you are not a miner, if you are a software developer testnet is broken. It doesn’t work at all. Signet integration, I will give examples of integrating Signet into existing software. This is the logo that one guy in our company did for Signet. It looks like a keyhole, it is pretty nice.
+
+# Agenda
+
+My agenda looks like this. There is an elevator pitch like I mentioned, there is three of them. I will go through some integration examples and then I will talk about testing features. Testing features is where this system actually shines. It can be completely integrated into the pull request framework or the way that we do features today where people can have a dedicated network for a specific feature. As soon as you compile their pull request you will automatically be on that network. This is pretty cool.
+
+# Elevator pitch
+
+My elevator pitch for the tiny elevator is Signet good, testnet bad. Two seconds. The five second version is for Bitcoin testing beyond regtest Signet is good and testnet is bad. I know what regtest is, raise your hand. Half of you know what it is so you might actually get something out of this. The 30 second version, tall building, is “For Bitcoin testing beyond regtest Signet is a better alternative than testnet because testnet is unreliable and broken, partially because it has a skewed incentive model (testnet coins = 0, mining testnet is not free).” Testnet is unreliable and broken. You will have no blocks for a long period of time and then you will suddenly have 100,000 blocks. You will have re-orgs and all these things going on. The testnet coins that people are mining on the testnet network, I don’t even know why they are mining them but they are mining them. They are mining them and they sell them at zero dollars. What is the incentive here? There is no incentive. They are just doing it, I don’t know what they are doing here. Again note we don’t need decentralization in a test network. No government is going to come in and say “Give me those testnet coins.” If they do you can just say “Ok I will give you them and then they walk away.” 
+
+# Steps to integrate Signet testing
+
+I am going to talk about integrating it. It is going to be code on the screen. If you are allergic to code I suggest you take out your phone and play with it for a while. I am going to show code. The first code is c-lightning. c-lightning is using bitcoin-cli, the system inside of the Bitcoin Core system, to do the Lightning stuff. I am also going to talk about rust-lightning which is a different implementation. It does direct peer-to-peer communication. The implementation is different and much more closer to the Bitcoin Core version of Signet.
+
+First what we need to do is add chain parameters. Testnet has its set of chain parameters and mainnet has its set of chain parameters. Then we have to add the option. That’s it. We don’t really have to do a lot here. With c-lightning there is a BIP 32 version, it is four bytes. I don’t really have to say anymore about that. 
+
+# c-lightning Signet PR
+
+https://github.com/ElementsProject/lightning/pull/2816
+
+These are the chain parameters. If you go through here you are going to see that nothing here is actually hard. Your four year old niece could do this and she would snort at you for giving her such a simple task. You have the `network_name`, you have the `bip173_name`, that is bech32 for you. Signet addresses start with `sb`. The addresses start with `sb1` instead of `bc1`. You have `genesis_blockhash` and `rpc_port` and the `cli_args` which is `-signet` to run it. This is all you have to do. If you have software that runs on testnet and mainnet you just add another one of these and then you are good. Or preferably you throw out the testnet one and replace it with this. That is up to you. If you want to use testnet I am not going to stop you.
+
+Some doc stuff. Some option stuff, lightningd is C code so it is verbose. In the wallet this `--network=` and then one of a number of strings. I actually wrote the `chainparams_get_network_names` helper function because this was all hardcoded before. That is c-lightning. That is all that is required for c-lightning. After doing this I could run a Lightning node on c-lightning using Signet. Not very hard. 
+
+# rust-bitcoin PR 291 (not yet merged)
+
+https://github.com/rust-bitcoin/rust-bitcoin/pull/291
+
+rust-bitcoin is a little harder. This is for the genesis block. In rust-bitcoin it derives the genesis block including the coinbase transaction inside of the genesis block. There is some stuff here. You see there is a `OP_PUSHNUM_1`, a pubkey, a `OP_PUSHNUM_1` and a OP_CHECKMULTISIG. Also it is creating new txdata, hash and Merkle root and then it derives the block from there. This can be tricky. You have to compare the hashes you get out for the different things. But it is not hard. If you have the code to do on mainnet you can do this no problem. Then there is the chain parameters split out into the minimum proof of work value. This is the chain parameters themselves. If we think of the c-lightning one, we have the network name, we have the height for different activations, BIP 34, BIP 65, BIP 66, that is CHECKSEQUENCEVERIFY, CHECKLOCKTIMEVERIFY. You have the `pow_target_spacing`. The only difference between mainnet and Signet is that the activations are obviously lower here. They all activate at the beginning. When you start Signet you immediately have SegWit and everything enabled and running. We have some constants, we have some assertions in tests and we have some more assertions in tests. We have versions for the legacy address stuff. We don’t really use it a lot. Back in the day Bitcoin had `1…` for P2PKH and `3….` for P2SH. We have the bech32 names. If someone asks from string “What is this address?” and it starts with `sb` then rust-bitcoin will say this is a Signet address. Also what is this string that starts with `125`? It is a Signet pay-to-pubkey-hash address. These are helper methods to do that, nothing really complicated here. This is displaying stuff for extended public keys. This is the private key version. If you have private keys for Signet and you have private keys for mainnet… You try to import a mainnet private key into Signet it is going to fail because the starting digit in the version is wrong. That is rust-bitcoin. There are some complications with the genesis generation that I didn’t mention here but that is all you need to do with rust-bitcoin. I don’t think you’ll ever do that unless you are writing a full node. If you are writing a full node you may have a little more work to do. The c-lightning example is probably going to be what you are looking at to get support for Signet.
+
+# Feature testing dedicated networks
+
+I’ll take a moment just to mention that you can already get coins from the command line and you can use them to test things. You can start up your own Signet if you want to. You are not going to risk a miner coming in and blowing your chain away. You can have a global testing network without worrying about anything. That is where Signet is I hope going to accelerate development. I will show real quick one example of those custom Signets that I am talking about. There is a default one that is using the same consensus rules as mainnet. There are custom ones, one that has Taproot, Tapscript. Eventually also CHECKTEMPLATEVERIFY probably, we’ll see.
+
+What you need to do when you make your own Signet is you tweak the default network and you make that a commit in your pull request to whatever software you are doing and then you are done. If you are doing a soft fork you also enable the soft fork inside of the Signet chain. For example Taproot as a soft fork exists inside of Bitcoin Core but it is not activated. By inside Bitcoin Core I mean the work in progress pull request for Bitcoin Core. Bitcoin Core does not have it yet. If you do that and someone grabs your pull request, compiles it and starts running it with the Signet flag they are going to be on your network. They are going to get blocks from you and they can start using your features. That all works out of the box in this case.
+
+# Example: signet-taproot network
+
+This is an example of me adding a commit that I mentioned to the Signet pull request. I am removing these parts up here and I am adding this. I am saying “Using default taproot signet network” instead to make it easy for the user to realize. Then a different block challenge and a different seed. That is all I’m doing. Like I said I am enabling Taproot also.
+
+We will go through the process of creating this Signet custom network tomorrow if you are going to the workshop tomorrow morning. We can also do a custom one if you have other ideas you want to try. I hope to see you there. If you have questions I will take them now or I will take them during the time we are here. Thank you for listening.
+
+# Q&A
+
+Q - How easy is it to use Signet to do offline testing?
+
+A - I know Stepan Snigirev has done hardware wallet in Signet where he derives everything offline and then eventually he gets a signature for something. Then he puts it online. You can do stuff offline for sure.
+
+Q - You said you could use Signet to write your own network. There are some networks out there and you can create your own. What is the [difference](https://bitcoin.stackexchange.com/questions/89640/what-are-the-key-differences-between-regtest-and-the-proposed-signet ) between that and regtest?
+
+A - The difference is that with regtest if you try to use it with other people you are in the situation where someone could come in and blow your entire chain away. Regtest is great for local testing. But as soon as you have people connected then Signet is superior.
+
+Q - You said it is possible to get Signet coins via the command line as any kind of Signet node. Do you use the same RPC call as regtest?
+
+A - It is a shell script that connects to a faucet that I am running that will send you coins. You can integrate it into your test system. If you have a global test system with your software you can get coins, do this, do that, burn the coins, whatever you want to do. There are rate limits on that faucet but you could also set up your own faucet easily. There is code to do faucets and explorers. Eventually you could just use Docker containers to set up a Tor running Signet node or a Signet issuer or whatever you want to do.
+
+Q - Where I can find information about Signet to make more sense of it? You have a recommended way to go to find more?
+
+A - On the Bitcoin wiki there is a Signet [article](https://en.bitcoin.it/wiki/Signet). You should check that out.
+
+Q - Just to clarify the examples you went through, you integrate Signet into rust-bitcoin?
+
+A - Yes. It has not been merged it. The c-lightning one has been merged.
+
+Q - The integration with c-lightning, you are using Bitcoin Core Signet with c-lightning?
+
+A - Yes. Eventually it is just going to be Bitcoin Core because I hope the [PR](https://github.com/bitcoin/bitcoin/pull/18267) is merged. But right now the Signet PR has not been merged yet. Right now you have to use the custom Signet. I hope in Bitcoin Core 0.20 that Signet will be in there. I will try to make it be in there. Then you could just use the regular `bitcoind -signet` and it should work.
+
+Q - If you are running your own version of Signet you don’t have to care about mining whatsoever? 
+
+A - Signet also has proof of work. It also has a miner. But the thing is you have to have the private key to the challenge for the block. For every block that is mined there is a signature inside of the block. That signature has to be valid. The only people who can mine on this network are the people who have the private key. Normally one person or two people. Literally what I do right now with the default network is I sleep for 9 minutes and then I mine for 1 minute to hit close to 10 minutes per block. The proof of work difficulty is really, really low. 
+
