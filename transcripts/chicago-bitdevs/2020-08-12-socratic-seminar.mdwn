@@ -1,0 +1,390 @@
+Name: Socratic Seminar
+
+Topic: Agenda below
+
+Location: Chicago BitDevs (online)
+
+Date: August 12th 2020
+
+Video: No video posted online
+
+BitDevs Solo Socratic 4 agenda: https://bitdevs.org/2020-07-31-solo-socratic-4
+
+The conversation has been anonymized by default to protect the identities of the participants. Those who have given permission for their comments to be attributed are attributed. If you were a participant and would like your comments to be attributed please get in touch.
+
+# Bitcoin Core P2P IRC Meetings
+
+https://github.com/bitcoin-core/bitcoin-devwiki/wiki/P2P-IRC-meetings
+
+They are starting P2P meetings for the Bitcoin protocol now. The trend for organizing backbone development for Bitcoin is starting to become more modular. They have wallet meetings for the wallet in Bitcoin Core now. You are going to have P2P network meetings for strictly the networking portion of Bitcoin and all of the technical stuff that goes into that. They had one on August 11th and they are doing them every two weeks. I thought I would give a public service announcement there.
+
+# Clark Moody Dashboard
+
+https://bitcoin.clarkmoody.com/dashboard/
+
+The next thing, our Bitcoin dashboard that Clark Moody puts on. It is a high level view of what is going on in the Bitcoin ecosystem. Price, 11,500 USD, the GBTC Premium which is a regulated OTC product that Grayscale offers. 17.8 percent is the premium on this. That means it trades at a 17 percent premium to spot Bitcoin. It looks like he has added Bitcoin priced in gold if that is your thing. We are around block height 643,000. UTXO Set Size 66 million, Block Time, we are still under our 10 minute desired threshold that signifies people are adding hash rate to the network and finding blocks faster than we would expect. Lightning Network capacity, mostly the same, at around 1000 BTC. The same with BitMEX’s Lightning node. There looks like there is a little bit more money being pegged into Liquid which is interesting. Transaction fees…
+
+Is there a dashboard where some of these metrics specifically Lightning and Liquid capacity where there are time series charts?
+
+I don’t know that. That would be very nice to have. Then meeting after meeting we could look at the diff since we last talked. I don’t know.
+
+For fee estimates, these fee estimates for Bitcoin seem a little high to me. 135 satoshis per virtual byte, is the network that congested? There are 6000 transactions in the mempool so maybe it is. That is what is going on on the network. 
+
+The fees for the next block are completely dominated by a somewhat small set of participants who go completely nuts.
+
+Sure but even the hour. That is 6 blocks, according to this is 129 sats per virtual byte which also seems very high to me. I didn’t realize that Bitcoin fees were as high. 
+
+I think that’s a trailing average.
+
+I was looking at the mempool space and the fees are lower than they are on this thing.
+
+Most of it is 1 satoshi per byte so I think it is a trailing estimate. 
+
+# Dynamic Commitments: Upgrading Channels Without On-Chain Transactions (Laolu Osuntokun)
+
+https://lists.linuxfoundation.org/pipermail/lightning-dev/2020-July/002763.html
+
+Here is our first technical topic. This is to do with upgrading already existing Lightning channels.
+
+The idea here is that when you are changing the actual commitment scheme or anything else about your Lightning channel, so long as no changes are required for your funding transaction and you are changing your revocation mechanism, you don’t have to go onchain for anything. After some discussion about various ways of doing this update offchain they decided upon introducing a new message which will be used I think also during channel opening to explicitly negotiate features instead of implicitly negotiate features using TLV stuff. You can update those features with an update channel message. The proposal is to activate these channel updates once there are no HTLCs left. You just have the to_local, to_remote balances. Then you can send one of these messages and do a commitment signed revoke and ack handshake but where the commitment being signed is now the new format or the new kind of commitment transaction. The ideas for using this are various things. Updating to use new features like static remote keys. That is a feature that improves channels which is somewhat new. People on a lot of channels are not using it because it would require that they close and reopen their channels. That stuff is now unnecessary. Changing the limit on how many HTLCs can live in a given channel can now be changed dynamically without closing channels. You can start with a smaller number. If there is good behavior you can make that a bigger number as you go on. In the future you should be able to do other various fancy things like Antoine (Riard) wants to do things with anchor outputs on commitment transactions. I think some of that stuff is already implemented at least in some places. You would be able to update your channels to use those things as well without going onchain. Part of the motivation is that once we get to Taproot onchain then once we’ve designed what the funding transaction looks like for Taproot we can hash the details later for what actual format we want to use on the commitment transaction. We can push updates without forcing thousands of channels to close.
+
+That last thing is a really key insight. Every time we come up with a new cool Lightning feature we don’t want have to make everybody close their channels, reopen them, go through that process. We want to dynamically change the rules. If two parties consent to changing the rules of the channel there is no reason they shouldn’t be able to do that just by saying “You are cool with this rule, I am cool with this rule. Let’s switch over to these new rules rather than the old rules that we had before.” Of course if they don’t agree that won’t happen. It makes a much smoother upgrade process for the Lightning Network.
+
+The key constraint is that you can’t change the revocation mechanism. You can’t go for example from Poon-Dryja channels to eltoo channels using this mechanism. But you can do most other things that don’t require changing the revocation mechanism.
+
+You wouldn’t be able to go to PTLCs or MuSig post Schnorr?
+
+You would actually. We could for example if people decided they wanted to use ECDSA adaptor signatures today we could use this should this also exist with current Lightning channels to update to PTLC enabled channels. The same goes if we have Taproot and the Taproot funding transaction has been specified but people are still using HTLCs, you can move to PTLCs without requiring channels be shut down so long as the revocation mechanism and the funding transaction doesn’t change.
+
+For negotiating a new funding channel, can’t you spend the old funding transaction so you don’t have to close and open? Just spend the old funding transaction so you just do a new open from the old one.
+
+Yeah and that is discussed later in this thread. ZmnSCPxj was talking about going from Poon-Dryja to eltoo using a single transaction. Anything that requires funding transaction you don’t have to close and open, you can do it simultaneously in a splicing kind of fashion.
+
+# Advances in Bitcoin Contracting: Uniform Policy and Package Relay (Antoine Riard)
+
+https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-July/018063.html
+
+This is the P2P Bitcoin development space, this package and relay policy across the Bitcoin P2P network. What this problem is trying to solve is there are certain layer 2 protocols that are built on top of Bitcoin such as Lightning that require transactions to be confirmed in a timely manner. Also sometimes it is three transactions that all spend each other that need to be confirmed at the same time to make sure that you can get your money back specifically with Lightning. As Antoine writes here, “Lightning, the most deployed time-sensitive protocol as of now, relies on the timely confirmations of some of its transactions to enforce its security model.” Lightning boils down to if you cheat me on the Lightning Network I go back down to the Bitcoin blockchain and take your money. The assumption there is that you can actually get a transaction confirmed in the Bitcoin blockchain. If you can’t do that the security model for Lightning crumbles. Antoine also writes here that to be able to do this you sometimes need to adjust the fee rate of a transaction. As we all know blockchains have dynamic fee rates depending on what people are doing on the network. It could be 1 satoshis per byte and other times it could be 130 satoshis per byte. Or what we saw with this Clark Moody dashboard, one person may think it is 130 satoshis per byte while another person is like “I have a better view of the network and this person doesn’t know what they are talking about. It is really 10 satoshis per byte.” You can have these disagreements on these Layer 2 protocols too. It is really important that you have an accurate view of what it takes to enforce your Layer 2 transactions and get them confirmed in the network. The idea that is being tossed around to do this is this package relay policy. Antoine did a really good job of laying out exactly what you need here. You need to be able to propagate a transaction across the network so that everyone can see the transaction in a timely manner. Each node has different rules for transactions that they allow into the mempool. The mempool is the staging area where nodes hold transactions before they are mined in a block. Depending on your node settings, you could be running a node on a Raspberry Pi or one of these high end servers with like 64GB of RAM. Depending on what kind of hardware you are running you obviously have limitations on how big your mempool can be. On a Raspberry Pi maybe your mempool is limited to 500MB. On these high end servers you could have 30GB of transactions or something like that. Depending upon which node you are operating your view of the network is different. In terms of Layer 2 protocols you don’t want that because you want everybody to have the same view of the network so they can confirm your transactions when you need them to be confirmed. 
+
+“These mempool rules diverge across implementations and even versions of Bitcoin Core and a subset of them can be tightened or relaxed by node operators.”
+
+I can set my bitcoin.conf file to be different another person on the network. We can have different rules to determine what is a valid transaction for our mempool.
+
+“This heterogeneity is actually where the risk is scored for higher protocols.” 
+
+If node operators configure things differently that is not good for things like Lightning.
+
+“Your LN’s full node might be connected to tx-relay peers with more constraining policies than yours and thus will always reject your time-sensitive transactions, silently breaking security of your channels.”
+
+That is very bad if you have these time sensitive protocols like Lightning. That will soundly break the security assumptions of your channel. 
+
+“Therefore moving towards such stable tx-relay/bumping API, I propose:
+
+a) Identifying and documenting the subset of policy rules on which upper layers have to rely on to enforce their security model
+
+b) Guaranteeing backward-compatibility of those rules, or, in case of tightening change, making sure there is ecosystem coordination with some minimal warning period (1 release?)”
+
+Making sure that there isn’t a Bitcoin Core release that gets pushed out that fundamentally breaks all Layer 2 solutions. This is one of those things that we are learning as we go with Layer 2 development and mempool policy is very important. He also goes onto write about what does this mean for network nodes? He says small mempools won’t discover the best feerate bid which falsifies their fee estimator as we saw with the Clark Moody dashboard. CPFP users, their feerate bump having a chance to fail is especially concerning for LN where concurrent broadcast for the same UTXO can be leveraged by a counterparty to steal channel funds. This is really complex, non-obvious stuff prior to last year or so that we need to think about in Bitcoin development. What does it even mean to have a transaction relayed across the network? It needs to be consensus valid. There must be UTXOs associated with the transaction but then it also must meet your relay policy. If your transaction doesn’t get relayed across the network there is no way that a miner is going to be able to confirm it. I think this is a really interesting active area of research going on in Bitcoin right now. There is a big GitHub [issue](https://github.com/bitcoin/bitcoin/issues/14895) where a lot of discussion is taking place currently. I am not going to walk through that here. But if it is something you are interested in I highly suggest taking a look at it.
+
+It seems out of scope in a way because ultimately there is what explicitly part of consensus and then there is everything else where the design of Bitcoin is that node operators have total autonomy outside of what is agreed upon by consensus. I don’t really understand what the actual proposal is here. It sounds like there is a discussion about getting users to agree to running certain code which is impossible to check that they are running and building a secure system on top of that assumption. That seems a surprising line of inquiry. I could’ve misunderstood.
+
+It lets you get a more perfect mempool. Say you broadcast 1 sat per byte transaction and then the fee rate jumps to 100 sats per byte. You want to child-pays-for-parent (CPFP) that, the second one has a 200 sats per byte so it will be in the next block. Right now a lot of nodes they see the first transaction and it is too low so they drop it out their mempool. They never accept their second one that bumps it up to make it into a high enough fee rate to be added to your mempool.
+
+I understand what the goal is and what the implementation recommendations are up to a point but why we should expect to get to a point where we can depend on this sort of thing? It seems fishy. What reason do you have to think that random Bitcoin node operators are going to have policy?
+
+I think at the very least it makes sense for mining nodes to implement these things because it means they get better fees. I agree that it gets more complicated beyond that. It does seem like at least a win in that scope.
+
+I want this stuff too but it is very different than other Bitcoin technology related discussion which has to do more with what are the other pre-agreed upon rules that are enforceable as a software consensus. 
+
+I don’t know if things are necessarily that straightforward. What do you do with a double spend? Both of them are consensus valid on the network. We are racing, you and me, we are both in a situation where we want to spend from a UTXO and we both can. Do you as a default on the P2P network say that somebody that is trying to double spend is a malicious node and ban them or do you allow the double spend and open up myself to spam?
+
+It is out of scope, it is persuasion.
+
+It is not out of scope. Then you open yourself up to spam which means you can crash other people’s nodes and you end up not having a P2P network.
+
+I don’t mean it is out of scope as a node operator. All we can really do is try to put together good arguments why people should adopt some policy but I don’t see it as something as dependable as the UTXO set that I validate as I run my node. It is not even a matter of degree, it is a matter of kind. Being able to trust other people’s mempool management, I don’t know how you would do it. It is weak subjectivity at that point.
+
+On the Lightning Network you broadcast in your gossip for node discovery or the features you support. If you claim to support certain features and then someone can detect that you don’t then you put that node on your blacklist. I don’t know if a similar kind of thing would work here.
+
+I think the proposal isn’t to add package relay as one of those flags. 
+
+If you could do in your node discovery, find the people who are supporting the things that they are supposed to. You can retroactively detect bad behavior.
+
+That is getting closer to the sort of thing that would make me more comfortable. I worry that this is conflating working on Bitcoin Core with making dependable changes to Bitcoin as a software system that people run independently and autonomously.
+
+What transactions should be relayed across the P2P network is what this is trying to answer. Depending on context a lot of things can be consensus valid but going back to my double spend example can open you up to various attack vectors or maybe not be useful in the first place. One fundamental premise that I think we all agree is you can relay a transaction across the P2P network. I also think we are are on the same page, this isn’t the same as consensus rules but it is also very important because we need this assumption of being able to relay transactions. I think you have some valid points. It is a really interesting area of discussion. I am personally interested in it so I will be following it.
+
+I think at the very least since so many people don’t customize this part of their node it would be neat if CPFP worked sometimes which it currently doesn’t really.
+
+Ideally you want your own node to have the best mempool possible and this gets you closer to that. That is just better for yourself. If everyone acts in self interest…
+
+Why is it that having an accurate mempool is important to your average node?
+
+When you get a block if you don’t have a transaction in a mempool you will have to revalidate it and sometimes you will have to download it if you are using compact blocks.
+
+Fee estimation as well.
+
+Here it is the trade-off of does a good mempool mean knowing about all plausible transactions? Then the spam risk is really huge. There are DoS concerns.
+
+If you are limiting it to 100 MB you still want the highest fee 100 MB transactions because they are most likely to be included in blocks.
+
+You want Bitcoin to succeed and to work well. As a node operator part of what you are doing is you are trying to estimate what would make Bitcoin the most useful. If there is a really clear cogent argument for having some potentially complex mempool management policy potentially involving additional coordination with your peers or even an overlay network, I agree that we shouldn’t be surprised if people adopt that. Getting from there to saying it is something you can depend on, I don’t know how to quantify that.
+
+# Ethereum gas prices
+
+https://twitter.com/rossdefi/status/1293606969752924162?s=20
+
+In other news gas prices on Ethereum are going bananas. According to this guy it was 30 dollars to submit a Ethereum transaction earlier today. Maybe it has gone up or down since then. I think this is good for Ethereum because that proves it is viable if they ever go to…. is Ethereum deflationary still?
+
+They have a EIP 1559 I think, that makes it so that all fees are burned if it is over a certain limit or something like that. 
+
+There is a really weird situation, the Ethereum community seems to be rooting for Ethereum 2.0. What is going to happen is that it is going to be a completely separate blockchain. After five years they are going to merge the two together. We have no idea what the issuance rate is or if ETH is deflationary. The community has no idea what is happening with ETH 2.0. 
+
+There is an open question, are blockchains sustainable over the long term? I don’t know if ETH necessarily answers this but I think it is encouraging to see people are willing to pay high fees for transactions. It means you are providing something valuable. Some day maybe we will get to this level on Bitcoin again. Ethereum is validating its valuation now.
+
+On the fees I bet the distribution looks like… the people who regularly pay the highest fees are people who have not optimized their fee paying logic.
+
+I disagree with that but we are going to talk about that later.
+
+It is very interesting that people are willing to pay these fees. I think it is interesting when you look at the use cases for paying these fees on Ethereum, I think the majority of people are involved in the new DeFi yield farming. They are not using it for a real business case, they are using it to get access to this new token that exists and then trying to be early for that. They are willing to pay whatever fee necessary to get in early.
+
+# High transaction usage on Ethereum
+
+https://twitter.com/juscamarena/status/1285006400792354816?s=20
+
+I didn’t realize that according to Justin Camarena it takes four transactions to send a ERC20 token. Is this right? Does it take four transactions like he claims to send and withdraw from Coinbase?
+
+It depends what he is doing. If he is taking a ERC20 off of Coinbase, that takes one transaction. Usually if he wants to use it with a particular Dapp then he would need to do an approved transaction. That would be two. And deposit it, that would be three. I’m not sure how he is getting four from that, I see how it could be three.
+
+That is very interesting to me because I didn’t realize that there was so much overhead in making a ERC20 transaction on the blockchain. They could use some of this package relay stuff. I guess it doesn’t actually reduce the number of transactions. Today on Twitter I have seen a lot of talk about Ethereum and Layer 2 solutions but we will see how serious they are.
+
+When you say transaction I guess I don’t know enough about ETH to fully comprehend, is it true that with ERC20 tokens you are not sending ETH you are updating a state? Is this somehow different with a lower fee than I would expect coming from Bitcoin world?
+
+It is a state update but it is essentially fixed size so it scales linearly.
+
+If it is true that it is a third the amount I expect from a value transfer transaction and it takes three transactions and that is also a fixed number this seems fine.
+
+A value transfer of ETH by itself is the cheapest transaction you can do. Anything that includes any amount of data costs extra. It is the other way.
+
+# Cloudflare DNS outage
+
+https://twitter.com/lopp/status/1284275353389862914?s=20
+
+Cloudflare had a DNS outage and there was a noticeable drop in Bitcoin transactions during this Cloudflare outage. I found that fascinating. It just goes to show who is making transactions on the network. It is probably Coinbase, Blockchain, all the big exchanges etc. It just goes to show how much influence Cloudflare has over the entire internet.
+
+# Altcoin traceability (Ye, Ojukwu, Hsu, Hu)
+
+https://eprint.iacr.org/2020/593.pdf
+
+There is a class project that came out a few months ago and made its way to the news. I wouldn’t really mention this otherwise except that you have probably heard about it in the news at some point. It is an altcoin traceability paper, some news agencies referred to it as the CMU paper. One thing to remember is that this is a pre-print. Even though it has been revised a few times to make it a lot better than the initial version I still take significant issue with many parts of it. This is an example of a paper where you might look at work and it might look simple enough on the high level. “I can try to understand this chart.” The problem is that it is approachable enough where it seems super simple but there is an extra layer on top of it that you might not be thinking about. That is very difficult to capture. I want to stress that when you are looking at certain research papers especially ones where they seem approachable… Here is an example. They look at Zcash and Monero predominantly in this paper. Here you can say “Here is the effective anonymity set for different mixing sizes.” You might say “It is still quite ineffective for large rings.” All of these are pre RingCT outputs where the deducibility was already 90 percent or so. This is an example where this has no relevance since 2017. It doesn’t make super clear as you are reading this research paper. The only reason I am mentioning this and I don’t want to spend that much time on it is that it was referenced in a lot of media. There is a new version out that does make certain parts more accurate but at the end of the day it was a pre-print and it was a class project. Take that for what it is worth. It wasn’t meant to be a super in depth research paper. If you want to look at certain types of things to keep in mind when you are doing analysis of blockchains it repeats a lot of the same methods in other papers.
+
+What was the original conclusion of the paper that the authors claimed?
+
+It was so biased. They made claims that were very qualitative and opinion oriented. They were like “We are going to say this without significant evidence” and it is completely extrapolating. I took significant issue with a lot of the claims they had. The whole point of the paper is to replicate a lot of things that other people have done. You have probably heard of some of the work by Andrew Miller. This is a really easy paper to understand on a super high level. That is partially why it is so dangerous because you might think that you get it more than you might. It is really easy to read. They will talk about some types of heuristics with Monero. “The first output is most likely to be the real spend” and “when a transaction has two or more transaction outputs and two or more of those outputs are included in different inputs of another transaction then those included outputs are assumed to be the real inputs.” They do what other papers have done. This particular paper did not really introduce new analysis. That was another reason it was so dangerous in the media, repeating this as new research even though it is applicable only many years ago. I wanted to point it out just because it was in the media a lot compared to what you would typically expect from a pre-print.
+
+If this was presented in a fraud case or something like that would it be taken seriously? If there was a legal case involving blockchain analysis would a paper like this be admissible?
+
+It is better than nothing. I am sure that even in the current state there would be substantial push back by other experts. One expert against a bunch of other experts saying it is ridiculous. For what it is worth they have made revisions to the paper to make it better. It is difficult to present some of the evidence as is. It is very set to certain time periods. This chart shows the applicability. After 2017 the whole application of the paper is not very useful but this is a paper from this year. Media doesn’t know how to interpret this is one thing I wanted to point out. This is a really easy high level paper to read, just be really careful to make sure you get your time points correct. They try to look at Zcash for example and they didn’t have proper tooling available to continue to update it. They didn’t really update a lot of the data and then extrapolated it. I would love to see them run the real data not just extrapolate old findings. That would be much more useful. 
+
+# Separate coinbase and non-coinbase rings on Monero
+
+https://github.com/monero-project/monero/issues/6688
+
+I have been focusing on the idea of separating coinbase and non-coinbase rings. With Monero and Bitcoin you have something called a coinbase output. No these are not outputs related to Coinbase the exchange. What they actually are are block reward money. When you mine a block you are granted the right to a specific type of output that includes new monetary issuance and inclusion of the fees people pay in transactions. Whether an output is a coinbase output or not has real implications about what type of user it is. If I sent someone money and my entropy set was related to these specific type of outputs either I am running my own mining pool or solo mining funds or those actually aren’t my funds that I’m sending you, it is other funds I’m sending you. This is an example of a point in metadata that might not be a convincing spend if you are using it as potential entropy. Think about it like you are using a mixer. If you were mixing with a bunch of other mining pools and you are the only normal user in the mixing process you’d probably not get that much entropy from mixing in there because people would know that you would not be the one contributing the non-mining related funds. With Monero this happens relatively often because it is a non-interactive process. People who do generate coinbase outputs are participating by having their decoys available. When I started looking at this a few years ago it was a bigger issue because about 20 percent of the outputs were coinbase outputs. Now it is really closer to 3 percent. It really isn’t a significant issue anymore. The issue goes away in part by just having bigger rings. But really based off greater network usage in general. The amount of coinbase outputs generated per day are constant and a total percent of total network activity. As network activity goes up then their proportional percent of coinbase outputs goes down. We also looked at a few things to see what if we tried to adjust our selection algorithm for coinbase or non-coinbase rings. The idea was we can help protect normal users by having them not spend coinbase outputs. If you are a mining pool then you would only make coinbase rings. That is how we could enforce it at a consensus level. We notice that there was no significant difference in the spend distribution of coinbase and non-coinbase outputs. I found this really interesting. I did not expect this result. I thought coinbase outputs would be spent faster on average because a mining pool mines a block and they send the funds to another user as a payout. I assumed that would be pretty instant but it actually is very similar to normal spend patterns. Of course for Monero where this is deducible up to 2017. We cannot test this on current Monero usage because that data is not available. It is too private.
+
+Going back to the previous paper we just talked about. Are you drawing your analysis from the same dataset they were? Did Monero make a consensus change that makes it unanalyzable now?
+
+What I am talking about with coinbase rings should be considered pretty independent to this. This doesn’t really talk about coinbase outputs. Monero used to have really weak ring signatures up until 2017. We can actually look at Monero transactions up until 2017 and for most transactions we can tell what specific output is being spent. This is not tied to an address, it is not a Monero address that is sending this but we know which Monero output is spent in the transaction. If I go back to this paper you can see here for example in Figure 6 that up until April the vast majority were quite deducible. The green line is the deducible. Frankly that did continue until about January 2017 when there was a steep drop off. Until then that is 90 percent of transactions where we are able to tell what the real output is spent. After that point we can’t really tell anymore. This was a consensus change that enabled the new type of output that provided higher levels of protection and therefore we can no longer deduce this information. We have to look at Monero data up until 2017 and Bitcoin data to determine spends. This is something that Moser et al and other papers have looked at too. In order to determine what the input selection algorithm should be. Ultimately the big takeaway is that coinbase outputs are interesting because they are not a type of output that a normal user might spend. You could separate them and say normal users will actually by network decree not spend these funds. However as network activity increases this becomes a mute point. To what extent do you need to care as a network protocol designer? That really depends on activity and use. It is never good but it can be small enough for you to say the extra complication this would add to consensus is not worth the change. The real impact is very, very small. This is still an ongoing discussion after about two years in the Monero community. Of course the Monero network has grown in number of transactions since then.
+
+What would it mean for a coinbase output not to be spendable? Wouldn’t it just not have any value then?
+
+Suppose that you run a public mining pool. People will send you hash rate and you occasionally a Monero block. I am just a user of the network. I am not even mining on your mining node. I am just buying Monero on an exchange and sending to another user. At the moment when either of us send transactions what we do is we look at all of the outputs on the blockchain and we will semi randomly according to a set process select other outputs on the blockchain which include both coinbase and non-coinbase outputs in the spend. When you are spending funds, since you are a public mining pool and you frequently mine actual coinbase outputs it is understandable for you to actually spend these coinbase outputs. It is also understandable for you to spend non-coinbase outputs. Let’s say you’ll spend a coinbase output to a miner and then you will receive a non-coinbase output as change which you will then use to spend and pay other users. Meanwhile since I am not directly mining I am never being the money printer. I am never actually the person that would convincingly hold a coinbase output myself. Whenever I send transactions that include a coinbase output outside observers can pretty reliably say “ This isn’t a real output that is being spent because why would they ever have possession of this output.” It is not convincing, it is not realistic. This person is probably not running a mining pool or probably isn’t getting super lucky solo mining.
+
+The actual proposal is to partition the anonymity sets between coinbase and non-coinbase?
+
+Exactly. As you do that there are quite a few things you can do. Mining pools publish a lot of information. Not only is it the case that coinbase outputs are not convincing for an individual to spend, most mining pools will publish what blocks they mine and they will publish lists of transactions that they make as payouts. You might see that this coinbase output was produced by this mining pool so what is the chance that this person is making a payment and is not the mining pool? Typically it is going to be pretty large. These are pretty toxic deducible outputs to begin with. Depending on network activity we can increase the effective ring size, not the real true ring size but what the after heuristic effectiveness is by about 3-4 percent. This seems small at the moment but it doesn’t cost any performance. It is just a smarter way of selecting outputs. That is one thing we can do. It is an option where we can stratify the different types of transactions by a type of metadata that we are required to have onchain anyway.
+
+You have been talking about this like it is a new consensus rule to change it. Shouldn’t this be a wallet feature where your wallet doesn’t select coinbase UTXOs. It seems like a soft fork is extreme.
+
+That is absolutely true. There are a few reasons why you may want to have a network upgrade. One, each wallet is going to do their own thing. If a user is sending funds that includes a coinbase decoy for example and suppose only one wallet does this, all the others have updated, then you know it is a user of that wallet. This is not ideal. Also we have the opportunity to do things like say coinbase outputs are pretty toxic anyway, let’s inform users that coinbase outputs should not have a ring. Perhaps we say you shouldn’t directly spend coinbase outputs to users if you do care about privacy in that transaction. Then just for those outputs we can make the ring size one and that would make the network more efficient but it would also require a consensus change. I also think in general even though we can make it a wallet change, as far as privacy is concerned it is better to enforce behavior rather than allow wallets to do their own thing. In the Monero community in general people are a little more open to the idea of forcing best practice behavior instead of simply encouraging it. Definitely a cultural difference between Monero and a few other communities.
+
+In my mind saying that this wallet’s transactions aren’t valid now is way more extreme than forcing them to upgrade their wallet and making a backward compatibility change. If that is what Monero does it is interesting.
+
+There are pros and cons. 
+
+Do you recommend the paper? I wasn’t sure if there was any tangible as a result of it. 
+
+I wouldn’t advise someone doesn’t read it and I also wouldn’t consider it an essential read. It is most useful for people who already have the context of the other papers. It updates on some of their data. It doesn’t really present much new compared to those. Part of the reason why we like to enforce behavior, this is perhaps controversial in Bitcoin implementations. Enforcing behavior gives much better desired results for privacy than not. Zcash, we constantly have people arguing Monero is better, Zcash is better. You can see the proportion of transactions that are shielded on the two networks comparatively and you can see one is a little bit more adopted. Monero, it has over 100 times as many transactions that hide the sender, receiver and amount than Zcash. That’s because instead of allowing the backwards compatibility users, exchanges and users are not forced to use the best practices, people typically don’t. I think that is because they don’t really care. Think about Bitcoin SegWit adoption. Ideally people should switch right away. But people don’t. If people aren’t going to switch for a financial incentive why are exchanges going to switch to get rid of a point of metadata that they don’t care about unless you force them. With privacy, in my opinion, it is not just whether a feature is available but whether it is enforced. More importantly whether people are actually using it. As you are evaluating implementations you should see if they are adopted or not. I know a lot of people talk about Samourai for example. This is some data on Samourai wallet usage. I want to be really clear. These numbers are not very comparable. These are interactive processes. For a 5 million satoshi pool 602 rounds occurred but those each include several participants. It is not just one participant that shows up. It might be ten participants or something. Even so if you stack all of these on top of each other which you cannot do because they are different amounts, they are denominated and they each have their own anonymity sets it is still pretty darn tiny. The implementation and encouraging good use is critically important. People think pretty highly of Samourai in general. I know the Samourai vs Wasabi feud, sometimes friendly, sometimes not so friendly. Ultimately the actual adoption is kind of small. One thing I mention is we are building these networks, we can talk about them in a research sense but we also need to talk about the sense that these are decentralized networks where it is permisisonless and anybody can send a transaction. People are going to do some weird stuff and people are not going to follow the best practices. That does matter for privacy adoption quite significantly.
+
+# Monero CLSAG audit results
+
+https://web.getmonero.org/2020/07/31/clsag-audit.html
+
+This is the big thing coming up with CLSAG. These are a more efficient form of Monero ring signature. They had an audit report come out where JP Aumasson and Antony Vennard reviewed it. You can see the whole version here. They had some proposed changes to the actual paper and how they have the proofs. But ultimately they were saying “This should be stronger.” It resulted in no material code changes for the actual implementation. The paper changed but the code didn’t. You can see the write up here. They are slightly more efficient transactions that will be out this October.
+
+Are you talking size efficient or time efficient?
+
+Both. They have stronger security proofs. They have about 25 percent smaller transaction size and they have 10-20 percent more efficient verification time. It is a really win-win-win across the board there.
+
+# FROST: Flexible Round-Optimized Schnorr Threshold Signatures
+
+https://eprint.iacr.org/2020/852.pdf
+
+This paper came out, FROST, which is a technique for doing a multisig to produce a Schnorr signature. I don’t know about the review that has gone on here. I wasn’t able to find any review of it. It is a pre-print. There is always a certain caveat. You should take a pre-print with a grain of salt but it is pretty serious. What distinguishes this Schnorr multisig is that it is a proposal for a two round Schnorr multisig. MuSig is probably the Schnorr multisig that most people are familiar with in this circle. MuSig started out life as a two round multisig scheme which had a vulnerability. The current best replacement for it is a three round. There are some rumors that there is a fix for that. I haven’t seen anything yet. If anybody else has please speak.
+
+I have seen a pre-print that I don’t think is public yet. They have a way of doing MuSig with deterministic nonces in a fancy way. Not in any straightforward way. It is not too fancy but it uses bulletproofs that gets it back down to two rounds because the nonce no longer requires its own round.
+
+I am looking forward to seeing that. If you have a math bent this paper is actually very nice. The constructions are beautiful. For those who are familiar with Shamir’s Secret Sharing, the idea is that you construct a polynomial, you give your users certain point values and then together a threshold subset of the users can reconstruct the secret. There is actually an interesting interplay between Shamir’s Secret Sharing and just additive secret sharing where you just adding the shares under certain situations. They have leveraged this duality that exists in a certain setting in order to get the low number of rounds. There is a key setup where what you are doing is everyone chooses a secret. I am going to ignore the binding and commitments for now. They construct a Shamir’s Secret Share for everybody else. Then they all add up the Shamir’s Secret Shares that all the other users give them and this gives them jointly a Shamir’s Secret Share for the sum of the individual secret shares. That’s the key. Nobody knows the key although any threshold t of them can reconstruct the secret directly. The point of the protocol though is that by doing signing nobody learns their secret. The signing procedure doesn’t leak the secret although they could in principle if they got together they could reconstruct it. Of course if you reconstruct the secret then every user who was in that reconstruction now has unilateral access to the secret. The signing procedure is somewhat similar to what you might be expecting. You have to construct a nonce. The way that you construct the nonce is you have to take care to bind everything properly to avoid certain classes of attack. What you do is everyone in this subset t where t is a threshold chooses a random nonce and then they construct a Shamir’s Secret Share for it and share it out to everybody. There is a nonce commitment phase which you have to do. In this setting what they describe it as is a preprocessing step. You might get together with the group of users that you think is going to be the most common signers. You are doing a 2-of-3, you have two signers that you think are the most likely, they get together, they construct a thousand nonces in one go and then they can use those nonces in the protocol later on and make the protocol from that point on one round. Signing uses this trick where you can convert between additive secret shares. The nonces shared is an additive secret share. The key that is shared is a Shamir’s Secret Share because you are using this threshold technique. There is a method for combining them. If you have an additive share for t people you can convert it into a Shamir’s Secret Share without any additional interaction. That’s the kernel of the idea. I think there is a small error in this paper although I could easily be the one who is wrong, that is the most likely. I think that the group response, you actually have to reconstruct this as a Shamir’s Secret Share. I think this is a small error. 
+
+How do they do the multiplication with the hash and the secret shard?
+
+They have this commitment which is broken up into two pieces. The thing that they use is the fact that you can reconstruct the challenge using just the commitment values. It is bound to the round and the message so there is no possibility of the Drijvers attack. That is not a good answer. 
+
+With most of these threshold schemes everyone is happy with the addition and all of the complexity is always “We need to go through a multiplication circuit or something.”
+
+This one is weird because the multiplication doesn’t play much of a role actually. It is more the reconstruction. If you have the group key that is shared as a Shamir’s Secret Share it is not clear what to do about the nonces so you can combine them and take advantage of Schnorr linearity. They found a way to do that.
+
+Are public versions of the shards shared at any point? Is that how this is being done?
+
+Let me show you the key generation. If you are asking about the key generation the public key is the Shamir’s Secret and then the public shares are not additive secret shares. They are public commitments to the Shamir shares. My verdict for that paper is do read, it is interesting. Having Schnorr multisig that has low interaction has proven to be extremely useful in the design of cryptocurrency stuff.
+
+# Minsc - A Miniscript based scripting language for Bitcoin contracts
+
+https://min.sc/
+
+For those who don’t know [Miniscript](http://bitcoin.sipa.be/miniscript/) is a language that encodes to Bitcoin Script. The thing that is cool about Miniscript is that it tracks a number of stack states as part of its type system. When you have a Miniscript expression you can understand how the subexpressions will edit the stack. The reason why you would want to do this is you have a table of satisfactions. Typically if you have some script it is complicated to calculate what the script that allows you to redeem it. With Miniscript every script that you write the type system tells you exactly what conditions you need to redeem that script. All of this geared is towards making analysis like this much more user friendly. It is very cool. Pieter Wuille put together a Policy to Miniscript compiler. Policy is just a simplified version without any of the typing rules. It has got this very simple set of combinators that you can use. Shesek put together a version of the Policy language with variable abstraction functions and some nicer syntax. This is going to be really useful for people who are experimenting with Bitcoin Script policies. It doesn’t have the full power of Miniscript because you can’t tell what is happening on the stack. If you have a Rust project you can include this as a library. But otherwise you can also compile sources using the compiler that Shesek put together. The website is also very nice. You can put in an expression, you get syntax highlighting and you get all the compiled artifacts. It is a really cool tool for playing with script. I recommend that. The GitHub [repo](https://github.com/shesek/minsc), unless you are a real Rust fan there is no need to look into the details. Most of the meat of this is in sipa’s implementation of the Policy to Miniscript compiler. 
+
+# BIP 118 (ANYPREVOUT)
+
+https://github.com/ajtowns/bips/blob/bip-anyprevout/bip-0118.mediawiki
+
+BIP 118 used to be SIGHASH_NOINPUT, now it is SIGHASH_ANYPREVOUT. The update that is being discussed right now is for integration with Taproot. The main design decisions that you should think about, there are two. One is fairly straightforward if you know how Tapscript works. If you want to use one of these new sighashes you have to use a new key type. In Taproot there is the notion of key types and this means that in order to construct a key post Taproot it is not enough to have a private key, you also have to have a marker that tells you what the capabilities of the corresponding public key are. It is part of a general move to make everything a lot more explicit and incumbent on programmers to explicitly tell the system what you are trying to do and to fail otherwise. Hashes post Taproot have a tag so you can’t reuse hashes in one Taproot setting in another one. And keys have a byte tag so that you can’t reuse public keys in different settings. The semantics of the two sighashes, ANYPREVOUT and ANYPREVOUTANYSCRIPT, if you are really into the guts of Taproot they affect what the transaction digest is that you sign. You should check out what the exact details are. As far as I could tell it is pretty straightforward. You are just not including certain existing Taproot fields. On the BIP right above the security section there is a summary for what these two sighashes do. The main thing is that ANYPREVOUT is anyone can pay except you don’t commit to the outpoint. ANYPREVOUT, you are not committing to the outpoint because that’s something you want to allow to be arbitrary. ANYPREVOUTANYSCRIPT is even weaker. Not only are you not committing to the outpoint but you are also not committing to the spend script.
+
+I’m looking at the signature replay section and I know one objection to SIGHASH_NOINPUT, ANYPREVOUT is that if you do address reusage, let’s say you are a big exchange and you have three HSMs that you are using as your multisig wallet. It is super secure but you can’t regenerate addresses because there is only one key on the HSM. You end up with a static address. If somehow you end up signing an ANYPREVOUT input with these HSMs your wallet could be drained which is what they are hinting at with the signature replay section here. Is that addressed at all in the newer iteration?
+
+No it is not. Nobody knows a way of dealing with it that is better than allowing it. I omitted something important which is that these keys, you can’t use them with a key path, you can only use them on a script path. Taproot has key path and script path spending modes which the user chooses at spend time. ANYPREVOUT is only available on the script path spending mode. This new key type which is the only key type with which you can use the new sighashes according to this proposal are only available in a Tapscript script. This is interesting but I still think that we are probably quite a way from actual deployment and deployment of eltoo. That is the main use case for this new sighash. This is nice because it can be included in another batch of BIPs. It is nice and self contained and clear. You are adding semantics but you are not going to care much about it unless other features become available. That’s the reality here as far as I can see.
+
+BIP 118 is now ANYPREVOUT?
+
+This is not merged and it looks like it might get a new BIP number. SIGHASH_NOINPUT, the name is almost certainly going to change. The SIGHASH_NOINPUT proposal is probably just going to remain in the historical record as an obsolete BIP.
+
+We have been using NOINPUT for our vaults protocol but ANYPREVOUT was also mentioned in the paper. I am not sure on the actual differences.
+
+At a high level they do the same thing. This says “Here is one way that you can incorporate it into a post Taproot Bitcoin.” 
+
+If you are on the Lightning dev mailing list people use NOINPUT and ANYPREVOUT interchangeably.
+
+They are synonyms. You are mostly talking about higher level stuff. You want to be able to rebind your transactions. In some sense it doesn’t matter if you have to use a Tapscript or whatever special key type. You want the functionality. 
+
+# Bitcoin Mining Hashrate and Power Analysis (BitOoda research)
+
+https://medium.com/@BitOoda/bitcoin-mining-hashrate-and-power-analysis-bitooda-research-ebc25f5650bf
+
+This is FCAT which is a subsidiary of Fidelity. They had a really great mining hash rate and power analysis. I am going to go through it pretty quickly. There are some interesting components to take away from this. They go into what is the common mining hardware, what is its efficiency. Roughly 50 percent of mining capacity is in China right now. I’m not really surprised there. They get into cost analysis. In their assessment 50 percent of all Bitcoin mining capacity pays 3 cents or less per kilowatt hour. They are doing energy arbitrage. They are finding pockets where it is really cheap to mine. According to them it is about 5000 dollars to mine a Bitcoin these days. Also the S9 class rigs that I think have been in the field for 3-5 years at this point. According to this research group you need sub 2 cents per kilowatt hour to break even with these S9s that are pretty old at this point. Here is the most interesting takeaway. A significant portion of the Chinese capacity migrates to take advantage of lower prices during the flood season. They go into a bunch of explanation here. What is this flood season? I was reading this and I didn’t know it is a problem. I had heard about it but I hadn’t investigated. The Southwestern provinces of Sichuan and Yunnan face heavy rainfall from May to October. This leads to huge inflows to the dams in these provinces causing a surge in production of hydroelectric power during this time. This power is sold cheaply to Bitcoin miners as the production capacity exceeds demand. Excess water is released form overflowing dams so selling cheap power is a win-win for both utilities and miners. This access of cheaper electricity prices attracts miners who migrate from nearby provinces to take advantage of the low price. Miners pay rough 2-3 cents per kWh in northern China during the dry months but sub 1 cent per kWh in Sichuan and Yunnan during the May to October wet season. They will move their mining operations from May to October down to these other provinces to take advantage of this hydroelectric power which is going on right now. This is the flood season in these provinces. Fascinating stuff. For some context this is Yunnan right here and Sichuan is here. I think they are moving from up in the northern parts here.
+
+# A mysterious group has hijacked Tor exit nodes to perform SSL stripping attacks
+
+https://www.zdnet.com/article/a-mysterious-group-has-hijacked-tor-exit-nodes-to-perform-ssl-stripping-attacks/
+
+A mysterious group hijacking Tor exit nodes to perform SSL stripping attacks. From my understanding Tor exit relays are trying to replace people’s Bitcoin addresses more or less. If you are using the Tor network and all your traffic gets encrypted and routed through this network it has to eventually exit the network and get back into plaintext. What these exit nodes are doing is they are looking at this plaintext, seeing if there is a Bitcoin address here, if so copy paste replace with my Bitcoin address rather than the intended address.
+
+In the West most of the internet is now happily routed through TLS connections. One of the things this is trying to do is trying to redirect users to a non TLS version. This is somewhat difficult now because you have an end-to-end TLS connection over Tor if it works properly. It is not possible as far as we know to eavesdrop on that connection or to modify it as a man in the middle. You need to downgrade first. 
+
+I think they saw similar attacks to this in the 2018 timeframe but I guess they are picking back up.
+
+It was the scale of this that was so incredible. One of the things that I think is a shame, if anybody is feeling very public spirited and doesn’t mind dealing with a big headache, running a Tor exit node is a really good service. This is where you are going to have a hose that is spewing sewage out onto the internet. Tonnes of random trolls are going to be doing things that are going to get you called. Or at least that is the worry. I have a friend who runs a Tor exit relay and he said that they actually have never had a complaint which I found shocking.
+
+I have had complaints when my neighbor who uses my wifi forgets to VPN when he downloads Game of Thrones or something. It is surprising that that wouldn’t happen.
+
+Is he credible? Does he actually run the exit node? It is like spewing sewage.
+
+I should practice what I preach but I would love more people to run Tor relays. If they get complaints be like “\*\*\*\* you I am running a Tor relay. This is good for freedom.” When it is your own time that you have to waste on complaints it is hard.
+
+# Taproot activation proposals
+
+https://en.bitcoin.it/wiki/Taproot_activation_proposals
+
+There has been a big debate on how to activate Taproot in Bitcoin. Communities take different approaches to this.
+
+There are like ten different proposals on the different ways to do it. Most of them are variations of BIP 8 or BIP 9 kind of things. It is picking how long we want to wait for activation and whether we want to overlap them and stuff like that. Currently talk has died down. The Schnorr PR is getting really close to merge and with that the Taproot implementation gets closer to be merged into Core. The discussion will probably then pick back up. Right now as far as I can tell a lot of people are leaning towards either Modern Soft Fork Activation or “Let’s see what happens” where we do a BIP8 of one year and see what happens. Once the PRs get merged people will have to make a decision. 
+
+I listened to [Luke Dashjr and Eric Lombrozo](https://diyhpl.us/wiki/transcripts/bitcoin-magazine/2020-08-03-eric-lombrozo-luke-dashjr-taproot-activation/) and I think I am leaning now away from the multiphase, long period activation like Modern Soft Fork Activation. When you said its split between those two what is your feeling on the percentages either way. Is it 50, 50?
+
+I would say it is like 25 percent on Modern Soft Fork Activation and 75 percent on a BIP8 1 year. That is what I gathered but I haven’t gone into the IRC for a week or so. The conversation has died down a lot. I don’t think there has been much talk about it since.
+
+I am a BIP9 supporter for what it is worth. Tar and feather me if you must.
+
+# The fastest draw on the blockchain: Next generation front running on Ethereum
+
+https://medium.com/@amanusk/the-fastest-draw-on-the-blockchain-bzrx-example-6bd19fabdbe1
+
+With all this DeFi going on Ethereum there are obviously these large arbitrage opportunities. Since everything is on a blockchain there is no efficiency at all doing this stuff for privacy. It is fun to watch people bid up Ethereum blockchain fees and also very clever folks are taking advantage of bots and stuff programming allocations in these DeFi protocols. This is a whole big use case of getting into this BZRX token launch. It is done onchain and everybody has got to try to buy into the token allocation at a specific time. It goes through these strategies that people could do to get a very cheap token allocation. If I’m not mistaken this guy made half a million dollars because he was clever enough to get on the allocation and then sell at the right time too. The post talks about what is a mempool which we were talking about earlier. How can you guarantee that your transaction to purchase tokens is confirmed as close as possible to the transaction that opens up the auction process. They go through a bunch of different tactics that you could take to increase your odds and do the smart thing. There was some stuff that wasn’t obvious to me. The naive thing I thought was pay a very high gas price and you are likely to get it confirmed close to this auction opening transaction. But that is actually not true. You want to pay the exact same gas price as the transaction that opens the auction so you are guaranteed to be confirmed at the same time. You don’t want to have your transaction being confirmed before one of these auction transactions. 
+
+One of the things that recently was very interesting with this front running situation is that there are no bots running on Ethereum where anytime you do any type of arbitrage that is profitable those bots will instantly check that transaction in the mempool and create a new transaction with a higher fee in order to take advantage of your arbitrage opportunity and have their transaction go through first. I thought that was one of the interesting things that people have been doing recently. Not too familiar on this one actually.
+
+I think it is a very fun space to see this play out onchain. Very interesting game theory.
+
+It is also really relevant for us as we are messing with Layer 2 protocols. People here are hacking the mempool in this very adversarial setting and we are just talking about it for the most part. We could learn a lot.
+
+Shouldn’t the miners be able to do all this themselves if they enough capital? They can do the arbitrage because they decide what goes in the block?
+
+There are reports that some miners have been performing liquidations or favoring the ordering of transactions based on liquidating particular positions over professional liquidators that are trying to liquidate positions. Giving themselves an advantage in that way. There have been reports of that happening recently.
+
+I agree that there is a tonne of stuff for us to learn in the Bitcoin ecosystem from what is going down in Ethereum right now. Especially around mempool stuff. Let’s look at this stuff and learn from it.
+
+In terms of front running I used to work at a place where we were doing some Ethereum integration. At the time one of the suggestions that was catching a lot of traction was to have a commit, reveal workflow for participating in a decentralized order book. Does anybody know if that ever gained traction? I stopped paying attention. You would commit to the operation you’d want to do in one round, get that confirmed and then reveal in a future round. Your commits determine the execution order.
+
+I am not familiar with that.
+
+That sounds like a better idea.
+
+It is a way to get rid of front running.
+
+That is interesting. I think the majority of protocols aren’t doing that. The only thing that sounds familiar to that is the auction system in Maker DAO where you call to liquidate a position first. Then it doesn’t get confirmed until a hour later when the auction is finished. This has its own issues but that seems more similar to a commit, reveal. That is the only thing I can think of that is remotely similar.
+
+# Evidence of Mempool Manipulation on Black Thursday: Hammerbots, Mempool compression and Spontaneous Stuck Transcations
+
+https://blog.blocknative.com/blog/mempool-forensics
+
+More mempool manipulation, this is sort of the same topic. These guys are looking into Maker DAO liquidations between March 12th and 13th which was a very volatile time in the cryptocurrency markets. Of the 4000 liquidation auctions with Black Thursday 1500 of them were won by zero bids over a 12 hour period, 8 million dollars in aggregated locked collateralized debt positions was lost to these zero bid auctions. When they say a zero bid auction is it a trivial price being placed on the order book and they just got lucky it got filled? What is exactly meant by that?
+
+I think what was happening here is there were a bunch of bots that came in. If you have an auction in Maker DAO, when they first implemented it the auction only lasted 10 minutes. What they would do is as soon as the value of a particular position went below the minimum collateralization ratio they would make a bid on that position for zero dollars. Usually what would happen is that in that 10 minutes someone else would outbid them. But what they would do is they would spam the entire network with a bunch of transactions at the same time so no one would be able to get a transaction in. At the end of 10 minutes they would win the bid. The person who had the position got screwed over.
+
+This is fascinating stuff watching this play out on a live network and seeing people making substantial money from it too.
+
+If you want to read more on how Maker DAO responded to this incident you can check [this](https://blog.makerdao.com/the-market-collapse-of-march-12-2020-how-it-impacted-makerdao/) out.
+
+# Working with Binance to return 10,000 dollars of stolen crypto to victim
+
+https://medium.com/mycrypto/working-with-binance-to-return-10-000-of-stolen-crypto-to-a-victim-3048bcc986a9
+
+Another thing that has happened since we last talked was the cryptocurrency hack on Twitter for those who live on a hole or whatever. Somebody hacked Twitter and was posting crypto scams. Joe Biden and Barack Obama’s account was posting this scam. What these people are talking about is how exchanges can be useful in returning people’s property when things are stolen. They claim Coinbase blocked user attempts to send over 280,000 dollars to the scam address. I think this is a really trade-off between centralized exchanges. Obviously some people don’t necessarily like centralized exchanges but I think we can all agree that it is probably good that they were censoring these transactions to keep people from paying in to some Twitter hacker’s crypto scam on Joe Biden’s account or Barack Obama’s account or whoever’s account.
+
+If you are going to scam make sure you reuse addresses so Coinbase can’t block you.
+
+Don’t reuse.
+
+This is perfect marketing for financial regulation. “Look it sometimes doesn’t hurt people.”
+
+That should be the Coinbase advertisement on TV or whatever.
+
+# Samourai Wallet Address Reuse Bug
+
+https://medium.com/@thepiratewhocantbenamed/samourai-wallet-address-reuse-bug-1d64d311983d
+
+There is a Samourai wallet address reuse bug that can be triggered in some cases where you reuse the same address due to a null pointer exception in the wallet handling code. The author of this post was not too thrilled with Samourai’s response and handling of the situation from my understanding. Especially for a project that touts itself as privacy preserving.
+
+The bug is fixed now. If you are using Samourai you are good.
+
+# BasicBlocker: Redesigning ISAs to Eliminate Speculative-Execution Attacks
+
+https://arxiv.org/abs/2007.15919
+
+Other things in the hardware realm. They are trying to fix all these vulnerabilities that are out there for speculative execution on modern processors. For those who don’t know hardware is a lot faster than software. What hardware and software engineers have realized is that we should speculatively execute code on the hardware just in case that’s the branch people want to take in software. That can have security implications because if you have a IF ELSE statement, say if Alice has permission to Bitcoin wallet allow her in to touch funds or to touch a private key else send her a rejected request. With speculative execution these processors will actually execute both sides of that branch for checking if Alice has access to private keys and that now can be cached on the processors, that is my understanding. That means you can maybe get access to something you shouldn’t get access to. This BasicBlocker, I think it was redesigning these instruction sets and asking for compiler updates and hardware updates to simplify the analysis of the speculative execution. I don’t know, I didn’t have any strong opinions on it. I think we’ve got to solve the problem eventually but nobody wants to take a 30 percent haircut on their performance. 
+
+Building formal tools to analyze this sounds like it would be awesome. The class of attack is a side channel attack and by definition a side channel attack is a channel that you weren’t expecting an attacker to use. I think hardening against speculative execution attacks is necessary but you really need to be very careful about applying security principles like minimum privilege. 
+
+It is tough. Things will get a lot slower if we decided to actually fix this stuff.
+
+Thanks for attending. We will do it again in a month or so. Next one will be our 12th Socratic Seminar. It will be a year so maybe we will have to figure something special for that.
+
