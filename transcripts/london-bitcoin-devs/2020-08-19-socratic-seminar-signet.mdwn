@@ -1,0 +1,506 @@
+Name: Socratic Seminar
+
+Topic: Signet
+
+Location: London BitDevs (online)
+
+Date: August 19th 2020
+
+Video: https://www.youtube.com/watch?v=b0AiucAuX3E
+
+Pastebin of the resources discussed: https://pastebin.com/rAcXX9Tn
+
+The conversation has been anonymized by default to protect the identities of the participants. Those who have given permission for their comments to be attributed are attributed. If you were a participant and would like your comments to be attributed please get in touch.
+
+# Intro
+
+Michael Folkson (MF): This is a Socratic Seminar organized by London BitDevs. We have a few in the past. We had a couple on [BIP-Schnorr](https://diyhpl.us/wiki/transcripts/london-bitcoin-devs/2020-06-16-socratic-seminar-bip-schnorr/) and [BIP-Taproot](https://diyhpl.us/wiki/transcripts/london-bitcoin-devs/2020-07-21-socratic-seminar-bip-taproot/) that were really good with Pieter Wuille, Russell O’Connor and various other people joined those. Videos and transcripts for that are up. For those who haven’t attended a Socratic Seminar before this isn’t a presentation. Kalle (All) is on the call which is great but this isn’t a presentation from Kalle this is a discussion. We have got a [reading list](https://pastebin.com/rAcXX9Tn) up that I have shared in various places on Twitter and on the YouTube. We’ll be going through those links and that will be the structure of the discussion. We will start off from basics. Early on is a great time for people who don’t know too much about Signet to participate. It will get more technical and we will go into the implementation details later. We are livestreaming on YouTube. Questions, comments on the YouTube. We will be monitoring the Twitter \@LDNBitcoinDevs and IRC \#\#ldnbitcoindevs on IRC. The topic today is Signet. As I said Kalle is here which is great. He knows more about Signet than probably anybody else on the planet. 
+
+Kalle Alm (KA): AJ (Towns) is starting to zoom away from me. I’m starting to be like “What are you doing now?” 
+
+MF: We start off with intros. We’ll start with you Kalle. What have you been working on in terms of Signet for the last couple of years?
+
+KA: I am Kalle. I am living in Tokyo right now. I am working for DG Labs. I am doing mostly Bitcoin Core related things. Also working a debugger for Bitcoin Core called [btcdeb](https://github.com/bitcoin-core/btcdeb). Recently the last few years Signet has my top priority. I am excited. It is moving forward now and finally I am hoping to get Signet in place right in time for Taproot. If we can get those two in, add Taproot to Signet, that would be cool.
+
+Emzy (E): I have only heard about Signet. I tried to use testnet for something and I see that we need Signet because testnet has so many problems. Mostly you can’t use it really, it is annoying.
+
+AJ Towns (AT): I have previously been working at Xapo and am now at Paradigm, in both cases just working on random Bitcoin Core stuff. I have been involved in the Taproot stuff for a while now. I agree that testnet is terrible and really want to see some sort of live way of playing with new soft forks and consensus rules before we deploy them. Signet sounds awesome. I have been looking at that for the last month or two with some seriousness. 
+
+MF: We’ll start off with basics exploring what testnet and regtest offer and some of the problems, why there was a motivation for Signet in the first place. 
+
+# Testnet in Mastering Bitcoin (p207)
+
+https://github.com/bitcoinbook/bitcoinbook/blob/25569ba10142a55a0c26d32033d06c5b1033e7ea/ch09.asciidoc#bitcoins-test-blockchains
+
+MF: This is part of Andreas Antonopoulos’ book Mastering Bitcoin. Starting from first principles what is testnet? Why do we have testnet? What do people use testnet for? Why was it set up in the first place?
+
+E: Testnet, I can talk why I used it. I used it in the beginning to test out Lightning because the first implementations of all the Lightning nodes used testnet. That is one example to simply use something that has no value and try out the whole system. I think that is the purpose for testnet. It has many people using it and without any value you can try out things.
+
+MF: If you are building an application and you want to test it. You don’t want to have real money on the line, that would be one use case. We’ll get into some of the problems with testnet but if you are trying out new mining hardware this can really impact the experience of other people’s application testing on testnet because the difficulty of mining blocks go sky high. The interaction in terms of testing certain applications does screw up the testing of other applications on testnet. In terms of how testnet works how are blocks mined on testnet? What is the difference between mining blocks on testnet versus mining blocks on mainnet?
+
+E: There is not directly a difference. There was an improvement because the difficulty was really ramping up. They would stop mining and then the difficulty was high and no new blocks were found. I think something changed on the mining side for the difficulty adjustment. Other than that it should be pretty much the same as mainnet. 
+
+MF: There was the adjustment with testnet3. There was the problem that they would be loads of hash power coming onboard and that would mean once that hash power left the block generation time was really, really long. There was that change for testnet3 in 2012. If a block hadn’t been found after a certain time the difficulty would plummet down the lowest possible. 
+
+KA: I am not entirely sure. I haven’t done a lot of mining on testnet. From what I understand yeah if a block hasn’t been seen for a while the difficulty drops. This has some issues but I’m sure we’ll get there.
+
+# Testnet on Bitcoin wiki
+
+https://en.bitcoin.it/wiki/Testnet
+
+MF: There are a few differences. Different DNS seeds. In terms of trying to find other nodes the DNS seeds are different on testnet to what they are on mainnet. I think Emzy is a DNS seed on mainnet. Are you a DNS seed on testnet Emzy?
+
+E: Half of them from mainnet are also running testnet nodes. I am not running a testnet node because I think it is not that important.
+
+MF: And obviously the port needs to be different. There is a minimal difficulty that we’ve gone over. Then you can do transactions with non-standard scripts. Again we’ll leave that to later because there’s that discussion on Signet. Whether you should be able to experiment with scripts that you can’t on mainnet on say testnet, regtest, Signet. That final one on this testnet wiki is that it is a different genesis block to the main network. There was a new genesis block which was reset for the 0.7 Bitcoin release.
+
+# 16 blocks were found in one day on testnet3
+
+https://web.archive.org/web/20160910173004/https://blog.blocktrail.com/2015/04/in-the-darkest-depths-of-testnet3-16k-blocks-were-found-in-1-day/
+
+MF: Some of the problems with testnet. This was a crazy example. I don’t know exactly how this happened but apparently there was 16,000 blocks found in a day. Why is this a problem?
+
+KA: I’m not sure if this is a case of a re-org. I am assuming it is. Probably there was a lag between the last blocks and then the difficulty dropped really far down. They put a miner on it and then it went haywire because of the minimum difficulty. That is a problem if you go back and re-org purposefully. You can get the same result because older blocks, if they were seen as if they were the last block on the chain then you would still get this difficulty drop from those based on today. You could go back and get lower difficulty and mine more blocks than you could if you just mined on the top of the chain. 
+
+MF: There are two issues with it. There is the issue of too many blocks coming through. Depending on your application, exactly what you testing, let’s say you are testing a new opcode or something. This may not be a big issue but it is just crazy that you are getting so many confirmations through in such a rush. There’s two issues. One is that block generation times are so volatile and variable. As Kalle said you also get re-orgs. If you are testing a transaction that you think has 5 confirmations and then there is a massive re-org and the transaction drops out because it was in a block that is now discarded from a re-org that is also a problem. But it is very dependent on exactly what you are testing. If you are testing new mining hardware, you are testing a change to Bitcoin Core mining or Bitcoin Core P2P that is very different from testing a new script, a non-standard script where perhaps you don’t care about confirmation times, you don’t care about re-orgs as much.
+
+# Has the testnet ever been reset?
+
+https://bitcoin.stackexchange.com/questions/9975/has-the-testnet-ever-been-reset
+
+MF: My understanding of why testnet was reset back in 2012, this was testnet2 to testnet3, is that one of the big problems was that people were selling their testnet for real monetary value. Was it just a dearth of testnet faucets and people couldn’t get their hands to do testing? Why did testnet coins suddenly get a value at that point in time?
+
+AT: It was totally before my time so I’ve got no idea but I thought the idea was more you’d reset testnet just to make sure it was easy to sync with in the first place and didn’t have years long history of transactions that nobody really cares about anymore. 
+
+KA: It was reset twice because both times somebody started selling them. That is what I heard anyway. I haven’t seen why anyone would buy coins like that.
+
+MF: We can only speculate I suppose. It might just be pure stupidity. Having no idea that the testnet coins weren’t real Bitcoin or not an altcoin or something. That was one of the motivations for resetting it back in 2012. As AJ says block sync time, we will get onto that in a few links, whether testnet should be big and whether it should take a long time to sync testnet. What were the other problems why it was reset? There does seem to be a problem because there are non-standard scripts enabled after a certain period of time it does get messy. Sometimes you need a reset just because people are struggling to sync the chain. There are rule changes and people are struggling to get to that latest blockchain tip, ignoring the time it takes, physically unable to sync up to the latest block.
+
+E: I tested syncing the testnet3 and it was really fast without any problems. I think the problem is if you don’t reset it, if there is no precedent that it was reset I can see it is like any other altcoin. It can get value if you don’t reset it. Now it is once or twice reset it doesn’t get any value.
+
+# Testnet version history
+
+https://bitcoin.stackexchange.com/questions/36252/testnet-version-history
+
+MF: On this Bitcoin StackExchange post there is this comment (from Gavin Andresen). “The main reason for the reset is to get a more sane test network; with the BIP16 and BIP30 and testnet difficulty blockchain rule changes the old testnet is a mess with old clients serving up different, incompatible chains.” I don’t know whether that is people not maintaining or not keeping up to date with the latest Bitcoin Core changes but there does seem to be a bigger problem than just purely sync time or IBD time. It does appear there needs to be a reset every so often to get rid of some of these issues that collecting up over time on the testnet. I don’t think people have thought much about testnet, I don’t know if there are any lessons to be learnt from these resets and whether Signets will need similar resets in time. 
+
+KA: Testnet is for making sure that your node that you wrote in Javascript can sync everything properly and you can go through all the testnet3 stuff and find all these weird scripts that are trying to break it. It is a resource for that reason I think. A way to try out weird stuff that people have done because it is on testnet and it is worth nothing. On mainnet you wouldn’t be experimental whereas in a test network you would. I know Nicolas Dorier was running a full node in C\# and he used testnet to make sure it worked. Both testnet and mainnet of course. 
+
+# Testnet reset?
+
+https://github.com/bitcoin/bitcoin/issues/19666
+
+MF: Given it has been so long since we reset the testnet we haven’t reset the testnet since 2012 there has been discussion pop up at various points on whether there should be a testnet reset. I thought about it and I was [thinking](https://bitcoin.stackexchange.com/questions/98579/will-there-be-a-testnet4-or-do-we-not-need-a-testnet-reset-once-we-have-signet) that perhaps we don’t want to reset the testnet until we’ve worked out how effective Signet is and whether Signet solves all the problems. If it does solve all the problems it doesn’t really matter. If we were to reset testnet say tomorrow and everyone moved to testnet there wouldn’t be any problems because obviously it was reset. You are not inheriting all the problems of years of testnet. Then perhaps people wouldn’t be using Signet and so maybe we do need a testnet reset but we should do it once we’ve worked out whether Signet solves all our testing needs.
+
+AT: I don’t think a reset would make testnet all that more useful. One of the things that stops it being useful for testing Lightning is that you get these huge variations in number of blocks per hour or day. The locktime restrictions that Lightning uses to make sure that you have time to be able to publish your revocation transactions and punish people for doing the wrong thing. You have got actual time for that. If thousands of blocks get found in a minute then you don’t have time for that. If there are huge re-orgs, a reset won’t fix that. Even if it was reset tomorrow and worked fine for what it is I still think that leaves Signet as a useful thing to have.
+
+MF: A testnet reset is certainly not going to mean that Signet isn’t required. Lightning is obviously a case where Signet is going to be clearly miles better than testnet for the reasons you just said. But for a testing use case like testing a new ASIC or testing IBD or testing P2P stuff perhaps you do want the craziness that happens on testnet to stress test your ASIC or stress test the latest IBD change in a way that perhaps it would be difficult to replicate that craziness on Signet.
+
+AT: For testing a ASIC Signet is not all that useful because you have got to do the signing as well as the proof of work. You’ve got a whole different setup than you have for mainnet for that. Whereas testnet is almost exactly the same, just point an ASIC at it and you’re fine. I don’t know how much the craziness is useful for anything realistic you are testing. Putting craziness in a regtest thing so you can have a couple of hundred blocks that demonstrates the craziness. Put it in a functional test and have it run on every commit seems a lot better than having to sync testnet and run it against that for changes you might make.
+
+MF: That is an argument for resetting testnet? For those testing use cases such as testing a new ASIC.
+
+AT: If you want to test an ASIC against testnet you have got to sync it first. If you get bored of it and you get bored of it and don’t sync it all the way then you risk doing a re-org which then interferes with everyone else. There is an argument on its own for resetting testnet every two years or on a schedule rather than every 8 or 10 years or whatever. I don’t know if that is a strong argument.
+
+MF: I’m not sure what you are saying. Are you saying it should be regular every 2, 3 years or are you saying it is not needed at all?
+
+AT: I don’t think it is needed at all. If you run a testnet node, once you get your new ASIC you point it at your testnet node and you are instantly mining new testnet blocks. I don’t think you need to do anything special to support that use case. If you wanted to make it so that you just go from scratch, plug in your new Raspberry Pi to run your testnet node, plugin your new ASIC and have it all working in 20 minutes then that is an argument for having it reset maybe.
+
+KA: I still don’t even know why testnet would exist if Signet exists to be honest. If you have an ASIC and you want to try it out why don’t you try to get money? Why don’t you point it at mainnet. I don’t see why you wouldn’t do that. I don’t think you are going to break mainnet if you try out your new ASIC on mainnet.
+
+MF: You are testing the firmware and you want to make sure that it is working properly before you direct loads of hash power towards the main chain?
+
+KA: Yeah maybe. I would just try it on mainnet myself probably.
+
+MF: I see what you mean. There is nothing to lose.
+
+KA: You mine a block. Oh no.
+
+MF: But there are other use cases like changes to Bitcoin Core mining or P2P code. If you wanted to test changes to that before pushing them out on mainnet, does it make sense as a completely open, crazy, chaotic staging ground to test it first before you start pushing it out to users. 
+
+KA: I guess. If you have mining software you want to try it first maybe.
+
+E: If you want to try to do solo mining it is way too hard to do that on mainnet. You are trying out some pool software for pool mining and you really want to try to find a few blocks. That is for sure much easier on testnet.
+
+KA: You could start a new custom Signet. You can mine there.
+
+MF: It is very hard to simulate that craziness on Signet. The whole point of Signet is that you are trying to prevent that craziness. You are putting constraints in there so that that craziness doesn’t happen. If you actually want that craziness I don’t know how much sense it would make to try to simulate that craziness either on Signet or to start a new Signet with craziness on it. Nicolas Dorier [says](https://github.com/bitcoin/bitcoin/issues/19666#issuecomment-668979781) testnet should be replaced by a Signet. Nicolas is in your camp Kalle. He doesn’t see the need for a new testnet. Testnet version 1 and 2, we don’t know if they are syncable anymore. At some point we would assume that testnet v3 won’t be syncable anymore for the issues that v1 and v2 had. If there are any use cases then we should think about a testnet v4.
+
+KA: The link you showed where there were issues and clients were giving different chains. That would be a reason to reset but I don’t think we’ve seen that on testnet3 at this point. I don’t think testnet3 is giving different chains for different clients right now.
+
+AT: Testnet3 was giving different chains at a point when some of the miners were trying out one of the block size increase BIPs. Some of the miners mined with whichever bit it was to lock it in. Then still on that chain someone else mined a too small block or something that was invalid. I think a whole bunch of those nodes got stalled. I think there was some sort of re-org that avoided that at some point, I’m not really sure. For a while there were definitely two chains on testnet.
+
+MF: I would guess if you are allowing more functionality on testnet and you are not going through the same rigor and the same processes that you do on mainnet in terms of soft forks and discussing the Taproot soft fork for years. I would think as you’ve got more freedom and more flexibility that there are going to be those problems. Especially if you start reverting making things more restrictive and then allowing things that aren’t on mainnet. I haven’t really followed testnet closely so I don’t know whether there has been lots of changes.
+
+KA: I think I synced testnet one time several years ago. Then I couldn’t figure out how to get any coins. I was like “What do I do now?” 
+
+MF: I don’t think many people are monitoring it for obvious reasons. Because it has no value. Most people are focusing on mainnet. 
+
+# testnet4
+
+https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-June/017031.html
+
+MF: Peter Todd back in 2018 when they were discussing a reset of testnet put forward the view that testnet should be a large blockchain. That motivation that AJ said earlier about wanting to reset the testnet just because it gets too big, it takes too long to sync, IBD takes too long. Peter is saying in this mailing list post that you actually want it to be similar size to mainnet if not bigger. Let’s say the block size, block weight discussion starts up again in 5 years, you want to know what is possible before there starts to be performance issues across the network. Perhaps you do want testnet to be really big for those use cases, to experiment with a massive chain prior to thinking about whether we should blocks sizes smaller or bigger or whatever.
+
+KA: I agree.
+
+MF: Perhaps that’s an argument for not doing a reset. Or at least doing a reset but with a massive chain included in that reset. I don’t know.
+
+AT: That would make sense to a point but if you just want to test random wallet and application software I don’t think you want to download an even bigger chain than mainnet to have to do that. Not when we are having problems with the IBD performance of mainnet in the first place. I thought some of the experiments they did with Bcash with their gigamega blocks makes more sense there. You just have some separate offline test to check that performance rather than inflicting it on everyone before it is ready.
+
+MF: This is where some of the use cases would make sense to be on Signet. You just leave testnet for that experimentation for massive chains and long IBDs and P2P issues. Maybe you leave testnet for those use cases and all the use cases such as the wallet use case you put forward, you’d use Signet for that. I am certainly not saying testnet fulfills everything that Signet can do. Signet is going to be better in the vast majority of cases. It is just whether we need that testnet, whether we need a testnet reset and what applications or what use cases are going to be tested on it in future.
+
+KA: I think there is an incentive misalignment with miners mining on testnet. They are mining but there is really no reason for them to mine. They are wasting energy and money, electricity bills to create blocks that are supposed to be worth nothing. I think Signet will solve that problem. People who want to mine testnet coins for whatever reason, I have met several of them. They have been very concerned when I mentioned Signet because they think testnet is going to go away. But it is not going to go away. If miners mine testnet it is going to stay there. Even if I wanted to remove testnet I couldn’t by the very nature of how it is set up.
+
+# Richard Bondi workshop at Austin Bitcoin Devs on regtest
+
+https://diyhpl.us/wiki/transcripts/austin-bitcoin-developers/2018-08-17-richard-bondi-bitcoin-cli-regtest/
+
+MF: Let’s move onto regtest then. What do you know about regtest? How is it different to testnet? How does it work?
+
+E: There is no proof of work. Most of the time you run it with any network connections. You simply type in a command and get a block or get 100 blocks, whatever you need for your test case. It is not like a network, it is more like you are doing it on your own node. 
+
+KA: It is like a fancy unit testing network. You can’t use it with people but it is perfect for using on your own computer to try stuff out.
+
+MF: You are not setting a network beyond your own machine. For some of those use cases we were thinking about in terms of mining or different ASICs competing with each other or P2P stuff, for those types of things you are just not able to test them on regtest. Regtest is good for small changes that aren’t network level changes. They are just small things you want to experiment with locally. 
+
+KA: Taproot is a great example. You can create an address and spend it to yourself on regtest. But having interactions between multiple people are probably harder to do on regtest. Signet will help.
+
+MF: This item on the reading list, this was really good, I think this is still [online](https://www.youtube.com/watch?v=sbupEpL6-J4). Richard Bondi did a regtest workshop at Austin Bitcoin Devs. This was getting set up on your laptop, generating blocks. Obviously there is no proof of work so you can just use a `generate` command to produce a block and to get the block reward. You don’t need any hash power to generate a block. There is no competition. Does it have the same genesis block as testnet or is there just an empty genesis block?
+
+KA: They are different.
+
+MF: I would recommend that, that’s a really good workshop if you want to play around with regtest and do small changes locally. There is also a [tutorial](https://bisq.network/blog/how-to-set-up-bitcoin-regtest/) from Bisq.
+
+# PR 17032 (closed) Tests: Chainparams: Make regtest almost fully customizable
+
+https://github.com/bitcoin/bitcoin/pull/17032
+
+MF: There was this PR that jtimon opened back in 2019 in terms of making regtest fully customizable. This is moving into Signet territory. I think you [commented](https://github.com/bitcoin/bips/pull/803#discussion_r304907257) Kalle on why this isn’t a good idea. The security of opening up regtest to external nodes is not the same security as you’d get opening nodes up to other external nodes on a Signet network.
+
+KA: I have very little experience with all of the altcoins out there. One of the big problems I have noticed when I looked at one, miners are automating mining on lowest difficulty chains all the chain. You have an altcoin that has a value. You will have miners coming regularly and mine a tonne, get the difficulty up to whatever makes it economically unviable to them and they’d move onto the next altcoin. If you had a regtest with mining without some kind of other security check like the signature in Signet they would have that problem there as well, griefing and whatever.
+
+MF: It is a mining issue. Your quote here Kalle is “You can in practice start up a regtest and `addnode` people all over the world to create a network though it would be completely vulnerable.” Are there any additional P2P security stuff you would have to worry about if you were to open up a regtest to external nodes? Is there anything additional that Signet provides?
+
+KA: I can do a one line thing where I delete your entire chain for you on your regtest chain. I can just erase it anytime I want. I just invalidate your block 1 and I mine a bunch of regtest blocks until my chain is bigger than yours and then you are going to switch over to mine. You have to invalidate my block and then you may go back to yours. You are going to have this back and forth because I can make blocks for free.
+
+MF: That is different to how thought I worked. I thought it was immutable. Once you’ve generated a block that was a block in the chain. But no. How do you ditch a block that someone has generated?
+
+KA: You just type `invalidate block` and the block hash and hit Enter. Then Bitcoin Core will throw that away and all of the other blocks after it. If you generate a block after doing that you are going to generate a block on the block before it. If I invalidate Block 1 in your chain then my node will mine on top of the genesis block. It will mine the first block, second, third, fourth. If you have 100 blocks and I mine 101 blocks your chain is going to see my 101 blocks and say “This is the longer chain. Let’s go there.”
+
+MF: That is a massive problem. That is something I didn’t realize. That is probably the strongest motivation I have heard for Signet. I was already convinced of the need for Signet. Do you remember how this PR worked in terms of making regtest fully customizable? Is jtimon introducing proof of work?
+
+KA: He has multiple versions of this I think. He was working alongside me when I was doing Signet in the beginning. He was an Elements developer, the Blockstream project. I think he worked to put my Signet stuff into the Elements stuff. I think this is the one he did after I did Signet. His idea was instead of having Signet as a set of parameters with a hard coded network you would just use regtest and customize it to say “We need a signature for the block to be valid.” I think ultimately it was a lot of code for something that didn’t seem like we were going to use a whole lot. 
+
+MF: I suppose it depends on whether it is one Signet that everyone uses as a slot in replacement for testnet or whether there are multiple Signets. If there was to be only one Signet then maybe it makes sense to try to experiment with different types of customizable regtests because that one Signet doesn’t satisfy everyone’s needs or desires in terms of how it is set up.
+
+KA: Let’s say you take Jeremy Rubin’s CHECKTEMPLATEVERIFY idea and you make a pull request for this new feature. Then you also change the Signet default values to be a new custom Signet that you make which enables the CHECKTEMPLATEVERIFY code. If you do that people who download your pull request from Bitcoin Core, compile it and run with `-signet` they would immediately be on your custom chain. No changes done, they don’t need to do any customization at all. They are just on your chain. They can now try CHECKTEMPLATEVERIFY stuff, they will validate it and they will do all the things that a Core node would do normally. I think people are against that idea a little. People would rather have one Signet with all bells and whistles turned on and then people can pick which soft fork they want to use. I think the jtimon idea was in the same vein but a bit complex. More complex than what was needed.
+
+MF: There is a question on the YouTube. Lukas asks wouldn’t the difficulty be way lower on testnet allowing you to test if your software can indeed find a block? In comparison to mainnet that is obviously the case. Because there is no value on testnet the difficulty is obviously going to be lower. It is just that it varies hugely but a much lower base.
+
+KA: Or you could join a pool. If you join a pool even if you have a relatively difficulty you are still going to get shares with your miner if it is working correctly. If you get shares you are going to get money. You can do that or you can use testnet. If you want money, if you don’t want money.
+
+MF: This was the discussion earlier. The worst case is your mining hardware, ASIC doesn’t work and you don’t get anything. That’s exactly the same case as if you are mining on testnet. You might as well throw it on mainnet and even if it doesn’t work you are not losing anything from not being on testnet. 
+
+# What are the key differences between regtest and Signet?
+
+https://bitcoin.stackexchange.com/questions/89640/what-are-the-key-differences-between-regtest-and-the-proposed-signet
+
+MF: Let’s move onto Signet. What do you know about Signet, how Signet works?
+
+E: I only heard about it and as far as I know instead of mining you sign the blocks. Other than that I don’t know how it works.
+
+MF: There were a couple of good quotes that I put on the reading list from Bitcoin Optech. I am going to read them out. On the Bitcoin Optech Signet topics [page](https://bitcoinops.org/en/topics/signet/) “The signet protocol allows creating testnets where all valid new blocks must be signed by a centralized party. Although this centralization would be antithetical to Bitcoin, it’s ideal for a testnet where testers sometimes want to create a disruptive scenario (such as a chain reorganization) and other times just want a stable platform to use for testing software interoperation. On Bitcoin’s existing testnet, reorgs and other disruptions can occur frequently and for prolonged lengths of time, making regular testing impractical.” The operators of the signet can “control the rate of block production and the frequency and magnitude of block chain reorganizations.” This avoids “commonly encountered problems on testnet such as too-fast block production, too-slow block production, and reorganizations involving thousands of blocks.” Any other high level things in terms of how Signet works? You have still got the proof of work but you can only successfully mine a block if it is signed by I think it is just you at the moment Kalle? Or is it currently set up to be a 1-of-2 between you and AJ?
+
+KA: It is me and AJ right [now](https://github.com/bitcoin/bitcoin/pull/18267#issuecomment-671686673) as of two days ago. 
+
+MF: That means that if I mine a block at the latest difficulty I need to send that block to either you or AJ to provide a signature before it can go on the chain?
+
+KA: Yes exactly.
+
+MF: There is no way of you or AJ or both giving your signature in advance for someone to start mining. It is going to be “Kalle I’ve got a new block” “Ok I’ll sign it.” “Kalle I’ve got a new block” “I’ll sign it”. It is not a “Kalle can I be a miner please?” and then Kalle goes “Ok fine.”
+
+KA: Yes the signature commits to the block itself. So you have to have the block before you can create the signature.
+
+# Signet on bitcoin-dev mailing list (March 2019)
+
+https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-March/016734.html
+
+MF: This is the announcement on the dev mailing list. Let’s have this discussion then on having one Signet which everyone uses or having multiple Signets. The problem that I foresee if there is just one is that then you get into the same issue that you do on mainnet where it is like “I want my change on Signet.” Jeremy Rubin comes and says “I want CHECKTEMPLATEVERIFY” and you go “Right fine.” Then someone else comes along with a change that no one is particularly interested or everyone thinks is a bad idea. “I want this on Signet.” Then you are in the same situation that we are on mainnet where it is very hard to get new features on the Signet. It needs at least with you and AJ as the signers it needs you or AJ to sign off that change is worthy of experimentation on Signet. Would you agree that is one of the downsides to having one Signet that everybody uses?
+
+KA: Yes
+
+MF: Any other downsides to having one Signet?
+
+AT: I thought your example of have a really huge testnet so we can test how things work when we’ve got way too much data, that is the perfect example why you want a completely specialized chain that some people use for their purposes but most people don’t want to use because it is too big for no good reason. The way Signet is implemented as is it lets people do custom ones that I think makes a lot of sense.
+
+MF: You certainly want to allow people to do it. Maybe it will end up that there is one Signet that everybody uses most of the time and then if you want to go off and do something crazy that most of the network isn’t interested in then you do your own Signet. You will have one with a network effect and lots of other splintered, fragmented Signets.
+
+# Enabling soft forks on Signet
+
+https://bitcoin.stackexchange.com/questions/98642/can-we-experiment-on-signet-with-multiple-proposed-soft-forks-whilst-maintaining
+
+KA: I think so. There is the default one, I call it the default Signet. If you don’t provide a custom block signing script or anything. There is something you can do even if you only have one. I know you were talking about the downsides of having one. Your example of Jeremy Rubin’s CHECKTEMPLATEVERIFY and Taproot. I could see how the default Signet would have both of those turned on. People who were running Signet could pick one. As long as the miner accepts the transactions then the users can choose not to care about specific soft forks. I can say “I don’t want to care about CHECKTEMPLATEVERIFY stuff. I just want to accept it. I don’t care.” It is like OP_TRUE. That’s how it works because it is a soft fork. The only thing is there is peer to peer stuff. 
+
+MF: You are saying because people obviously care a lot more what goes on mainnet than goes on Signet they would be open to a lot of those OP_TRUEs on Signet. They don’t really care because it is Signet.
+
+KA: If I am Pieter Wuille and I don’t care about CHECKTEMPLATEVERIFY. I want to make sure that the Taproot stuff works. I tell my Signet node to only care about Taproot and not care about CHECKTEMPLATEVERIFY. Even if the network accepts both I can pick one if I want to. It is a minor detail so it is not a big deal. It is one of the things that is cute about Signet. The miner has both soft forks enabled but the user can choose not to enable them if they want to.
+
+MF: That makes it difficult. There is a reason why you can’t do that on mainnet because you can’t verify the chain… Let’s say I wanted to have SegWit disabled on Signet. I’d have a version of Bitcoin Core pre-SegWit. Then I experiment with Jeremy Rubin’s CHECKTEMPLATEVERIFY without SegWit. Then you are not going to be able to verify the chain. You are going to have some of the problems that we’ve seen on previous testnet resets where people are doing different things and activating different things. People struggling to verify the blocks.
+
+KA: You can definitely not do that on mainnet. The reason why you can do it on Signet is because you trust the miner. The miner signs off the block so you know it is valid.
+
+AT: If you were trying to disable SegWit on mainnet then if you try to spend someone else’s SegWit coins without doing the SegWit stuff and miners accepted that anyone could do it. If you did that on mainnet anyone can mine as long as they dedicate the electricity to it. Then you can get different forks. But on Signet only a couple of people can mine. You can create those transactions but they will never actually make it anywhere. As long as you’ve got all the miners not doing anything that would violate the soft forks then you can treat them as enabled for as long as you like until that changes. The difference in the security model of having only a few signers where you can’t have an attacker mine blocks successfully changes the scenario a bit.
+
+MF: You still want to be able to verify the chain. You still want to be able to do the IBD process even though Kalle or AJ or both have signed off on blocks into the chain. You still want to verify that all the transactions in those blocks are valid in certain use cases. 
+
+KA: You can still do it. The only thing is your node is going to see a mined block and it is going to say “This block contains a transaction that I don’t understand” which in Bitcoin land means accept. That’s in mainnet as well. If someone makes a transaction with SegWit version 1 and it gets into a block or SegWit version 58 and it gets into a block everyone is going to accept it.
+
+AT: There is no SegWit version 58, it only goes up to 16.
+
+KA: Ok, sorry.
+
+MF: Certainly in a hard fork case, let’s say someone wanted to hard fork Signet you and AJ would just not allow that. There would not be a hard fork on Signet.
+
+AT: If you were willing to do a hard fork you could make the hard fork change the people who sign the blocks. Once you bring hard forks into it anything can happen.
+
+MF: I was thinking before this that it would be a problem people coming with their own proposed soft fork but it sounds like with OP_TRUE type stuff it wouldn’t.
+
+AT: If you are coming with your own soft fork you still have to get the signatories to mine blocks that will include those transactions. If you started mining CTV blocks then the miners don’t have the code to verify that and they would consider the transactions non-standard and just ignore them. Same with the Taproot transaction right now.
+
+MF: Do you see there being a BIP like process, as part of the soft fork discussion there being an application to Kalle, AJ, whoever else is signing blocks to have their soft fork on Signet?
+
+AT: I am playing around with code to make that as straightforward as possible. We’ve got a Taproot [PR](https://github.com/bitcoin/bitcoin/pull/17977) in the Bitcoin repository at the moment. The last modification date of that is a couple of days ago. I think what make sense is to say that if you merge this code, once blocks have passed that modification date and the user passes an `-enabletaproot` flag or something then they will relay Taproot transactions to anyone else that has also got that flag set. If there happens to be a miner on the network that is willing to mine those transactions then they will get mined. I think that is all feasible and would be compatible with doing Taproot and CTV and everything else and work with custom Signets without requiring lots of configuration. Still a work in progress.
+
+KA: To answer your question on an application to get your soft fork in. Ultimately Signet is going to be based on Bitcoin Core. I am hoping other implementations and wallets are going to support it. The way that I see it is if something is merged into Bitcoin Core, into master repository that is going to trickle down into Signet. Maybe there is a Signet branch on Bitcoin Core, I don’t know. That would be automatically pulled and built and ran by the miners somehow. I don’t think AJ and I would sit and take applications or anything. We don’t even know if we are going to be the maintainers or run the miners in the future. It could be anyone. It is more going to be we have a codebase where we have a pull request, the pull request gets merged and after merging it goes into a Signet phase or something. Kind of like how they had the SegWit testnet for a while.
+
+MF: There are definitely trade-offs for both approaches. There is a downside to having that permissioned “Kalle, AJ please enable my soft fork” type stuff. But that does bring all the benefits of Signet with a network effect so that everyone is using that same Signet. If everyone was just splitting off and using their own Signet with their own soft fork on it and no one else is on their Signet then there is not much point. You are almost just on a local regtest like network. You are not getting the benefits of a public network.
+
+KA: If you have a soft fork you want to try out starting your own custom Signet and asking people to join is probably the most straightforward thing to do.
+
+MF: One thing I did see, on testnet you can do non-standard scripts. Some of those opcodes that are disabled on Core you can actually use on testnet but your plan is to not have them enabled on Signet. What was the reason for that?
+
+KA: Ultimately people want to make sure that whatever they are doing is going to work with real money. I think it makes more sense to be close to the things that are possible on mainnet and not accept things that won’t be accepted in Bitcoin. That’s the only reason. It is supposed to be as close to mainnet as possible. 
+
+MF: At your [workshop](https://diyhpl.us/wiki/transcripts/advancing-bitcoin/2020/2020-02-07-kalle-alm-signet-workshop/) at Advancing Bitcoin, the hope is that we have Taproot on Signet before we have Taproot on mainnet. Otherwise there is not much point. It does have to make jumps ahead of mainnet so that you can test stuff but perhaps the bar for getting on Signet is where Taproot is now rather than a soft fork that comes out of nowhere and doesn’t have the discussion, review, the BIP, code, a PR to Bitcoin Core etc. 
+
+KA: There are several issues that you have to tackle when you are trying to test out new features with the Bitcoin setup. Once you turn it on if you find a bug do we reset the chain now? I think AJ has been working on various [ideas](https://bitcoin.stackexchange.com/questions/98642/can-we-experiment-on-signet-with-multiple-proposed-soft-forks-whilst-maintaining) to make it so that you can turn it on but then you say “Oops we didn’t actually turn it on. That was fake. Ignore that stuff.” Then you turn it on again later. So you can test out different stages of a feature even early stages. You can turn it on, see what happens and then selectively turn them off after you realize things were broken. 
+
+AT: The problem is if you turned Taproot on two weeks ago all the signatures for that would’ve been with the [square version of R](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-August/018081.html). If we change it to the even version of R they’d be invalid if you tried running the future Taproot rules against them. I think you can make that work as long as you keep updating the activation date of Taproot so that all those transactions, they weren’t actually Taproot transactions at all, they were pretend OP_TRUE sort of things that you don’t need to run any validation code over anymore. You only have to do the Taproot rules from this block instead that previous block. Going back to the current version of Signet, that does allow you to accept non-standard transactions.
+
+KA: I don’t think so.
+
+AT: I don’t think we will ever actually mine it but the command line is TestChain which is set to TRUE for Signet at the moment I think.
+
+KA: RequireStandard is TRUE for Signet. It is in [chainparams](https://github.com/bitcoin/bitcoin/pull/18267/files#r453425026). 
+
+AT: It is just using [IsTestChain](https://github.com/bitcoin/bitcoin/blob/54f812d9d29893c690ae06b84aaeab128186aa36/src/chainparams.h#L70) isn’t it?
+
+KA: If testing is TRUE but [RequireStandard](https://github.com/bitcoin/bitcoin/blob/54f812d9d29893c690ae06b84aaeab128186aa36/src/chainparams.h#L68) is also TRUE.
+
+AT: Isn’t [fRequireStandard](https://github.com/bitcoin/bitcoin/blob/6a2ba626852bd5bd8531dfa335c78fa87e4f6282/src/init.cpp#L1157) a default?
+
+KA: It is set to TRUE anyway. 
+
+AT: I think it gets overriden in [init.cpp](https://github.com/bitcoin/bitcoin/blob/6a2ba626852bd5bd8531dfa335c78fa87e4f6282/src/init.cpp#L1157). If you do the command line parameter. I think this because I claimed all the empty things that I mined. I don’t think I had to change the code to do that. 
+
+KA: I’ll have to look at it later.
+
+# Keeping multiple Signets separate
+
+MF: There are going to be other Signets. Even if we didn’t want them there are going to be other Signets. There’s reasons for having other Signets as we’ve explored. How do you separate the different Signets so they don’t start interfering with each other. There is [network magic](https://learnmeabitcoin.com/technical/magic-bytes) that you can set so there are different Signets. You can have different addresses beginning with sb1 and sb2. What else do you need to make sure they impact each other?
+
+KA: The network magic, if you change the magic the nodes aren’t going to talk to each other. All the network messages include the magic so they are not going to communicate. You are pretty good there as long as the magic is different. With Signet the [genesis block](https://github.com/bitcoin/bitcoin/pull/16411#issuecomment-577999888) is the same for all of them. A lot of software hardcodes all of the genesis blocks for all the chains that they support. It is hard to have a dynamic genesis block, it is harder to implement for people. The genesis block is the same for everyone but the magic changes. It should be enough but you can have collisions.
+
+# Bitcoin Core PR 16630 (closed) to skip genesis block POW check
+
+https://github.com/bitcoin/bitcoin/pull/16630
+
+MF: On that genesis block, there was a PR to skip the genesis block proof of work check on Core mainnet. Can you explain what the issue is? This PR wasn’t merged but why do we want to change genesis proof of work check on mainnet? And why do we want different genesis blocks on either Signet or multiple Signets?
+
+KA: I am not entirely sure why the genesis block’s proof of work check was added before. It makes sense in a way to not check it because it is hardcoded. You literally put the genesis block values in there yourself. Why would you go and check them? In the case of Signet, because Signet has proof of work and the genesis block has to follow the proof of work rules if you have proof of work enabled, whenever you created a new Signet before you had to also mine the genesis block. There was an entire `grindblock` command inside the Signet proposal that would turn your genesis challenge into a block with a nonce and everything. This was just more work for everyone. You’d have to have this nonce, you’d have to say this Signet genesis nonce is 1,325,000. That was when the genesis block was dynamically generated for each Signet which is not the case anymore. I don’t have any problem with proof of work being tested now.
+
+MF: What is the argument for different Signets having different genesis blocks? Is that just an extra separation factor?
+
+KA: The argument for is say you want to try out Lightning between multiple chains and you want to spin up a couple of Signets. You want to try them out. If they have the same genesis block c-lightning is not going to be able to use them. They use the genesis block to define the chain. But the argument against that is you can just go in and change the code. You can change the genesis block if you want to try two. It is not hard to do. I know that was one of the reasons why Jorge (jtimon) wanted to have the genesis block be different for each Signet because we was working on multi asset Lightning stuff. 
+
+MF: I hadn’t thought much about Lightning in terms of what you’d need on Signet for Lightning. There are quite a things where Lightning influences the design of Signet. 
+
+KA: I have pull requests to make it possible to do Lightning stuff. 
+
+MF: I am just going to highlight some good resources on Signet for the video’s sake. There’s your mailing list [post](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-March/016734.html) initially announcing Signet. Then there’s the Signet [wiki](https://en.bitcoin.it/wiki/Signet) which talks about some of the reasons why you’d want to run Signet and some of the differences between mainnet and Signet. I think we’ve gone through a few of these. 
+
+“All signets use the same hardcoded genesis block (block 0) but independent signets can be differentiated by their network magic (message start bytes). In the updated protocol, the message start bytes are the first four bytes of a hash digest of the network’s challenge script (the script used to determine whether a block has a valid signature). The change was motivated by a desire to simplify the development of applications that want to use multiple signets but which need to call libraries that hardcode the genesis block for the networks they support.” Bitcoin Optech
+
+# Kalle Alm at Advancing Bitcoin (presentation and workshop)
+
+https://diyhpl.us/wiki/transcripts/advancing-bitcoin/2020/2020-02-06-kalle-alm-signet-integration/
+
+https://diyhpl.us/wiki/transcripts/advancing-bitcoin/2020/2020-02-07-kalle-alm-signet-workshop/
+
+MF: Then there’s Kalle’s talk at Advancing Bitcoin where you have the various elevator pitches. Steps to integrate Signet testing. c-lightning has the [PR](https://github.com/ElementsProject/lightning/pull/2816) merged. Once Signet is merged into Core you will be able to do c-lightning experimentation on Signet. The Lightning implementations don’t need to wait for it to be merged into Core before getting it set up on their Lightning implementation. They can just start using it whenever it is merged into Core or even before. They could start using it now. Then in the workshop you had the participants set up a Signet to experiment with Taproot. Because currently Signet isn’t merged into Core they had to merge sipa’s Taproot branch with the Signet branch. Once Signet is merged into Core and certainly when Taproot is merged into Core then it will be very easy. A lot of that fiddling goes away.
+
+KA: If Signet is merged, even if Taproot is not merged then as soon as Pieter Wuille updates the Taproot pull request then you can just grab that and you would have Signet in it.
+
+MF: In terms of the Signet faucet, you have [one](https://signet.bc-2.jp/) set up. I used it yesterday and I was successful the first time. Then I tried to get some more. I think the message “Nuh-uh”. Perhaps the error message needs to be improved. How is that set up to prevent people from draining that faucet?
+
+KA: It is one time per IP per day.
+
+MF: I managed to get some later that day again. Maybe I was using a different IP. That stops it being drained. Other people can also set up their own faucets. They just need to either get some Signet from your faucet or they would need to mine a block on Signet. Then they can set up their own faucet and people can get Signet from their faucet rather than your faucet. 
+
+KA: If they have the private key to sign a block.
+
+MF: Or they mine a block on Signet that you sign off.
+
+KA: Right.
+
+MF: There is a Signet [explorer](https://explorer.bc-2.jp/). I think this is based on the open source Blockstream [Esplora](https://github.com/Blockstream/esplora) explorer. A normal block explorer for Signet. There are currently Taproot transactions on this default Signet? No there are no Taproot transactions currently on the Signet blockchain.
+
+KA: No
+
+# Activating Taproot on the default Signet
+
+MF: What needs to be done to get a Taproot transaction on the Signet chain? Is it just the case of the merging that we were discussing?
+
+KA: That is the easiest way I think. I think the other way, you merge the Signet and Taproot together again and then start up a temporary Signet. Then you can use that to do Taproot stuff today. We did it in February at Advancing Bitcoin. I know Stepan Snigirev even used it for his hardware wallet demo.
+
+MF: There would need to be an activation like discussion on when to activate Taproot on the default Signet?
+
+KA: Yes. 
+
+AT: There has to be some indication of at what height to start enforcing the rules which gets into some complexity. The complexity is ultimately that if there has to be changes made to the Taproot code before it is rolled out on mainnet then the old transactions might no longer satisfy the new rules and the new transactions that satisfy the new rules might not satisfy the old rules. What that adds up to is if you have enabled Taproot on your Signet server and the rules change underneath you then it is effectively like a hard fork. You have to upgrade or your view of the chain stalls. I think that is probably going to be fine for testing as long as we can get the user experience worked out so that if you enable Taproot you put this command line in. But then you need to keep paying attention to see if there are any changes because then you will have to [upgrade](https://bitcoin.stackexchange.com/questions/98642/can-we-experiment-on-signet-with-multiple-proposed-soft-forks-whilst-maintaining) or everything will get broken. I am just poking at my Terminal to try to push the branch where I have merged the things on somewhere public.
+
+# BIP 325 PR (merged) to change signature scheme to be tx-based
+
+https://github.com/bitcoin/bips/pull/947
+
+MF: There was this change to the BIP recently and this was AJ again, changing the block signing algorithm to be based on tx validation instead of a custom method. Can you explain what is going on here and what the motivation is for changing it?
+
+AT: The original design was that it took the block and extracted the place where the signature would go from it and then made a SHA256 of all that and signed that. Because that’s different to anything that Bitcoin has done before it needed some special signing code infrastructure to let that happen. That special signing code is exactly the sort of signing code that Craig Wright was using to fake all the keys for other stuff. You just pass a hash into it of the message you are claiming to sign but you don’t ever prove that you knew what the stuff was that hashed to it. That’s not a secure protocol. There were some complaints on the PR about that approach. I think there was a similar suggestion for the Bitcoin sign message stuff in that rather than having a new protocol for this we have already got a protocol that lets us sign transactions. Why not reuse that? That’s what this basically is. Instead of creating a new serialization for the block data and running SHA256 over it, it reconstructs it into a transaction like thing and then does the usual transaction signing stuff. After a good suggestion by Pieter it is now at the point where we can convert the block into a PSBT and then just run it through whatever PSBT tools we have so that we could even do a Signet that is signed by a hardware wallet. I think.
+
+MF: This is moving into the conversation on what a malicious actor could do to try to screw up Signet.
+
+AT: It is not really that far. It is more just how could a malicious actor mislead you if you didn’t understand all the details of what you thought was going on in the code. It wasn’t that there were bugs or an actual exploit or anything. It was just an architectural design sort of thing. The result of changing it means that we can then stick in other tools so it is a little bit more flexible in practice now I think.
+
+MF: There is nothing glaring a malicious actor could do to screw up Signet other than trying to get one of your two signing keys?
+
+KA: Even without the signing keys you can customize Bitcoin Core so that it will ignore the signing keys. I think it is pretty easy to modify it so that it will let you mine blocks only using proof of work. Those blocks would not be accepted obviously by the nodes. Light clients, people who are using the nodes and trust them, they can be fooled by this unless they have support for the signature verification part. One of the ideas that’s been floating around is to move the signature into the header of the block. This would mean that even light clients who only download the header, they can choose to also get the signature. Then they can do the bulk validation on their own. That’s something for the future. I am not sure when that would happen. That’s a potential attack vector I guess. You can mine blocks even if they are not valid. Some people will accept them. 
+
+MF: It is inevitable there are going to be certain attacks that aren’t possible on mainnet that are going to be possible on Signet because there is no value on it. There is no motivation to do some of the more hardcore attacks that might be tried on mainnet. There could be an eclipse-like attack where your node isn’t connected to Kalle’s or AJ’s on Signet and you don’t realize you are being fed Signet blocks that haven’t been signed by Kalle or AJ.
+
+KA: If you are running Bitcoin Core node then you will check the signature and realize. If you are running a light client then someone could fool you for a while.
+
+MF: I don’t think we need to worry too much about that with no money on the line. There is not much motivation for an attacker to do stuff like that I wouldn’t have thought.
+
+# Signet PRs in Bitcoin Core PR 16411 (closed) and PR 18267 (open)
+
+https://github.com/bitcoin/bitcoin/pull/16411
+
+https://github.com/bitcoin/bitcoin/pull/18267
+
+MF: There was the initial PR that is closed (16411) and then there is the PR that is open (18267) and is currently being reviewed. You have been working on this for at least a year or two now Kalle, what big changes have happened at a high level over that time. There has been some structuring of the PR to make it more reviewable and commit organization but what are the high level changes over the last year or two.
+
+KA: There have not been a lot of changes that are high level in that sense. The thing that I realized is that it is really hard to get people to review the code. It was kind of big and it had a lot of stuff in it. I was optimistic for a while. But then I started splitting it into multiple pull requests and doing that let me get more traction. AJ joined in a couple of months ago. He has been really helpful to keep me motivated and nudge other people to help out with review. I think mostly it is the nature of being a big change and it taking a while to move through the process and get it into the system. It has also about me generally being bad at getting reviewers. 
+
+MF: It is certainly one of the big challenges to get review on your PRs just observing all the PRs in Core at the moment. There does seem to be impetus now with Taproot. If we don’t get Signet up to test Taproot what is the point of Signet at all? It is the perfect opportunity. We have a proposed soft fork and we want to do testing before it could potentially activate and get deployed. It is split now. What is currently being reviewed is this PR 18267. There were a couple of steps afterwards. Once that is merged you want to do RPC tools and utility scripts.
+
+KA: This PR 16411 (closed) here is kind of outdated. AJ’s stuff with the transaction based approach made a lot of this stuff obsolete. There are some utility scripts that I really want in there though. For example I have a script called getcoins which you run from the command line and it will connect to the faucet and get you coins. That for me was a big blocker for testnet when I started testing it out when I was new. How do I get coins? I don’t know. Now you just run a one liner in the command line and it gets you coins. Now you have coins to send to your buddy or whatever. There is other stuff as well. A lot of the mining stuff I don’t know if it is ever going to go into Core because you can just run custom stuff. The miners can have a different branch. I don’t know if any of that is going to go in to be honest.
+
+MF: You mean it is important that you and AJ are running the right software but it doesn’t really matter if other people aren’t if they are not interested in verifying the chain?
+
+KA: No, verifying is one thing. Mining, generating blocks and signing them and stuff. I don’t know if that has to be in Bitcoin Core. It would be useful if it was. People could start up their own chains but it doesn’t have to be for Signet to work.
+
+# Reviewing the Signet PR
+
+“There is a tiny amount of risk involved as it touches consensus validation code, but this is a tiny code change. If for some reason someone managed to flip the "signet" flag on a running node, for example, that would cause those nodes to start rejecting bitcoin blocks. I don't foresee this as very likely, personally.” Kalle Alm
+
+MF: On reviewing this it does touch consensus but only marginally. The only thing to worry about in terms of touching consensus is someone could hack into your machine and turn the `-signet` flag on. Is that the only thing we’ve really got to worry about? We’ve obviously got to be careful with PRs that touch consensus. It is just those chain parameters.
+
+KA: Everything is dependent on the signed blocks flag being on or not. Signet adds stuff to the consensus, it doesn’t remove anything really. You couldn’t fake Signet on a node and then suddenly it would accept invalid blocks to fool you into you had money or something. 
+
+MF: When I tried it it worked all fine. Fee estimation, obviously there are no fees. Should it be enabled that you can send a Signet transaction without setting the fee? I got an error message when I didn’t set the fee.
+
+KA: I get that on regtest too. When I start up a regtest node and I try to send a transaction. I get the same error, I have to do settxfee or something. I think it is an odd feature to be honest. I guess something should be done about it.
+
+MF: It is just a small thing. It could be addressed in future. With fees, anything is going to be accepted. It could have zero fee but as long as you or AJ sign it off it can get in the chain.
+
+KA: Other nodes are going to reject zero fee transactions I think. The Core nodes will have a minimum 1 satoshi per byte rule in policy.
+
+MF: Fabian (Jahr) has got a [Signet2](https://github.com/fjahr/signet2) set up with ANYPREVOUT and Taproot. Have you been discussing that with him?
+
+KA: I hadn’t heard of it.
+
+MF: Maybe it is personal testing.
+
+# generatetoaddress doesn’t work on custom signets
+
+https://github.com/bitcoin/bitcoin/pull/16411#issuecomment-522466194
+
+MF: With regtest you can just do the `generatetoaddress` command because there are no requirements on generating a block. That doesn’t work for Signet obviously because it hasn’t got the signature from you or AJ. I think Nicolas Dorier said he’d like that to work but there is no way for that command to work unless it goes via you or AJ. 
+
+KA: What he is saying is he thinks it should work for me and AJ. We have our private key so we can sign the blocks. He thinks `generatetoaddress` should figure out that it is Signet and go and do the signing and all this stuff under the hood. Because then he can start a custom Signet on his side and he can generate blocks on demand in some kind of testing network or framework.
+
+MF: With multiple Signets are you going to have different data directories, a signet1 data directory, a signet2 data directory? How is it going to be managed on the file system with different Signets?
+
+KA: If you have multiple ones you are going to have to do what you do with regtest. You have to do `-datadir=`.
+
+MF: In terms of block generation currently you have a script, I think you said at the workshop at Advancing Bitcoin, to do a block every ten minutes. It churns away on the proof of work for a minute, succeeds and then you have a pause. Is that going to be the block generation script going forward? Any thoughts on how that could change or would need to change?
+
+KA: It seems to be working fine right now. If there are any problems we will change it. I don’t really know if there are going to be problems. The difficulty is very low. If you put a modern ASIC on it it would literally create a couple of hundred thousand blocks or something before it slowed down. How big of a deal is that? I don’t know. That could be a problem. If it is then we may have to increase the difficulty. Having an ASIC on a high profile Signet may make sense.
+
+MF: What could go wrong? At the moment there is no hash power directed to it. Let’s say Signet is being widely used and there are a lot of people competing to mine blocks with your or AJ’s signature. Would you or AJ increase the difficulty if there were lots of mining going on manually? Tweak it like that?
+
+KA: The Signet is working exactly like mainnet in terms of proof of work changes. It looks at the last 2016 blocks and if they were mined in 10 minute intervals it keeps the difficulty. If we realized that we had to increase the difficulty we would put more hash power on Signet and then it would gradually increase. The reason I am doing the 9 minute pause right now is because I don’t see a reason for my CPU to be spending time on mining the entire time. If I mine the entire time then the difficulty is going to go up until we hit 10 minutes per block. Then my CPU is going to sit there and sweat. But that could change. If we need to have more security other than the signatures. Someone could spam a bunch of block headers that are valid. 
+
+MF: The difficulty is only adjusted every two weeks on mainnet. There is still the possibility that blocks get found really quickly if there was loads of hash power directed to the Signet chain. The signature just makes sure that blocks aren’t found too fast. 
+
+KA: The signature makes sure no one else can mine. If everyone could mine…
+
+MF: Two people could submit a block to you. You only accept one of them because you don’t want to accept two blocks within a short period of time.
+
+KA: I don’t think people would be sending blocks to me. I think they would make blocks and they would talk to my node through the network. My node would get transactions like normal in mainnet and it would mine them, mine transactions into blocks.
+
+MF: If I have an ASIC and I am mining and I find a block. I need to get your signature. 
+
+KA: I don’t think it is going to work that way. I don’t think you are going to mine blocks. You are going to put transactions out in the network and eventually they are going to be mined just like in mainnet. If you do try to mine then yes you are going to have to have a signature in your block for it to be valid. Even if you did mine you can’t get it on the network.
+
+AT: The code also works the other way at the moment because of where the signature is placed. You have to construct the block first which is all the transactions. Then you have to get it signed and only then do you generate the proof of work after that.
+
+MF: You are only starting the proof of work once you’ve got the signature. If loads of people are asking for that signature to start mining perhaps you wouldn’t give it to everyone in case they all find blocks within 10 minutes?
+
+KA: If we were to do that then only one of them would be valid because they would all be mining on the same block. There would be one chain and they would mine on top of it. Even if all of them found a block there would only be a one height change anyway. Ultimately we don’t get blocks from people. We just get transactions over the P2P network like in mainnet. Then our nodes put them into blocks. Like when you do `generatetoaddress`, the same thing. 
+
+MF: If a block is mined and then I get your signature and I find a block 30 seconds later. Do you only announce that block after 10 minutes and essentially put a 9 minute and a half delay on it?
+
+KA: No. If we have a signature in a block then we just put it out there.
+
+MF: There can be blocks every minute or two. There is still going to be that variability just not testnet level variability. Mainnet variability basically.
+
+KA: Right now it is not going to be that way because I am putting out 9 minute sleep between every block and I am creating all the blocks.
+
+MF: No one is mining.
+
+KA: It is just me mining. 
+
+# btcdeb
+
+https://github.com/bitcoin-core/btcdeb
+
+MF: Can you explain what btcdeb does? Why people should use it and why it is interesting. Then we’ll talk about enabling Taproot scripts on btcdeb.
+
+KA: It is toolset for Bitcoin related things. It is based on Bitcoin Core code so it has many of the classes defined in Bitcoin Core. They are also in btcdeb. It has several tools. The main one is btcdeb, you can hand it Bitcoin scripts and it will show you step by step what happens when you run those scripts. If you are learning Bitcoin it is something you can use to experiment with Script. It is even more useful if you hand two transactions, one spending the other, then for a P2SH it will show you the redeem script and how the scriptPubKey and scriptSig interact with each other. Step by step how the system verifies that your transaction is valid or not valid. When Pieter Wuille opened the Taproot pull request I wrote a version of btcdeb that allows Taproot. Along with that I also made a tool called `tap` which you can use to both create Taproot, Tapscript UTXOs. You can also spend them with multiple scipts. I am hoping that can be useful for people testing the Taproot stuff in finding bugs and stuff. 
+
+MF: There is a worked through [example](https://github.com/bitcoin-core/btcdeb/blob/master/doc/btcdeb.md) where you can step through a script.
+
+KA: The Taproot example is in the Taproot branch. That branch is outdated right now. I don’t think you can find that Taproot example right now. 
+
+MF: The example that you’ve got up on the documentation isn’t Taproot. You’d need the Taproot [branch](https://github.com/bitcoin-core/btcdeb/pull/55) to be able to step through a Taproot script. One thing I did see was that you [disabled](https://github.com/bitcoin-core/btcdeb/pull/53) Miniscript. You did have Miniscript enabled with this. It was an old version of Miniscript? What was the problem with the Miniscript?
+
+KA: I based it on this old conceptual version that Pieter Wuille or someone made. I didn’t realize until after I got it working that it was missing a bunch of new features. It was basically just a limping version of Miniscript that didn’t really do a lot. I decided to just rip it out and redo it. Also now that there is [Minsc](https://min.sc/), that might be an even better approach to go from there. I don’t know. I have to look at what shesek has done and how it works. It is possible that it would be a Minsc debugger in btcdeb, I don’t know.
+
+MF: The stack visual isn’t needed on Miniscript or Minsc. One of the cool things about this btcdeb is stepping through the stack operations of the script. I suppose if it was integrated with Miniscript you’d get all the benefits of Miniscript with the benefits of being able to analyze and debug the script. That would be cool. Let’s wrap up then. Thank you very much Kalle, AJ, Emzy and everyone else on the YouTube. There was Kalle’s [tweet](https://twitter.com/kallewoof/status/1222080714193166336?s=20) on successfully funding and spending a Taproot script from January. Then your [tweet](https://twitter.com/kallewoof/status/1295976640200060929?s=20) a hour or two before this was upgrading btcdeb for the latest Taproot branch. With that branch you should be able to debug Taproot scripts.
+
+KA: And create them.
+
+MF: Awesome. Thank you. The video will be up, we’ll get a transcript up.
+
