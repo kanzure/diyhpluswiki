@@ -1,0 +1,30 @@
+Name: Greg Maxwell
+
+Topic: Is Taproot development moving too fast or too slow?
+
+Location: Reddit
+
+Date: August 2020
+
+https://www.reddit.com/r/Bitcoin/comments/hrlpnc/technical_taproot_why_activate/fyqbn8s?utm_source=share&utm_medium=web2x&context=3
+
+# Is Taproot development moving too fast or too slow?
+
+Taproot has been discussed for [2.5 years already](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-January/015614.html) and by the time it would activate it will certainly at this point be over three years.
+
+The bulk of the Taproot proposal, other than Taproot itself and specific encoding details, is significantly older too. (Enough that earlier versions of our proposals have been copied and activated in other cryptocurrencies already)
+
+Taproot's implementation is also extremely simple, and will make common operations in simple wallets simpler.
+
+Taproot's changes to bitcoin's consensus code are under 520 lines of difference, about 1/4th that of Segwit's. Unlike Segwit, Taproot requires no P2P changes or changes to mining software, nor do we have to have a whole new address type for it. It is also significantly [de-risked](https://twitter.com/theinstagibbs/status/1285018236719976448) by the script version extension mechanisms added by Segwit. It has also undergone significantly more review than P2SH did, which is the most similar analogous prior change and which didn't enjoy the benefits of Segwit.
+
+Segwit went from [early public discussions](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2015-December/011935.html) to [merged](https://bitcoinmagazine.com/articles/segregated-witness-will-be-merged-into-bitcoin-core-release-soon-1466787770) in six months. So in spite of being more complex and subject to more debate due to splash back from the block size drama, Segwit was still done in significantly less time already.
+
+Taproot has also been exceptionally widely discussed by the wider bitcoin community for a couple years now. Its application is narrow, users who don't care to use it are ultimately unaffected by it (it should decrease resource consumption by nodes, rather than increase it) and no one is forced to use it for their own coins. It also introduces new tools to make other future improvements simpler, safer (particularly Taproot leaf versions), and more private... so there is a good reason that other future improvements are waiting on Tapoot.
+
+To the extent that we might delay Taproot because we could instead deploy a more advanced version: Taproot is already cut down from a more advanced version which included signature aggregation, generalized Taproot (G’root), and more advanced signature masking (NOINPUT). A decision was made to narrow the taproot proposal because the additional ideas, while clearly very valuable, had research risk and the technical community also felt that we would learn a lot from in-field use of Taproot by users. So Taproot has already been narrowed to a small useful logical unit and additional improvements aren't being worked on and would violate the intentional design of keeping it minimal.
+
+Moreover, I believe the discussion about Taproot is essentially complete. It's been extensively reviewed and analyzed. People want it. No major arguments against it have been raised. At this juncture, additional waiting isn't adding more review and certainty. Instead, additional delay is sapping inertia and potentially increasing risk somewhat as people start forgetting details, delaying work on downstream usage (like wallet support), and not investing as much additional review effort as they would be investing if they felt confident about the activation timeframe. It's also delaying work on subsequent technology like signature aggregation, G’root, and other things.
+
+I'm all for taking things slowly and deliberately. But I think we have, especially given the narrowness of this change. No matter how slowly something goes someone could always say "but it could be done slower"-- but slower is only better up to a point and beyond that slower is worse even if you totally disregard the fact that applications that would benefit from Taproot aren't getting the benefit.
+
