@@ -1,0 +1,470 @@
+Name: John Newbery  
+Topic: Security Models  
+Location: Chaincode Labs 2019 Residency  
+Video: <https://youtu.be/6gGcS4N5Rg4>  
+Slides: <https://residency.chaincode.com/presentations/bitcoin/security_models.pdf>  
+Transcript by: Caralie Chrisco
+
+John Newbery: Alright, Security Models. This is going to be like a quick whistle-stop tour of various things, very high-level view. I'm going to start by giving you some kind of framework to think about things. So in cryptography, we often talk about security proofs in terms of existing schemes, we talk about assumptions.
+
+So, for example... If you can break new scheme B, then you'll also be able to break old scheme A. That's how we make security proofs. So for example, under the random oracle model, so if we have a hash function that we model as being random. If you can break taproot, then you can break the discrete log problem over the ecliptic curve in general.
+
+The contrapositive is true that if old scheme A is secure then new scheme B is secure. If you can break new scheme B, you can break old scheme A.  So, why do we think the discrete log problem is hard over elliptic curves?
+
+Elichai: Because exponentiating is very easy but doing logarithms is very hard. We don't know any algorithms that can do logarithms efficiently, so the second you have big numbers, you're stuck.
+
+John: Yeah, because we haven't broken it yet. That's kind of an interesting framework to think about these things when you're talking about security models, you have to ask, compared to what? So that's what we can start with. We're going to start with the gold standard, which is the full node, and we'll talk about other schemes, and we'll say how does this compare to a full node?
+
+A lot of these things are about lowering the cost of being able to interact with the Bitcoin network. All of them are. Running a full node is expensive in terms of bandwidth, memory compute. So how can we allow people to interact with the network while allowing maintaining an acceptable security level? There will be trade-offs here, and that's what we're going to talk about.
+
+So full and pruned nodes are where we're going to start. We're going to talk about light clients, of course, SPV. We're going to touch on checkpoints, assumevalid, assumeutxo, which I assume you've all heard of. Then we're going to talk about some alternative UTXO set proposals. Then a bit of further reading.
+
+# Full Nodes
+
+So what does a full node do? That's a question as well. What does a full node do?
+
+Various Audience Members: Validate, relay, store transactions for the full blockchain.
+
+John: So downloads all headers and blocks, validate and relay transactions in those blocks in the most-work chain. They may validate and relay unconfirmed transactions. What do you think about that? If I have a full node that is not validating unconfirmed transactions, is that a full node?
+
+Audience Member: From the perspective of the person who wants to verify the transaction, I guess it would be.
+
+Audience Member: If a transaction is not confirmed, it's not confirmed, right?  If you only cared about confirmed transactions and you downloaded all the blocks, then you might not need to relay or validate unconfirmed.
+
+John: Yeah, so I think it's useful to think about the transaction relay network separately from the block propagation network. I would call a full node something that is on the propagation network and is validating the blockchain, and then on top of that, you can also have a mempool with relay transactions. Those are two separate functions and two separate networks. They just happen to share the same mode of transport right now. But that's not necessary. Lucianna?
+
+Lucianna: From a security standpoint, full nodes simply valid transactions. The full nodes would only be sending you valid transactions? (inaudible...)
+
+John: You can run a full node that is not relaying unconfirmed transactions, use blocks-only as an option, and you don't have a mempool basically, you do, but you won't fill it from your peers, and you won't relay.
+
+Audience Member: So there's no validity guarantee, right?
+
+John: Right.
+
+Audience Member: Somebody could be running a different node. There's no guarantee that there is consensus, given the same rule set, there's eventual consistency, but there's no guarantee that at any given time, I've caught up.
+
+John: I'm just talking about the difference between relaying unconfirmed transactions and syncing the blockchain. You're right that there's no guarantee that - we have, as an assumption that you're connected to at least one honest peer, and if you are, then you will sync to the most-work blockchain.
+
+# Pruned Nodes
+
+Okay, so pruned nodes. What does a pruned node do?
+
+Antoine: Blocks are validated, and you just keep the range of the last block near the tip.
+
+Audience Member: To save space.
+
+John: Yep, downloads, and validates all blocks and headers and discards all block files over a certain storage limit. Is that still a full node?
+
+Antoine: Yeah.
+
+John: Lucianna?
+
+Lucianna: Question, also the answer would be no if the reorg is larger than how much they have stored. Do they keep the headers or just discard the bodies or discard the full data?
+
+John: It discards the full data, the full serialized block. You keep the blockchain safe, which is your view of the most-work chain. You discard all of the serialized data.
+
+Audience member: You also keep all the undo files. So you can efficiently undo a block.
+
+John: You discard all of the full block files and all of the undo files over a certain limit. So Lucianna raised an interesting point, if there's a reorg too deep, then you can't reorg back to the most-work chain. That is a difference in security assumptions. But the default here it is...550 megabytes. So the idea is that you have at least some amount of reorg that you can go back to.
+
+Audience Member: What will the pruned full node do if there is a deep reorg?
+
+John: I think it will stop.
+
+Audience Member: Stop working?
+
+John: Yes.
+
+Audience Member: It won't ask for blocks from others?
+
+John: No. There's no mechanism for getting old blocks and re-orging that. You need the undo data. You need to know about the transactions that were spent on the block, and you can't get that over the peer-to-peer network.
+
+Audience Member: So 550 megabytes you said?
+
+John: That's right.
+
+Audience Member: That's only like what, like  200, 300 blocks, 400, right?
+
+Audience cross talk...
+
+John: Yeah, you need, I think it's a day, a day or two of blocks plus undo data because the undo data is about the same size, again a block is 1.5 megabytes.
+
+Audience Member: That's kind of a low limit.
+
+John: Yeah, I should have looked up what the default is, I think it's 550.
+
+Audience Member: The minimum is 550.
+
+Audience cross talk...
+
+Audience Member: We never had a chance to test out if this number is the right one.
+
+John: There is a functional test that will...
+
+Audience Member: I mean in a real scenario.
+
+John: Right, so the assumption here is that you're not going to reorg deeper than a day or a week or whatever it is.
+
+Audience Member: That's a big assumption.
+
+John: Is that a fair assumption? What do you think?
+
+Audience Member: If you have to reorg that much, I think bitcoin is broken.
+
+Audience Member: Not 500 megabytes, but a day or two?
+
+Audience Member: There was a full day reorg  in testnet.
+
+John: Right, that's testnet.
+
+Audience Member: But what I'm saying - The reason that there was because of the inflation bug. It could have happened in mainnet too if miners hadn't upgraded in time. I don't think it's such a stretch from reality.
+
+[group noise]
+
+Antoine: How long was the reorg?
+
+Audience Member: 24 blocks.
+
+John: Yeah, something like that.
+
+Jon: I'm just making sure I understand. In the functional pruning test, there is that magical value of 550, and it's all over the test. I actually rewrote the test, but then thought it was too trivial to submit a pull request. But I always wondered, why 550? So that's the explanation?
+
+John: The explanation is some certain amount of depth that you want to be able to reorg back to plus some buffer, and that what was chosen.
+
+Audience Member: Assuming the future is unknowable, right? We can speculate about the reorg depths, but every time we change the node blocks...
+
+John: Node blocks?
+
+Audience Member: What do you call them?
+
+John: Checkpoints?
+
+Audience Member: So we have checkpoints, and we don't validate up until the node blocks.
+
+John: We'll get onto that. That's assumevalid.
+
+Audience Member: Sorry, but that implies in a sense...
+
+John: We'll talk about what the assumptions are around checkpoints. The additional assumption here is we don't have a deep reorg, and we could debate whether that's a good assumption that we can make about Bitcoin and what other things would break if we did have a deep reorg?
+
+Audience Member: Question -  Can you tell that a peer is a full node versus a pruned node if it acts just like a full node?
+
+John: Yeah, there's a service bit.
+
+Audience Member: The node network?
+
+John: Yeah, node network that would be able to serve you old blocks, prune nodes won't.
+
+Audience Member: But you can lie about it.
+
+John: You can lie about it, and then your peers will ask you for all blocks, and you don't have them.
+
+Audience Member: Or you can lie about being a pruned node, but you actually have all the block nodes.
+
+John: I wouldn't call that lying. It's just saying, "I'm not giving you that data."
+
+Audience Member: Can pruned nodes relay new blocks?
+
+John: Yes. And there is a proposal to allow a pruned node to serve blocks up to some level deep. Jonas Schnelli has some of that merged into Bitcoin Core, but it's not fully merged.
+
+# SPV Nodes
+
+Alright, SPV nodes. The term SPV was introduced in this document, which is the Bitcoin white paper, and Satoshi said, "It is possible to verify payments without running a full network node. A user only needs to keep a copy of the block headers of the longest proof-of-work chain, which he can get by querying network nodes until he's convinced he has the longest chain, and obtain the Merkle branch linking the transaction to the block it's timestamped in. He can't check the transaction for himself, but by linking it to a place in the chain, he can see that a network node has accepted it, and blocks added after it further confirms the network has accepted it.
+
+As such, the verification is reliable as long as honest nodes control the network, but is more vulnerable if the network is overpowered by an attacker. While network nodes can verify transactions for themselves, the simplified method can be fooled by an attacker's fabricated transactions for as long as the attacker can continue to overpower the network. One strategy to protect against this would be to accept alerts from network nodes when they detect an invalid block, prompting the user's software to download the full block and alerted transactions to confirm the inconsistency. Businesses that receive frequent payments will probably still want to run their own nodes for more independent security and quicker verification."
+
+Any responses or reactions to that?
+
+Audience member: When fraud-proof?
+
+[Laughter]
+
+John: When fraud-proof. What's a fraud-proof? Anyone?
+
+Audience member: Verifying a block, I assume, without having the chain checked from the first block. Somebody could prove that to you without you going all the way through the chain. That would be a valid fraud-proof.
+
+John: If someone could present a short, easy to verify, proof that a block is invalid without you having to validate the entire block.
+
+Audience member: The challenge with fraud proofs is there's no cost to sending them out, so it can be used as an attack vector. You could spam the entire network with, "Hey, this is invalid, this is invalid, this is invalid."
+
+John: This idea of having alerts from network nodes, there's no DoS protection against that. This is not even talking about fraud-proofs. This is saying, if someone pretends to send you a valid block, someone else can say that the is block invalid, and then you download the block and validate. It doesn't really work.
+
+Audience member: Question - What's a way to say a block is not valid, that we cannot say already? If we know there were additional bitcoin created aside from the coinbase transactions, we can say that the block is invalid already by just looking at the block.
+
+John: You have to validate the whole block. The idea with fraud-proof would be some compact proof where you wouldn't need to validate the entire block, but you'd still be able to know that it's invalid.
+
+Audience member: You say validate the whole block, because if I show you a block with a certain height in the future, and I say, "oh look, this is 50 bitcoin." It could still be that there were 50 bitcoin of fees in all the transactions. In order to verify that, you have to then download all the blocks and the whole chain because you don't have the input values. Now with SegWit, you can verify that the input values are not being lied about because the input values are signed. But before, there was no way to verify that you did not claim more fees than you should have.
+
+John: You still need that old data if you're validating, right?
+
+...
+
+John: Okay, so what can an SPV node do? Carla?
+
+Carla: They can pick up when you receive transactions, they can broadcast transactions...
+
+John: Yeah, so they can verify the transaction has been confirmed by a certain amount of work. Presumably, they're synching the headers chain, so they know what the most accumulated work chain is. So they know there's work there, they don't know that it's valid or has valid blocks.
+
+Audience member: Question - They know it's valuable work?
+
+John: They know it's valid work. You can't fake work. If you're synching the headers, you know the timestamps and the end bits, so you know how much work a header should include by looking at the hash.
+
+Audience member: They can't verify if the money supply has been inflated. There could be a block in the past that's been inflated, but they wouldn't know that.
+
+John: Correct. So what can they do? So when the block's transaction's chain is valid. So when I say transaction chain, I mean the transaction or its ancestor, going back to the coinbase where those coins were minted, unless you've got a Merkle proof for every step in there.
+
+# Fraud-Proofs
+
+So, we were talking about fraud proofs. In general, they're pretty difficult. This is a [post from Luke](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-March/013756.html) on the mailing list. The generalized case of fraud proofs is likely impossible, but he had an implementation of a fraud-proof scheme showing the block isn't over a certain size. This was during the 2x time period. People were worried that a 2x chain might fool SPV clients. This would be a way to tell an SPV client that this header you've got is committing to a block that is larger than a certain size. And you don't need to download the entire block. That's a narrow example of fraud-proof.
+
+Audience member: Does this solution protect you against the DoS attack vector?
+
+John: That people can send you fake fraud proofs? You can just ban them or just disconnect them.
+
+Audience member: The point is you don't have to check the block if the proof is an actual proof.
+
+Audience member: I guess I struggle to understand the cost of validation is what? IBD is a big chunk, bandwidth is a big chunk, subverting an SPV node, I could assume a certain utxo set and then from there on, just cause a single block isn't expensive to validate?
+
+John: Well, the ongoing costs might be quite high in terms of bandwidth if you're trying to run a full node on a limited network, like a mobile network.
+
+Audience member: Seems to me like the big cost would be IBD and bandwidth, and this is attacking a part that's not.
+
+John: I agree, I guess this was implemented by Luke, and as far as I know, it was not incorporated into a lot of projects, but I've included it as an example of an unlimited fraud-proof.
+
+Audience member: Can we backtrack a little bit and talk about DoS protection and maybe, in this kind of scenario, it would feel like having outbound peers that you trust, that you have control over, that you wouldn't be as concerned about DOS protection with. So in terms of, if that's the big blocker for fraud proofs, why don't we just fallback to the kinds of relationships that we trust with our nodes.
+
+John: Well, the big blocker for fool proofs is that they don't exist. We don't have a compact way of saying this block is invalid according to these consensus rules. You can imagine some kind of SNARK or ZK system where you could. I don't know what that would look like. I'm not an expert in cryptography.
+
+Audience member: These are different than accumulators and belonging to a set and things like that? These aren't related?
+
+John: They're not related, I don't think. What you want is a proof where someone could present you a small piece of data, and that data proves they have validated the block according to the rules you want to validate that block according to. And you can look at that proof and not have to validate the proof itself and know that it's been validated. This is a very narrow example of that. Maybe you don't want blocks to be greater than one megabyte, and you can get a proof that shows it's not more than one megabyte. It doesn't tell you that no new bitcoin is being produced or that some other consensus rule has been broken. For that generalized case, it's probably impossible, and we don't know.
+
+Audience Member: I'm really curious how we actually implement this because even for valid fraud-proofs - we sound the alarm when something is going wrong, but the question is, how long do we sound this alarm? You can keep sounding that alarm for a week. No one tells me to stop, so I keep sounding this alarm. So that could also be a DOS attack, right? A fraud-proof is alerting you to an event or a snapshot in the network. But how do you keep broadcasting this fraud-proof?
+
+John: The difference between a fraud-proof and what the white paper said was that the whitepaper said your peers could alert you without giving a proof. So they just to say, this block is bad, and you download the block and check yourself. That's expensive for you to do.
+
+Audience Member: My question is, how long do you do that? Watch out for this block, it's invalid.
+
+John: I don't know, maybe as long as it's got the most work on it.
+
+Audience Member: I can take a look at that.
+
+John: So SPV nodes can't determine whether a block is valid, they can't enforce consensus rules. In general, most of us use the same consensus rules we learned in Bitcoin. In some circumstances, you might care about your consensus rules being specific consensus rules. An example of this is 2x fork, where the authors of the components of the 2x fork announced it as a feature, but changing the size of the block has no impact on light clients. So if you thought SegWit 2x was not bitcoin, you'd see this as an attack on SPV client because you're sending something that is not a bitcoin block, but they perceive it as a bitcoin block. Does that make sense? SPV clients are not enforcing any consensus rules.
+
+Again, SPV clients can't ensure your preferred monetary policy is enforced. That's a consensus rule. So we might all believe that 21 million bitcoin is the total number of bitcoin. If you run an SPV node, you aren't enforcing that anywhere. That is particularly important if you think about a network where all of the users are running an SPV node. If it becomes too expensive to run a fully validated node, and only miners are running fully validating nodes we are now trusting miners with monetary policy.
+
+Audience Member: Do we have any sort of idea of the ratio?
+
+John: I don't know
+
+Audience Member: Some general order for proportions.
+
+Audience Member: For ones that are accepting incoming connections, it's like 95 percent.
+
+Audience Member: 95 percent?
+
+Audience Member: Non-pruned.
+
+Audience Member: It kind of makes sense if you have incoming connections, you might as well want to serve them the whole blockchain. I don't know. I don't have any stats for the outgoing nodes.
+
+Audience Member: I haven't thought about this too much, but what is the economic incentive to run a public node? Like inbound, why do I care?
+
+Audience Member: You want to spread the gospel, right?
+
+[Laughter]
+
+Audience Member: Secure the network.
+
+Audience Member: Is there a rule for that? If you're only accepting blocks, but never transmitting to others, are you cut out of the network? That would be a kind of incentive.
+
+Audience Member: Once I'm connected, the connection all remains the same. Why do I need to open ports? Why do I care?
+
+Audience Member: You want the network to work because you own bitcoins!
+
+Audience Member: But again, if I want to optimize for just me?
+
+Audience Member: There are some things that make sense on the individual level.
+
+Audience Member: It's like voting,  why do you vote?
+
+Audience Member: Yes. It's game theory. That's nash equilibrium, the prison dilemma. It's the same thing. What's good for you will be bad for you if everyone does the same thing. It's a big problem in game theory. I don't know where the nash equilibrium is in the peer-to-peer network. There is an equilibrium somewhere.
+
+Audience Member: There's an argument whether you shouldn't even run a full node if you're using it as an economic node.
+
+Audience Member: Like to accept payments.
+
+Audience Member: But again, I don't need to accept inbound. I can just fire up my node, validate my transaction, and disappear, if I'm truly, truly selfish.
+
+Audience Member: What do you lose from accepting inbound?
+
+Audience Member: Cost.
+
+Audience Member: Bandwidth?
+
+Audience Member: Not just bandwidth, but cost.
+
+Audience Member: I disagree. You still want bitcoin to work because you own bitcoins. What is the selfish thing? I don't think it's that straightforward.
+
+John: We'll talk about this a bit more later. I think Lucianna has one last point.
+
+Lucianna: I was going to say if you just go online, check the transaction, and go away, you don't really know what's happening when you're not online. There's a selfish motive in the network in the network that you have a stake in when you go away.
+
+Audience Member: Fair point.
+
+Audience Member: What was that stat? Percentage of inbound?
+
+Audience Member: I don't know that, but 10,500 accept incoming connections.
+
+Audience Member: On [bitnodes](https://bitnodes.io/)?
+
+Audience Member: On bitnodes.
+
+John:  Let's move on, we've had half an hour, and I'm not very far into my slides. SPV nodes also can't give you the same kind of privacy. There are things we can do to improve upon privacy for light clients, but again, the gold standard is running a full node. Do we want to talk about that? Any thoughts?
+
+Audience Member: This is sort of grouped in with the bloom filters, right?
+
+John: Whatever your strategy is downloading transactions that you're interested in, even if you are downloading a subset of data, you're leaking something. You can't be information-theoretically perfectly private unless you're validating the full blockchain.
+
+John: And again, SPV nodes can't detect false negatives. A peer who is serving you, if you are a light client, they can lie by omission -- they can just not give you data.
+
+Okay, What about Satoshi's vision?
+
+[Laughter]
+
+Audience Member: Quickly on that last point, so the fact that you can't detect a false negative, that has consequences for the lightning network, right?
+
+John:  Yes. With bloom filters, yes. With BIP 157/158, a slightly different model, because you're downloading all of your filters...
+
+I didn't mention fee estimation. The way fee estimation works in Bitcoin Core is that we look at the mempool. Felix is going to talk more about fee estimation this afternoon. But if you don't have a mempool, if you aren't using unconfirmed transactions, you have no way of estimating fees. You can look at blocks, but that's not a lifeline.
+
+Audience Member: How do SPV wallets do fee estimation?
+
+Audience Member: Public APIs?
+
+Audience Member: Someone runs the server and tells you.
+
+Audience Member: Most of the android wallets, the fee estimation is so bad.
+
+Audience Member: Like Samouri Wallet, that's one of the features of their server. They're serving up their own fee estimations.
+
+...
+
+John: Let's pause this one till this afternoon. Let's talk about the estimation stuff this afternoon.
+
+So this is a bit tongue in cheek. Some people talk about all nodes being SPV nodes. What is the point of us running full nodes at all? Satoshi and the white paper said, "If the network becomes very large, like over 100,000 nodes, this is what we'll use to allow common users to do transactions without being full-blown nodes. At that stage, most users should start running client-only software, and only the specialist server farms keep running full network nodes, kind of like how the usenetwork has consolidated."
+
+[This was back in 2010](https://bitcointalk.org/index.php?topic=125.msg1149#msg1149), but also the white paper states, "businesses that receive frequent payments will probably still want to run their own nodes for more independent security and quicker verification."
+
+So this conversation has been going on for ten years, but the white paper, even back in 2009, says that the full node is the gold standard, and SPV nodes are, I would say, second class citizens.
+
+# Bloom Filters
+
+Okay, we'll talk about Bloom filters. I'm only going to touch this briefly because I believed Amiti talked about these last week. They're defined in BIP 37, implemented in Bitcoin Core in August 2012. They allow light clients to request their transactions without revealing everything about their addresses. They're using probabilistic filters, so you're requesting more data than you need, and that should give you some level of privacy. But in fact, they are not very good at giving privacy.
+
+[This is the implementation](https://github.com/bitcoin/bitcoin/pull/1795). Quite a big change in that PR.
+
+Then this [blog post from Jonas Nick](https://jonasnick.github.io/blog/2015/02/12/privacy-in-bitcoinj/) talks about how Android wallet that uses Bloom filters gave you almost no privacy because of the way the filter was constructed.
+
+And [another paper by Arthur Gervais](https://ethz.ch/content/dam/ethz/special-interest/infk/inst-infsec/system-security-group-dam/research/publications/pub2014/acsac_gervais.pdf) of ETH talks about Bloom filters.
+
+"We show that considerable information about users who possess a modest number of Bitcoin addresses is
+leaked by a single Bloom filter in existing SPV clients.
+
+We show that an adversary can easily link different Bloom filters, which embed the same elements—irrespective of the
+target false positive rate. This also enables the adversary to link, with high confidence, different Bloom filters which pertain to the same originator.
+
+We show that a considerable number of the addresses of users are leaked if the adversary can collect at least two Bloom filters issued by the same SPV client—irrespective of the target false positive rate and of the number of user addresses."
+
+In terms of achieving its target, Bloom filters do not actually give you very good privacy. Any thoughts about that?
+
+Audience Member: In the end, we just wrote a very complicated thing that gave us nothing?
+
+John: Maybe? Yeah.
+
+Audience Member: So I touched on this the other day, is there a process about rewording changes? If we know for sure it's not helping, why keep this in the codebase?
+
+Cross talk from the audience...
+
+John: I will answer that in just a second. The question is, is there a way of reversing this? Let's have a look.
+
+Before we do that, first of all, it's not very good at preserving privacy,  and also places load on the server.  So if you're a server serving up these Bloom filters, you're doing the compute work to create a new Bloom filter for every client that connects to you.
+
+Audience Member: And you have to run through all the blocks, no?
+
+John: You have to run through every block. Yep. Going back to your question about altruism and selfishness. I think I would separate this from block and transaction propagation in that at the margin with transaction propagation, you probably wouldn't do it if you weren't entirely selfish, but there's a global good.
+
+Locally it's altruistic, but globally we get a shared benefit from it. Whereas this locally is fully altruistic, but there's no global shared benefit. So Bloom filters are much worse in transaction block propagation in terms of selfishness. And transaction and block propagation have within them some kind of DoS protection, like the block must contain work, the transaction must contain fee. Whereas constructions like this, there's no DoS protection at all.
+
+Audience Member: Were there ever large DoS attacked on the network, using bloom filters?
+
+John: I don't know about that.
+
+Cross talk...
+
+John: I know there is a GitHub repo from Peter Todd called [bloom-io-attack](https://github.com/petertodd/bloom-io-attack) so maybe you can try that at home if you want. But, "a single syncing wallet causes 80GB of disk reads and a large amount of CPU time to be consumed processing this data." [[source]](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2016-May/012636.html) So it seems trivial to DoS.
+
+Audience member: Highly asymmetric.
+
+John: Very asymmetric.
+
+Audience Member: This issue came up when I was researching /BIP 21/70... It's not always that simple as getting rid of bad code.
+
+John: So BIP 70 is application layer. It's really down to the application or the client. This is p2p, so again it's down to the client. It's not consensus at all. So individual clients can decide not to participate in bloom filters.
+
+There was a question last week about SegWit, and the answer is, it doesn't work with Segwit because if the pubkey is in the witness, then that's not included in the bloom filter. I think intentionally, we didn't update bloom filters to support it. Generally, it's not advised. If you're running a full node, it will probably be disabled in the next version of Bitcoin Core.
+
+...
+
+John: Sorry, I misspoke. Disabled by default.
+
+Audience Member: Wouldn't it be nice to still have it, but using the encrypted Jonas Schnelli authentication. So if I use my android wallet, I can authenticate to my own node.
+
+John: Yeah, and Nicolas Dorier also wants that for BTC Pay Server where you connect to a trusted node, and the trusted node serves you Bloom filters.
+
+Amiti: I don't understand that. Why do you want a Bloom filter if it's a trusted node?
+
+Audience Member: You can't leak privacy because it's your node.
+
+Amiti: But if you're trusting it.
+
+Audience Member: Couldn't your trusted node just have a -
+
+Audience Members: I do not think there is in Bitcoin a fully secure way to communicate with a full node. The only way is with electrum server, not part of Bitcoin Core. Luke is trying to implement that.
+
+...
+
+John: So here's Nicolas Dorier, he maintains Bitcoin Pay Server and [he's saying](https://github.com/bitcoin/bitcoin/pull/16176) there's no reason not to use Bloom filters for whitelisted peers. So if you preconfigure the IP address of your peer, you should be able to.
+
+John: This was in response to [BlueMatt's PR](https://github.com/bitcoin/bitcoin/pull/16152).
+
+Audience Member: So, in that statistics, how many nodes have it enabled?
+
+Audience Member: Almost all, like 90%.
+
+John: Alright, we talked about the incentive issues, the DOS attack issues, and Bloom filters are generally not fantastic. A newer proposal is compact block filters, as defined in BIPs 157/158. Again, I'm not going to talk very much because Fabian talked about this last week.
+
+This flips the BIP 37 proposal around, so instead of the client asking for the filter, the server creates a filter based on the block and can serve that to all clients. It uses Golomb-Rice coding instead of Bloom filters, and it's first fully implemented in btcd which is a GO implementation. There is BIP157, on the roasbeef fork initially, but now being merged upstream to btcd. In Bitcoin Core, we have the [block filter construction](https://github.com/bitcoin/bitcoin/pull/12254) and we have an [index](https://github.com/bitcoin/bitcoin/pull/14121), and the P2P part of that is a work in progress.
+
+Audience Member: How do these work with SegWit transactions?
+
+Audience Member: How do you create a filter that includes SegWit? Addresses, I guess.
+
+Audience Member: There are different filter types. You can basically put anything in the filters that you want. You just need to use a different filter type. You can make a filter type that only has TXIDs or anything.
+
+Audience Member: You're saying the hash function has to cover the witness data in some way when the TXID is computed?
+
+John: I believe these cover the script pubkey.
+
+Audience Members: I don't think the witness is commuted.
+
+I think it's hashed, that's enough.
+
+There's no commitment to the witness agent with the txid. That's why it's so malleable. You're filtering with UTXIE. You can filter with anything else.
+
+Fabian: Yeah, but you can filter for anything basically. You can throw any data in there that you want to... It's super flexible.
+
+John: I think the one that is used includes all of the script pubkeys that have been created and spent in the block. Is that right? And that would cover the addresses if you're watching for an address.
+
+Audience Member: Is this like neutrino?
+
+John: This is the same thing. Neutrino is an implementation of BIP 157/158, and often people call the protocol neutrino.
