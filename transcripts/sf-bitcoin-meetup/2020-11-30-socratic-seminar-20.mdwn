@@ -1,0 +1,540 @@
+2020-11-30
+
+SF Bitcoin Devs socratic seminar #20
+
+((Names anonymized.))
+
+XX01: For everyone new who has joined- this is an experiment for us. We'll see how this first online event goes. So far no major issues. Nice background, Uyluvolokutat. Should we let Harkenpost in?
+
+XX06: People around America are showing up since they don't have to show up in person.
+
+XX01: How do we block NY IPs?
+
+XX06: We already have people from Western Africa joining.
+
+XX05: Oh he's here? You can increase the tile number. To get everyone in the same tile display. You can do non-power of 2, but you can also set it if you want.
+
+XX04: Can you hear me now?
+
+XX01: Yes. I like your throne.
+
+XX04: It's just a couch. It's out in the garage. Maybe I should get it. I think I should get it.
+
+XX01: There's an agenda published. It's also linked in the chat.
+
+<https://www.sfbitcoindevs.org/socratic/2020/11/30/socratic-20.html>
+
+# Ground rules
+
+XX01: I think I'm going to screenshare my screen. Then we'll go through the topics. I think the best way to run this is for people to raise their hand. Can someone test raising their hand right now? Okay, great. I'll kickstart each topic.
+
+XX01: The way we run these is that we have a list of topics to discuss. Anyone is welcome to participate in the conversation, ask questions, give their input into any insights they have into the topics we're going through, the list of topics is linked in the chat. I'll be sharing my screen with a webpage for each of the topics we go through. It will be something visual like a pull request, charts, news article.
+
+XX01: If you're not talking, just mute yourself for everyone else's sake. Once I kickstart each topic, I think I'll just call on people who have their hands raised and that will allow everyone to either ask a question or give their thoughts on that. Sometimes a specific person I might call on for a specific topic because it's something someone has worked on or they built. We'll just go through the-- we'll start going through the list now and see how this works. Other ground rules- be respectrufl. Typically we have a rule about privacy and no photos, which is hard to enforce here.
+
+XX05: It's been so long, there's a lot of topics to go over.
+
+XX01: If this goes well, we'll just do this every month and it's actually easier. Denise and I don't need to lug around drinks, chairs and tables and all that.
+
+XX01: The nice thing about this is that we have this sidebar for commentary. If you want to leave comments about things happening, feel free to throw it in there. If you have random questions, feel free to throw them in there. If you have comments you just want to make on the side, feel free to use the chat for that. I think it's a nice non-distracting way to give input. I'll share my screen here.
+
+XX01: Can everyone see my screen?
+
+XX01: Weclome everyone .I think all of you were here when we went over the rules. Let's get started. We'll go over news, statistics, pull requests, lightning pull requests, etc.
+
+# GLV patent expired
+
+<https://twitter.com/pwuille/status/1309707188575694849>
+
+# Brink
+
+<https://brink.dev/>
+
+David Harding, John Newbery and Mike Schmidt have started a new bitcoin development funding program.  They are taking a unique approach for funding and bitcoin development. Are they here? Steve?
+
+XX08: I don't think they are here. If they are, they could speak to it. I can speak to it a little bit. I think they are introducing the first mentorship program for open-source bitcoin development. The first formal mentorship program. I think that's exciting for the space. I think they have identified their first fellow and will be announcing that person soon. I guess the way I view it, it's another great organization like Chaincode and Blockstream, and MIT DCI and Square Crypto and these different orgs focused on open-source bitcoin development, it's great to have another entity focused on that.
+
+XX01: Cool. It will be cool to see what they will roll out this year. Looks like John Pfeffer and Wences Casares are both funders and supporting this group. Pretty awesome.
+
+XX05: It's a one-year program. It seems long. That's also good, because it can be more intensive. Chaincode was a summer or a few weeks. It's a year of vocational school, in a sense, to learn bitcoin stuff.
+
+XX08: You're right, it's a year. Brink has both the mentorship program which they are calling Fellowships and more traditional grants too. They will be funding established developers through regular grants, as well as the fellowships. It's more substantial than a few weeks. They have already signed up several funders not listed on their page, like Square Crypto, Kraken, and one more. Gemini and Human Rights Foundation (HRF).
+
+# Bitcoin Core wallet 0.21 what's new
+
+<https://achow101.com/2020/10/0.21-wallets>
+
+XX01: Bitcoin Core v0.21 is-- the most recent release; it has a number of awesome features raised in the wallet itself including wallet descriptors, sqlite database backend, and achow101 has a nice writeup on his site. We'll go into the details of these pull requests a little bit later on tonight. I just wanted to give a little taste.
+
+# Lightning pool
+
+<https://lightning.engineering/pool/>
+
+Lightning pool is a marketplace for lightning channels. It's the next step in building out a true market for liquidity on the lightning network. Would someone from Lightning Labs like to share more? Oh, Segfault is here.
+
+XX05: It's an auction that runs every 10 minutes and people can buy/sell channels through leases. So you can buy a channel for 20 days for 2%. It can be negotiated, and has a few other cool features. We're building on some ideas we talked about in the past.
+
+There's a @lightningpool on twitter, it's not made by us. Roasbeef worked a lot on the lightning pool paper. Also shadowchain stuff?
+
+XX05: We have something called a shadowchain which is a reusable application framework for applications on bitcoin in general. This can be used for fidelity bonds, for example, or an untrusted system-- you have a protocol where you have off-chain validation, versus actively putting in all chains. Every batch in pool is its own thing; signature aggregation is another example. It's a protocol that can sign off on blocks of data they want. It's like pessimistic roll-up where you only care about things on your own input, so you have fraud proofs and other things. Also, we have a channel on our slack.
+
+XX01: Looks like fees during the alpha will range from 5 to 25 basis points?
+
+XX05: That's what we as the operator will be charging for our services, like coordination or matching. You have an embedded chain in the bitcoin blockchain that has all the auctions and all the L2 modifications. So we can create an authenticated tries of the ... on bitcoin itself.
+
+<https://lightning.engineering/lightning-pool-whitepaper.pdf>
+
+XX11: Between 5 and 8% APR. Loalu doesn't like that wording though. It's not compounding, so you can think about the risk-free yield for coins on lightning in a non-custodial manner.
+
+XX01: Any questions? Steve? Your hand is up. This is working better than I expected to be honest.
+
+# bitcoin-core-pr-review-club
+
+<https://bitcoincore.reviews/>
+
+XX01: John Newbery hosts Bitcoin Core PR review club. I haven't participated yet, but I look at what they put out, and it's very interesting. It's a good way to get a sense of what's happening in bitcoin development, dig through the code, have walkthroughs of what's going on.
+
+XX03: This isn't a recent thing. It's been going on for a year or two.
+
+XX01: Did I miss it? Was there always a website for it?
+
+??: He recently had the 100th review.
+
+XX01: Wow, I missed that then. It's pretty cool.
+
+# Crypto Open Patent Alliance
+
+<https://open-patent.org/>
+
+XX01: Square Crypto is helping to kick this off. The goal is to create an alliance around patents to prevent malicious use of IP in this industry. Steve?
+
+XX08: Technically, it's Square not Square Crypto. It's a Square initiative. They announced a couple months ago. Blockstream did work around this a few years ago, a similar intent and program. The idea here is to help defend against patent trolls. Any aggressive, offensive crypto patent thicket. This serves a few purposes: member companies or individual developers (anyone can join, including projects or developers) can commit to not asserting their patents they have offensively and then adds them to a pool which any of the members can use to defend thesmelves. You don't need to have any patents to join. If you don't have any patents and don't intend to, but you still want to protect yourself, it can be a good idea to join.
+
+XX08: We'll soon be announcing some major companies that will be joining. I think Blockstream is on the public record saying they are going to join. It's a good way to fend off potential problems in the future.
+
+# Bitcoin design grants
+
+<https://medium.com/@squarecrypto/square-crypto-designer-grants-a9a3982c1921>
+
+XX01: In the design world, there's some attempts to bring more designers into the fold and help create user experiences for bitcoin. Square has a number of crypto designer grants that they have available. I don't know if any have been awarded yet. Are you still looking for people to apply?
+
+XX08: The initial thinking of Square Crypto was that we would hire a full-time designer to contribute. After speaking with 50-60 designers around the world, it was clear that there were many designers quite interested in bitcoin but they were off in their own little island and they just really needed a community to participate in and get to know each other. So this summer we announced an open-source bitcoin design community with now 750 people that are parto f that. There's about 30-40 who are fairly active and contributors. We have given out 7 or 8 grants so far to both designers and user-experience researchers. The primary work product or outcome we hope from this community to get developed is an open source design guidelines that will help any wallet or application designers to not start from scratch. Any new designer to this space or frankly anyone new to bitcoin finds bitcoin quite counterintuitive when you have to build a non-custodial wallet and those challenges. Building mobile apps that are client-server based, it doesn't help so much. So hopefully the design guide will help with that. A number of people we've been giving grants to are helping specific projects in the space improve their design. There are volunteers who don't have Square Crypto grants who are more engaged on Bitcoin Core now and trying to help the Bitcoin Core GUI. Square Crypto helped kick it off, but it's intended to be a public good and open-source bitcoin thing. There's no.... Square does not want any specific control over this. We'd like to see other companies fund designers and researchers as well.
+
+# Bitcoin treasuries
+
+<https://bitcointreasuries.org/>
+
+XX01: Bitcoin has seem large adoption in corporate treasuries making allocations. I think it has implications on the tech downstream, custody solutions and I think it's important to understand who is using bitcoin now. This is pretty interesting to see. I don't know if anyone has something specific things they want to discuss.
+
+((isn't there an accounting reason why this doesn't work for companies?))
+
+# GLV patent has expired
+
+<https://twitter.com/pwuille/status/1309707188575694849>
+
+XX03: This is the GLV endomorphism patent that enables a faster elliptic curve multiplication in secp curve. The secp curve was specifically designed to enable this optimization. libsecp256k1 started as a hobby project of mine trying to figure out how much of a gain it would actually be. Due to patent concerns, it was later made optional. The optimization was never used in any releases of Bitcoin Core or otherwise. 0.21 will have this optimization enabled. The code for not doing the optimization has been removed from the library, in fact.
+
+XX01: So the impact of that, if I recall, is a 25% speedup in signature validation?
+
+XX03: Something like that. It's huge. It may not sound like that much, but let's just say optimizations of a couple percents are rare.
+
+GM: Hal Finney actually wrote code to implement this optimization while he was still posting on bitcointalk and it sort of dropped that code-- but his implementation was built on top of openssl and so it didn't have a lot of other optimizations. So, Pieter's initial work was combining that along with other high performance optimizations.
+
+XX01: It's cool to see this finally live. Are there any other patented optimizations that we're waiting to unleash? Or is this the last one lined up for a while?
+
+XX03: There might be one. It's much smaller. Co-zee stuff?
+
+XX04: I think that we were actually on the cozee stuff as far as patents went. That was one of those things where we wanted to do some more research on the patentability of it. But it's a small optimization, in any case.
+
+XX03: For anyone who would go to Google Patents and see that it claims that it is still live, I think their information is rather outdated. Blockstream actually had a patent attorney... ah, it says it's expired now. A couple of weeks ago it was still saying it was live. Blockstream had a patent attorney verify that it actually expired.
+
+"This invention provides a method for accelerating multiplication of an elliptic curve point Q(x,y) by a scalar."
+
+XX04: This was originally a Certicom patent, and then they got acquired by RIM, and then they were acquired by Blackberry.
+
+XX01: Okay, let's move on from news to statistics.
+
+# Segwit adoption
+
+<https://charts.woobull.com/bitcoin-segwit-adoption/>
+
+XX01: I found these charts interesting. I wanted to throw out some trends and see if anyone had anything to say about it.
+
+XX06: One thing that I thought was interesting on bitcoin segwit adoption chart is that you can see it going down lately. I think what we're seeing there is a lot of people are batching payments. If you look at the charts on payments that use segwit versus transactions, it's just that people who adopted segwit early are also the people who adopted payment batching early. The number of payments using segwit has been going up.
+
+XX04: What about old coins excluded? People are often bringing up pre-segwit coins that are old and there's no way they could have used segwit.
+
+XX06: I'm not aware of that chart, but it makes sense. We should mention that in public, and someone will do it.
+
+XX01: One of these lines is hard to see here. The payments using segwit has increased, it's just hard to see that on my black background. The other reason I wanted to bring this up is because--- taproot is obviously a proposed soft-fork coming and with a new version of segwit addresses and seeing how the previous network upgrade adoption went, and kind of where it is potentially plateaued is interesting especially in light of a new upgrade coming down the road. I have myself a lot that I could say about this, having run a bitcoin company, having seen how infrastructure ossicizes and companies get stuck with legacy infrastructure that they don't bother to update. What can we do to make it easier to make 
+
+BB: address index wasn't that interesting.
+
+XX01: At Redacted we have a golang indexer and wallet infrastructure, watchers, script descriptors, We'd like to hear what you;'re doing at Avanti. Our implementation is a golang. I also wanted to talk about blockchain developer kit (BDK) which might help here with developers building out more standard projects for infrastructure for companies to use.
+
+XX05: I think taproot is going to have slower uptick. A lot of the lightning nodes will probably upgrade to taproot because of the privacy benefits. Lightning pool--- whenever you have a batch of transactions, single payout script, which will be interesting. I think lightning operators will upgrade quickly, and be a new constituent in the pool of people upgrading, for things in the future including script updates.
+
+XX04: About 30% of all the transactions are still blockchain.info as of a few months ago, which is a supermajority of the non-segwit transactions that were going on at the time. Someone pointed that out to me. I suspect it's still the case now.
+
+XX06: .... now it's aroudn the time where wallets can think about making segwit their default. Have you ever bumped into trouble? Is there anoyne that can't send to native segwit by now?
+
+XX01: It's rare these days. Most of our people buying bitcoin for the first time, so they use new software. There's still a lot of existing exchanges that don't support sending it to. I don't think Binance supports pay-to-segwit.
+
+XX03: Witness scripthash.
+
+XX01: We use multisig segwit deposit addresses, sometimes they're too long for certain wallets to send to. For those of you who don't know, I can pull it up here, there's a compatibility table on bitcoinoptech for who supports what.
+
+# Mining stats
+
+<https://bitaps.com/blocks>
+
+<https://www.blockchain.com/pools>
+
+XX01: Looks like pooln is quite large these days and F2pool. I'm not close to the mining space but I like to look in once in a while. What's happenign in mining these days? Any interesting trends or surprises? Things that people want to bring up?
+
+XX11: There was news that-- because of the rainy season-- that a lot of mining within China was moved. Why have we never heard that before? Why was that a thing this year if it was an annual year when the hashrate dropped?
+
+XX04: We've heard this every year for the last four years that it was seasonal. That's not new.
+
+XX11: The drop was more dramatic this year.
+
+XX04: True, but we have seen this every year in the rainy season because of all the hydropower in China.
+
+XX05: One of the engineers that left Bitmain started one of those pools. It's cool to see them with mindshare with some of the OGs in there as well. I haven't looked at this chart in a long time.
+
+XX11: pooln had a non-compete and couldn't mine bitcoin for a year. Now they are back after the year. It was about the unbundling of Bitmain in a sense.
+
+XX06: I think that the latest numbers on how much of the mining power are in China are down to something like 65%. I haven't tracked that over the years. I think that's lower than it has been in a while.
+
+XX01: Most of these pools seem like they are based in China, but I don't know where the hashrate is.
+
+XX04: The big advantage of mining in China is proximity to manufacturers and lower cost of building out mining farms. There's a lot of inexpensive power in North America. So it doesn't surprise me that there's some transition out of China.
+
+XX01: I have seen some increase in the US like with Layer1 and some of the pool stuff Blockstream is working on. I don't know if any of that is material or if anyone has information about that.
+
+XX09: (redacted) Like Uyluvolokutat said, there's a lot of very cheap power and good rule of law in North America. It's attractive.
+
+XX09: Binance Pool is usually around 6-10%. It's interesting that these big exchanges using pools as a loss leader to build relationships with miners. I don't know how to think about that strategy other than building relationships or maybe being able to negotiate cheaper bitcoin buys and cutting out market makers. I think that's an interesting new thing.
+
+XX01: The financialization of this industry is still in its infancy. There's going to be a lot of second-order effects across the industry.
+
+XX01: One other thing. I know there's increasing popularity on the financialization trend or professionalization around this-- Matrixport is doing well with miners in China, derivatives, things to help them hedge. It's an interesting trend worth keeping an eye on.
+
+# Taproot activation
+
+<https://taprootactivation.com/>
+
+Al: Taproot activation is a major topic of discussion lately. I think everyone has a bit of PTSD from the block size wars and segwit to say the least. Nonetheless, I think there's a lot of excitement about taproot -- something that is-- it's an upgrade that has been in the making for years now. It seems to have increasing amount of broad support-- which will remain to be seen regarding how it is to be activated. When people need to put money where their mouth is, we'll see.
+
+XX01: Poolin has created a tracker to track the hashrate that has indicated they would be supportive of the taproot soft-fork. It's at taprootactivation.com. I think it's interesting to see. A lot of the major pools have indicated support for this upgrade. I'd be curious to hear any insights from people closer to the ground on this stuff than what any-- any insights on there?
+
+XX05: What's with the "no answer" on Binance Pool?
+
+XX04: It's a "no comment" kind of answer, not a no.
+
+XX05: So it's "I'm not running for President".
+
+XX04: There were a few crappy news outlets that sent out an article saying Binance had rejected it. But they hadn't even looked atit was the comment I got from them. I think those numbers add up to like 65% of the hashpower or something like that.
+
+XX01: It says 82% here.
+
+XX04: I think we're going to see... the challenge here is that this is a verbal commitment. When it comes time to update their software, the schedule may get pushed out and it might take a while to get that level of support. But it looks good to me.
+
+XX06: There's only 91% of all hashrate accounted for on this list. So with an activation threshold of 95% if we do the same as before, we haven't even talked with everyone.
+
+XX04: I think this is really good, though, because people had a lot of concerns that this would be some really dramatic drama-filled activation mechanism issue this time aruond. I think this is at least a good first example that no, this can be activated without a lot of drama.
+
+XX08: I've had direct conversations with poolin, Huobi and Slush and got positive vibes consistent with them saying yes. Again, that doesn't mean anything until it's time, but they understand taproot and I think they are legitimately supportive of it. To me the big open question remains the activation method and there's not consensus among developers and as you can see on this table there's not consensus among pools. Somewhat unclear to me how that gets resolved.
+
+XX04: I think this goes a long way towards resolving that question. The question among developers was how aggressive does the activation mechanism need to be? If there's broad support from pools, it will justify a less aggressive mechanism because it will activate anyway. We'll see, though.
+
+XX06: Also, we can always start with the least aggressive and as we build raporte we can commit a level further and ramp it up.
+
+# Revisiting squaredness tiebreaker for R point in bip340
+
+<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-August/018081.html>
+
+XX01: Pieter asked about revisiting the squaredness tiebreaker for schnorr signatures. Do you want to give an overview of that discussion and the end result?
+
+XX03: In short, we thought we had a good reason for using quadratic residues instead of evenness as a tiebreaker. We only want to store an x-coordinate because wasting a byte to encode 1 bit is stupid. Which of the two y coords do you take, corresponding to a particular x coord? We thought we had a good reason for picking quadratic residue which was kind of cool and seemed faster, but later we realized actually you don't want to do that for public keys because it has some compatibility issues and even later we realized it wasn't a good idea in the first place and we shouldn't do it. This email you're pointing out is where I explain why we had come to the incorrect conclusion and why some recent work on faster algorithms made it not only the case that it wasn't actually faster, but that it was actually slower. So that's all finalized now, and it's now using evenness everywhere and that's what's in the bip and that's what's implemented. Everyone can forget about the quadratic residues.
+
+XX01: For those of you who might be out of the loop--- a public key is a point on a curve in bitcoin, you have two coords but you only need the x coordinate. There's a positive and negative y coord corresponding to the x coordinate, and you need a standard method to choose which of the y coords to use so that you don't have to signal which one to choose.
+
+XX03: This isn't just public keys, but also the public nonce inside the signature, which is what this was actually about.
+
+# Bitcoin archaeology
+
+<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-November/018269.html>
+
+BB: (timestamp your old emails, archaeology....)
+
+XX01: What does archaeology in bitcoin mean at all? Dan Bryant went through and tried to figure out how to run the oldest versions of bitcoin core, using the old libraries that it linked to. It's very interesting. I think people are interested in history.
+
+XX04: I was able to get bitcoin v0.3 to sync, back in 2017. You have to work aroudn some bdb lock issues.
+
+XX03: If you go further back, the problem is v0.2.9 which didn't have the checksum in p2p protocols so you need some sort of adapter to make that talk to the current network. But it should be possible, in theory.
+
+XX01: That's a pretty interesting project. I like that.
+
+
+# bech32 updates
+
+<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-October/018236.html>
+
+XX01: Rusty brought up some ideas for how to deal with potential issues with bech32 encoding including the malleability issue discovered a year or two ago at this point with the checksum. Pieter or Rusty, do you want to give a high level overview of this discussion?
+
+XX03: I was planning to reply to this email today, actually. In short, I agree, and I think we should do the clean break switch to checksum for v1 and up, regardless of length.  .... This will protect against a situation where an old software enters the new style address, which is something you don't get with the proposal we originally had because v1 would keep the same checksum in the algorithm. Anything to add?
+
+XX10: I wonder if there's some background notes?
+
+XX05: Why? Uyluvolokutat says we messed up? Are addresses longer?
+
+XX10: That was the dream, that there would be one upgrade and then it would all be great. There wasn't an understanding at the time that this would be how it works. So people do the checks for v0, and then they reject for v1 so there's already a lot of implementations that--- some of these things were implicit not explicit, that they should accept v1 and v2. But it turns out that the people who implemented it in c-lightning also didn't understand, if it's v2 do the length checks, if it's v1 just fail. So it was a common mistake. Bitcoin Core also didn't relay it early on, so in the lightning code we had to be sure to not relay them or accept them. ..... since everyone is going to update their softwre anyway, it will force some people to get upgraded, so sometimes the way out of this mess is to fix it the right way, and the right way to fix it is saying if v0 it's this checksum algorithm and if it's this other one you use another checksum. People are going to upgrade anyway, so let's let them upgrade to make this problem go away.
+
+XX04: There's more than one service where if you send to a v1 address right now, they just burn it to a v0 address using the v1 payload and the coins are unrecoverable. Just refusing wouldn't be the end of the world, and burning the coins is pretty bad.
+
+XX01: Is the proposed new checksum for segwit v1+.... Is the consensus right now for taproots to use the existing checksum?
+
+XX03: The idea that-- so, Rusty's proposal which I agree with, is that for v0 witness we keep using the thing we have been using so far. Then for v1 and all future versions, this new checksum algorithm would be used.
+
+XX04: The problem with continuing to use the old one with v1 with the length restriction is that we're still left with the coin burning problem.
+
+XX03: There's also an issue that all software would remain vulnerable, even if we added a length restriction to v0. All software would be vulnerable to the length problem.... and by forcing all receivers to change the algorithm, we protect all old senders simultaneously.
+
+XX10: It's clear that they haven't upgraded. We should probably generate a v2 address and ask people to start testing their sends to that. A miner could scoop it up if they want to. Just to make sure this doesn't happen again for the next time.
+
+XX03: Another angle that might have caused the problem, mainly.... OP\_0 is different from OP\_1 to OP\_16 so maybe having the checksum type that -- is not such a terrible thing. v1 to v16 you handle identically anyway, but it's not true for v0.
+
+<https://cbeci.org/mining_map>
+
+<https://garethrees.org/2013/06/12/archaeology/>
+
+# Hold fees
+
+<https://lists.linuxfoundation.org/pipermail/lightning-dev/2020-October/002826.html>
+
+XX01: A little bit of a lightning discussion. I thought this was interesting. This idea of trying to prevent spam on the lightning network, locking up HTLCs, pinging nodes too much, creating a-- requiring payments for actually even doing things in the lightning network. This email is basically positing a few ideas of how to prevent spam on a lightning network. Just a cool conversation.
+
+XX05: It tries to present a different way.... we have an old page talking about... but it was a hacky solution, I've gone away from making people pay for failures. .... someone's stale payments could cause your wallet to be drained, so that's bad UX. Having this effective... privacy preserving of ... there could be more legs there. From my point of view, I don't know it's correct that people can be paid for failures. So you can delegate your right to BCI because they have... but I think some measure gains were made in different ways like the forwards and the backwards thigns, but I don't know if that's the right way to handle it personally.
+
+XX10: I agree with you, redacted. There's a feeling that perhaps eventually we're going to have to require some anti-spam payment.
+
+XX05: To Bryan's comment, you can have a privacy-preserving bond of coins in some output and I can prove that-- it's like attribution of HTLCs and the problem goes away. I have some ideas about doing it without too much heavy stuff.
+
+XX04: Joinmarket has done some privacy-preserving anti-spam stuff as well.
+
+XX10: It turns out there's a time difference between short payment and a long payment. There's <5 seconds payments, and then there's a multi-day case where it is hard to come up with a number upfront. A tiny fee can stop fast spam, but what about slow spam? It's an interesting design space here. There's no obvious wins. The problem with not solving this is that it increases an incentive to deanonymize the network.
+
+XX05: I think this is going to be mitigated by... being compesnated by putting liquidity into the network and having passive compensation over time, so people are prepared for the worst case OP\_CSV deadlock. I think it's another thing to factor in.
+
+XX10: That's more a griefing attack, but you can do it, but it will cost you. So you can magnify how much you put in by about 20 something? You can squeeze some more in there if you really try, but that's still annoying. You can attack the network today with that, pretty limited capital. If we have a liquidity provider war.... attacking one person because you want liquidity on yours; etc. There's a lot of work ongoing on this. I think it's important.
+
+XX01: Another post by gleb was around "Mitigating channel jamming with stake certificates".
+
+XX05: This is related to what kanzure and gmax talked about with respect to proof-of-burn to prevent spam. This is about proving to you that you have an output locked up for 30 days, and my proof is unique to you at a particular time. You would be able to attribute who is routing towards you; so nodes are able to quanitfy their relative risk. This problem has a lot of sub problems. What about separating spam from the griefings and everythign? This can solve one of them.
+
+# Bitcoin dev kit
+
+<https://bitcoindevkit.org/>
+
+XX01: Since February when we last did this; another one that is interesting is Bitcoin Dev Kit. It helps wallet developers join forces and works ... BDK, a rust bitcoin library. What do people think?
+
+XX08: A few different developers started two different projects earlier this year, and then merged it into one. Steve Mieiers is a grant recipient of Square Crypto. And another one funded by Bitfinex. I'm bullish on this project. As was discussed earlier, Bryan Bishop talked about address index and other things that a lot of companies have to build themselves. At Optech, we learned that lots of companies are rolling their own in terms of bitcoin libraries. Some people use bitcoinj but nobody is satisfied. bdk is a wallet library kit that makes it easier for any wallet developer to build a wallet. I think they are focused on mobile first. It uses rust-bitcoin and builds on it, but it does much more than the primitives in rust-bitcoin. It does coin selection, which I think Murch can speak to. I think Mark has been looking into this project.
+
+XX06: They have native segwit, script descriptors, and they have implemented a very simple constellation of added random selection and branch and bound.
+
+BB: There's also a python library from Jimmy Song and Michael Flaxman.
+
+XX03: Also libwally.
+
+XX06: There were two multisig wallets that appeared recently; Spectre and Nunchuck. They have both open-sourced their wallet code, not necessarily their UX code but there's a lot of new things coming out.
+
+<https://specter.solutions/>
+
+XX01: I am excited to try out Foundation Devices.
+
+# bolt12 and reusable invoices
+
+<https://twitter.com/rusty_twit/status/1328826839024865281>
+
+XX10: I have lots of stuff to say about it. This is basically-- we have been mumbling about this for about 2 years now. I tried to implement it and get a spec out there. Basically it's the classic solving the problem by another layer of indirection. You have an invoice and you make a request over the lightning network to get the real invoice. At its most trivial, it gives you a reusable invoice format. This is an offer for something; you scan it, your wallet reaches out, gets the real invoice, and pays it. This givs you a lot of cute things- the obvious one being that, people abuse invoices at the moment. The secret you promise in return for payment is a secret and you can only send that invoice to one person at a time because it's a secret. You should only be using it once. This is painful because you shouldn't be tweeting it to people. ... It's nice to have a transient key you can associate with an invoice request,s o if they want to prove they are you later, you can get a proof of payer and get a proof that yeah this was me like for refunds. It uses bech32 in the draft without a checksum because we didn't know what the checksum was going to be anyway; it's not clear how much we gain from having a checksum, we just needed some random encoding and the codebases already have bech32 somewhere. There's multiple threads on that; I spent a week tweeting about it. If you want to read it and see all the goodies, most of them are already implemented already.
+
+XX03: Very cool.
+
+XX01: Looks lik you have a regtest offer here already. Neat.
+
+XX10: Yes, but it's so drafty, it might not work next week.
+
+XX01: Random question on invoices and bech32. Is the discussion-- the discussion earlier, relevant? I have heard also it mentioned that the whole checksum for bech32 in general is meant for quite short or wasn't meant for strings as long as an invoice. Is there any updated discussion around that given the new developments in that encoding standard?
+
+XX10: LN invoices are pretty short, for offers. The default is bitcoin mainnet so you don't have to include the genesis block in that case. Anything under 1024 characters has some guarantees in the original checksum for bech32. If you don't have the checksum, you scan it, you try to pay it, we would basically do key recovery to figure out what node I need to pay to and if there's an error somewhere it will say I don't know how to pay that node, it's nice for it to say invalid invoice instead of saying I don't know the node. That's why we wanted to keep the checksum in the first place. This uses x-only pubkeys which is what all the cool kids are using; it's very clean, it's quite nice, we switched to it within a day. There's no key recovery for that format; there's explicit key in there-- so the checksum doesn't really buy us anything anymore.
+
+??: Is there a use case for spontaneous payments?
+
+XX10: Spontaneous payments are really cool. Being able to tip someone without having to interact with them. You don't have to request them to make an offer first. I think that's cool. The problem with spontaneous payments is that you don't get a receipt and you can't prove that you made a payment. If you have a static offer on your page and you say here use this to send me money, then .... cryptographic signature across that, I can prove the amount is paid, that I paid it, because I hold the payer key. You can't fake a payment, and you can't fake that you paid something, and you can prove that you paid. It has a lot of advantages. The downside is that if you try to do a lot of them, there's some latency fetching the invoices since it's a roundtrip.
+
+XX05: Spontaneous payments... using something like d-log based thing like HTLCs, does allow a secret to be... one thing we realized is that we can't probe a window-sized payment because the .... not really sure how to... the entire flow. .... do that aggressively by not giving them the last transaction; so to probe across many channels, you have to do something like this. Once you have a ... you can do the best of both worlds and I think they both work in those use cases. We have seen some people rolll other solutiosn we have seen in the past.
+
+# Signet merged
+
+<https://bitcoincore.reviews/18267>
+
+<https://github.com/bitcoin/bitcoin/pull/18267>
+
+XX01: Pretty cool. Nice development. We're thinking about using it internally for some of our environments at Redacted. Excited to see adoption here pick up. I'd be curious to hear if anyone has had experience playing around with it. Signet has taproot activated, yes. There's a taproot spend--- someone forked Esplora.
+
+XX05: Who are the signers? Can you dynamically add and remove signers to the thing?
+
+XX03: There's signet and then there's advanced signet, you can define your own. The default signet is a network that is signed by ajtowns and bellawoof.... alm? kallewoof. I think it's 1-of-2 multisig. I think there's no affordance for changing the set of signers at runtime. But it's fairly cheap to change the network. Also I believe that as far as Bitcoin Core is concerned it does not have taproot activated. But given the network is mined by two private instances, they could choose to enforce taproot rules if they want and then it would be active. in such a centralized setting, they individually define the consensus.
+
+XX01: How do you get signet coins?
+
+XX03: I think there's a faucet, or even a tool that lets you request coins automatically.
+
+XX01: That was a pull request we followed from beginning to end. Yes, there's a bitcoin review club that went over it. There's a link in the doc for that.
+
+# bip 340-342
+
+<https://github.com/bitcoin/bitcoin/pull/19953>
+
+XX01: The big one. The big topic of discussion. bip340, bip341, bip342 was merged into Bitcoin Core. This was the effort of a lot of hard work from a lot of different people. Great job all around. It's exciting to see the progress here and see the excitement across the various stakeholders in bitcoin. I'd be curious to hear updates on anything that we haven't discussed yet that you might think is worth bringing up. Has anyone spent some time building it into their own infrastructure or preparing their own projects to support it? Any insights that anyone would like to share? Anything else you want to add?
+
+XX05: From my end, I'm starting to look at implementing it for real. I had a toy thing that I was letting sit for a while. At this point, I want to start adding it to btc suite and lnd and maybe get around to testnet activation. This is back on my radar.
+
+XX01: Phil has been working on some go stuff about this.
+
+XX05: I saw his Schnorr thing. It doesn't use some of the better integer representations, but we can work with that.
+
+XX01: Anyone else? Anything else to add about taproot?
+
+XX04: when wallet support?
+
+XX03: We have time. Now that we have descriptor wallet support in 0.21, or will have it once it gets released-- we have cut two release candidates, it's imminent.
+
+XX03: It's 0.21, but it will be 22 in the future for the next release. It would have been nice to have "version 21", I know.
+
+XX01: Oh look who just joined. Funny timing. Andrew Chow just joined.
+
+XX02: i got a message from Murch saying I should join.
+
+XX04: Murch is kind of super-natural, so that explains it.
+
+XX03: ... adding things like taproot to the wallet, at least simple single key version of it, but probably some other complex things will be significantly more simple than hacking it into the old code.
+
+XX01: Andrew, I think you had a post about this or there was some pull request? Not sure what the status is. I saw a discussion somewhere about bitcoin versions are changing. What's the latest there?
+
+XX02: The net  version will be called "22.0" instead of "0.22". All we did was drop the leading zero. That was merged shortly after branching of v0.21.
+
+XX01: So there will never be a v1.0?
+
+XX02: We're skipping 1.0 to 21.0 and going straight to 22.0.
+
+XX01: So version inflation?
+
+XX03: We should have made it 42.
+
+XX01: Shouldn't we have made it 0.0000021 since it's bitcoin? That's just a joke. Okay. We also have descriptor wallets as well. We can get to that.
+
+XX06: About taproot, I've been looking at how 2-of-3 multisig would end up transaction size wise and single sig and so on, and it's just another huge size improvement. It's going to be 58 vbytes. Comparing that to 2-of-3 multisig with P2SH with 297 bytes, it's almost a 5x reduction in blockchain space which I think is pretty remarkable. Then the other thing that I've been really thinking about is if people are now going to start implementing sending to v1 addresses first, like they had been with native segwit where they were first able to send it to, and later it was enabled as a non-default reecive address.... then I think there's a lot of room for people to upgrade to native segwit by default, because when they support taproot they will therefore go to native segwit. So we will see a big push of segwit adoption with taproot getting merged.
+
+XX01: ... how far are we from the world where can someone can spin up a 3-of-5 cold storage with a single pubkey representing a threshold required to sign for it? 
+
+XX03: ... the first round can be pre-computed before you know its message. There's some edge cases to worry about, but in that case you have a non-interactive signing protocol. You have everyone publish their partial signatures, and then they can be combined. It's a remarkable technique. It's just using two nonces instead of one nonce. Then you MuSig those two nonces at signing time. This was pretty much invented simultaneously by three distinct groups of people.
+
+XX03: I should also mention that this is not yet in Musig2 paper... but Musig2 is compatible with privately nested musig where you can have a multisig of a number of participants and one of them is a multisig themselves of a hardware wallet and a software wallet, or something, and it doesn't need to reveal that to the other participants. This is not something you can do with normal musig. I need to stress that this is not proven yet.
+
+....
+
+# Use wtxid for transaction relay
+
+<https://github.com/bitcoin/bitcoin/pull/18044>
+
+XX03: The lingering issue that existed after segwit was that transactions are announced and requested on the protocol using txids. In segwit, the txid does not fully commit to all the data you use to verify a transaction, in particular the witness. If someone gives you a segwit transaction with an invalid witness, you can't blacklist that txid for denial of service protection because you don't know the txid is invalid because you only know that particular witness is invalid. This has some effects on potential bandwidth where you request the same transaction multiple times. When nodes disagree on what the policy is on the network, then you could have the same transactions announced over and over again and it could be retrieved from nodes over and over again. This problem specifically has been addressed using some much simpler change as well. This was a fundamental improvement where nodes can negotiate-- just using wtxids instead of txiss for announcements and pull requests. It's in, it works.
+
+# TORv3
+
+XX01: The previous version of advertising node location did not support longer torv3 address limit, because there was a length limit, and thias been updated and been emrged into core and will be shipped in the v0.21 release?
+
+XX03: Exactly. It was a bip written originally around 3 years ago by Wladimir by the idea that we would eventually need the longer address length. Torv2 is deprecated and the shorter address length will dispapear in less than a year. We couldn't use the hack of putting it in a ipv6 packet. There's a specific network class now for a torv2 address, torv3 address, ipv4, and ipv6, and i2p, and what's the other one supported? CJDNS.
+
+XX03: torv2 addresses are only 80 bits. We sent them over the network by putting them in some private ipv6 range which was something we've been doing since 2012. But now I think ipv6 addresses... ... and torv3 is 256 bits.
+
+XX04: The reason why the Tor network changed is because they did a substantial rework of their hidden services, like switching off of 1024-bit RSA, and they also fixed a tor hidden service enumeration attack that existed with Torv2. The torv3 addresses use a bip32 derivation (similar to that, anyway), and it requires them to include a pubkey in the address rather than having a hash or something like that.
+
+??: There was a lot of privacy implications for the hidden service directory where they could observe and get information about the topology, which were improved in Torv3.
+
+XX03: Yes, public keys should be public.
+
+# GLV commit
+
+<https://github.com/bitcoin-core/secp256k1/commit/949bea92624fbd65bfb21d773f1df6a115af71ff>
+
+XX01: This goes back to 2013. This was just now flagged as default in Bitcoin Core due to this patent expiration. So that's cool.
+
+# sqlite as a new wallet database for Bitcoin Core
+
+<https://github.com/bitcoin/bitcoin/pull/19077>
+
+XX01: I like the idea of having a standardized descriptor describe a wallet. Also adding sqlite as a database in Bitcoin Core with the long-term goal of removing berkeley db (bdb).
+
+XX02: This pull request is for using sqlite as the wallet database. Basically the idea behind why now was that descriptor wallets was going to be a completely new type of wallet that would be backwards incompatible and one of the reasons we hadn't switched off bdb for such a long time was because of the need for backwards compatibility. If we're going to move to something completely backwards incompatible on the application side, then we might as well change the database to be backwards incompatible as well. Even though descriptor wallets don't need sqlite, they are orthogonal in nature, they are being bundled together as part of the same pull request. That's mostly it.
+
+??: Does it use an ORM in front of the sqlite itself?
+
+XX02: We don't even use any of the sql stuff. We use it as a key-value store like bdb is. We're just serializing all oru records in the same way we did as bdb. You could in theory upgrade a legacy wallet from bdb to sqlite but this is not recommended.
+
+XX01: So there's just one table?
+
+XX02: It's just one table. We're using it purely as a data file format.
+
+...
+
+XX01: So there's no longer-term goal here to replace leveldb with sqlite?
+
+XX02: sqlite is going to only be for the wallet. We're only using it because we don't want to use bdb anymore.
+
+XX01: So there's no desire here for the actual blockchain itself or chainstate to use sqlite either?
+
+XX02: Those will all remain as leveldb for the forseeable future.
+
+??: If sqlite is only being used as a key-value store, why not move the wallet functionality and store that in leveldb so there's only one database backend?
+
+XX03: One reason is that, leveldb is sort of annoying in that its whole directory with log files and whatever. Sqlite is just single file, you can backup the file and you're done. I think leveldb....
+
+XX02: leveldb is more similar to bdb. One of the major pain points with bdb was that it had these log files. Every time we flush the database, stuff would end up in the log file and not the database file. So if you did the stupid thing of copying a wallet file while it was still in use, then you would end up missing some data. I actually wrote a test case for this. Its' very easy to miss data because it was in the log file and not in the database file. One of the nice properties of sqlite is that it has a mode where if you flush, everything flushes to the database file. You don't have the log file, or if you do, it's temporary and doesn't stick around for more than a couple milliseconds. Mostly everything is in the database file; you can copy the wallet file while it was opened, which is not recommended, but you are far less likely to lose data-- not to the log file, but certainly to corruption.
+
+XX03: .... has a history of corruption crashes. sqlite is known to be extraordinarily resilient to that sort of stuff. It's of course annoying wherever something like that happesn, but for something that stores private keys, you want to use the most stable thing out there.
+
+# Native descriptor wallets
+
+<https://github.com/bitcoin/bitcoin/pull/16528>
+
+XX02: It changes the concept of the wallet from something that is key-based to something that is script based. This is backwards incompatible with previous versions of Bitcoin Core. We disabled a bunch of RPCs that no longer make sense in a descriptor wallet world. hdseed no longer makes sense. The descriptor wallet doesn't have a global wallet seed anymore. Everythign is based around the descriptor now, at least for address generation and all that. To most users, when you use a descriptor wallet, unless you're doing something with multisigs, or with watch-only, you won't feel anything different. So it stores addresses in the same way;y ou still sign transactions, you still use the rawtransaction API, you still use PSBT, the whole--- not even this PR, but the 5 PRs before it, was refactors to make an interface where we could do this without having the user feel anything different from this change. So if you do multisig stuff, or watchonly things, it's now all under a single RPC descriptors and you just import a descriptor and it deals with it magically.
+
+# Multiprocess bitcoin
+
+<https://github.com/bitcoin/bitcoin/pull/10102>
+
+XX01: This is potentially the longest running open effort in Bitcoin Core that I know.... but, this experimental branch to make the Bitcoin Core codebase multiprocess and switch out the core, switch out the various components into separate processes. ryanofsky is constantly and diligently maintaining this branch. I don't know if there has been any updates at a high level around the thinking around this, or the prospects of this happening. Does anyone have any updates?
+
+XX02: I think something was merged that enables this as a build option, I think. You can try that out if you want.
+
+# ZMQ: Create "sequence" notifier, enabling client-side mempool tracking
+
+<https://github.com/bitcoin/bitcoin/pull/19572>
+
+XX03: I thought it was cool that if your'e consuming mempool stuff from bitcoind, this makes it easier than following "getrawmempool".
+
+XX03: With zeromq, you still have to poll. No deliverability guarantees. But yeah, I'm sure it's easier.
+
+# Lightning pull requests
+
+We'll go over some lightning pull requests.
+
+# Lightning pull requests
+
+We'll go over some lightning pull requests.
+
+
+
+
