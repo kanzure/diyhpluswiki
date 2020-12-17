@@ -84,4 +84,39 @@ Then, finally there is a serialize method at the very end to serialize the trans
 
 Some things notably absent from python-bitcoinlib. If you are going to it to implement something like segwit, don't because there is nothing implemented in there to handle segwit. It does not have bech32 from bip173. Doesn't have bip32 support, doesn't support bip174, or output descriptors which I recognize we have not talked about these past couple of days. There is no generally accepted proposal for script version 2, which interestingly enough will probably be called script version 1 which is very confusing but that is because bitcoin script is currently version 0. These guys are laughing over here, but that is actually a big problem. Why is it still using OpenSSL, who knows. In general for signing, the signature is still going to be correct no matter which of the two libraries you are using, but perhaps and ability to switch between the two. That would be an interesting project to go implement, a simple weekend thing or something.
 
-So that is python-bitcoinlib and to be clear this is not libbitcoin, which is the next presentation.
+So that is python-bitcoinlib and to be clear this is not libbitcoin, which is the next presentation
+
+# Q&A
+
+Q - This is completely different from bitcoind?
+
+A - This is not related to bitcoind although the RPC interface, if you want to communicate to a Bitcoin node on the other end it would be bitcoind.
+
+Q - When I look at this it seems like a great learning tool but who else uses it? What are the use cases?
+
+A - I have used this in many projects for application development for everything from making exchanges for handling deposits and withdrawals. Anytime I have handled Bitcoin transactions. My two main options have been either write something in bash with the bitcoin-cli, `createrawtransaction` interface or you can use some other language other than bash. Why would anyone want to write in bash?
+
+Q - I am one of the people working on bitcoinjs-lib and SegWit support is really hard.
+
+A - That’s not my job.
+
+Q - It sounds like people are using this for production code.
+
+A - Yes
+
+Q - It is scary that you mentioned that it is probably already unmaintained and it doesn’t support of all of these things.
+
+A - Yes
+
+Q - What is the history of maintainership?
+
+A - Poor
+
+Q - I think there’s an opportunity if you are into Python, this is a way to get involved in Bitcoin development.
+
+A - Absolutely. In general it is considered a bad idea to use unmaintained code. At the same time there is a collection of work that has been performed here that could be useful. Some of the data structures are quite basic and they are not going to be deprecated. There are bits and pieces that you could probably safely use. Other parts that you should probably stay away from. Unfortunately this requires expertise to tell the difference.
+
+Q - If someone is good at Python who could they talk to about reviving this as a maintained project?
+
+A - Feel free to talk to me or Peter Todd. He makes himself available. Those are the two starting places I would recommend.
+.
