@@ -1,0 +1,414 @@
+Name: Matt Corallo
+
+Topic: Better Hashing through BetterHash
+
+Location: London Bitcoin Devs
+
+Date: February 5th 2019
+
+Video: https://www.youtube.com/watch?v=0lGO5I74qJM
+
+Announcement of BetterHash on the mailing list: https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-June/016077.html
+
+Draft BIP: https://github.com/TheBlueMatt/bips/blob/betterhash/bip-XXXX.mediawiki
+
+Transcript by: Michael Folkson
+
+# Intro
+
+I am going to talk about BetterHash this evening. If you are coming to Advancing Bitcoin don’t worry I am talking about something completely different. You are not going to get duplicated content. That talk should be interesting as well though admittedly I haven’t written it yet. We’ll find out. BetterHash is a project that unfortunately has some naming collisions so it might get renamed at some point, I’ve been working on for about a year to redo mining and the way it works in Bitcoin. Who feels like they are familiar with how Stratum and pools and all that good stuff works in Bitcoin at a high level? A little bit more than half. I am going to through a little bit of background. I can rush through it and skip it. It is kind of stolen from a talk I gave that was much less technical. If you fall asleep for the first ten minutes or so that is going to be perfectly ok.
+
+# Why Are We Here
+
+I wanted to give a little bit more philosophical background as well. Bitcoin did not invent ecash. Ecash as a concept is not new, it has been around since the 1980s and 1990s and a tonne of people were trying to do this at that time. They all kind of failed. Who read the Ray Dillinger [piece](https://www.linkedin.com/pulse/id-known-what-we-were-starting-ray-dillinger/) on LinkedIn? If you haven’t read it you should go back and read it because it was really good. A random guy claimed he was around back then in the 1980s and 1990s, claimed that Satoshi had mailed him the paper before the announcement, no material reason to disbelieve that claim although it doesn’t really matter. He wrote a really good piece about what it was like back then working on ecash for all these startups in the Caribbean and essentially trying to build Bitcoin but failing. Out of this came a lot of simple centralized US dollar banks that failed because their business models failed. Out of this came PayPal which I guess we would have considered to have failed in the censorship resistant money case because they had to succumb to regulators. Out of this came some attempts at ecash like Chaumian tokens which were shut down because they were very usable as money laundering and got shut down by various regulators especially in the US. But ultimately they all failed for the central reason that they were a centralized third party. They had some business that could go under or fail or be targeted by regulators. They all failed to live up to this goal. Ray, I think accurately, phrased Bitcoin as a novel attempt to solve this centralization problem, or this ecash problem, by removing the centralized third party. It is the first real attempt someone came up with that is realistic, it might actually work. We don’t know that it is going to work yet and that’s why we are talking about mining and centralization of mining, but it is experimental and maybe we can actually achieve these goals that we’ve had for 30 years and haven’t accomplished yet.
+
+# Bitcoin Pool Background
+
+I am sure a lot of you will recognize this. This is a number of months out of date but that was as of a number of months ago the pool distribution and hash rate distribution for pools in Bitcoin. The top two are owned explicitly by the same company so that should be one, that’s AntPool and BTC.com. The fact that they also run ViaBTC which is one of these, it is kind of bad right? They clearly have a lot of control of hash power. When I gave this original talk I phrased it as consensus group. I think this is actually a really useful phrase when we are talking about cryptocurrencies broadly because it is not just hash power. Ultimately it may be stakers in a proof of stake system, maybe it is the 5 or 6 nodes who validate things in Ripple, whatever. Ultimately, your consensus group is like the people who are able to select transactions and put them in blocks or make them confirmed in some way. In Bitcoin that is obviously pools. Pools work by having this block template, they create the block template, they probably use Bitcoin Core, they get a list of transactions, they create this candidate block, they send it to all their clients who then hash a bunch. If it matches a full block, it has enough proof of work to become a full Bitcoin block it is sent back to the pool and the pool will distribute it. If it has a lot of work but not enough it still gets sent to the pool. In fact that how they do payouts. If you have some probability that it will be a full Bitcoin block and 10x higher probability that it will be not a Bitcoin block but sent to the pool anyway, you can still see how much work all your clients are doing and you can pay out based on that. 
+
+# BetterHash
+
+SlushPool actually has the public statistics for the breakdown of each of the individual users on their pool and how much hash rate they have. I blindly took that and mapped that onto the graph you saw earlier and this is what I came up with. This is what our goal is, to make Bitcoin look like this. Obviously it is an oversimplification to the nth degree but it was easy and it was the public stat that I had. There is reason to believe that you have some larger miners on some other pools but even still this is actually probably not entirely inaccurate. It is in fact the case that ownership of hardware and management of farms is way more decentralized than pools. Your whole goal is to reduce this variance problem. If you are a 1 percent miner or a 0.5 percent miner or a 0.25 percent miner some months you are not going to make your power bill, some months you are going to make a bunch more money so you have to have a pool. Naturally there is a lot of centralization in that market whereas in the actual hash rate market, purchasing cheap power is often more available in small quantities than large quantities, not to mention larger investments than a pool etc. You actually see much better decentralization. The goal is to get there. We do this by taking the key observation that the consensus group in Bitcoin is the people selecting the transactions. That doesn’t have to be the pool, the pool can still manage the payout. The idea is we take all of the miners, we give them all full nodes, they select all the transactions, they have a mempool, they build the candidate blocks that they work on and then they pay the pool. You still have centralized pools but the only thing they are doing is receiving the payment for blocks, full valid blocks, and then they can distribute that as they do normally, as they do today. They don’t necessarily need to be involved in selecting the transactions and doing the key consensus group things that we care about in Bitcoin. 
+
+# Protocol Overview
+
+There are obviously a number of problems with that that I will get into. But first I’m going to describe what the state is today and the high level protocol design. BetterHash is actually a replacement for two protocols. Currently there are two main things that are used in the mining process today. There is Stratum that more people are familiar with. This is the protocol that the pool server uses to communicate with the actual clients. It is a mess. getblocktemplate is also a mess. Stratum is JSON and it is mostly hex sent over the wire in JSON, it has things like 32 byte numbers that are sent as hex in JSON, byte swapped on 4 byte boundaries because apparently no one knows how endianness works. It is confusing. 
+
+Q - Can you elaborate why you dislike JSON encoding?
+
+A - JSON is fine but hex in JSON has all of the downsides of having a binary protocol in that you can’t read it on the wire anyway because it is hex. And all of the downsides of being JSON in text because it is bigger and has more complex parsing. Remember ultimately the ASIC controllers are embedded devices, they are running [OpenWrt](https://openwrt.org/) and some pretty crappy software. You don’t really want a super complicated parser. They never get updated so if you have a bug in your JSON parser all these things are vulnerable. It is not ideal in that environment especially.
+
+The other current protocol is called getblocktemplate. It is in fact just a RPC call on Bitcoin Core. It has a bunch of bells and whistles that literally no one knows how to use and probably don’t work. So I’m pretty sure they don’t get tested. But it is the protocol with which the pool server can request data from the Bitcoin Core node about which transactions to send. It is also a mess. It sends you all of the transaction data, again hex in JSON. Don’t know why. It sends you all of the transaction data, the full hex of each transaction that you want to include in the block but you have no reason for that. Stratum actually only sends you a Merkle path. It sends you information you need to build the coinbase ie the first transaction and then hashes of the other pieces that you need to build the Merkle root. It doesn’t actually have to send you anything on one side of the tree. Whereas getblocktemplate, you in fact only want the same information but it gives you not only the full tree but all the transaction data anyway just to confuse you and make you do more work than you need to. This also of course makes it slower. The JSON serializer in Bitcoin Core is fine but it is not that fast. If you are encoding a full 4 megabytes of hex blobs into JSON it is not that fast and has no reason to be that slow. It is also very pool oriented. It leaves a lot of complexity on the pool server instead of the Bitcoin Core node being able to say “Hi I have some new transactions that you should include in your new block” or “Hi I just got a new block. You should start working on this now.” It forces the pool server to think about these things and request that information from Bitcoin Core. It has some bells and whistles to try to not do that but no one uses them. We don’t like this world. Bitcoin Core, obviously in the node has more information than the pool server does because it has all the transactions, it knows when it just got another transaction with a really big fee on it that it wants to make sure you are mining on. It knows when you got a new block because it is the first thing to see it. We would like to have more control over that in Bitcoin Core just because we can make better decisions and we can optimize that instead of making the pool guys optimize that, which is a centralization pressure. A well optimized pool shouldn’t be a lot faster than a poorly optimized pool because that means they have to have technical competence. We would rather them just be able to spin it up and run it. That’s what is used now.
+
+Q - I don’t know the history but can you talk about the step from getwork to getblocktemplate?
+
+A - getwork was a much older thing in Bitcoin Core that was used to get work. We only gave you the header, the 80 byte block header which was fine for CPU mining and GPU mining but that is actually too slow for an ASIC. You’d have to get a stream of those, like millions of times a second. It is vastly too slow for that. A new thing had to be created. getblocktemplate was added as the thing to replace it. It is terrible but someone had to make something and so the first thing that got written got merged.
+
+Q - getblocktemplate was never designed for pools?
+
+A - There was some intention for it to be used as such but it never made any sense. It is too much data too. Even in Stratum with the weird hex encoded nonsense if you get a work update for a new block it still fits in a single TCP packet. Not by a tonne, it is close, but it does. That is nice for efficiency. Whereas getblocktemplate is 2 megabytes of data minimum plus SegWit just to give you a new block template. That is just nonsense.
+
+Q - Why do you think it was designed that way?
+
+A - The intention was for getblocktemplate, the pool would give you too much information and then the clients would do some policy thing. Luke designed it. The intention was that clients could do policy around which transactions to include themselves. It never really made any sense to be honest. 
+
+So BetterHash, I talk about it as two protocols, it is really three protocols. Obviously it splits the lines a bit differently because the intention is that clients run full nodes and not just the pool. It splits the lines a little bit differently so we have the Work protocol which is that Merkle path, the current header, some basic information about how to build the coinbase transaction, the previous block hash, those kinds of things. And the Pool protocol which is really just pay out information. Here’s how you submit shares and if you find a block it should pay out to this address. Then you use that to submit shares to prove that you are working and prove that you are paying out to the right address etc.  I say it is kind of three protocols. The Work protocol is used in a few different contexts. It can either be final or it can be non-final. Non-final means it doesn’t have full pay out information. If you start mining to a non-final Work without adding a full payout you are going to burn all the reward to nothing which would obviously be kind of a shame. Final is like “Here is the fully built thing. You can go mine on this.” You can imagine in non-final mode you need to connect to a pool or be solo mining. You need to combine that payout information you got from the pool or you can be solo mining. Whereas in final mode that is the thing you pass to your ASIC and you go mine with that. There is a high level goal of having a mining proxy in the farm which you can think of as a Raspberry Pi or CasaHODL node kind of thing. All of your devices can connect to that device, it can run your full node, it can connect to the pool etc. You could in theory also skip that and have each of your ASICs actually connect to the pool and have them all connect to a full node. But that is up to you. Of course for practicality reasons because a number of miners aren’t going to run their own full node you could also have a pool expose your final Work protocol version to clients who don’t want to run their own full node. That’s just going to be how it works in practice a lot. An interesting goal, ideally we’d like to be able to just mine against Bitcoin Core. You shouldn’t necessarily need a pool if you want to solo mine or mostly for testnet, but also for fallback. The Work protocol, being the thing that connects to your ASIC controller or to your ASIC, if that’s also the thing that Bitcoin Core speaks it is nice because if the pool goes offline or if you are testing or if you just want to solo mine you don’t anything else. Currently you need a pool server because no ASIC speaks getblocktemplate. So you have to have some other software in between. Now you don’t necessarily need that. If the pool goes offline you can fall back to solo mining, at least until the pool comes back. This is a nice little property. Of course I lied, there are four versions of this protocol. There are two variants of the Work protocol. Who is vaguely familiar with the Bitcoin block header format? It is 80 bytes but the key observation is there is a 4 byte nonce, you increment the nonce, you test that hash, and then you increment the nonce and so on. There is also a 4 byte timestamp and then there is a 4 byte version field. If you just increment the nonce you would run out very quickly on an ASIC, that was in fact the problem with getwork that we mentioned earlier, it is just too slow. You run out of 32 bits of nonces very quickly on a modern ASIC. So you really only need a few more bits. There is a proposal to use some of the bits in the version field, use 16 of the 32 bits in the version field, we don’t really need that many bits in the version field, as a secondary nonce location. Then you can cheat and you can spin 2 bytes of the version, 4 bytes of the nonce and you won’t run out within 1 second. Then every second you can increment the `nTime` field. You actually never need to give the ASIC device the coinbase transaction which is currently really annoying because all of the end hardware in Bitcoin, or at least the ASIC controllers, which generally run crappy software that is not maintained, not updated, is involved in constructing the coinbase transactions and building the whole Merkle path. It has a lot of complexity. If we can get rid of a lot of that complexity so we literally give it 80 bytes and it knows it can spend these 4 bytes, these 2 bytes and it needs to increment that 1 byte every second it is so much simpler and we can have a lot more flexibility in terms of protocol upgrades and that kind of thing.
+
+Q - How does this interact with AsicBoost?
+
+A - The current AsicBoost stuff actually uses the `nVersion` field, specifically those 2 bytes. The BetterHash spec references that and says “Yes these 2 bytes that people have already been talking about using and are already using, just go ahead and use them.”
+
+Q - It is like those warnings we see on our node?
+
+A - Yes. The current AsicBoost stuff only uses like 2 bits but there was a proposal that says “These 2 bytes should be the ones used for AsicBoost.”
+
+Q - Currently the ASICs tweak the coinbase transaction?
+
+A - Yes. The way Stratum gives you a coinbase transaction is it gives you a prefix, it tells you how many bytes you get and it gives you a postfix. You take the prefix, you add however many bytes, you can use that as a nonce and then you add the postfix and then you build the Merkle path.
+
+Q - What is the postfix in reality? Some OP_RETURN?
+
+A - The prefix and postfix are just parts of the transaction. The part you get to spin in the middle is in the scriptSig input. It will be like the version, the number of inputs…
+
+Q - Not covered by signatures?
+
+A - Not covered by signatures, the coinbase transaction. The prefix will be the transaction version which is 4 bytes, the number of inputs which is 1 byte, the length of the script and then the pool’s name and stuff like that. Then you’ll have 4 bytes that you get to play with and then it will be the rest of the scriptSig, the number of outputs, all the outputs. That is a blob.
+
+We’d like to move to headers only. Of course with this whole separation of the Work protocol versus the Pool protocol where the Work protocol has to be able to support not having the payout information. We still have to support the non-header version but ideally from an ASIC perspective you can just do this header version that is 80 bytes and you don’t have to have all this complexity.
+
+# Existing Problems
+
+Some existing problems in the current world. I already went through getblocktemplate. It is a complete mess. It also was really gnarly, SegWit required updates to getblocktemplate and so we had to update all the pool servers for getblocktemplate, for SegWit support. There was no reason for that. That shouldn’t be how we had to do things. getblocktemplate needs to die, I will be very happy to see it go. Stratum is not authenticated at all. There is no crypto, there are no signatures, there’s nothing. This is terrible. 
+
+Q - How is that possible if you sending shares? Surely it must be authenticated?
+
+A - No there is no authentication whatsoever. If I ran a ISP in China I’d be skimming a percent off the top and no one would notice. I’m dead serious, no one would notice if all the ISPs in China are skimming a percent of the hash rate off the top. Mining farms will vary in its hash rate a few percent a day based on temperature and other nonsense.
+
+Q - …
+
+A - Some pools support wrapping it in SSL but it depends on the pool. It is not the majority and mostly ASICs don’t support it.
+
+Q - I’m going to Dogecoin.
+
+A - All the coins use Stratum. Dogecoin uses Stratum, everything uses Stratum. This is a mess. We saw a BGP hijack against altcoin pools in like 2012. I am not aware of one against Bitcoin pools but we saw some against altcoin pools in like 2012 or 2013 so we know this is a very practical attack and could steal a tonne of hash rate.
+
+Q - …
+
+A - They clearly should. It is a material risk too because Stratum has a wonderful message where you can say “Hey I the pool server am moving to a new host. Please connect over here.” Then they have to power cycle all the hardware. If you can get a temporary man in the middle you can get all the hardware to point to a new pool server for you and then they have to power cycle their entire mining farm before it reconnects. It is terrible. Don’t be surprised if we see massive 51 percent attacks for a day while people have to react and power cycle their hardware. It is not an inconceivable attack. That said, you can’t just trivially encrypt the whole thing because pool servers actually have relatively high server overhead. They are checking shares. The whole point of a pool is you get more shares. The lower the difficulty on the shares is, the more consistent the payouts. That is what your users want so they always tune to have very low share difficulty which means more server CPU time hashing all the shares and making sure they’re valid. You can’t just blindly encrypt everything. 
+
+BetterHash is relatively carefully laid out with all the messages so that they are signed. There is no encryption but they are signed. You can still see that someone is running BetterHash but at least you can’t modify it. The messages are signed in such a way that the only messages which are signed are one-off messages or messages that get sent to all the clients. When a new user connects the pool will sign a response like “Hi. I understand you are User A. Here is your payout information for you User A.” Obviously the user can check that and make sure that lines up with the username. But that only happens once on connection. The share submissions aren’t signed because the pool told the user the payout information for that user. It is self authenticated already. There is no reason to add a signature to that, it will just slow down the pool. Also on the Work protocol side, if you have a new block update that data itself, you just have to sign once and you can send that to all your users. You don’t have to sign a different copy for every user. There is a separate message for per user data just to avoid any complaints about server overhead for pools who might push to deploy such a thing.
+
+This isn’t documented anywhere. I couldn’t find anywhere that said this. I had to figure it out on my own. There is no standard for Stratum. Good luck trying tor reimplement this stuff. It is nonsense. BetterHash actually has a spec, I bothered to write it out. It is also incredibly dense. If you have ever tried to read any of my BIPs, they are dense. It is very clear exactly what you should do. You just have to be good at parsing my sentences.
+
+Q - Is there a BIP number?
+
+A - XXX. No I haven’t bothered to get it a BIP number yet. There are a few more tweaks I wanted to do.
+
+Q - Is it public?
+
+A - There is a post on the [mailing list](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-June/016077.html) and there’s a [link](https://github.com/TheBlueMatt/bips/blob/betterhash/bip-XXXX.mediawiki) actually in the Meetup description to the current version on GitHub.
+
+Vendor messages, there’s a general trend right now. If you run a mining farm, monitoring and management is actually a pain in the ass. There is one off the shelf solution that I am aware of. They charge you a certain number of dollars per device. It is Windows only, it is not a remote management thing, you have to be there and it is really bad. Most farms end up rolling their own management and monitoring software which is terrible because most of them are people who have cheap power, they are not necessarily technical people who know what they are doing. We want some extensibility there but I am also not going to bake in all the “Please tell me your current temperature” kind of messages into the spec. Instead there is an explicit extensibility thing where you can say “Hi. This is a vendor message. Here is the type of message. Ignore it if you don’t know what that means. Do something with it if you do.” That is all there. That is actually really nice for pools hopefully and for clients. I don’t know why you’d want this but someone asked me to add this so I did. I wrote up a little blurb and how you can use the vendor messages to make the header only, final Work protocol go over UDP because someone told me that they wanted to set up their farm to take the data from broadcast UDP, you don’t have to have individual connections per device and shove it blindly into the ASIC itself without an ASIC controller whatsoever. I don’t know why you’d want to do that but if you do and you are crazy this is explicitly supported. There is a write up of how you might imagine doing such a completely insane thing. 
+
+# New Problems
+
+Those are the existing problems. Luckily BetterHash being more fancy, it comes with its own problems that have to be solved if we want to get any kind of adoption. First of all, operational complexity is the obvious one. As I mentioned a lot of mining farm operators aren’t necessarily the most technical people. Telling them “Hi. You need to run a full node now” is a steep barrier. With that in mind it is an explicitly supported thing that the clients don’t necessarily have to run a full node. It is an option, strongly encouraged. That’s the whole point but if you don’t at least we get authentication and standards and the other things that are nice. The way current mining farms are often set up is you have like a thousand devices and they all connect to the pool. You configure all of them so you have like a thousand TCP connections from your farm that are all getting the exact same data from the same server at the same time. Some of the pools have designed these little proxies that are simple little Raspberry Pis. You plug it in at the farm and you point all your devices to that and that connects upstream to the pool. They had clients who were running very large farms who couldn’t figure out how to do that, couldn’t figure out how to plug in a Raspberry Pi and reconfigure their miners. Some of these guys really don’t know what they are doing. With that in mind if we are going to imagine a world where some of these guys who don’t know what they are doing are going to run a full node, you can imagine how they might creatively misconfigure this and end up generating garbage or not uploading the blocks or ending up with no mempool so they have no transaction fees they’re claiming. You can imagine how a user might deliberately misconfigure this. So we have to this option for the pools to spot check the work that is coming in. This in fact interacts with block propagation as well. Existing pools obviously have a lot of block propagation optimization that they’ve done. When they are the ones creating the work they have all the transactions. If a share comes in that is a full block they have the full block. Whereas if you imagine sending just shares to the pool where the client is the one who created the full block, the pool doesn’t have the full block to broadcast. Of course some of these farms are behind random crappy DSL modems in rural China so you can imagine block propagation might suffer. With that in mind the Pool protocol actually has a weak blocks protocol built in. We can finally actually do weak blocks because no one has ever bothered to do it. It actually works really well in this scenario. Who is familiar when I say weak block, what that means at a high level? I’ll go through it real quick. Weak blocks is a super old idea for how to do better block propagation in the peer to peer network using a similar observation as pools use for shares. You can say the peer to peer network won’t only send around full difficulty blocks, it will actually send around what look like shares that are slightly reduced difficulty blocks. These blocks won’t be validated, won’t be connected to the chain but if we’ve already seen most of the transactions that come through, even one of these lower difficulty blocks, then we can use a differential compression for the real full blocks that have many similar transactions. Of course compact blocks and other schemes are more efficient than this so this doesn’t actually exist in an implemented form as far as I’m aware. But it makes a lot of sense here because we already have these shares, we already have this natural place to shim in weak blocks. We are already sending from the client to the pool the shares and we can have a second share difficulty that is slightly higher where we send the full block data. All the transaction data as well instead of just the Merkle path. We do that and that uses differential compression to say “Hey, that last weak block I sent you. Take these transactions from it and here’s some new transactions.” That works pretty well. The pool can select different difficulty tuning between the shares themselves and the weak blocks so they can choose how much data they get from the client in that regard. That allows them to spot check. They can take those weak blocks they receive, look at them, say “Yes these transactions are valid. You are not mining Dogecoin on a Bitcoin pool.” These are well formed things and you are including transactions and everything looks good so we can pay you out. There is a little bit of complexity here. We’d like the pool to accept chain fork blocks. Not Bitcoin Cash, Bitcoin kind of forks, but if you have two blocks at the same height that are both valid we don’t want the pool to be involved in selecting which block you should be mining on because that enables selfish mining attacks. If we make that up to the clients that means the client would have to do the selfish mining attack and not the pool. Ideally that is on the client end but that obviously has complexity because you can’t just take a random block you see and validate it steady state, you have to build UTXO for the previous block. If you have a Bitcoin node you have to have some way to not validate in that case. Eventually we will have a solution to that. I just know that that’s rare enough that hopefully you are fine. In practice, those are super rare. Again this is spot checking where you aren’t checking every share that comes in fully. That is probably ok. Your biggest goal here is to identify a misconfigured client not necessarily a malicious client. Malicious clients can already exist today in Stratum. BetterHash doesn’t change anything in that regard. A malicious client in Stratum today can do block withholding attacks where they send you shares but not if that share is going to actually be a full Bitcoin block because they know that. That means the pool loses money but still pays you out. That doesn’t change. Malicious miners, it is the same threat model that you have today. But misconfigured miners are a hell of a lot worse in BetterHash than in Stratum today. That is the reason for the weak blocks. We can fudge it a little bit and say “It is ok that we don’t necessarily have the ability to spot check everything. We can at least see that it is built on a block of the right height at a potential tip that might be valid. We’ll go ahead and accept that.”
+
+Q - Why is the block withholding attack useful against your own pool?
+
+A - Against your own pool? I mean against a competitor. You do it against a competitor. That’s a good point though actually. Who is familiar with pay out schemes for pools? This is a quick detour in algebra. We can get into that in the Q&A if you are interested. There are some fun attacks in early payout schemes. Because a lot of mining farms are operated by people who don’t necessarily know much about Bitcoin they naively assume or maybe rightfully that if the pool doesn’t pay them out the exact same amount every day or every hour, the pool is scamming them. If you have variance, the pool has some variance, sometimes gets more blocks, sometimes gets less blocks and pays out based on how many blocks they get, you’ll have a slightly different payout everyday. For practical business reasons most pools, especially in the Chinese market, use what is called a paper share. This means that they pay out the expected value of a share every time they receive a share, irrespective of whether or not they mine a block. If the pool hasn’t found a block in a long time it might go bankrupt because they are still paying out based on this. This makes block withholding attacks very nasty because if a pool is charging a 5 percent fee and you have 6 percent of the hash rate of that pool you can make them go bankrupt eventually with high probability. Because you do block withholding, they lose 6 percent of their income, they still pay you out 99.9 percent of what they would pay you if you weren’t doing this attack and they don’t get the blocks so you put them out of business. Why this attack doesn’t happen in practice I don’t understand. I guess everyone is just kind of fine with if. In practice most pools, especially in the Chinese market, know their customers. What you would see if this attack started happening, I imagine they would KYC their customers. You’d think it is a cutthroat industry and you want to put your competitors out of business but I guess not. I don’t know.
+
+Q - They know where you live.
+
+A - Yeah. It is China, who knows.
+
+Q - If you own all your competitors, that works as well.
+
+A - Yeah if you are your own competitor it doesn’t help
+
+Q - There is no way of detecting when…
+
+A - Not materially no. Because blocks are rare enough, you don’t have enough information to do any kind of statistical analysis to see when your clients are doing a block withholding attack. Unless that client is really large. But that is not that common.
+
+Q - You could make a probabilistic judgement that they are withholding blocks?
+
+A - But only if they have been doing it for six months and they very clearly should have found a block. There is not really enough information. I have actually heard a case of an accidental block withholding attack. It was detected because they weren’t doing the block withholding attack at the real Bitcoin difficulty, but at a much lower difficulty. There was this weird distribution of the difficulty of the shares coming from that miner. They were able to identify just because of a software bug in the miners. If there is a way to f\*\*\* it up your users will find a way to do it.
+
+Q - Could you send the user a prepared… use this second nonce you will run into the main nonce and you should find a block. If you have a username in there it doesn’t work?
+
+A - If you have per user data that doesn’t work. Of course you want the user to be doing useful work because otherwise you are wasting money.
+
+Q - For testing?
+
+A - That only works if it is a full Bitcoin block. You’d only be able to do it right when you find a block, you could send that same work to all other clients and make sure they get back to you with something. The user could detect you doing this. If you want to go down the rabbit hole of a user being truly malicious and competent they could.
+
+So chickens and eggs. Getting adoption for something like this, a pool doesn’t want to run parallel infrastructure, they don’t want to have their existing Stratum setup and also a whole second pool server without a lot of customer demand. Of course the customers aren’t going to demand something that a) doesn’t make them more money and b) the pool doesn’t even offer. How do you solve chicken and egg problems in terms of protocol adoption? I am all ears if you have ideas. Working on that one, it is slow going.
+
+Q - …
+
+A - If you are writing a new pool, [this](https://github.com/TheBlueMatt/mining-proxy) has an implementation of the Work and Pool protocols. It has a sample pool and it will speak Stratum on the backend to connect to existing clients. An existing miner obviously only speaks Stratum and this will work for that. If you are running a new pool the anticipated layout is that you would use this software on the pool end and then also run your own mining proxies that speak Stratum for clients who want to use Stratum. Clients who want to use BetterHash can run their own mining proxy as well. You provide that mining proxy as an option for clients.
+
+Q - What are the constraints for running a mining pool? Obviously when you run physical miners yourself you are constrained by electricity?
+
+A - The only real constraint is that you have enough clients. You have to have enough clients to have steady blocks founds or enough hash rate in total. You can’t necessarily run a pool if you have a tenth of a percent of the network hash rate because you won’t really be solving the variance problem for your clients. They might as well just solo mine.
+
+Q - Does geographical proximity to the clients matter much?
+
+A - For block propagation, in current pool design yes. BetterHash kind of helps with that because of this weak block thing. Pools don’t want to throw away all of their existing block propagation tuning that they’ve done. Especially in the pay per share model because in the pay per share model any orphan rate comes directly out of the pool’s fee and not out of the client’s. It comes out of the client’s in pay per last end share or any of the sane payout schemes. They don’t want to throw away all of their block propagation work so that is another reason for the weak block stuff. The pool gets the full block relatively quickly when a block is found which means they can do block propagation with that. But also the client can do it. Now if the pool server is further away you might have a higher stale rate on your work submissions but the client can do block propagation redundantly with the pool. Obviously that is purely additive, that is only a gain. Now the latency between you and the pool for block propagation isn’t as big a concern. You can propagate it locally and then the pool can do it on the other side of the world and that is fine.
+
+[This](https://github.com/TheBlueMatt/mining-proxy) started as demoware. It is not that far off. There are some issues filed on it that are tagged. If you want to help and you want to write stuff in Rust and you are interested in Rust contributors are welcome to that. There is some stuff that is not done yet, not implemented yet, some features that need to be added before it is usable. There is information there. There are three Bitcoin Core patches that I need to land upstream. You need to be able to submit headers and validate headers, loose headers. I talked about how ideally if one of your clients as a pool, is mining on some fork that is at the same block height as you, you want to be able to say “Yes, they are mining on a fork. It is the same block height, this is rare enough, this is ok, I am going to accept this.” But in order for you to be able to do that you have to have the header for the previous block that they are mining on. They actually send you the header in the protocol, it is just an extra 80 bytes, it is not very expensive. That needs upstream support in Bitcoin Core. I think that may have already landed. I told Marco to do it and I think he did it, I think that might have landed. I don’t know, I haven’t been following that.
+
+Q - You live in a bubble when it comes to Bitcoin Core because you are always following a subset of pull requests. You don’t see half the rest of the repo.
+
+A - Yeah exactly.
+
+I think that one might exist but it needs to be plumbed into the mining proxy code. It also needs support for validating the blocks themselves, testing the block validity of a weak block that you received from the client, that also needs to be plumbed through in the mining proxy and landed upstream. But there needs to be some tuning there to say “If you have spare CPU cycles you should be validating someone’s weak blocks. But if you don’t have spare CPU cycles you should turn up their difficulty so that they submit fewer of them. That needs some clever tuning there. Practical fun project if someone feels like writing that. And then the Work protocol itself, again it has to exist in Bitcoin Core, I have an experimental patch set for that. It is linked from the README of this and it has successfully mined testnet blocks before so it probably works. It needs to land upstream.
+
+# Questions
+
+I was told I have to mention that we are running another residency this summer, Chaincode is. It is free and I think we might help with housing if you need financial support. I think, don’t quote me on that. This time it is going to be a full summer, it is going to be 2-3 weeks of course stuff and all kinds of fun philosophy of Bitcoin Core and details and implementation, all kinds of fun talks like this. Except for 2-3 weeks solid, a stupid amount of learning. Then 2 months-ish depending on your schedule, of project time, hands on with great mentors. You can apply at residency.chaincode.com. Don’t wait, we are doing early submissions so you screw yourself if you wait too long. Of course if you so choose and you get accepted your project time can be on BetterHash so you could work on this with me in New York. With that, any questions.
+
+Q - Are there major pools interested in this?
+
+A - I have gotten some level of interest from folks. I have gotten the BIP reviewed by some of the pool operators. They provided good feedback. There are a few more changes I need to make in response to feedback that I got recently. There is the chicken and egg problem that I mentioned and also the running the second set of infrastructure. It is a little bit harder to justify that to an existing pool. There are some folks who are talking about building new pools based on this software. It is kind of nice because a lot of the pool software I have written for you and you can just use it. You just have to build the website, the fancy graphs and sparkly things. Obviously the SlushPool people are excited about the concept. Jaan, the CEO of SlushPool was saying this on stage in Vegas a week ago. This is cool and they support it in theory but it is hard to justify at least without customer demand. If there were a bunch of customers banging on their door saying “Hi I want to use your pool but I want to run my own full node” maybe they would be more likely to do it. You should totally go form a Twitter mob and tag \@slush_pool I think it is. But it is hard to justify. It is one of those slow burner things.
+
+Q - Can the previous protocol be deprecated?
+
+A - Ideally, eventually. But you have to get the hardware to upgrade because all the hardware supports Stratum and only supports Stratum. That is a lot of roll time.
+
+Q - The other option is for a miner to get a pool onboard?
+
+A - Yeah or you could run your own pool or you could solo mine using it if you are sufficiently large that you could solo mine. There are folks talking about starting a pool. This is one of those things that is build it and then wait a few years and hopefully they will come. It is intended to be a slow burn. I don’t anticipate seeing material adoption of it in any short timeline but hopefully with enough continued pressure and if someone wants to finish the bugs that need to be implemented then we can make that happen.
+
+Q - There are people interested in making a pool?
+
+A - Yeah. There are always people, it is not a terrible business to be in so there are always people interested in getting in I guess.
+
+Q - There is an incentive there for the clients to run their own full nodes so that if the pool goes down they can get their money?
+
+A - Yeah. Most of them are already configured with multiple pools so if one pool goes down they can carry on mining on a different pool. It is one of those things that is hard to justify this to anyone involved because no one makes more money necessarily. You can make some argument about how this looks better to investors of Bitcoin than the other chart. And so it is going to cause the Bitcoin price to pump so we should get this adopted now. But the market seems to be pretty rational (joke) so I don’t know how strong an argument that is.
+
+Q - You prove to the pool that you paid the pool in the coinbase but you can lie about the precious transactions paying large transaction fees.
+
+A - You can totally claim in a share “Hi I have a million Bitcoin in transaction fees. You should pay me out more because of that.” You have to handle that on the payout side. The BIP, I think, if not I should go write it because I intended to, tells you “Your payout should not exceed the median fee claimed by your users.” That makes it safe. Obviously you have to spot check the weak blocks. If you spot check the weak blocks you can detect a user who is cheating and ban them. Then as long as you don’t pay out in excess of the median fee claimed by your users you are never going to pay out too much. You just might be paying out to what is effectively a block withholding attack.
+
+Q - Are there any scenarios where a security vulnerability in the old protocol could cause mass adoption of BetterHash?
+
+A - Yeah these pools could lose all their hash rate overnight. If someone has an unfiltered BGP connection, you can get those in Eastern Europe all over the place I hear. If you want to make some easy money go BGP hijack some Bitcoin pools and you will also drive adoption of BetterHash (joke). I didn’t just say that.
+
+Q - Wait until the BetterHash pool is ready.
+
+A - Yeah please wait until there exists a BetterHash pool.
+
+Q - That goes along with Eric Voskuil’s general thesis that decentralization is a result of attacks. If governments attack mining pools, stuff like that.
+
+Q - Have you given any thought to paying out shares with Lightning? Does this make it easier?
+
+A - No it doesn’t really change it. Payouts are orthogonal and in fact not implemented in the sample client I have. 
+
+Q - Could you not do it in a trustless way? That would be cool. Somehow the shares already open a Lightning channel or somehow push things inside a channel?
+
+A - Intuitively my answer is no. I haven’t spent much time thinking about it. Bob McElrath has some designs around fancier [P2Pool](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-August/014893.html) that he claims does it. I am intuitively skeptical but I haven’t thought about it. Maybe it works, talk to Bob or go read his post.
+
+Q - It could be some referential thing, maybe it is Lightning-esque where whatever you are doing in the Lightning channel points back to the hash of the block that you are doing it in?
+
+Q - What you do is you make it so that the coinbase includes a preimage. You wait for the pool to get its money to reveal its preimage and that also unlocks…
+
+A - But that only works when the pool finds a full block and broadcasts it. They don’t have to reveal 99.99 percent of shares because they are not full blocks.
+
+Q - It is intended for P2Pool.
+
+A - Ok. His scheme is like a P2Pool variant with GHOST, SPECTRE kind of design.
+
+Q - I guess all the payouts could be a Merkle tree of preimages of individual Lightning payments?
+
+A - The problem is you are trying to reveal them and publish them. That would be a lot of data to publish.
+
+Q - I don’t know how it would actually work. But it’d be nice because it solves a lot of these problems if you know that every individual thing that you send to the pool is self contained. You don’t have to think about who to pay how much.
+
+A - Bob’s design no longer has a centralized pool involved. Back to the P2Pool design which is a little bit more self contained.
+
+Q - Bob didn’t come up with this, it was me.
+
+A - Chris, do you want to explain P2Pool?
+
+Chris Belcher: [P2Pool](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-August/014893.html) works, these shares form a share chain. Every node in P2Pool verifies this share chain and makes sure it pays out to the right people. When a real block is found the hashes get paid in proportion to how much work they have contributed to the share chain. You could make it trustless so that they can’t cheat each other. That’s a summary of how it works but it is dead, there are loads of problems with it unfortunately.
+
+Its biggest problem was it was bad UX. It reported a higher stale rate because it had this low inter block time so you had naturally high stale rates. But what mattered for the payouts, for a centralized pool if you have a stale rate you miss that many payouts, in P2Pool if you have a stale rate you can still get payouts for stale shares, the only thing that matters is your stale rate in comparison to other clients. And so you have a lot of miners who were running P2Pool and it said “Hey you have a 2 percent stale rate” and they were like “F\*\*\* this. My centralized pool says I have 0.1 percent stale rate. I am not going to use P2Pool.” And so P2Pool died for no reason because it had bad UX.
+
+Q - Does P2Pool solve most of these problems?
+
+A - P2Pool has a lot of complexity. The intention of BetterHash is that we can do effectively as well as P2Pool. You still trust the pools for payouts but hopefully they are only able to rip you off for a day and then you go somewhere else. But we can do almost as good as P2Pool without all the complexity of a share chain. This is two orders of magnitude easier to implement and maintain than P2Pool. That goes a long way in terms of adoption I think. But I’d be happy to be wrong, I’d be happy if P2Pool took off again and everyone just used that instead of this.
+
+Q - Was it a factor with P2Pool that you had to have a full node? For a lot of people mining having a full node is an issue.
+
+A - Totally, yeah. P2Pool made you have a full node whereas this is at least optional. I anticipate that most people using BetterHash kind of pools won’t run their own full node. My hope is that you can move to a world where it is really easy. You just buy a CasaHODL style node, you plug it in and now you are running a full node. You can have at least some of the larger clients of pools do that which will get you most of the advantage here. Even if all the small clients are just on pools, it is ok.
+
+Q - One of the big issues with a pool is that you have tiny payouts and then you have lots of them before you form a meaningful output. While in a centralized pool you can set a payout threshold where here you cannot?
+
+A - BetterHash doesn’t really affect payouts in any material way. In fact the software I have, it just has a hook for “Hi I received a share from this client.” It is up to someone building the pool to implement the database tracking and all of that stuff and actually do the payout stuff. That is no different from today versus this. You still have that “I got a share from client A for value B”
+
+Q - I was talking about P2Pool.
+
+A - P2Pool had very high payout thresholds because they were all onchain. They ended up with these huge coinbase transactions. I guess another problem with P2Pool is they had big coinbase transactions and some of the early ASICs actually barfed if you gave them too large a coinbase transaction and couldn’t mine with it. You have to pass the ASIC the coinbase transaction itself in Stratum. They had some limit in their JSON parser because parsing JSON in embedded devices is hard, who would have guessed? Also Forrest walked away from it and wasn’t really maintaining it. He went and did a rocket science PhD and got bored with P2Pool. I think it is kind of unmaintained. If someone wants to maintain it, go for it.
+
+Q - It is really hard to read, massive Python files.
+
+A - Someone could rewrite P2Pool and then maintain it.
+
+Q - Some questions from Twitter. I think you’ve answered a couple of them. Does BetterHash allow overt AsicBoost? 
+
+A - Yeah. It is explicit in the BetterHash spec that overt AsicBoost is allowed specifically because the 2 bytes in the version field that I mentioned are explicitly allowed to be tweaked any way you’d like. That is compatible with existing AsciBoost stuff which just uses 2 bits and also gives you spare room to not need the extra nonce in the coinbase.
+
+Q - Why weren’t the 2 bytes of the version field not used before? 
+
+A - The question is why didn’t early Stratum specify that the 2 bytes in the version field are free for extra nonce space. It is bad form to be like “This thing that has consensus rules around it, we are going to embed it in the ASICs that they can change this.” Then you might have a soft fork or something that breaks your ASICs just because someone wants to increase the version number. Again if we all agree that we can take 2 bytes of the version field and apply no consensus meaning to them forever more it is completely fine to do this. At this point because of AsicBoost we are already locked in to that. We can’t do anything about it, at least without breaking all the AsicBoost miners which we don’t necessarily want to do. Just because it is bad form I guess.
+
+Q - It is 4 bytes, the version are 32 bit integers?
+
+A - Yes they are all 32 bit integers.
+
+Q - I guess that’s just the way it is.
+
+A - Because Satoshi. They are also little endian 32 bit, it is weird.
+
+Q - I was quite surprised when I learnt that a lot of the Bitcoin exchanges don’t rely much on Bitcoin Core software. I was just as surprised also to learn that miners do heavily rely on Bitcoin Core software. Is that a true impression?
+
+A - I actually don’t think that most exchanges don’t rely on Bitcoin Core. I think by far the most common setup for an exchange is you have Bitcoin Core nodes that you run and then you have your own internal SPV node using BitcoinJS or BitcoinJ or whatever and then that connects only to your own Bitcoin Core nodes. So in a sense you are still relying on Bitcoin Core, you won’t get data from anything else except your own full node that you are running, but you don’t have any of your business logic in Bitcoin Core. In a sense the pool setup is actually kind of similar in that most of your business logic is on the pool server. All of the logic around payout and shared validation and everything is on the pool server. You are just Bitcoin Core to get data about new blocks. You use it a little bit more obviously than just making a peer to peer connection to it. To my knowledge there is not a real alternative, if you want good performance for getblocktemplate I don’t know if anything has reimplemented getblocktemplate in its insanity.
+
+Q - I have never even looked at it.
+
+A - I don’t think anyone else has either. It has a bunch of bells and whistles that I’m pretty sure are documented in the getblocktemplate spec and aren’t even implemented. I know that none of the things that it has aside from just the really basic “give me a block template” version are implemented in any of the pools. It has bells and whistles but no one cares because it is gratuitously inefficient and over designed.
+
+Q - …much better latency in this regard and more profitable?
+
+A - Yeah. That’s the other reason to pull getblocktemplate out and into a binary protocol that’s just push specifically. In the BetterHash Work protocol you have if Bitcoin Core gets a new block it pushes that information to the pool server, to the clients whereas getblocktemplate is polling.
+
+Q - …
+
+A - No it is a raw TCP socket. You just connect and it will give you new work. So in practice it will be a little lower latency, not enough to make a difference for profitability or at least not materially. But only because most of the pool servers are heavily optimized for making sure that right when Bitcoin Core gets a new block it does a getblocktemplate request. They do stupid crap like connect to the peer-to-peer port to get a push notification of a new block so that they can then go request getblocktemplate. Without the JSON roundtrip it will be a little bit faster. You could make some argument about better profitability but not a very strong one.
+
+Q - It said in your BIP there is a reliance on Bitcoin Core APIs. 
+
+A - That is a reference to getblocktemplate? Because most of these pool servers are optimized for latency and they care a lot about the latency they do these stupid hacks where if we change something about the way we send notifications of new blocks to our peer-to-peer connections then we might break pool servers because they are using that as a notification to some other subpart of the daemon. It is this weird dependence that we might accidentally break because we go optimize something else. Oops now all of the pool servers are broken through complete nonsense reasons. We don’t want to be in that state.
+
+Q - We want in the architecture to have a proper boundary between what they see as their Bitcoin Core as a service. Like you said with the exchanges, it is the same thing. They have Core and in theory they could swap it out.
+
+A - At least BetterHash is better documented, you still get that boundary. In this case it is “Here’s one protocol. You use this.” Not “You connect over ZMQ and the peer-to-peer….” It is like have your little potato computer and shove electrodes on both sides so you can get something out…
+
+Q - When your disk space decreases by more than….
+
+A - Call getblocktemplate.
+
+Q - Why would you subscribe to the blocks and connect to the P2P interface of the same server?
+
+A - Because the getblocktemplate doesn’t give you a push notification when you get a new block. So you have to connect via the peer-to-peer interface to get a push notification so that you can go poll getblocktemplate. I think they also support ZMQ to get the push notification.
+
+Q - You connect twice. One from the P2P and one from ZMQ.
+
+A - Yeah. One might come first and one will come first. It is random which one because Bitcoin Core is not designed to support one millisecond push notifications over arbitrary interfaces. But we can do that if we are using the protocol that explicitly supports it. We can go optimize that in Bitcoin Core and it is like a first class supported feature versus these weird hacks that people do that we might break without realizing it, very easily.
+
+Q - Is the pie chart generated distributed randomly?
+
+A - This is actual data. I took the breakdown of SlushPool… they have public user A has 1 percent of their hash rate and user B has 0.5 percent and whatever. I plugged it all into Excel. You can see where the big chunks are. This is AntPool and that is BTC.com. Then the actual breakdown of the individual bars are based on SlushPool distribution of the hash rate within their users. It is at least valid for SlushPool. The distribution will be different on AntPool and BTC.com.
+
+Q - You are assuming that each pool is the same as SlushPool?
+
+A - Yeah. Assuming each pool has the same distribution of hash rate then that would be valid. It is a strong assumption but it is not completely far off.
+
+Q - There’s an old theory in Bitcoin, we’re going to have commodity hardware, miners in toasters. What do you feel?
+
+A - It seems like 21 had to pivot so it seems like it didn’t work. That was a few years ago.
+
+Q - Were they crazy or were they just ahead of their time?
+
+A - Most of that is termed in the “we’re going to use them as heaters.” Remember that an electric heater is a hell of a lot less efficient than a heat pump. If you care about the efficiency of your heating you are not going to use an ASIC. If you have an existing electric heater you might replace it with an ASIC but it seems weird that that would be competitive commercially, especially since cheap power is in a few specific locations that have hydro, that have cheap green energy.
+
+Q - It is more about energy distribution than it is about the fact that hardware reaches a certain physical limit in terms of efficiency…
+
+A - We are at the point for hardware. That’s why you see more competition in that market which is really exciting. My sense has always been that distribution of hash power is more about the power markets than distribution of the hardware itself. Luckily power markets are pretty distributed it turns out. You can go buy a small amount of cheap hydro power a hell of a lot easier than you can show up and buy a hundred megawatts or two hundred megawatts of cheap hydro power. 
+
+Q - Consumer electricity is pretty expensive. Unless you have a number of giant solar panels it just does not add up enough. So unless you have a windmill in your garden…
+
+A - Some people have windmills.
+
+Q - You joked about hijacking BGP. Has anyone seriously considered mechanisms to disincentivize pooled mining?
+
+A - There have been some attempts to disincentivize pooled mining. The term you are looking for in a Google search is non-outsourcable proof of work, a non-outsourcable puzzle. The idea of a non-outsourcable puzzle is that you design it such that if the client of the pool is able to detect whether or not this meets the full block difficulty then they can steal the full reward. You allow the client to steal the reward. You design it such that the pool will never be able to trust the clients because if the block is actually a full valid block the client will just steal all the reward for the block and the pool won’t get the reward, pools would be broken. I am vaguely dubious of this because as we discussed you could already put all your competition out of business with block withholding attacks. This doesn’t happen so it seems weird that a technical solution will solve this. Again you’ll just have pools that KYC.
+
+Q - Any one of the miners in the pool can steal…?
+
+A - No it would have to be the miner who found the block can steal that block reward. You just end up in a world where you KYC them and you are fine. The problem is also the reward variance. If you make the variance really low you have less incentive for pools to exist but you might still have pools. You still see pools in Ethereum but the reason you see pools in Ethereum is because they take over running a full node for you which is a lot of effort. Especially in Ethereum it is really hard. Whereas there is lower inter block time so there is much lower variance but even still you see pools.
+
+Q - Up to a certain size I would say pools are a positive because they allow much smaller organizations to mine.
+
+A - Yeah there is nothing inherently wrong with pools. They very neatly solve the payout distribution which is really nice. If we could get them to use BetterHash they could rip off their miners and try to hold them hostage but the miners could go elsewhere pretty easily.
+
+Q - What are you talking about at the conference?
+
+A - On Thursday I’m going to be talking about rust-lightning which is a project I’ve been working on to implement a batteries not included Lightning node. lnd, c-lightning, these things are a full standalone Lightning node where they have a wallet, they download the blockchain, they scan the blockchain, they do all of these things. If you are for example an existing wallet already, you are Electrum or Mycelium or whatever, taking a full Lightning implementation in a node, how do you use that, how you integrate that? You don’t just run a second wallet in your wallet, that’s kind of nonsense. rust-lightning is all of the pieces of Lightning implemented for you except for the last step of downloading the chain, generating keys, storing things on disk, these kinds of things. There is some cool stuff that I’ve been doing with it in terms of fuzzing the actual protocol logic and finding bugs in much cleverer ways than almost any other existing fuzz work that I’ve seen. That I’ll be talking about in addition to the high level API and what you can do with it, how you might integrate it into a mobile wallet or how you might integrate it into a hardware wallet. All kinds of fun stuff.
+
+Q - It is able to be really flexible in comparison to some of those alternatives.
+
+A - Yeah if you run a Lightning daemon I would not suggest you take rust-lightning, I would suggest you go take lnd and I don’t intend to compete with that. It is more a very flexible thing you can integrate a lot of different ways. You might imagine having it synced across different devices, having hardware modules that are mutually distrusting that are partially offline, integrating it that way. It is designed to support these kinds of different use cases that current Lightning stuff doesn’t have a concept for.
+
+Q - Are you following those other implementations closely? 
+
+A - Not that closely. I don’t have strong views of them.
+
+Q - I found an interesting Twitter conversation between you and Alex Bosworth on some of the design decisions for c-lightning and lnd versus rust-lightning. 
+
+A - I don’t remember.
+
+Q - Apart from the pooling problem are you not concerned about mining centralization?
+
+A - I am not really. Eric Voskuil likes to complain about BetterHash. He has a valid argument. His point is essentially that if you are beholden to your pool they could tell you “Hi, you have to now run Bitcoin Core patched to censor these transactions or we are not going to pay you.” There is still some effective centralization there. I am personally not at all concerned about that because currently today the pool can just do this and you don’t even notice. You would have to spend a lot of effort to detect this. Whereas in a BetterHash world you have to take active action to apply this patch and run this version of Bitcoin Core instead. It is much easier for your response to that to be switch to a different pool than actually do what they tell you to do. So you don’t really care. I’m not too worried about that. If you have only one pool you might still have that problem but of course if you only have one pool and they do this you can go create a pool.
+
+Q - From a manufacturing point of view?
+
+A - That is completely orthogonal, the manufacturing. Luckily that is improving a lot because we are getting to the current gen process for semi conductors so that’s become much more distributed which is nice.
+
+Q - You are removing the need to parse JSON…
+
+A - Yeah and we can simplify the controllers so that they are not running weird CG miner hacks on hacks on hacks and parsing JSON and spaghetti C code.
+
+Q - Can you talk about Rust and how you are finding it developing on?
+
+A - I really like Rust. Remember Rust was designed in large part because Mozilla got tired of C++ being terrible in Firefox and having security bugs up the wazoo. They wanted something that was efficient and much safer to replace it with. I have found it to be really nice to use but I was also coming from C++ so I was the target audience. Generally I am a huge fan. I haven’t messed around with Go or any of the things that are seen as alternatives but they rather orthogonal. If you are going to do especially embedded programming, some of stuff it is intended for, especially what rust-lightning is intended for, Go doesn’t really make sense. You have this big runtime and garbage collector and whatever. Rust doesn’t which is nice for that use case. I have found it to be great. It is still a little bit immature. The BetterHash implementation I have is in Rust but uses some of the new fangled Rust async stuff which isn’t complete yet. Hopefully they will finish up in the next year or two. It is still a newer language especially for server development kind of stuff. But rust-lightning is just a C callable library so I have most of the C wrapper written for it so you can embed it anywhere C is. Rust is relatively mature for that kind of application where you are not doing anything fancy, you are just providing an API in a C callable wrapper, I have found it to be pretty mature for that.
+
+Q - Can you open a Lightning channel with a coinbase transaction?
+
+A - Yes
+
+Q - Does BetterHash enable things like I as a miner have my full node, I can include transactions that I actually want to send for no fees?
+
+A - Yes. The “I want to mine my own transactions to avoid paying fee on it”. You do pay the fee in opportunity cost.
+
+Q - And you hurt your anonymity.
+
+A - Yeah and you hurt your anonymity because it is clearly the miner who included this and you are paying it in electricity fees. 
+
+Q - At least you know for sure you can close a channel.
+
+A - That’s true if you have enough hash rate to mine a block in the correct amount of time.
+
+Q - There is interest in decentralized mining with Lightning. As Lightning matures, Lightning is really dependent on miners not being able to censor transactions.
+
+A - Yeah. Almost all proposals for doing more scalable chains, sidechain kind of designs, Lightning, there is other stuff in that category. The key assumption that they’ve all chosen to make is they elevate the censorship resistance assumption in Bitcoin to a security assumption instead of a utility assumption. We assume if you couldn’t get your transaction through in Bitcoin and transactions were being censored this is probably going to destroy the value of Bitcoin in the long run. But maybe this is ok on short bursts. Maybe this won’t work hurt Bitcoin materially if we can redecentralize mining. Whereas in a system like Lightning or a system like a proof of work secure sidechain or something like that, if this is violated temporarily you not only have a broken user experience but you actually lose money. That is generally the key design. As you point out decentralizing mining is an important part of that at least in my opinion. That was kind of some of the impetus to work on this but we are currently in a very f\*\*\*ed state so we should fix that.
+
+Q - It goes along Schnorr I would say because Schnorr lets you blend in these opening and closing transactions a bit more so it is more difficult to see that’s a Lightning channel close. A force close wouldn’t have that because you are still expressing the script.
+
+A - With a force close you wouldn’t have that and the open is just a bech32 output anyway. The comment for those on video is because Schnorr or MAST might allow you to make Lightning transactions look the same as any other transaction, decentralizing mining is useful and goes hand in hand with that.
+
+Q - If you also used Taproot then it would look like a normal transaction.
+
+A - Yes if you used Taproot it would look like a normal transaction. eltoo uses SIGHASH_NOINPUT, that would still be obvious. Hopefully the only thing that uses SIGHASH_NOINPUT. If anything else uses SIGHASH_NOINPUT we might be f\*\*\*ed. 
+
+Q - You didn’t give it its full title.
+
+A - SIGHASH_NOINPUTDONTUSETHISITISDANGEROUS
+
+Q - Could you give a bit more detail on the fuzz tests that you wrote for rust-lightning? Perhaps explain what fuzz testing is first.
+
+A - For those who are not familiar fuzz testing is a general testing approach of black boxing a test case that takes as input some random set of bytes, running a program on it and trying to make it crash. This is primarily used for decoders, things like that. They have proven to be very effective at taking an image decompression library or something that processes untrusted data off a network and making it crash, finding vulnerabilities in it, finding stack overflow, buffer overflow kind of vulnerabilities. They are not just completely dumb shove in random bytes, they usually instrument the binary, you can do this in hardware or in software, and detect when a given input has found new paths in the program. You map out all the IF statements and all the branches in the program and if it finds an input that hits a new branch then it considers that input interesting and it will mutate that input a little bit more than other inputs. They’ve actually had great results finding all kinds of fun security bugs in mostly image decompression, that kind of library. With rust-lightning, because it is a library and it is this C embeddable thing and it has no runtime associated with it, it is super easy to shove it in fuzz tests. One thing that I’ve done recently that has turned out to be really cool and really useful, to my knowledge the first use of this kind of approach to fuzzing, there is a fuzz test where it stands up multiple nodes in the same process, connects them to each other and then interprets the fuzz input as a list of commands to do to these nodes. Then tries to make the nodes disagree about the current state of the channel. These commands take the form of things like “Please initiate sending a payment from this node to this node. Or from different sets of nodes.” It can also deliver messages out of order. The fuzz tester can actually hit speed of light issues in terms of messages sent and getting delivered at different times. Its goal is to say “If somehow it can make the nodes disagree about the state of the channel then this is considered a crash and this is bad.” This has found a number of really weird corner case bugs of “If you do these four things in exactly this order then it forgets to set this flag. That will result in a disagreement if these other four things happen in this order.” The Lightning channel state machine is actually not as simple as it sounds. It is rather complicated. It has been a very effective test at fuzzing the rust-lightning channel state machine.
+
