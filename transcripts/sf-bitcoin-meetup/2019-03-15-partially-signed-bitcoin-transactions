@@ -1,14 +1,19 @@
 Name: Andrew Chow
+
 Topic: PSBT
+
 Location: SF Bitcoin Devs
+
 Video: https://www.youtube.com/watch?v=H6xZSRDXUiU&feature=youtu.be
+
 Transcript completed by: Caralie Chrisco 
+
 
 # Introduction
 
 Andrew: So as Mark said I'm Andrew Chow and today I'm going to be talking about BIP 174, partially signed Bitcoin transactions, also known as PSBT. Today I'm going to be talking a bit about why we need PSBTs, or Partially Signed Bitcoin Transactions, what they are, and the actual format of the transaction itself and how to use a PSBT and the workflows around that. 
 
-A quick story, around this time last year there was a fork of Bitcoin and I had some fork coins on a treasure and I wanted to get these fork coins off my treasure so I could sell them obviously. I wanted to do this locally and securely so I was going to use Bitcoin Core and Electrum. I figured this would be easy. It would be a pretty standard process that you do for signing offline transactions with Bitcoin Core. You just create a raw transaction, I bring it to electrum, sign it using the electron treasure plug-in, bring it back to Core and broadcast it to the network. So I went to do this and I created a raw transaction and brought it to an Electrum and I saw this problem. It says that the transaction doesn't belong to my Electrum wallet.
+A quick story, around this time last year there was a fork of Bitcoin and I had some fork coins on a Trezor and I wanted to get these fork coins off my Trezure so I could sell them obviously. I wanted to do this locally and securely so I was going to use Bitcoin Core and Electrum. I figured this would be easy. It would be a pretty standard process that you do for signing offline transactions with Bitcoin Core. You just create a raw transaction, I bring it to Electrum, sign it using the Electrum Trezor plug-in, bring it back to Core and broadcast it to the network. So I went to do this and I created a raw transaction and brought it to an Electrum and I saw this problem. It says that the transaction doesn't belong to my Electrum wallet.
 
 Back to this story, Electrum says this transaction was not related to my wallet. It definitely was. I assure you this transaction was related to my wallet. It also says the transaction is signed but according to Core that's definitely not signed. The scriptSig is completely empty. I spent a long time trying to figure this out, many hours reading through some documentation that wasn't very clear and reverse-engineering Electrum's transaction format. I finally figured out what the problem was. 
 
