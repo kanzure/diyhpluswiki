@@ -2,6 +2,8 @@ Using the Chain for what Chains are Good For
 
 Andrew Poelstra (andytoshi)
 
+Video: <https://www.youtube.com/watch?t=5757&v=3pd6xHjLbhs>
+
 I am Andrew Poelstra, a cryptographer at Blockstream. I am going to talk about scriptless scripts. But this is a specific example of a more general theme, which is using the blockchain as a trust anchor or commitment layer for smart contracts whose real contents don't really hit the blockchain. I'll elaborate on what I mean by that, and I'll show what the benefits are for that.
 
 To give some context, in Bitcoin script, the scripting language which is used to encode smart contracts which go on to the blockchain and eeryone verifies the chain and to download and execute all of this contract code. Everyone validates the chain. Everyone that wants to trustlessly learn the stat eof the system has to download and parse and validate. They can't compress or aggregate the data. They can't make it smaller due to kolmogorov complexity. The contractors doing this, before they publish, to be ensured that it doesn't get reverted, the transaction must first be confirmed. This is a poisson process. Once your transaction lands in a block, you need additional assurances. You never have perfect finality, too.
