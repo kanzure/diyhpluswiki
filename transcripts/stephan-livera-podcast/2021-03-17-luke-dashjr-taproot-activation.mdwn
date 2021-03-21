@@ -1,0 +1,338 @@
+Name: Luke Dashjr
+
+Topic: How Bitcoin UASF went down, Taproot LOT=true, Speedy Trial, Small Blocks
+
+Location: Stephan Livera Podcast
+
+Date: March 17th 2021
+
+Audio: https://stephanlivera.com/episode/260/
+
+Luke Dashjr arguments against LOT=false: https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-February/018498.html
+
+T1-T6 and F1-F6 arguments for LOT=true and LOT=false: https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-February/018380.html
+
+F7 argument for LOT=false: https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-February/018415.html
+
+Transcript by: Stephan Livera Edited by: Michael Folkson
+
+# Intro
+
+Stephan Livera (SL): Luke, welcome to the show.
+
+Luke Dashjr (LD): Thanks.
+
+SL: So, Luke for listeners who are unfamiliar, maybe you could take a minute and tell us a little bit about your background and how long you’ve been developing and contributing with Bitcoin Core.
+
+LD: I first learned about Bitcoin back at the end of 2010, it was a new year’s party and I’ve been contributing since about a week later. So I recently got past the decade mark.
+
+# Bitcoin Knots
+
+GitHub org: https://github.com/bitcoinknots
+
+Website: https://bitcoinknots.org/
+
+SL: So I know you have done a lot of different things in the Bitcoin world, and I know you have different projects running. One of them is Knots. Can you tell us a little bit about that?
+
+LD: [Bitcoin Knots](https://bitcoinknots.org/) is pretty much a product of the same development process that creates Bitcoin Core but it doesn’t have as onerous review requirements for things to be merged. And it also preserves some features that have been removed from the mainline Core such as the transaction priority, coin age and all that.
+
+# History of SegWit activation
+
+SL: Okay, great. I know you have been developing in Bitcoin Core for a while and there are certain things that you’ve helped progress. I believe it was your suggestion that enabled SegWit to be done as a soft fork as well. So maybe it’d be good to also dive into some of the different views on how SegWit got activated, because I think looking back now there are different visions of how exactly SegWit was activated in the Bitcoin network looking back to 2017. So perhaps if you want to set the scene in terms of how you viewed the lead up to 2017? As I understand there were multiple attempts to raise the block size at that time, there was XT and Unlimited and a few others. Can you spell out for us your view on what that looked like leading up to 2017?
+
+LD: There were a lot of people who wanted to increase the block size mainly as a PR stunt to say “Bitcoin can handle so many more transactions”. There were a lot of reasons not to do that. At the end of the day, when we got SegWit made up as a soft fork, a block size increase was included in that as sort of a compromise with the big block faction, pretty much doubling the effective block size that Bitcoin blocks can be. For whatever reason, they didn’t like that, they wanted to have more. I guess they wanted to take control of the protocol rules away from the community. And so they pushed forward with trying to do a hard fork despite that.
+
+SL: The view at that time is that people who were more in the small block camp or even in the “Let’s just keep things the way they are and not change it too much” some of them viewed that as an attack, correct?
+
+LD: Yeah. But SegWit was pretty widely accepted as a compromise between the big blockers and the small blockers because SegWit not only increased the block size, it also enabled Lightning to be a lot more effective and secure and that hopefully will eventually help reduce the block sizes significantly.
+
+SL Yeah, I see. By fixing some of the different bugs, for example transaction malleability and setting up the possibility for Lightning and so on, it was viewed that that would be the way forward. In the community it seems that there are somewhat different views on how exactly SegWit was activated. Could you perhaps tell us the story from your perspective, how do you believe SegWit was activated in that time in 2017? I know there were various attempts and different BIPs and proposals made.
+
+LD: Initially we had configured SegWit activation to be done with the [BIP 9](https://github.com/bitcoin/bips/blob/master/bip-0009.mediawiki) version bits, which was an upgrade over the previous model that simply used the version number as an integer for each new feature and we’d increment it. Then eventually all the old version numbers would become invalid and all the blocks had to be upgraded. So version bits, the idea was we can just temporarily assign each of the bits for the activation. Then once activation is over, we stop using it. That way we can have up to 20 soft forks activating in parallel, which at this point seems like why would we ever have more than one? But at the time things were speeding up and it looked like that was going to become a possible issue that we’d want to have multiple in progress at a time. So SegWit used this and because of the whole big block controversy, there may have been other motives in the middle there, but it turns out the miners decided they were going to, instead of coordinating that upgrade, actually just refuse to coordinate it and effectively stop the upgrade in its tracks. It was never intended to be a way for miners to make decisions about the protocol. The community had already decided SegWit was going to happen. Otherwise you don’t deploy an activation at all. But in any case the fact that it was relying on the miners to coordinate meant the miners were able to effectively prevent it. And so BIP 9 at that point had pretty much failed. An anonymous developer named Shaolin Fry proposed that we fix this by making them signal, it’s no longer optional. The miners have to no later than a certain date signal or their blocks wouldn’t be valid. This meant closing the loophole that miners could refuse to coordinate. They still had the coordination involved but if they didn’t coordinate then it would still activate anyway. That was [BIP 148](https://github.com/bitcoin/bips/blob/master/bip-0148.mediawiki). At one point it was found that due to some bug in BIP 9 it would have to be moved forward and ended up being moved to August 1st. It was very rushed and somewhat risky because the timeframe was only 3-5 months depending on when you first heard about it and very controversial obviously, but pulled it off at the end of the day without any issues at all. Despite everything it had going against it it still was a complete success.
+
+SL: Could you also outline what [BIP 91](https://github.com/bitcoin/bips/blob/master/bip-0091.mediawiki) is? And any impact that had?
+
+LD: BIP 91 to be frank was essentially a 51 percent attack. The miners collaborated against the network. The only reason it was acceptable at all was because it was in effect the miners complying with BIP 148. BIP 91 was effectively a way that the miners could say. “Yeah we activated SegWit” even though they didn’t really have a choice at that point, BIP 148 was just a day or two later.
+
+SL: Going back to my recent [episode](https://stephanlivera.com/episode/257/) with Matt Corallo, we were talking about this idea of so-called playing chicken with the network. I guess that’s one of the concerns that people had, that there could potentially be a split caused in the network. This is why the idea is you want the miners to come along to help enforce that rule. This comes onto the topic of forced signaling. I think that’s essentially what BIP 148 was helping achieve because all of the nodes who are running this version are essentially saying “If you do not signal for SegWit we will not recognize your blocks as valid, right?
+
+LD: That’s a framing that revolves around BIP 148 and the events of that time. It doesn’t really apply to the current situation where all the miners are friendly and hopefully going to just activate it anyway.
+
+SL: Of course. So we’ll get to the Taproot stuff but I just wanted to get your view on the SegWit stuff.
+
+LD: I don’t know that I would portray it as a game of chicken though. The users pretty much said “SegWit is going to be activated.” That’s how it is. That’s not going to necessarily cause a networks split. The network only splits if miners violate these new rules that the users have decided to enforce.
+
+SL: I’m kind of more in the camp of UASF myself but I guess the counterargument would be something like “Even if all you UASF nodes go off and create your own Bitcoin network you might not have the same level of hash power and therefore not the same level of security. Or maybe even at the start you might not get that many blocks coming through because the difficulty would not have adjusted back down. How would you think about that? Or would you disagree with that?
+
+LD: I completely disagree with the premise that UASF splits off at all. It’s just one more rule that the blocks have to follow to be enforced. Miners can violate that rule but they could violate that rule tomorrow. If they wanted to they can violate another rule. If the miners decide to violate rules that’s just the miners splitting the network. That has nothing to do with the actual UASF.
+
+SL: Moving on with the events in 2017, could you spell out your thoughts on how you viewed the SegWit2x aspect? That was later in the year post SegWit being activated for listeners who are unfamiliar.
+
+LD: That was right before BIP 91 which was a few days before BIP 148 activated. They saw that essentially SegWit was going to happen, the UASF was going to work. So they decided they were going to tack on their hard fork as an after effect or try to anyway. Obviously Bitcoin doesn’t work like that. You can’t just force users to do something so it was a complete failure.
+
+SL: In your view was it important that for example, Bitfinex had a B1X token and there was a B2X token to represent a futures market of what people viewed the value of Bitcoin versus the SegWit2x coin, which never actually eventuated? The fact that at that time it was something like 9 to 1 in favor of Bitcoin over the SegWit2x coin of which one was the true Bitcoin. Was that significant, did that matter at all? Or did that just not really matter?
+
+LD: At the end of the day it would have had the same outcome. I’m not going to say it didn’t matter at all. Obviously it helped get us there quicker. It made it clear before the fact that it wasn’t going anywhere, which I guess caused them to give up early. But at the end of the day the users are the final rule on what the protocol is. So it’s not like it would have succeeded without a futures market involved.
+
+# Economic majority concept
+
+SL: Of course. I think another important topic to bring up here is the concept of economic majority. It is one thing for people to spin up a node and not actually transacting, not receiving Bitcoin. That act of receiving Bitcoin and saying “Yes I recognize this as valid Bitcoins” or “No these are not valid Bitcoins.” In that act they are helping in some sense influence the rules of the network. And so I guess the argument from the people who believe that it was not UASF that did it might say “Ok there might just have been a few people on Twitter but they were not actually the economic majority. The economic majority would have been actors like Coinbase and other big exchanges.” What would you say to that line of thinking?
+
+LD: It is kind of history revisionism. Everyone knows that the exchanges have to do what their customers want. They’re not really the economic actors, the economic actors are the people who are offering services or products for the Bitcoin. When you receive the alleged Bitcoin, if they’re not valid you have to be able to say “No I’m not going to give you a product” or not. “I’m not going to give you a service.” Otherwise you’re not really enforcing anything.
+
+SL: Perhaps the counter argument, and again I’m more on your side, but just for the sake of talking it out and thinking what would it look like. If a lot of users are naive or they do not understand this aspect of it. Maybe they’re not as engaged in the conversation around what Bitcoin is and thinking about the technical ramifications of what’s going on. They are just an everyday user and they just see on their wallets or on their front end, whether that’s Coinbase or some other front end they see “Oh I’ve received SegWit2x coin and I think that’s Bitcoin.” What about that?
+
+LD: That’s a scenario where Bitcoin has failed. Bitcoin only works because of decentralized enforcement. If it is centralized enforcement you may as well go back to PayPal because that’s all you have. Except it’s more expensive than PayPal because it’s inefficient. It is trying to simulate decentralization without actually having decentralization at that point.
+
+SL: Absolutely, it’s important that people take that on, actually treat Bitcoin seriously and try to learn about it and be more actively engaged in how they use Bitcoin. But there are a lot of people out there, maybe they are only on a mobile phone or maybe they are not very technically savvy. What’s to be said for those users or potentially, and I know you might not agree with this, for the people who are lightweight client users?
+
+LD: Hopefully they’re an economic minority at all times. Bitcoin just doesn’t work if the majority isn’t enforcing the rules, there’s nobody else that’s going to do it for them.
+
+SL: In your view then is it not feasible? Let’s say there would be enough users who might call out a service and say “Hey, they’re not actually valid. They’re not giving me real Bitcoins.” And then maybe everyone stops using that service. People go to some other service that is using “true” Bitcoin.
+
+LD: I would hope that would occur. I would imagine if any exchange tried to pass off fake Bitcoins then they would probably get a class action lawsuit.
+
+SL: Of course. That’s what we would hope to see. I guess the worst case would be nobody can natively interact with Bitcoin or very few can natively interact with Bitcoin. Then we end up in this scenario where people are essentially all having to trust somebody else. Obviously that’s very antithetical to the idea and the very notion of Bitcoin. Is there a question around some nodes being more important than others because some actors may hold more coins? They might be more interested in it. They might be the ones in some sense defending the ruleset of the network in a loose sense. Do you understand what I’m saying there?
+
+LD: That’s back to the economic majority and economic activity being used. Using your node to validate is essentially the weight of your node on the network enforcement. If your node doesn’t validate any transactions that people are using in real economic activity, then to be frank that node is not doing any enforcement at all. If you’re selling products every day for Bitcoins then you’ve got a lot of push compared to someone who’s only selling something maybe once in a while.
+
+SL: Yeah. So more active users and people who are using it to receive Bitcoins, they’re the ones who are in some sense enforcing the rules.
+
+LD: And of course people who have the Bitcoins and are willing to spend it get to choose who is receiving the most.
+
+SL: You’re right there. Are there any other points around SegWit and 2017 that you wanted to touch on? It’s ok if not, I just wanted to make sure you had your chance to say your view.
+
+LD: I’m trying to think. I’m not sure that there was too much else.
+
+# Taproot activation
+
+SL: So let’s move on to Taproot now. We’ve got this new soft fork that most people want. There’s been no serious sustained objections to it. Can you spell out your thoughts on how Taproot activation has gone so far?
+
+LD: We had three, maybe four [meetings](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-January/018370.html) a month or two ago. Turnout wasn’t that great, only a hundred people or so showed up for them. At the end of the day we came to consensus on pretty much everything except for the one lockinontimeout (LOT) [parameter](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-February/018425.html). Since then a bunch of people have started throwing out completely new ideas. It is great to discuss them but I think they should be saved for the next soft fork. We’ve already got near consensus on Taproot activation, might as well just go forward with that. There’s not consensus on lockinontimeout but there’s enough community support to enforce it. I think we should just move forward with that how it is and we can do something different next time if there’s a better idea that comes around. Right now that is the least risky option on the table.
+
+SL: With lockinontimeout there’s been a lot of discussion back and forth about true or false. And other ideas proposed such as just straight flag day activation or this other idea of [Speedy Trial](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-March/018583.html). Could you outline some of the differences between those different approaches?
+
+LD: The lockintimeout=true is essentially what we ended up having to do with SegWit. It gives a full year to the miners so they can collaborate cooperatively and protect the network while it’s being activated early. If the miners don’t do that for whatever reason, at the end it activates. If we were to set lockinontimeout=false we essentially undo that bug fix and give miners control again. It would be like reintroducing the inflation bug that was fixed not so long ago. It doesn’t really make sense to do that. At the end of the day it is a lot less secure. You don’t really want to be running it as an economic actor so you would logically want to run lockinontimeout=true. Therefore a lot of economic actors are likely to run it true. In most of the polls I’ve seen most of the community seems to want true. As far as a flag day, that’s essentially the same thing as lockinontimeout=true except that it doesn’t have the ability for miners to activate it early. So we’d have to wait the whole 18 months for it to activate and it doesn’t have any signaling. At the end of the day we don’t really know if it activated or if the miners are just not mining stuff that violates Taproot which is the difference of whether it is centralized or decentralized verification. It is economic majority still, that will matter for the enforcement, but you want to be able to say “This chain has Taproot activated.” You don’t want it to be an opinion. I say Taproot is activated, you say it isn’t. Who’s to say which one of us is right? Without a signal on the chain we’re both in a limbo where we’re both saying the same thing about the same chain and there’s no clear objective answer to that question, is Taproot activated.
+
+SL: I know this may be a bit more contentious but I think there are other developers and other people out there who have made an argument that they think setting lockinontimeout=true is “putting a gun to the head of the miners” and forcing them to signal in a certain way. What would you say in response to that?
+
+LD: Are we putting a gun to the miners and forcing them to not mine transactions stealing Satoshi’s coins or whatever? There’s rules and the miners have to follow the rules. They’ve got a whole year to figure out whatever they need to do to enforce the rules themselves. It’s not any different than any other rule. Would you add the inflation bug back because we don’t want to force the miners not to inflate?
+
+SL: Of course not.
+
+LD: Kind of a nonsensical argument.
+
+# Devs propose, miners activate, users override
+
+Rusty Russell blog post: https://rusty.ozlabs.org/?p=628
+
+SL: Some people make this argument that you’ve got developers, you’ve got miners and you’ve got users. Each of them can propose things, developers can propose and write code and put it up there. Ultimately it’s up to people to run that code. What if you let miners signal it on their own and activate on their own? I guess that is one of the arguments for LOT=false. What are your thoughts on that idea of letting them signal on their own and then changing? If they do not signal then change at that point?
+
+LD: There’s no point to it though. LOT=true gives them the whole year to signal on their own. If they do then there’s no difference whatsoever between the two. The only question is do they have the ability to refuse to collaborate? And if they refuse to collaborate does that essentially cancel the soft fork? There’s no reason to ever do false. If they collaborate great, then it works. If they don’t collaborate then it works as well.
+
+# The prospect of a bug in the Taproot implementation
+
+SL: Another reason I’ve heard to have LOT=false is if let’s say in this activation period, there is a bug found and coordinating the stoppage of the soft fork is easier in a LOT=false scenario than if we were to go with LOT=true as default. What’s your thoughts on that?
+
+LD: First of all, the possibility of finding a bug at this stage is very unlikely. There’s been years of review on this, or at least during development there’s been review. And then even after it was merged there has been more review. At this point it’s just sitting there waiting to be activated. There’s not really much more review to be done with it. The next time we’re going to see any possible bugs would be after it’s activated. At that point it’s, after all this is relevant, it’s activated at that point. The second point on LOT is that it doesn’t actually make it any easier to cancel it. Sure, you could just not activate it. But if the miners have the trigger only the miners can not activate it. So you as an economic user running a full node, you want to change to different software, you don’t want to allow the miners to activate it. Finally, even in the best case scenario you would still have to update again because you’re going to want to activate Taproot at the end of the day with that bug fix. There’s nothing to gain in that regard.
+
+SL: This is more of a meta or long term argument, that if developers are unilaterally able to put out this code and everyone just adopts it, in the future maybe a large government or a large business could try to bring pressure to bear onto developers to co-opt or change the protocol or somehow sabotage the protocol. Do you see a potential risk on that side?
+
+LD: No, not really. The developers, no matter what we release at the end of the day, if the users won’t run it then it doesn’t have any effect. Again if users just blindly run whatever developers release that is another failure scenario for Bitcoin. That’s something that’s a problem no matter what we do with the legitimate soft forks.
+
+SL: Of course. I guess in practice though not everybody is a software developer and even for the people who are software developers they may not be familiar with the Bitcoin Core codebase. It is a sliding scale. There’ll be some who are loosely familiar and then others like yourself who are much more closely familiar with the codebase. To some extent there’s some level of trust placed in people who are a little bit closer to the detail. The argument then is in reality not everybody can review the code?
+
+LD: Right. But we can provide honest explanations in the release notes of what this code does. No matter what we do with the legitimate soft forks it does not change what a malicious soft fork or a 51 percent attack rather can attempt to do. If developers are going to put out malicious code it doesn’t matter what we do with Taproot, the malicious code is going to be malicious no matter what.
+
+SL: And so either way we are reliant on there being enough eyes on the code, enough people reviewing that if there were some malicious code inserted that somebody would raise a flag and let everybody know. Then there’d be a warning about it and people would kick up a stink about it basically.
+
+LD: You would hope so. But regardless, what we do with legitimate soft forks has no influence on that scenario.
+
+# Bitcoin Core releasing LOT=false and UASF releasing LOT=true
+
+Luke Dashjr on why LOT=false shouldn’t be used: https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-February/018498.html
+
+T1-T6 and F1-F6 arguments for LOT=true and LOT=false: https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-February/018380.html
+
+F7 argument for LOT=false: https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-February/018415.html
+
+SL: The other argument I have heard is if Bitcoin Core were to release a client with LOT=false and another contingent of developers and users who want to go out and do similar to the UASF and release an alternate client with LOT=true. The average user can’t review all the Bitcoin code and they would now have to decide whether they want to run this alternate client that does include LOT=true. So what are your thoughts on that aspect?
+
+LD: That’s no riskier than running the one with LOT=false. LOT=false for other reasons doesn’t come to a coherent view of consensus. It will not be very useful to people who are on the LOT=false client. For that reason, I think Core releasing LOT=false would actually be an abdication of duties towards users. Obviously Bitcoin Core, there’s this expectation that it’s going to follow what the users want and be safe to use. LOT=false is simply [not safe](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-February/018498.html) to use.
+
+# Dealing with unlikely chain splits
+
+SL: There’s also this discussion on the code in Bitcoin Core dealing with chain splits. People have points like “If there were to be a chain split at that time how would Bitcoin Core deal with the peer-to-peer ramifications of finding other peers who are on the same chain you are on and stuff like that?” Could you outline any thoughts on that aspect of it? I guess that’s also why in your view is LOT=true is the way to proceed with this.
+
+LD: LOT=true minimizes any risk of chain splits. That only happens if the miners are malicious at that point. But if they are, they could be again, they could be malicious tomorrow and cause problems. In any case Bitcoin Core can definitely improve on its handling of such miner attacks but it’s not really related to Taproot or lockinontimeout or any of that. It’s a general issue that could be improved but there’s no reason to link it to lockinontimeout or any of this.
+
+# Miner signaling threshold
+
+SL: in terms of the minor signaling ratio or percentage. 95 percent is the current threshold as I understand. What’s your thought on that level and what sort of scenarios could happen if the hash power were to be evenly split? If it wasn’t just one or two blocks before everyone figures out this is the correct chain and this is what we’re going with?
+
+LD: SegWit had 95 percent but that one failed. The current consensus for Taproot seems to be around 90 percent. As long as you’re relying on miners to protect the nodes that haven’t upgraded yet you probably don’t want it to be much lower. I would say 85 percent at least but once you get to after the year is over and we’re activating, regardless of the miners at that point, hopefully the whole economy has upgraded and we aren’t relying on the miners anymore because that could be kind of messy. At that point the hash rate doesn’t matter quite so much as long as there’s enough blocks to use it.
+
+SL: Let me take a step here just to summarize that for listeners who are maybe a little newer and trying to follow the discussion. The point I think you’re making there is that miners are in some sense helping enforce the rules for the older nodes. Because the older nodes aren’t validating the full set of rules, the way Bitcoin works old nodes still have backward compatibility. Old nodes could theoretically be put onto the wrong chain…
+
+LD: Old nodes essentially become light wallets at that point. To get a better view of the timeline overall, before any signaling, before the miners even have the opportunity to activate, you really want the economic majority to have upgraded by that point. When the miners activate the enforcement of the rules also agrees and so you have the majority of the economy enforcing the rules no matter when the miners activate. For the next year the miners are enforcing the rules on the mining side. So if someone were to make an invalid block, the longest chain would still enforce the Taproot rules and by doing that they protect the nodes that have not upgraded yet, the light wallets and such. After that year is over, that’s why you would hope at that point that the entire economy plus or minus one or two small actors has upgraded and is enforcing the rules. Regardless of what the miners do at that point the rules are still being enforced. If you lose money because you haven’t updated your full node, that’s kind of on you at that point. You’ve had a whole year to get ready.
+
+SL: Let’s say if somebody had not upgraded at that point, there wouldn’t be enough hash power actually pointed at that incorrect chain such that people would be kept from the correct chain. Even if they are an old node because of the rule about the most work?
+
+LD: After the full year you’re no longer relying on that assumption. The miners, if they were to produce an invalid block, then everyone’s expected to use their own full node to reject that block no matter how much work that chain has.
+
+# Speedy Trial
+
+Speedy Trial proposal: https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-March/018583.html
+
+Speedy Trial support: https://gist.github.com/michaelfolkson/92899f27f1ab30aa2ebee82314f8fe7f
+
+SL: Now is a good point to bring up the Speedy Trial idea. For anyone who is not familiar with that could you outline what that is and also what your views are on that?
+
+LD: Speedy Trial is essentially a new idea where signaling starts basically immediately and pretty quickly. If at any point during that 3 months the miners signal 90 percent or whatever the threshold is, it activates 3 months after that. It is a total of 6 months into the future. At that point Taproot is considered active. This gives us a 6 month window where the economic majority has an opportunity to upgrade. Because of the short window it doesn’t conflict with the so to speak “real plan” hopefully LOT=true. They don’t overlap with signaling and if Speedy Trial activates sooner, great, we don’t even have to go with the regular one. It’s just active in 6 months. If it doesn’t work that’s ok too. We just go forward as if it had never been tried.
+
+SL: So I presume then you’re also in favor of Speedy Trial in that case and you’re encouraging other people to go with that approach?
+
+LD: I think it’s still important that we move forward with the LOT=true. If Speedy Trial manages to preempt it that’s ok too. It’s not really an alternative as much as another way that the miners could activate before the deadline.
+
+# BIP 8
+
+https://github.com/bitcoin/bips/blob/master/bip-0008.mediawiki
+
+SL: While we’re here as well, it might be a good point to talk about BIP8. As I understand I think there are some parts about it that you would prefer to change if you were to be writing it today. Could you outline that?
+
+LD: In light of lockinontimeout=false being unsafe it really doesn’t have a purpose. If it were solely up to me I would just remove the parameter and make it always true effectively. I don’t think it would be right for me to make that change unilaterally when there’s still disagreement about that. But if it were up to me I don’t think that there’s any purpose in having a parameter in there, it should just always be true at this point. There’s no point adding a bug back in once we fixed it.
+
+SL: If you had to think about what is the most likely outcome at this point, what do you think that would be?
+
+LD: Considering all the miner support for Taproot I’m guessing that Speedy Trial might succeed. But if it doesn’t that’s fine. If people have to switch to a so called Bitcoin Core with Taproot added that’s ok. It might actually be better than if Bitcoin Core were to release in the main line release because then it’s the users even more explicitly acting. I think it really should have been released by now with the timeline that had been proposed by the meetings a month ago but I’m not about to do it myself. If there isn’t enough community support to actually get it done then it’s flawed and it’s not going to succeed in the first place. I’m happy to help the community if they want to move forward with this. But I do think it should happen sooner rather than later, we don’t want to wait until after Speedy Trial and then realize “Oh we should have done this 3 months ago.”
+
+# The importance of network consensus
+
+Suhas Daftuar on Taproot activation and consensus changes: https://medium.com/@sdaftuar/on-taproot-activation-and-consensus-changes-in-bitcoin-5b3453e91c4e
+
+SL: Suhas Daftuar from Chaincode Labs wrote a blog. His overall guiding thrust was the important thing is to keep network consensus. I’m not sure if you have any views on that or if you’ve had a chance to read that blog post?
+
+LD: I didn’t read the whole thing, I did skim through it. I agree that keeping the network consensus is probably very high priority, if not the highest. I think LOT=true does that.
+
+SL: I guess those are probably the key points at least from my reading of the community discussion. People out there, if I missed any questions, let me know. Luke, did you have any other points around the Taproot activation conversation that you wanted to make?
+
+LD: I did think it was important to point out that the miners aren’t going to be caught by surprise with the requirement for signaling. If they haven’t signaled for a whole year, they’ve had that whole year to prepare for the inevitable need to signal and to make valid blocks. If they have an outlier server somewhere and they’re setting the wrong version, they’ve had a whole year to work out that problem. There’s no risk that there’s going to be an accidental chain split with LOT=true. I’ve noticed there’s been a lot of fear being spread about accidental chain splits and all that but the only way a chain split would occur at that time with LOT=true would be if the miners are maliciously, intentionally creating invalid blocks, there’s no accidental risk.
+
+SL: If I had to summarize your view it’s essentially we should be pursuing the LOT=true approach. As you’ve said that maximally reduces the risk of these splits. Given there’s been no serious sustained objections to Taproot that’s just the way to proceed.
+
+LD: We can go ahead with Speedy Trial too, that doesn’t hurt. But I do think we should be doing both in parallel in case that doesn’t succeed.
+
+# Thoughts on the Bitcoin block size
+
+Luke Dashjr presentation on why block sizes should not be too big: https://diyhpl.us/wiki/transcripts/magicalcryptoconference/2019/why-block-sizes-should-not-be-too-big/
+
+SL: While we’ve got you here Luke, I thought it would be interesting to hear more about your views on the small block approach. This is one of those things where you have been campaigning for and agitating for this idea of smaller blocks in Bitcoin. Can you outline some of your thoughts on this and why is that an important thing to pursue?
+
+LD: Earlier you mentioned users who just want to use a smartphone and that’s pretty much impractical these days. With a full node you have to download and process 350 gigabytes of blockchain and that’s just way too much for a smartphone. So that ship has pretty much sailed. What would reducing block size now get us? It would hopefully accelerate the return to the blockchain being manageable as smartphones get better. Right now the blockchain is still growing faster than the smartphone or any technology improves. So it’s actually getting harder and harder for phones or computers to keep up with it. So reducing the block size would get us to the point where the technology improvements, hopefully if they keep pace, will finally catch up and maybe someday smartphones will again be usable for a full node. The best we can hope for in the meantime is people run a full node at home and they remotely access it from their phone.
+
+SL: In that case what about the idea of using pruned nodes on the smartphone and things like that? Is that a possibility in your mind? Or do you think that even that ship has already sailed?
+
+LD: That ship’s already sailed. I was assuming that in the first place because even with the pruned node you still have to download and process all 350 gigabytes of data. It’s just what is requires to be a full node even if you prune it.
+
+SL: There are also the battery and internet considerations as well because people are walking around with a smartphone. They might not want to take that kind of battery loss.
+
+LD: Yeah and when the CPU is pegged it’s going to get hot. That also destroys the phone usually if it’s running too hot for too long.
+
+SL: So I wonder then whether smartphone use might not have been feasible even if it stayed at 350 gigabytes just because of the battery and the CPU aspects.
+
+LD: No because the technology would continue to improve while the blockchain grows slower than the improvement. It would remain viable if it had been reduced in a reasonably timely manner. It may have actually needed to have been before SegWit but there was a point in time where the reduction would have preserved that use case. I remember back in 2012 or 2013 I was actually running a full node on my phone with no problem at all.
+
+SL: What about your thoughts on making it easier to remote into your home node? Right now a lot of people can do the whole Raspberry Pi thing with one of the different packaged nodes.
+
+LD: That’s pretty much the approach I’ve been looking at lately and working toward. I’ve got the whole pairing thing that I have in Bitcoin Knots. There’s a QR code where you can point your phone’s wallet to the QR code and scan it and then it will automatically connect to your node on the computer that you’re showing the QR code on. That’s the area I’ve been trying to focus more on lately, trying to get it so that people can use Bitcoin as easily as they want to but still have a full node of their own for security.
+
+SL: And your thoughts on the compact block filter approach?
+
+LD: That’s just another light wallet. It’s no more secure than bloom filters. In fact the existence of that feature is harmful because there’s no longer a privacy incentive to run your own full node.
+
+SL: In your view you would rather that not exist and you would rather people just all be on their full node at home kind of thing.
+
+LD: Yeah. And it’s actually less efficient than the bloom filter protocol.
+
+SL: That’s interesting. Why is it less efficient?
+
+LD: Because now your light wallet has to download the block filters for every block. Whereas with bloom filters, you just tell your full node at home this is what addresses my wallet has and your full node at home just tells you “These are the blocks you need to worry about and nothing else.”
+
+SL: There’s a privacy trade-off there but it is less computationally demanding?
+
+LD: There is a privacy trade-off if you’re using somebody else’s full node. If you’re using your own full node then it doesn’t matter.
+
+SL: That makes sense to me. Longer term as Bitcoin grows it eventually will hit a point where not every user will be able to hold their own UTXO right. Putting context and some numbers on this. We’re speaking in March 2021, the population of the world is about 7.8 billion. The current estimates for Bitcoin users around the world, it might be something like 100 to 200 million people but obviously not all those people are using it directly on the chain. Some of those are just custodial users, they’ve just got their Bitcoin on some exchange somewhere. Let’s say over the next 5-10 years we get a big increase in the number of people using Bitcoin. What happens when they can’t all fit on the chain?
+
+LD: I’m not sure. Hopefully we’ll have a comparable increase of developers working on solving that.
+
+SL: Even if you were to go with Lightning, I’m a fan of Lightning, it might be difficult because by the time you get each person opening or closing channels then it would just completely blow out the capacity in terms of block space.
+
+LD: It can do what it can do. What it can’t do we can try to solve. Maybe we will, maybe we won’t come up with the solution. It is hard to tell at this point. There’s already plenty of work for developers without having to try to look at things like that.
+
+SL: Of course. I guess the optimistic view would be something like we have some kind of multiparty channel thing going where multiple people can share one UTXO and then people sort of splice in and out of a channel factory or something like that. That allows people to preserve some more sovereignty in their use of Bitcoin rather than a lot of people having to be custodial users of Bitcoin.
+
+LD: I haven’t given it much thought but it’s possible that Taproot might actually enable that since it has multiparty Schnorr signatures.
+
+SL: Another approach I’ve heard is using covenants and things which is related to what Jeremy Rubin is doing with CTV. Do you have any thoughts on that kind of approach using covenants?
+
+LD: I haven’t given it much thought. There’s just so many things going on here now.
+
+SL: It is a big world out there and there’s so many different ideas going around. It’s obviously very difficult to keep up with all of that. For some people who maybe don’t want small blocks, they might be thinking “Let’s say we did lower the block size. It might make it even harder right now for people who want to open and close their Lightning channels. It might not be enough in terms of block space. We have to remember that Lightning does rely on us being able to react accordingly if somebody tries to cheat us or something goes wrong. We still have to be able to get our penalty close transaction or justice transaction in the Lightning Labs parlance and get that back into the chain in time. If the block size was lower at that point that’s another consideration.
+
+LD: I haven’t looked at the specs but my understanding is that Lightning does not count the time as long as the blocks are being mined.
+
+SL: It is mostly around relative timelocks, is that what you’re getting at?
+
+LD: Not so much relative timelocks but that while the blocks are full it’s not counting towards your time limit on the penalty. You have more time if the blocks are full.
+
+SL: I’m not familiar on this part of how Lightning interacts with Bitcoin. I probably can’t comment any further there.
+
+LD: I could be wrong. My understanding of Lightning is mostly based on the theory rather than what has been implemented.
+
+SL: Have you used any Lightning stuff yourself or have you mostly just been focused at the Bitcoin Core level?
+
+LD: Mostly at the Bitcoin Core level. I’m not going to say I haven’t used it but pretty much just to the extent of losing a bunch of testnet coins.
+
+SL: Have you tried any phone wallets on Lightning?
+
+LD: No, I like to understand what is actually happening with my Bitcoin. I have a really high bar, I will not even let it touch my Bitcoins if I haven’t looked at the code and compiled it myself.
+
+SL: What if someone just sent you 10 bucks on a small Lightning wallet or something like that?
+
+LD: I’ve had some people offer to do that. I should probably figure out something for that. I also don’t want to use a custodial Lighting wallet. In my position I don’t want to set a bad example. If I’m going to do it, I’m going to do it right.
+
+SL: You could use one of the non-custodial ones. There are some out there depending on how much trust or how much self sovereignty you want. There are different choices out there, things like Phoenix or Breez.
+
+LD: I’m sure there are, I just haven’t seen much yet.
+
+SL: With the whole small blocks thing is your hope that there might be other people out there in the community who agree and help agitate for the idea or are you sort of resigned to the block size as it is now and the block weight limit as it is now?
+
+LD: There’s only so much I can do. If the community tomorrow decides that we’re ready to reduce the block size, sure we can do it. But until that happens, it’s just a matter of I think the block size should be lower and right now there’s not enough support. So there’s really nothing more to do until other people agree with me.
+
+SL: It may be that large holders of Bitcoin are the ones who are much more able to fully be self-sovereign with their own full node, holding their own keys and things. Maybe to some extent, the people with a smaller stack of Bitcoins using more custodial services and things. They are more reliant on the protection and the rewards of the wholecoiners or the large coiners.
+
+LD: Well also you have to consider that even if you have a lot of Bitcoins, if you’re not very economically active with those Bitcoins, you may find yourself at a loss if you’re running a full node and nobody else is. If you’re cut out of the economy because other people have accepted an invalid chain, your Bitcoins aren’t going to be worth quite as much anymore.
+
+SL: I see what you’re saying. Even if you’re a whale sitting on over a thousand coins or whatever. The scenario would be that if a lot of other people out there get tricked…
+
+LD: Then the economy moves on to another chain that doesn’t necessarily recognize your rules. No matter how many Bitcoins you have you’re still at the mercy of the economic majority. That is essentially what puts the price on the Bitcoin and the value. Even if you’re not valuing it in dollars the value all comes from the economy.
+
+SL: So your purchasing power could be impacted. I guess it also is about if you are running a business then you’re regularly doing transactions. In that sense you are helping enforce your vision of what the rules of Bitcoin should be out there in the network. You’re helping influence that in some way as long as you’re running a business. Even if you are regularly accumulating and you’re regularly receiving you are helping enforce in that sense.
+
+LD: Yes to a limited extent. Obviously it would be very bad if there was a handful of people that made up the whole economic majority.
+
+# Closing thoughts
+
+SL: It has been a very interesting discussion, Luke. I wonder if you’ve got any closing thoughts that you want to leave for the listeners?
+
+LD: I guess if you are interested in working on Bitcoin Core with Taproot or getting Taproot activated, join the IRC channels. If you’re not comfortable with your skill in doing it, I can help teach.
+
+SL: Luke, for any listeners who want to find you online, or they’d like to get in contact with you, or maybe they want to follow your work, where’s the best place for them to find you?
+
+LD: If they just want to follow my work or ask me questions in general, probably best way these days is probably Mastodon or Twitter. My handle is \@LukeDashjr, and then on Mastodon that’s [bitcoinhackers.org](https://bitcoinhackers.org/@lukedashjr). If you have a reason to reach out privately, there’s some privacy sensitive information, you can always email me directly. It’s just luke at dashjr.org for my email.
+
+SL: Excellent. Well, Luke, I enjoyed chatting with you and thank you for joining me.
+
+LD: Thank you for inviting me.
+
