@@ -1,0 +1,278 @@
+Name: Sjors Provoost and Aaron van Wirdum
+
+Topic: Taproot Activation with Speedy Trial
+
+Location: Bitcoin Magazine (online)
+
+Date: March 12th 2021
+
+Video: https://www.youtube.com/watch?v=oCPrjaw3YVI
+
+Speedy Trial proposal: https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-March/018583.html
+
+Transcript by: Michael Folkson
+
+# Intro
+
+Aaron van Wirdum (AvW): Live from Utrecht this is the van Wirdum Sjorsnado. Sjors, what is your pun of the week?
+
+Sjors Provoost (SP): I actually asked you for a pun and then you said “Cut, re-edit. We are going to do it again.” I don’t have a pun this week.
+
+AvW: Puns are your thing.
+
+SP: We tried this LOT thing last time.
+
+AvW: Sjors, we are going to talk a lot this week.
+
+SP: We are going to get blocked for this.
+
+AvW: We talked a lot [two weeks ago](https://diyhpl.us/wiki/transcripts/bitcoin-magazine/2021-02-26-taproot-activation-lockinontimeout/). LOT was the parameter we discussed two weeks ago, LOT=true, LOT=false, about Taproot activation. We are two weeks further in and now it seems like the community is somewhat reaching consensus on an activation solution called “Speedy Trial”. That is what we are going to discuss today.
+
+SP: That’s right.
+
+# Speedy Trial proposal
+
+Speedy Trial proposal: https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-March/018583.html
+
+Proposed timeline: https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-March/018594.html
+
+AvW: Should we begin with Speedy Trial, what is Speedy Trial Sjors?
+
+SP: I think that is a good idea to do. With the proposals that we talked about last time for activating Taproot, basically Bitcoin Core would release some software, maybe in April of something, and then the miners will start signaling using that software in I think, August or something. Then they can signal for a year and at the end of the year the whole thing ends. 
+
+AvW: That was LOT=true or LOT=false. The debate was on whether or not it should end with forced signaling or not. That’s the LOT=true, LOT=false thing.
+
+SP: The thing to keep in mind is that the first signaling, it would be a while before that starts happening. Until that time we really don’t know essentially. What Speedy Trial proposes is to say “Rather than discussing whether or not there is going to be signaling and having lots of arguments about it, let’s just try that really quickly.” Instead there would be a release maybe around April, of course there’s nobody in charge of actual timelines. In that case the signaling would [start](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-March/018594.html) much earlier, I’m not entirely sure when, maybe in May or pretty early. The signaling would only be for 3 months. At the end of 3 months it would give up.
+
+AvW: It would end on LOT=false basically.
+
+SP: Yes. It is the equivalent of LOT=false or just how it used to be with soft forks. It signals but only for a couple of months.
+
+AvW: If it isn’t activated within these months by hash power which is probably going to be 90 percent hash power? It is going to require 90 percent hash power to activate Taproot. If it doesn’t happen then the proposal expires and when it expires we can continue our discussion on how to activate Taproot. Or if it activates then what happens?
+
+SP: The thing is because you still want to give miners enough time to really upgrade their software the actual Taproot rules won’t take effect until September or August.
+
+AvW: Miners and actual Bitcoin users.
+
+SP: Yes. You want to give everybody plenty of time to upgrade. The idea is we would start the signaling very quickly. Also miners can signal without installing the software. Once the signal threshold has been reached then the soft fork is set in stone. It is going to happen, at least if people run the full nodes. Then there is still some time for people to upgrade and for miners to really upgrade and run that new software rather than just signal for it. They could run that software but they might not. That is why is sort of ok to release a bit early.
+
+AvW: They should really be running the software if they are signaling? 
+
+SP: No. We can get into that later.
+
+AvW: For now, to recap really briefly, Speedy Trial means release the software fairly fast and quickly after it is released start the signaling period for 3 months, which is relatively short for a signaling period. See if 90 percent of miners agree, if they do Taproot activates 6 months after the initial release of the software. If 90 percent of miners don’t activate within 3 months the proposal expires and we can continue the discussion on how to activate Taproot.
+
+SP: We are then back to where we were a few weeks ago but with more data. 
+
+# The evolution of the Speedy Trial proposal
+
+AvW: Exactly. I want to briefly touch on how we got here. We discussed the whole LOT=true and LOT=false thing and there appeared to be a gridlock. Some people definitely didn’t want LOT=true, some people definitely didn’t want LOT=false and then a third proposal entered the mix. It wasn’t brand new but it wasn’t a major part of the discussion, a simple flag day. A simple flag day would have meant that the Bitcoin Core code would have included a date in the future or a block height in the future, at which point the Taproot upgrade would activate regardless of hash power up until that point. 
+
+SP: I find this an even worse idea. When there is a lot of debate people start proposing stuff. 
+
+AvW: I think the reason that we reached this gridlock situation where people feel very strongly about different ideas has a lot to do what happened during the SegWit upgrade. We discussed this before but people have very different ideas of what actually happened. Some people feel very strongly that users showed their muscles. Users claimed their sovereignty, users claimed back the protocol and they basically forced miners to activate the SegWit upgrade. It was a huge victory for Bitcoin users. Then other people feel very strongly that Bitcoin came near to a complete disaster with a fractured network and people losing money, a big mess. The first group of people really likes doing a UASF again or starting with LOT=false and switching to LOT=true or maybe just starting with LOT=true. The people who think it was a big mess, they prefer to use a flag day this time. Nice and safe in a way, use a flag day, none of this miner signaling, miners can’t be forced to signal and all of that. These different views on what actually happened a couple of years ago now means people can’t really agree on a new activation proposal. After a lot of discussion all factions were sort of willing to settle on Speedy Trial even though no one really likes it for a couple of reasons which we will get into. The UASF people, they are ok with Speedy Trial because it doesn’t get in the way of the UASF. If the Speedy Trial fails they will still do the UASF next year. The flag day people are sort of ok because the 3 months doesn’t allow for a big enough window to do the UASF probably. The UASF people have said that that is too fast and let’s do this Speedy Trial.
+
+SP: There is also still the LOT=false, let’s just do soft forks the way we’ve done them before where they might just expire. A group of people that were quietly continuing to work on the actual code that could do that. Just from mailing lists and Twitter it is hard to gauge what is really going on. This is a very short timescale.
+
+AvW: The LOT=false people, this is basically LOT=false just on a shorter timescale. Everyone is sort of willing to settle on this even though no one really likes it.
+
+SP: From the point of view that I’m seeing, I’m actually looking at the code that is being written, what I have noticed is that once the Speedy Trial came out more people came out of the woodwork and started writing code that could actually get this done. Whereas before it was mostly Luke I think writing that one [pull request](https://github.com/bitcoin/bitcoin/pull/19573). 
+
+AvW: BIP 8?
+
+SP: Yeah BIP 8. I guess we can get into the technical details, what I am trying to say is one thing that shows that Speedy Trial seems like a good idea is that there are more developers from different angles cooperating on it and getting things done a little bit more quickly. When you have some disagreement then people start procrastinating, not reviewing things or not writing things. That’s a vague indicator that this seems to be ok. People are working on it quickly and it is making progress so that is good.
+
+AvW: Some technical details you want to get into?
+
+# Different approaches of implementing Speedy Trial
+
+Stack Exchange on block height versus mix of block height and MTP: https://bitcoin.stackexchange.com/questions/103854/should-block-height-or-mtp-or-a-mixture-of-both-be-used-in-a-soft-fork-activatio/
+
+PR 21377 implementing mix of block height and MTP: https://github.com/bitcoin/bitcoin/pull/21377
+
+PR 21392 implementing block height: https://github.com/bitcoin/bitcoin/pull/21392
+
+SP: The idea of Speedy Trial can be implemented in two different ways. You can use the existing BIP 9 system that we already have. The argument for that would be that’s far less code because it already works. It is just for 3 months so why not just use the old BIP 9 code?
+
+AvW: BIP 9 used dates in the future?
+
+SP: Yes. You can tell when the signaling could start, when the signaling times out. There are some annoying edge cases where if it ends right around the deadline but then there is a re-org and it ends right before the deadline, people’s money might get lost if they try to get into the first Taproot block. This is difficult to explain to people.
+
+AvW: The thing is the signaling happens per difficulty period of 2016 blocks. At least up until now 95 percent of blocks needed to signal support. But these two block periods, they don’t neatly fit into exact dates or anything. They just happen. While the signaling period does start and end on specific dates, that is why you can get weird edge cases.
+
+SP: Let’s do an example there, it is fun to illustrate. Let’s say the deadline of this soft fork is on September 1st, pick a date, for signaling. On September 1st at midnight UTC. A miner mines block number 2016 or some multiple of 2016, that’s when the voting ends. They mine this block one second before midnight UTC. They signal “Yes.” Everyone who sees that block says “Ok we have 95 percent or whatever it is and right before midnight Taproot is active.” They have this automatic script that says “I am now going to put all my savings in a Taproot address because I want to be in the first block and I am feeling reckless, I love being reckless.” Then there is another miner who miners 2 seconds later because they didn’t see that recent block. There can be stale blocks. Their block arrives one second past midnight. It votes positive too but it is too late and so the soft fork does not activate because the signaling was not done before midnight, the deadline. That is the subtlety you get with BIP 9. Usually it is not a problem but it is difficult to explain these edge cases to people.
+
+AvW: It is a bigger problem with shorter signaling periods as well?
+
+SP: Yes of course. If there is a longer signaling period it is less likely that the signal is going to arrive at the edge of a period. 
+
+AvW: The threshold, I thought it was going to be 90 percent this time?
+
+SP: That’s a separate thing. First let’s talk about, regardless of the threshold, these two mechanisms. One is based on time, that’s BIP 9, easy because we already have the code for it, the downside is all these weird things that you need to explain to people. Nowadays soft forks in Bitcoin are so important, maybe CNN wants to write about it, it is nice if you can actually explain it without sounding like a complete nerd. But the alternative is to say “Let’s just use this new BIP 8 that was proposed anyway and uses height.” We ignore all the LOT=true stuff but the height stuff is very useful. Then it is much simpler. As of this block height that’s when the signaling ends. That height is always at the edge of these retargeting periods. That’s just easier to reason about. You are saying “If the signaling is achieved by block 700,321 then it happens, or it doesn’t happen.” If there is a re-org, that could still be a problem by the way, there could be a re-org at the same height. But then the difference would be that it would activate because we just made the precisely 95 percent. Then there is a re-org and that miner votes no and then it doesn’t activate. That is an edge case.
+
+AvW: That is also true with BIP 9. You remove one edge case, you have one edge case less which is better.
+
+SP: Right, with BIP 9 you could have the same scenario, exactly one vote, if it is just at the edge one miner vote. But the much bigger problem with BIP 9 is that if the time on the block is 1 second after midnight or before this matters. Even if they are way over the threshold. They might have 99.999 percent but that last block comes in too late and so the entire period is disqualified. With an election you are looking at all the votes. You are saying “It has got 97 percent support, it is going to happen” and then that last block is just too late and it doesn’t happen. It is difficult to explain but we don’t have this problem with height based activation.
+
+AvW: I guess the biggest disadvantage of using BIP 8 is that it is a bigger change as far as code comes. 
+
+SP: Yeah but I’ve looked at that code yesterday and wrote some tests for it. Andrew Chow and Luke Dashjr have already implemented a lot of it. It has already been reviewed by people. It is actually not too bad. It looks like 50 lines of code. However, if there is a bug in it it is really, really bad. Just because it is only a few lines of code, it might be safer to use something that is already out there. But I am not terribly worried about it.
+
+# The hash power threshold
+
+AvW: Then there is the hash power threshold. Is it 90 or 95?
+
+SP: What is being implemented now in Bitcoin Core is the general mechanism. It is saying “For any soft fork that you call Speedy Trial you could for example use 90 percent.” But for Taproot the code for Taproot in Bitcoin Core, it just says “It never activates.” That is the way you indicate that this soft fork is in the code but it is not going to happen yet. These numbers are arbitrary. The code will support 70 percent or 95 percent, as long as it is not some imaginary number or more than 100 percent.
+
+AvW: It is worth pointing out that in the end it is always 51 percent effectively because 51 percent of miners can always decide to orphan non-signaling blocks. 
+
+SP: And create a mess. But they could.
+
+AvW: It is something to be aware of that miners can always do that if they choose to.
+
+SP: But the general principle that is being built now is that at least we could do a slightly lower threshold. There might be still some discussion on whether that is safe or not.
+
+AvW: It is not settled yet? 90 or 95 as far as you know?
+
+SP: I don’t think so. You could have some arguments in favor of it but we will get into that with the risk section.
+
+AvW: Or we can mention really briefly is that the benefit of having the higher threshold is a lower risk of orphan blocks after activation. That’s mainly the reason.
+
+SP: But because we are doing a delayed activation, there’s a long time between signaling and activation, whereas normally you signal and immediately, or at least within 2 weeks, it activates. Right now it can take much, much longer. That means miners have a longer time to upgrade. There is a little less risk of orphaning even if you have a lower signaling threshold.
+
+# Delayed activation
+
+AvW: True. I think that was the third point you wanted to get at anyway. The delayed activation.
+
+SP: What happens normally is you tally the votes in the last difficulty period. If it is more than whatever the threshold is then the state of the soft fork goes from [STARTED](https://github.com/bitcoin/bips/blob/master/bip-0008.mediawiki#state-transitions), as in we know about it and we are counting, to LOCKED_IN. The state LOCKED_IN will normally last for 2 weeks or one retargeting period, and then the rules actually take effect. What happens with Speedy Trial, the delayed activation part, is that this LOCKED_IN state will go on for much longer. It might go on for months. It is LOCKED_IN for months and then the rules actually take effect. This change is only two lines of code which is quite nice.
+
+# Downsides and risks for this proposal
+
+AvW: Ok. Shall we get to some of the downsides of this proposal?
+
+SP: Some of the risks. The first one we briefly mentioned. Because this thing is deployed quite quickly and because it is very clear that the activation of the rules is delayed, there is an incentive for miners to just signal rather than actually install the code. Then they could procrastinate on actually installing the software. That is fine unless they procrastinate so long that they forget to actually enforce the rules.
+
+AvW: Which sounds quite bad to me Sjors. 
+
+SP: Yeah. That is bad, I agree. It is always possible for miners to just signal and not actually enforce the rules. This risk exists with any soft fork deployment. 
+
+AvW: Yes, miners can always just signal, fake signal. That has happened in the past. We have seen fake signaling. It was the BIP 66 soft fork where we learnt later that miners were fake signaling because we saw big re-orgs on the network. That is definitely something we would want to avoid. 
+
+SP: I think we briefly explained this earlier but we can explain it again. Bitcoin Core, if you use that to create your blocks as a miner, there are some safety mechanisms in place to make sure that you do not create a block that is invalid. However if another miner creates a block that is invalid you will mine on top of it. Then you have a problem because the full nodes that are enforcing Taproot will reject your block. Presumably most of the ecosystem, if this signaling works, will upgrade. Then you get into this whole very scary situation where you really hope that is true. Not a massive part of the economy is too lazy to upgrade and you get a complete mess.
+
+AvW: Yes, correct.
+
+SP: I think the term we talked about is the idea of a troll. You could have a troll user. Let’s say I’m a mean user and I’m going to create a transaction that looks like a Taproot transaction but is actually invalid according to Taproot rules. The way that works, the mechanism in Bitcoin to do soft forks is you have this version number in your SegWit transaction. You say “This is a SegWit version 1 transaction.” Nodes know that when you see a higher SegWit version that you don’t know about…
+
+AvW: Taproot version?
+
+SP: SegWit version. The current version of SegWit is version 0 because we are nerds. If you see a SegWit version transaction with 1 or higher you assume that anybody can spend that money. That means that if somebody is spending from that address you don’t care. You don’t consider the block invalid as an old node. But a node that is aware of the version will check the rules. What you could do as a troll is create a broken Schnorr signature for example. You take a Schnorr signature and you swap one byte. Then if that is seen by an old node it says “This is SegWit version 1. I don’t know what that is. It is fine. Anybody can spend this so I am not going to check the signature.” But the Taproot nodes will say “Hey, wait a minute. That is an invalid signature, therefore that is an invalid block.” And we have a problem. There is a protection mechanism there that normal miners will not mine SegWit transactions that they don’t know about. They will not mine SegWit version 1 if they are not upgraded.
+
+AvW: Isn’t it also the case that regular nodes will just not forward the transaction to other nodes?
+
+SP: That is correct, that is another safety mechanism. 
+
+AvW: There are two safety mechanisms.
+
+SP: They are basically saying “Hey other node, I don’t think you want to just give your money away.” Or alternatively “You are trying to do something super sophisticated that I don’t understand”, something called standardness. If you are doing something that is not standard I am not going to relay it. That is not a consensus rule. That’s important. It means you can compile your node to relay those things and you can compile your miner to mine these things but it is a footgun if you don’t know what you are doing. But it is not against consensus. However, when a transaction is in a block then you are dealing with consensus rules. That again means that old nodes will look at it and say “I don’t care. I’m not going to check the signature because that is a higher version than I know about.” But the nodes that are upgraded will say “Hey, wait a minute. This block contains a transaction that is invalid. This block is invalid.” And so a troll user doesn’t really stand a chance to do much damage.
+
+AvW: Because the transaction won’t make it over the peer-to-peer network and even if it does it would only make it to miners that will still reject it. A troll user probably can’t do much harm.
+
+SP: Our troll example of a user that swaps one byte in a Schnorr signature, he tries to send this transaction, he sends it to a node that is upgraded. That node will say “That’s invalid, go away. I am going to ban you now.” Maybe not ban but definitely gets angry. But if he sends it to a node that is not upgraded, that node will say “ I don’t know about this whole new SegWit version of yours. Go away. Don’t send me this modern stuff. I am really old school. Send me old stuff.” So the transaction doesn’t go anywhere but maybe somehow it does end up with a miner. Then the miner says “ I am not going to mine this thing that I don’t know about. That is dangerous because I might lose all my money.” However you might have a troll miner. That would be very, very expensive trolling but we have billionaires in this ecosystem. If you mine a block that is invalid it is going to cost you a few hundred thousand euros, I think at the current prices, maybe even more.
+
+AvW: Yeah, 300,000 something.
+
+SP: If you have 300,000 euros to burn you could make a block like that and challenge the ecosystem, say “Hey, here’s a block. Let me see if you actually verify it.” Then if that block goes to nodes that are upgraded, those will reject it. If that block goes to nodes that are not upgraded, it is fine, it is accepted. But then if somebody mines on top of it, if that miner has not upgraded they will not check it, they will build on top of it. Eventually the ecosystem will probably reject that entire chain and it becomes a mess. Then you really, really, really want a very large majority of miners to check the blocks, not just mine blindly. In general, there are already problems with miners just blindly mining on top of other miners, even for a few seconds, for economic reasons.
+
+AvW: That was a long tangent on the problems with false signaling. All of this would only happen if miners are false signaling?
+
+SP: To be clear false signaling is not some malicious act, it is just a lazy, convenient thing. You say “Don’t worry, I’ll do my homework. I will send you that memo in time, don’t worry.” 
+
+AvW: I haven’t upgraded yet but I will upgrade. That’s the risk of false signaling.
+
+SP: It could be deliberate too but that would have to be a pretty large conspiracy.
+
+AvW: One other concern, one risk that has been mentioned is that using LOT=false in general could help users launch a UASF because they could run a UASF client with LOT=true and incentivize miners to signal, like we just mentioned. That would not only mean they would fork off to their own soft fork themselves but basically activate a soft fork for the entire economy. That’s not a problem in itself but some people consider it a problem if users are incentivized to try a UASF. Do you understand that problem?
+
+SP: If we go for this BIP 8 approach, if we switch to using block height rather than timestamps…
+
+AvW: Or flag day.
+
+SP: The Speedy Trial doesn’t use a flag day.
+
+AvW: I know. I am saying that if you do a flag day you cannot do a UASF that triggers something else.
+
+SP: You could maybe, why not?
+
+AvW: What would you trigger?
+
+SP: There is a flag day out there but you deploy software that requires signaling. 
+
+AvW: That is what UASF people would be running.
+
+SP: They can run that anyway. Even if there is a flag day they can decide to run software that requires signaling, even though nobody would signal probably. But they could.
+
+AvW: Absolutely but they cannot “co-opt” to call it that LOT=false nodes if there is only a flag day out there.
+
+SP: That’s true. They would require the signaling but the flag day nodes that are out there would be like “I don’t know why you’re not accepting these blocks. There’s no signal, there’s nothing to activate. There is just my flag day and I am going to wait for my flag day.”
+
+AvW: I don’t want to get into the weeds too much but if there are no LOT=false nodes to “co-opt” then miners could just false signal. The UASF nodes are activating Taproot but the rest of the network still hasn’t got Taproot activated. If the UASF nodes ever send coins to a Taproot address they are going to lose their coins at least on the rest of the network.
+
+SP: And they wouldn’t get this re-org advantage that they think they have. This sounds even more complicated than the stuff we talked about 2 weeks ago.
+
+AvW: Yes, that’s why I mentioned I’m getting a little bit into the weeds now. But do you get the problem?
+
+SP: Is this an argument for or against a flag day?
+
+AvW: It depends on your perspective Sjors.
+
+SP: That of somebody who does not want Bitcoin to implode in a huge fire and would like to see Taproot activated.
+
+AvW: If you don’t like UASFs, if you don’t want people to do UASFs then you might also not want LOT=false nodes out there.
+
+SP: Yeah ok, you’re saying “If you really want to not see UASF exist at all.” I’m not terribly worried about these things existing. What I talked about 2 weeks ago, I am not going to contribute to them probably.
+
+AvW: I just wanted to mention that that is one argument against LOT=false that I’ve seen out there. Not an argument I agree with myself either but I have seen the argument.
+
+SP: Accurately what you are saying is it is an argument for not using signaling but using a flag day.
+
+AvW: Yes. Even Speedy Trial uses signaling. While it is shorter, it might still be long enough to throw a UASF against it for example.
+
+SP: And it is compatible with that. Because it uses signaling it is perfectly compatible with somebody deploying a LOT=true system and making a lot of noise about it. But I guess in this case, even the strongest LOT=true proponents, one of them at least, argued that would be completely reckless to do that.
+
+AvW: There are no UASF proponents out there right now who think this is a good idea. As far as I know at least.
+
+SP: So far there are not. But we talked about, in September I think, this cowboy theory. I am sure there is somebody out there that will try a UASF even on the Speedy Trial.
+
+# Speedy Trial as a template for future soft fork activations?
+
+AvW: You can’t exclude the possibility at least. There is another argument against Speedy Trial, I find this argument quite compelling actually, which is we came out of 2017 with a lot of uncertainty. I just mentioned the uncertainty at the beginning of this episode, some of it at least. Some people thought UASF was a great success, some people thought it was reckless. Both are partly true, there is truth in both. Now we have a soft fork, Taproot, that everyone seems to love, users seem to like it, developers seem to like it, miners seem to like it, everyone likes it. The only thing we need to do is upgrade it. Now might be a very good opportunity to clean up the mess from 2017 in a way. Agree on what soft forks are exactly, what is the best way to deploy a soft fork and then use that. That way it becomes a template that we can use in more contentious times in the future when maybe there is another civil war going or there is more FUD being thrown at Bitcoin. We seem to be in calm waters right now. Maybe this is a really good time to do it right which will help us moving into the future. While Speedy Trial, no one thinks this is actually the right way. It is fine, we need something so let’s do it. It is arguably kicking the can of the really big discussion we need to have down the road.
+
+SP: Yeah, maybe. One scenario I could see is where the Speedy Trial goes through, activates successfully and the Taproot deployment goes through and everything is fine. Then I think that would remove that trauma. The next soft fork would be done in the nice traditional LOT=false BIP 8. We’ll release something and then several months later miners start signaling and it will activate. So maybe it is a way to get over the trauma.
+
+AvW: You think this is a way to get over the post traumatic stress disorder? Let everyone see that miners can actually activate.
+
+SP: It might be good to get rid of that tension because the downside of releasing regular say BIP 8 LOT=false mechanism is that it is going to be 6 months of hoping that miners are going to signal and then hopefully just 2 weeks and it is done. That 6 months where everybody is anticipating it, people are going to go even crazier than they are now perhaps. I guess it is a nice way to say “Let’s get this trauma over with” But I think there are downsides. For one thing, what if in the next 6 months we find a bug in Taproot? We have 6 months to think about something that is already activated.
+
+AvW: We can soft fork it out.
+
+SP: If that is a bug that can be fixed in a soft fork, yes.
+
+AvW: I think any Taproot, you could just burn that type.
+
+SP: I guess you could add a soft fork that says “No version 1 addresses can be mined.”
+
+AvW: Yes exactly. I think that should be possible right?
+
+SP: Yeah. I guess it is possible to nuke Taproot but it is still scary because old nodes will think it is active.
+
+AvW: This is a pretty minor concern for me.
+
+SP: It is and it isn’t. Old nodes, nodes that are released now basically who know about this Speedy Trial, they will think Taproot is active. They might create receive addresses and send coins. But their transactions won’t confirm or they will confirm and then get unconfirmed. They won’t get swept away because the soft fork will say “You cannot spend this money.” It is not anyone-can-spend, it is “You cannot spend this.” It is protected in that sense. I suppose there are soft fork ways out of a mess but that are not as nice as saying “Abort, abort, abort. Don’t signal.” If we use the normal BIP 8 mechanism, until miners start signaling you can just say “Do not signal.”
+
+AvW: Sure. Any final thoughts? What are your expectations? What is going to happen?
+
+SP: I don’t know, I’’m happy to see progress on the code. At least we’ve got actual code and then we’ll decide what to do with it. Thank you for listening to the van Wirdum Sjorsnado.
+
+AvW: There you go.
+
