@@ -1,0 +1,275 @@
+Name: Socratic Seminar
+
+Topic: Agenda in Google Doc below
+
+Location: Bitcoin Sydney (online)
+
+Date: June 1st 2021
+
+Video: No video posted online
+
+Google Doc of the resources discussed: <https://docs.google.com/document/d/1E9mzB7fmzPxZ74WZg0PsJfLwjpVZ7OClmRdGQQFlzoY/>
+
+The conversation has been anonymized by default to protect the identities of the participants. Those who have expressed a preference for their comments to be attributed are attributed. If you were a participant and would like your comments to be attributed please get in touch.
+
+# Bitcoin Problems (Lloyd Fournier)
+
+<https://bitcoin-problems.github.io/>
+
+This is Bitcoin Problems, it is a Jekyll website I put on GitHub. I am very bad at making things look nice but it is functional at least. What the idea is is that there are lots of open research problems that often don’t get written down in a particular place but they end up on the mailing list and stuff like that. Sometimes they are just things in my head and other people’s heads that you talk about on Slack or IRC or something and they don’t really get put down properly. But on the other hand we have a lot of really clever people in academia or in research labs who are looking for topics to research on. For example we have Lukas (Aumayr) here today who made a brilliant presentation last time on [Blitz](https://eprint.iacr.org/2021/176) (Secure Multi-Hop Payments Without Two-Phase Commits). Now he’s done that he is going to be looking for other things to do. There are lots of people like him so I thought that at the very least we should have a website where we write down open research problems that someone could pick up and see if they can get to the bottom of it for us. Rather than it being these developers and independent mailing list readers and researchers having all the fun. Maybe we can get some other people in there to do it as well. I created this website and started writing down problems that are in my head that I thought other people should look at but maybe aren’t being paid much attention. I’ll give you some examples to start with. 
+
+This [one](https://bitcoin-problems.github.io/problems/ptlc-cycle-jamming.html) (PTLC Cycle Jamming) here was my test one that I wrote to see if I could put an image here. This is one where you have these jamming attacks that we’ve talked about before. Someone makes a Lightning payment but does not redeem the payment and so the funds get locked along the payment path until the expiration of the timelocks. This is a kind of griefing attack. You can enhance this attack with the point timelocked contracts (PTLCs). If we upgrade to point timelocked contracts not only do we enhance privacy, we enhance privacy so much that it creates a new kind of jamming attack. Instead of just locking up funds along a single path that goes to different nodes, you lock up funds along a path that actually repeats through the same hop several times. This is a way of focusing an attack on a particular hop. The people who are forwarding the payments in a circular way through their hop multiple times can’t tell it is the same payment. At each hop it is randomized and it doesn’t look like the same payment as it was before. This is why it gives you privacy and why it gives you this attack.
+
+Another [one](https://bitcoin-problems.github.io/problems/removing-cross-layer-links.html) is these removing cross-layer links which is heavily related to this [paper](https://arxiv.org/abs/2007.00764) we discussed with Pedro (Moreno-Sanchez) and his co-authors which is about cross-layer deanonymization methods in the Lightning protocol. How you can link onchain stuff to offchain stuff through these cross-layer links that occur in the protocol. Can we have Lightning Network without these links? 
+
+This is what I’ve been doing and wondering what your thoughts are. I don’t know exactly where I’m going to go with it. My dream would be each problem was really, really well specified and has a maintainer. I’ve tried to say there is a maintainer for each problem. It is open, has categories, has a discussion issue. You can click on the issue and discuss it in an informal manner. Then what I would really like to have BTCPay Server and you can pay to have these problems solved. Or at least pay into so then if someone publishes a paper or puts some work into solving it they can maybe get the money at the end, if it is sufficient of course. The problems right now are probably not specified well enough to actually decide when that would get paid out. In the long run that’s where I’d like to go with it.
+
+On the channel jamming for PTLCs, I haven’t heard of that before. I was under the impression that PTLCs were a strict improvement on HTLCs. This is an example where they aren’t and we need to solve this.
+
+I think so. I don’t know if everyone else agrees that this attack is much worse than the original attack. It doesn’t let you lock up more funds but it lets you focus it on a particular hop. Is that much worse? I think it is. As an attacker you can lock up lots of funds but in a channel with 1 BTC capacity in one direction, in order to jam that capacity up you need to spend 1 BTC doing that and lock up your own BTC. You can do that 20 times with 20 different 1 BTC channels. But with this attack you can lock it up with much less, 0.1 or even less BTC. That seems like a problem, you don’t want to do that. That might bring down the threshold to actually start doing the attacks. Of course these attacks don’t exist right now. Maybe the reason is people don’t care enough, probably that’s the main reason. The next reason why people aren’t doing them, maybe it is not super effective to lock up your own funds to lock up other people’s funds. When you focus it on a particular person that you want to take out. That’s why the site exists, no one is thinking about this problem, let me write it down and see what people think.
+
+I think this attack was also possible before HTLCs. I remember a paper where they used circular routes as well. Maybe clients now don’t allow for circular routes anymore? I don’t know, this exact method was also used in HTLCs as well.
+
+If you can find that mentioned you should send that to me or make a pull request and put that there. In theory you can easily protect against the circular routes just because the HTLC preimage is the same on each hop. The privacy leak allows you to identify it.
+
+To be clear the payment hash would be the same and because the node can detect it is the same payment hash this guy might be trying to spoof or channel jam me. I am now going to stop accepting incoming HTLCs from that have this payment hash?
+
+Exactly. There is no reason it should ever cycle through you with the same payment hash.
+
+So would this be a strong enough reason to not do PTLCs until this is solved or attempted to be solved?
+
+You could do the PTLCs and just not do the randomization bit of it. There are other ways you can leverage PTLCs. I don’t know if I would say I would not do it but it is definitely worth the Lightning developers considering this problem before switching I would say. It is the operating nodes that have to pay the cost for this protocol change. Of course they can just not accept that if they don’t want to, it can be an optional thing.
+
+Are you planning to attend Antoine Riard’s [workshops](https://lists.linuxfoundation.org/pipermail/lightning-dev/2021-April/003002.html) on Lightning problems? I think they are coming up next month. 
+
+This is the particular one about fees. He writes a lot about [Lightning problems](https://github.com/ariard/L2-zoology) but he is also doing a workshop on this fee bumping, what should be the rules to evict transactions from the mempool? I have a Bitcoin problem as a [PR](https://github.com/bitcoin-problems/bitcoin-problems.github.io/pull/13) right now on that topic as I’m trying to teach myself and he has done a nice review for me. I need to go through that. Eventually there will be a Bitcoin problem on solving that. If we solve this problem out of these meetings then it can be the first Bitcoin problem to be solved.
+
+# OP_CAT and Schnorr tricks (Andrew Poelstra)
+
+Part 1: <https://www.wpsoftware.net/andrew/blog/cat-and-schnorr-tricks-i.html>
+
+Part 2: <https://www.wpsoftware.net/andrew/blog/cat-and-schnorr-tricks-ii.html>
+
+Next up we have something that has been on the list for us for several months, we just never get to it because we have very interesting speakers. It is about the implications of adding OP_CAT. OP_CAT is a proposed opcode, I think it used to exist but it was quietly removed in 2010. This is a blog post about the immense implications of adding this opcode and how it does much more than you would have thought. Just taking two bits of data and sticking them together which is what it does. It takes the top two elements on the stack, puts them together and leaves it on the stack. Ruben sent me this idea on Telegram years ago, maybe at the beginning of the pandemic. He was like “If you have OP_CAT we can do covenants, we can do CHECKTEMPLATEVERIFY potentially.” We have this opcode as a [BIP 119](https://github.com/bitcoin/bips/blob/master/bip-0119.mediawiki), called CHECKTEMPLATEVERIFY which is being considered seriously. The claim of this blog post and what Ruben was saying at the time, if you just have OP_CAT you can do this. How on earth could you get CHECKTEMPLATEVERIFY out of OP_CAT? What is CHECKTEMPLATEVERIFY first of all? CHECKTEMPLATEVERIFY is to check what is the structure or in the simplest case the hash, of the transaction that is spending this output? I’ve got an output, I’ve got some money, I can put an OP that says “It can only be spent by this exact transaction in this branch”. It doesn’t matter about the signature, you may check the signature as well, but it can only be spent by this transaction. It says CHECKTEMPLATEVERIFY and there’s a hash and it checks that the hash of the transaction spending is this hash. If I’m remembering correctly exactly how it works. The reason you may be able to do this without that particular opcode is because you have a thing which has as input the transaction that is spending this output. You have the CHECKSIG, you have a signature checking opcode which checks the signature on a digest of the transaction that is spending the current output. When you sign a transaction, you take the transaction, you hash it into the signature and you check the signature in the output. You have the transaction as an input to this process of verifying the signature. What the trick is… This is what a Schnorr signature looks like:
+
+`s = k + xe`
+
+`e` is the hash of some things and the transaction digest. That is in the `e`. Then you’ve got your private key and you’ve got this random `k` thing. The approach for this cheating way Andrew uses here to get CHECKTEMPLATEVERIFY is to fix those other two things to `1`. `k` and `x`, fix them to `1` then `s` is just `1+e`, `1` plus the hash of the transaction roughly. In order to check that it is spending to a particular transaction, we can do that because we’ve fixed the private key to `1` and we’ve fixed this `k` value to `1`. If the person who wants to spend puts `s` on the witness stack we can check `s` is a valid signature under the public key corresponding to `1`. If we check that and we check its value, we check `s` is this value and we check that it is a valid signature, we’ve checked that the transaction spending it is the one we wanted. It is a really odd way of checking it but it certainly works. Instead of having these variables of public key and this `k` value we fix them all and now we are only checking the message. Rather than checking a signature on the message we are only checking what the message is effectively by removing these variants. What does OP_CAT have to do with this? OP_CAT allows us funnily enough to do this `1+e`. The difficulty of doing this before, Ruben (Somsen) said you could do this with ECDSDA and I was like “But wait, you can’t do the `1`. You can’t add `1`, it is impossible to add `1` to something without a special opcode to do the `1+e` modulo the curve order. What Andrew has figured out, obvious in retrospect, if you want to add `1` to something you can just add the byte `01`. If the number ends with `00` let’s say and you just add the byte `01` onto the end instead of the `00` it is the same as adding `1`. This uses OP_CAT to do arithmetic. Then once you’ve got the right `s` value he uses OP_CAT to concatenate the `s` value onto the point corresponding to `1` which is `G` and checks the signature against it. That’s really difficult to get your head around. I was confused about it, I had to ask Ruben what was going on here. Eventually I got to the bottom of it. You can see these `G`s. This is the public key corresponding to `1`. They are being concatenated onto each other and then CHECKSIG, you check it against `G` and the signature `G.s`. Normally it is `R` and `s`, the signature. We are setting `R` as `G` because that corresponds to `k`. That’s the trick of this thing. It is not something I would have ever come up with but what that gets you is covenants without this particular CTV opcode. OP_CAT gets you that now. It is not in a particularly nice way, it is quite messy in several respects. One thing is you have to find your `s` value that starts with a particular byte pattern. You can’t just choose any `s` value, you have to keep going through them until you find one that starts with `01`. Then you put `2 CAT` on the end of it because `2` is `1+1`. That is what he is going for here. That is the trick.
+
+Then given this trick, this fundamental trick he’s got, he claims in his next post that he can do vaults. You’ve probably heard of this idea of vaults which is an example of a dynamic covenant. It is more complicated than just OP_CHECKTEMPLATEVERIFY. A vault is when you take your money out and you send it to a particular address but it doesn’t go straight there, it waits some time. Then eventually it gets there after a timeout. It gives you time to take the money back if you didn’t really want it to go there. Instead of sending a payment that goes straight there it takes time and then comes back if you sign something saying “I cancel that payment”. I can’t remember the details of this now, he’s done that just using this trick and using OP_CAT to hash bits of the transaction. Instead of having a fixed transaction it is a dynamically constructed transaction using bits of the witness stack and using OP_SHA256 to actually do the hash and get the transaction digest on the actual stack from data that was passed in. It is much more dynamic than just a fixed transaction that can spend this output. It is a transaction with this particular structure, it can be any transaction with this particular structure. We only care about these bits of it. He manages to construct that rather remarkably using this trick. To top that off, he also says “In my next blog post I’ll show you how to do ANYPREVOUT just with this trick”. You wouldn’t even need ANYPREVOUT, maybe. Or you could do something like eltoo just with this trick. I haven’t figured out how he’s going to do that. Since Andrew is such a prolific researcher I thought it was pointing this out. We have to wait for the next blog post in the series to figure out how this magic gets turbocharged to achieve what he claims there. That is what we know so far. 
+
+Did you say you tweak the signature nonce until you get a signature that starts with a certain byte?
+
+Yeah he wants `01`.
+
+You want `01` at the start of your signature?
+
+At the end. He wants the `s` value which is 32 bytes to end in `01`. Then when he puts it on the witness stack he is going to get rid of the `01`, it is going to be 31 bytes there.
+
+Why does OP_CAT need `01`? Why can’t you concatenate anything? Why does it have to remove `01`?
+
+The reason is he needs addition. He needs to check that the signature is this hash plus 1`. This `e` is going to be on the stack but he needs to complete the addition (`1+e`). This is the difficult thing. He needs to check that this `s` is equal to this `1+e`. I get lost in the logic of it as well but that is what is happening. He needs to do this addition. We need this plus operator so he’s taking something that he knows ends in `01`, the person who is doing it has found something that ends in `01` and adds `1` to it by concatenating it (doing a `2 CAT` and checks the signature. Hopefully I’m putting you in the right direction at least to read the blog post. It ends in `01`, he removes the `01` byte, adds `2` using the CAT operator, a `02` byte on the end, that’s the result of the addition in almost all cases unless you have a modular reduction that you are unlikely to have. Then the addition is done and now you know the OP_CHECKSIG is going to be checking what you want it to check. That’s the answer, the best one I’ll give.
+
+What do you think? This doesn’t sound like a proper replacement for CHECKTEMPLATEVERIFY, it is more like a trick?
+
+I don’t know what he’s going for with this. It is very interesting but especially with this `SHA256(“BIP340”)` and concatenate that into the whole thing as well if you are doing the dynamic thing. You put `BIP 340` in the message, it is just not the transaction hash. There is stuff before it, you have to concatenate other things before anyway. You have to do all this concatenation. I’m not explaining it very well now and I have read the blog post. Imagine trying to get the developer community to understand this, that’s the difficulty. Even if it works it is going to be a little bit inefficient.
+
+You need 256 tries to find the correct `s`.
+
+Yeah, writing that code is disappointing. The guy who has to write this loop where you keep trying until it ends in `01` before you can do the covenant.
+
+This might speed up the acceptance of the BIP proposal for CHECKTEMPLATEVERIFY because you could argue that it is already possible right now in a weird way.
+
+We don’t have OP_CAT. If we have OP_CAT then you’re having this anyway. Those who are fans of OP_CAT now have cause to accept that you are going to have covenants. That is a big breakthrough, that’s important.
+
+I think that’s important. OP_CAT is not as controversial as OP_CHECKTEMPLATEVERIFY. OP_CAT, all you do is concatenate two strings. But OP_CHECKTEMPLATEVERIFY, how should this be used, how should this look? Maybe we will see OP_CAT in Bitcoin now.
+
+OP_CAT is now more controversial because it makes the functionality of OP_CHECKTEMPLATEVERIFY possible. You sign up for more than you originally intended.
+
+I guess so. A good point he makes in the blog post, this whole thing about covenants being dangerous or whatever is a bit of nonsense. It doesn’t make any sense and I agree with him. They are fun and they don’t hurt anyone. 
+
+One thing about OP_CAT is that it is already available in Liquid or Elements. You can do this sort of hackery in that environment and actually create wallets that use covenants and stuff without needing to finish the design of CTV or anything similar.
+
+That’s right. In this blog post, what I assume has happened is that he’s so excited about this idea that he’s gone off and started implemented it in Elements. We haven’t gotten the blog posts after that. I’m hoping he’ll appear with eltoo on Liquid with OP_CAT.
+
+There is no Taproot yet on Liquid.
+
+You wouldn’t need it.
+
+I thought someone was saying that Taproot was on Liquid already.
+
+I haven’t seen that. I think they are still working on it. It is at least not yet live.
+
+Alternatively Taproot is apparently already available on Chia.
+
+Chia is an altcoin for anyone who doesn’t know what Chia is.
+
+I have seen people complaining about it. It is destroying the SSDs on AWS or something.
+
+We made GPUs expensive, now we are making SSDs expensive.
+
+There is going to have to be an interesting [conversation](https://bitcoin.stackexchange.com/questions/106851/what-are-the-downsides-to-enabling-potentially-suboptimal-or-unused-opcodes-in-a) for the next soft fork. From what I see, ANYPREVOUT seems an absolute guarantee but then for covenants and vaults, Poelstra is talking about using OP_CAT here, there’s CHECKTEMPLATEVERIFY. Is the next soft fork just going to be a bunch of opcodes? We throw it out there and say “See what you can do with this kind of stuff”? Or is the next soft fork is going to be “You can do everything with ANYPREVOUT so we are not going to do OP_CTV, we are not going to do OP_CAT”. I have no idea which is superior at this point. Do we have all the opcodes or do we just have one or two that allow us to do the majority of the stuff we want to do?
+
+With ANYPREVOUT you can do everything that you can do with CTV and OP_CAT?
+
+You can do [vaults](https://arxiv.org/pdf/2006.16714.pdf) with ANYPREVOUT.
+
+I can’t remember what ANYPREVOUT can do on its own versus what it can do with OP_CAT. OP_CAT is so simple that if you are making these weird tricks that you can do anything with, you assume that OP_CAT is something equivalent is available.
+
+One thing I remember why OP_CAT was maybe controversial is because you can keep CATing things and make a really, really big stack.
+
+The way CAT works in Liquid is its limited to some power of 2 bytes, 64 or 256 bytes, you can’t CAT together things anything longer than that.
+
+Seems like a simple solution.
+
+# Designing Bitcoin Smart Contracts with Sapio (Jeremy Rubin)
+
+<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-April/018759.html>
+
+I’ve got this [blog post](https://judica.org/blog/sapio-tutorial/), this is being released by Judica which is a research lab / development team started by Jeremy Rubin. Their first big release is this Sapio language, this Sapio compiler for the language. It is a smart contract compiler but smart contract doesn’t necessarily mean one transaction. It is a contract that could be expressed through many transaction trees. What’s the angle here? I have taken a look at this blog post. What he has got here is a really basic public key contract which means these funds can be taken by making a signature under somebody’s public key.
+
+```
+class PayToPublicKey(Contract):
+    class Fields:
+        key: PubKey
+
+    @unlock
+    def with_key(self):
+        return SignedBy(self.key)
+```
+
+There’s this class, it seems very Pythonic in a lot of ways this language. This class has fields and it has a pubkey and you can unlock the funds with this \@ decorator thing, the predicate being if it is signed by `self.key`. That should be straightforward, that’s what it looks like for the simplest possible spend. Then he goes for a more complicated one next. 
+
+Same thing except we have multiple keys now, three keys and we have this `unlock` which are these two disjunctions here, signed by escrow and Alice or Bob or just signed by Alice and Bob. This typical escrow output, 2-of-3. 
+
+```
+class BasicEscrow(Contract):
+    class Fields:
+        alice: PubKey
+        bob: PubKey
+        escrow: PubKey
+
+    @unlock
+    def redeem(self):
+        return SignedBy(self.escrow) & (SignedBy(self.alice) | SignedBy(self.bob)) | (
+            SignedBy(self.alice) & SignedBy(self.bob)
+        )
+```
+
+What he is showing here, if you want to make that a bit simpler, you can have two methods now. There’s unlock `use_escrow` and unlock `cooperate` which is Alice and Bob. The two sides of the disjunction up here are now two different methods. 
+
+```
+class BasicEscrow2(Contract):
+    class Fields:
+        alice: PubKey
+        bob: PubKey
+        escrow: PubKey
+
+    @unlock
+    def use_escrow(self):
+        return SignedBy(self.escrow) & (SignedBy(self.alice) | SignedBy(self.bob))
+
+    @unlock
+    def cooperate(self):
+        return SignedBy(self.alice) & SignedBy(self.bob)
+```
+
+That’s as complicated as it gets up until using CHECKTEMPLATEVERIFY. The question I have at this point is what would this look like if you are using this as an engineer. My guess is that you take this code, you compile it and it will give you an instance of this contract. Then you will be able to pass in these fields as variables as runtime and it will compile out this contract. What that will leave you with is an address to send the money to, to lock it in to this contract, and also any subsequent steps and an interface to create the transactions that spend from it and any subsequent steps you have in executing this contract. This very simple one has one step, money goes in, you take it out by `use_escrow` or `cooperate`. 
+
+This is where things get a little more complicated. Here he has what he is calling trustless escrow but the key thing to look at here is he’s got this unlock `cooperate` as he did last time but now the `use_escrow` has this `guarantee` decorator and it has this transaction thing going on. He makes a `TransactionTemplate` and adds outputs to the transaction and sets a sequence. Now you can see that the logic of this, if you `use_escrow` what is going to happen to you as an engineer interacting with this is you are only going to be able to spend from this output that you initially put the funds in using a transaction that satisfies the transaction template using OP_CTV. 
+
+```
+class TrustlessEscrow(Contract):
+    class Fields:
+        alice: PubKey
+        bob: PubKey
+        alice_escrow: Tuple[Amount, Contract]
+        bob_escrow: Tuple[Amount, Contract]
+
+    @guarantee
+    def use_escrow(self) -> TransactionTemplate:
+        tx = TransactionTemplate()
+        tx.add_output(*self.alice_escrow)
+        tx.add_output(*self.bob_escrow)
+        tx.set_sequence(Days(10))
+        return tx
+
+    @unlock
+    def cooperate(self):
+        return SignedBy(self.alice) & SignedBy(self.bob)
+```
+
+This language is built around OP_CTV and covenants that we just discussed a bit. What does this look like? Now he’s got some actual code that uses this, you can see he has created a trustless escrow. He passes in at runtime all the keys and the amounts that should be in the escrow. When the transaction goes to this path what are the values of the outputs for each party? You can see he has got in the fields a contract. As part of the parameters he has passed in another Sapio contract which is the basic `PayToPublicKey` one. 1 Bitcoin to Alice, 10,000 satoshis to Bob, to this `PayToPublicKey` Bob contract. The important thing to note is that he has composed the contract with other contracts as parameters, also expressed in Sapio. He shows how to make things more complicated and how you can compose these contracts together using Sapio. This is where I got my guess about how it works, it prints out the address for the contract. After all this is done and you have got this contract as an object in your programming language, you can ask it for the address of it, the pay-to-witness-script-hash address of this contract. It will give it to you. That’s my impression of how this is going to work. Jeremy is going to be talking at the Bitcoin 2021 conference and giving a more up to date presentation of how this works and explanation.
+
+For people who are aware of Miniscript and Policy, this is a layer above Policy, it is a similar level to shesek’s [Minsc](https://min.sc/) language. What hasn’t [clicked](https://bitcoin.stackexchange.com/questions/106855/what-are-the-differences-between-the-minsc-and-sapio-high-level-scripting-langua) for me yet… I can see why you’d want a high level language above Policy. What I don’t understand is how this language ties in with CTV. Is this just useful without CTV? Is there some interlocking where this language has been designed specifically for CTV or is it just a nice language that you can use for CTV?
+
+It has been designed around CTV.
+
+What does that actually mean? What decisions were made because he wanted it to fit around CTV? I don’t understand that.
+
+I don’t know the answers either. I will hopefully get to grips with what is happening here, what his idea is. What you can see is that using CTV here, he has created a transaction and he’s added as outputs… You can think of this as compiling to Script in an output, this whole thing. But in the script he has said “I want this script to only spend to a transaction that has these outputs and those outputs are also contracts written in Sapio”. That is how he is using CTV as a first class citizen in this language whereas using other things it wouldn’t be a first class thing. In Miniscript you would have support for that kind of spend but you wouldn’t have it as a first class thing. I don’t even know how OP_CTV would be able to work in Miniscript if it included details about the transaction that was spending…
+
+The way I understood it, Sapio needs CTV but for the time being without CTV being approved it uses a CTV emulation oracle. I don’t know how that works but that’s what Judica says about CTV. That would make it possible to use CTV inside Sapio right now. 
+
+There’s a trusted party you can use to emulate CTV that he has built already. 
+
+It will compile down to Miniscript so Miniscript will surely have to be extended.
+
+It compiles down to Policy and then Miniscript. 
+
+But Miniscript would have to be extended to support CTV surely.
+
+It totally would be but the question is what happens in it? I imagine that it is just the hash that is in there. The Miniscript would be like CTV this hash and that’s the spending policy. I imagine that is the way it would work, I imagine you don’t have CTV and then properties of the transaction as parameters to the CTV Miniscript. This is clearly giving you some higher level logic over that whereas in Miniscript I guess the parameters of CTV would just be a hash. Maybe they could think up something more clever. 
+
+# Taproot is going to be activated
+
+<https://taproot.watch/>
+
+Taproot is going to be activated it looks like. We are about to hit the next activation period, epoch… we are already in it. It looks like we are going to be locked in. 97 percent so far. Congratulations everyone, congratulations to the people who worked on it and thank you to AJ and others, the authors and everybody else who did the engineering to get this done. It looks like we are going to be there.
+
+And [Mara Pool](https://bitcoinmagazine.com/technical/mara-pool-and-bitcoin-mining-censorship) capitulated. They are not going to censor transactions and they are going to signal for Taproot.
+
+Why were they doing that? Did they think they were legally required? Because they were on the Nasdaq they had to follow regulations or something?
+
+Someone joked on social media that they probably just need some time to rebase their censorship code on top of Taproot because they are signaling for Taproot.
+
+One thing is that several of the large mining pools had enough hash power to stop the upgrade and assuming people didn’t move between them they had enough mining power to stop it or delay it. But no one tried any games. These are some [charts](https://taproot-chart-3k9v7.ondigitalocean.app/) that I made. You can see these are big pools down here, like F2Pool, AntPool, Poolin and perhaps ViaBTC and Binance at some points. If any of these ones said “No” and people didn’t proactively move their hash power away from them we would have been in a tricky situation. But they all eventually changed so we didn’t have to think about this problem. Does anyone have feelings about that? Why is this unlikely to happen? Do you think that if any of these big mining pools did really put their foot down and not do it or be unresponsive, do you think the hash power would have moved away from them in time for Speedy Trial? My feeling is that it would have, the hash power did have enough time in this case because we got so many cooperative pools onboard. By the end of the second period we pretty much had everyone. If there was anyone left out we would have had four more periods to get people to move their hash power away from that particular holdout. 
+
+I heard that it takes quite a lot of time for a mining farm to move from one pool to another given all the setup transition. If that is true, I have no idea, then I’d guess it wouldn’t happen within Speedy Trial.
+
+Normally every miner should have a backup pool if the main pool is down. They should be prepared and have the backup pool ready. That is what you should do, otherwise if your pool is down then you aren’t mining. I don’t know what the miners actually do but normally you have a backup pool I think.
+
+Inconsistent miners, I saw a few of them that signaled and then didn’t signal and then signaled again.
+
+It was interesting. This whole upgrade process rattled the miners a bit because they hadn’t done it in a while. Some of them had some technical issues. I know that Poolin, I think Alejandro was on Stephan Livera [podcast](https://stephanlivera.com/episode/277/)... Some of them had issues switching. They found out, after they tried, that some old hardware..
+
+They had to update firmware and I think they didn’t want to dox which particular ASIC manufacturer it was. They were just going round telling the other pools “Get your firmware upgrade”.
+
+On BTC.com Twitter they actually said “We are not going to go round and do the difficult task of forcing people to upgrade for some particular firmware”. That is why we still have the little red ones for BTC.com because they have split their mining pool in two effectively. One server does the old ones and all the new ones moved. It took them some time to sort that new infrastructure out and get the majority of their hash power doing that. F2Pool also has these red dots for a while, they probably had similar issues. They eventually sorted it out. Andrew Chow said something on Twitter, something exposed the fact that some mining pools were not verifying blocks properly. I can’t remember why he thought that. Andrew Chow was monitoring the Stratum stuff from the mining pools directly. He believed that some mining pools were still making non-signaling blocks because they were not checking the work somehow. It didn’t make sense to me but that is what he seemed to say. It seems this task of upgrading their infrastructure exposed some taking of shortcuts.
+
+We do actually need them to enforce the Taproot rules in November. It would be a bit of a shame after all this signaling if that wasn’t to happen.
+
+The interesting thing I didn’t know about miners, they do actually use a Bitcoin Core node off the shelf without too many modifications, it sounds like. In my mind I always assumed they did something to it or they run their own custom things but it sounds like the way they upgraded was just to upgrade their Bitcoin Core node. Hopefully that takes care of the enforcement as well. 
+
+I heard that if you don’t tweak Bitcoin Core then you don’t get really full blocks. Maybe a few bytes or something missing. Somehow there is some optimization for the block template stuff. I don’t know exactly.
+
+There are about 1000 or 4000 bytes at the end of the block that is left free in case they want to extend the coinbase by adding more data in there. It is much worse if you go over the block size and get your block rejected than losing out on the bottom bits of fee rate for a couple of transactions that might have fitted in there. 
+
+Bitcoin Core when it is making blocks leaves extra room that the miners may not need for the coinbase?
+
+When you are generating your template, that’s just a template, the miners are still going to put some stuff in the coinbase. It will probably be 30 bytes or 60 bytes or 100 bytes or whatever.
+
+It could mean the difference between a few sats. Maybe they do modify Bitcoin Core nodes slightly in a predictable way that is easy to deploy. 
+
+It is the [BLOCK_MAX_WEIGHT](https://github.com/bitcoin/bitcoin/blob/a55904a80c35730c89d4d84214c2afbec8b1536d/src/miner.cpp#L65) minus 4000 bytes that it tries to fill up to.
+
+4000, that’s quite some transactions.
+
+That is weight not bytes. It is 1000 bytes. 
+
+Still a handful of transactions if you were not optimizing.
+
+At 1 satoshi per byte that’s 1000 satoshis. Or 100 satoshis per byte that’s 100,000 satoshis. 
+
+That’s quite some sats.
+
