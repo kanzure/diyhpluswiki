@@ -1,0 +1,342 @@
+Name: Socratic Seminar
+
+Topic: Taproot is locked in. What now?
+
+Location: London BitDevs (online)
+
+Date: July 20th 2021
+
+Video: <https://www.youtube.com/watch?v=GAkLuZNsZzw>
+
+Gist of resources discussed: <https://gist.github.com/michaelfolkson/0803271754f851530fe8242087859254>
+
+This event was livestreamed on YouTube and so comments are attributed to specific individuals by the name or pseudonym that was visible on the livestream. If you were a participant and would like your comments to be anonymized please get in touch.
+
+# Intro
+
+Michael Folkson (MF): Welcome to everyone on the call, welcome to anybody on YouTube. This is a Socratic Seminar on Taproot rollout or Taproot support post activation in November. If there are some developers on the call or people working on particular projects hopefully we’ll be able to discuss some of the challenges or gotchas in terms of rolling out Taproot support, gauging where we are at in terms of whether people are thinking about this for their developer roadmaps in their businesses, in their companies, on their open source projects. Everyone should know that activation is in November, block height 709632 and that is a few months away so there is no rush but it is a good time before the summer holidays to be discussing plans for rolling this out. We’ll start with intros. Who you are, name or pseudonym is fine, and also what project and what company you are either contributing to or what software you are using in terms of what you are interested in for what projects and what businesses support Taproot once November comes around.
+
+Oscar Pacey (OP): I’m interested to catch up on the news, follow the format, get more accustomed to it for future meetings.
+
+Alex Waltz (AW): Hi I’m Alex, I don’t work for any company, I just wanted to come in and listen. I hope to see the upgrade in more wallets even though I think that is not going to happen so fast. 
+
+MF: We’ll get into that later.
+
+Aaron van Wirdum (AvW): I’m Aaron van Wirdum, I work for Bitcoin Magazine so I am tuning in to see what is going on over here. 
+
+Craig Raw (CR): Hi I’m Craig Raw, developer of [Sparrow](https://github.com/sparrowwallet/sparrow) wallet. I have recently been integrating single key Taproot in. I guess I’m here on the call having done that work on my own. I’m interested to hear what the progress of the greater community is on it, get some feedback perhaps.
+
+MF: Awesome. How was that process? Was it pretty easy to do? Or did it require looking up loads of stuff? Did you look at how Core has implemented it or just did it yourself?
+
+CR: I pretty much followed the BIPs. I didn’t find them particularly easy to read. I also referred to the Optech Taproot [workshop](https://github.com/bitcoinops/taproot-workshop) which is a little bit out of date. There is a [PR](https://github.com/bitcoinops/taproot-workshop/pull/168) that updates it to 0.21. I followed that but the workshop is not exactly what is in the BIPs either. It wasn’t the easiest process I must admit but I do think all the information is out there. It can be a little bit difficult to piece it altogether.
+
+MF: That is really good feedback, thanks Craig. Those Optech workshops are really good but yes there were a few done a year and a half ago so maybe there are a few details that are out of date or slight changes that weren’t implemented in the Optech workshops. Luke says you can propose changes to the BIPs to make them easier to work with. You mean the Taproot BIPs?
+
+Luke Dashjr (LD): Yeah. He was saying he needed help besides what was in the BIPs. It might make sense to clarify what goes in the BIPs so that is easier for other people to work with when they are in the same situation.
+
+MF: What are your thoughts in terms of changing the BIPs, it is kind of dangerous… I suppose if it is guidance for users then it is not really a problem.
+
+LD: The purpose of the BIPs is that people can read them and understand how to work with it. If it is not accomplishing that I don’t know what is missing, it sounds like something could be added to make it clearer, whatever was missing for him.
+
+MF: Good point. Craig, after this if there is anything in the BIPs you don’t like perhaps consider opening a PR.
+
+CR: It all depends on what background you’ve had coming into them. That’s obviously a difficult thing to assume everyone’s background reading them for the first time. I didn’t have a particular issue with the BIPs, they are quite dense but that doesn’t necessarily mean they’re bad. I just think we perhaps need more accompanying material that can assist with explaining them. Obviously as the support grows and the amount of code grows you have more reference points. There aren’t that many at this point.
+
+MF: It is still early. In terms of SegWit time we are still mid 2017. I am always trying to think where we are in terms of SegWit and comparing to SegWit. I have a section later where we’ll talk about some lessons why SegWit rollout and SegWit adoption were so small. Andrew says in the chat the BIPs are pretty dense so it can be easy to miss things.
+
+MF: [This](https://gist.github.com/michaelfolkson/0803271754f851530fe8242087859254) is the reading list that I put together. We did have Socratics last year discussing the design of [BIP-Schnorr](https://btctranscripts.com/london-bitcoin-devs/2020-06-16-socratic-seminar-bip-schnorr/) and [BIP-Taproot](https://btctranscripts.com/london-bitcoin-devs/2020-07-21-socratic-seminar-bip-taproot/), there are transcripts and videos from June, July last year. Anybody who is unclear on the details, some of that discussion might be helpful. Obviously there are BIPs and other resources. Hopefully there will be a lot more resources coming out to help people like Craig implement this.
+
+# Recap on miner signaling (activation at block height 709632, approximately mid November)
+
+MF: I thought we’d recap the miner signaling. Activation in November, we had the [taproot.watch](https://taproot.watch/) site that was great for monitoring which mining pools were signaling, that seemed to get a lot of attention on social media etc. I was really impressed by some of the mining pools, pretty much everyone did a good job signaling pretty speedily and reaching that 90 percent threshold pretty fast. Special shoutouts to Slush Pool who were the first mining pool to signal and they put out a tonne of [blog posts](https://twitter.com/slush_pool/status/1394352696010887181?s=20) and podcasts discussing activation. I thought that was really impressive. Also Alejandro from Poolin did the [podcast scene](https://stephanlivera.com/episode/277/) discussing the challenges of a mining pool signaling. They had a few issues, they weren’t as fast off the tracks as Slush Pool but I thought he did a really great job discussing miner signaling and he had the taprootactivation.com site. I hope going into activation in November that this aspect of technical competence and staying up to date with the latest features and latest things to be rolling out, user interest in terms of what changes are available, not just miners but exchanges, wallets, hardware wallets etc. I hope that momentum continues because that would be really cool and give us a headstart getting Taproot rolled out across products, companies and the community. Then Pieter Wuille had this [tweet thread](https://twitter.com/pwuille/status/1403736902579023875?s=20) where he said “This is just the beginning. The real work will be the ecosystem of wallets and other applications adopting changes to make use of Taproot.” This is just the beginning, even though we’ve got it activated and hopefully this call might play a small part in getting people thinking about and discussing it well in advance of November. Any thoughts on the miner signaling part?
+
+AvW: I think an interesting point about miner signaling is a question of what is it for? There seemed to be different perspectives on what the actual purpose of miner signaling is. Is it purely a technical thing, is it purely something to trigger nodes into starting to enforce the rules or is it also some sort of social signal to users that there are going to be new rules. As an overall question I think there are different perspectives on what is miner signaling actually for ultimately.
+
+Andrew Chow (AC): We use miner signaling as a coordination mechanism because it is easy to measure. It is hard to measure whether users are upgrading, it is hard to measure whether nodes are upgrading but it is really easy to measure whether miners seem to want the soft fork. That is why we use miner signaling at least as a first step because it is easy to measure. For further steps we haven’t really gotten there yet so that is up for debate.
+
+LD: Miner signaling is rather the last step and it doesn’t really matter what miners want. That’s not its purpose for sure. The purpose is to have something concrete onchain that says “This chain has these rules” so the users that want it know to activate it and the users that don’t want it know they have to fork off.
+
+MF: I think your point Luke is that miners and mining pools should have reviewed the BIP well in advance of signaling. If they are unhappy with it the time of signaling is not the point to raise that opposition or raise that criticism. It is well in advance of any activation.
+
+AC: Luke’s point is more that miner signaling is the coordination mechanism but they should only be signaling when it is clear that the community wants the soft fork to activate.
+
+LD: If that isn’t clear there shouldn’t be any signaling at all. 
+
+MF: There shouldn’t be any signaling at all if there is not consensus on the soft fork but if the miners and mining pools are signaling not only does that mean because they are signaling that there is consensus on the soft fork but also that they are signaling readiness for that soft fork to be activated. But it will be interesting, there seems to be a lot of churn and a lot of changes in the mining community so perhaps in November the mining pool breakdown will be totally different than it was when the signaling actually happened. I don’t know if there is anything to come of that. Hopefully it will go smoothly and miners will enforce the Taproot rules on that block and there won’t be any disruption. 
+
+# What Taproot offers us and Taproot uses
+
+MF: Let’s start with what does Taproot offer us?
+
+AW: There was this whole thing with signature aggregation and cross input signature aggregation. I am still confused about that. I thought the whole thing with Schnorr is that you can add signatures. Doesn’t that mean aggregating? Can someone clarify what does it mean? What is signature aggregation, what is the other type of aggregation and why is that not here? How is it going to be added and what is it going to be used for?
+
+AC: Signature aggregation is basically the ability to take multiple signatures and combine them into a single signature. Cross input signature aggregation would be to do that across the inputs in your transaction. If you have 5 single signature inputs, instead of having 5 signatures in your transaction you would have 1 signature. Taproot doesn’t implement this and I haven’t seen any concrete proposals to do this yet because this would require significant changes to the transaction format. But signature aggregation itself is something that Schnorr signatures provide because of the linearity properties of the signature. If you have a multisig inside a single input you could then do signature aggregation with something like MuSig where you also do key aggregation. If you have a 2-of-2 multisig instead of doing what we do now where you put 2 keys and 2 signatures, you would combine the 2 keys into 1 key and combine the 2 signatures into 1 signature. It becomes 1 key and 1 signature. That is signature aggregation in general. It is combining signatures. Key aggregation is combining keys. It gets more complicated from there.
+
+AW: The cross input one is just a meme?
+
+AC: It is something that people want and it is something that we thought we could do without Taproot. It is something you can do with Schnorr signatures in general, signature aggregation. But it is not happening because it would require significantly more engineering work and more changes to the transaction format. I think people want the Taproot changes sooner rather than later. Doing cross input signature aggregation would put a several year long delay on that.
+
+AW: This would also require a soft fork? How would this be done?
+
+AC: It would require some kind of fork because you would need to change the transaction format. Maybe there is some trick we could do similar to SegWit where we add on more data to the transaction format. But this is something that still needs to be worked out. I don’t think there have been any solid technical proposals for this yet. 
+
+LD: There is no reason we couldn’t have a new witness version and just have the signature only in the very last one or the very first one?
+
+AC: I think that would probably work.
+
+LD: There’s not much you can do at that point to combine the keys.
+
+AC: There might be problems around if you want to combine some inputs but not other ones. I’m not sure. If you have inputs 1 and 2 are one signature and inputs 3 and 4 are a different signature because those are two different parties in a coinjoin. As I said requires more thought and engineering work to actually have a concrete proposal.
+
+LD: I just don’t think it is as big a deal as SegWit would be. 
+
+Fabian Jahr (FJ): Schnorr signatures allow you to aggregate signatures of transactions that have Schnorr signatures locally but to make the protocol more efficient you have to make very deep changes to the protocols as Andrew has said. It is possible to do it but to utilize it in the protocol you have to change the protocol.
+
+LD: My understanding is that even without the signature aggregation Taproot is still a significant improvement on the efficiency.
+
+MF: It is more efficient batching wise. There is a StackExchange post on the difference between key aggregation and signature aggregation. With Schnorr and Taproot we have key aggregation but we don’t have [cross input signature aggregation](https://bitcoin.stackexchange.com/questions/106241/what-is-cross-input-signature-aggregation-and-how-would-it-work). Schemes like MuSig and MuSig2 allow us to have the equivalent of a multisig scheme with only one key and one signature going onchain. But the signature aggregation part is collecting a bunch of signatures and aggregating all those signatures into one. Rather than going to the chain with just a key and a signature having done the equivalent of a multisig scheme.
+
+MF: Anything else that Taproot offers us?
+
+OP: It sounds like we are moving towards a Mimblewimble style protocol. The next step would be, if I understand the math, something like block cut through where you start to be able to remove history from the ledger thus saving disk space and bandwidth. Is that correct rationale and is that conceivable that would ever be interesting to a Bitcoin world?
+
+AC: I haven’t heard or seen anything proposed for Bitcoin like that yet. I think a lot of the talk of cross input signature aggregation has been around making large transactions more efficient. You have a lot of inputs, now we can have just one signature instead of 20 signatures. Save on fees, save on block space so now we can have more transactions in a block.
+
+MF: There is going to be a lot of discussions in terms of future soft forks. That is a whole another discussion. Cross input signature aggregation would definitely be a candidate and I suppose that is a stepping stone towards this potential Mimblewimble end goal. I think that’s a discussion for another day.
+
+FJ: At least from today’s perspective it seems unrealistic that this is going to come. On the one end we can cut off old blocks, do an [assumevalid](https://bitcoin.stackexchange.com/questions/88652/does-assumevalid-lower-the-security-of-bitcoin) or prune which is another simpler solution to space that you need on disk. In addition to that there is [Utreexo](https://dci.mit.edu/utreexo) which is another approach that also tackles how much you need to save on disk. There are other approaches that seem easier to do or that are further along but maybe we are thinking about it differently in 5 years or so. From today’s perspective it doesn’t seem the most likely scenario that we’ll do block cut through. If we do it will be a big approach similar to what Utreexo is looking at for introducing it.
+
+MF: That’s long term, many years down the line. We’ll get back to the original question. What do we get with Schnorr and Taproot. Why should an exchange, a wallet, a hardware wallet be interested in implementing this come November? What are they going to gain?
+
+AC: There is actually one other thing that Schnorr signatures provide that I don’t see talked about as much and that is [batch verification](https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki#batch-verification). If you have a tonne of Schnorr signatures you can verify them all in one step instead of n steps. This really improves block verification time. If we see a lot of Taproot inputs and Taproot being adopted blocks that contain a lot of Taproot transactions, a new node that is syncing and revalidating everything they can validate these blocks really quickly because all the Schnorr signatures are verified at the same time in a single step instead of individually sequentially. This is something else that Taproot provides. I haven’t seen much discussion of that before. 
+
+MF: I think it is on the order of 40 percent speedup in terms of batch verification?
+
+AC: It is quite big. There used to be a [graph](https://github.com/jonasnick/secp256k1/blob/schnorrsig-batch-verify/doc/speedup-batch.md) in BIP 340 and I can’t find it. I think there was also a mistake in the original benchmark and it is actually faster that was originally stated but I can’t find my reference for this. 
+
+MF: Batch verification is definitely great from a network, community perspective bringing IBD time is great. Wallets, exchanges, hardware wallets, Lightning: what benefits are they getting? Instantly with activation or once they do some work to implement some things?
+
+LD: One thing I also haven’t heard talked about much is in theory wallets will be able to do a [ring signature proof of funds](https://github.com/jonasnick/taproot-ringsig). You can prove that you have money for a payment or whatever without showing the proposed recipient which funds on the chain are actually yours.
+
+MF: Did Jonas Nick do something like that? I might have seen a [tweet](https://twitter.com/n1ckler/status/1334240709814136833?s=20).
+
+LD: I’m not sure if anyone is actually working on a BIP for that yet or not.
+
+MF: That did look cool. Did he do it on Elements or Liquid or main chain?
+
+AC: I think he did it on Signet and if I remember correctly it mostly looks like a cool party trick and not something that will be usable. I know when he did it he did it as a cool party trick and not something that would actually be used but perhaps someone will work out how to actually use it and a proper protocol around it. 
+
+LD: My understanding is that this was one of the reasons that we [weren’t hashing the keys](https://bitcoinops.org/en/newsletters/2021/03/24/#discussion-of-quantum-computer-attacks-on-taproot). 
+
+MF: For this particular use case?
+
+AC: I don’t think so. I think this came up afterwards. The not hashing the keys is a completely different conversation.
+
+MF: I’ll try to summarize. Obviously MuSig is a big deal, eventually it will be a big deal for Lightning, it will mean with the 2-of-2 only one signature will go onchain rather than two. With threshold schemes like Liquid with its 11-of-15 it could potentially be putting one signature onchain rather than 11. These are massive space savings for multisig and threshold sig. That’s kind of longer term. With the Taproot tree we can have complex scripts and we can put them in the leaves of the Merkle tree. This is great for privacy because you only reveal one of the scripts that you are spending and also it is great for block saving space because rather than putting a really, really long script onchain all you need to do is prove that one of the single leaf scripts was within the tree. That will make complex scripts, combinations of multisig, timelocks etc much more feasible in a higher fee environment. That’s a bunch of stuff in terms of what Taproot offers us. [This](https://en.bitcoin.it/wiki/Taproot_Uses) was a site that Jeremy put up. These are some of the projects that are planning to use Taproot. Either at the idea stage or further than that, actual implementations. 
+
+# Lessons learnt from SegWit adoption
+
+https://www.coindesk.com/one-year-later-whats-holding-back-segwit-adoption-on-bitcoin
+
+MF: I thought we’d have a brief session if there are any interesting observations or thoughts on why SegWit adoption was so slow, any lessons from that period. I suspect because there’s not so much focus on altcoins and all this kind of stuff, there is at least a small number of exchanges and hardware wallets that are really interested in implementing the latest cutting edge things that come out from Core or that are available to use on the protocol. Hopefully it will be different this time. Are there any lessons from SegWit? Anything that we shouldn’t repeat this time when we try to get businesses, exchanges, open source projects to actually implement Taproot and offer the ability to send and receive to P2TR addresses.
+
+LD: Aside from Lightning wallets there was no reason for wallets to receive with SegWit. That’s not quite the case with Taproot.
+
+MF: There were fee savings though right with the discount?
+
+LD: At the expense of the network. It was harming the network. 
+
+MF: It depends whether you are looking at it from a network, blockchain perspective. Luke takes the view that allowed for bigger blocks so longer IBD times. But in terms of a user that doesn’t care about the network and doesn’t care about the chain they did actually receive fee discounts if they used SegWit. That incentive or motivation to use SegWit doesn’t apply as much to Taproot. Perhaps it is going to be harder to get Taproot adoption than SegWit adoption.
+
+AC: I think a lot of the delay in getting exchanges and other wallets to support SegWit was due to the complexity of SegWit. SegWit changed the transaction format, introduced a completely new address format and implementing all of this is a considerable effort. I think that is a significant factor in why SegWit’s rollout was so slow. But with Taproot the transaction format stays the same, the address format changes a little bit but it is almost identical to bech32. That doesn’t really change. A lot of code that was written for SegWit can be reused in Taproot. The Taproot things that need to be implemented are Schnorr signatures and the whole Taproot tree thing. That’s complex but I don’t think it is as complex as all the things that SegWit did. I think Taproot will probably have better adoption or faster rollout.
+
+FJ: I think SegWit showed that the fee savings weren’t that big of an argument for exchanges that are putting most of the transactions onchain. I think that is not such a huge factor probably again since the effect is even slower. But Taproot has this privacy effect. I can’t really give a prediction but it is going to be interesting to see. It is going to be easy to tell which projects go in that direction and implement it first. It is going to be interesting how much of a pull the privacy aspect versus the fee aspect which wasn’t that big for SegWit.
+
+CR: I’d like to disagree with Andrew a little there. Having implemented both I suspect that I found Taproot the harder of the two to implement. As I was saying earlier the BIPs are quite dense, you have to refer to all 3 of them to understand what is going on. I think that unless we get quite a bit more entry level material around Taproot implementation it might be a while before we see a lot of other wallets folding it in.
+
+MF: Luke says in the comments he thinks Taproot provides more benefits than SegWit so there is more incentive for switching to it. I would challenge that by saying if you are using multisig or complex scripts then there is greater incentive. There’s an Optech [link](https://bitcoinops.org/en/preparing-for-taproot/#is-taproot-even-worth-it-for-single-sig) on whether that incentive exists if you are just doing simple 1-of-1 pubkey spends.
+
+LD: Better for the network and you get the privacy improvements either way. I think overall it is more incentive for more people to adopt Taproot than there was for SegWit. Even if the fee difference isn’t as big.
+
+MF: I think your focus, which is good because you are a Core developer is always on the network and making sure the network is as healthy as possible. But some users and exchanges obviously don’t have that perspective, will be purely looking at this from a what does this give me from a selfish perspective? We need both types of people. It is great we have people like Luke thinking like that.
+
+MF: During SegWit there were tonnes of resources being produced. [These](https://bitcoinops.org/en/bech32-sending-support/) are a bunch of resources Optech put together for bech32 which was SegWit 2017. I think Craig’s point that there were a lot more resources to help people with SegWit is certainly a fair one. Hopefully we’ll get more and more resources as the weeks and months go by up until November. 
+
+# Monitoring Taproot adoption
+
+MF: [This](https://en.bitcoin.it/wiki/Bech32_adoption) is a Bitcoin wiki. Murch is tracking which wallets, which implementations, hardware wallets, web wallets, exchanges, explorers. I think he is trying to contact them to see what their plans are and whether they’ll be supporting Taproot to some extent in November or perhaps later. We do have 0xB10C here. Let’s discuss your [site](https://transactionfee.info/charts/outputs-p2tr/). What it currently tracks, how you built it and what you plan to support going forward up until activation and beyond.
+
+0xB10C: My site does support Taproot outputs and inputs, both key path spends and script path spends. Of course there aren’t any spends yet but there are some outputs as you can see on screen. I think half of them are from testing sending to witness version 1, bech32m addresses. There was a thread on the mailing list in the past year and I think half of these 6 outputs that exist to P2TR are from that. Some others are from other people experimenting. Of course these are at the moment anyone-can-spend. If you have connections to a mining pool these are spendable supplying an empty witness.
+
+MF: Are you planning to do the same graphs for signet and testnet? Hopefully we’ll see a bunch of people playing and experimenting with Taproot transactions in the run up to November.
+
+0xB10C: I did look at signet and testnet. I was surprised… On signet Taproot has been active for its whole existence or at least since the release of Bitcoin Core with signet implemented. I think there were like 20 key path spends and 5 script path spends. So not much experimentation done on signet. There were 20 or so key path spends in the last week or so. Some people pay to Taproot outputs but not much experimentation done yet. If there is need for it and if people want it we can of course support a signet or testnet version of this site as well.
+
+MF: If you are looking through all the different parties or projects in the space you’d want blockchain explorers to be supporting Taproot from activation. If you had to think about projects that would be a priority you’d want blockchain explorers, you’d want to be able to look up your Taproot transactions immediately from activation in November. Luke says in the chat block explorers are disinformation. I am sure [Esplora](https://github.com/Blockstream/esplora) will support it. I think Esplora supports signet and testnet Taproot transactions now and I’m sure it will do mainnet transactions in November. There is a conversation in the chat about the outputs that are currently on mainnet, the Taproot outputs. Luke asks “Are these trivially stealable?” and Andrew said “Yes they are trivially stealable. I’m surprised they haven’t been stolen yet.”
+
+Tweet discussing the Taproot outputs on mainnet: https://twitter.com/RCasatta/status/1413049169745481730?s=20
+
+0xB10C blog post on spending these Taproot outputs: https://b10c.me/blog/007-spending-p2tr-pre-activation/
+
+AJ Towns tweet on those running a premature Taproot ruleset patch being forked off the network: https://twitter.com/ajtowns/status/1418555956439359490?s=20
+
+MF: I did listen to your podcast Andrew with Stephan Livera that came out in the last couple of days. You said a lot of people have been trying with their wallets to send Bitcoin to mainnet Taproot addresses. Some of them failed, some of them succeeded and some of them just locked up their funds so they couldn’t even spend them with an anyone-can-spend. Do you know what happened there?
+
+AC: There is a [mailing list post](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-October/018255.html) from November where this testing was happening. I think Mike Schmidt had a big [summary](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-November/018268.html) of every wallet that he tested and the result. There were some wallets that sent successfully. These used a bech32 address, not a bech32m. This was before bech32m was finalized. Some of them sent successfully and made a SegWit v1 outputs, some of them failed to parse the address, some of them failed to make the transaction. They accepted the address but something else down the line failed and so the transaction wasn’t made. Some of them made a SegWit v0 address which means that the coins are now burnt. As we saw on the website there are some Taproot outputs out there and there are some that should have been Taproot outputs but aren’t.
+
+MF: They sent them to bech32 Taproot addresses rather than bech32m Taproot addresses and the bech32 Taproot addresses can’t be spent. Is that why they are locked up forever?
+
+AC: bech32 and bech32m, on the blockchain there is still a similar SegWit style scriptPubKey. It is just the display to the user that is different. It is that SegWit is v0 and Taproot is v1. So the address that it uses is supposed to make a v1 output but some wallets made a v0 output instead of v1. And that is incorrect. This was part of the motivation for switching to bech32m because several wallets were doing it wrong. It is ok to introduce another address format.
+
+# bech32 and bech32m addresses
+
+MF: [This](https://bitcoin.stackexchange.com/questions/100508/can-you-break-down-what-data-is-encoded-into-a-bech32-address) is what a bech32 address looks like, `bc1q…..`. The `q` stands for SegWit v0 and so a mainnet bech32m address will have that `bc1p` instead of the `q` but otherwise will look similar to that. Then obviously if you play around with signet and testnet, testnet [recently activated](https://twitter.com/ajtowns/status/1413432147247964166?s=20) a few days ago so Taproot is active on both testnet and signet and obviously regtest. The address will start `tb1…` for testnet and signet. There will still be that `p` in `tb1p…` because that stands for witness version 1. In terms of the first thing an exchange or a hardware wallet would think about doing in the run up to November is allowing the wallet to send to Taproot addresses, P2TR addresses. That would be the first step I think if we imagine ourselves to be an exchange or a wallet. Craig, was the first thing you did to add the ability to send to a P2TR address?
+
+CR: Yes it was. That was the first thing that I built in and then I worked on the receiving part afterwards. 
+
+MF: So that’s the bech32 address, bech32m is pretty similar, just the checksum is different. This [link](https://bitcoin.stackexchange.com/questions/101117/what-problems-identified-with-bech32-addresses-have-been-resolved-with-the-updat) is explaining the problems with bech32 and why we’ve gone to bech32m. That part shouldn’t be too hard for implementers. 
+
+# Implementation gotcha when only needing key path
+
+I think this is one of the first gotchas. Andrew talked about this I think on the Stephan Livera [podcast](https://stephanlivera.com/episode/292/). If you think back to the diagram I had before with the key path and the script path. If you just want to use the key path and you don’t want a script path or vice versa, you just want the script path and not the key path, there is a potential gotcha here. [This](https://bitcoin.stackexchange.com/questions/99325/how-do-i-construct-a-p2tr-address-if-i-just-want-to-use-the-key-path) is explaining how to construct a P2TR address if I just want to use the key path. Andrew can you explain the potential gotcha here because the public key isn’t the one going into the descriptor. The guidance is to always tweak it. Even if you don’t actually want to use the script path the guidance is to tweak that key path public key but something.
+
+AC: Taproot, the general construction is you have an internal key and then you have your script path tree. To make the Taproot output which is also the output pubkey you take the internal key and you tweak it with the Merkle root, something to that effect. But if you don’t have a script path what do you tweak it with? The naive thing would be you just put the internal key as the output key but that is not what the BIPs recommend. Instead they recommend that you tweak the internal key by the hash of itself. If you don’t read the BIPs carefully you might miss this, I think it is mentioned once. There is one sentence that says that. I definitely missed it when I was going through the BIP for reviewing the Taproot code. If you are doing key path spends you should do this tweaking, tweak the internal key with the hash of itself rather than putting the internal key as the output key of the Taproot output.
+
+MF: Does that make sense to everyone? 
+
+CR: You used the word “should” there Andrew. Surely the requirement is “must” or is that just best practice. You obviously won’t be able to meet the test vectors you put into BIP 86 unless you do that.
+
+AC: BIP 86 says “must” so that you meet the test vectors. But BIP 341, I think it only says “should” because you can’t verify whether this was actually done. When my node receives your transaction I can’t tell whether you did this tweak of the internal key even after you spend it. Frankly for my node it doesn’t matter whether you did or did not. You should do this as the wallet software but it is not “must” because it can’t be enforced. 
+
+CR: Ok, thanks.
+
+MF: It is guidance rather than literally this would be rejected by the consensus rules if you don’t do this. People can do it without the tweak, it is just recommended not to. Would that be correct wording?
+
+AC: Yeah. Also BIP 86 says must because we need it for compatibility. Everyone who uses BIP 86 has to do exactly the same thing which means doing this tweak so that they can generate the same addresses. But if you’re not doing that for whatever reason you don’t have to but you probably should.
+
+MF: [This] is the flip side. If you don’t want to use the key path and you just want to use a single script path or multiple script paths. You don’t want that key path option. The BIP instructs you to use a particular point, internal key, but you can change that key. Again Andrew are we in a similar space where this is the guidance, you should follow this guidance, but the consensus rules won’t reject your transaction if you do something slightly different? 
+
+AC: I don’t follow.
+
+MF: This is eliminating the key path. In BIP 341 you have to pick an internal key with an unknown discrete logarithm to slot into the key path.
+
+AC: If you don’t want the key path spend, because BIP 341 still requires an internal key to do the tweak against, your internal key needs to be a NUMS number, nothing up my sleeve number. It is just a pubkey that no one knows the private key for. It could be the hash of something, it could be a random number, it could be anything you want. It just needs to be something that no one knows the discrete log of or no one knows the private key of, in order to not have a key path spend.
+
+MF: The problem that you’re concerned about here is there being a hidden… Assuming you don’t want a key path spend you want to make sure there isn’t a hidden key path spend. If you just want the key path and you don’t want the script path you want to ensure that there is not a hidden script path. Both of those are the challenges that you want to make sure you are ticking off. 
+
+# Optech series on “Preparing for Taproot”
+
+https://bitcoinops.org/en/preparing-for-taproot/
+
+MF: Bitcoin Optech has doing a series on preparing for Taproot. [This](https://bitcoinops.org/en/preparing-for-taproot/#is-taproot-even-worth-it-for-single-sig) is what we alluded to earlier, is Taproot worth it for single sig? Luke was saying it is because it brings the network benefit. From a selfish individual exchange or individual wallet, hardware wallet provider the benefit is pretty small for fee savings. That small benefit accrues to the spender. There are some figures here that Optech have done comparing the vbyte size of Taproot with SegWit v0. This is going to the crux of what we were discussing, whether there is that incentive for an exchange or a wallet or a hardware wallet that is doing single sig. Is there that incentive for them from a selfish perspective to make sure that they are ready and P2TR address support in November?
+
+# The Bitcoin Core descriptor wallet
+
+https://bitcoinops.org/en/preparing-for-taproot/#taproot-descriptors
+
+MF: Let’s discuss descriptors. Andrew can tell us better than I can, the Core wallet took a long time to support SegWit back in 2017. Now Andrew has done the heavy lifting of moving the Core wallet to use [descriptors](https://bitcoin.stackexchange.com/questions/99540/what-are-output-descriptors) instead. It now means the Core wallet will be supporting at least limited Taproot scripts in November. That’s due to Andrew’s hard work on descriptors. I think there are some other wallets, other hardware wallets using descriptors, I don’t know if it is common across the ecosystem and whether it is going to be tough to implement Taproot if it is not a descriptor wallet. 
+
+AC: For Core, since we are moving towards descriptors as the main way the wallet handles scriptPubKeys Pieter designed some descriptors for Taproot. You can use them in a descriptor wallet to get Taproot addresses. The main thing is because we have descriptor wallets it was fairly easy to do this. It was just adding a new descriptor for Taproot and then the existing descriptor wallet stuff could automatically handle the generation of Taproot addresses and the use of Taproot. This is in contrast to the legacy wallet which is the wallet before descriptor wallets. Those will not support Taproot and it is probably non-trivial to support Taproot in the legacy wallet. I haven’t looked at whether it can because we’ve decided we are not going to support Taproot with legacy wallets. 
+
+LD: Even the SegWit stuff in the legacy wallet was kind of a hack.
+
+AC: Yeah, the SegWit stuff in the legacy wallet, it is not great. It definitely took a long time for that to be implemented, it was 3 or so versions after SegWit itself made it into a release. 
+
+MF: It is likely given that the descriptor wallet is the non-legacy part of the Core wallet that no one will work supporting Taproot for the legacy wallet. You are not planning to do it and you don’t know if anyone else will.
+
+AC: The legacy wallet will not have Taproot support. For the descriptor wallet, in 22.0 which is going to be released soon hopefully, there will be Taproot descriptor support and after Taproot activates Taproot descriptors can be imported into the descriptor wallet. For 23.0, the next major release, I expect that descriptor wallets will start making a Taproot descriptor by default. You won’t have to enable Taproot manually. 
+
+MF: Are there lots of [other wallets using descriptors](https://outputdescriptors.org/)? Are they going to find it hard supporting Taproot if they don’t currently have descriptor wallets setup now?
+
+AC: I have no idea. I don’t think supporting Taproot without descriptors will be terribly difficult. It all depends on how the wallet is structured. At least for Core the easiest thing for us is to use descriptors. I don’t know about other wallets. 
+
+MF: Craig, with implementing Taproot did you use the descriptor approach?
+
+CR: Sparrow does support and use descriptors but it doesn’t directly influence the wallet itself since when it retrieves information it uses the Electrum server approach. This uses a hash of the scriptPubKey. You don’t really need to worry too much about what is in it. However I can say that for example libraries that Sparrow depends on, for instance the one that it uses to connect directly to Bitcoin Core which is the library [BWT](https://github.com/bwt-dev/bwt) I believe uses the legacy wallet. That will need to upgrade to the descriptor approach to support Taproot. I can’t speak to other wallets like Specter desktop, I’m not sure what they currently use. 
+
+# The descriptor BIPs
+
+MF: Descriptors overdue for a BIP, Luke says. There is a [bunch](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-June/019151.html) of descriptor BIPs. 
+
+AC: There is a [PR](https://github.com/bitcoin/bips/pull/1143) open. Feel free to assign 7 numbers for me, thanks.
+
+LD: I didn’t notice that yet, I’ll get to that.
+
+MF: Most of the descriptor BIPs aren’t Taproot, most of them are just outlining how descriptors currently work without Taproot. One of the BIPs, bip-descriptors-tr is the Taproot descriptor BIP. 
+
+AC: There are 7 documents. One of them describes the general philosophy and shared expressions like keys and the checksum. The other 6 describe specific descriptors. There is one for non-SegWit things, `pkh` and `sh`. There is one for the multisig descriptors, `multi` and `sortedmulti`. There is one for SegWit things, `wpkh` and `wsh`. There is one for Taproot and the other two are legacy compatibility things, the `combo` descriptor and the `raw` and `addr` descriptors. The reason there is 7 of them is so that people can say “We support these BIP numbers” instead of saying “We support BIP X” and then have to spell out which descriptors individually. I think that will get really complicated versus giving a list of numbers. 
+
+MF: In terms of actual design decisions, most of these BIPs in the PR are outlining stuff that has already been agreed right? The new stuff is just the Taproot BIP.
+
+AC: Descriptors has been discussed in the Bitcoin Core [repo](https://github.com/bitcoin/bitcoin/blob/master/doc/descriptors.md). I took that document and cut out pieces for each individual BIP here. It is basically just rewording documentation that has already existed and formatting it in the form of a BIP. 
+
+MF: I suppose this is getting onto what Core is supporting although there is an overlap between what the Core wallet supports and the Taproot descriptor BIP. The Taproot descriptor BIP supports the Taproot script as long as all the leaves are 1-of-1. 
+
+AC: The way that descriptors work is we specify things generically. “Here is a script expression and the script expression produces a script.” A Taproot descriptor can take key and script expressions and encapsulate those together as a Taproot scriptPubKey. Right now the only supported script expression that works inside of Taproot is normal pubkeys, `pubkey OP_CHECKSIG` type thing. There can be future script expressions that can be used inside of a Taproot context. Really the only other script expression we have that kind of makes sense is `multi` but we’ve decided to limit this to just be the old OP_CHECKMULTISIG method of multisig instead of overloading its meaning. The `multi` descriptor cannot be used inside of Taproot but there will probably be a different `multi` that uses OP_CHECKSIGADD. 
+
+MF: You can do the equivalent of a 1-of-n if you are doing 1-of-1 on all the leaves. But you can’t do a threshold because that would require either MuSig, Murch’s [blog post](https://murchandamus.medium.com/2-of-3-multisig-inputs-using-pay-to-taproot-d5faf2312ba3) on how to do a 2-of-3 with MuSig with 2-of-2 on the leaves, or CHECKSIGADD which would be a normal multisig but under the Taproot rules. 
+
+AC: We haven’t made descriptors for these yet. Once we do make such descriptors there will be yet another BIP for them. It will be another script expression that we say can be used inside of a Taproot descriptor. 
+
+LD: Does `multi` error fit into Taproot?
+
+AC: Yes. `multi`, I think we’ve limited to just top level or inside `sh` and `wsh`. At least in Core our descriptor parser will tell you you are doing something wrong if you try `multi` inside of `tr`. 
+
+MF: I have got a couple of links here. I was scouring the internet to see whether other people are using descriptors, whether other exchanges, wallets have been discussing supporting Taproot. I did see Bitcoin Development Kit is currently [using descriptors](https://bitcoindevkit.org/descriptors/) which is promising for supporting Taproot in November. I am assuming they can follow a similar approach to what Andrew and the wallet devs have done in Core. [This](https://bitcoinops.org/en/river-descriptors-psbt/) was a field report in Optech on what River are doing and a [blog post](https://bitcoinops.org/en/river-descriptors-psbt/). I did see the Bitcoin Development Kit has also opened an issue for supporting P2TR addresses in November. I don’t know if anyone on the call has been following some of these other projects, BDK is in Rust so I’m not sure if people like Andrew and Luke are following what they are doing. 
+
+# Miniscript support
+
+MF: The Miniscript part is going to be interesting. There is a [rust-miniscript](https://github.com/rust-bitcoin/rust-miniscript) library and Pieter Wuille’s [C++](https://github.com/sipa/miniscript) Miniscript implementation. Miniscript will allow us to do generic scripts. When I said before we can do Taproot functionality as long as there is only a 1-of-1 leaves of the script path but currently with the Bitcoin Core wallet anyway we can’t have threshold signatures as a leaf. We also can’t have those complex scripts, a combination of different timelocks and multisigs, the long scripts that we were talking about that could fit into a leaf script. Perhaps we can talk a bit about Miniscript, any thoughts on Miniscript?
+
+AC: Miniscript is cool. I think there will be a renewed effort to review the [PR](https://github.com/bitcoin/bitcoin/pull/16800) for that and get it merged into Core. Right now the C++ implementation is kind of limbo. Because Miniscript is part of Bitcoin what Pieter did was copy and paste several chunks of Bitcoin Core code out and use it in his C++ implementation. This means that over time they will start to diverge. It will be hard for one to be merged into the other. It would be better to get that into Core so it is more easily maintained. Then we can use it. 
+
+MF: There’s this [discussion](https://github.com/sipa/miniscript/issues/56) between Nicolas Dorier and Pieter Wuille on the work that still needs doing. As you said Andrew there is the Miniscript PR to Core but there is still work to do that and it is a bit of out of date before it can get merged into Core. It doesn’t support Taproot and we’ll probably need to get the Miniscript PR merged into Core before getting Miniscript to support Taproot. Craig, you are not thinking about Miniscript? I don’t think anyone can really think about Miniscript until people like Pieter Wuille, Andrew Poelstra, Sanket have updated Miniscript to support Taproot. I think that’s the stepping stone we need to pass to be able to have lots of generic scripts in a Taproot tree. I don’t know if anyone is going to try to implement Taproot generic complex scripts before that Miniscript support. Any thoughts on that?
+
+CR: I think the relative education of users is frankly only just starting to get their heads around multisig. Anything more advanced than that just feels like a few years off. That doesn’t mean we shouldn’t start working on it but as a wallet developer you have to allocate your time to where you think users are actually going to use the features that you build. I really love the idea of Miniscript but I can’t see many users actually using it yet because it is not well understood to create complex scripts to lock Bitcoin in and unlock it. 
+
+MF: Sparrow is a multisig wallet. You haven’t done the multisig part, supporting the CHECKSIGADD opcode that you’d need to do for Taproot multisig?
+
+CR: Yes, that’s correct. I’ve only done single key, key path spends thus far. I think there is quite a bit of thinking work still required on how to do interactive MuSig. How does that work if you have QR capable hardware wallets? It is just not something that I think is ready and easy to do today. Obviously there is not much point in having all of the keys in your multisig just coming out of the same wallet. That is something that I need to give more thought. I think the whole industry needs to start figuring out how we develop good UX around that.
+
+# Multisig and theshold sig Taproot support
+
+MF: At least from what I’ve read in the discussions of some of the core devs, those stepping stones are going to be CHECKSIGADD support in Taproot descriptors and then MuSig support in either descriptors or Miniscript. We’ll have Taproot PSBT support but MuSig2 support does seem as if it is further down the line, 6-12 months. Any support for multisig in Taproot is likely to be using that CHECKSIGADD opcode rather than MuSig. This [post](https://murchandamus.medium.com/2-of-3-multisig-inputs-using-pay-to-taproot-d5faf2312ba3), I referred to this earlier, this is how you get 2-of-3 using MuSig when we do have MuSig support. You’ll have a 2-of-2 on the key path and then two leaf scripts that are also 2-of-2. You can choose which 2 keys you want to sign and that gets you the equivalent of 2-of-3. That’s because MuSig just supports multisig and not threshold sig. There will be schemes like [FROST](https://eprint.iacr.org/2020/852.pdf) that will support threshold sig even further down the line from MuSig. That seems a few stepping stones away so we can get a threshold scheme equivalent of MuSig. There are a few [links](https://github.com/ElementsProject/elements/tree/master/src/secp256k1/src/modules/musig) there in terms of MuSig support in Elements. (Also https://github.com/ElementsProject/secp256k1-zkp/pull/131 and https://github.com/ElementsProject/scriptless-scripts/pull/24). The code is there if you want to play around with MuSig but it is not going to be supported in the descriptor spec or in Core for a while I suspect. 
+
+# Taproot’d Lightning
+
+Then I have some links on Lightning.
+
+https://btctranscripts.com/advancing-bitcoin/2020/2020-02-06-antoine-riard-taproot-lightning/
+
+https://lists.linuxfoundation.org/pipermail/lightning-dev/2019-December/002375.html
+
+https://github.com/ElementsProject/scriptless-scripts/blob/master/md/multi-hop-locks.md
+
+MF: Does Sparrow support Lightning Craig?
+
+CR: No it doesn’t at this time. That is still coming. 
+
+MF: Do you try to list priorities in terms of what would be cool for Sparrow? Where does Lightning support sit versus supporting paying to P2TR addresses or receiving to P2TR addresses or being one of the first to support MuSig? Is this a jumble in your head or are there certain things that you are really excited about implementing in Sparrow as soon as you possibly can?
+
+CR: I think every wallet has its own particular focus. Sparrow is a desktop wallet, it focuses mainly on Bitcoin’s store of value usage. This is why we’ve got a strong multisig and hardware wallet focus. Lightning is certainly something I want to support. I still think there is some way to go before Lightning itself becomes mainstream. I think I have some time there. There are a lot of layer 1 features that I believe are still interesting and worth building out at this time. Many of us I’m sure expected fees to be higher at this point, the reality is that they aren’t. Fees are ultimately what is going to drive us towards layer 2. That situation can obviously change quite fast but it is not the case today. Today I still focus very much on layer 1 and making sure that Sparrow addresses the store of value need to the best extent that it can.
+
+MF: Seeing how the fee environment develops, if fees were going through the roof perhaps that would completely change your priorities or things that would be high on your objectives. With fees low that changes where your priorities are.
+
+FJ: On the adoption of Lightning, it is a very good fit, these teams are very technically advanced of course. I haven’t talked to anyone personally about this but my feeling is that they are very excited about it and have already started working on it probably. I would bet that c-lightning, lnd and eclair will support Taproot before the first exchange will have sent the first Taproot output. The privacy aspect of Lightning has always been a major argument for it and Taproot improves that greatly. I think it is a great fit and I would put money on this going to be the first wave of adoption of Taproot that we’ll see.
+
+MF: I think, hopefully with Covid, they’ll have some Lightning in person protocol discussions and figure out what priorities there are across the protocol. I agree Fabian that you would expect MuSig to be rolled out first on Lightning and then perhaps later on point timelocked contracts (PTLCs) replacing HTLCs. There is a tonne of stuff that can be done on Lightning with Taproot, it is just a question of priorities for the protocol and for those individual implementations. There is a c-lightning [PR](https://github.com/ElementsProject/lightning/pull/4616) for channel types. The approach that they are likely to take is to have different channel types. Perhaps a MuSig channel type for channels that are using MuSig and then upgrading to a new channel type that is perhaps a PTLC rather than a HTLC. There is definitely thought going on amongst the Lightning protocol devs and implementations. They probably need an in person protocol meeting or two to figure out what order to implement some of these Taproot benefits in. I suspect it will be P2TR addresses first, then MuSig support and then potentially very far down the line PTLCs rather than HTLCs. I think that was all my links. Any final thoughts?
+
+MF: So Fabian, you’re a Core contributor have you been following all the Taproot stuff? Is anything complicated to you? Or are you on top of all of this Taproot stuff?
+
+FJ: I try to review Andrew’s PRs. I organize the Socratics for Berlin, we talk about all the Taproot stuff there. Taproot is one of the main things that I’m excited about. I try to be helpful with the adoption of it, currently mainly through reviews. 
+
+MF: Are you optimistic for November that we’ll have lots of exchanges, businesses, hardware wallets, wallets, maybe even miners paying to Taproot addresses and receiving from.
+
+FJ: For November I am rather pessimistic especially looking at exchanges from the SegWit era. I think there is going to be slow adoption. As I mentioned Lightning, even though they have a longer way to go, there is going to be more effort there, more motivation, a lot of development power dedicated to it. That is where I expect the most action over the next couple of months in terms of Taproot adoption and discussion. 
+
+MF: Any final thoughts? Thanks Craig for coming along, it was great to get an outside of Core perspective trying to implement stuff. I think a few of us are focused on Core most of the time and don’t really know what it is like to implement this outside of Core.
+
+CR: My biggest hope for Taproot in terms of what I hope it can bring is better privacy, particularly for multisig, and if we see something like lnd adopt it, perhaps even as the default, then we can really get the kind of large anon set that we would need for that to happen. That is where I’m personally hoping to be able to benefit apart from all the other things that it brings. Those are my thoughts.
+
+MF: And more resources, I have linked to a few StackExchange posts but hopefully there will be tutorials and videos and things in the run up to November so that there are some resources to look at when trying to implement this stuff. Ok we’ll wrap up. Thanks a lot everyone for attending and fingers crossed that we have some progress to observe in the ecosystem in the run up to November.
+
