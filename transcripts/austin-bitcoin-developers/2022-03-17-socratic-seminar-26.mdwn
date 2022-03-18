@@ -196,5 +196,12 @@ There was a good discussion in the bitcoin pr review group about migrating legac
 
 ....
 
+# Sensei
+
+<https://l2.technology/>
+
+There are two development kits for making ... BDK and LDK, libraries written in rust for building bitcoin stuff. They are sponsored by Square or Spiral. Recently there has been a grant to integrate BDK and LDK. One is developed in slack, one is developed in discord. lnd has an on-chain bitcoin wallet and then you lock that up into channels and now it's lightning. Sensei is a lightning node implementation based on BDK and LDK so the on-chain stuff is managed by BDK, the lightning stuff is managed by LDK, then there's lots of glue logic, and then a web UI. The big hook with sensei is really easy child nodes. Sensei is the master training the child nodes, they can be an Uncle Jim and you don't have to spin up a whole node for each child. A child node is basically everything you need to know to sign transactions and open up channels as a child, but things like the blockstate and the gossip, routing, a lot of the resources can be shared. That's what Sensei does. That's my explanation. It's usable today if you fork the github and run it yourself. It's in a wreckless stage, not everyone should deploy it. This could be an app running on your umbrel so you could just point to the blockchain that Umbrel knows about, and then you can run child nodes with Sensei which is also on lightning.
+
+It says enterprise ready on the tin. So ship it. Great.
 
 
