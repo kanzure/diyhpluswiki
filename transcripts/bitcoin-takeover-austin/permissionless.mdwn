@@ -1,0 +1,99 @@
+Permissionless access to wealth
+
+Marty Bent, Will Cole, Nick Neuman, NVK
+
+We have another talk getting started here. Marty Bent will lead the talk. We've got Nick Neuman who is the CEO of Casa and previously he led their products. He has been leading Casa for a long time. They focus on private key management similar to Unchained. NVK is the founder and CEO of Coinkite which is the manufacturer of your favorite bitcoin hardware wallet but maybe most importantly the manufacturer of the block clock. If you don't have a block clock, you're not doing it right. Will Cole, best friends since 3 years old. Our chief product officer at Unchained, and previously he was VP of product at Stack Exchange. This panel is on permissionless access to wealth. Each of these three guys work on that all day every day, so it will be a great talk not just at the individual level but also for bitcoin.
+
+MB: Sorry you have to look at me again. Alright, we're here to talk about permissionless access to your wealth in a bitcoin standard. That means creating private public key pairs and then trying to protect those keys as much as possible in a user friendly way if possible. Will and Nick provide multisig solutions and nvk provides a hardware wallet to produce and provide private public key pairs. As someone building hardware in this space, how do you create an experience for people to create and protect their keys?
+
+nvk: We focus on don't trust, verify. There is this idea that you can have the perfect UX, but for every layer of abstraction you're giving up security and trusting the devices further. We try to offer both worlds where you can connect it and do it all by itself, including using Casa or Unchained. But we also sort of try to encourage people to go a little deeper and try to roll dice for their own entropy. Try to learn what is going on, because if you learn what's going on, you'll get it right.
+
+MB: Some people argue that multisig is a more secure way to secure bitcoin because there's no single point of failure. Why did you decide to come build products around multisig?
+
+NN: We were looking at the problem from the first principle of how do we make self-custody as easy and safe as possible. Some people love rolling their own dice, but not everyone wants to do that. When we looked at the technology of multisig, we saw it as a way to offer people the safety of having no single point of failure while still knowing they have full control of their keys and being their own bank. Multisig technology enables that end goal of making it as simple and safe as possible to make it simple and safe for people to control their keys.
+
+WC: It's important to note that multisig is not us rolling our own crypto. It's native to the bitcoin protocol. You'll hear lots of marketing out there from companies that support every crypto under the sun that make a new cryptographic way to get something that looks like multisig, but multisig is native to bitcoin. Our job is to make it accessible. It's not that it's not easy, it's just new. It wasn't easy to drive a car when cars came out, it wasn't easy to operate a computer when those first came out, same with smartphones. Multisig is just new. There's nothing difficult about it. I see a lot of people here who are deep down the bitcoin rabbit hole, but if you haven't gone down that route yet, this is a good place to start. Hold your own keys.
+
+MB: Why is it important to hold your own keys? Censorship resistance, decentralization, why should someone keep their own bitcoin keys?
+
+nvk: Know your keys, know your coins. It's really that simple. Bitcoin has upsides if you look simply: it has price upside and sovereignty upside. You don't get the sovereignty upside if you have coins on your exchange; they aren't really yours, they just owe it to you. Until you withdraw from an exchange, you have not become a sovereign bitcoiner. You don't have full rights over those coins.
+
+NN: We have seen the importance of this recently with what happened around Canada and the trucker protests. We saw the Canadian government shutting off access to bank accounts. It's just pure financial anarchy and censorship. It's becoming more possible because our money is becoming more digital. As we move into this world of CBDCs, and our money just being numbers on a screen, it gets easier and easier for someone who disagrees with you who is in power to press a button and now you don't have access to your savings. The name of this panel is permissionless access to wealth. When you hold your own keys, it's much more difficult for the government to do that. They can still send someone to your house and confiscate your money physically, but they can't just do it with the press of a button for an entire population of people. This is an important part of the bitcoin story. Some people only think about bitcoin as inflation protection, and they miss the censorship resistance which is just as important if not more.
+
+nvk: You can leave a country with all your wealth with just 12 words in your head. You can be naked, and leave. That's incredibly empowering.
+
+WC: It's been only a month and it's cliche now to reference Canada, but do oyu think it's going to get better? They have the tools to take over your entire life. When they can do that, financially, you're done. You're ruined.
+
+nvk: My company is in Canada. We don't keep a lot of fiat float. Everyone who has wealth in Canada is getting their money out. Bring up the truckers forever. Don't let this go. You have a G20 country that entered martial law because of a bunch of people honking their trucks. It's insane. They showed their hand. This is an absolute gift. We all know how they are going to play this out if they want to.
+
+WC: It's not just Canada, it's happening in Ukraine and Russia on both sides at this point. As our money becomes more digital, multisig and taking possession of your private keys is a physical thing. Thinking about secure locations, how to store things in the real world to protect yourself from martial law.
+
+MB: What are some of the largest pain points when building products around private key management? What are some of the common and interesting problems you find in fresh individuals trying to use multisig?
+
+WC: Getting an sdcard stuck in a USB slot.
+
+nvk: We hear a lot of sob stories in support because people are migrating to our product, or they just lost a family member the incredibly smart husband was also a programmer and decided to write his own redeemScript or something. Keeping things simple is a good practice. The great majority of people will probably screw themselves long before they get robbed. You want to de-risk, but also de-risk from yourself.
+
+NN: There's a lot of people trying to get real smart about how they do self-custody setup and you're just way more likely to hurt yourself than to have someone figure out your setup and steal from you. The majority of lost bitcoin is because people lose it, it's not because it gets stolen. As you think about your own setup, try to avoid pitfalls about overcomplicating things. Keep it simple.
+
+WC: We've talked about single points of failure earlier. Most people have not had to contemplate how to eliminate counterparty risk and SPOFs in your life unless you have had something really valuable before. All of our setups are designed specifically to avoid SPOFs which includes the physical world. Where do you store your keys? They can't be in the same building. Where do you keep your backups? I think that part is difficult for people because they haven't contemplated that before. As we have seen in the world, it's important to go through that thought process. Unchained can't be the SPOF. Coinkite can't be the SPOF. Casa can't either.
+
+NN: I think a lot of users are used to the reset password button and that doesn't exist with your private key, so you need a much different approach to it.
+
+nvk: Before bitcoin, if you wanted to be your own bank, you would go to the bank and withdraw all your money and put it in your house. But now you have to get a safe, get a defense system, if you have a country with guns you're probably going to get guns, then you get an alarm system, all this stuff is required for you to be your own bank. Same goes for gold. A lot of people come into bitcoin thinking this is in the cloud (someone else's computer) and they don't take the time to try to understand what it means to take on responsibility for an asset that is now under your sole signing authority. That's where a lot of the challenges come from.
+
+NN: The barrier is much lower with bitcoin than for gold or cash or anything else, which is why I think this has the opportunity to actually work.
+
+nvk: Yeah, it's because you can't shoot math. As long as the math works for you, it's great if you have the keys. If you don't have the keys, cryptography sucks.
+
+WC: If you have a gold and you want to keep it yourself, if you get enough of it, you need a safe, and eventually you need to be a custodian. But with bitcoin you can get the exact same security precaution that Coinbase uses to protect $100 billion to protect your own money. We haven't seen that before. You can get the same security level. The message out there is that self-custody is difficult, but it really isn't. There's tons of guides out there to help you.
+
+nvk: Don't do this because it's too simplistic, but say you go to another country, you bury your private keys in some park. There's nothing your government can do to you except maybe torture or jailing you forever to make you to release the money to you. If they shoot you, that money is gone anyway. It changes the dynamic around money because it's just math and it's not physical.
+
+WC: It's also really good for bitcoin overall. If governments do want to be challenging towards bitcoin and bitcoin holders, what's a better honeypot? An exchange with a few keys protecting hundreds of millions of dollars? Or Casa or Unchained where there are thousands of different keys? You have permissionless access, and there's nothing they can do about it.
+
+MB: So you guys are leveraging an open-source protocol to create your multisig products. There's walletrecovery.com, you can build on this open-source protocol, but you also want products to be interoperable when you have different services interacting with each other. What do you think about standardization? What should we be coalescing around?
+
+NN: I think it's important. Jack was talking about that earlier today. When you have standardization and interoperability, it's a much more level playing field for people to build businesses about hey how great is the user experience rather than some red tape moat. With Casa, if you wanted to, you could stop using the software and port it over to a completely different set of software and still have access to your money. Every single Casa user is able to re-create their wallet on Spectra or Electrum or any other multisig open-source wallet and have access to their money just as they would through Casa. In the traditional financial system, if your bank goes under you have FDIC insurance up to some level and maybe the FDIC will bail them out. But there isn't the tsame level of interoperability.
+
+nvk: We don't need to exist for you to redeem your money. All that matters is the secret and some information about where to look for your money. It didn't use to be a standard, but now it's much better. A programmer would tell you there's 50 things to do, but I'll tell you, it's incredibly great... most wallets work with each other now. ....
+
+WC: If you're using an Unchained vault, and something happens to Unchained. Well, you have this little wallet file, you can upload it to Caravan just natively drag and drop it, or into Sparrow. Your wallet will pop up and you can spend your funds immediately. Even the companies ourselves are not SPOFs. Will contracts be interoperable?
+
+nvk: It's interesting. If you try to ever empty your bank account, how many days is that going to take? You need to convince them; you have a minimum of 24 hour notice to get your money. In Canada, a lot of people withdrew their money from their bank. It'll take maybe a week. With bitcoin, the fascinating thing is I like htis solution, oh I don't like it then you can just choose your next wallet fine.
+
+WC: Only if you have your own keys. If it's on a bank, it might be a nightmare.
+
+nvk: Well, the exchange is the bank.
+
+MB: If you do not own your keys, then you don't own bitcoin, and you're not a sovereign bitcoiner. Why be a sovereign bitcoiner?
+
+nvk: Transaction freedom is freedom of speech. You don't have speech if you don't have a way of transacting. How will you drive to the protest if you can't afford fuel? They can now turn off your Tesla car. Your phones spy on you and track you. Without having a medium of exchange for you to express your political views, you don't have freedom.
+
+NN: Financial freedom should be a human right. We're straying away from that, unless bitcoin works, and unless self-custody with bitcoin works. We're not headed in the right direction either... Coinbase holds 13% of all bitcoin that is not lost today. Add Kraken and Binance and everyone else, you're talking 50-60% of outstanding BTC could be held by custodians today. We're not taking advantage of this right. In terms of the broader industry, this is not going in the right direction and we have to do whatever we can to make this better for consumers and better for the industry.
+
+WC: I'd be willing to bet that in the next 5-7 years, that most of your twitter feeds, would be grounds for financial censorship. That's why.
+
+nvk: Oh, definitely. You can look at this as a selfish thing as well. All these people who have money on exchanges are going to make a donation to us by virtue of the government seizing the bitcoin and holding it forever. So exchange users, I thank you for your loss.
+
+MB: We were talking about a product where you can custody pocket change, and you guys are providing services for securing generational wealth. With corporate treasuries, ....
+
+NN: This is why you need an industry of different providers that focus on particular audiences. Some people will want to go with Coinkite because they want to roll the dice to create their private key entropy. There are institutions that want to use Unchained and self-custody through that. Or some people want to use Casa because we speak their language better. Thta's why having this broad sloth of the industry- we're all working towards the same goal: put private keys into people's hands as fast and simple and securely as possible.
+
+nvk: Different people, different needs. The same people might have different needs themselves. We see this, we have users that will have his phone wallet with a few hundred bucks. Just like your back pocket wallet, you have a few hundred bucks. Maybe they already have KYC coins or privacy or tradeoffs. Maybe they would like to use collaborative multisig. Then you also have people that want super deep cold storage with a Coinkite Coldcard or then an operational wallet with $100,000 for the business. You need this different thresholds and sort of like as an industry we are all sort of pigeoned holed for so long, trying to push x is the best solution for something. But that's not true, people have different needs and they will use these different tools. The more options we can offer people, the better off we will be.
+
+WC: It's early. I have a vision for the future where private key management is so simple that you can designate anyone in your life whether a family member, lawyer, or a trusted institution, geographically separated where this is so simple to look at, like a private key in Brazil and another one in Africa, and I can hold a certain number myself in a trusted manner that it really is you would keep your pocket change in a single sig situation but anything of substantial value you would keep sovereign with this network of keys or collaborative multisig.
+
+MB: What do you guys think is the most exciting thing in this product space? What's exciting you about innovations in private key management?
+
+nvk: There's a few things. .... You'll see wallets de-risking htemselves because it's easier and easier to use different devices at the same time. There's PSBTv2 but won't talk about that, that's technical. Just the knowledge base and the education has become so much better and it's really amping...
+
+WC: And all these companies are becoming more mature, whether coordinators or hardware wallet manufacturers. We have had years to ossify our products. The people who got MtGoxed weren't stupid, there just wasn't simple good options for them at the time. Everyone here can benefit from the last 10 years of tears. It's getting easier to do. It's very doable.
+
+NN: I think we will start to see some interesting developments on the product side... we're still talking about why self-custody is important from a security and protecting yourself.. I was having an interesting conversation with someone about the fact that banks have massive fraud departments to protect against things like fraud where they need to reverse a transaction. When you have a collaborative self-custody multisig where there are multiple parties to a contract, and each party needs to sign off on transactions, then you can eliminate a ton of that cruft and save a lot of cost when it comes to something like a bank. That conversation, I haven't thought through it fully, it seems like an interesting approach to help explain it and the magic of private keys and self-custody and new things and types of agreements that you can setup using this technology that hasn't been available before. There's a certain core of people who will adopt tihs because of security and censorship resistance, but then other people will daopt it because it enables them to do new things at a lower cost. I think that will be in the next 5 to 10 years.
+
+WC: We've been focusing on custody as one financial service where we eliminate SPOFs and counterparties, but how do you get the bitcoin to begin with? How did you buy it? Can you get trade execution straight into cold storage? What about lending programs where you don't need to give up your collateral? What about cryptographically proving that money has not been rehypothecated? What about storing money in tax advantaged accounts? I want to find where there is counterparty risk in any financial service and using private keys to eliminate it.
+
+
+tweet: Transcript: Permissionless access to wealth https://diyhpl.us/wiki/transcripts/bitcoin-takeover-austin/permissionless-access-to-wealth/ @unchainedcap @willcole @nvk @Nneuman @MartyBent
+
