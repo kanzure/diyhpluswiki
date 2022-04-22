@@ -1,0 +1,191 @@
+2022-04-22
+
+bip119 CTV workshop
+
+previous workshop: <https://diyhpl.us/wiki/transcripts/ctv-bip-review-workshop/>
+
+# Introduction
+
+I'll give a menu of options for what to cover. We could do a more architectural review of Sapio. We have some content on what miniscript is, as well. Then, we have a rust programming guide. We also have a tutorial for getting setup with sapio. I was thinking we'd end with the tutorial on getting setup unless anyone feels strongly that they want to play around in Sapio sooner.
+
+All of the slides are in the company folder at the end the last slide has a link tree of sorts... Buck is going to rename all of those to the appropriate name so that it's less confusing which one to click on, thank you for your service Buck.
+
+We're going to start with as I said someone wanted an overview of Sapio so we will talk about the architecture of Sapio under the hood a little bit and this theoretical calculus of covenants thing. Then we will go into what's actually ACTV in this context. Following that, we will do some content on what miniscript is and how you can use that and we will play around with that a little bit. Lastly we will do a primer on... who here has done any rust programming ever? Some people have played around with it. We're going to do a little bit of a primer that is just building some intuition for rust and avoid common pitfall. That should hopefully help when you're looking at some of these samples of code about how to get the compiler to stop fighting you. Then we will dwelve into setting up sapio, and hopefully people will be able to attempt a small challenge that I setup but we might run out of town.
+
+# Sapio architecture
+
+What is Sapio? It's just like Solidity... not really. It's kind of similar. It's a high level language for writing smart contracts. It has some nice tooling and you can do a lot, but it's not targeting EVM, it's targeting bitcoin. The bitcoin VM is this concept that I made up but actually Satoshi made it up. There's no strong formal model for what this bitcoin VM is, it's just that there are transactions, there are scripts. But maybe we can think about this in a new theoretical way and it will yield better mental models to think about smart contracts.
+
+A common misconception is that Sapio is uniquely for CTV. This is a misunderstanding because Sapio is really trying to target any arbitrary transaction graph. If you can target an arbitrary transaction graph, then you can target any type of covenant. Inside of Sapio, because OP\_CHECKTEMPLATEVERIFY is a concrete defined thing... we can add support for what other covenants do into the Sapio framework if there were others. If people on Liquid wanted to make Liquid to be Sapio-compatible, then it's possible.
+
+Q: When you say concrete and well-defined, are you referring to anything in particular like characteristics of smart contract?
+
+A: Well, there is code for it, and the code has been tested pretty thoroughly and there are tools that you can use to work with it in terms of miniscript and other things. It's not just like here's an opcode, figure out how to use it. It's kind of well formed, and we will talk about the theoretical properties over the next two presentations.
+
+Lightning can be thought of as a smart contract... or multisig smart contracts. If we had ANYPREVOUT, you could implement eltoo inside of Sapio. We don't have ANYPREVOUT, so it doesn't exist actually, but Sapio has one of the anyprevout like eltoo-like lightning implementations because you can model that kind of state transition system. It's kind of cool, I might not use it in production but it exists.
+
+It's not quite a standard, but it's a standard for making bitcoin transaction flows. One day maybe Sapio will become mature and there will be a standards body around it so that I don't get to rugpull people when I get a crazy new idea, but instead something that users can rely on the formal semantics on how these things should work and maybe we'd get more tooling around it or other metadata protocols and things like that.
+
+There's a lot of stuff that I showed you today. Here's the architecture diagram. Say you have a Sapio Application like a vault or a NFT. It's a compiled module that you can interact with and see it. Then underneath that there's Sapio-studio react GUI frontend, and then Sapio-studio electron which is the backend code for running the application itself. The electron application is using command line tools called Sapio CLI. It also uses bitcoind. Any flow that you're doing or might want to automate one day, it's not like there's some special magical thing happening in some mess of javascript and typescript. It's mostly just shelling out to a command line interface and you can reimplement using that, maybe with relative ease. It's still slightly difficult, but it's doable, if you have a separate tool managing it.
+
+Then there's the sapio language itself which is a big block of complex topics like compiler logic, and it's built on top of rust-bitcoin which is one of the main ecosystem libraries, and it includes things like rust-miniscript. Then there's wasmer, which is a webassembly runtime in rust. wasmer uses llvm for running webassembly but I don't really fully understand that. I don't know how crane lift works. In theory it's deterministic-ish. After that, you have the turtles that all of this is based on anyway. Does anyone have any questions about this architecture diagram overall?
+
+sapio-react is not a library, it's more of an application with a graphical user interface. There's a lot of things it handles in terms of like being able to click on things and generate state transitions, all of this can happen in a backend context. It just happens to be doing the things you need it to do, in an interactive form.
+
+Is anyone more confused now?
+
+# How do I use sapio?
+
+At the end of the day, what you need to know is that you write smart contracts in a rust-based language for smart contracts called Sapio. Tensorflow is a little bit of a language itself, and then it compiles a neural network for you, but tensorflow itself is not that neural network. Sapio is like that; it's a library ultimately, but it's a language for describing flows of bitcoin. When you write a sapio program it's really making itself a little compiler that you can then pass a language in, and a language is a set of arguments, into it and it will generate an actual concrete program for you. The sapio module that you're running is not the actual transactions; the transactions are the compiled output. Sapio is the thing that compiles and generates those transactions. Those modules that you compile are compiled into webassembly, that's probably something where I could do some improvement. Some people are working on specs for very very deterministic webassembly because webassembly has a few holes about how it is setup, floating points are unspecified but it is defined or something so you can get some weird things... but generally webassembly is deterministic, if you run a contract once, you will get the same result next time. You can ask it questions like, what type are you? It will return json and you can use json-schema to figure out hwat types can you send into it, and so on. It's a self-describing webassembly model. Then you load the module into Sapio Studio, and then you can use it. You can play around with the transactions, build your contract, save to disk, you could have a covenant or a vault or whatever you're using. That's the user story at the end of the day.
+
+# Mutable transaction graph
+
+It generates a mutable transaction graph. What is a mutable transaction graph? Let's start with the idea of a contract called "pay my friends". In PMF, Alice wants to pay Bob and Carol the same amount and then put the change back into the contract. So Say there's a contract PayMyFrenz, the first step would be to generate a transaction graph that does that. Sapio allows us to finish a computation and then later pick-up where we left off, and resume that computation. In this example, Alice is paying an amount to Bob and to Carol, and the rest to the same contract PayMyFrenz. So we could apply that recursively, and Sapio is a toolkit for being able to deterministically re-generate -- this is like an effect type system where you can inject and resume transactions in this graph of things. You can generate the same graph, and you could continue....
+
+Sapio supports CTV as a first-class citizen. It can support other things, as well. In particular, the emulation of CTV would work for ... I think there might be some issues with re-compilation but those signatures that the oracle is supposed to serve is deterministic, and you could cache them once you generate them. When you see these continuations, you left the purview of emulating CTV and now you're doing something else. CTV is just one of the things; emulating CTV is one of the facets of how CTV works. Covenants are just like a construct of something that can be enforced as a restriction on transfers, which also encapsulates things like multisig.
+
+# What enforces the contract?
+
+It could be CTV, but it could be multisig or even future covenant opcodes. Sapio helps us with tooling infrastructure around it. It could support a bunch of different things... but those things, Sapio is happy to do it, but those things need to be well-formed.
+
+So how we should think about the shape of what is a covenant? I have a post on the bitcoin-dev mailing list that has a better formal treatment of this. This is a high level of what you would need to understand: a "covenanty" smart contract in bitcoin, needs (1) an intent generator that says something like "I want to sell my NFT via this transaction T", and then you have (2) an authorization verifier (something that checks whether the transfer is signed by some key, for example), and then (3) some authorization prover that says the transaction is valid because I generated a signature with the key. Then there's a meta-component: (4) what is the set of all possible conditions and are all these conditions desirable? Have we excluded all undesirable conditions and have we included all the desirable conditions? This can also be thought of in the recursive context as well.
+
+Q: Why do we need that list? What does that list of requirements give us to think about covenants?
+
+A: Basically, this is the set of things... there's a few ways of thinking about it. This is the set of things you would need to have to formally prove properties of a covenant's possible state transitions. If you don't have these things, I'm pretty sure you couldn't prove that a covenant is correct. These also happen to coincide with the things you would need to implement a piece of code for, in order to be able to integrate this into Sapio. There's an impetus match of like, these properties of formally proving it are the same pieces of code you would need to write, or you need to at least prove that the code could be written in a reasonable way, and if you can't then the thing might be difficult to use and maybe shouldn't be done. If you can't prove the entire set of intents that are provable under the verifier you generate, then maybe there are bad state transitions. If you can't generate a verifier, then how will you translate into script? If you can't do a prover, then how will you play these things out? Expressing these things- generally people want to live at the levels of intents and then you want the authorizer and prover to be automatically generated for you, that's the intution you should probably want. You don't want to spend your time writing a verifier or prover. You want to find the set of intents that are valid, automatically derive them, and then have a proof that it is total and that you have full coverage.
+
+# Super simple vault
+
+Say I have a vault V with a UTXO with 10 coins. If I want to move it, then I need to wait for 10 days after I say that I want to move it. If I say my distress word, then my funds get sent to my mom. Who wants this kind of vault? Okay, it looks like some people don't trust their moms with their coins.
+
+Let's map it back to intent. So the tx1 intent is begin to withdraw funds, but allow time for the below transactions. tx send to mom: the intent is to send funds to mom. Tx move after maturity: the intent is to allow any transactions afterwards.
+
+What about authorization? Well on tx1, authorization is done by CTV pre-committed in script. Then tx send-to-mom, then the authorization is done by CTV pre-committed in script. Then the tx maturity at the end is done by timelock plus keysign. It's an open-ended covenant for the tx maturity spend.
+
+The verifier now. For tx1, the verifier just has to match that the txn hash matches. For send-to-mom tx, it's the same, check the txn hash. Then for the maturity movement tx, then it's just check the timelock and check the signature.
+
+So now we have expressed the three facets of the intent, authorizer, and the verifier logic. All covenants look like this when you zoom in. You have some sort of way of generating state transitions that you want, you need to prove the state transition is correct, and you generate a verifier that only accepts the state transitions for you want. If you can't do that, then you don't have a covenant. I don't see how what you're doing would be a covenant if you were missing any prong of these 3 things, or maybe it is a covenant but would not be well-formed.
+
+...
+
+Multisig: it's easy, as long as you define a good federation for the multisignature and if the majority of those are running the same Sapio code then they will be verifying state transitions by seeing that they were constructable through the Sapio code themselves. So we are subverting having any of this happening as a consensus-level authorizer or verifier because we're doing client-side validation. When we jump into consensus, it's easy because Sapio is already doing the intent generator, prover and authorizer, if we were to write our covenant in a way that we were happy with all the state transitions that we were happy with.
+
+# Why not something else other than CTV
+
+Some people don't like CTV. Some people do like it. My challenge for people who don't like it, then extend Sapio to implement and extend your other covenant. Implement it, and then people can use it. It might be a high bar but the reality is that for me to argue in favor of CTV, I built all of Sapio but I am just asking you to build a plugin into Sapio for your opcode- it doesn't need to be all use cases for your opcode, but just at least one thing that it can do in the one well-formed thing and then we can write applications around it. If you can't do that, then probably whatever you're doing is an immature concept because we don't know how to write the three prongs for what you need to do a covenant. If it was usable, then we would know how to write those things. You don't have to use Sapio, but it would be easier to use this kind of tooling.
+
+I think sapio is good because rust is a real programming language, and minx is more of a hobby language and if you were doing some real computation and figure out what your covenants do, it might be harder to do in minx because it doesn't have all the libraries you might expect.
+
+Outside of sapio... an intent generator would be to be something like "I would like to sort this list". An authorizer prover would be "I sorted the list", and the verifier would be "I scanned over the list and checked that all the elements are in order". Those might seem like the same thing, but they are very different things in general. For a transaction in particular, your intent generator could be "I would like to only send to transactions which have every other input be the prime factorization value of like the next one or something like that". Then the authorization verifier would be, "look at them in this order". If you don't know the order, then it's probably not correct, it's probably an NP-hard problem. The verifier just looks in that order. It's three separate properties. The verifier is what goes into bitcoin consensus. The prover goes into your wallet. The intent generator is kind of also in your wallet, but it's the literal transactions that get played. You have to prove that this is what you actually want, prove to yourself.
+
+With pre-signed transactions, don't you need to prove you deleted the key? In the mailing list post, there were 7 characteristics actually. A string of multisig could be viewed as a covenant but it's a little bit more difficult to get the same guarantees. Whether multisig is or isn't a covenant, it's in the category of thing that can be described by the Sapio framework which can also describe covenants. Timelocks are a covenant. It's an additional restriction on how the coins can be spent, beyond just the authorizers. I don't consider just authorizers without explicit instructions on what to do to be a covenant, but maybe it can be modeled as a covenant with no restriction on how it can be spent. Useful covenants are the ones where we can bound the set of outcomes. That's what we know about formal models: there's always things that you can't prove in them, there are things you might want to prove, but also that generally you can prove quite a lot of them but it's a framework for comparing. It's not whether you can describe something in a weird way this way, but rather that you can compare two different things and then compare the properties against them.
+
+What's going on and what is... this is a calculus of covenants. It's a generic idea, it's that book in the sky.. what does this look like for Sapio? Get a rust struct that has Deserialize implemented on it, and probably Serialize, but I think you just formally need Deserialize. Read it from somewhere- you read the data in, and then you have some piece of logic for CTV enforcement or multisig enforcement of the set of intents. You add them to the contract; you bind it to wasm, and then you use it, and then you party. That's all you really need to know in order to do this thing. That's not the full theoretical framework but generally Sapio is not trying to cover all possible covenants. It's just trying to cover the ones that you will probably need to use to do something meaningful, and some other things might be out of scope. But is this solving a real critical business infrastructure thing? If not, then I don't think we should add 10,000 lines of code to support that niche business use case.
+
+```rust
+impl<S: State + 'static> Contract for Vault<S> {
+    declare! {updatable<Option<Output>>, Self::spend_cold, Self::spend_hot}
+    declare! {then, Self::backup, Self::begin_redeem}
+}
+type JamesVault = Vault<Secure>;
+REGISTER![JamesVault, "logo.png"];
+```
+
+... overview of jamesob sapio contract code ...
+
+<https://learn.sapio-lang.org/>
+
+Contract actions: <https://learn.sapio-lang.org/ch03-02-guts.html>
+
+* guard: create a caluse using miniscript with access to the contract's values and context.
+* context\_if
+* then
+* continuation
+* decl\_\*\!
+
+Next we will do a primer on OP\_CHECKTEMPLATEVERIFY. See <https://diyhpl.us/wiki/transcripts/ctv-bip-review-workshop/>
+
+
+<https://github.com/jamesob/simple-ctv-vault>
+
+
+# Miniscript
+
+<https://diyhpl.us/wiki/transcripts/stanford-blockchain-conference/2019/miniscript/>
+
+<https://diyhpl.us/wiki/transcripts/advancing-bitcoin/2020/2020-02-07-andrew-poelstra-miniscript/>
+
+<https://diyhpl.us/wiki/transcripts/london-bitcoin-devs/2020-02-04-andrew-poelstra-miniscript/>
+
+<https://diyhpl.us/wiki/transcripts/noded-podcast/2019-05-11-andrew-poelstra-miniscript/>
+
+
+# Sapio stuff
+
+<https://jeremyrubin.github.io/sapio-testsite/>
+
+click 'miniscript testing' on the above page.
+
+# Recursive jamesob vault
+
+I turned the jamesob vault construct into a recursive vault. In this one, it's recursive, although it terminates after 5 steps. At each step, I have an opportunity to cancel the remaining steps of the vault. Each one has different output paths; in one, it goes to my hot wallet, in another it goes to a sub-vault where you then have to decide how you want to handle that either going down the escape hatch or keep it in the new vault.
+
+What's cool about this exercise is that I wanted to-- I took 15 minutes from having the jamesob vault to having this. So what did I have to do to do that? I defined a RecursiveJames vault, and I defined it by saying the parameters for a JamesVault, declare a number of times I want this contract to happen, I'm going to do an amount per step so how much coin should get locked up per hop of this thing.. I have fees per step, and then a timeout per step. So what I did is that I defined the contract for RecursiveJames as then(next, backup)... The next function- it's a very simple thing, it takes the template, ... it sets a sequence for the timeout I said which is in this case 1000 blocks. I spend the amount for the fee, then add an output with the amount per step that goes into the JamesVault a new instance of the JamesVault at every step. If the number of times remaining is 1, then that's it. If it's greater than one, then I am going to make a RecursiveJames vault with the amount that needs to be leftover and one less time available and this will roll out over a number of steps. Then I realized, it would be nice if I could cancel the rest of the flow. All I did to get that was literally copy all the code from backup from the previous jamesob vault version, and the only modification is that instead of self.backup I call self.v because it's the jamesob vault version and then I copied the rest of the code. Send the rest of what's remaining to my emergency backup procedure. Then I declared it-- then(next, backup), and it worked.
+
+Q: If CTV was to be activated today, what contracts would you be putting your money into?
+
+A: I think jamesob's vault for one. There was a bug I just found in Sapio last night. It hasn't had enough eyes on it. If everyone here went a few hours looking into the compiler, that would make me feel better because more people have looked at it. I'm the only person who has designed the sapio system, it has a lot of moving parts that can be surprising, so more help would be helpful. I've spent 1000s of hours on this, so yeah I would put $100 into a contract or two. I think the hashrate swap contract is also interesting. Miners have expressed an interest in being in a telegram group where people just buy these things out. For hashrate derivatives for miners it's fully trustless because they can mine their own executions. Any time I've talked to a miner, they have told me they need this.
+
+Q: Does pow-swap need CTV?
+
+A: It doesn't require it, but it's a lot simpler.
+
+
+Delayed lightning channel opening.
+
+# Coinpool and payment pools
+
+What about coinpool in Sapio? Here is a coinpool in Sapio. I have a plugin version of that one actually. If there is a mailing list post for it, then it has been built in sapio. Originally the names of this stuff is kind of annoying because they all got generic... oh your thing is joinpool, my thing is coinpool. But then why not name yours jaccuzi and I'll name mine hot tub? I won't remember the generic names.. For payment pool, here's an implementation of one. The thing interesting about payment pools is that as a concept, they are really simple and you actually don't need any covenants to do them. You just need tooling to enforce a multisig covenant. Where covenants help, is in the initial bootstrapping creation of it where you can do it with less interactive signing or if you can create it on behalf of others. Exchanges could match customers into payment pools and they say you should coordinate with these other customers who will coordinate with you for your ongoing business.
+
+The thing that I think has been toxic in the payment pool space is that people are really fixated on niche properties that require more sophisticated soft-fork, when the core concept of payment pools doesn't require a soft-fork. I don't want to name names, I like everyone involved, but one of the proposals had a hard-fork in the proposal. But a hard-fork isn't necessary for payment pools. The thing is that some of these already work today, and it improves scalability. Today the ones you can build or the ones you can build with CTV are better for privacy than some of the other payment pools. I haven't been able to figure out people's prioritization around this.
+
+Q: Can you give a broad sketch of the design of this payment pool? The proposals differ a lot.
+
+It is a single UTXO where any person is able to remove themselves from it if they don't want to be in the pool any more. As a group, you're able to do a multisig operation to line up a series of payouts and payments, or balance transfers within the pool, and you should also be able to have channels nested inside of that. If you look in the sapio contrib folder, you can see an implementation of this where the coinpool has a then branch that bi-sects the pool in half, otherwise you have an all-approved guard and you can vote as a collective because everyone has to approve as to what the next pool should be. When you do the updates, there is a protocol for re-assessing the balances that everyone agrees on; what's the next new pool we're moving funds into it and what's the allocation of assets in that pool? There's also similar code for DAO, same concept of being able to split out things. This has scalability and privacy gains.
+
+A lot of these issues are social. Vaults are more self-sovereign and you can get a benefit even if only you are doing it.
+
+The other payment pool designs tend to be a constant number of logarithmic sized transactions. In some of the designs, if one person becomes dead then they require everyone who is not dead to exit the pool which means one person going offline you need to do n log(n) chain work, unless you support forced evictions. In the CTV one, it's symmetric: if you want to leave, it's log(n) and if someone wants to kick you out it's also log(n). It has better privacy because it has sub-structural privacy; the recursive structure of it doesn't require you to share everything to the pool, but the others have this flat structure where you need to share everything to everyone in the pool. The CTV one is also superior in number of bytes by 7-fold compared to the TAPLEAFUPDATEVERIFY (TLUV) one.
+
+It's a logarithmic number of people pay a constant amount of the cost. It's not that bad. The other advantage of the CTV one.. all those other branches, you're committed to the future states but you don't have to lock them in on-chain, so you can wait for cheaper fees. These things aren't time-sensitive, generally. The other big benefit in one of the other designs is that they only have evictions in the case where you have interactivity, and so to me it doesn't make sense: having interactivity means these things are very hard to setup because you can't set it up on behalf of other people, you can't have a liquidity provider setting up a payment pool that they operate for a group. You can also have DLCs in payment pools and arbitrarily nest other protocols. You can have payment pools that send funds into a vault for you. The composability is really exciting to me.
+
+There's a post event at Firehouse Lounge just around the corner and we can do dinner and keep the conservation going.
+
+Q: What is the craziest fun thing you would do if you could enable every covenant possible?
+
+A: If you had every covenant possible, you would just have the ethereum virtual machine and you can do those things on EVM already. I think maybe within a limited set of those things what I'm really excited about is like having the zero-knowledge proof verifying stuff and having the conjunction of that with a payment pool where you can have a payment pool where all you're signing off on with respect to state transitions is that you have verified you can get your own money out, but you're also enforcing all the rules for everyone else. You can have groups of people with very sophisticated smart contracts running in their own sidechain kind of like the starkware vaults, but I think that's quite a ways out. I'm really excited about Uniswap and the bitmatrix stuff. Uniswap is probably one of my favorite smart contracts in this space because it completely routes the traditional IPO process; in a very long run what we will see is that IPOs will stop being a thing, and we will incentivize decentralized market making and I think that's a very good idea and it will take some time to percolate through the network. I don't see a good path to that in bitcoin. Bitmatrix is kind of doing it, but it's a little bit messy. Bitmatrix is worth checking out. I like Brock a lot.
+
+Q: For me to tie this together, bitswap (uniswap but on bitcoin), what are the missing pieces that in your estimation to get there or something like it?
+
+A: The automated market maker stuff.. there's a lot of structural reasons why they are actually really efficient. At most times, they are inefficient compared to traditional markets but they are much more strongly available which is why they are interesting. Lots of people talk about atomic swaps of tokens; that liquidity can dry up quickly during a flash crash or someone takes their market making offline and they won't trade with you. With automated market makers, they are always on infrastructure like even during big events. To have an automated market maker in bitcoin, the asset protocols... taro is a huge step forward but it still seems difficult because bitcoin smart contracts don't have a notion of state that they are maintaining, and they require individuals to steward it perhaps in a multisig arrangement. I think it's complicated way of doing something that is simple in ethereum... I don't know how in the utxo model we will be able to get that nicety of really really simple thing that has nice behavior, and that's just something that I don't have the pathway to that type of thing. I don't have the answer.
+
+
+How worried are you about UTXO ownership scalability on the base layer? Will payment pools be a solution to that?
+
+A: That's a fun question. People have proposed crazy things like having 5,000 people in a payment pool and I think that's probably not going to happen because coordinating 5,000 people is really hard. You might have 5,000 people in a payment pool, run by 10 people. It's kind of like micro-banking and maybe it has a chaumian e-cash server, like the fedimint stuff. I think they would still benefit from CTV for the peg-in and peg-out stuff and the treasury management through something more vaulted. I think those things would work together in the long run. The thing that I think would probably be true is that people will probably still have like a UTXO per person, but they may have 1/10th of 10 UTXOs, and the availability guarantees and sharing guarantees of that is better than having a portion of just one UTXO. I don't think people will be a member of only one payment pool, I think they will split their funds across multiple payment pools and then their availability will go up. There won't be just one account that someone manages somewhere; they will have lots of different accounts, there might be some sort of hub-and-spoke topology where you do swaps between them or something like that. I'm skeptical of this being competitive with lightning payments, because I don't think lightning is suitable for large volumes, I don't think it will work for things like payroll whereas payment pools should be able to work for payroll. I just think that if I'm an employer and I need to pay 100 employees and I'm paying them out of my revenue, then I will not have the ability to have that collateral locked up before hand, unless I'm in a tech business where labor to profit is low... but for a restaurant, I don't think most restaurants can lock up enough cash to have the outbound liquidity. The counterpoint I've heard is that most people won't save money, and I apply the lense that if people can't save money, and that's because of a scalability limit of some kind, then that seems like the system we're working on is broken and people should be able to save money. I'm skeptical of lightning for payroll. The Venmo use case-- like how often you have to add balance it, when you take people out to dinner and maybe it nets out, but nobody gets their paycheck through Venmo....
+
+Q: Payroll can be more centralized, though.
+
+A: Even for a centralized provider, if you're providing liquidity over lightning over 1 million employees.. where's that money coming from? You have to lock it up from somewhere. I see how it can work for payment pools, though, where you move value from one account to another in a local economy. Again, I'm just skeptical and I'd have to see it working to believe it. Multiple UTXOs per person. I don't know how to achieve the best guarantees for self-custody, but trading off centralization for better self-custody guarantees might be better.
+
+Q: Like this idea of 10,000 central banks or fedimint or something?
+
+A: Would you make the block size 10x bigger if you could get everyone much better custody? If you could get 10x more self-custody activity, I think that's a good tradeoff personally....
+
+
+
+
+
+
+
+
