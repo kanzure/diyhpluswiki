@@ -1,0 +1,375 @@
+2022-05-19
+
+Austin Bitcoin Developers
+
+Socratic Seminar 28
+
+<https://austinbitdevs.com/2022-05-19-socratic-seminar-28>
+
+Must be a bear market. Attendance is down. Welcome to the bear market Austin Bitdevs. We now know who the real bitcoiners are and who the fakers are. You made it, thank you for coming. This is our telegram group if you want to sign in there.
+
+We'll start with some announcements. We're doing a tour of the Riot Blockchain mining facility. It's a gigawatt mining facility in Rockdale. I thought this was interesting because if you think about where bitcoin could be adopted on the ground, it could be at a place where there is a huge mining facility. There's 5000 people in this town, and maybe 1000 work at the mine. The whole town is dependent on the mine. It used to be a huge aluminum plant, and now it's getting rebooted as a town. We're also going to go to bbq and it's the new Mayor's bbq restaurant. He will be accepting bitcoin for the first time which will be interesting. It's sold out, unfortunately, but how many of you got tickets? The meetup is not sold out, though. Come at 1pm t othe BBQ.
+
+# Silicon Salon
+
+Bryan Bishop is co-hosting a silicon chip design workshop for secure enclaves and hardware wallets. If you have any experience in chip design or developing for hardware wallets, sign up and join us or get in touch.
+
+<https://www.blockchaincommons.com/salons/silicon-salon/>
+
+# bitcoin++
+
+For those that don't know, Austin is the bitcoin capital of the world. As such, this is the natural place to host one of the best bitcoin events happening this year. Bitcoin++ we're going to frontrun Consensus and bring a bunch of people in. We have two days of learning and workshops, some faces here will be leading them and talking. Then two days of hacking. Check us out on twitter at btcplusplus and then btcplusplus.dev is our website.
+
+Q: How technical do you have to be to get something out of this conference?
+
+I would say it would probably vary depending on the talks. We have the schedule of talks with the different descriptions so it varies between how technical the talks are. There are different rooms going on concurrently so you can pick your sessions you attend. Check it out.
+
+<https://base58btc.notion.site/btc-is-a-bitcoin-dev-conf-8880ed55bfe6419fb1bc6cafbe463787>
+
+# Austin Lightning Developers Meetup
+
+We had our first Austin lightning developers meetup the other week. The next one is in 3 weeks on June 8th, about 3 weeks so make sure you come to that.
+
+<https://www.meetup.com/austin-lightning-devs/events/285641053/>
+
+# OldestFirstCoinSelection
+
+<https://github.com/bitcoindevkit/bdk/pull/557>
+
+The first topic- this is for the bitcoin dev kit BDK library which is a rust library that is a plug-and-play solution for building or using your own wallet. This is kind of a small thing, but I thought it was interesting they added OldestFirstCoinSelection. What coin selection is that when you're creating a spend in any wallet, say you received a bunch of coins in your wallet and when you want to create a spend to spend out, your wallet has to pick the UTXOs that it will use to make a spend. There are implications about which UTXOs you pick. The bigger the transaction is (like the more UTXOs you use), then the higher the fees on the network to get it processed. Using multiple UTXOs of 0.1 BTC will cost more than just using a 1 BTC UTXO. Sometimes it makes sense to consolidate your wallet during a low fee market, this is often called UTXO consolidation or coin consolidation.
+
+There are different algorithms your wallet can use to figure out which coins to select. For a while the best known way was random where you pick at random. Branch-and-bound which was really invented I think by Murch in his PhD thesis. Eventually it was introduced into Bitcoin Core with a better optimization over that. BDK supported random and branch-and-bound, and now they have added OldestFirstCoinSelection. I found it interesting they added this.
+
+One of the reasons they did it is because branch-and-bound and random are not deterministic, which isn't helpful during testing. Knowing which coins though with OldestFirstCoinSelection is better for testing.
+
+We saw this with paynyms/stealth addresses.... because BDK is sort of modular, they will say yeah as long as the code is okay we will keep it and incorporate it and users can decide whether to use it or not. BDK will accept any well-implemented change, and users are free to ignore them as they like. I think that's awesome.
+
+# Tor congestion control
+
+<https://blog.torproject.org/congestion-contrl-047/>
+
+Who here knows what tor is? Alright, good.  Tor if you don't know it's a way to do internet but more anonymously. It uses onion routing where you send encrypted messages across the network, kind of like lightning, but you're able to browse the internet privately. It has a problem though, it's extremely slow and uses a lot of data.
+
+When you send packages over the internet, your packets are split up into multiple packets, sometimes one of those packets won't make it there and you need to get the packets again. With tor, you can't know which packets you missed until the very end when you decrypt everything. It's just a hard process to do because you can't do introspection about what is missed throughout the entire route when you're sending these messages. Tor has been thinking about it for 2 decades for how to do this. Tor is pretty slow. They have been trying to do this.
+
+In their latest release, they implemented something for this, where they show the drop packet rate is much lower, download rate is higher, etc. Getting into how it works, we tried to figure it out but we couldn't. It's using some fancy cryptography and compression algorithms. It's kind of cool to see.
+
+Q: Can this be used for lightning's onion routing? Or is it less important because the packets aren't as big?
+
+With lightning, the packets are, you won't be sending multiples. A single payment has a max byte size so you only need to send a single packet. With tor, you're often downloading a megabyte of webpage with javascript and everything. A lot of bitcoin apps end up using tor to get better privacy. Unless you're Jack Mallers giving a demo, tor is usually kind of slow but for some reason not for him. Oh, he must have been using the new tor a month early? Okay, sure.
+
+The upgrade only has to happen with the relay nodes on the edges. So all the people on the inside are now going to be getting hammered because the network is going to be more efficient and more data will be flowing through. If you're an exit node, you need to upgrade, and if you're a relay then you're going to be dealing with a lot more data here soon.
+
+Q: Does the tor circuit switch more? Does it retain more traffic, what changes?
+
+I think the actual router is the same and these nodes are just more efficient and they will have less data they need to re-ask for, but as a result people might use tor more because it's faster. You'll use the same circuit.
+
+Q: It bothers me how much we use tor. I wish we could use it less. Especially when you're both ends of the communication, it's kind of ridiculous to be using tor for that. There are other methods.
+
+# ROAST: Async threshold signatures with Schnorr
+
+<https://twitter.com/real_or_random/status/1523964246945636352>
+
+We were talking last month about MuSig2 and FROST, and ROAST is a protocol on top of FROST. ROAST is interesting not for cold storage but for-- well first let's talk about MuSig vs FROST. The privacy that we get with Schnorr that came with taproot are these aggregated signatures where multiple signatures can be made to look like a single signature. But with MuSig, you can only do n-of-n. However, many use cases want threshold, like k-of-n where k != n. This is what we call threshold.
+
+FROST introduced a way, and it's still an early proposal, and I think there's a formal security approval of it now, and it allows you to do threshold signatures. ROAST is on top of FROST and addresses even more concerns. I think it's important to point out because oh with taproot then bitcoin and lightning are private, well that's bullshit. It introduced primitives that we could use later to maybe get more privacy, and so FROST and ROAST are part of the process to get there to get those kinds of benefits.
+
+One of the shortcomings of the FROST scheme is that one of the signers tries to disrupt the signing process, then the whole process fails. With just one party disrupting it, no signature will be produced. A lot of coordination is required. In a cold storage use case where all the keys are owned by the same person, then that's not a problem. But in a federated system like Liquid or Fedimint, these systems, the people running the federation are doing a multisig and they are different people and one or more of these people might be malicious and the protocol still needs to work... so you need a signing scheme that can facilitate a situation where one or more people might be trying to disrupt but still work.
+
+FROST's protocol does not provide robustness, which is a flaw of earlier schemes that tried to do distributed key generation where every single round of signing, just made it harder to implement... so it never really caught on and it was slower. Instead, FROST did not attempt to be robust. When it did fail, it would say who caused the failure, specifically which signer screwed it up. That allows them to come and make another scheme on top of it called ROAST which says okay, well, if one person screwed up the last round, then we will do it again without that person. This allows you to retry it excluding the person who disrupted in each round, and still produce a valid signature. There are these identifiable forks about who screwed up the process. This is still not great, because it's still synchronous and you have to run it multiple times. So one more optimization is that, when it starts, it starts at most n - t + 1 concurrent signing sessions all at the same time and the idea is that one of these will succeed if less than (n - t) people are malicious in the protocol. The protocol runs once, and it will either succeed or fail. It's cool to see a stack of these things: Schnorr, Taproot, FROST, and then ROAST on top of it. This would be a fantastic thing for federated systems like Liquid.
+
+This is a problem with MuSig as well. There's MuSig1 and MuSig2 and MuSig-DN. The coordination problem was also in those protocols. The way that multisig works today is that if the three of us want to make a multisig wallet, then we go around and share xpubs with each other. With a 2-of-3, we're able to sign without one of the participants. With MuSig and with FROST, when we want to sign then we have to go through the coordination process again. If you can imagine like if one of the participants disappears and we need him, then that's really problematic, especially for threshold because the whole point of threshold signatures is that you're protecting yourself from certain sizes of collusion or disappearance of participants. That's one of the challenges of these protocols.
+
+You need a trusted coordinator to coordinate the signature starts... they made a nice assumption which is that maybe youcan trust one of the people to coordinate, because they want to make a signature. So in the worst case, everyone can try to be a coordinator until the protocol succeeds, so that's nice.
+
+A lot of these things are not happening at the cryptography layer, but at how you structure the protocol on top of the cryptographic primitives. How do you coordinate passing around nonces and knowing them ahead of time? The cryptography is settled and the question is how do we build tools on top of it.
+
+Q: For wallet developers, are they waiting for something like this to implement taproot in their multisig wallets?
+
+A bigger blocker is that there's not many implementations of the cryptography yet. I think MuSig just recently got merged into libsecp256k1-zkp and FROST is a work in progress for like a year now. That's the first blocker. Once that gets merged, I think it will pick up. There's a MuSig BIP about how to do coordination and so on.
+
+MuSig2 getting merged into libsecp256k1-zkp is like the staging ground for experimental cryptography that might eventually get into Bitcoin Core's libsecp256k1. Bitcoin Core doesn't even have the cryptography primitive to even do this yet, it's just in the staging ground that Blockstream uses for a lot of their projects. Bitcoin Core can't do this yet because it doesn't have the primitive.
+
+Another issue is that if you don't hold customer keys, and the customers have hardware signing devices, and the hardware signers need to be able to not just do the cryptography but also participate in the coordination and expose certain information to the users to make sure we have the same security assumptions, and it's a lot of coordination so the standards are important on this.
+
+On that note, Coldcard just released the ability to receive to a taproot address but it cannot yet send from one. So you can deposit using taproot to your Coldcard but you can't send it yet. Coinkite is usually the first to implement this stuff, and when Ledger will support it is anyone's guess.
+
+Q: Are there any upcoming hardware wallet meetups where we could discuss this?
+
+Bitcoin Excavation and Exclamation Fund on top of ROAST.. so ROAST BEEF. There is no t in roasbeef. Bunch of perfectionists, relax.
+
+# Quantum protections for post-quantum taproot commitment
+
+<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2022-April/020209.html>
+
+Today bitcoin uses the discrete log assumption. If quantum computers become a real thing, then they can break all the keys in bitcoin and we'd all lose all of our money. It would suck. Well, only the public keys that are fully public which is most of the keys... the nice thing is that we could have a way to do quantum signatures. The general cryptography space is moving towards this. SSH recently released something for quantum signatures. It's happening outside of bitcoin; it's not just bitcoin worried about this.
+
+There's a few ways to fix this, and there's different ideas about how to do this, and Eric proposes that in a taproot output with scripts that aren't always revealed, one scriptpath might be a quantum safe key....
+
+There's a pre-problem built into the possible solution might be... first there's extra protections if we hash the public key. If you receive to an address, and the public key is hashed then that's harder for quantum computers to break. Taproot though has plain public keys which in early bitcoin transactions a lot of funds on-chain that still those are fully exposed. The reason for that is if a quantum computer attacker sees the public key, then with a quantum computer you can break the discrete log assumption and find the private key associated with that public key.
+
+One of the things we would have to do is not just have a quantum proof signature algorithm, you still have all of the quantum exposed public keys on-chain. With one of those solutions that puts a qunatum proof signature into the tapscript, you would need to soft-fork ... from validating normal ... and maybe there is a way to do migration for private/public key signing. This is the challenge in bitcoin where we have this immutable history but it also means we're stuck with everything that happened before with P2PK (pay-to-pubkey). Maybe soft-forks can pause that, and maybe the old keys can sign with a new quantum safe algorithm later. That wouldn't totally work actually.
+
+Satoshi's addresses are all public keys. If I had a quantum computer, I might be able to take the private key out of that. The point with this is that with taproot we can get around with this a little bit, and with taptrees we have unrevealed scripts, so we can pause the thing that only allows the script validation spends that must be quantum safe, so you allow script spends so you can still have a soft-migration path.
+
+Wouldn't the pause idea be incredibly disruptive to like everyone? Yes, it would be incredibly disruptive. So would quantum computers breaking all the public keys. When the first quantum computer comes out and it can break one key per day, is that more disruptive than just disrupting everyone's transactions?
+
+Maybe, because you can't trust that if you're getting paid by someone who has the funds or not... imagine you're running commerce and you're accepting payments to send stuff and vice versa, and you can't trust the payments anymore, then you stop using bitcoin. The assumption is really important when using something for money.
+
+Hashed taproot address with a quantum safe algorithm seems like a much better solution than having the pause. Yes.
+
+Q: Couldn't that result in a full hard-fork if the quantum thieves control a large part of the network? They would say, they wouldn't want to pause with the soft-fork and they could steal.
+
+Can you hash with quantum computing? You kind of can. A pause is a soft-fork so you could soft-fork it in.... so the pause might cause a hard-fork and the quantum side wants to keep it going and the non-quantum side doesn't. You might be able to get a pause in with a soft-fork.
+
+Pieter Wuille the inventor of taproot said well why not do raw public keys instead of hashing it... and his analysis of it was, there's about 5 million BTC that has exposed public keys, so if a quantum computer existed and be able to steal a quarter of all bitcoin then that's pretty bad anyway.... So when taproot was still a proposal, this was first put out in a post on the mailing list, someone wrote a blog post... Mark Friedenbach had a concern about this... Satoshi originally used plain public keys for receiving transactions. For some reasons including quantum concerns, we put keys behind a pubkeyhash and that gives us a little more resistance, and we kept that going through p2sh and segwit and then there was a conversation around taproot where we were basically able to save a byte by not putting the taproot addresses behind a hash so we lose that small amount of quantum protection in favor of saving that block space. And then this conversation first raised by Mark Friedenbach, and then there were tweet threads and bitcoin-dev emails about well, was it okay that we lost this protection? Then the answer for why it's okay is that there are so many funds that are still behind P2PK that it undermines the assumptions of the network enough that we would still have to deal with it in the post quantum world. You still have all these exposed plain public keys, which is enough of a concern that we might as well take the free byte blockspace savings.
+
+Q: Wasn't there also a concurrent validation optimization that can be done because htey did it this way?
+
+Q: I'd love it if Jimmy Song could explain to us why we shouldn't be afraid of quantum. I'm completely, I'm about as afraid of quantum computers doing this to us as we are that we're nearing the speed of light with our spaceships.
+
+I've ranted about this a lot of times. One more rant? I kind of disagree with Mark Friedenbach. I have read his posts on what quantum is, and it doesn't work the way he thinks it does. He thinks you get magical speed-up on calculations through quantum, but that's not how it works. In quantum algorithms, you get maybe a square root speed-up but you need like 8 different really difficult engineering breakthroughs. Da Vinci in the 1500s was able to conceive of a flying machine but there were engineering things that needed to exist in order for that flying machine to get made. We're able to conceive these things about quantum computers, but the thing is that we don't know how to do any of these things like how do you set the spin state of an atom before hand? In his blog post, he sort of assumed it away. I think quantum is a complete scam. There's a lot of people that have a lot of stake in it, it's kind of like blockchain in that way in that everyone talks about how blockchain is going to change the world and they say the same thing about quantum. A lot of people used to the same thing about cold fusion. These things don't exist. The engineering realities are incredibly hard to overcome. These things are nano-degrees above zero and must be kept in that state and error correct for everything. It just doesn't work the way that people think it does, and it's not that close. It's not happening in the next five years. Same as ten years away.
+
+And because you need those multiple things, you get the signal that it's on its way sooner than it can actually be used. If you want to steelman it, follow Mark Friedenbach on twitter and he's been tweeting about it lately.
+
+Some people say bitcoin is quantum-proof, which is also wrong. It's important to fight the FUD on the pro-bitcoin side... sure we don't have to worry about quantum yet, but you don't have to be wrong by trying to be right completely.
+
+# Verifiable random functions in libsecp256k1?
+
+<https://github.com/ElementsProject/secp256k1-zkp/issues/190>
+
+Today you will generate a private key using a secure random function, each language has their own primitive for this, like in Java and C etc. Why not generate private keys from a more sure way of doing this randomness in libsecp256k1? Often you can implement libsecp bindings perfectly but then you generate a private key in a stupid way, so it would be nice to have in the library and the page talks about the pro's and cons of doing it. When you're generating a nonce for a signature, before it was deterministic based on what you were signing, but now it's a random thing and it's even more needed now than before.
+
+It's a way to generate random numbers. It's a hard problem. Verifiable random function so the idea is you want to, you know how there are these strategifes for generating your seed with a wallet using dice? If you have 100 dice rolls that has a certain amount of randomness built into it, and it's provable-- well, your dice might be hacked, but if someone knows the entropy or the entropy is low enough then they can guess what your private seed is, then that's a problem.
+
+The problem with doing it in software is that if your software is compromised at all, then it can leak the seed or use a bad seed. Michael Flaxman had concerns about the birthday attack where if you don't have randomness in your signing device... if you have single sig there, that's a real concern. If you can verify randomness generating your seed or nonces, then this gives you a lot more security and it's very important.
+
+Q: How do you verify it?
+
+Fancy math, basically. You'd have to read the paper. I trust him. It should be fun.
+
+Sometimes the source of entropy is from the computer microphone or sometimes it's moving your mouse around.. the secure way to do it is lots of fancy math and hashing. You have to be able to prove it's random after the fact, not just the matter of generating the random entropy.
+
+# Multisig self-custody scenario
+
+<https://smartcustody.com>
+
+<https://github.com/BlockchainCommons/SmartCustody/blob/master/Docs/Scenario-Multisig.md#appendices-further-information>
+
+Q: So this is just a recommended setup? Not a new protocol?
+
+Kind of. It's also a discussion of the different ways to do it and what the pro's and cons are. It's kind of educational. It's kind of terrifying when you read the adversaries section. This is a nice summary topic of everything else we have been talking about today, like failure scenarios for getting your funds out... this is for example why you shouldn't do n-of-n multisig because you have to account for failure scenarios where some of the signers might be adversarial or cause denial-of-service. Thinking about different failure modes is an important exercise.
+
+# Bulletproofs++
+
+<https://eprint.iacr.org/2022/510>
+
+We have Liam here today. He was in Austin and so we got him to show up. It's a new rangeproof and new confidential transaction protocol. Is everyone familiar with bulletproofs?
+
+I'll say my understanding of bulletproofs. Confidential transaction is when you do a transaction on-chain and the amount is hidden but you can prove that there's no inflation. It's similar to what Monero uses. I think they use Bulletproofs+ and mine is Bulletproofs++. You can have proofs that the hidden amounts don't cause inflation.
+
+If you have an elliptic curve, and you add up commitments, they will add up but you might have negative amounts, so that's rangeproofs. Confidential transactions also encompass any information inside the transaction. If you have transactions with multiple types of currency or user-defined tokens, there's also a protocol for that in the paper.
+
+The rangeproofs of Bulletproofs+ are binary. So basically the way it works is that you commit to all the bits of the value, you prove that they are bits by squaring them and showing them they equal the same, and sum to the right value. Mine uses a permutation argument so it supports larger bases. For each digit, you prove that it belongs to a larger set, and you use the same thing for confidential transactions where there is a type and an amount.
+
+Q: Why a larger base?
+
+Well, for example 64-bit values. You can do 16 hex digits. So it reduces the witness size for the proof by a factor of 4. So it's shorter witnesses.
+
+Q: So the idea is this would, this would be on a blockchain and having a shorter proof is very important.
+
+There's smaller proofs, and smaller data that you have to commit to.
+
+My code is really slow and it's written in Haskell. It's ridiculously slow. You can do it over any elliptic curve. It's scalar multiplications and multiplications of multiple curve points summed together. It's pretty similar structurally to bulletproofs, it's mostly the permutation around it is different.
+
+The big win is the smaller footprint. What are the prospects for getting something like this into bitcoin? What are the pro's and con's? Well it could help improve second layer protocols. The zero-knowledge proofs will be smaller eventually in an equivalently sized transaction. The proofs grow logarithmically in size with the amount of inputs and outputs of the transaction. I don't know how many inputs you need for that transition. But the tradeoff of putting bulletproofs directly into a blockchain is that the amounts are commitments, so if someone solves the discrete log problem the nyou could open an output to an arbitrary amount of money.
+
+Q: Is this computationally sound but not unconditionally sound?
+
+I think so, yes.
+
+It's the same cryptographic assumptions as the rest of bitcoin, more or less. This is bulletproofs in general. Initially you might think that if it breaks it wouldn't be any worse. But if these assumptions broke now, and someone stole money, then it would be spotted, and could be spotted very quickly because everything is in the open. If we did bulletproofs, and it worked, you might not see it broke. The scary part is that the cryptographic assumptions don't change, but the consequences of the assumption being invalidated are now much more worse.
+
+Earlier people were saying well with a quantum computer they would be able to steal an address ecah day, but here you could add a billion bitcoin in one day. A couple years ago bitcoin had an exploitable inflation bug where you were able to create more than 21 million bitcoin, and we audited the chain and knew that it wasn't exploited. But with zcash or similar, even if they caught it, you don't know at what point, was it ever exploited? That undermines the assumptions of the entire chain at that point, which is a problem. This is what happened to "Bitcoin Private".
+
+The way to integrate this is to isolate it into a closed system so you can see all the money coming in and out, and then the risk is only for the people who are participants in the layer two thing.
+
+That's very cool. Thanks for coming. He emailed me two hours ago.
+
+# Bitcoin optech propagation graph
+
+<https://bitcoinops.org/en/newsletters/2022/04/27/#is-there-evidence-for-lack-of-stale-blocks>
+
+Congratulations to Bitcoin Optech for their 200th newsletter. This website has lots of interesting graphs with statistics. All kinds of interesting data. The one that Optech pointed out was the block propagation times. I assume they are using multiple nodes and measure fast to slow. The blue line is the slowest 10% of blocks and the yellow line is the average, and you can see it going down in a linear fashion and they attributed it to compact block relay. It would otherwise be slower for blocks to propagate around the network.
+
+I think the website has videos of block propagation all the way back to 2015. There's some interesting stuff here. What happened in the beginning of... how is segwit involved here too? The line went straight down at the beginning of 2018. I wonder when the 4 megabytes blocks started happening.
+
+Q: I'm always amazed how fast transactions propagate. It's wild.
+
+# lnd taproot wallet support
+
+<https://github.com/lightningnetwork/lnd/pull/6263>
+
+Our friends at Lightning Labs lnd implemented taproot into their wallet. It's cool to see. They have taproot key spends, and another thing is they add MuSig2 RPC commands to signrpc as well. So now anyone can build on top of lnd and use MuSig2.
+
+Q: Why not do FROST? Pop quiz.
+
+A: It's not ready yet.
+
+No, lightning network is 2-of-2 multisig so they don't need FROST anyway. ... Bastard.
+
+Lightning channels with PTLCs, and you... this is kind of the step one of getting there which is fun to see. Any thoughts on that?
+
+Q: If they can't tell it's a lightning channel, what are they going to do about the things about knowing the map of the network?
+
+For the graph you would still announce which UTXOs and which channels, well maybe, they might be changing that. Right now the gossip network doesn't support taproot outputs so there's a whole big discussion about how do we want to extend the gossip network. Do we want to have it as is? Then if you have a public lightning channel....
+
+For those who aren't familiar, if you have a public lightning channel available for routing. Right now what you do to the whole network is gossip which output it is and prove real bitcoin is being used in the lightning channel. There's a big discussion in lightning right now saying if we get all the on-chain benefits from taproot channels, how do we keep those privacy benefits when we have a public routable taproot-supporting channel because we don't just want to gossip what the output is and tell everyone that this is a lightning channel output...
+
+Two places where you lose privacy on lightning. One is the close where it is obviously a 2-of-2 multisig. The other place is the gossiping. Taproot and PTLCs will help with the closes so you can't tell who is closing. Another local bitcoiner had a good post about all the privacy leaks in lightning. These holes might be pluggable, but it's not certain as this point.
+
+One of the things that will be interesting is that now that lnd has on-chain taproot support, the next big version of lnd the goal is to have taproot channels without the gossip network supporitng taproot outputs then those would have to be private or unannounced channels that would not support routing through them. It's interesting to think about how to upgrade the lightning network in stages.
+
+Q: When BOLT12?
+
+Eh, no comment.
+
+Q: When you announce a channel, it's just by blockheight, index, and output index. How do you use taproot?
+
+It just has a... there is no technical reason why you can't just extend how we use gossip today to support taproot outputs. The existential question though is that a large purpose for taproot was privacy, and so, we just ruined the privacy of lightning channels by having everyone gossip them is counterproductive. There were some original ideas that were shelved around trying to use some really advanced zero-knowledge proofs to maybe prove that I won't reveal exactly which output is mine but I will reveal that it is one in this set of output.
+
+Q: Didn't someone do ring signatures with Schnorr as soon as taproot was activated?
+
+Yeah. I just know BlueMatt did some investigation and said there's no readily available libraries and maybe we will re-assess when Starkware reveals their zero-knowledge proof stuff. There is a meetup soon where they will be hashing this stuff out. So maybe we will get some new information there?
+
+Q: What meetup is that?
+
+Just the lightning developers meetup. It's an in-real-life meeting coming up.
+
+# Coinbase MPC
+
+We talked about MuSig and FROST for ways to do fancy threshold multisignatures with Schnorr, but apparently you can do this with ECDSA using MPC (multi-party computation). Tim Ruffing is a genius cryptographer coder dude and he is replying to this post about how Coinbase uses MPC instead of Schnorr and MuSig and all that and he is kind of making fun of them... but he said why not just use the same cryptography like Schnorr and Taproot because you have better assumptions and the code is way easier to implement. A few months ago Binance had a huge vulnerability and misimplemented MPC, and could have lost funds. The reason why they are using MPC instead of Schnorr/Taproot is because they aren't just signing for bitcoin but for every shitcoin under the sun so they needed something that supported everything under the sun. Why bitcoin? Well because we do things correctly. Any thoughts on that? Get your coins off Coinbase.
+
+<https://twitter.com/real_or_random/status/1527216333821198336?t=XF9SLYtX-IueZklqlFp4AQ&s=19>
+
+# Bitcoin 0.23
+
+A new version of Bitcoin Core was released, so upgrade your node. Old nodes have a preference for peers on port 8333 which was removed. CJDNS which is another p2p network but not as private as tor, that's another thing that nodes can failover to. It's implemented now. Another thing is a different form to-- tracing to help figure out how long something is taking, and maybe figure out how to optimize some things. Jameson Lopp's stat website might benefit from this. Hopefully this might make things faster too to see how slow various operations are in the wild, instead of just unit tests.
+
+The validateaddress rpc call with bech32 it can have like one or two characters be wrong and it will understand what the address is. Now when you do validateaddress, it will tell you what the mistake was. It just demonstrates what bech32 does.
+
+Q: How does that work?
+
+It uses fancy math with a graph, and when you change one of those characters then it moves it kind of off, so it...you gave me a seven but it would have added up if you gave me a 10, so that's kind of how it knows. sipa has something about this on his website where you can play around with bech32 in javascript and see how it works with error correction.
+
+<https://bitcoin.sipa.be/bech32/demo/demo.html>
+
+Also descriptor wallets are now the default. That's cool. Who's running this new release of Bitcoin Core? Oh, come on. Running master? Running the CTV branch?
+
+Q: What is the rationale for not connecting to other ports other than 8333?
+
+The question is what was the reasoning for not prioritizing port 8333. The counterpoint is that if I'm China and China blocks bitcoin then I can just block any request that uses port 8333. Just using any port, you're less likely to leak the info that you're using bitcoin.
+
+Q: Why didn't we do this initially?
+
+Satoshi just didn't do it. They talked about it in the IRC logs.  Folk lore? I don't know if there is a good reason. It might have been a bootstrapping reason. Over the historical reasons for doing this, prevent bitcoin compute network to be used as a DoS attack on other services. If you just sending bitcoin traffic to your webserver and DoS you, so this would have prevented people from gossiping a DoS target as an IP address.
+
+Q: Is that solved?
+
+I don't know. I don't think it was ever a big issue. They determined that the benefits now outweigh the costs. You open a TCP connection, you say oh it's not a bitcoin node then you disconnect immediately. Don't think you can mount a DoS attack with that. The bitcoin p2p network has had hard-forks in the past, but now there is a protocol negotiation in the beginning so that you're not just sending block data straight to someone's poor web server.
+
+# Script to generate bitcoin.conf
+
+<https://github.com/bitcoin/bitcoin/pull/22235>
+
+There's two sources of truth for bitcoin.conf, one is the help file which the help command would print. Then there was a hard-coded file as well. So this new change generates bitcoin.conf from the help thing, so there's only one source of truth. The motivating issue was the first time I ran a bitcoin node in May 2018, I ran into this. Years later, my problem has been sorted out. That's kind of interesting.
+
+# simple-anyprevout-vault
+
+<https://github.com/darosior/simple-anyprevout-vault>
+
+This is pretty cool. We have talked a lot recently about covenants. There's a lot of different proposals for how to do covenants in bitcoin. In one sentence, a covenant is a way essentially to have a UTXO that is constrained to where it can be spent to. Normal transactions lock up a UTXO with a public key that says you can only spend this coin if you have the corresponding private key and prove it with a signature. A covenant says this UTXO can only be spent to a transaction that has a certain shape or look. Essentially you can think of covenant proposals as a way to do things that we currently do with pre-signed transactions. Lightning kind of fdoes this, you trust the lightning channel because of the eventual close state that you can prove with a pre-signed transaction which works in lightning because of the 2-of-2 because you can't be cheated especially with all the off-ramps, but it's more difficult if you are doing more complex multi-party transactions. Covenants allow you to commit to that in a way that is enforced by the blockchain.
+
+ANYPREVOUT is a proposal that was originally proposed for eltoo protocol. Eltoo might be the winner for the worst name in bitcoin. It's another way to do lightning channels. Right now our justice mechanism is punishment where if someone publishes an old state of the channel, you punish them and steal all the funds from the channel. eltoo was a proposal for how to do it without punishing the other party, but being able to say no this other thing is the correct latest state.
+
+ANYPREVOUT lets you pre-commit to a transaction by signing everything except the input essentially. So you can attach any input to it. Now on to simple vaults. Vaults are a way to have not just multisig but also off-ramps. You can have a hot key, and if someone steals your single key hot key then you might want to opt out of that. James O'Beirne proposed a way to do this with bip119 OP\_CHECKTEMPLATEVERIFY and now there is discussion well is there a way to do it with APO and if there is then maybe we should consider APO instead?
+
+It was interesting that darosior (Antoine Poinsot) did this. Basically, you put the signature for the transaction that will be spending it into the UTXO, and it's basically saying that this will only invalidate if it's in this transaction because this signature will validate it. You can do it without any private key, they do it with the private key for 0. It's kind of cool that you can pre-commit with this thing and anyprevout will be worked out in tapscript, so it's kind of cool to fit these puzzle pieces together. There's some issues with malleability and pinning attacks that this still has. Using this you can still do spacechain proposal because you can pre-commit to a whole set of future transactions, and spacechains lets you do sidechains and drivechain style things with these covenant proposals.
+
+jamesob made this vault thing a few months ago, and he showed a cool use case for CTV. darosior then posted well screw you I'll do it with APO. That's cool. I think it also shows how well-built primitives... they are good because if it's a good primitive it can be used for other things in a somewhat secure way. We also saw this with CTV where it turned out it can help do DLCs more efficiently.
+
+....
+
+The problems is that these signatures commit to a public key or address kind of, so if you re-send back the address then you can spend it back out with the same signature, so it's more insecure. But also because you're not committing to the inputs, there's malleability concerns as well with the vaults.
+
+# Spacechains
+
+<https://twitter.com/SomsenRuben/status/1519009818425671684?s=20&t=lyPz7ZUV9PBeoaLmFfYEPg>
+
+<https://github.com/fiatjaf/simple-ctv-spacechain>
+
+People say they have concerns about certain proposals, and Ruben keeps saying well you should have these concerns already and here's how. He has these ideas for spacechains and he shows you how to build these protocols on top.
+
+Sidechains are a way to do off-chain protocols. Essentially the simplest way to understand it is kind of like Liquid where you send BTC to a multisig key and then you do other things off-chain, like Lightning, and then you trust the holders or owners of that contract to rebalance accordingly. With spacechains and drivechains, there is a proposal for a way to do it in a way where you commit to a hash in each block, and there are different ways to make that commitment, and that hash will represent a block on the sidechain. Then you have miners mining on the sidechain that happens in a way where you can figure out how to reach consensus on that, but then mining is competing for getting your hash into a bitcoin transaction into bitcoin mainnet blockspace and you pay miners to do this. Then you do this with CTV covenants by having a pre-committed chain of transactions that you compete to get your hashes into those transactions in the future.
+
+The implementation is 400 lines of code. Read the mailing list post, didn't understand it, but 400 lines of code was understandable for me.
+
+Someone wrote a CTV implementation of spacechains, and it's done on signet. Jeremy is mining it, yeah, sure.
+
+# DLC channel specifications
+
+<https://github.com/discreetlogcontracts/dlcspecs/pull/196>
+
+DLC is a way to do bitcoin smart contracts where you have an oracle saying an event happened, then oyu can do a bitcoin transaction based on that. You can bet on the superbowl game, for example. Today when you do it there's an opening transaction for this DLC and then a second transaction to close it and give the money to the winner. We have things like lightning that is way better. This is a little step to get into lightning where he made a DLC channel. Say I have someone I'm doing a DLC bet with every single day, what if we just open up a channel and close our bet into the channel so that the next day we do a bet, we just open and close on top of a single UTXO and it doesn't have to go on-chain until we're done, and if he tries to lie I can take all the money and stuff like that.
+
+Wasn't there a DLC super smash bros tournament happening at btc++? Yes. There might be.
+
+# Blind signing risks
+
+<https://lists.linuxfoundation.org/pipermail/lightning-dev/2022-May/003579.html>
+
+We're going to skip this segment.
+
+# bitcoin-chess
+
+Our web development hero here supertestnet has done some amazing work in javascript. Austin Bitcoin Developers has started to put an issue on github for everyone to contribute topics to. If you want to see something discussed at the next bitdevs, add it as an issue. We have a section about projects, so if you have an interesting project we hope to find some time to discuss that.
+
+So I've been spamming this with projects. I made chess on the blockchain which is a terrible place to do chess. There was this ethereum developer who put chess on ethereum. Jeremy Rubin wrote a blog post and said why isn't this guy working on bitcoin, and I thought to myself I wonder if we could do that. So I made chess on bitcoin.
+
+I did this using some of the same tech that is in Taro which uses key tweaking to put data about assets into bitcoin pubkeys. You can use these key tweaking features to share with someone look I have a tether dollar or whatever sitting there in my bitcoin pubkey. I'm doing the same thing except I'm putting chess moves into bitcoin pubkeys. Then you keep making bitcoin transactions that reveal what chess moves you made, and people can follow along by scanning the blockchain. You figure out all the valid chess moves for each state, and you watch for those. For each state of the chess game there's usually 20-40 moves that a player can make, so you tweak the person's public key by one of those, and it generates a new address. His opponents computes all the same pubkeys, computes all the same addresses, and looks to see which addresses receive money.
+
+Q: Do you wait 10 minutes per move?
+
+Yes, unless you allow your opponent to double spending his chess moves which is kind of fun. I might put a button in to do that. In normal chess, there is a rule that if your hand is still on the piece you can take it back. I kind of want to add that. In the meantime, the whole point, don't play chess on the blockchain, I just wanted to learn how key tweaking works.
+
+This is just bitcoin blockchain as messaging passing. If you wanted to do some betting on the game then you would need to do a DLC or DLC channel or something on lightning.
+
+Q: In theory, you could only use transactions in the adversarial case, if you do all this off-chain and then only go on-chain to prove that your counterparty was lying about the move you made.
+
+Yes, you can do this off-chain. You don't even kneed the blockchain at all, you can just commit to your moves with cryptography and say here's my move. You can also just get a chess board and move the pieces. If you're paying for prize money, maybe you can prove that you deserve the prize money based on your moves, but you could do that with regular cryptography anyway.
+
+Q: Because you are using the blockchain and you can double spend, you can alternate between the moves you want to make, and both players have to settle on a move and then they have to do it on the next move too. This is a fun way of letting miners decide how to conclude the chess game.
+
+# vanilla-js-browser-wallet
+
+<https://github.com/supertestnet/vanilla-js-browser-wallet>
+
+I made a lightning wallet in pure javascript. No CSS. This is beautiful and how all bitcoin wallets should work. This is a laser eye moment. He opened a link and he has a lightning wallet. Just open up a link, you don't have to do anything weird.
+
+Q: Do you have to keep the tab open?
+
+It would be really hard to use it if it were closed. You don't have to download anything. This is a non-custodial lightning wallet, it's not really a lightning wallet, it's doing what moon does where when you receive a lightning payment it goes to your lightning service provider and they do an atomic swap and send you bitcoin on the base layer. This does the same thing.
+
+Q: Who's the LSP here?
+
+Me.
+
+Q: isn't that cheating?
+
+This explains why Moon's fees are high. They receive the LN bitcoin and hten they send you an on-chain transaction, and your client has a preimage for that can sweep it back to yourself later and they charge a fee to cover their costs and probably to make a profit. That's why Moon won't work so great if the fee environment goes big which is kind of the whole point of lightning which is that it should work when fees go up. These wallets are just as fast as regular lightning.
+
+# Wallet policies for descriptor wallets
+
+<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2022-May/020423.html>
+
+
