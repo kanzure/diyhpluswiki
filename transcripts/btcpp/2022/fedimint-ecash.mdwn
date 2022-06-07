@@ -148,6 +148,8 @@ If no gateway takes you up on the offer, you can sweep it back, that's why it ha
 
 The payment secret in the lightning payment protocol is the preimage, like an HTLC. So I implemented this in c-lightning with a plugin that has a htlc\_accepted hook. There are htlc interceptors in lnd which I heard were fantastic or something. So you get this HTLC, you ask the federation hey is the preimage for sale with this payment hash and the federation will say yes or no. Then the gateway will enter into an escrow contract... I skipped a step here... actually the preimage is threshold encrypted to the pubkeys of the federation members just in case one of the federation members is the gateway, so they can't see the plaintext value and just steal it, so it's threshold encrypted.
 
+With FROST, the federation members could run a lightning node or something. That's one of the exciting applications of FROST and ROAST but that's probably years away.
+
 # See also
 
 <https://diyhpl.us/wiki/transcripts/building-on-bitcoin/2018/blind-signatures-and-scriptless-scripts/>
@@ -159,4 +161,7 @@ The payment secret in the lightning payment protocol is the preimage, like an HT
 <https://github.com/phyro/minicash>
 
 e-cash without chaumian blinding <https://webcash.org/>
+
+<https://www.offline.cash/>
+
 
