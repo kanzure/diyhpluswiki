@@ -1,0 +1,373 @@
+2022-06-07
+
+bitcoin++
+
+It's going to Zero... Knowledge! Introduction to zero-knowledge proofs
+
+Nadav Kohen (Suredbits)
+
+Q: Is a signature a zero-knowledge proof of a private key?
+
+A: It's zero-knowledge proof of knowledge of the private key.
+
+Q: What about nonce reuse?
+
+A: Nonce reuse is actually an important part of the proof of zero-knowledge. The r is the nonce in the (r, s) value that is computed when signing. Never reuse nonces.
+
+# btc++ introduction
+
+Thank you for coming to the first-ever bitcoin++. We are thrilled to be doing it in Austin. Nadav will kick us off by teaching us about zero-knowledge proofs. Thanks for coming. Lunch will be at noon across the street. If you can't find a seat in here, you will have to go to a different talk because we will be at capacity.
+
+There are cameras here. If you don't want to be on camera, go to the back corner over there.
+
+# Introduction
+
+Alright, let's go. Hello everyone. We're going to be talking about zero-knowledge proofs in here. This is mostly going to be pencil/paper pen/paper kind of thing. No need for laptops. I won't police people and tell them to put them away, but we won't be using them.
+
+Last minute I found out that I get to use a whiteboard. So I have modified things to use that. I guess the first thing which was previously on a slide was a gameplan. I will start with some demos to get our creative juices flowing, and then we're going to give an initial definition for what zero-knowledge proofs are, and then we will come up with a few on our own in groups, quite a few anyway, and then we will talk about some bigger results. If we have time, we will talk about Schnorr signatures and other items.
+
+# Demo: Coin distinguishability
+
+I will start with two coins. I will prove that these identical coins are actually different. I am giving you this coin on the left and this coin on the right. I want you to put them behind their back and either swap them or don't, I won't look. So you know if you swapped them or not?
+
+You did not swap them. You're correct. Well maybe I got lucky, so let's do it again. You did not swap them. Let's do it one more time just for good measure. You did swap them. Great.
+
+Hopefully I have not told you anything about how I have been distinguishing these coins. How convinced are we that I can actually tell the difference between the coins? Pretty convinced? How convinced are you?  I only have 3 data points to go on.
+
+Let me move on to another demo. Let me just mention that if I didn't distinguish between these two coins, what would be the chances that I failed if we did it one round? 50%. So we have a 1 in 2 chance that I failed if I can't actually distinguish between the coins. What about twice in a row? So now it is 1 in 4 chance of succeeding. And then if we did it three times, then what was my chance of succeeding if I couldn't distinguish actually? It will be 1/8th. It gets cut in half each time because there's a 50% chance that I'd fail each time.
+
+So that means you should be 7/8ths sure that I can actually distinguish between these things. If we do this process a bunch of times, then eventually you should be pretty sure that I can actually distinguish between these coins.
+
+# Demo: Card deck
+
+For my next demo, I will pick a card. I'll have someone else pick a card. First of all, everyone believe me that this is a normal 52 card deck. We don't have time for everyone to check. Take my word for it. So pick a card.
+
+Now I will prove to everyone else without telling you anything about his card that his card is red. Here are all the black cards in the deck. If you want to take a peak and make sure I got all of them; it should be in order, so that should help.
+
+So who is convinced that his card is red? Okay. Hopefully you don't know anything about his red card.
+
+# Demo: Sudoku
+
+Who here doesn't know what sudoku is or how it works? Awesome. Cool. Good crowd. So, I don't have time to show you a full 9x9 sudoku puzzle because that would take too long to setup each time. We will do it on a 4x4 puzzle. It works for any size really, you can go higher.
+
+I will make a 4x4 sudoku grid where I use the numbers 1 through 4 and there are four rows, four columns and 4 2x2 grids. It's the same normal rules as normal sudoku where I need 1234 in each column and each row and each 2x2 grid.
+
+So here's a puzzle. This isn't hard to figure out on your own, but here's a puzzle. I will prove to you that I know a solution to this sudoku puzzle without knowing anything about it. In front of me, I have laid out a bunch of index cards with numbers on them. I have flipped over the initial conditions.
+
+I want a new volunteer from the audience. I am going to give you three things that you can check about my solution. You can check the rows, the columns, or the 2x2 grids. Pick one. Okay, I'll check the 2x2 grid.  So I clump these index cards into 2x2 grids. Then I am going to shuffle each of these as I walk towards you. Check that those are the numbers 1 through 4. They are.
+
+Okay, so we had a verification that those 2x2 clumps were indeed the numbers 1 through 4. Just to convince you further... so first, thing amongst yourselves as I setup again. How convinced should you be so far that I actually have a solution to this puzzle?
+
+Do we have any guesses? Approximations to share? 1/4th, 1/16th. Any other guesses? 1/3rd? Technically you have a little bit of knowledge already on the board. There are three things you could have checked. Supposing that I didn't actually have a solution here, and got close, then at best I could have satisfied 2 of the 3 rules. Maybe it's not possible to only break one rule?  I'm not going to think about that.
+
+But suppose it's possible for me to break only one of the rules. Then it's kind of like playing rock-paper-scissors without ties. There's a 1/3rd chance you can catch me in my lie because I had to break one of the rules. At least 1/3rd chance because it might be higher than that if I broke more than one rule.
+
+The same thing as last time.. if I have a 1/3 chance of getting caught the first time, then how likely am I if I try it again? How likely am I to succeed if I didn't know the answer? So actually this should be 2/3rds chance at first that I don't get caught if I'm lying. And then the next iteration, it is 4/9th. This is less than a half now. So my chance will eventually go to zero.
+
+So next, you want to check columns?
+
+Q: Right now, as the game stands, you have made 2 guesses about what's in the board, that's the 1 and the 3?
+
+A: These are the given initial values. I am claiming to have a solution as to what's in the rest of the squares.
+
+And now I am trying to prove to you that I have a solution without showing you the solution.
+
+Q: Should I be keeping track of which columns you give me? Just that they have the numbers? What about the order?
+
+A: The order doesn't matter because I shuffle them before I gave them to you.
+
+It's possible that I am changing it up. But really then what you should believe I am proving to you is that I know at least one solution. If I don't know a solution, then each time there is a 1/3rd chance you can catch me in a lie each time. That's why I alluded it to kind of being like RPS, because I'm also making a move here, but if you're randomly picking something to check, then that's the solution.
+
+I'm not necessarily putting down the sudoku solution the same each time. So anyway, you checked these? Yes, so we're more than half sure that I know a solution to this puzzle.
+
+Q: Do all zero-knowledge proof protocols involve this property where it is asymptotic towards zero chance that you're cheating?
+
+A: Most, yes. My card trick though was not, it was right away you should know that it was red. That still counts as a zero-knowledge proof.
+
+I don't know how to come up with an analogy for how the cards would work on the computer.
+
+Q: If I have a coin and flip it, and I don't tell you what I got it, and I tell you it's not tails, then that seems like a full knowledge proof.
+
+A: I would be proving that it's not tails, or something like that. Which isn't a very interesting proof to do in zero-knowledge because the statement I'm proving gives you all the information. In most zero-knowledge systems, I can make a statement like hey my card is red, is more information than that. The coin flipping knowledge proof is kind of like the degenerate proof. It would be more meaningful if you had a 10-sided coin and you prove to me that it was not 4, or something.
+
+We could also make a proof that my hand was flush without revealing what my hand actually is.
+
+Q: Wouldn't you want to prove you know what the card is, without revealing what the card is?
+
+A: Yes, but that demo is much harder. Feel free to come up with a demo for that and I'd be happy to hear that.
+
+# Computerizing the sudoku example
+
+I am going to change the sudoku demo slightly so that you can see how it works in a computerized system. I took advantage of the fact that I could physically shuffle the deck and you could see that, and I took advantage that you could observe my sudoku cards on this table.
+
+I have written down some permutations of the numbers 1 through 4. I didn't make 24 lines though. I am just going to pick a random one to begin.
+
+Next, I am going to setup one more time. I am going to set up one more time on this table, and this time not flip anything over. Here on my computer I am sending you a bunch of encrypted values, one for each square on the sudoku grid which you are receiving. To you, they look like random garbage because it's encrypted. I also send you encrypted what permutation I used of the numbers.
+
+This time, you get to check one of: the rows, the columns, or the 2x2 grids, or my initial setup. There are 4 rows, 4 columns, 2 2x2 grids, and the initial setup. You get to check one of these. There are 13 things.
+
+Q: In a computerized setting, I would want to check one of the 2x2 grids.
+
+A: Okay, which one?
+
+Q: That one.
+
+A: Okay. I will flip these over. I was told to do this 2x2 grid. I will send the keys that decrypt these values. I will flip them over. As you can see, they are the numbers 1 through 4 in some order. What have you learned?
+
+Q: What was the question?
+
+A: I have claimed to have sent you a permutation of the solution. I took my actual solution and changed every 1 to a something, and every other number to something else. I have shuffled my numbers so to speak. These numbers don't represent the actual numbers in my solution.
+
+Say you didn't see that 2x2 grid, and I was asked to check my initial setup. Let me make it clear what I mean. What I would do is flip over the spots that are initializing the board. I will also tell you what permutation I used. I will tell you my 1s became 2s, and my 2s became 3s, and my 3s became 1. That is how you would check my initial setup. Once you see this, that was just making sure that I set it up correctly. I have these thirteen things- if I don't have a solution, I can't satisfy all 13 things at once. I must violate either one of the initial conditions, one of the rows, one of the columns, or one of the 2x2 grids.
+
+In this game, I have a higher chance of getting away with it. I can satisfy 12 of the 13 rules, and I will get away 12 of the 13 times that we do this. You shouldn't be very convinced after just one round of this. So if we repeat it over and over again, then we get 144/169 which is smaller. I'm not going to keep doing this, but it does get smaller. If you take any less than 1 and you take powers of it over and over again, it will eventually reach zero, and it will do it exponentially quickly.
+
+Q: Is there a rule where you can say you're fully convinced? What's the best practice?
+
+A: It depends on your personal morals. How much risk do you like in your life? What is your epsilon? In our setting, we're going to be caring that you can make it as small as you want it to be. In practice, there are a bunch of considerations.
+
+The philosophy of these kinds of proofs, even if you're checking actual deterministic proofs that aren't conversations, like a computer reading a proof line by line. There's some probability that the cosmic ray hits your computer at the right spot and hits a one or zero when a computer decides good vs bad proof. You don't live in a wolrd of complete certainty.
+
+Q: What about making sudoku non-interactive?
+
+A: There is a way to get sudoku non-interactive which hopefully we will have time to talk about. My verifier just gave me a bunch of random numbers, so I should be able to replace them with a hash function.
+
+# Zero-knowledge proofs (ZKPs)
+
+Let's define ZKPs. A zero-knowledge proof, this might not be satisfying, it's an interactive proof that is zero-knowledge.
+
+An interactive proof is a conversation between a prover and a verifier, that I will call P and V, satisfying and it has two properties to satisfy: (1) completeness, and (2) soundness.
+
+The completeness property, loosely speaking, means that an honest prover always succeeds in making a proof. If I am telling you that I have a solution to the sudoku puzzle, and the proof that I will use is guessing the next blockhash, that won't be a complete interactive proof because an honest prover doesn't have any way of succeeding. The honest prover not only needs to mostly succeed, but always succeed. If I mess up, you should not believe that I know a solution, even if I mess up just once.
+
+Soundness means that a dishonest prover, which is to say a prover P that claims to have a solution to some problem they don't have a solution to, or for which a solution doesn't exist... a dishonest prover fails almost all the time. Here we allow some little epsilon, a greek letter meaning little numbers. You should fail (100 - epsilon) percent of the time. As long as I make sure that epsilon is positive, I can set it to be whatever. You can run the protocol 5 times and then it becomes something that satisfies this; it doesn't matter for our definition what we set epsilon to, because we know we can always repeat and get the probability down. If you can fail, then you can't avail, for dishonest provers.
+
+Q: With red-black card example, is epsilon zero there?
+
+A: Yes. It is possible to get to that 100%, but normally it isn't. This isn't really a great example of how things work in the real world. Usually there's some kind of epsilon involved.
+
+So what is zero-knowledge? Loosely speaking, zero-knowledge means that the verifier nothing other than the statement being proved. So you have a zero-knowledge proof of a statement if you have a conversation between a prover and a verifier, where a honest prover always succeeds and a dishonest prover can be caught. Hopefully you have learned nothing except that the prover has a solution satisfying the statement.
+
+Q: What is knowledge? There's a difference between knowledge, information, and data?
+
+A: What is knowledge? I am going to change the definition. I will say the verifier learns nothing useful other than the statement. In some loose sense, they shouldn't be able to do anything after talking with me that they couldn't do before, other than like repeat my messages. We will get more into what this means. I left it intentionally vague. Once I make you come up with a few zero-knowledge proofs, we can make it more precise.
+
+Q: If there is an intermediary between prover and verifier, forwarding messages, then the verifier might be talking to the prover but really is talking to the intermediary.
+
+A: Yes, there are man-in-the-middle attacks here. People's favorite tends to be non-interactive zero-knowledge proofs though. For now, we will pretend there's only two people in the universe and one of them knows something and one of them knows nothing.
+
+Q: What is non-interactive?
+
+A: It means a conversation where only one person speaks. It's a monologue.
+
+# Group breakout
+
+I will send you off to talk with the people around you and come up with a solution or conversation that a prover can have with a verifier to convince them of something. Let me set the stage first.
+
+In the two coin scenario, you have a prover and a verifier, time goes down the chart here, you have coin 1 and coin 2 which I gave to the verifier, and then the verifier decided for themselves whether to swap the coins or not swap them. They should have picked randomly 50/50, as they were. Then let's call this function F which if they decided to switch then it swaps coin 1 and coin 2. If they decide to not switch, then it .... so one way to write this down is they respond with the coins C\_f(1) and C\_f(2) and then the verifier checks does the prover know that f prime equals f. This is what I did earlier. It will be useful in solving this next problem which I just realized is about graphs so let me review graphs.
+
+I am sure you guys have seen a network graph before. It's a bunch of vertices or nodes and then we have a bunch of edges or connections between them. This is one of my favorite graphs, the Pedersen graph, despite looking denomic. It's the counterexample to a bunch of things in graph theory. This next graph is going to be.... and here's another one.. let me just draw some stuff, and here's another one that is a hub-and-spoke graph.
+
+There's a notion under which these are actually the same graph, I've just moved all the nodes around. They represent the same relationships between people. The formal way of saying this is that there's a function F, so we call a graph a set of vertices and a set of edges G = (V,E) or a set of nodes and connections. That's what a graph is defined to be. We say that these two graphs are the same if I have a function F from this set of nodes to the set of nodes of the other graph. Maps on graphs are just about the nodes, by convention. It satisfies the property that v is a neighbor of w if and only if ... if these two are connected, then these two will be connected, and if these two aren't then these two aren't. It's a structure-preserving map. If there is a function that-- if you can tell me exactly which node corresponds to which node and all the connections are the same...
+
+We had an example with two coins of a zero-knowledge proof that two things aren't the same. But here in the graph example, here are two things that are the same. And these two other graphs are not the same.
+
+So the zero-knowledge proof that I want you to talk about with your friends, along with what I've talked about so far, I want a proof that two given graphs are not the same. There's one important thing I forgot to mention. For the prover in a zero-knowledge proof, in almost every actual use case, they have to do things quickly. For the definition of a zero-knowledge proof, the verifier has to do things quickly in polynomial time efficiently and they can't bruteforce slow things. The prover though has infinite time and infinite computing power, and the verifier remains dormant or frozen in the cryogenic chamber while the prover is doing the computations. Or you could say the prover does computations instantly or whatever. Later we will reintroduce normal things. I have to go through some weird contrived examples in order to get people to come up with things. The prover has infinite time, but the verifier is a normal computer that can't do very much.
+
+# ZKP of graph non-isomorphism
+
+Graph non-isomorphism... so say I have a graph g1 and a graph g2 and they aren't the same. This is the statement the prover is proving. I have a prover, a verifier, and I want y'all to come up with a dialogue with the people around you in which the verifier will be convinced that these two are not isomorphic.
+
+What kind of ideas did you come up with?
+
+Q: A good one we had was have the verifier ask the prover whether or not two nodes share an edge.
+
+A: The verifier might not already know that.
+
+The graphs are public information. The mapping between the two graphs is not clear especially since they are not isomorphic. There is no way of corresponding the edges in this scenario. We're doing a graph non-isomorphism zero-knowledge proof.
+
+Q: What is it called when you take a node and morph it so that it looks different but it has the same edges and stuff?
+
+A: That's a permutation. A verifier could take one of the graphs, shuffle it up, and keep track of the shuffling. Say g2 has n vertices. If you have 1, 2, 3.... and then like in sudoku you map what these numbers go to.
+
+Q: Okay, so then you take both graphs, you shuffle them, so they are both different-looking now, you put them in an array that has a tuple of both graphs. Then you swap them or keep them the same like you did with the coins, and then you ask the prover, did I swap them?
+
+A: Okay, so we could say the verifier generates 2 permutations. I will use pi as a permutation function. So we have pi1 and pi2, two shufflings. You could even use the same one, I don't think it would matter too much. This maps the nodes to new values. Then you send over either pi1 of g1, pi1 of g2, or you send over pi2 of g2 or pi1 of g1. Then what does the prover do?
+
+Q: The prover then tells you whether you swapped them or not.
+
+A: Cool. What do we think?
+
+Q: Well, you wrote it down, so I'm confident.
+
+There are other solutions, this isn't the only solution.
+
+Q: Could we send over one permutation and ask the prover to tell us which graph it corresponds to?
+
+A: Very good. We could make an optimization here and just come up with one random permutation and one random bit that is either 1 or 2. Then we send over pi(Gb)... then the prover says whether it is b prime or not. If you sent over a permutation or a shuffled version of g1, then they should say 1, and if you sent over a shuffled version of g2, then b' should be 2 coming from the prover.
+
+Does this have completeness? If these two graphs are not the same, will an honest prover always be able to succeed here? So long as you know-- you can bruteforce the answer, look at all possible permutations, which will take far too long but the prover has infinite time. They could write down those tables and then search the tables for these, and if they aren't the same then they will be entirely different and have no intersection.
+
+Okay, is this proof sound? If the prover is dishonest, and these two graphs are actually isomorphic, what are the odds that they fail? It's 50%, right, because b' will either be g1 or g2 (or 1 or 0 since it's encoded as a bit). They have at best a 50% chance of succeeding each time. If you do it n times, then they would only succeed every 1/(2^n) times.
+
+Q: So is it sound?
+
+A: Yes, because the dishonest prover succeeding goes to zero. They have a (2^n - 1)/(2^n) chance of getting caught.
+
+Now, is it zero-knowledge? Did the verifier learn anything they didn't know ahead of time?
+
+Q: They shuffled it, and they only learn the b'.
+
+Yes, that's true, but we are assuming the verifier is honest. The protocol says the verifier gives you a graph and you respond with 0 or 1. But say the verifier gives you a graph they didn't make themselves, like they found it in the wild, they might learn something about that graph.
+
+We call this honest verifier zero-knowledge (HVZK). HVZK is almost always good enough in practice, because we will be replacing the verifiers with hash functions later. Honest verifier zero-knowledge is often enough. But I wanted to note that this is zero-knowledge if the verifier follows the rules.
+
+Q: What was the knowledge being hidden?
+
+A: Say there was a way to distinguish between the two graphs, and there is a difference between them, and the verifier needs to not learn anything about how these two graphs are different. They only learn that they are different. Assuming they follow th erules--- they came up with b, and we just tell them b right back to them.
+
+One thing is to not tell the verifier anything that they don't already know. If you tell the verifier only things that they came up, when they aren't learning anything htey didn't already know. If the verifier is swapping the coins behind their back, and the prover tells them they did it, then the verifier already knew that and isn't learning anything.
+
+Those two graphs I drew earlier didn't look the same, but they were the same. Imagine that, but with extremely large graph. It's not very easy to distinguish if two graphs are the same in that context.
+
+# ZKP of graph isomorphism
+
+Say I have written down g1 and g2 both graphs that are actually the same. There is a function F that can send each node in g1 to a node in g2 and maintain all the edges. These graphs are again known, but this function F is only known to the prover. You can think of it kind of like a private key: I'm claiming it's a hard problem, and F is the private key, and G1 and G2 are kind of like a public key. This is hand-wavy.
+
+I want us to break us up into groups again. We will not use the two-coin zero-knowledge proof for inspiration. But keep in mind what we have learned so far; if they have any chance of failing, then that's good enough. If you can fail, then you won't avvail. That's something that can be repeated multiple times, no matter how small that chance is.
+
+I would also think more about the sudoku example if you want inspiration. It will be more like that. Not exactly like sudoku in the way that graph non-isomorphism was almost like the coin distinguishability demo.
+
+So g1 and g2 are known to everyone. Only the prover knows this fancy F function that is the isomoprhism, a map or correspondence between nodes of g1 and nodes of g2. The prover wants to prove to the verifier that these graphs are indeed the same without telling the verifier anything about isomorphism function F.
+
+It might be helpful for this one to start with an interactive proof that is not zero-knowledge, and then you can make it zero-knowledge.
+
+Q: Could you just two permutate the two graphs as the verifier, and then ask if the two graphs are isomorphic?
+
+A: So the verifier permutes the two graphs. So they take the two graphs, they randomly shuffle them up, and then what do they ask? What does the prover respond with- yes or no, or the isomorphism?
+
+Q: They would respond with the isomorphism.
+
+A: Well, if they know f' then they can compute f. Just showing f is an interactive proof, but it's not zero-knowledge.
+
+Q: What if the verifier sends a permutation of g1 or a random grapher, and the prover responds with whether there is an isomorphism?
+
+A: So it's either a permutation of g1, g2, or g prime. What if g prime (some random graph) is accidentally the same as g1 or g2? There might be a way to do this, but it would be tricky to construct g prime.
+
+Q: Another idea we had was that, sending two vertices on g1 to the prover, and then having the prover send back the corresponding vertices on g2, and then .... But that way you extract f eventually.
+
+A: This will have to be iterated over and over again; the reason why we require air tight zero-knowledge is because repetition reveals more and more knowledge over time.
+
+I'll start the solution. The prover will generate some random shuffling of the nodes. They send over a graph G' that happens to be pi(g1) so they send over a shuffled version of g1. Like always, I want my verifier to ask for one of two things. The prover is claiming that this third graph is the same as g1 and g2. It's a permutation. The pi function is a shuffling of the nodes. These are all the same graph. pi is a different shuffling than f is. pi is just some random shuffling.
+
+Then, the verifier can ask, give me an isomorphism from this random graph g' to g1 or g2. So the verifier will pick b from {1, 2} and they will just tell the prover to give them an isomorphism to g1 or g2. It's kind of like their "swapped or not swap" thing. If you send back 1, it says give me an isomorphism from g' to g1. If b=1, then they send over pi inverse. It's easy to flip a shuffling, you just flip all the arrows. Otherwise, if it's b=2, then we have to send them an isomorphism from g2 to this. So this means you first do an inverse of F and pi inverse...... so this whole thing will be named Q. So then the verifier checks whether Q(gb) is g' (where gb is the chosen graph from the verifier).
+
+What happens is that in order to answer this question of a specific way of writing graphs down; I like adjacency matrixes where there is n-by-n matrix. There is a value in matrix[i, j] as 1 if there's adjacency. In linear algebra you have a change of basis... it's just a matrix multiplication, and then you check it, it's still polynomial time. It's not obvious that this should be quick, but it turns out to not be so bad, once you pick a graph serialization method.
+
+Is this proof complete? Will the prover always succeed here? Not only will they succeed, it will be quick. Inverses are instant to compute, and composition is matrix multiplication. So if I have this shuffle and this other shuffle, I can show from here to here to here. It doesn't take long to write down.
+
+Q: Is it zero-knowledge because if you do this a bunch of times, you figure out pi not f?
+
+A: I am picking a new random pi permutation each time.
+
+Is it sound? If these graphs are not the same, how often will the prover fail? What if they say b=1? It will only fail in the b=2 case. So it will be 50% of the time. Also, they can't prove both of them with the same random shuffling because then they would tell you that.
+
+So this is sound. To the question of whether this is zero-knowledge, what do we think? Does the verifier learn anything? Well, the verifier learns half of Q. Depending on whether b=1 or b=0, you only learn pi inverted times F inverted. Q is the thing that the prover sends back. So I think you mean half of f?
+
+# zero-knowledge formal definition
+
+So here is where we have to be a bit more nuanced to answer our question earlier about what we mean by zero-knowledge. I here claim that the verifier doesn't learn anything useful here. I will say the handwavy version and then the precise one. So you either give them p inverse which is the inverse of a random permutation, and I tell them a bunch of random numbers, or pi composed with my actual thing, and you can think of this as having a number in a range and then I add a random number to it. I give you that sum mod whatever, so it might wrap around, but if I give you that sum, you have learned nothing about my initial thing. That is going to be the same. If I have a random matrix and a random matrix, and multiply them together, you get a random matrix. You get a random matrix with some random rules satisfying them. This shouldn't be useful, it should be like sending a random number to them, did you give them any useful information?
+
+Well, what if it is a cool random number, or an interesting matrix? So here is how we make it precise... another mantra I came up with is, knowledge is what you can do with it. If you can't do anything new, then you haven't gained any knowledge. I would claim that the verifier without a prover existing, could simulate a prover existing that would be same to this conversation without there actually being a prover.
+
+A conversation has 3 parts to it: g', b from the verifier, and a Q. It satisfies the property that Q(gb) is equal to g'. We know that b will be random choice from {1, 2}. All three of G', b, Q are going to be uniformly random, and any triple can satisfy this constraint. Otherwise, it's randomly uniformly distributed. I say, a verifier could write one of these things down. They can write b, they know what they will pick, then they write down a random Q just a random shuffling, and then they write down Q(gb) as their G'. This will obviously satisfy the relation Q(gb) = g'. You can kind of think this as, you started with three degrees of freedom and you got rid of one. Once you picked two things randomly, then the third one is determined. In the actual conversation, we pick G' and b, and then Q is determined after that. But if I am just writing down these conversations, I can just write them down and it doesn't matter the order, you can determine g' from the other two values for example. I can just write down a bunch of conversations between a prover and a verifier and you wouldn't be able to distinguish them from a real conversation between a prover and a verifier. You have not given them anything useful, because with g' and Q they could have done the same things they could have done with this other information. This is the formal definition of zero-knowledge: the verifier can simulate the prover. The verifier could write down a transcript, and if they give it to you, you wouldn't be able to tell if it was a transcript from the verifier or one from the prover.
+
+It's a way of checking that you actually have not learned anything new.
+
+# Sigma protocol
+
+There was one other thing to point out about this graph isomorphism proof shape... where the prover sends something over, the verifier sends something back, and the prover responds, that's called a sigma protocol. It's backwards of the sigma symbol I guess. I don't get it, but I didn't make it up. Capital sigma in greek.
+
+Sigma protocols are really useful and they have some terminology. When you send over a commitment to something random that you picked out, that's a nonce (which means use only once, or not but once). You use that later to tweak the secret knowledge so that it looks random. That's how you use a nonce. You send over a nonce, you get back a random challenge, and then they respond to that challenge using that nonce so that everything stays hidden. Each time you do this, you need to pick a new nonce.
+
+My sudoku example followed this. It started with me sending over encrypted values of every grid spot and the permutation. The verifier replies not with a bit but a 1-in-13 thing, and me responding with some keys that I came up with earlier. The collection of all the keys is like the nonce, and then I reveal part of the nonce.
+
+# Complexity classes
+
+I'm going to skip some of the things I could have done. It turns out that sudoku the example I gave you earlier..... I'm going to review some complexity theory you might have learned if you have a CS degree.
+
+You might have heard of these things call P and NP. The set P are the things you can do in polynomial time. Not exponential. Everything the verifier can do must be in the set of problems we call P.
+
+NP is the set of all things where there is a certificate or a solution can be verified quickly. As an example, finding out whether two graphs are the same might not necessarily be in P, I think that's an unsolved question. We don't have a quick way of telling. But it's definitely in NP, because if I give you an isomorphism function then you can quickly use that.
+
+Sudoku is in NP, and it's equivalent to one of the hardest problems in NP. These are called NP-complete... we don't know if P and NP are the same; as cryptographers, we all believe that they aren't because otherwise what are we doing with our lives. NP-complete is a subset of NP, which are all the problems that are the hardest in NP. Any problem in NP can be efficiently reduced to that- you can rewrite it so that this instance of this problem, say you have a graph isomorphism, I could construct a sudoku puzzle that could only be solved if the two graphs are actually the same. That would be a reduction.
+
+NP means you can check a solution quickly. One way of checking a solution is to compute your own solution quickly, which is P, and if you can compute it quickly then verification is possible. Verification tends to be at least as hard or as at least as easy as computing your own solution.
+
+I also care about PSPACE, which means you can solve the problem using polynomial space. If you can verify if there is a certificate, or a solution can be checked efficiently, then that's always going to be in PSPACE because what I can do is check every certificate that could possibly happen. I don't look at the list of certificates, but I generate a certificate, check it, throw it away, and so on, and it won't use more than polynomial space because I just reuse that space.
+
+All you need to know is that if it's in NP, then it's solvable in polynomial space. PSPACE is much bigger. You could have an algorithm that takes forever to run but only ever uses a little bit of memory. Hopefully lightning nodes live in P space.
+
+Then there is IP, which is the set of problems that you have interactive proofs for. Forget zero-knowledge. Just conversations like giving a function for graph isomorphism. NP is definitely inside of IP, because you can give them the proof and then they check it.
+
+P may be equal to NP, but it turns out that PSPACE = IP. Things that can be proven, are things that can be proven in polynomial space. It will be in the back of a senior year CS complexity theory book. That's where I found it at least.
+
+Here are some results from this. There is a theorem from 1990 and the theorem is called all things provable are provable in zero-knowledge. That is to say, IP = ZKP. This might be unintuitive. Anything I can prove to you by giving you all my secrets, then there is a way to prove that without giving you any information about any of my secrets. In particular, this includes all of NP, which is what we care about for cryptography. We want validation to be efficient.
+
+We saw problems in NP-complete that have sigma protocols. Everything in NP has one of these sigma shaped protocols for zero-knowledge which has a nonce, a random challenge back from the verifier, and a response from the prover that uses the nonce. Everything that is in NP, like all the things we use in bitcoin cryptography, most of those have a sigma protocol and have zero-knowledge proofs.
+
+Furthermore, this challenge is always random. It's always 0 or 1 or a bunch of 0's and 1's.
+
+# Schnorr signatures
+
+Public keys and private keys. We like to pretend that public keys are some kind of identity. I claim that you need to actually know some stuff about zero-knowledge proofs to make this claim validly. Sure, it's easy to encrypt things to public keys so that only people with the private keys can read those things. This is introduced to people who do cryptography because it's quite easy. But at the heart of the matter, if you don't have a way of proving that you know the private key, then it's not really an identity. An identity protocol should be a zero-knowledge proof that I know a private key to a public key. So, that's signatures, but there are two stops on the way there.
+
+If you have a hard problem, then in some sense, you have private keys and public keys. You have solutions to those problems and the problem statement. Earlier we had g1, g2, and that's the public key, and then the function F for isomorphism would be the private key. You generate a random private key, if you have a graph you can generate a public key, and okay-- how do I prove that I know the function for isomorphism? Well, you send them a random permutated third graph, you ask them to prove is it one of these two graphs, and you respond with a permutation that looks random. That's a zero-knowledge proof, and now you can be convinced that having g1 and g2 as a public key can be an identity. It's the identity of the person who knows the shuffling of one of them that gives you the other one.
+
+Digital signatures are a non-interactive zero-knowledge proof, which we are about to get.
+
+Say that we have a public key X and the prover knows some little x that is the private key corresponding to X. The prover wants to prove to the verifier that they know x for big X. Here, X = x * G. So we will do a standard sigma protocol; if I just tell you what the private key is, doing this multiplication is efficient, which means the problem is NP because of efficient verification of the solution, and therefore this means there's a zero-knowledge proof and all of NP has these sigma protocols. So say the prover generates a new private key, and the prover sends over an ephemeral key pair, a one time nonce. The verifier responds with a random challenge, a number in our number field, and it's chosen randomly by the verifier. Then the prover responds with S and they pick S to be-- they want to use the private key and the challenge, so they multiply their private key by the challenge but if you send that they can divide. But here we do k+x\*e where e was picked by the verifier. ... verification equation...
+
+This is an identity protocol. It should convince the verifier that the prover knows the secret key x. I have a blog post where I show this has completeness and soundness.
+
+Q: So you are claiming that these protocols have 3 steps. The prover sends R=k\*G. So the prover sends R?
+
+A: Yes. They send R to the verifier.
+
+Q: Then the next step is that the verifier takes R and generates e?
+
+A: e is just some random number. The prover constructs a number that required use of the challenge and the private key. There's a proof in my blog post that this value S cannot be constructed without the use of this x and e value. If you reuse nonces, then you would be able to derive private keys.
+
+This is the Schnorr identity protocol. Encryption is one of the important things in private key systems. But here is the crux, you can prove without giving away any information about your public key that you know the private key.
+
+# Non-interactive
+
+Well, now let's get rid of the verifiers and get a signature out of it. In sigma protocols and others where the verifier only responds with random things, we should be able to replace them with a hash function. So how am I going to do that?
+
+Say e = H(everything known so far), so that would be H(X, R). You take the nonce and all the public things, everything in the initial setup, and you take the hash of that. Now we don't need a verifier. Now the prover is going to generate a random number, that gives them the nonce, then they can compute the challenge which will just be..... The key thing is that hash functions are awesome and hopefully act like random oracles, and if you assume they .... hash functions make things nice and random that you can't game or predict. What this lets you do is you generate the nonce, you generate this e for yourself, and then you generate this s, and then you publish (R, S) and then anyone can take (r, s) and compute the challenge that came from that r, and validate your response. There is no conversation with a verifier necessary. I can post this on a blockchain under a transaction input. This is the Schnorr digital signature.
+
+It's an ephemeral public key, and a number that satisfies an equation.... S\*G = R\+H(X, R)\*X. That's the Schnorr verification equation. You can get rid of the verifier and replace it with a hash function. Any identity protocol can give you a digital signature algorithm in this way, and that's how you get Schnorr. If you believe it's sound, complete, and honest verifier zero-knowledge which is good enough now because we replace our verifier with an honest hash function. Hash functions don't lie, in the random oracle model.
+
+For this to be a signature, you also have to add a message into the hash you want to sign. The message is the thing that you want to prove was signed by the private key. So it gets added into the hash as part of the context. If it's more than 32 bytes, then you take the hash of it, or something. Ask Andrew Poelstra. Hash functions can take any length of number and produce a 32 byte message. You can also just put the message directly since it's already going into a hash function.
+
+Q: Is there a variation of this where you published something different? A slightly different verification?
+
+A: You could publish (e, S) instead of (R, S). If you know the hash, then there's a way of solving for R. You just reverse some equations. But everyone prefers (r, s) and bitcoin uses that for the serialization of signatures. R is going to be the nonce, you generate an ephemeral private key and you get a nonce.
+
+In fact, ECDSA was a way of sidestepping the Schnorr patents. Instead of multiplying, you add X and e, but then you have to multiply by k, but that introduces some problems that you have to account for and poof you get ECDSA out of that. It turns out to be worse because it requires more tricks, but in Schnorr you just multiply this and tweak it and you're done.
+
+# Some additional references
+
+<https://diyhpl.us/wiki/transcripts/scalingbitcoin/tel-aviv-2019/survey-of-progress-in-zero-knowledge-proofs-towards-trustless-snarks/>
+
+<https://diyhpl.us/wiki/transcripts/scalingbitcoin/hong-kong/zero-knowledge-proofs-for-bitcoin-scalability-and-beyond/>
+
+<https://diyhpl.us/wiki/transcripts/simons-institute/zero-knowledge-probabilistic-proof-systems/>
+
+<https://diyhpl.us/wiki/transcripts/mit-bitcoin-expo-2015/zerocash-and-zero-knowledge-succint-arguments-of-knowledge-libsnark/>
+
+<https://diyhpl.us/wiki/transcripts/simons-institute/snarks-and-their-practical-applications/>
+
+<https://diyhpl.us/wiki/transcripts/stanford-blockchain-conference/2020/stark-for-developers/>
+
+<https://en.bitcoin.it/wiki/Zero_Knowledge_Contingent_Payment>
