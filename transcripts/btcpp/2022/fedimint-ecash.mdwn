@@ -1,0 +1,162 @@
+Fedimint: making a Chaumian bank in python
+
+Justin Moon
+
+# Introduction
+
+I originally planned on giving a talk. I started the bitcoin meetup here in Austin called Austin BitDevs now. It started really small. I moved to Austin 4-5 years ago. I knew there were some people here that liked bitcoin from twitter. I started a meetup, which I encourage all of you to do if you meet a similar situation. Now it's usually 100-200 people. It grows a little bit every year. It's particularly odd because it's a super technical meetup and it's hard to imagine that so many people find this stuff interesting. Every month, I'm surprised how many people show up. You wouldn't expect so many people to find it interesting.
+
+I was originally going to-- during the Miami conference, or during a meetup like ours you hear interesting technical projects when they are first announced. You get a handwavy overview of how it works. We have been talking about minimint for a few months, I met Eric at plebfi, at the open-source stage, and each day we would talk more which is the advantage of these events to get facetime and exchange ideas. Each time we talked, I got more and more interested in what he is doing.
+
+So I started playing around with the project and a few others that I learned about in Miami. I encourage you guys to do that when you get home. If you hear something interesting, then download the code and run it. Maybe the maintainer can explain a few things to you sometimes. It's kind of exciting.
+
+I wanted to give a basic talk about what a Chaumian bank is, in python, so basically a tutorial on blind signatures and stuff. I never got around to it because I got engrossed in minimint. So I will share what I have learned in the last 5 weeks of working on this project, what it is, and why it is interesting.
+
+# How will you access the bitcoin network?
+
+Everyone over the next decade or two will have to ask this question about how they will have to access the bitcoin network. Most people in this room will say they will run a bitcoin node themselves and also a lightning node, they know how tor works, they can do port forwarding, they can access a private key. When you step back, you see all the complexity there. It's great that people like us can directly access bitcoin without trusting very much.
+
+But outside this room, most people find an exchange run by a bunch of snakes that they don't actually know. They have a predatory product offering and that's who you trust with your financial future? That's what most bitcoin users are doing. Sometimes at these technical events we can get detached from reality, and most people are doing that.
+
+Minimint is another answer to this question where you don't outsource it to some big institution but also not doing it yourself.
+
+# Hal's take
+
+Here's a screenshot of a post from Hal Finney in 2010 saying there's good reason for bitcoin-backed banks to exist which is an intermediary between accessing bitcoin yourself, and each bank issuing their own bitcoin-backed token.
+
+<https://bitcointalk.org/index.php?topic=2500.msg34211#msg34211>
+
+# Fedimint
+
+First there was something called Chaumian mint then it became federated. Then they added the ability to speak between them and with the rest of the lightning network, and then there are some exciting possibilities in the future that you could build on top of this.
+
+This project is extremely immature. Two months ago, there was one person working on it. Now there are 3 of us who have written code in the actual core part. Other people work on the build system and this and that. There's really only three people working on code in the consensus part. It's a research project supported by Blockstream for over a year.
+
+This is an interesting topic, but a bad presentation.
+
+# Chaumian mint
+
+What is a chaumian mint? It's private bearer IOUs. You take some asset, and you get an IOU. But it's private; when you're issued this asset, you hold on to it, and then you later redeemed it, the issuer can't correlate the issuance with the redemption which is pretty cool. It's a very private way to transact.
+
+Confidential transactions hide the amount; here is the inverse, you hide which thing you're spending. The amounts are fixed, like coins or dollars where you have fixed denominations on these IOUs so you can spend any combination of these. Which coin you are actually spending is actually hidden.
+
+This has been around since the 1980s, pre-bitcoin and pre-internet. Why was this interesting technology invented so long ago? When you read the paper, it's obviously written on a typewriter which is interesting. So the interesting question is, why didn't it take off? I hope to address that a little bit.
+
+# Blind signatures
+
+<https://diyhpl.us/wiki/transcripts/building-on-bitcoin/2018/blind-signatures-and-scriptless-scripts/>
+
+<https://diyhpl.us/wiki/transcripts/scalingbitcoin/tokyo-2018/edgedevplusplus/blind-signatures/>
+
+The system here to get these private bearer IOUs is something called a blind signature. I'm not a cryptographer. I'll try to explain anyway. You have a message and you want a signature for it, but you don't want the signing entity to know which message they are signing. This is how you get the thing where the issuance of the token and the redemption is non-correlatable. That's what we are trying to achieve.
+
+So you start with a message, and you blind it. You can just add a scalar to the pubkey I think that's one way to blind it, or you can hash the message and add the scalar times a public point or something like that that is then reversible later on the signature. So now you have a blinded message, the signer signs it. In the original paper from David Chaum, it's carbon copy paper. You can sign on this carbon copy paper, but you can't see through it. So you might be signing a check but you don't know what's on the check. So they sign this unknown message, they don't know what it is, and the blinding operation can be reversed and get a real signature for the real message.
+
+Q: Confidential transactions lets you encrypt amounts and decrypt them.
+
+A: I don't understand how confidential transactions work.
+
+Q: It's the same. For a UTXO, you have a scriptpubkey for where it is going and the amount. You can blind one of those to make it confidential. For this one, you're not blinding the amount, you're blinding the scriptpubkey basically.
+
+What we will see later is that issuance is this process where a token is just a nonce and the Chaumian bank will sign it. They see the blinded message and signature, and when you go to redeem it you give them the unblinded message and the signature. Since the bank doesn't have the blinding key, they can't see it.
+
+It's theoretical perfect privacy and scalable, and it's a centralized honeypot and no cross mint transactions and not auditable.
+
+((I think chaum e-cash didn't takeoff in the US not because of the honeypot issue but because Mark Twain Bank got acquired and Digicash had a bad business model, surely that was why.))
+
+# Trust model
+
+This is how a Chaumian bank works in the traditional sense. It's 100% trust based. Since you can't correlate them, you can't discriminately censor, or you can censor everyone. Yes, so the idea here is you either do it yourself or you trust some far-off bitcoin emperor to do your bitcoin for you. But who would you trust the most? I hope that people will access bitcoin through the people they trust the most; for some of you, you would trust yourself the most. But for other people, they would trust that you wouldn't betray your family members for example. But what if we have groups of people offering bitcoin services for your mom? The cost of cheating there or censoring there would be so high because you pay real world costs. I think this will outcompete centralized things.
+
+Q: So it boils down to trusting a federation?
+
+A: That's a good question.
+
+# Federated
+
+The next evolution from Chaumian bank is making a federated version. This addresses the centralized honeypot. Instead of having a bank that can be easily shutdown, bitcoin allows for collective ownership and multisig which is not possible with dollars or gold. Why not have the mint be a collective where you don't trust just one party, but t of n? This is like a replicated state machine where each is running in a few places. There's no blockchain here, it's just a UTXO set. Each round is just a list of transactions that the guardians validate, and the outcomes are synced using a consensus algorithm called HBBFT Honey Badger Byzantine Fault Tolerant which may have been produced by shitcoiners.
+
+The transaction structure has inputs and outputs and a signature across the inputs. We will allude to this later, so everything is based on modules here. In the actual Fedimint, there is an on-chain wallet, an e-cash for dealing with these values, and then a lightning wallet to do an escrow to incentivize lightning node operators to send and receive bitcoin over the lightning network for them.
+
+The really cool thing about fedimint is that you can basically do whatever you want in the set of inputs and outputs. You could do a cold wallet thing, proof-of-reserves, some kind of lending thing, or stablecoins or something. One of the things I want to do is run simplicity in here and do simplicity transactions which would be sick. Something like simplicity could be deployed here.
+
+Liquid is more like one giant federation and a lot of sunk costs in terms of so many members it's hard to change. But these fedimint federations are going to be small and agile. So yeah run simplicity, javascript, solidity, whatever you want just run it.
+
+# Spending e-cash
+
+In the e-cash model, you give the actual bearer instrument to someone and then they can redeem it and then it's theirs now, which is cumbersome so that's why we introduced lightning because it's a standard interface that everyone speaks. We will go over how to use lightning because trading bearer instruments unique to one custodian... coin ids where one coin works at one bank and the other one... but really, the coin itself should be an implementation detail in the wallet. I don't know yet, it's such an early stage project.
+
+Q: Why only certain denominations?
+
+BB: That's a privacy thing. You could correlate activity if you accidentally use unique values. There might be other reasons.
+
+# Federation again
+
+You get a round of transactions in the consensus protocol, and every module has like, it's more like, you agree to which transactions were valid and you agree to the fee rate for on-chain withdrawals and you agree to contracts that were created or redeemed and a few things like that. I'm a little fuzzy on the consensus algorithm part of this. It's the state of the mint on every single step. Which blind nonces, for example, are still spendable? Everything is stored in the database called the sleb (sled?) and you agree on a diff to that database more or less between federations.
+
+The IOU layer is like for spending e-cash privately or maybe to yourself. There's also an on-chain wallet that is just a custodian. That's one of the flaws here. You'd like to make sure those two wallets have the same amount but there's no guarantee there.
+
+The guardians of the fed can do whatever they want, as long as (t - n) of them are in agreement. There is a collusion group that could defect if they reach a threshold.
+
+It's interesting because HBBFT is asynchronous. Usually there's a time-bound for each round which won't work in bad network conditions; this one doesn't have any assumptions about how long a round for an epic would take. It's slower as a result, and it's synchronous and if that fails then you move to asynchronous, and the time bound can vary depending on whether it is changing.
+
+# Deposits
+
+The federation has a script descriptor like wsh(sortedmulti(k, [pubkeys, ....])). It's a standard descriptor for a multisig. You could have a fixed address, but then it's hard to link the deposit to a user and give them the chaum token. Another idea is to ask the federation and they generate an address, which is possible but slow. What we do instead is we generate a keypair, and use miniscript to tweak each of the pubkeys in the federation descriptor. Deposit to the tweaked multisig. You wait a number of blocks as set by the federation, like 101 blocks and maybe smaller amounts have lower thresholds on confirmations, but once it's confirmed, then the user gives the keypair to the federation and a merkle proof that the transaction was included in a block so that the federation can go find it. After that, they can spend it however they want. It's their bitcoin at that point. The on-chain wallet has an input and a keypair and this merkle proof, and the output is some e-cash.
+
+Q: What about reorgs?
+
+A: Well, now the bank isn't backed. They gave out tokens and don't have the underlying assets. The bank now has a difficult moral problem to solve.
+
+Q: So the mechanism to ensure it's fully backed is that this algorithm works?
+
+A: Bitcoin has the same problem. How many blocks until you can spend bitcoin? Final settlement is 101 blocks. We've never had a 101 block reorg. But we could, and then you know, whoever got that bitcoin could have spent by then and then it would be a double spend.
+
+Q: Why is it hard to prove you deposited to a static address? Couldn't you make a signmessage to prove you deposited?
+
+A: You could do that. Your mom probably can't.
+
+...
+
+Hayek wrote about free market money saying that having smaller institutions makes money more valuable and less restricted.
+
+...
+
+I'd like to see a world where it's more about human relationships than filing a customer support ticket.
+
+Q: Is it fair to say there's different solutions to this problem and they are in competition? There's a lot of overlap with spacechains, drivechains, liquid, and they could all co-exist.
+
+A: Totally, that's one of the cool things about lightning. Well, lightning could connect these things.
+
+Q: Taro is another example and they made sure it could operate over lightning.
+
+# Sending bitcoin with e-cash using lightning
+
+The user wants to pay an invoice with payment hash X. The user has e-cash blinded tokens basically, messages and signatures. Thy deposit this into a federation escrow saying this ecash is redeemable for anyone who submits this preimage, and that's what a lightning payment is you can go get the preimage. So the user tells a lightning node, the 'gateway', who is willing to be paid in e-cash tokens. The federation does not trust the lightning node, the lightning node trusts the federation instead. So the user tells the gateway there is a contract and a small spread, and if they redeem this then they can earn a small spread. The gateway goes and buys the preimage with lightning bitcoin and once they have that they can always redeem that for on-chain bitcoin. At that point, they go tell the federation okay I got the preimage, tell me the e-cash tokens. Then the consensus round runs, and the federation enforces the escrow contract by checking that the preimage is valid.
+
+Instead of asking users to accept multiple types of e-cash, you could just withdraw to lightning bitcoin. So all the payments are lightning on the outside, even if they don't accept your particular kind of e-cash that's okay as long as there's a route between two gateways that accept the sending e-cash and produces the receiving e-cash at the other gateway on the other side of the lightning transaction payment route.
+
+# Receive
+
+To receive, you use a throwaway node pubkey to generate an invoice. You might not need to keep it. Your node will exist for only one payment. Your invoices can't be correlated to one node, which is a nice little privacy thing.
+
+Well, then how can the payer find your node? If there are multiple gateways, you might have multiple routings in here. It adds the gateway node pubkey as route hint. The payment secret is a Schnorr pubkey P. If the payer notices that your payment secret is on that curve, on the elliptic curve, then they will know you're in a federation so maybe in the future we should hash this. Then they put the preimage for sale in the federation.
+
+To find the gateway nodes, it's just the same lightning routing problem. You don't know who is on the other side, it doesn't matter. You don't have to know the user on the other side is using some other e-cash token provider or whatever. It's just lightning.
+
+If no gateway takes you up on the offer, you can sweep it back, that's why it has to be a pubkey. If the escrow fails, this is how you get your money back. The gateway has a fixed pubkey... let me reload this into my brain; I forget how this fails, but if it does, I forget the problem but the gateway is able to reclaim it if it goes wrong because there's a pubkey in the contract they have the key to.
+
+The payment secret in the lightning payment protocol is the preimage, like an HTLC. So I implemented this in c-lightning with a plugin that has a htlc\_accepted hook. There are htlc interceptors in lnd which I heard were fantastic or something. So you get this HTLC, you ask the federation hey is the preimage for sale with this payment hash and the federation will say yes or no. Then the gateway will enter into an escrow contract... I skipped a step here... actually the preimage is threshold encrypted to the pubkeys of the federation members just in case one of the federation members is the gateway, so they can't see the plaintext value and just steal it, so it's threshold encrypted.
+
+# See also
+
+<https://diyhpl.us/wiki/transcripts/building-on-bitcoin/2018/blind-signatures-and-scriptless-scripts/>
+
+<https://diyhpl.us/wiki/transcripts/scalingbitcoin/tokyo-2018/edgedevplusplus/blind-signatures/>
+
+<https://www.reddit.com/r/webcash/comments/utbgur/minicash_simple_chaumian_ecash/>
+
+<https://github.com/phyro/minicash>
+
+e-cash without chaumian blinding <https://webcash.org/>
+
