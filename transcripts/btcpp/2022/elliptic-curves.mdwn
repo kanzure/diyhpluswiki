@@ -1,0 +1,66 @@
+Demystifying elliptic curve cryptography
+
+Asher Pembroke
+
+# Introduction
+
+I think the hashing part of bitcoin is a little more glamorous. But when it comes to the topic of how signatures work and how you actually move bitcoin from one person to another person, the signatures part of that, it gets a little hairy. There are some great educational resources for this. I don't think Jimmy is in the room so this won't be as embarrassing as I feared. I use a part of his programming bitcoin python code to build this stuff.
+
+What I wanted to do is provide a way to teach the topic of elliptic curves and how they are used in bitcoin, but we won't be doing any coding and there will be barely any math in the way that you might have been taught to do math.
+
+You may not know, but in the old days, before algebra was invented, there was something called geometry which is how mathematicians did proofs. Basically they had straight edges and they had points and compasses and they had to figure out everything based on that. We will be using that approach, in a sense, so that we don't have to look at the syntax or get confused by the syntax of what's going on.
+
+I am using this website called GeoGebra for this lesson. First I will go over the continuous curve description of elliptic curves, and then we will talk about the finite discrete version of elliptic curves as used in bitcoin.
+
+# Elliptic curves
+
+Elliptic curves are described by the following equation: y^2 = x^3 + ax + b. For every point along this curve, this point satisfies that expression. The x and y coordinates of this point will satisfy y^2 = x^3 + ax + b. Here, a controls the 'curviness' of the curve, and b kind of squeezes everything down. If you make it small enough, it will split the curve in twain. That's it, that's the end of the talk.
+
+Well, no, there's more. There's a negative of this point. Point negation is reflecting this point around this axis. So for every point up here, there is by definition a corresponding point on the other side of the chart.
+
+# Point addition
+
+In bitcoin, this equation is even simpler. a=0, and b=7. When a=0, you get y^2 = x^3 + 7. I will now introduce the concept of point addition. Addition is something that we can assign a meaning to. In this case, addition will mean if we have two points (P, Q) then we can draw a straight line through those points and this will intersect the curve again at a third point which we will for now call negative r (-r). We can associate with that point its negative which is this positive r down here. So what we're saying is P+Q=r. That's just what addition means to us now.
+
+For any two points that you choose, there's always going to be only at most one other point that it touches the curve at. Even when I bring p below... what happens if p is directly below q? What will happen? It will intersect at infinity. You could say, it doesn't intersect the curve at all, but another thing to say is that it intersects the curve at infinity, and that's how mathematicians like to describe it. Yes, there's an intersection, and it's somewhere infinitely far away. The second thing to note, what happens if p = q? What's P + P?
+
+As you bring P and Q closer together, you will see that this line of intersection approaches the tangent to the elliptic curve. For any curve, if you pick a point on that curve, you can define the tangent, the line that just touches that point on the curve. That's how we define addition.
+
+# Point multiplication
+
+Next, we're going to talk about multiplication. Say we start at a generator point G, and we can get 2 \* G and 3 \ * G. If I didn't show you the path and you just saw G0, G2, G3, ... it would be hard to guess how many times to hop around to get there. It's just not obvious what the connection is between these two points, and it's only once I show you the path that you can walk the path. There's something zen about that. You can't just guess what n is in; this is called the elliptic curve discrete log problem which is analogous to not being able to guess what prime numbers you multiply together when you multiply big primes together.
+
+When n is small, it's sort of an easy to guess value that maybe we could bruteforce. But if n is large, then it becomes intractable to compute.
+
+The security of elliptic curve cryptography depends on this being an irreversible problem. If you break sha256, you could basically produce blocks willy-nilly. But if you broke this discrete log assumption, you could just move anyone's funds to wherever you wanted, trivially. I can't stress enough the importance of this being an unsolvable problem as far as we know. It's important to pick an unsolvable problem here.
+
+# Finite discrete elliptic curves
+
+We saw this in the continuous space, so now let's introduce the concept of finite elliptic curve in what we call finite fields. We want to do this on computers and on computers we can't talk about infinite numbers, we have to squeeze things into a finite space. What if we took this curve, and tried to squeeze into this box, and we only consider like the integers modulo this point.
+
+The great thing about finite fields and elliptic curves is that they have the same geometric properties as in the continuous case. I have a link here to a math paper that will explain why that is true. But for us, we're just going to assume and take it for granted that they have the same geometric properties.
+
+I started to implement a finite implementation of this on this github link, so I will switch over to that. It's essentially a webapp that runs in a docker container, so it's pretty easy to spin up if you want to do this yourself or teach it to other people. Feel free to contribute to this repository too.
+
+We have the elliptic curve equation from before where we can choose a and b, and by default you could choose a=0 for the bitcoin parameters. We can also choose the size of the space where we're tweaking these points in.
+
+On screen, all these white points are the locations where the integer values for say this point (18,55) satisfies this expression modulo the boundaries of this box. When I say modulo, think pacman rules. When in pacman you go off the screen and you come back the other side, it's the same concept.
+
+This modulo that we're choosing, we happen to be choosing a prime number for our modulus. I computed the first few hundred primes here. 67 is a prime number, but we can squeeze this down I think by default, 37 is the space. Then the number of white points is getting .... the last thing about just talking about the size of this space.
+
+In bitcoin, the prime space you're in is a ridiculously huge number. It's on the order of the number of atoms in the universe size. When I said initially, we won't be doing small n, then I was putting it mildly.
+
+I can take two points and it will give me a third point. If I take a point and the point below it, I get infinity. Add these two together, you get infinity. If I take the same point twice, then you get something like the tangent. It's hard to describe something like the tangent, because you don't see the curvature of this thing at all, but you can represent this algebraically and the moral of the story is that you still get a point that references a point addition itself.
+
+Just like addition, we have point multiplication. If n=0, then we get a point not on the plane. It intersects at infinity. If you choose n=1, you get the identity. We can hop around here. Something to note is that we can essentially reach all these points if we start here. But eventually we will cycle through all 39 points if we started here.. but if we start at (18, 20), then we can only reach 13 of the 39 points. That's called the subgroup of this generator. All these green points here represent the subgroup of this field.
+
+
+# Encryption/decryption/ECDH
+
+Say Alice notices that hey you can't just guess what n was given some point, right? So what if I just say, if I start here, and I have, when I have a private number, which I will call my private key is just the number 5, I can multiply it by my starting point and get an ending point. I can tell someone else hey this is going to represent my public key, and you will never guess what my private key is if I just tell you this number. So Alice tells her friend Bob and says okay give me your public key, Bob says okay I'll follow the procedure, and now I have a public key too. Alice then does some math and realizes that, wait, we could actually use this for some cool stuff, like we could make-- first she notices that if she takes her private key and multiplies it by Bob's public key, then she will get the same thing Bob would get if he took his private key and multiplies it by Alice's public key. If you plug in the definition of Alice's public key here, then you get the same result whether you're looking at Bob's perspective or Alice's perspective. From this they are able to setup a shared secret between them. They can encrypt and decrypt values.
+
+This illustrates that with them having only knowledge of their pubkeys they can at least start the process of having a way to encrypt and share information. This doesn't actually guarantee though  their identity.
+
+Multi-layer encryption is used in onion routing where each layer is encrypted to another public key that another party controls.
+
+
