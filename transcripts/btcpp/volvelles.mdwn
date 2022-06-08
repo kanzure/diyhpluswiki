@@ -1,0 +1,141 @@
+2022-06-08
+
+Volvelles: A paper computer for Shamir's secret sharing over the bech32 alphabet
+
+Secret sharing with analog computers
+
+Andrew Poelstra
+
+<https://github.com/roconnor-blockstream/SSS32>
+
+# Introduction
+
+We will generate a share randomly by paper computers. Our goal is to generate a short version of a seed in a 2-of-3 Shamir secret sharing. We will have 3 individual shares and any 2 of them will be combinable to produce your actual seed. It won't matter which 2 of the shares you choose. The scheme generalizes, so you can take k-of-n where n is any number up to 31 and k is any number up to n. If you want to do a 3-of-5 with this scheme, or 5-of-10 or 15-of-30 you probably shouldn't because your body won't like all that tedious manual work. For the purposes of this workshop, we will do 2-of-3.
+
+We will generate two random shares, derive the third share in a way we will go over, such that you always get the same secret no matter which two shares you use. We will talk about how to generate the shares. We are going to next generate a checksum on those random shares. A checksum is a little bit of extra data that you tack on to the end of some real data, and gives you some structured redundancy that lets you guarantee a detection of a certain number of errors. With the help of a computer, you would be able to even correct errors. If your shares are corrupted, then up to 4 places of corruption can be determined and you would be able to find what the original values were.
+
+The cool thing about almost all checksums is that they are compatible with Shamir secret sharing. When we derive a new share, we will derive a third share and it will automatically be checksummed. When you recover your secret from your shares, it will be automatically be checksummed. When you do derivation on the checksum itself, it will do a transform of the checksummed data itself.
+
+Our goal is to generate two random shares, derive one share, pick two of them, and try to recover your secret using these worksheets and this volvelle.
+
+# Definitions
+
+Q: What is a share?
+
+A: Great question. Let's start with what's a secret. Intuitively it is a bunch of random data that can somehow turn into a bitcoin address or something like that. A share is an artifact of a process called Shamir secret sharing. We will breakup your master secret into multiple pieces that we call shares such that any 2 of them can be used to reconstruct the secret. The term share refers to the pieces of your secret that you get when you use such a splitting scheme. The shares are themselves the same size as the original secret.
+
+Volvelles is a paper computer, because electronic computers are scary and unpredictable. We also have two slide rules, and there are no windows except at the top, and you can see all the values. As you rotate it, the mapping and arrows point to different symbols. This is a two-sided slide rule over here. It's sort of like a decoder ring you may have found in your cereal boxes in the 1950s. The way this works, you translate the symbol you point it to. You flip it around and then there you go.
+
+Checksumming as I said is just this extra data we're going to add to our actual share data. The randomness that we generate is our actual share data, which in real life would be a bip32 seed that you use to derive everything else. The checksum is something we will compute and tack onto the end.
+
+Secret sharing is a technique to break your secret into multiple pieces called shares such that only a few of the shares are required to reconstruct the secret data. When you have a secret like this, there is a tradeoff in the choices you might make with storing it. You want to have a lot of copies, because if you lose all your copies then you lose your secret and it is compromised. But you also don't want a lot of secrets because there's more copies to steal.
+
+Shamir secret sharing has a more nuanced take on this tradeoff where we can make a certain number of copies, as many copies as we want up to 31, and you can control how many of them are needed to reconstruct the secret. If you do for example, say you do a 3-of-5 secret share where you have 5 shares floating around and you need 3 of them to reconstruct the original secret. The idea here is that as long as 3 of them are alive, you can reconstruct them. You can lose 2 of them, and still be okay. But, if someone steals 2 of them then you're still okay because you need 3 in order to get the original secret.
+
+Q: Are all the shares in these schemes always equal? Is one weighted and one is the key one or something?
+
+A: They are all going to be equal weight. What a fun question, could you make one that is double weighted? One way to double weight them is, during the recovery process which we will go through is you translate each share, and then you add the shares together and add the double shares together. What you're doing mathematically is creating a linear recombination. You translate using the translation wheel, and add using the addition wheel. If you translate the two shares and add them, that's a combination of two shares that you can use. It's a good question.
+
+# What can we can currently do and not do with volvelles
+
+We're not quite reaching the goal of paper wallets yet. We can compute and verify checksummed secrets, which is useful if you're trying to manage backups of a secret. One caveat is that if there are errors, then you can detect that. I haven't figured out how to turn the correction algorithms into a volvelle yet. Importantly, you can't do wallet stuff and signing. If you want to move your coins, you will need to put your secret into an electronic computer and all our bad feelings about electronic computers you will just have to live with for now. I don't mean it's impossible, only that we haven't been able to do it on paper so far.
+
+# Tips for handwriting
+
+We're using the volvelles but also filling in worksheets. When you're doing this, you want to use a mechanical pencil. Not a pen, because you will make mistakes, and a normal pencil will get blurry. You want to write on a hard surface, we're using cloth tables that's okay. If you're dealing with real secrets, you should use a hard surface because that makes your writing more clear and also if you write on a wax table then your pen will leave imprints on the surface below and people could read your secrets.
+
+Another tip is to cross your 0s, 7s, and Zs (looks like a 2 otherwise), and also your S as a $ because the S looks like 5 otherwise. Be careful with 6's and g's look similar if you write sloppily. Our intention in the booklet is to provide some drafting instructions on how to draw your letters so that we can really get the kindergarten crafting experience.
+
+If you make mistakes, your checksum worksheet will not work. You put in all your data, you do a computational process, and at the end you get a magical value that should spell out "SECRET SHARE" and if it doesn't then you know. I will provide some tips for noticing this early. When you're generating your checksum and initial shares, there's no good way to detect errors, so you have to do it twice. It's very annoying, we haven't found a way to shortcut these error checks.
+
+# Links
+
+<https://github.com/apoelstra/SSS32/tree/new-complete>
+
+<https://github.com/roconnor-blockstream/SSS32> branch 2022-06-workshop
+
+pearlwort@wpsoftware.net
+
+# Continued
+
+Q: How do we know that this is not compromised?
+
+A: These are good questions. One way is that you can go to this url, download this document, and this booklet is handwritten in postscript the format that existed before pdf. In postscript, there is a turing complete language where it doesn't belong. You can implement error correction in it, you can implement field arithmetic, secret sharing, etc, and then you can produce all these volvelles just by writing code, so it has facilities for doing rotations and translatoins and drawing text.
+
+As a kid, the way I used qbasic or how people used logo before that, you can kind of do that. It feels a lot like bitcoin script because it's stack based.
+
+One answer is that you can verify the postscript code. Another answer which might be more helpful is that you can verify the mathematics; here we have a tiny paper that describes what we're doing here. The cool thing is that you can just look at these and manually check, and it's not hard to check that everything is where it should be. Reading the code might be easier to verify. This is the addition, and we have 1024 symbols on the back and you can meticulously check that.
+
+Within the booklet, there are a couple tables of symbols. We actually spent some time brainstorming asking how would you compromise this as an attacker? One idea would be to swap some symbols so that when someone is generating a share they are actually generating the real secret. We came up with an attack that we think doesn't work, which is where verifying the source or downloading it now and checking it later, or keeping a safe copy forever... but ultimately, what we're doing is basically directly doing a bunch of mathematical transforms here. I haven't figured out a way to backdoor this where you could actually recover from some subset of shares. It doesn't mean it's not possible, of course, but there's not a lot of freedom of action in the things that we're doing. There's almost no freedom of action in how things are supposed to be worked out.
+
+# Motivation
+
+Q: ...
+
+A: The goal here is eventually that we would have hardware wallets that would understand the encoding format, and then the goal is that you only do that when you're actually spending. If you have long-term coins that you call your "cold storage coins" that maybe you have on an airgapped Ledger hardware wallet, and then you have your seedphrase. For those kinds of applications, that's where this volvelle secret sharing scheme would come into play.
+
+Let me try to motivate why you would do this. Electronic computers including hardware wallets are very difficult to reason about. All their operations are happening on the nanoscale and you need expensive equipment to see what they are doing, and even then it's hard to tell what's going on. We know that, even without malicious behavior, there is a risk of sidechannels and there might be power draw from a USB hub, or EMF from the processor, or even noises that it is making or something like that can somehow reveal computations that it is doing. It's possible to leak information from that.
+
+A lot of my job as a practical cryptographer is to design algorithms that don't have leakages, but it's very hard to do that. Your compiler fights you, when you write optimized C code it will try to optimize it its own ways. Division is the worst in Intel processors. The division opcode in x86 takes different amounts of time depending on the inputs, so you never use division in cryptography for this reason.
+
+Morally, another issue is that you can't verify any of this. Or maybe you store data on flash and try to delete it by writing over it, but maybe your flash chip decides that hey the wear level is too much and it preserves data forever even though the chip itself and onwards everything tells you hey the data isn't there, maybe someone with an electron microscope can still go and get it.
+
+For long-term bitcoin secrets, maybe you're okay with these individual risks. In the long-term, storing secrets for decades, you have to worry about these problems both now and on an ongoing basis. Your Ledger hardware wallet is probably not going to last until 2035, well what about the new hardware wallet you upgrade to? Do you trust those? Are there firmware bugs? You can't tell really. You need to deal with these threat models forever and forever on an ongoing basis.
+
+The goal with paper is that if you handle it properly, you set fire to your intermediate computations and don't write on a soft surface, then you know how it works. You don't need special skills or equipment. You can use your brain and intuition to know where the copies of your data is and what their status is. Using this scheme, you can create secrets, you can split them up, you can verify your checksums as much as you want.
+
+Q: Can you generate addresses?
+
+A: I don't think so. Hashes are very hard. Someone in 2012 generated a bitcoin blockhash by hand and it was like 0.67 hashes/day. Ken Sherrif on righto.com... But maybe that's okay, because taproot addresses don't involve hashes. That's a cool accidental feature, everything Pieter Wuille touches somehow fits together.
+
+Q: Well, only if you're not doing internal key.
+
+A: Yes, you can generate a taproot address where you just generate a secret key and derive a public key from that. But we don't recommend that, because in multi-party settings and other contexts, it can be impossible to prove that the key you generated did not have a hash or internal script somewhere inside it. In multi-party settings, you want to be able to prove that, and you don't want a single party to sneak in a script. In single party applications, where you don't need to worry about that, and you use dice for randomness, then you can be okay.
+
+But even then, you need some elliptic curve math to get from a secret to a point. Maybe we can do this. 8 years ago, I wrote a table of discrete logarithms in a github repository. The joke of course is that real logarithms are continuous and you can interpolate them, but discrete logs are not. You can do elliptic curve by looking things up and adding points and doing an addition ladder. The issue here is that even adding two points seems to be hard to do by hand, and the reason why is because we're using a 256-bit prime field, which means we use addition and multiplication modulo a large prime and the reason our scheme here works by hand is because we use a field size of 32, and that's small enough that we can have 32x32 on a piece of paper and you can lookup every possible operation on a piece of paper. It won't have any internal structure for a 256-bit prime field. Maybe you can derive addresses with pen and paper, but I haven't found a volvelle way to do it. I'd really like to get there. Then you can generate addresses and receive money... although if you can generate an address, then generating a signature is not much harder. You would need a computer to compute your transaction hash, though. If a pubkey can be derived, I could put the pubkey on a computer and hash it and get an address, and that's perfectly safe.
+
+One thing you can do is take a ti84 calculator, and implemented it in ti-basic the address derivation. It takes several minutes because it's a slow computer. You really have to do a lot of stuff by hand. It's a very slow processor. Those are nice because those calculators were for the most part manufactured before the internet and bitcoin and there's like a zero chance that it was compromised in a way that can compromise bitcoin. Also, they are designed for professors to come by and erase memory, although you probably shouldn't trust that erasure feature necessarily.
+
+# Data structure
+
+The data that we're going to generate will have this format. There will be a prefix MS1 at the start. This is kind of like bc1 at the start of bitcoin addresses for segwit and taproot addresses. Our prefix is MS1 it's just an identifier that indicates what the data is for.
+
+Then we have a header here where you as the user of this system will define some extra data that will identify a specific secret from other secrets you might be storing too. Your special value of recovery threshld will be the first spot after MS1. We use the bech32 alphabet, by the way. If you want to verify addresses by hand, you can actually do that using the postscript to generate it. Then we have an ID which is 4 characters that you can put whatever in there; if you generate shares and give them to your friends, then they can figure out what the share is.
+
+Then finally there is a share index, which is perhaps the most interesting and meaningful part of this. The share index identifies which share... every share will have a different share index, and the indices are all the bech32 alphabet all the numbers except for b, i, and o. Those identify which share you have. There is one special value, S. If your share index is S, then that is your actual secret. The way that the scheme works under the hood is that actually all of the shares have equal meaning and we just declare by fiat that the S share is your secret. From any subset of shares, you can generate any other shares. By any k-many shares, you can declare any other shares, so we just say that the S share is the one we're going to generate.
+
+Then you have your share data, which we will generate randomly, and then the checksum is 15 characters.
+
+Q: So this is not a thing where you make one secret, and then you split into parts. You make 3 secrets, wihch are then combined.
+
+A: Ah, yes. One way to do secret sharing is to start with a secret and then split it up. But since we're generating a fresh secret, we might as well just generate some fresh shares and derive the secret. If you already have a secret you want to split up, there are some separate tables for that, and it's a slightly different process.
+
+For this workshop, we will generate random shares, and the shares will imply a secret. So you won't even know what your secret will be.
+
+# Random data
+
+We will manually generate the A and C share, and then a third share and derive that. Let's first talk about random data. We will write our share data in the bolded boxes. In the bold boxes, we will write out this data. In the shaded boxes, are your checksum where we will use the owrksheet to compute what that is. The ten boxes that are not shaded are your share data; you will generate 10 random characters and fill in those boxes.
+
+It's cheaper to make biased dice, there are sometimes air bubbles. The ones that you can see through and have sparkles might be better. You can kind of tell if the distribution of sparkles is off. Regardless, let's not chance it. Another thing is that if you are dealing with a malicious actor, and a guest is someone trying to steal your secret by compromising your dice by putting them in your kitchen oven and shift the distribution of plastic in the dice and show the value at the top more frequently.
+
+We can eliminate any passive bias. We are going to use a von Neumann entropy extractor in the form of a dice worksheet. We will roll each dice twice, and if it's greater than some value, we will say it's a 1 bit, and otherwise it's a 0 bit. 00 and 11 we just reroll, and 01 is 1 and 10 is 0. 32 is 2^5 and that can be represented by 5 bits. You can see all the characters are nicely written.... in this tree diagram on the worksheet, here's all of your different symbols. What we're going to do is using this worksheet, there are instructions on it, we will roll the dice twice and follow this tree based on where the dice land.
+
+# Checksum worksheet
+
+The way that the checksum worksheet works is that, we're going to add and do alternating sequences of looking up values and adding. At the bottom of every row, you have these two extra overhanging values. Initially you don't have the overhangs, actually. We add these values above and below to make the next row. We will use the dragon volvelle, turn it, and point it to 3. So 2+3 is m. This gives us the next line. Addition is commutative, yes. It doesn't matter which order you add the two values in.
+
+Next, you will have these two values on the left just hanging out there. You will look up these two values in the checksum table, and it will give you the next line.  Then you add the two lines together, and you repeat this process and so on. So we're adding two lines, to get the third line, and the third line will have extra characters hanging out, and we will look those up in the checksum worksheet and get the next line. Then we repeat.
+
+We keep doing this, and eventually we get to the bottom of the worksheet and everything except for the pink squares will be filled out. If you are verifying the checksum, then you do the whole thing and it will say SECRET SHARE hopefully. We will fill in the pink shares by adding backwards, here.
+
+We're generating two initial shares, the A share and C share. You can do this process for both of these. That is the goal.
+
+The final step of the checksum worksheet is that if you're done with the lookups and addition, you will still have the pink squares left. To fill those up, you add going upwards, and you add each two values together, all the way up. One shortcut you can use, and I'm hesitant to share these shortcuts but if you have 2 twice and you're doing a running sum and it will be canceled out. So just ignore the 2's basically, if you have multiple 2's. Anything you see twice, you can repeat it. If you see it 3 times, you only ignore it twice, right.
+
+# End
+
+You're welcome to keep the volvelles and the worksheets. You can find the full booklet online. If you're just going to throw it in the garbage, I'd appreciate if you would leave the volvelle with me. You're welcome to keep it. We also have a few extras if you want some for your kids or whatever.
+
+This is the first time we've done this workshop, and we're looking for feedback. Could you leave your email address and any comments you might have, on the purple sheet on the back and then you can get a final booklet once it is finalized. You're also welcome to email me if you have specific feedback.
+
+Thank you.
