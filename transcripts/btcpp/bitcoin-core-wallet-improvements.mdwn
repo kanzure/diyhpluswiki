@@ -1,0 +1,125 @@
+2022-06-08
+
+Bitcoin Core wallet improvements
+
+Murch
+
+# Introduction
+
+Looks like we're going to start early by a couple minutes. Hi. I'm Murch. I am going ot talk a little bit about some general ideas about wallets and specifically some open pull requests and some WIP for bitcoin core wallet. I hope that I will get through all my slides. Feel free to ask questions or comment inbetween.
+
+# Overview
+
+I want to talk a little bit about why we have a wallet in bitcoin core, some general best practices in wallet design. Any wallet implementers or designers here? Anyone working on wallets? I expect you all to promptly implement all these wishlist items.
+
+After that, I have a few features that are new in Bitcoin Core that I want to talk about. I will also talk about the simulations that we use to convince ourselves that our efforts are improvements on the situation, and then I will talk specifically about what I work on.
+
+# Why have a wallet in Bitcoin Core?
+
+It turns out that back when Bitcoin Core was released, it was the only piece of software that implemented bitcoin and you needed a wallet to build transactions. It was mostly in main.cpp and main.h at the time, and you could build some transactions there.
+
+Over time, the Bitcoin Core codebase has gotten more modular and it has its own whole directory and lots of tests and more functionality.
+
+# WHat's Bitcoin Core wallet for?
+
+I wanted to show off some of the stuff you can do with the wallet, that other wallets might not implement right away. I want to show some best practices, and it should still be somewhat usable. Most people run Bitcoin Core for the full node capability and not really for the wallet. We don't really know anything about our userbase because we only learn things when they tell us something and we learn a new thing, so we're flying blind here otherwise...
+
+There was a company getting a lot of tiny deposits into their wallets, and then they were making payments. They spoke up and asked, we occassionally get these huge transactions with lots of inputs, and this one time this happened, it was at 46 sat/vbyte, which cost about 0.036 BTC which at the time cost 700 bucks or so. What were they doing wrong? Well, dear user, you're not doing anything wrong, the Bitcoin Core wallet at that point did not optimize for high fee rate or fluctuating fee rates. It was optimizing for change outputs, instead.
+
+The idea I want to convey is that it's easy to know when the wallet is doing something stupid, but it's hard to know when a wallet is doing something well. As a human, we have an intuition that hey the fees are high so I would do the single input instead. But if you want to automate it, it might be hard to cast it into fixed programmatic rules about how to do this.
+
+# Cool stuff hardly any other wallets have
+
+I think some of you might have heard of wallet descriptors. This is a different way of describing all the addresses in a wallet. Previously to wallet descriptors, when the Bitcoin Core wallet had a key, it would generate all the scriptpubkeys that it could generate with one key. So you would have P2PKH, segwit, wrapped, etc, and it would look for all these 4 things each time you had a key. With wallet descriptors, it tells you how to derive all the keys, what script it is using, and also the derivation path. A lot of you will be familiar with seedphrases for backups, and they don't tell you what the derivation path is. A bunch of wallets implement the same seedphrases but then they use a different derivation path from the master secret, and unfortunately you have to search all those paths if you don't know which wallet originally used this key and which paths were used for the addresses of the wallet.
+
+PSBT bip174 is partially-signed bitcoin transactions. I think this will be important for airgapped and watchonly wallets. It's also helpful in making multi-user transactions, so if you want to do coinjoin or things like that, it's a standard for sharing not-complete transactions. A bunch of hardware wallets have implemented PSBT, and as more wallets implement it, then we will be able to create transactions between the Bitcoin Core wallet and other wallets because of the PSBT standard.
+
+HWI is hardware wallet interface. We can plug in a bunch of different hardware wallets and plug in Bitcoin Core as a watchonly device, and sign on the hardware device.
+
+When you accidentally or on purpose reuse addresses, what does that do to your privacy? Yeah, that's bad. What if someone has sent you funds to an address before? The Core wallet will, if you have not spent to the address before, then it will try to build input sets that avoid spending them-- so it will either try to spend them together or not, and you can set it to a more strict criteria where it will never reuse an address unless you give an override. Someone can force a payment to an old address you have used before. If you are a regular honest sender, then you use the new address the recipient has told you to use. This is forced address reuse. Dusting is things like dust attacks, but it's sort of not always correct to call it that.
+
+Pay-to-taproot P2TR I think people have heard about. You can use P2TR in Bitcoin Core already. I think it will take a while for the ecosystem to catch up and be able to send to it. I have a section later making some arguments why we should all use P2TR.
+
+Automated coin selection is another Bitcoin Core wallet feature. Some wallets have worse coin selection. We're working on it. I think some wallets have pretty good coin selection but in the past we have also seen really bad coin selection that ground the wallet into dust and things like that. There's a lot of room for improvement in a lot of ways.
+
+# Wishlist
+
+Every wallet should do low-r grinding. Signatures in Bitcoin ECDSA have two values (r, s) and s is always in the lower-half of the curve because we have declared high-s signatures to be standard. Thank you to <https://transactionfee.info> for this chart. Why would people repeat until they get a low-r signature? In the signature encoding scheme, DER encoding, it adds an extra byte if you are in the upper half of the curve. So you might end up with a 33 byte signature instead of a 32 byte signature, which is another fingerprint. If you know that Bitcoin Core doesn't generate 33 byte signatures, then you know that the transaction was signed by someone not using Bitcoin Core if it is a 33 byte signature. Right now it might be more of a fingerprint that Bitcoin Core and Electrum have low-r signatures, but if everyone does it, then maybe not as much. Also doesn't matter as much with taproot signatures and all the Schnorr signatures are the same size.
+
+# Anti-fee sniping
+
+In the far far future, when the block subsidy has receded to a level where it doesn't really pay for miners, then miners will rely on transaction fees for their revenue. Right after finding a block, there might not be many transactions waiting. It may be more opportune to attack the previous block, rebuild it, remine it, include some of the waiting transactions plus the previous juiciest transactions, and try to get a second block to reorg the other one. In Bitcoin Core, we lock our transactions into the next block in 99% of the cases otherwise we use a lock of up to 100 before so that if people build transactions offline they can have a little noise to hide it. The transactions built by Bitcoin Core will only be available in the next block, and they will reduce the reasons to do chaintip attacks. Please lock your transactions to the next block. We just do a block-height-based timelock, and we lock it to the current height which means you can broadcast it right now but can only be included in the next block.
+
+Also, it's another fingerprint from Bitcoin Core wallet: you would look for a transaction with only low-r signatures, and also with a blockheight locktime locked to the block it was included in. Then this might give you a bound on how many Bitcoin Core transactions are out there, maybe.
+
+# Address reuse
+
+53% of addresses are reused. Why? Every time you do it, it's completely obvious that it's the same owner of the funds is involved. A lot of it is exchanges. The pools can only pay out to a single address, and that's common across the mining pools. Mining pools store the address to make payouts to that. To improve that, one thing to do is have a wallet descriptor from the user where the service always generates a new address from this wallet descriptor. The infrastructure or the service has to make that update first, of course. They are not necessarily financially incentivized to do that, though..
+
+Don't reuse addresses. If you build a new wallet or work on a wallet, it would be great if you kept in mind that addresses should really be named invoice identifiers and they should only be used once. You should design your wallet flows that put the user in a position that he wants to use a new address every single time they give it up, or even if they do interact with the same counterparty multiple times.
+
+# Taproot is good for ya
+
+There are three good reasons why you should use pay-to-taproot P2TR. Taproot has been active on the network since November. Currently we see about 1000 outputs/day whic his not that much because we have 700,000 outputs created per day. I'll make three arguments.
+
+Privacy: If there are more outputs that go to P2TR outputs, they all look the same whether they are using Musig or multisig or later reveal some leafscripts hidden in it and reveal more complex spending conditions. Multisig and single sig will be indistinguishable. Some of them might reveal that they are multisig later when they spend and reveal a leafscript.
+
+You get for free a way to hide a recovery options or have a path for your heirs in each of your outputs. You could have a tapleaf where you have a 3-of-5 multisig with your five heirs, and you put the wallet descriptor in your will, and later they have the keys already maybe and maybe then they can find all the UTXOs with that. You have it hidden in your P2TR output, and meanwhile you're using single key path spends all along. You don't have to re-spend everything back to a special address so that they later have access, no you can just have it hidden in there for free and carry it along. I think other cool things will be developed.
+
+As more of us use P2TR, nobody will be able to tell which ones have these hidden nifty backup recovery scripts or other things.
+
+I often hear native segwit single sig P2WPKH version 0 is slightly smaller in the roundtrip than P2TR.  I think it's 68 vB + 31VB vs P2TR being 57.5 vB + 43.vB. Why would you still want to do P2TR? Well, as the receiver, the sender pays for the output and the receiver pays for the input. The input on P2TR is smaller. Senders are already okay spending to a P2WPKH address, so therefore they should alright be to spend to P2TR addresses. But I pay later less. From a user perspective, you want people to spend to your P2TR address so that you can save later, and this will create an economic incentive for people to want to have P2TR addresses.
+
+Q: If people use multisig today, will it be compatible with FROST later?
+
+A: I know one service that has rolled out latent multisig already in their keypath with Musig. They are currently only allowing the leafscript though, because Musig wasn't standardized when they rolled it out. They already spend all their utxos or at least all their P2TR utxos so that they can later do Musig. If you know already what it will look like, you can build it in already. I'm not on up-to-date on the latest with FROST. I think the spec might be done? Tim Ruffing has another proposal called ROAST to do it more practically.
+
+# Simulation
+
+I don't want to have a single piece of bitcoin, because if I spend it then I tell my counterparty how much I have and all my money is in flight with my changeoutput. So we don't want that either. We want different output types and so forth. There's a very high dimensional space of things that wallets can behave like and do. How do you convince yourself that what we are doing is improving the overall situation?
+
+The simulation that achow101 is working on is a simulation setup where it spins up two nodes, one is the tested wallet and the other is the world node. For the deposits, the world node sends to the tested wallet and then the tested wallet builds the transactions we're actually interested in. We can feed the simulator a sequence of amounts which are just the payments, negative going out and positive being deposits, and we zip that with fee rates, so we can have different fee rate scenarios like where block demand evaporates instantly, or gradual exponential decay, or a situation where for 6 months there is a backlog.
+
+Recently another contributor also made a change that we can send to different output types, we can simulate the transition of a wallet all the way from legacy to P2TR or from segwit to P2TR.
+
+We can run simulations to convince ourselves that the costs go down, UTXO pool didn't explode to unbearable numbers, and so on. We have been using the tracepoints that timo introduced into Bitcoin Core to gleam what coin selection algorithms are used in the real world and the exact details there.
+
+An example of where that came in handy is PR 24752 which came out of Circ telling me that branch-and-bound changed this window... okay, I have to explain this a little more. There's one algorithm in Bitcoin Core where we try to explicitly find an input set that will not require change. If you have lots of pieces of bitcoin, you might be able to combine them in a way such that you get the exact amount you need to send your transaction without creating a change output. This algorithm searches the whole combination space in an efficient manner to try and see if there is such a combination. Since you would hardly ever get that correct to the Satoshi, we allow a few satoshis excess in order to say well, the excess of a few sats is less than the cost of making a new change output. It would be more efficient to just not create a change output and increase the sats. Circ told me last year that the window in which we accept a change set is too small, and we simulated it. There are three algorithms right now: knapsack, single random draw, and branch-and-bound. The baseline is here on the left in my chart. In our simulations of the baseline behavior, we had somewhere between 40 and 50% of changeless transactions for our scenario. Single random draw over the course of 5,005 payments we did was somewhere between lower 30%. Knapsack which is the horrible horrible coin selection that was in Bitcoin Core since 2011 was not being used all that much, it's like 20%. What do you think happens if you increase the size in which you accept BNB solutions, you would expect more BNB solutions right? But instead this yellow curve here is just above 30% now. We actually got a lot more single random draw solutions which went to over 45%, and Knapsack increased to almost 25% which was not what we were expecting. We were instead expecting get more BNB solutions, avoid change and save cost more often, but we did have a completely different outcome. This is the sort of thing where simulating a complex system where later iterations depend on previous outcomes... well, now we have a simulation framework to check if we are actually improving things.
+
+We have a few nice sets of data, but one thing that I would really like to have... well, we have a few merchant donations where people have their data and they want Bitcoin Core to work better for our use case, and then we simulate for that data. But what we don't have is a representative data source for a power user, like someone who lives on bitcoin or whatever. Just someone who does a lot of bitcoin transactions and gives us a sequence of amounts and fee rates, so that we can play it through from the perspective of that use case. We have a script in Bitcoin Core that allows someone to dump their payment sequences and it will fuzzify it by a few percents and it will fuzzify the fee rates; we don't collect the address. They generate it on their end, and then they can give us those two sequences. That's the other thing, we have fee rate sequences and payment sequences but we don't have the combination of the two which would be super interesting. If we can see how and when they were actually crafting their urgent or not-so-urgent transactions, that would be a lot more accurate than our synthetic data right now. Somebody that has at least a few hundred payments in their Bitcoin Core wallet. If you happen to know someone like that, a friend or something, perhaps approach them there.
+
+# UTXO management
+
+This is a little bit of a pet project of mine. I've been working on it for a few years, and recently returned to it in Bitcoin Core. Coming back to that transaction view I showed you early on with the 860 inputs at 46 sat/vbyte, well achow101 and I checked out the v0.19 codebase again to look back and see in 2020 and we were confused at the change output here because the change output has 8051 sats, and the minimum change in Bitcoin Core is 1 million sats. So if it was optimizing for the smallest oversheet of the minchange, then how did it come out to be 8000 sats which is significantly less than 1 million sats? We looked at this and figured it must have had two iterations, and this is ancient software that we have long since improved. It didn't use the effective values of inputs, but after it picked an input set it would have to account for the fees for inputs. The effective value of an input is the value of an input reduced where it pays for itself at a certain fee rate. Once you pick the input, it has paid for itself already. Bitcoin Core didn't do that back then. It probably picked 600 or so inputs, and targeted 1 million change, and that change was not enough to pay for the fees, so it had to go again and increase the target by the amount of fees it had to pay for the 600 or something inputs it picked in the first round, so the target was now increased. 600 * 105 vbytes or something, and then it did it again, and it overshot just enough to be able to pay for all the fees and there were 8000 sats leftover after it paid for the fees. But, yeah, we should be able to do better than this. Use effective values when you're doing coin selection.
+
+# Knapsack is crap
+
+Knapsack optimizes for the smallest change, and not for the best outcome for the user. First we fixed this by using branch-and-bound where you look for changeless solutions. But then sometimes there's no changeless solution, and we would sitll fall back to Knapsack. Then we introduced something called the waste metric to have multiple algorithms create input sets and then pick the most opportune from them. The step that I am working on right now is to get rid of knapsack and put some better algorithms in there so that hopefully this would never happen.
+
+# Waste metric
+
+Our idea is that if I spend some inputs now, is it good or not, in comparison to the long-term situation? If the fee rates are very high right now, then I probably want to use very few inputs. If my wallet is fragmented and the fee rate is low, I might want to use more inputs to compact the funds into fewer UTXOs going forward.
+
+So what the waste score calculates is the weight of the inputs times the current fee rate, minus a hypothetical long-term fee rate. When I first implemented this, we used 10 sats/vbyte. In the long future when fee rates always go up, I would still be able to consolidate at 10 sats/vbyte. This already improved the situation a lot. The excess is when we overshoot a little bit, and in a changeless solution how much do we drop to the fees after paying for the fees? The change of course is that if we don't get a changeless solution, it costs money to create change right now but it would also cost money to spend that additional UTXO later and we account for that in our calculation.
+
+..... they had so few UTXOs that all their real funds were always in-flight, so you want a larger UTXO pool in that case.
+
+# Long-term fee rate estimate
+
+We simulated this in our simulation framework from 1 sat/vbyte to 10 sats/vbyte with a fee rate sequence that kind of looked like the mempool did in the last half year. There was an early peak of fee rate, then some little noise between 10 and 15% maybe. What did we find out from this simulation?
+
+If you have a much lower long-term fee rate estimate, then your UTXO pool is larger because you consolidate it less often. The red is the percentage of transactions that are changeless. If you have a larger UTXO pool, then you will more often find combinations that don't require change. As a reminder, we are always using 10 sats/vbyte in this simulation, so we only have slightly above.... for htat.. but if we had a lower long-term feerate estimate, we might have a 38% changeless rate, at least for our use case.
+
+What else did we see? The algorithms that got used for each feerate hypothetical long-term estimate scenario, drastically changed. At low fee rates, we use BNB more often to find changeless solutions. At high fee rates, we had more knapsack solutions. The total cost that the wallet spent for the 5000 payments was the lowest at 4 sats/vbyte. So this metric is both the fees we spend for the 5000 payments the wallet goes through, and the estimated cost to go through the wallet. At least under the fee rate conditions of the last year or so, we probably more want to be on a long-term fee rate estimation of 5 rather than 10. That intuitively makes sense because if you think about it, right now you can always get a tx through at 1 sat/vbyte and if you have a fragmented wallet and want to consolidate-- and paying up to 10 times that, in order to de-fragment your wallet seems like a pretty large range. We're going to have a pull request soon.
+
+# Change output strategy
+
+If you're spending wrapped wallet inputs, and you send to a legacy output and a wrapped segwit output, which one will be the change? The same input type-- if all the inputs are wrapped segwit and one of your outputs is wrapped segwit and one of them is an older less efficient format, then probably the change output is the more efficient one because if you were spending to yourself you wouldn't want to spend more on spending that utxo later. So we have therefore revealed which one was the change output and which one was the recipient output.
+
+Say we're sending to a legacy output, then we also create a legacy change output but perhaps the next one we use wrapped inputs and also legacy outputs, then that also reveals the parent transaction had change and not a receiver output was which. So what about, instead, what if we try to spend all inputs and outputs separately? So if we have these different types, then why not do coin selection on the same type first? Only a few transactions in a simulation had to mix inputs. A lot of wallets only allow a single output type, and to hide among htem, and only spend a certain type, then we will have less of a fingerprint. Spending multiple types together is a fingerprint.
+
+The funny thing is that in combination with our waste metric, well the weight of the inputs is different for different input types. If we have a set of inputs with the same count, from either of those, then at a high fee rate we will prefer the small UTXOs, or the more modern blockspace efficient UTXOs, and at low fee rates we would prefer the old legacy inefficient ones.
+
+((So does this imply a market for UTXOs of different types?))
+
+
