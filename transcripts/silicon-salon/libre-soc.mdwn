@@ -1,0 +1,275 @@
+# Libre-SOC
+
+Youtube: https://www.youtube.com/watch?v=us061o4PBZs
+
+Transcript: https://libre-soc.org/conferences/siliconsalon2022/
+
+slides: https://ftp.libre-soc.org/siliconsalon2022.pdf
+
+
+* <https://www.blockchaincommons.com/salons/silicon-salon/>
+* <https://ftp.libre-soc.org/siliconsalon2022.pdf>
+* <https://git.libre-soc.org/?p=nmutil.git;a=blob;f=src/nmutil/grev.py;hb=HEAD>
+* <https://libre-soc.org/openpower/isa/bitmanip/>
+* <https://libre-soc.org/openpower/sv/bitmanip/>
+* <https://libre-soc.org/openpower/sv/biginteger/analysis/>
+
+# Talk
+
+(with thanks to Bryan Bishop for the transcript)
+
+* video: <https://www.youtube.com/watch?v=us061o4PBZs>
+* slides: <https://ftp.libre-soc.org/siliconsalon2022.pdf>
+
+* The Libre-SOC Hybrid CPU-VPU-GPU
+* and why Libre/Open is crucial (even in a business context)
+* Practical gotchas for Silicon Transparency
+* Sponsored by NLnet's PET Programme
+* 2022-05-24
+
+## Introduction
+
+This is a quick presentation on the Libre-SOC project and some practical
+gotchas for silicon transparency. Many thanks to Bryan for inviting me
+to do this presentation.
+
+## What is the Libre-SOC project
+
+So what is the Libre-SOC project?
+
+* An entirely libre vector-enhanced Power ISA cmpliant CPU with enough
+legs to tackle supercomputing-class workloads.
+<https://libre-soc.org/openpower/sv/>
+* Working closely with the OpenPOWER Foundation: no rogue custom
+instructions. Both long-term stability and open-ness is key.
+<https://openpowerfoundation.org/groups/isa/>
+* Huge reliance on Python OO and software engineering as applied to
+HDL. Not just traditional verification: unit tests at every level,
+formal correctness proofs as unit tests. "python3 setup.py test" to run
+the tests.
+<https://gitlab.com/nmigen/nmigen>
+<https://uspto.report/TM/88980893>
+* Using libre VLSI tools: coriolis2 (by Sorbonne University), ultimate
+goal is to have the GDS-II Files publicly reproducible
+<http://coriolis.lip6.fr/>
+
+We're developing an entirely libre licensed vector-enhanced Power
+ISA compliant CPU. Basically with enough legs to tackle supercomputing
+workloads. What that means in turn is that we're developing pre-stylized
+vectors ontop of the Power ISA and we're in the process of writing that
+up to present to the OpenPOWER Foundation ISA working group. There will
+be no rogue custom instructions in our project at all, everything will
+get reviewed and be submitted alongside a compliance suite documentation,
+etc. etc.
+
+<https://libre-soc.org/openpower/sv/svp64/>
+
+The history of the Power ISA is that it's 25 years old. It pre-dates
+the RISC-V instruction set by a long way. As does interestingly their
+intention to open up the ISA, which was initiated about 10 years ago
+and one of the key important things there was that IBM wanted to ensure
+that its allocated its patent pool protection correctly to the OpenPOWER
+Foundation to be able to protect members.
+
+I just wanted to get across that the long-term stability and open-ness
+is very important to IBM and to the OpenPOWER Foundation members.
+
+We rely hugely on python object-oriented program. We use mgimen which
+is a trademark HDL that is open-source. We can use the power of python
+object-orientation to create VLSI and HDL. Verilog is an output from
+nmigen, right.
+
+We don't just use traditional verification and development; we have
+unit tests at every single level, because we are trained as software
+engineers. Most hardware engineers have never heard of git, their method
+for doing backups is multiple zip files. We also use formal correctness
+proofs and formal verification as unit tests within our test suite,
+down to the lowest level. Each module you just do "python setup.py test"
+and wait for it to complete once you run that command.
+
+<https://symbiyosys.readthedocs.io/en/latest/>
+
+We are also working closely with Sorbonne University because we want to
+ensure that there is full transparency right down to the silicon. Our
+ultimate goal is to have the GDS-II files be publicly reproducible and
+for people to be able to etch away the actual silicon, take photographs,
+and verify that the actual silicon produced was genuinely what was in
+the GDS-II files, but not for someone to do that under NDA but for it
+to be done by an independent third-party who can be trusted. Or even
+multiple independent trusted third-parties, more to the point.
+
+## What challenges does a crypto-wallet ASIC face?
+
+* Industry-endemic paranoid 5-level-deep NDA chain. Foundry NDAs
+themselves are under NDA. Sharing between teams inside the same company is
+prohibited! Cell libraries: NDA'd. PDKs: NDA'd. HDL designs: NDA'd. ((Also
+SE interfaces are, you guessed it, most commonly NDA'd.))
+* Power-analysis attacks. Timing attacks. EMF attacks. Standards
+verification (FIPS ain't it). Toolchain attacks. Cacheing is out:
+performance will suck.
+* Achieving full transparency - a critical goal - is almost impossible
+to achieve. Ultimately, you need to buy (or build) your own Foundry.
+* Production and development costs (NREs) almost certainly dwarf the
+sales costs.
+
+Right. The challenges that a crypto-wallet ASIC faces is first and
+foremost that there is a massive industry-wide paranoid 5 layer deep NDA
+chain. Even the foundry NDAs which give you access to the PDKs (platform
+development kits) and the cell libraries from the foundry, are, the NDAs
+themselves are under NDA. It's insane. You can have two teams in the
+same company working at the same time, using the same foundry, using the
+same geometry, and they are prohibited contractually from talking with
+each other. It's mentally ill. Your cell libraries are NDA's. The PDK's
+are NDA'd. Third-party HDL: NDA'd. Firmware, too, NDA'd. The firmware
+might reveal too much information about the HDL that it is supposed to
+be associated with, so it's NDA'd. It's completely insane.
+
+Unfortunately, any point in this NDA chain could be an attack vector. It's
+been demonstrated that it only takes about 3,000 gates to implement
+a processor which can if put into the memory bus can compromise the
+entire design. Intel Management Engine was detected and deliberately
+marketed as a management negine, but the thing is, you can activate
+those and program those hidden CPUs, via power fluctuations or by EMF
+so you can broadcast on a high-frequency using I think even Morse code
+or other techniques at a rogue onboard processor, to get it to activate
+and program it. It's mad. The level of attacks that you have to mitigate
+against is just enormous.
+
+Power analysis attacks, I remember going to a conference at ITT Madras a
+few years ago where they showed just the existence of the floating point
+unit was enough to compromise 95% of the secret key for Rhondial, even
+though there were no actual floating point instructions being executed. It
+turned out that it was just that the decode engine had a link to the
+floating point unit. That was enough to detect what instructions on the
+integer side were being used.
+
+<https://www.youtube.com/watch?v=bmsvWvus3mc>
+
+You have timing attacks too. An EMF burst can actually be used to change
+bits inside the ASIC, including registers that have been switched off
+which you would normally expect to prevent writes to certain other areas
+of the ASIC.
+
+<https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-811.pdf>
+
+You then have problems with standards, if there is even a standard at
+all, it might be written incorrectly, or you might have conformance test
+suites for FIPS approval- if those are not written correctly.... you
+also have toolchain attacks, and also cacheing attacks.
+
+Achieving full transparency while critical is almost impossible to
+achieve. Ultimately you need to buy or build your own foundry which is
+the only way to guarantee there are no sidechannel attacks in the foundry.
+
+The other issue that being a small market, your producion and development
+costs or NREs are almost certainly going to dwarf any sales in the
+hardware wallet market.
+
+How can we mitigate some of these issues?
+
+## Pragmatic solutions
+
+* Use formal correctness proofs at every step. Caveat: proofs are only
+as good as the mathematicians that write them!
+* Work with standards bodies (e.g. OpenPOWER Foundation ISA WG) and their
+membres with similar interests. Custom Extension with zero public review
+== bad.
+* Unstable PLLs to detect rogue EMF
+* Develop a product that has a larger total market (a SoC
+(system-on-a-chip))
+* Accept that removing some levels of NDAs will be "out of reach" for now.
+* Use E-Fabless "ChipIgnite" to at least get the NREs down.
+* Ultimately: buy your own foundry, make the PDK and cell library
+public. Only use Libre VLSI tools (limits to around 130 nm at the
+moment). Everything is "early days" in this space.
+
+Firstly, use formal correctness proofs at every step. The caveat here
+is that if the mathematician makes some assumptions particularly if
+the mathematician is the same person who wrote the HDL, then they end
+up proving their incorrect HDL is correct. They 100% guarantee that the
+proof matches the HDL, but the HDL or the technique may be wrong. So one
+mitigation solution here is to have separate people write the proof,
+and for the proof to be verified against other people's designs that
+are independently developed. You need collaboration here, not competition.
+
+Working with standards bodies is extremely important. The OpenPOWER
+Foundation has an external RFC process. We do not have to be a secret
+member and develop everything in private or secret in order to submit
+extensions to the OpenPOWER Foundation. Whereas with RISC-V, you are
+forced to join and sign the commercial confidentiality clauses where
+the entire process from that point on is no different from the ITU. The
+other aspect is that if you develop a custom extension, then it gets
+zero public review, and clearly this is bad.
+
+Another thing is for detection of rogue programs and rogue EMF bursts,
+there is a technique of using an unstable PLL where you can detect the
+phase changes and you deliberately route the PLLs throughout the entire
+ASIC and you monitor the phase changes. If the phase signature over time
+is not what you would expect when running a specific program, then you
+can detect that activity. You can detect firstly external EMF bursts,
+you can detect when people are trying to wiggle the power supply, and
+you can detect if a rogue program is being run at a particular time, in
+real-time. The only problem that you have to watch out for is to make sure
+the PLL the signatures themselves are not used as an attack vector to leak
+information. You have to secure the actual signature mechanism itself.
+
+To solve the market size problem, just develop a product that has a larger
+total market size that solves other problems. Or, you can develop this
+as part of another product, I think. It can be a sides-sales channel
+rather than an isolated product, for example.
+
+At a practical level, we might have to accept that some NDAs can't be
+removed but we should go as far as we can.
+
+I think ChipIgnite I think they charge about $8,000 and you can get maybe
+300 ASICs out of that and you can do the math on that that you can sell a
+thing at. E-fabless have done many of the things for which a foundry or
+NPW would normally charge $50,000 they have got it down to an automated
+process and they knock it off the cost that they charge you. Normally
+it would be $50,000 for running a tool that would be a manual process,
+but e-fabless has completely automated that.
+
+<https://platform.efabless.com/chipignite/>
+<https://fosdem.org/2022/schedule/event/efabless/>
+
+Ultimately, you need to buy your own foundry, make the PDK and Cell
+Library public. Skywater PDK 130nm is now publicly available which is a
+start. Some cell libraries are publicly available, but not every foundry
+is following suite yet. They are interested, but not moving yet.
+
+<https://skywater-pdk.readthedocs.io/en/main/>
+
+Another thing is that you could only use libre VLSI tools because you
+want people to be able to independently verify your GDS-II files, then
+you can't rely on a proprietary toolchain. At the moment you would be
+limited to about 130 nm, which you can use to achieve 700 Mhz which is
+not that bad.
+
+Bottom line is that everything is early days in this space.
+
+## Find us online
+
+<http://libre-soc.org/>
+
+libera.chat IRC: #libre-soc
+
+mailing lists: <http://list.libre-soc.org/>
+
+<http://nlnet.nl/PET>
+
+<https://libre-soc.org/nlnet/#faq>
+
+
+
+
+
+lkcl from libre-soc notes:
+* <https://www.crowdsupply.com/design-shift/orwl> an example of tamper resistant hardware
+ note from allen "without triggering an autodestruct" unless you heal the lines with beam-induced deposition
+* idea: SE variant of Coherent Processor (OpenCAPI) <https://libre-soc.org/openpower/sv/SimpleV_rationale/>
+* idea: Open FPGA with SE. use ChipIgnite. look up efabless mini FPGA which is too small but could be expanded. OpenFPGA. <https://www.cnx-software.com/2022/02/08/open-source-fpga-asic-efabless-chipignite/>
+* idea: use Certification Marks to solve the standards creep problem
+* Coherent Processor concept, no cache etc but the same ISA as the main CPU, execution is pushed to the SE over OpenCAPI managed by the main processor. solves the problem of-
+
+
+
