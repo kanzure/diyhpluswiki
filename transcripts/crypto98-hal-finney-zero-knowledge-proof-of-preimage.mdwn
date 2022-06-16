@@ -1,0 +1,69 @@
+A zero-knowledge proof of possession of a pre-image of a SHA-1 hash
+
+1998-08-26
+
+video: <https://drive.google.com/file/d/0BxSJdYnjz8zdVG9qR0xiX191V28/view?resourcekey=0-FVdOIm-GOYp00LljDZkc0Q>
+
+<https://crypto.stackexchange.com/questions/1767/proving-knowledge-of-a-preimage-of-a-hash-without-disclosing-it>
+
+We will next hear from Hal Finney.
+
+# Introduction
+
+I want to prove to you that I know a message that hashes to a given hash value using the SHA-1 hash. I don't want to reveal anything about the message to you. It's a zero-knowledge proof, and I've written a program to do this that I'll tell you about.
+
+# Model
+
+Here's the basic model that we have. Peggy the prover knows a message m. She sends a commitment to the message over to Victor the verifier, which locks her into the message without revealing any information aobut the message to Victor.
+
+What we're going to do, Peggy will calculate the SHA-1 hash on this message. Victor will start with the message commitment and he will calculate simultaneously with Peggy, a commitment to the SHA-1 hash. Peggy will help him do this as they perform the calculation together, but of course again without revealing any information about the message.
+
+At the end, Peggy has the hash and Victor has the commitment to the hash. Peggy will open the commitment, and he will verify that it matches what he calculated. That's how he will know that she knows a message and it hashes to this value.
+
+# Motivation
+
+The motivation for doing this... lots of the presentations that we hear about will say this particular protocol could of course be done with general-purpose zero-knowledge and perhaps multi-party computations, but those techniques are inefficient or impractical. I wanted to find out just how inefficient or impractical they really are.
+
+I picked SHA-1 because obviously there won't be an elegant zero-knowledge proof of a SHA-1 hash, the whole algorithm is designed to be complex irreversible. So it's meant to be a benchmark for zero-knowledge proof systems that can handle problems like this.
+
+# ZK proof system
+
+The proof system that I'm using is one by Cramer and Ivan Damgard. They presented it this Thursday at this conference. "Zero-knowledge proofs for finite field arithmetic". It's very efficient and quite flexible.
+
+I've implemented two of the generators they described in their paper, one which is suitable for zero-knowledge arguments where the prover's privacy is protected unconditionally, and one for zero-knowledge proofs where the prover is unconditionally bound, depending on which model you're using.
+
+The nice thing about their system is that you can either do commitments to values up to the size of the group order in these discrete log systems, or you can do bit commitments which are just value commitments restricted to this range. I make use of that quite a bit in my program.
+
+Another nice thing about it is that allows pre-computation of the commitments. The prover and the verifier can work together and calculate a pool of bit commitments ahead of time, which is relatively expensive, and once they have done that, they can go through and perform the protocol in a relatively short amount of time which you will see in my results.
+
+# SHA-1
+
+Just a brief description of what SHA-1 looks like. I'm not going to describe the whole function, but I want to give you an idea of what operations are involved in it that we have to simulate.
+
+The message in the case I'm doing here, the message is known to fit into just one SHA-1 buffer. So there's that amount of information leaked about it, but it doesn't ... the actual length of it.
+
+The message is padded in this 512-bit buffer which is then treated as 16 words. The rest of this w array is filled up with some 80 word arrays of 32 bit words, using each of these entries is the result of 4 XORs of earlier entries in the array and they rotate. This creates the w array which is where the input comes from.
+
+Then the actual SHA compression function works like this: we have 5 32-bit words which hold the state. These get processed, the main thing that happens is this big 5-way addition where 5 values are brought together in an arithmetic sum here, modulo 2^32 and then we bring in a value from our w array and there's a ... constant... and then there's a function F which takes 3 of the words and it's either selection, parity, or the majority function. Then these are done bit-wise arithmetic, whereas this again is modulo 2^32 and so that's why it's helpful in the Cramar-Damgard system that you can do both kinds of calculations.
+
+# The plan
+
+So the plan is that we will transform the program. Instead of having our variables be 32-bit variables, there are arrays of bit commitments with 32 entries. So each variable we saw there is now an array. It's still a single variable though. It's all written in C.
+
+When we need to, then we will translate those to the value commitments.
+
+What we end up doing is that we will have parallel execution. The prover is executing the code, the verifier is executing almost the same code, and they work together as I mentioned earlier.
+
+# Implementation
+
+What I have is a library of the primitive operations of these bit commitment arrays. We have boolean and arithmetic operations. So you translate the original program which has straightforward arithmetic and you can substitute for those function calls into the library to perform the operations that way.  This is all done using cryptolib which has IO operations on large integers so it was really convenient.
+
+I'll show you a sample of the code so that you can see the form that it is used in the zero-knowledge proof, and the original form and see it side-by-side and see what kinds of transformations have to be done.
+
+Originally, here's a fragment of the compression function in SHA-1. Where's where we're doing the F function, here are the four types that are used, and here's the big add that I showed where there are 5 values coming together and being added.
+
+The corresponding code over here on the right, once we have converted it to work with the zero-knowledge proof, each of those operations have become a function call. Here's the operand add, and it's a function that adds the 5 values, so that's the kind of substitution that you have to do.
+
+# Performance
+
+So the real question then is how long does this take and how long does it take to execute? The pre-computation is relatively costly, where we setup a pool of bit commitments between the two sides. For the case of a SHA-1 argument where the prover's privacy is protected, it takes 40 minutes to calculate that on my machine whic his a 200 MHz pentium processor, and 6 megabytes of data is exchanged. Once you get to the protocol, it takes about 100 seconds and only 22 kilobytes. The zero-knowledge proof takes about 2x as many resources.
