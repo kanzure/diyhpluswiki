@@ -1,0 +1,259 @@
+Austin Bitcoin Developers
+
+Socratic Seminar 29
+
+2022-06-16
+
+<https://www.meetup.com/Austin-Bitcoin-Developers/events/285215002>
+
+<https://austinbitdevs.com/2022-06-16-socratic-seminar-29>
+
+This is the bear market edition of Socratic Seminar, so move up and get cozy. The price is down $20,000 and you're here amongst friends. We had a pretty eventful last two weeks with bitcoin++ conference and hackathon which Lisa hosted which was a huge success. How many of you attended the conference? Wow. It was impressive. There were 130-140 people there, multiple tracks, a two-day hackathon, which I won but no big deal.
+
+It's tradition of the Unchained offices to take a survey. Who here is first time attending Austin bitdevs? Wow. Who is the first time person doing socratic seminar or bitdevs at all anywhere? Welcomes.
+
+((rules ommitted))
+
+The Austin bitcoin telegram group has 400 members now. If you're just looking to hang out or other events, it's a good place to check. Even in the bear market, there's a lot of companies hiring so head over to bitcoiner jobs.
+
+When the meetup isn't happening, Bitcoin Commons is a co-working space and it's filling up with 10 and more people. Trezor has announced that they will sponsor two developers to have a co-working seat here, which is a few hundred bucks a month. It's on our website or on the meetup page. This is one of the things on there, just fill out this survey and it will take a few minutes and you might get a free seat at Bitcoin Commons because Trezor is a sponsor. Thank you to Trezor for that.
+
+# Announcements
+
+# Silicon Salon #1
+
+<https://www.siliconsalon.info/>
+
+<https://www.siliconsalon.info/presentations/>
+
+# bitcoin++ hackathon
+
+Next we will go through a few hackathon projects. Here are a few of the projects that won prizes at the hackathon. We did our first hackathon. A few years ago doing these meetups we met up at a library and did a hackday and that was fun. Another one we did was 3 months ago and maybe half the room was full, and there were 9 or 10 impressive projects. But this time, all the tables in this room were occupied and there were 18 projects. It was almost too big for this space. Every project was interesting and every team delivered something at the end, which was kind of cool becaues most hackathons have low quality output.
+
+## lnuptime
+
+lnuptime: It's a pretty basic app. We won the Voltage prize. We have an lnd node running on Voltage. When you sign up, our node will connect to your node and then every 5 minutes or so we will ping all the nodes that signed up and if any are disconnected we send you an email alert. We also send you an email alert when you get it back online. It's a pretty simple app that seems to work considering the hackathon spaghetti code.
+
+Q: Were there any challenges that you encountered or tool improvements that would make things like this better or more resilient?
+
+I was pretty impressed with how easy it was with Voltage. I'm mostly a frontend developer so I haven't done much lightning or bitcoin stuff. The LND REST API through Voltage was pretty easy to setup. It's up, it works, and it's a free service.
+
+<https://lnuptime.com>
+
+## pLN
+
+pLN: We worked on pLN for the privacy lightning network wallet. The whole idea is basically there's a lot of privacy-enhancing features in lightning, but there's also a lot of ways where it is not private or the ways people use it is not private. So we came up with a way to do an application that is a flutter frontend for desktops and mobile wallets and things like that. We're using Sensei which is a LDK-based lightning node. Our first project or proof-of-concept of how to create a private lightning wallet was to do a very basic where every time you open a channel, it spins up a whole new lightning node each time. With Sensei, you can spin up nodes very fast because it all shares internal state, instead of setting up a lnd node, c-lightning node, they all get heavyweight. We were able to spin up a bunch of nodes on the backend each time a channel open happened. It's just open channels right now and not payments, but we don't want users to have to think about all the footguns when it comes to privacy so ew're trying to build a lightning wallet that focuses on privacy features.
+
+You also posted a mailing list post on lightning-dev. The update is that private channels aren't private and there's a way to spam the network to figure out where all the unannounced channels are, and what amounts and when it was closed or when it closes later. With a few days of testing, I was able to find 10 BTC of locked bitcoin worth of channels locked in unannounced channels that are otherwise private.
+
+Q: What steps were required to do that probing?
+
+It's really just opening up a channel and from there you're able to send probes throughout the lightning network for free, it doesn't cost anything and it's sort of a spam vector. Every channel has a UTXO that backs it. The channel ID is based on that UTXO so there's some number deterministic from that channel based on that UTXO like where in the block it was mined and at what blockheight, things like that. I scanned the bitcoin network for every unspent P2WSH transaction which could be a lightning channel open, and then I used those numbers to guess channel IDs and if I was able to guess it then I got a certain error response from the lightn[ing network. There's some fundamental issues with probing and error codes on lightning, and interesting discussions about how to fix these things but it's kind of a problem.
+
+Q: How is it free, don't you have to pay to route to that?
+
+Successful payments you pay for. But you can intentionally make it fail, and then it's free. You make a hash that is not known by anyone. When you create an invoice, there's a preimage that goes with that and the redeemer can use that but nobody else can use it. But if nobody knows the preimage, then nobody can redeem it. So you can make intentionally fake payments that will fail and you don't pay a dime for them.
+
+Q: Are there any viable paths towards solutions for this that either you're aware or being proposed?
+
+There's short channel ID aliases which helps on unannounced channels problem. LDK is launching their implementation, and I think lnd and c-lightning is working on their version. It makes a short number for these private unnanounced channels and you can't reasonably guess those short channel IDs, which helps a lot, but probing in general is a big problem and it's accepted as fact. It's nice to probe and figure out the paths that will work and tell if your payment is going to work, but at the same time it's kind of a spam vector. Some people talk about pre-payments, paying for failed payments, I don't think anyone likes some of these solutions fully that are out there but it's currently an unsolved problem too.
+
+There's obviously a market for deanonymization, right. So at least having some sort of price. It's crazy that we're able to do this for free.
+
+Q: If you send spam through my node, please pre-pay. Thank you.
+
+A: Okay, I will.
+
+Q: So you were sending a ton of traffic to certain nodes? So you just find a node, and just barrage it with messages. Did you notice anything during that?
+
+At about 1 million or so probes, the channeldb in lnd would be like 30 gigabytes. You couldn't compact it if you didn't have the double the space on your node. If you only have 10 GB free, you can't compact your 30 GB channeldb because it wants another 30 GB free. There's supposed to be a fix for that.
+
+Q: That sounds like spam protection, to me.
+
+Well there's supposed to be a fix, but it didn't work for me, and it didn't work when your channeldb is already 30 GB. Alex Bosworth was telling me "don't do that" but I tried anyway and it worked and I was able to get my channeldb to 100 megabytes.
+
+Q: One thing that I thought was cool about the hackathon project was that, in order to, because you have a node that only has features that don't ruin your privacy. So you can't receive. No receiving.
+
+A: Receiving online is not very private, so we opted-out of that for now. There are some protocol upgrades in the pipeline to make that better.
+
+## Translnd
+
+My project was translnd, basically the idea is to let you change your lightning pubkey for your invoices. It's about getting more privacy and it's a little bit of a joke. There are still some correlations for your actual node in the route. It's a step in the right direction. It relies on the node under it, and that one has the 430 HTLCs or something. The second to last path pretends like there's another one behind it, but there's nobody that can see it.
+
+Q: It would be cool if you can increase your HTLC slots by creating a bunch of virtual nodes on top of your real one.
+
+A: Well, you can have like 10 lnds with one virtual thing behind it so that you can 10x your capacity that way.
+
+Q: Could you use this to have an accounting system within lightning? If you can essentially change the public keys that are associated with the invoices, can you have public keys represent certain accounts in a node?
+
+A: Yeah, I guess, you could say pubkey A is like payments to Walmart and pubkey B is for payments to Target. Yeah, that would make sense. Apparently that's how Sphinx does it.
+
+Q: If this was a layer on top of the last one, could this detect spam and then turn it off in some way?
+
+A: Not really, because you'd get all these things and you would reject them because you don't have the preimage to settle it but you can't stop it from coming to your node initially. There's no barrier for that. They are able to breach the walls, but you can kill them once they get there but they will keep coming through the walls.
+
+## Simpmint
+
+My project was with a visitor from Germany and a few others. A little context. We have had a lot of in-the-weeds discussions about granular changes to bitcoin script system to add more functionality like covenants. That's been great to see more of that, but I think the other extreme is sort of like more of a discussion about how you can improve how we write our little contracts in bitcoin, basically a bitcoin 2.0 exactly.
+
+That's kind of what Simplicity offers. Simplicity is like an 8 year old research project from Blockstream made by Russell O'Connor, a real galaxy brain, trying to think about from first principles what's the best way to get more contractability in bitcoin so that the contracts are terminating and are easier to prove and verify the behavior of.
+
+For our hackathon project, we tried to combine minimint which is a little framework for building federations. We've talked about the e-cash token feature of minimint, the Chaumian mint, but I think you can do more with this idea. One idea was to put Simplicity into it. In 2 days, we got a very simple Simplicity program working which was pretty cool. Our program checks a sha256 hash, so you can lock your funds behind a sha256 hash and if you give it a hash then you get the money out. It's not useful for anything, but it was fun to get those things connected.
+
+One way to think about the minimint stuff is that it's kind of like a localized sidechain where you have a bunch of people that have decided they would trust this one federation to execute transactions however they want. They can be thought of as a scalability technology because if we trust them then we don't need to wait for blocks to confirm. If you have arbitrary conditions for confirmation, then you can have that condition also be a Simplicity contract. You can do this without deploying Simplicity with a soft-fork but just do it localized to these federated e-cash mints.
+
+The promise is that you get a few people to run this program and it spawns this minimint network. Any conceivable sort of transaction can be proposed here. As long as all these people running the federation agree on what the output is, it marches on. The history is discarded, actually, so it's not like a blockchain. Only the current state is preserved. Liquid on Bitcoin has a bunch of technical debt based on that, and minimint is a simple rust implementation. It's like a custodial thing, which has drawbacks but there's some positives. It's trust-explicit; you trust these federation members, and at a local level in local communities this could work well. This is how some societies work, it's how the US used to work and it doesn't work that way anymore which I think is a tragedy. In scenarios where you can be explicit about who you trust and why, then there could be benefits for this.
+
+This project itself was about understanding Simplicity and getting it deployed in an application. Andrew says they will probably deploy it on Liquid by end of the year. So they are working on it.
+
+I think deploying on Liquid by end of the year is feasible. Right now I'm working on a rust library which we used for minisimp which was our project name. I will work closely with the others to follow through with this idea. Meanwhile, Russell O'Connor will work on the Liquid integration with the Liquid guys.
+
+Q: You mentioned you might be creating some educational materials around Simplicity? What are your plans around that and how people can help?
+
+A: The way Simplicity is explained is kind of complicated, but it's actually quite simple and this is because of all the math and terms.
+
+When I was trying to figure out how it would work, there's one pdf on github which is a tech report and it starts with 30 pages of type theory. 80% of that is discarded later, too. Don't think of it as necessary. I'm working on a booklet to distill it to its essence and try to produce a 10-12 page document that will be on github. I'll try to announce this to the telegram group and people can share it with others. You can help by reading it, giving feedback. That would be highly appreciated. This is the plan to really show practical examples of how Simplicity can be used, like for covenants and pay-to-pubkey, and others. This way we can make it tangible and show that it is actually indeed Simple.
+
+# Batch verification of Schnorr signatures
+
+.... the reason for this transition away from CHECKMULTISIG is for batch verification in Schnorr, where you can say here's 10 signatures let's verify it all in one go. OP\_CHECKMULTISIG like we had before doesn't work like that. Say you have a 2-of-3 multisig, there are 2 signatures with 3 possible keys, so you take the signatures and figure out which ones it passes against which keys but you could have a failure there. In batch verification, you wouldn't know where the failure came from, and if you're checking thousands of signatures that's a problem. With OP\_CHECKSIGADD, you add up how many correct signatures you need which is why we deployed this change. sipa breaks down the optimizations and reason for this in the stackexchange answer.
+
+Q: Is batch verification just doing the linearity and checking only one signature?
+
+A: In verifying signatures, you have elliptic curve addition and elliptic curve multiplication and multiplication is the expensive part that takes CPU time. So we add the signatures together and do the multiplication just once, which saves on CPU time. In ECDSA though, there's a division in there so you can't add them cleanly. This is one of the advantages of Schnorr.
+
+We recently talked about FROST which is a way to do an aggregate key for k-of-n threshold signatures. In the meantime, you could do CHECKSIGADD which is sort of like the workaround.
+
+Q: Is this for tapscript or for segwit v1?
+
+A: It's for tapscript. The segwit v1 has to have the pubkey, the root, and then there's at the root you have the script or the script is in the tree.
+
+Q: It's interesting the upgrade path that we have. With segwit we introduced that we can basically say oh in this version it's not just that we introduce this new opcode basically but we actually disable another one which we weren't able to do before. One of the things with segwit that was cool was that it gave us an upgrade path where we were not just locked into OP\_NOPs for upgrades, and now we have a whole range. Taproot gave us even more; now we have new ones, plus the segwit versions.
+
+In segwit v0 and segwit v1 (taproot), we just copy-pasted the script from original bitcoin but we didn't have to do that. We could have said something else though, and used some other scripting system, but we just did this because these opcodes are already standard. Taproot was just one way we did that with changing out this opcode and it replaced OP\_NOPs with OP\_SUCCESS and a couple other fancy things we added.
+
+# Silent payments
+
+This is one of those bip47-like things. Silent payments are a new proposal where you can basically publish a static address, and then people will tweak the address maybe using information from the UTXO that they are spending. The receiver can scan the blockchain to discover these based on the static addresses. It's kind of like BOLT12 where you can be paid to by multiple people, but in the bitcoin context you're not doing address reuse and it's a little more private.
+
+There's a pull request on Bitcoin Core implementing this. Surprisingly, it has some very positive reception so far which is interesting. So here's a tutorial for how to do it with signet and `-silentpaymentindex` flag. When you create a wallet, you say this is going to use silent payments. I don't think it does scanning, I think you have to manually scan the UTXO set yourself actually, there's something to trigger that. This is not bip47, just silent payments. So you can get a new address, spend to it, you have to scan the UTXO set yourself. It's pretty involved, but it's a small patch to Bitcoin Core that adds a more private way to receive funds.
+
+Q: What advantages does this have over bip47? That's already working and the Samurai guys were up in arms about it.
+
+A: bip47 you have to put OP\_RETURN into the blockchain this hidden key. That's kind of the tradeoff, and then you scan for this OP\_RETURN, this helps with scanning and computation. ...... if every bitcoiner was using bip47, everyone would be making OP\_RETURNs all the time and blowing up the chain space. So silent payments are a little bit more efficient. Also it doesn't require taproot.
+
+There is a bip47 alternative that uses taproot; there's reusable addresses that didn't require... this one you get the tweaked key from the input, and the taproot reusable addresses get a tweaked from the... raw pubkey... script.
+
+pavolrusnak at Trezor was talking about silent payments and proposed this is something they are interested at Trezor but it would need an address format or something. So he details different ways to do this; there's the scanning version of silent payments and non-scanning version. So he proposed some combinations about where to put the keys and stuff; it would be cool if people make it a standard and people actually adopt it.
+
+This is a cool one. There's tutorials now, and hardware wallet manufacturers who are often the last people to adopt interesting new upgrades are already thinking about it.
+
+I don't know how this proposal work, but the way a lot of these things work, for those who are not fully following. When we talk about twteaking and the extra work, in order to get something-- the way that people do reusable addresses now is that you give a static address at the bottom of a website or something which is problematic because anyone watching the blockchain can see what's coming in. You're not just doxxing the person receiving the funds but also the people sending the funds, it can be problematic. The reason why the-- privacy implications of that are also why it's easy to scan. The public keys are on the blockchain, you spend to them, you watch the blockchain and your wallet can see it. So as blocks come in, the wallets detect it. The way that a lot of these protocols work is that you have a protocol that tweaks a key that you do care about and the sender can tweak where they are sending to. They make a cryptographic change underneath and you can figure that out but it's not deterministic. It's not the same way where you know the public keys.
+
+Q: Why don't wallets just start with bip47 and evolve into something that uses less chainspace?
+
+The problem is that there's bip47 which uses chain space, but then other proposals, there's recent stuff but there's no alternative. There's a lot of coordination involved in these. It's kind of like lightning as well. You need both people involved in how this protocol works, you need wallets to speak it, but paying to a bitcoin address is just so easy because it's there and there's no real coordination that is involved and it makes adoption easier. It's all these hurdles whether chainspace or running your own server.
+
+Q: What about stealth addresses?
+
+The old stealth addresses were bip68 and they worked with-- they were similar to this where you have to scan every block that came in, but they had a marker like bip47 where they would create an OP\_RETURN that had a 33-byte pubkey. You didn't have to scan every transaction in every block, just the ones that had an OP\_RETURN and then each wallet would specify in their receive address the thing they would put up on their website they would specify a prefix that you would put into the stealth address. When you tweak their public address to create the stealth address, you had to ensure it contained this prefix. It had a block scanning requirement, but it greatly reduced the amount of transactions you had to scan, and then bip47 reduced that even further so you could immediately identify the transactions on the chain intended for you. bip47 was the middle ground between stealth addresses and silent payments. So there's a lot of block scanning in silent payments.
+
+Q: It sounds like a similar problem to reusable taproot addresses; when more people use them, the more stuff you have to scan.
+
+A: Exactly. It takes harder and harder, and if it's used a lot then raspberry pi's will have trouble scanning all these. The real problem deploying this is that the sending wallet would also need to be aware of it which will be really difficult to get all the wallets to implement all of this, given how long it took for some wallets to get upgraded to be able to send to native segwit for example.
+
+At the Prague event, they were talking about bip47 and they were talking about different small ways to improve it. The first four bytes; they only have a 1 in 43 billion chance of having a collision so that might be worth it, or you can use the segwit annex with a witness discount so it's a little cheaper. It's cool to read it if you want to learn about it.
+
+Q: What if there was an authy feature where it was cycling through let's say what the prefix would be, and then you could see that in real-time and once that authy is used, then nobody else could use that one until it generates the next one.
+
+A: How would you enforce that when I use it, you don't? That might work. I don't know. I think it will be hard because the idea is to put this in a twitter bio and then people can generate addresses from it but not see the other addresses I own. If it's a static thing, they could watch it and calculate all the addresses.
+
+In lightning right now, there's no sense of something static. The idea behind BOLT12 is the way to have a way to do static payments or you can do like Amp as well to do ways... but it's difficult because right now this is where lnurl is such an important player in the ecosystem now because there needs to be a way to find this way to mimic the behavior that we have in bitcoin which is "here's a thing you can send a payment to". In lightning, you say I want to send to you can you give me an invoice?
+
+# rpc: add rpc to get mempool transactions spending specific prevouts (PR 24408)
+
+In lightning, you have these channels and you need to see someone spent it. Before what they were doing was looking at every transaction in the mempool and asking, does this spend my txout? Computationally that's expensive in the worst case. He created an RPC command and he asks was this spent; instead of fetching the entire mempool you can do just this one call and it saves these second layer applications a lot of time.
+
+All the signed but non-broadcasted transactions that your channel counterparties could have; you basically say only Bitcoin Core I'm interested in these, has anyone spent these yet? Instead of getting the entire mempool and filtering it from there.
+
+This is interesting because it's kind of like bip157 or bip158 solved, but on a node level. These are alternatives to bloom filters for light clients. The old way of doing lite clients that degraded privacy such that, the way it worked was that as a lite client you go to  nodes and say here's a group of transactions you might care about and a node will tell you if something relevant about, and that exposes information because the transaction you care about will be in that group. But with golem filters, you can get a filter for every block and you can apply and put your transaction through this filter and see if there was something in the block spending it. This is kind of like a bloom filter for your mempool as an RPC command. Could you just use the existing block filters? Well, the block filters are only for the blocks not the mempool. Hopefully this will make lightning stuff faster.
+
+# Miniscript integration (PR 24147)
+
+Miniscript and descriptors have been a long-standing topic. Pieter Wuille had a library in C++ for miniscript that he had been developing for a couple years, and this was more or less parts of it were merged into Bitcoin Core recently which was pretty cool. I don't know when this was merged, looks like April 5th. It's interesting.
+
+The current descriptor wallet feature is nice for describing certain types of outputs, but it's very limiting. You can do P2PKH, P2PK, multisig, it can do like 4 or 5 things. But the idea here is to add more of miniscript so you can do if-statements and have more flexibility of bitcoin script available within these new descriptor wallets that are becoming a standard in Bitcoin Core.
+
+Now we're seeing some new pull requests like PR 24148 which adds some basic miniscript support to the output descriptors that are exported by the wallet. So we're slowly merging like these research topics, or something that was a research topic into active use which is kind of cool.
+
+This is just in terms of describing a wallet, but it doesn't do any signing or anything. There's another PR 24149 for signing. There's several different BIPs for descriptors for wallets. It's kind of confusing. Someone mentioned to me that Pieter Wuille and Andrew Poelstra actually disagree about what miniscript actually is. I experienced this myself when I was trying to make a descriptor wallet with scripts that Coldcard can sign. Coldcard scans for multisig script lexographically or something, which is super annoying because at the time the descriptor language couldn't express this. So I implemented this in the rust version and got them to support them. It's interesting to see where descriptors started in miniscript but not in descriptors or something. This one started in descriptors, but was then moved into miniscript. To me it's very confusing. There's the miniscript policy language, the compiled version, and then the descriptor language and it's quite complex and it's really just Andrew and Pieter doing it, and Sankit... he was saying, don't trust policy because you can have two different policies but when it gets compiled to miniscript you can trust the miniscript. So it's very confusing. You get a simple description of what your wallet is, which is nice. I think the implementation details are confusing. It's a better user experience than backing up a seed and wondering what it's for.
+
+If you think about seeds in a multisig context... at Unchained, we talk about difficulties around coordinating with hardware wallets and software coordinators as well. One problem is that doing something as simple as calling our wallet inner configuration; a seed is one way to generate a lot of keys and that's kind of your wallet. But when you have multisig, you have coordination between pubkeys that come down from multiple seeds. How do you describe that? Electrum has a configuration file that describes its wallets. Coldcard has a configuration textfile that describes its wallets. Caravan our coordinator from Unchained has another one. So there's all these versions of describing wallets. Descriptors create a language for what addresses this wallet can generate. So you say, okay, is it a witness scripthash? or is it a pay-to-scripthash? Is it sorted multisig? is it unsorted multisig? can you get the xpubs and describe that and generate addresses from there? Those are the wallets people use today, but how can we create a world where we can have wallets that are represented with timelocks? I want to have a wallet that I can generate new addresses that I can use as a kill switch so that if I don't spend this in a year then it becomes reusable or something. We don't have language to describe this quite yet. If you take a wallet configuration file, you should be able to re-generate the addresses that you care about.
+
+PR 24149 has some interesting descriptor details. If you want to get involved in Bitcoin Core, these pull requests look juicy and fun to review.
+
+# Rule 110 in bitcoin script and turing completeness
+
+<https://github.com/supertestnet/rule-110-in-bitcoin-script/blob/main/README.md>
+
+Briefly, this is a pretty triangle and I made it with bitcoin script. There's this rule 110 which is the simplest virtual machine ever discovered probably. You supply the first line of this input and every line in this thing is generated programmatically according to this set of rules up here. There's rules for generating each line. Some programmer found out that rule 110 is itself a programmable computer. I made it in bitcoin script and put a tiny virtual macihne that computes the first 3 lines of that thing into a bitcoin address. You can put up to 4 0's and 1's as input, and you can get up to 8 distinct triangles out of my little program. This is the program I wrote. But yeah it works, there's actually a programmable virtual machine running in a bitcoin address and you can program it to produce triangles. Oh, so we don't need Simplicity after all? Why did you do this? Why?
+
+Well, I found out that bitcoin has some of the boolean operators in it. Many of them were removed a while ago for safety reasons. They kept AND and NOT. But then I figured out you could build the others with just AND and NOT, you can make logic gates, and then circuits and a small computer. So I wanted to show that they didn't remove the unsafe things, they just made them harder.
+
+There was debate during segwit design about if and minimal-if and one of the arguments was that well we can still implement unsafe if with some other opcodes. So on the mailing list there were people saying oh yeah you're still wrong you can still break stuff another way.
+
+Bitcoin is still not Turing complete because it has no loops, but it can do triangles. It's kind of a loop.
+
+# DMix: decentralized mixer for unlinkability
+
+We have been talking about mixers for the last couple years like Samurai and Wasabi. One feature of these is often there's a centralized coordinator. Well one question is, can we have a decentralized coordinator? DMix allows for a decentralized coordinator or no coordinator. They decided to write a big-ass academic paper that is hard to understand unfortunately.
+
+Basically Wasabi and Samurai do a coinjoin where you work collaboratively to create a transaction where you have inputs and outputs and you spend to yourself. But this is a little different. To do a mix, we generate a MuSig shared address and we all deposit into it asynchronously and once we have all deposited then we spend it out from there to ourselves with you can see here the output numbers in the diagram... and then you get your money back. It's kind of weird; they talk about it in the paper, if someone disrupts it and says screw you guys then you're just screwed... They made an implementation of it; it's 10,000 lines of rust code. It's unclear to me if this works or not. I think it will work if everyone participates. It works where everyone does what they say they are going to do; and if they don't do what they said they would, then it seems like this would crash and burn.
+
+Q: What about having backout conditions in the tapscript? Like if someone is holding us hostage for more than 2 weeks then...
+
+A: You could do something like that, but it gets complicated because we're depositing in individually so you might need covenants to get your money out and pre-commit to how much you're depositing. At the beginning of the paper, they say Schnorr signatures aren't in bitcoin yet so they clearly wrote this pre-taproot and don't have those taproot ideas in here yet.
+
+It's cool to see an attempt at making the next generation mixer.
+
+# FROST spec v5
+
+<https://twitter.com/chelseakomlo/status/1531742900299517952>
+
+There's one person in the room that has tried to implement FROST. Do you want to talk about your experience? I don't know what the new spec does so I'll have to get back to you. The questions about how to generate nonces between a group and how to aggregate public keys is a big one that hasn't been decided upon yet. There's a lot of things to work out and hopefully the spec will help implementations be compatible and make FROST deployable.
+
+Taproot is really cool. With FROST itself, there's a lot of decisions that we try to minimize the amount of rounds that this takes. There have been threshold Schnorr multisignatures created in the past but the problem with them is that they took 4 or 5 rounds of communication back and forth between participants. I think FROST is 3 rounds, and each signing round is just a single round of communication so it's quite efficient.
+
+MuSig is 2 rounds of coordination with 1 round for signing? MuSig1 had like 3 rounds which was kind of too much. I think that's right. FROST might be 2 if you do it nicely. I'll have to read the spec again.
+
+# Has bitcoin hard-forked?
+
+<https://blog.lopp.net/has-bitcoin-ever-hard-forked/>
+
+Jameson Lopp wrote up an interesting blog post asking if bitcoin has hard-forked. There's a few different incidents that can be discussed. He also talks about in his blog post about we hard-forked around v0.3.6 where they added these OP\_NOPs. Something like OP\_CHECKLOCKVERIFY, we take the NOPs and make them do something. We use these for soft-forking in new opcodes now. Technically that might have been a hard-fork. On twitter, achow101 was saying if you only used OP\_NOP in p2sh then you might be okay. There might be 4 transactions where they used a NOP that weren't p2sh but it was just like luke-jr trying something out. There might have been an accidental hard-fork possible back when bitcoin was trading at $5.
+
+Another interesting thing about this blog post is that we have several instances in the past where code was introduced and out into the wild where if it had been noticed or someone did something accidental, could have caused a hard-fork. So it's easy for us to laugh about ethereum when they accidentally hard-fork, in another sense we're kind of lucky that it hasn't happened as much with bitcoin. It's a much bigger attack surface area. But the best example of this was the inflation bug which was live in bitcoin for like a year, and not every implementation and not even every version of Bitcoin Core nodes that were deployed would have been vulnerable. Some would have. Lopp is trying to distinguish between code that is hard-forkable and we have had that, versus actual hard-forks and how we have recovered.
+
+We talk often about how we have to be careful about introducing changes like soft-forks. But if you read his post and look at all the incidents where this has happened, it's not just soft-forks that introduce these changes but really any change in Bitcoin Core has an opportunity to introduce not only a soft-fork but also a hard-fork is a possibility.
+
+If a consensus rule change would have been a hard-fork but was never triggered, then was it really a hard-fork?
+
+In rusty's OP\_TX proposal, there was a difference between changing OP\_NOPs vs OP\_SUCCESSes and there's some nuanced difference between them. NOP does nothing so it can't have side-effects; bitcoin is consensus so we have CHECKLOCKTIMEVERIFY meaning it either fails and the whole thing stops or it succeeds and moves on. But we have OP\_ADD where you give it two numbers nad it gives you the solution, and NOP can't do that because it can't do anything afterwards. SUCCESS though says this whole program is correct and the whole program just halts and you got a SUCCESS, no matter what it's correct. So you can have it put things on the stack and do fancy stuff in that kind of opcode.
+
+So if we change an OP\_SUCCESS to OP\_TX, then an upgraded .... old clients would see SUCCESS, and new clients would see OP\_TX and do whatever that opcode says. If a NOP is upgraded, an old client will just do nothing. It will do nothing and continue on the rest of the program. With SUCCESS, old clients will do nothing and stop executing the rest of the program. You can have more things happen in the rest of the program with SUCCESS than you would have been able to with using NOPs to upgrade.
+
+So upgrading NOP is technically safer than upgrading a SUCCESS opcode? I think now it's more nuanced. It's a little nuanced. SUCCESS makes the rest of the program successful regardless of what's after; you keep executing it. With OP\_NOP you just don't do anything and continue on. You could have a potential here for a split where new clients might accept something but old clients might reject.
+
+# jamesob: Add allocator for node based containers (PR 22702)
+
+jamesob noticed a lot of hash map operations, so on a whim he tried an optimized implementation and found a 10% improvement which is kind of a big deal. So there has been a slow back and forth over the last year or two about what should we do with this. One of the core data structures that Bitcoin Core uses is safe to use because it's the standard C++ library and has well-defined behavior but it slows down initial block download a lot. So it's an interesting discussion: should we basically... it's kind of like openssl, we used to use openssl and then we implemented libsecp256k1 ourselves. So should we ditch the C++ hashmap implementation for our own version? It's preferable in a sense that we have more control over it and the standard library is a black box, but the downside is that your responsibility goes up. It better be correct, otherwise it's a massively huge problem and your UTXO set will be invalid. It's an interesting update on this conversation. The work is ongoing. If we ever merge it... it's kind of like a tradeoff between convenience and safety.
+
+There was one hard-fork about databases. If you think about the potential for a fork if there's something wrong in the implementation of something, we went from one database to another and because different nodes were running different databases the versions had a block and the others didn't. So if there's a deviation of how hash maps work, then that could cause an accidental fork. The UTXO set is all in memory because you have to access it a lot, so there's an in-memory database using a standard library thing in C++ so should we change that for performance optimization reasons? YOLO. But it could be a big problem if it doesn't behave as expected. It's hard to tell if it works as expected but you would only be able to tell when you get it out in the wild.
+
+
+
+
+
+
+
+
