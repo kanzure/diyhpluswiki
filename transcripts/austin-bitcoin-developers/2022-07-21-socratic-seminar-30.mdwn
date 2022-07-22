@@ -1,0 +1,281 @@
+Austin Bitcoin Developers
+
+Socratic Seminar 30
+
+2022-07-21
+
+<https://austinbitdevs.com/2022-07-21-socratic-seminar-30>
+
+This is bear market Austin Bitdevs. Anyone who went to the office we had in the last summer there was an air conditioning system but it had only one vent, and couldn't keep up with all the people. Here it's a more comfortable 75 degrees, and we have mood lighting. It doesn't matter what the price is because we're here to talk about the technical aspects of bitcoin, because price doesn't matter and we're all here for the long-term anyway.
+
+We try to keep this technical about the topics over the last month. Don't attribute names to ideas, just talk about ideas basically. Respect people's privacy. No photography. We have a telegram group, t.me/BitcoinAustin. Everything we go through today is on our website.
+
+# Bullrun
+
+We're going to start with a demo from supertestnet on his product he built called Bullrun.
+
+I made a thing called Bullrun which is an Uber knock-off but it uses bitcoin instead of dirty fiat. Why bullrun? It's better than my previous name for it which was Crow. I thought bullrun would be a cool name for going from place to place.
+
+Anyway, it's basically like Uber and you can request a ride. There's a video demo on the github repository. You request a ride, and it uses nostroffs for coordination and communication. The payment is escrowed by Lightning Escrow where I am the CTO of that... the driver gets the bitcoin when he takes you to your destination.
+
+Nostr is easy to build on. I built this in 4 days. Nostr is a very simple wrapper around websockets, which is a way to create a direct connection over the internet between two services or two nodes. Nostr is a set of relays or of servers that run websocket listeners so you can pass a message to a relay who gives it to a recipient or store it in a mailbox format. It's very similar to WebRTC which is a protocol Google came up with for real-time communication between people using Google servers.
+
+You can run the driver app in the comfort of your home, and watching your netflix... when you see a ride request, you can see someone wants to pay me 20,000 sats to take him from here to there. I might accept that ride and then order him an uber, and then pay someone in dollars to pay someone to pick someone up and take him to the destination. Feel free to do that, and stack sats while you're watching The Boyz without KYC.
+
+"Bitcoin after the gig economy" and they have been working on this for a lot longer than I have.
+
+Q: For your next project, could you upgrade Airbnb?
+
+A: I don't think it's possible to get a more sublime experience than Airbnb.
+
+Q: Well they don't take bitcoin, so they need to be upgraded.
+
+A: That's true. I'll do that next.
+
+Q: Can you integrate a way to-- if you take an uber and throw up in the backseat of their car, maybe there can be a financial recourse like if your car gets destroyed?
+
+A: Ouch, a real question. Maybe. Maybe I could have the rider put up extra and then we cancel that payment as Lightning Escrow if there's no vomit in the backseat. Maybe something with fidelity bonds. Pull requests are accepted. Maybe drivers could choose to only take rides between 10pm and 2am that only have insurance deposits pledged or something.
+
+The client is just javascript just running on my github.io site. It's just an open protocol, and you can write your own features.
+
+Part of why I like nostr is that there are 4 different projects that are trying to provide a framework for building decentralized applications anchored to bitcoin without introducing additional blockchains. Coin5 from the Block team... verifier credentials and DIDs and "decentralized web nodes"; the Synonym team with Carvalho, RGB ecosystem, private/public keypairs... then RGB from the LNP/BP association doing somewhat similar things doing decentralized messaging over lightning, and then there's Nostr. Each of these different projects are taking their own approaches to it. The first 3 of them have some sort of corporate or organizational body behind them. Nostr is grassroots. There's a big focus on building and getting products out right now.
+
+The nostr relay that hosts the ride request that Super used for the demo... Dommess is hosting it, and is building a nostr-based twitter client. One thing we are doing is stripping this out and building this with nostr so that we can have automatic interoperability with Dommes using the same relays. The idea that is exciting about this architecture is that it can let bitcoin startups have an interoperable layer for data, but we already have an interop layer for money. When you do it for data, now you can use a Web5 architecture to do a shared orderbook where we can list the goods on our app and vice-versa. Questions, comments, insults.
+
+Nostr is just a wrapper around websockets, and you don't need any Nostr libraries to talk to Nostr. You just need to talk websockets. It's a built-in feature in web browsers. There are easy libraries in javascript and python and it makes it easy to integrate with because it's just talking to websockets.
+
+<https://github.com/Giszmo/Nostr-Voice-Chat>
+
+Nostr just came out with a proof-of-concept for voice chat which gives an idea of how much you can do over this protocol. It's pretty cool. I think one of the things you will see a lot of is that you don't need to do everything on the blockchain. You just need the language of the payments be native in the protocol itself, but the pipes don't necessarily need to be... other smart contracting platforms save everything on the blockchain. Nostr is giving a nice platform to show that if there are payments enabled, but the other stuff can be off-chain even in a nice p2p decentralized way and that's exciting.
+
+# Fedimint
+
+This is just some project that Justin Moon is working on. He's not here, so we can say whatever we want. I'm just kidding... we love Justin. He's traveling the world doing a corporate launch.
+
+Who's familiar with Chaumian mints, minimint, other mints? Chaumian e-cash servers are an idea from the 80s because banks never implemented them. Banks are custodial, but they hate privacy.
+
+Minimint is the fancier version of the e-cash server, where you can do smart contracts or implement Simplicity on top of it or integrate lightning or theoretically integrate ethereum on top of it. It's limitless in what it can do.
+
+Fedimint's homepage says if it's centralized then it's easy to shutdown. If it's easy to shutdown, then they probably will shut it down. Peter Thiel talks about the early days of PayPal and they were looking into how to create their own currency. It was going to be centralized, and therefore wasn't really going to work.
+
+It's nice to have bitcoin as a baselayer. It's like a sidechain but you can have lots of them and you don't need to do anything on the base layer other than locking up bitcoin into a multisig contract. If it's federated, you don't need too much trust and you can have a smart contracting language on top of that. It also helps for scaling. There's still an element of trust but there's always tradeoffs.
+
+Q: Is anyone doing this for tether? It's like a crappy chaumian mint. Why use a blockchain?
+
+BB: (....)
+
+Q: Are the IOUs that you get from the Chaumian mint, are they exchangeable between different mints? The idea would be you have lots of different federated mints. You could, it's signed by their federated key or whatever. In their current implementation, they all speak lightning and you could send over LN. But it's not like bitcoin where you can import into another wallet.
+
+Q: What is the lightning gateway concept with Chaumian mints?
+
+Anyone can run the lightning node. When you want to make or receive a payment, you basically put up a contract and say here is a hash and I will pay for the preimage and the price is the invoice. Lightning payments are just about getting a preimage for the hash. The lightning payment will go through once the receiver has the preimage and gives it to get the final payment. LSPs can be on top of Chaumian mints and all compete to get user's payments.
+
+Q: Are the Chaumian mints selling to each other?
+
+The lightning node is holding real bitcoin and basically those lightning providers on the mint are just swapping real bitcoin for chaumian tokens. They are taking risk there as being a provider so they will probably take a small fee.
+
+Q: If you pay e-cash tokens to this other Chaumian mint, ....
+
+The mints don't know about the lightning payment at all. It's these LSPs on top of the mint that are talking to each other. These LSPs... when you deposit into an exchange, they get real bitcoin and you get your fake custodial bitcoin it's the same thing here just fancy cryptography behind the custodial bitcoin. The LSPs will exchange bitcoin on both sides; one will send BTC and receive e-cash, and the other one will receive BTC and send e-cash.
+
+The design of these lightning channels were originally meant to be high volume and you could imagine a channel open between two exchanges and if you had an account on both exchanges then the exchanges rather than settling on-chain bitcoin transactions could just change the balance of their channel. So maybe it would be similar here. One mint ends up having less bitcoin locked up in their mint once it gets transferred by another mint by the lightning channel, and maybe the other mint then has a little bit more bitcoin.
+
+Q: So it's.... so it's a federated thing.... in the conversations on twitter spaces, could this be taken into a local level, where any club at a local level can setup these mints? is that true?
+
+A: It's like any software. It's open-source and you can run it yourself. I was talking with Justin before his launch and he wants this to be a Galloy competitor where it would be like a community bank and if the federation rugpulls you then you can go break their knees because they live down the street. So yeah, run federations locally and hopefully anyone could run it on Umbrel or something. Federations are basically multisigs; so you can have variations in the sizes of the multisig groups running it. If you were running one of these mints for your family members, maybe it's 3-of-5, but for more complex situations maybe it's 9-of-15 or something.
+
+Q: What is required for a federation member to be available, uptime, etc?
+
+A: I can't believe Justin is not here. We're sitting here answering questions about his project. Liquid has HSMs or something. This uses BLS signatures so any laptop should be able to do that. Maybe a raspbpi could run this. Maybe the biggest challenge would be just wallets speaking this language. If you receive Fedimint e-cash tokens, no software speaks e-cash tokens so that would be the first hurddle. If you are using lightning, you basically already need a full node and I don't imagine it would get much bigger than that. It would be more like being able to understand that and finding the ecosystem and finding communities that can benefit from that. Once you're all in it, if you think about the startup cost... once you're in, the transactions are fast and easy, but getting into lightning can be really challenging. But maybe Bitcoin beach style thing... once you are in, everyone can get in and out pretty easy. Once someone has a wallet, and someone wants to give out their Fedimint tokens, that's fine too, just like earning bitcoin is a good way to get into the bitcoin circular economy.
+
+Q: Since the mint is blind signing, is that a single point of failure?
+
+A: That's a tradeoff. It's less centralized than an exchange but there's still centralization risk and trust risk. There's a privacy promise because they don't know who they are giving their tokens to. You have to trust them to run this and also honor the withdrawal requests later because they are holding the bitcoin. This is why it makes the most sense in semi-trusted communities where you can break people's kneecaps.
+
+Q: If I have e-cash, I have to keep that? What happens if I lose that data?
+
+A: You still have 'private keys' that you have to maintain. It's custodial and you need to still maintain private keys. But you can also have a custodian on top of a custodian and abstract that away if you wanted.
+
+Q: What's the process of setting up the federation? Do you have to bring keys together in person?
+
+A: I think it's similar to setting up a multisig and sharing keys and then you have a shared public key. There might be other things about validating transactions within the mint. If someone wants to do a withdrawal, you need to be online to sign for that at any given point of time.
+
+Q: Are there a couple of points that distinguish this from Liquid? What are the key features that are different? It sounds a lot like Liquid.
+
+A: It's basically a sidechain. That's the easiest way to think about this. Liquid is a federation with a multisig custody. The contract might be a little bit different. Liquid has heartbeat transactions. Blind signatures in Chaumian mints are unique compared to Liquid. The main difference is that Liquid publishes a blockchain, and Fedimint just has a UTXO set that the federation keeps track of. That's the main difference, and you can build different models on top of that. Liquid has bitcoin script with some more opcodes, and in Fedimint they can implement any kind of scripting system. But it's really similar to Liquid. As Justin said, "This is Liquid done right".
+
+Q: This is what altcoins done right looks like. You can give the e-cash to anyone you want, and the redeemer can come back and say hey you gave me some of this and I want it back, it acts like cash.
+
+A: Altcoins suck. Cash is great for privacy. Once the bank gives you cash, they don't know what you are doing with it. The people you're interacting with might. There's this thing in MA called Berksbucks which is a town in MA that issues its own currency. Every business in the town accepts this currency. This is a similar type of system. You go into the town, you give them some dollar and they give you Berksbucks. They trust each other to not inflate it and all that and things you can do with a currency.
+
+Q: What about the anonymity set? What's the expected size of the anonymity set you're hiding with?
+
+BB: UTXO set size for coins of the same denomination. And hopefully everyone is using tor.
+
+Q: Are transactions broadcasted like how blockchains broadcast transactions? How are transactions effected by two parties outside of the initial exchange?
+
+A: There is no network anymore, you just give it to the federation. You just sign it over. You can go to the federation and ask for real bitcoin, or you can just sign it over and check with the federation.
+
+# Validated lightning signer (VLS) broker by Sphinx
+
+<http://sphinx.chat/2022/06/27/a-lightning-nodes-problem-with-hats/>
+
+There are challenges in having lightning be part of business infrastructure. Lightning nodes are basically hot wallets. There's an effort to split out the signing process and have it on a separate device. You could have a device that just does signing, and you can split up your opsec. This is important for companies like Unchained where being able to split up these responsibilities is really important.
+
+Their idea is have your lightning node on your phone. Your keys are on your phone but the uptime doesn't have to be 100% so they can keep an eye on the UTXO set for you and then you just have your keys on the phone. It's still a hot wallet, so don't put all your wealth on there. If you want to take them offline, you could, but you wouldn't be able to route and whatnot.
+
+# X-only pubkeys
+
+<https://github.com/jonasnick/bips/issues/32>
+
+The elliptic curve we use in bitcoin is symmetrical over the x-axis. If you know the x point, there's only two possible y coordinates that it could be on that curve. It's either positive or negative. It's odd-or-even. You could then determine what the y-coordinate is. You don't need both points, though.
+
+For taproot, we said x-only. We don't care about odd or even, and we just say it's always even. Then we say it's always going to be even, so we an get rid of a single byte.
+
+That's basically what we did. If you end up with an odd one, you just have to flip it. It causes a lot of headaches because a lot of software assumes that-- you can do it at the end easily, but a lot of it is about deriving a key off of a derivation path. Right now if you derive a key it expects all of it to be x-only, so you do this flipping half-the-time a bunch. So what if we just do just-in-time x-only flipping? So the normal key derivation the entire process, and at the very end we do the flip.
+
+The important thing is saving a byte on the blockchain; all the other stuff? We shouldn't need the extra complexity there. We have kind of locked ourselves into this for some space savings, and there are ways for us to back out of it by doing the just-in-time version. But there's also an interesting discussion like is this a developer education problem where if we get the word out, we can do it differently? But these are complex problems. Consensus is hard when you have bitcoin and all the systems have to behave similarly.
+
+real-or-random posted "Eh, nobody really anticipated this" and yeah, that's helpful. Was taproot activated too early? Maybe it was because we didn't have this discussion before it was locked in. One of the things highlighting why it was important, and this has been asked of CTV and future soft-fork proposals, then maybe-- it's nice to theoretically talk about what we can do once it's out there. But maybe we should start writing those applications; but how can you get people to build stuff on top of a proposal that is not yet out there? But we also need people to do that so that we can see what the potential challenges are and figure it out. Let's undo taproot and start over.
+
+This is causing a lot of non-adoption... stuff like this is such a headache. One of the challenges in the adoption for taproot is that you need to build tools and if it's really hard to build tools safely... we saw early on right after activation, there basically someone burned some bitcoin and someone found that. It was just an invalid pubkey actually in that case. It's just hard to build these tools and we put this upgrade out without the tooling being ready, and we're finding lots of pitfalls and gotchas.
+
+The MuSig2 library that people are trying to build on to do the multisig dream where it looks like a single sig and all that fancy stuff. But libsecp256k1 which is what everyone uses doesn't have x-only so people are mad and now we have this issue.
+
+It's a byte in the witness so it's not even a single byte. No, it's in the output. Oh, yeah, it's in the output. When taproot activated, people were like yeah we have taproot private lightning now, and well, yeah, we need all this tooling built out like MuSig2. So building and learning is important.
+
+# Half-aggregation of bip340 signatures
+
+<https://blog.blockstream.com/half-aggregation-of-bip-340-signatures/>
+
+One more cryptography item and then we will move on to less complicated stuff. Blockstream put out a blog post and the first formal proposal for half-aggregation of signatures was in 2017.
+
+With taproot, we have the dream of multisig where you have one key and everyone comes together to sign and produce a signature for one key. Well, what if we have a transaction with one signature in it and we had one signature for all 5 multisigs? And then maybe we can do that for the entire block or the entire blockchain. But that's hard to do that.
+
+The first step is a half-aggregated signature. Signatures are made from (r, s) values. One of the things hard about full aggregation is that even if we figure out, the ways we know how to do it right now require coordination. With half-aggregation you don't have to do that signing together at the same time. It's interactive vs non-interactive.
+
+In half-aggregation signatures, (r, s) instead of aggregating it into 64 bytes, it aggregates it into 32 bytes plus n values... it's really cool properties where you can do this non-interactively to make transactions smaller without having access to private keys. This would require a soft-fork. It's great for coinjoin and stuff like that.
+
+They published a bip, bip340, and the spec has some rust code which is kind of unique. They talk about in the blog post that this would have good properties for off-chain protocols which aren't really consensus systems. We could use this in lightning, coinjoin coordinators, maybe use this in Fedimint, it could have real use today if people wanted it to.
+
+Q: Is the main benefit just cheaper transaction cost?
+
+A: Space savings is the primary benefit.
+
+You can get some privacy for coinjoin where now your coinjoins are cheaper than a normal transaction so that improves privacy further. It's also faster to verify. Should be. Maybe? The non-interactivity is... if you have hardware wallets or cold wallets, you only need to get a signature once.
+
+Q: Does this incentive coinjoins in the sense that if you send multiple transactions with one signature then it would be cheaper than....
+
+A: Yes. You will save a ton of space on signatures. It's cheaper than a normal transaction at this point. The coordinator can aggregate the signature for you too, and submit it to the miner. Inputs, locktimes, versions, would also be joined by the coinjoin participants. Might be big for companies that need a justification for using privacy techniques and maybe it's hey just for cost savings not for privacy.
+
+Half-aggregation can take two signatures and turn it into one, so isn't that full aggregation? Well, it turns them into a signature, but not a full one. It aggregates all the s values but not the r values. In a full-aggregation signature, you just have 64 bytes. But here with half-agg, you have one s value and then multiple r values for these signatures. Full aggregation would just be the one 64 byte value. For interactive signature aggregation you could get down to 64 bytes, and there's problems around negating someone's key and stealing their private key or something. Half-aggregation is non-interactive and would result in 32 bytes plus 32 * n bytes... full aggregation is interactive but results in just 64 bytes no matter the end.
+
+The challenge is that you want to do this cross-inputs. With half-aggregation we want to do it across inputs, and potentially across transactions in a block and interactivity is not something you want in those situations. I think we would need a soft-fork for that.
+
+Q: Could custodial exchanges do full aggregation? Or would it be more useful for miners?
+
+A: If you have interactivity as an already requirement like you're doing MuSig or you own all the keys then yeah you should do a full aggregation because you'll get the single signature. But for situations where there are multiple independent hardware wallets involved and we don't want them online at the same time in the same room, then you could do bip340 half-aggregation and do it non-interactively.
+
+You can't put the transaction back into the mempool if one of the UTXOs gets reorged. That's one of the downsides.
+
+# Half-aggregation signatures breaks adaptor signatures
+
+<https://www.gijsvandam.nl/post/why-does-signature-half-aggregation-break-adaptor-signatures/>
+
+Adaptor signatures are waiting for a specific signature to come online, and if it's hidden in a combined aggregated signature then it just gets never seen because it's combined.
+
+In the DLC case, you would see a transaction and verify okay that was a correct payout but you--- say you have the real signature and you can take your adaptor signature to figure out what your tweak was, and if the oracle lied then you could extract it out and prove that they lied. But with half-aggregation you wouldn't have this proof that they lied... so you would just be kinda screwed. DLCs use that, but also PTLCs which we want to use on lightning want to use that, so half-aggregation could break some of that.
+
+Q: What is it about Schnorr that lets us do that versus ECDSA from before?
+
+A: Before Schnorr signatures, we had ECDSA which was invented to be different from Schnorr because of the patent. They put a division sign on each side of the equation, and it breaks linearity. So you can't add fractions easily. So basically with Schnorr you can just add things together. Half-aggregation is pretty simple. You just add together the s values and a random tweak and that's it. It's basically just adding things together. That's what lets us do it.
+
+With ECDSA, you commit to just one coordinate not the entire point. That's different too. With Schnorr, you're committing to the entire point so all the math comes clean and you can sum them all up and aggregation works well.
+
+# TxWithhold smart contracts
+
+<https://thelab31.xyz/blog/txwithhold>
+
+It's not really practical but it's interesting. The idea with TxWithhold is that we want adversarial thinking. This is particularly important for layer 2. This post has.... the idea with TxWithhold is that one of the things that could break bitcoin and assumptions on L2 is that if you can incentivize a transaction not to be mined. Some of the attacks that we know of for lightning are things like pinning attacks: if you can pin a transaction to have a fee that is too low to be bumped in a high-fee environment then your justice transaction won't get mined and an attacker would be successful stealing your bitcoin. There's a few other versions of attacks where attackers can... this is basically still a problem where if you flood the mempool and you basically have bankruns on lightning channels, then you would not be able to get your justice transactions through if someone was trying to cheat. Your attacker wants you to wait out the timelock, and then the attacker would be able to redeem the funds.
+
+TxWithhold is asking, is there a way today that we can incentivize miners to not mine these transactions that might be waiting? What gleb is trying to do in this post, he got funded by BitMex for this research.... basically, he's trying to come up with ways in bitcoin today and maybe with covenants is there a way to make a proof of not mining. One of these basically is this,  you could do a transaction not inclusion oracle, using a DLC you would pay a miner if an oracle can prove that a transaction was not mined. One of the challenges of the solutions he puts up, ideally you're dealing with many blocks, so how do you reward or pay every miner that didn't mine it? So he talks about reward allocation, and pooling withholders. One thing is that you could target known pools, you could add an output to each block for each miner that didn't mine it. So the first miner wouldn't get it if it ends up getting mined later as well....
+
+You can also put an anyonecanspend output there, so that small miners can mine a block and get a reward for not including a transaction. Another question mark was how much of an attack vector is.... you can do this more verbosely in ethereum, which MEV plays around with. He posits whether or not it could be possible to have incentives on another blockchain to inform by oracles and this other blockchain to not do this in bitcoin. I don't think he has an answer for that quite yet. But it's interesting to think about. You could pay a miner or all the miners off-chain they have these transaction boosting pages for public miners to pay them to mine your transaction faster. You could also do the reverse: I'm going to pay you to not mine this transaction. But you would need to get enough miners on that. But you can't prevent cheating... well maybe you could use an escrow service. There are attack vectors involving other chains and layer 2's. If the underlying security assumptions are vulnerable then this undermines the entire layer 2 protocol.
+
+Q: The main attack vector here would be justice transactions or are there other use cases?
+
+A: I think the systemic risk is for lightning here. That's the biggest part of our ecosystem that would be vulnerable to this. But on an individual level, we trust bitcoin because of eventual finality. It would be dangerous if there's something that undermines the guarantee that your transaction will get confirmed. Lightning relies on this eventual guarantee. I trust the channel because if you cheat then I can trust the recourse, but if I can't trust the recourse then lightning doesn't work at all. You can also pay a miner to not include someone else's transaction paying them to not include some other transaction and do this recursively. The end game is that the miners get all the bitcoin. If you want to undermine everything, you could burn a lot of money.
+
+Q: Wouldn't a single miner that specifically selects for best fees, wouldn't that beat this?
+
+A: Yes, unless you're paying more fees to incentivize that miner. There are risks. All of this is game-theoretical and a lot of layer 2 protocols operate on that. If you undermine the game theory, then you can Peter Todd this shit.
+
+# Is key-path only okay in taproot?
+
+<https://bitcoin.stackexchange.com/questions/113989/bip-341-should-key-path-only-p2tr-be-eschewed-altogether>
+
+Taproot is kind of interesting and complex because you have the idea of a key-path spend. You have key-path spend and script path spend. In most situations, you don't have complex script spends you want to do and you just have a normal address with a single pubkey or maybe it's a multisig or MuSig public key and you don't need the script path spend. But in the original BIP, there was a suggestion that you still want to tweak that public key with a filler script path spend. That's the question. Do we want to never have a key-path-only address? Why not purposefully disable the script spend? Why still tweak it?
+
+Pieter Wuille had this nice categorization of three types of ways that you could have a key-path-only spend represented. v1 is a raw taproot output which is just a public key. v2 is a no-script. Basically you just tweak with the public key. Then v3 is you have a tweak of a OP\_FALSE. The suggestion I think in the BIP was the no-script.
+
+One of the reasons for this is that you want to be able to prove... one of the advantages that we have with taproot is being able to hide script paths. Right now today if you have an HTLC for lightning, then you have to reveal the whole script even if it's a cooperative spend. What we get with taproot is that if it's cooperative then we can hide the script and just show the public key and nobody else knows it's tweaked. But the challenge is that sometimes you want to prove that something is not tweakable; you could have hidden off-ramps... you could say, I have this awesome 3-of-3 safe musig one, but in the script path maybe it's hidden and you have a way of spending after 10 blocks with a single public key.
+
+So Pieter Wuille is explaining that one of the things we want to try to have is that we want to prove that the tweak is obvious and something that everyone can agree to. Any comments or questions? Who's going to do a no-tweak P2TR? Alright. Reckless. Cool. Tweak as much as possible, that's really what you want to do. Tweak maximalism here.
+
+# OP\_CHECKSIGADD issue
+
+<https://bitcoin.stackexchange.com/questions/114446/why-do-invalid-signatures-in-op-checksigadd-not-push-to-the-stack>
+
+OP\_CHECKSIGADD is the replacement for OP\_CHECKMULTISIG. It checks the signature and if it adds one to the number if it's correct, and if it's false then it adds 0 but actually it fails the whole script. Pieter Wuille and achow101 gave two different reasons that are interesting. One of them is that it forces you to use the minimal number of bytes on-chain, so if one of the signatures was invalid why even include htat. So just use minimal bytes. Also fast verification and it makes it safer and easier; if you had one invalid signature in there and you tried to do batch signature validation, it would make the whole batch fail and it's hard to find which signature was invalid without checking each one which defeats the batch validation.
+
+An empty byte vector would add 0, not fail the whole thing. That was interesting thing that was added.
+
+# How to reliably determine output types that inputs are spending
+
+<https://twitter.com/murchandamus/status/1549201407747694593?s=20&t=mqKh1ywjauEUOknsaKQ3zQ>
+
+I think he was trying to come up with a parser. So if you just have the input data for a transaction, how would you figure out the type of the output? Is it a segwit P2WPKH, P2SH, P2WSH, etc.... All have a prevout and that looks similar in each one. But there are other ways to tell.
+
+The idea too is that you can't tell from the serialization because you would need hte previous output for that. Segwit has a separate data structure for putting witness data into; scripthash has variable length depending on the screen. Wrapped segwit is this inbetween state between our migration plan from pre-segwit to post-segwit. If you have ever designed a wallet, having to deal with address types and script types is challenging to determine what you're dealing with.
+
+There was another thread asking about signature verification. We don't have an actual standard for signature verification. There was the original signmessage version. After that, we don't have any good standards that are widely deployed. Just verifying that someone is the owner of an address. Peter from Coinkite talked about trying each of the different address formats. bip322 is out and there's no adoption really... you don't need any special implementation.
+
+In bitcoin-s when implementing taproot, we had definite types for every single input type. In taproot, it can be like the same look as a P2WSH so implementing taproot broke that in our library. This witness could be the same as a P2WSH so it broke my type system. The way we fixed that was we optimistically parse the taproot one and then in the actual evaluation we convert it based on what the output type is...
+
+bitcoin-s and taproot: <https://twitter.com/Chris_Stewart_5/status/1547228805554532352?s=20&t=mqOWClcR6n6E9G8v3qMLpg>
+
+Why did you guys write this in scala? Well, that's what Chris picked 7 years ago. Good of a reason as any.
+
+# PR 24836: regtest package relay
+
+<https://github.com/bitcoin/bitcoin/pull/24836>
+
+This is useful for layer 2 protocols as well. This is the transaction fee uncertainty issue at play. Many L2 protocols can be facilitated by broadcasting multiple transactions together. Maybe a child transaction pays for itself and the parent; glozow has been working on some rulesets for package relay of packages of transactions. The PR had an interesting discussion about how to implement this, and luke-jr said put this in normal and have a flag and say fail if you're not in regtest and it's a package otherwise we have this extra code to maintain long-term. So just put it in sendrawtransaction and if it's not regtest then reject it.
+
+# Run gateway as core-lightning plugin (PR 174)
+
+Justin added this to the list and then didn't show up to this meeting. This is a lightning receive into the Fedimint thing. This supports spending into the Fedimint stuff. It's a core-lightning plugin, it's written in rust and core-lightning just added rust for their plugins. I think this is what they were waiting on before their announcement. Any rust fans in the house? If you're a nerd then you can be a fan of things like rust, it's cool.
+
+# Maintainers
+
+glozow recently became a mainter of the Bitcoin Core repository so she has merge access. There's 4 or 5 people with merge access. 5 people. We lost one and we gained on. Who knew that? Okay, a few number of people.
+
+I thought it was interesting because I was reading through the PR and it's not a resounding yes to add glozow... but even jamesob who has been a long-term dev has given a NACK and he had some good points in there. Some other people gave concerns about how 3 of the maintainers are funded by Brink.
+
+One of the arguments made in favor of glozow is that she is knowledgeable about mempool policy that one area of code and that's awesome, but then we have a centralization of knowledge issue and then she is the best person to approve her own work and we don't have a great solution for that. It is worth noting in here that, okay, so who watches the watchmen type of thing. Who is really going to hold her stuff to the highest standard? Part of the answer is we know her and she has done good work, but we have to think adversarially. It's not necessarily a bad decision, but where are the possible risks? Often people conflate risks with maliciousness. Problems don't always come from malicious intent but from complacency. There's no process to make these decisions and these decisions are consequential.
+
+Andrew Chow is the wallet guy and other people have their sections. If she starts merging everything open, then we can fix that, but most likely she won't do that so it's fine.
+
+Pieter Wuille stepped down his maintainership. Same day stepped down as a Bitcoin Core maintainer but he said on twitter he is still going to be a bitcoin developer, just won't be a maintainer anymore and he doesn't need the permissions anymore which he wasn't using lately. So that's why he shutdown. So if we're switching maintainers, in what order should they step down? If someone is giving up a spot, or is the concept of spot even the wrong way to thin kabout it?
+
+# Prevent block index fingerprinting
+
+<https://github.com/bitcoin/bitcoin/pull/24571>
+
+If you send additional getheader messages, then you can fix some of the fingerprinting from initial block download (IBD). So this way you're able to hide the fingerprint and it's yet to be merged but it was an interesting thing; people are finding very tiny fingerprints in Bitcoin Core, like all the ways your node could be identified. The fingerprint is basically, the stale blocks that you're aware of are somewhat unique to your node because of your uptime, availability, nodes you were connected with, if you got blocks that were reorged you might be aware of some or not others or something which on its own doesn't give up a lot of privacy but a lot of deanonymizing methods are based on combining multiple fingerprints together. In the Bitcoin Core PR review club, they were discussing about how if your node is connecting over tor and clearnet then you would have that same fingerprint so an attacker could identify you as that same node so you would be deanonymizing your tor node. But if you're fully routing through tor, you're not leaking too much information. But it's about going into Bitcoin Core and finding these little things, and this is how we tighten things up around the edges for things that could have big impacts.
+
+# Multisig labyrinth guide
+
+<https://github.com/bitcoin/bitcoin/issues/24861>
+
+Basically Sjors has been working on bitcoin wallet stuff specifically on things like how to get hardware wallets into Bitcoin Core. He talks about multisig, miniscript, and all those things. He basically-- basically he lays out the plan or the guide of how to get the dream of what Bitcoin Core wallet can be in his eyes. He talks about how Spectre does some of this stuff and ew could do natively with HWI and MuSig2 and getting all these big things into Bitcoin Core that the wallet doesn't currently support. It's a lot to get into, but if you want to see what the best wallet in the world could look like, this would be a good place to start.
