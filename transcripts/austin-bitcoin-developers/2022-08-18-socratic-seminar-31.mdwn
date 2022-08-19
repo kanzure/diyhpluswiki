@@ -1,0 +1,233 @@
+Austin Bitcoin Developers
+
+Socratic Seminar 31
+
+<https://austinbitdevs.com/2022-08-18-socratic-seminar-31>
+
+# Anti Craig Wright
+
+hodlnoaut is running a donation drive to help pay his legal fees. The lawsuit is defending against Craig Wright for hodlnoaught calling him a fraud. Please help hodlnoaut.
+
+# Tornado Cash
+
+On the topic of going to jail, let's get into the main act: the US Treasury sanctioned a git repository and a smart contract. If you read what they said, it's more that they were sanctioning the service. The first two topics here are ethereum topics. I apologise, but it's interesting. This is a mixer that the US Treasury department has sanctioned. One of the developers was arrested by the Dutch. The Dutch arrested him. Those bastards. Typical.
+
+Q: When you release Lightning Vortex, can you rename it Tornado Cash?
+
+OFAC sanctioned a smart contract which is like an API. That's essentially what happened. That seems to me like huge overreach. But also this is one of those things where-- we talked about centralization risks of ethereum about having a single smart contract on-chain that you can point to and say this is the mixer makes it an easy target. This was assumed.
+
+It seems like the problem was that... it's not that they facilitated anonymous transactions, it's that they didn't make any distinction between things that were obviously money laundering or sending funds to terrorists. There's a few examples here. $96 million of malicious cyber actor funds... there was a hack and money moved through Tornado Cash, which is what I think OFAC is objecting to or saying is a crime. I don't know a lot about this.
+
+They did block the OFAC sanction list on the frontend of Tornado Cash. It's not like they weren't discriminating. At one point, they started discriminating on the frontend but that wasn't enough so they got on the OFAC list. It's not as clear cut as no discrimination was occurring.
+
+Q: The difference between bitcoin UTXO and how ethereum works is that there's...
+
+Ethereum doesn't have coin control basically. So all the money gets intermingled in one account. So you can't just... in bitcoin, if you just dust-- you can't dust a wallet really. You kind of can, but only if the user then goes and combines it with their existing UTXOs and goes to spend it. You can't just dust a whole wallet. In bitcoin, you can isolate a UTXO and in ethereum you can't. Your entire wallet is boshed.
+
+It's interesting because now some other projects in ethereum are saying okay, we'll block Tornado Cash associated addresses. There's this altcoin influencer who said- well I can't use this project now because someone sent me 0.1 ETH from Tornado Cash. All of the .eth popular accounts are getting dusted by Tornado Cash withdrawals, which blocks them from other DeFi contracts now.
+
+GitHub is a bit of a honeypot. That's an interesting one. GitHub is a bit of a single point of failure. You can kick a project off github and it will disrupt its operations to some extent. Github is a frontend for a distributed protocol called git, which helps you share versions of files with comments. Git is very distributed. Lots of people use github though as a frontend to navigate these projects. You all have redundant copies of the software; but github has great collaboration tools and lots of users know how to use it. There's all kinds of niceties they have built. There are alternatives, like you can self-host gitlab so there are other alternatives here but Bitcoin Core could get kicked off github too. The big problem is that there's lots of useful metadata on github like all the bug reports... Well, Bitcoin Core archives github issues.
+
+Q: What are the implications if this same kind of sanctioning happens for Samurai or Whirlpool... what about users running the whole Samurai stack? What position are we in if this happens tomorrow?
+
+That's harder. Here the sanction list is one 32 byte pubkey which is the Tornado Cash address. So it's obvious if someone is using Tornado Cash. But with bitcoin, coinjoins are harder to ban because it's just a transaction with a bunch of inputs and outputs. Coinbase does big transactions, are those coinjoins? If Samurai was compelled to turn off their servers tomorrow, you can't self-host their centralized coordinator. That's the whole point. You can run a local coordinator. The problem is getting liquidity to make a decent coinjoin. You could coordinate on twitter but it will take a bit to get liquidity. Joinmarket has decentralized coordination.
+
+Q: What are the legal implications of this? I was under the impression that "code is speech" paradigm had been locked in by the Supreme Court a while ago and this seems to bring this in question.
+
+Someone did a 30 page explainer about Tornado Cash. They did a great job. Galaxy Digital about Tornado Cash. They mainly focused on the over-reach of America into saying hey we don't like this particular developer please bring him into custody. Then it goes into address reuse and says hey this is the first time and there will be legal challenges to this precedent. Is this even something that the government is allowed to sanction? It's a thought-provoking piece. It's very legal theory.
+
+We are kind of "in it together" because we all want writing software to preserve freedom to not be a crime. We don't want to live in a world where posting that software on the internet is a criminal act. We're all in it together in that aspect.
+
+OFAC mining has been brought up on twitter. Basically whether-- is it a possible future where the bitcoin network won't mine transactions spending from addresses on the OFAC list, or requiring KYC mining where all the miners would coordinate to orphan any block. Marathon was able to do it because they had their own pool. They tried doing it, but they got wrecked by the community.
+
+Marathon was a LARP because they were making their own blocks, but they were building on top of non-KYC blocks too. The scary thing is if you get a miner cartel that 51% attacks the network so that no sanctioned block gets into the blockchain. That's the true OFAC mining attack. What was discussed last week talking about was whether someone would mine on top of a block that had mined a sanctioned transaction, but in my view someone is going to mine that transaction always. The problem comes in if people don't mine on top of "invalid" blocks despite those transactions being valid by the bitcoin rules. It's a classic 51% attack, where a block might have a transaction in it that some miners don't want to build on top of. It's a competitive disadvantage because there might be huge fees showing up. The other issue is how many UTXOs will be on this list anyway? It might not be a competitive disadvantage at start. Right now there's only like 20 addresses on the OFAC list.
+
+Are there any currently censoring miners or mining pools? Well, Marathon tried it and they shut it down after 2 months. I think Michael Saylor made a call and asked what are you doing. There are notable "ethereans" and someone brought it to my attention that... they seem to be under the impression that most US miners are already censoring OFAC stuff, which I don't think so, but I'm not aware of people actively doing it. 0xb10c has a project where he calculates the optimal block every second and sees if miners are excluding transactions that wouldn't make sense to exclude. You'd lose a lot of money.
+
+Wouldn't the existence of a mining cartel that is only accepting OFAC compliant blocks be an existential threat to the network? Bitcoin wouldn't be censorship resistant if that happened. That's a big if. But if it did happen, would it continue to happen? Would hashrate move to somewhere else? Would miners be ideologically aligned or profit aligned? If there were enough high fee transactions sitting around waiting, then it might make sense to move somewhere else.
+
+You can't tell between a censoring block and non-censoring block really. You can only look at fees and see if the miners are acting rationally or not in terms of fee profitability.
+
+There's an analogy to OPEC where they talk about throttling the supply of oil, and as soon as they do that then there's this prisoner's dilema where there is intense advantage to break away and capture all the demand.
+
+# The Merge
+
+<https://twitter.com/JackNiewold/status/1560284429519667202>
+
+Our next one is unfortunately ethereum too. They are moving to Proof-of-Stake and it's called The Merge. You can't withdraw. It's interesting to think about OFAC mining on PoS vs PoW. On PoW you could say I had nothing to do with the previous block I just accepted it. My block might not have any OFAC stuff in it, and the previous one might have, but I had nothing to do with it. But with staking, you might be complicit with every single transaction that ever gets in because you can't say you didn't have anything to do with the block. So one crazy West Texas miner can't be preserving the freedom. But as long as the distinction holds water for Proof-of-Work, you can have that. It's an interesting distinction.
+
+They said "One of the major advantages PoS provides over PoW is being able to punish bad actors and financial disincentive for anyone who goes against the protocol" but the question is, what is the protocol then? It's completely upside-down. It's bizarro world. It's a hard-fork. From our point of view, hard-forking to redefine the protocol is very strange. To them they say this is great, we get to take people's money if they are bad and that's good because we are the arbiters of what is good and right in the world. The lack of self-awareness is hysterical.
+
+If you are USDC, then you kind of get to choose which fork of ethereum will be the real one. Unless you want your USDC to be non-redeemable, you will have to go with the fork that USDC operators choose. Different contracts might be able to use their influence to choose between forks of the chain. In bitcoin you really don't want tokens on the chain that have enough value to usurp the value of bitcoin.
+
+Yes, introducing exogenous assets to the bitcoin blockchain is a risk for all the reasons that we know. However, because of the advantages that bitcoin has as a UTXO chain and PoW chain, those risks are significantly mitigated. Additionally with the way that Taro is designed and the way that Taro assets will only be at the edge and not at the actual center of the lightning network, we think that this is significantly mitigating the risks of exogenous assets as a whole getting very large market caps. Two, we really think it dilutes the fact that one specific asset could get a really large network effect. If everything is crossing through bitcoin liquidity at the end of the day, then this allows for the opportunity of more longer-term tail currencies to gain traction. Additionally, one thing roasbeef said in that thread was that the real thing that is unforkable state that you can't deal with is not the holdings of USDC but it's the USDC used as collateral in this DeFi pyramid of ponzi scheme leverage. If you have USDC that is the underpinning for 10x the type of leverage on top of it, you can't unwind that. It's part of your financial system. The real risk for us to learn from this is to not allow exogenous assets to be the underpinning of any sort of DeFi on bitcoin. Once they are in there in the foundation, it's really really hard to get them out. You're almost incentivized to keep the house of cards up and running. If Taro stablecoins can kill bitcoin, then bitcoin deserves to die. Bring them on.
+
+# Malware on github
+
+<https://twitter.com/stephenlacy/status/1554697077430505473>
+
+Someone found a bunch of git repositories with malware on github. They clone a repo and commit to it to make it look like someone has been working on it more recently. Lots of old npm repositories don't have any changes for 5 years or something, so they try to trick people into using vulnerable dependencies with malware added with fake commit messages.
+
+The point should not be if it actually effected anyone or not. The question is, how careful are the projects you use to lock your dependencies exactly to the hash? If one of your dependencies or its dependencies is not locked to a hash, and then one of those developers gets hacked? You could unknowingly upgrade into a hacked dependency. This should be a wakeup call for everyone to be aware of supply chain attacks....
+
+# jamesob mempool
+
+<https://github.com/jamesob/mempool.work>
+
+Our good friend jamesob has been diving into the mempool. If you read the bitcoin mailing list, you might dread the mempool posts because they are extremely dry and boring to read. So long to read. Sometimes 10-15 pages of just minutia. James is doing god's work of trying to digest this research. He has this thing called mempool work, and he has some idea of rules enforced in mempool validation and he points to code where this is enforced if you want to learn about this a little more.
+
+One of his motivations for doing this that he fears that in order to fix a lot of these sort of flooding attacks and pinning attacks and all these things that second layer protocols like lightning and DLCs would like to see fixed in order to make their systems more secure, well it costs at the cost of making p2p mempool logic more complex. So maybe you all of the sudden get into a situation where miners don't care about this, and miners might have different mempools from nodes. This happens in ethereum and other projects actually; they have mempool-as-a-service companies. It harms the ability to do fee estimation. Fee estimation assumes that I have a copy of the mempool that resembles the miner's so I can guess how long it would take given a certain fee rate how many blocks it would take for my transaction to get mined. Also it's easier to censor SaaS companies than the bitcoin protocol.
+
+So that's what he's getting at; there's a cost to securing all these second layer protocols to get rid of these vulnerabilities. We hope it's doable but he's putting in the leg work. Has anyone dived into this?  ... Jeremy Rubin posted about transaction sponsorship where you could have a transaction that sponsors another one in fees, so that you don't have a weird dependency graph. This is in contrast to package relay which is another way of doing this, but it's really complex and hard to understand. There's only a handful of people that really understand it. He's looking for a simpler way of bumping fees and stuff like that.
+
+# STARK
+
+<https://twitter.com/EliBenSasson/status/1554046423234134016>
+
+You could do a zero-knowledge proof that you own a bitcoin transaction with this. This lets you have a bitcoin transaction and prove you have ownership of a signed transaction without revealing the actual transaction. It's also relatively performant and somewhat reasonable. Right now it's kind of slow, but proof size is a few kilobytes. It could be usable in second-layer systems. This could be used for sidechains and some other fancy stuff. It's cool bitcoin research.
+
+You can prove that you could sign something? You could either prove that you could sign it or someone else already has. My understanding of this is that he figured out a way to do STARKs over fields that don't have Fourier subgroups of high two power, using elliptic curves. He published a paper called Elliptic Curve Fast Fourier Transform. The main thing with this is that you can do a STARK over the same curve that the bitcoin signature is defined over.
+
+STARKs are succinct transparent arguments of knowledge. This is what Eli Ben-Sasson works on. They are a type of zero-knowledge proof that doesn't require a trusted setup and is also quantum resistant. They're cool.
+
+STARKs are very broadly applicable and they can do anything. Before this research, you would have to encode the field using bits in another field which is extremely inefficient. You can use STARKs to prove anything. Instant IBD, zk rollups... The main issue with STARKs is that they are bigger than other kinds of proofs, but they are quantum resistant, so it's a tradeoff.
+
+Jeremy Rubin was talking about one of the things you could do with this is take a bitcoin block, get all the signatures, and make a zero-knowledge proof that all the signatures are valid and this would greatly speed up validation of this block because you would noly have to validate the one STARK instead of the thousands of the signatures. You would still have to do input and output math addition, but it would greatly improve validation of a block by like 2000x. The instant aspect is recursive STARKs like STARKs within STARKs and then you can verify that all the proofs worked all the way back to the beginning. Some transactions don't have a signature so you still have to validate those-- maybe just don't validate the ones without a signature? Not a good solution.
+
+Maybe five years. Maybe next month. Who knows.
+
+Q: Is there a security proof?
+
+Yes. So it's ready to be implemented? Someone just has to do it. If someone does make an implementation, it doesn't have to go through the non-existent Bitcoin Core approval process. This isn't something that needs to be consensus-level approved.
+
+# Batching for Plebs
+
+We'll skip this one. Okay.
+
+# Address ownership
+
+<https://bitcoinops.org/en/newsletters/2022/07/27/#multiformat-single-sig-message-signing>
+
+There's a million competing solutions. Core has its own but it only works for non-segwit. Then there's bip322 trying to make a standard but it's like xkcd 927. One person suggested testing against all possible validation mechanisms and try them all.
+
+This has been a topic for like 4 years now. It doesn't seem that the state of the art has improved at all. If you're just using a public key, you just sign a message and that's easy. But if you are using an HTLC then you need to give the preimage and the signature; if it's fancy script then you need lots more data. bip322 just says create an invalid transaction that spends from that invalid address, but Bryan makes a good point: either Bitcoin Core has to validate this transaction, or implement your own consensus logic which is something you shouldn't do either.
+
+I have some history about why it uses an invalid transaction. I was asking myself, why? Why not just make a neutral minimal format that doesn't require external things to validate? The arguments given back then was that this would make it easier somehow for HSMs to sign without modifying the HSMs and I never really bought that argument as a justification. I think that if the industry declared a de facto standard then people would follow it. But this is the first I'm hearing about "try every algorithm and verify each type". That doesn't seem like a good idea. A hardware security module, it's a locked-down separate computer. It's like a hardware wallet for servers.
+
+# TxWithhold smart contracts
+
+We covered this one last time.
+
+# Taproot statistics
+
+<https://txstats.com/dashboard/db/taproot-statistics?orgId=1>
+
+Taproot activated in November. It's been about 9 months now. What is taproot? I was arguing on twitter about this. We're at a whopping 0.6% of the existing bitcoin in taproot outputs.  The number of UTXOs are increasing too. Segwit on daily transaction volume is 80%, but on UTXOs it's like 20%. Taproot is going up and to the right, lnd is going full taproot and a bunch of other stuff. There's an incentive with fees to use taproot, but there's no incentive for normal wallets only for the complex multisig stuff where the savings are. None of that really works yet like ROAST, FROST, etc. For regular segwit it's 1 byte smaller.
+
+Segwit adoption was pretty slow as well. Is this slower adoption than it was for segwit? I think it's slower. Segwit was way faster. I saw a chart. Segwit was a 30% fee savings for every user so there was a huge incentive. But with taproot, it's only a fee saving if you are doing complex multisig schemes that don't work yet. Taproot was a mistake.
+
+# DLCs with oracle-based conditional payments
+
+<https://eprint.iacr.org/2022/499.pdf>
+
+I've been talking about DLCs for 2 years now. You need to forget all about that because this is better. Lloyd Fournier is a mad-man sponsored by Spiral and he has been working on ways of improving DLCs. Today with DLCs you ask an oracle can you please sign for who's going to win an election? They give you some data.... before you enter into the contract, they need to start broadcasting this event. They need to say they will sign for this, so it's hard to get going because you need people to be broadcasting for every imaginable event and there's only a small handful of oracles that will do this. SuredBits has a contract with a financial contract with another company to do signing about the bitcoin price. Without that, I could go sign for every sports game but it's a hastle. It's a problem.
+
+In this paper, they talked about instead of using Schnorr signatures you would use a BLS signature and do some fancy-- it doesn't matter, it's fancy cryptography. Cut-and-choose stuff. The points you adapt your signature by are the data you get from the oracle but intsead you can cut-and-choose something where you get the data from the oracle's public key not from their announcement about what they will be signing. So I sign anything you tell me to, and then create a contract based on that. So you can create a contract first, and later have the oracle sign for it if there's a dispute. So you can bet on the election using someone's oracle, and we only have to ask them for a signature if someone falls off the face of the planet.
+
+<https://mailmanlists.org/pipermail/dlc-dev/2022-August/000149.html>
+
+There was a concern that it would not be optimal but it turns out to be the same speed and everything as current DLCs. We'll likely be rewriting the entire DLC protocol. In the distant future, you could write a program that can lookup some outcome like looking it up on the internet like go seek some information on the web. You could compile it to WASM or something; it's a standard format for a standard VM to express a program. So you would make a contract and based on this computer program,r you want to bet on the outcome of this program. Once the time has past and the event has occurred, you could run the program ourselves and settle between each other, or we can have an oracle or a set of oracles go and check it. Except there's no blockchain- it's just signatures and giving a program.
+
+You need to do on-chain setup of 2-of-2 multisig where you lock up your funds, but you don't need anything else except an oracle public key. One problem with the previous type of DLCs was that there were very few things you could bet on. Were Schnorr signatures a mistake and we should have gone full BLS? Well in the opening paragraph it uses both Schnorr signatures and BLS signatures.
+
+They figured out a way to take a BLS signature and extract a secret from that as a secret to complete an adaptor signature for ECDSA or Schnorr and using that to spend bitcoin. BLS uses pairings. There's no r or s value, I don't think. You have the message which is a curve point, then the secret key you just multiply on to the message like a scalar multiplication and it's a signature. It's very simple. The signatures are 48 bytes for 256 bits of security, so they are much smaller. Here you do a Schnorr adapter signature on-chain and you extract the secret from an off-chain BLS signature.
+
+This only requires coordination with the oracle at settlement. You only need to know which oracle you're going to use in the beginning. If you end up needing the oracle to settle the bet, then they make a signature and you can use that to settle the dispute. This is a little worse for DLC privacy because the oracle will find out to some extent what you're betting on. In DLCs preivously the oracle only knows you bet on the election but they don't know your bitcoin transaction or any contract details only that some IP address asked for an attestation about something. You could use tor, really. If oracles really care, they could just sign all the normal events like NFL games, elections, asset prices and do bets on those and if you try to bet on Norwegian horse racing maybe you're out of luck.
+
+What happens if an oracle signs for multiple outcomes- will it reveal their secret key? Today in DLCs you pre-commit to things so that if you sign for multiple outcomes then the private key is leaked. But here they are using ephemeral signatures that don't relate to each other. There's no protection against that. But an oracle would be dumb to do that; it's not a real security assumption you should take.
+
+# Call for p2p Maintainer
+
+<https://github.com/bitcoin/bitcoin/issues/25870>
+
+They are trying to find a maintainer for the Bitcoin Core p2p network. Recently we talked about sipa stepping down as a maintainer. Gloria has been working on mempool, and now someone is asking for a maintainer for the p2p code and vaslid nominated himself because he added i2p support cjdns and a bunch of other stuff. jonatack was also nominated. Just some Bitcoin Core governance.
+
+# Descriptors
+
+<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2022-July/020791.html>
+
+The proposal is to add a ; semicolon inside of a descriptor to say it could be 0 or 1 at this part in a path. It's an optimization of how to describe a wallet. Can it be an array or is it only two options? There's no really interesting use case where you want the exact same ... if you have multiple accounts...
+
+When for taproot they decided the descriptor, it's like TR and then a key (TR(key)) but with taproot you put a raw key on the blockchain but in taproot it doesn't put it on the blockchain, you tweak it by a hash of itself so that you can prove to yourself there's no scripts spending that key so you can do a single sig spend without having a fear that someone put their private key as a potential scripthash but they didn't have a way of defining a descriptor about this is my output key and I just want to describe that. So Pieter Wuille added that; it was interesting, some people were asking should we even add this? It's like a bad practice, but it got merged. If you don't like it, don't use it.
+
+# Mitigating wallet scams
+
+<https://github.com/bitcoin/bitcoin/pull/25766>
+
+Apparently people are buying wallet.dat files that are empty. Someone might say I have a wallet.dat with 1000 BTC and then ask who wants to buy it for 500 BTC and someone will buy it for some stupid reason, and then the ywould find there's no BTC in there and the encryption couldn't be broke. But here you can encrypt it, and find a public key, and find it and see if there's any money in the address. If you post an address saying I have this address in this wallet.dat file, you can buy it from me... this would say, you would need to have that public key and that set of things and a signature for it to prove that you have the private key and ... you could sign the wallet.dat file, so you could still sign the wrong file I guess.
+
+What information is extractable from the encrypted wallet.dat file? You have to tell that the key is the same key. Given an encrypted wallet.dat file, you don't know what's inside so some idiot will buy the file thinking Satoshi's private keys are in there.
+
+Q: If someone is falling for this scam, are they really going to follow these validation steps? Seems unlikely.
+
+# Rustacean Result class
+
+<https://bitcoincore.reviews/25218>
+
+Rust has a nice way of handling errors where each function will return an eum where one of the variants is, if it goes according to plan or it's an error, you can pass this enum up and down the call stack atomically and then there's syntactic sugar and if it was successful you apply a question mark and pull out the success part. A cool thing is that Bitcoin Core has implemented this feature as a macro in the C++ that they use it's called Result so they just pull a popular idiom from rust into the Bitcoin Core codebase.
+
+This is also called the (VB?) monad in Haskell.
+
+# Stale block fingerprinting
+
+<https://github.com/bitcoin/bitcoin/pull/24571>
+
+We covered this last month.
+
+# Demo of the month: Blind Schnorr signature interactive demo
+
+<https://blindsigs.utxo.club/>
+
+Blind signatures are awesome. There are such things as physical blind signatures and they are used in some countries where voting happens where if you vote with paper, they have some guy sitting upfront voting just once and he stamps every vote coming in. But you don't want him to see who you voted for; so you put carbon paper over your vote and you lock your vote in the envelope and he stamps the piece of paper and because it's carbon paper his stamp transfers to your piece of paper but he is blind to it and doesn't see what you voted for. Then he puts it into an envelope and submits it.
+
+Blind signatures lets us do the same thing where you can have someone attest to something you did without seeing. In actual production, most coinjoin servers are using blind signatures. Fedimint will do this but doesn't really exist yet. 
+
+Blind Schnorr signatures are broken if you have one signer conducting multiple instances of the signature protocol at the same time. If you do this, make sure not to do that. Blind Schnorr signatures are broken if you can query the signer multiple times in parallel then you can get an exponential speed-up. What do you mean query? If you have the signing entity and you ask them to sign a hundred messages at the same time, you need to make sure they block-- if you don't, there's Wagner's attack. Andrew Poelstra has a way to potentially mitigate this where you randomly abort the signing protocol. I don't know what the status of that is. Also, abortion is banned in Texas.
+
+# Block hardware wallet
+
+<https://wallet.build/losing-your-keys-without-losing-your-coins/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
