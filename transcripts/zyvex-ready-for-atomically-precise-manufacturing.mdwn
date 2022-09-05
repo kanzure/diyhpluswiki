@@ -1,0 +1,138 @@
+J. Randall & S. Kalinin | Ready for Atomically Precise Manufacturing & Electron Microscopy
+
+video: <https://www.youtube.com/watch?v=2z3Otp6rMLg>
+
+more materials: <https://diyhpl.us/~bryan/papers2/nanotech/zyvex/2022-presentation/>
+
+<https://foresight.org/salon/john-randall-sergei-kalinin-ready-for-atomically-precise-manufacturing-electron-microscopy/>
+
+# Preamble
+
+Why has the acceptance of Atomically Precise Manufacturing taken so long? Despite evidence for the utility of APM, the resources dedicated to it are incredibly small. However, things are changing:
+
+– Solid state quantum technology needs APM
+
+Semiconductor lithography does not work well with quantum technology, it introduces extremely large errors related to tunneling rates. Newer Hydrogen Depassivation Lithography has much greater accuracy and lower energy level variation, but we are still not there yet.
+
+– International competition of quantum technology
+
+The US only produces about 12% of the worlds integrated circuits. There is more funding now than ever before to improve technological capacity of the US and put it on par with other countries.
+
+– The looming crisis in technology advancement
+
+Moore’s law is running up against a wall. We are running out of room at the bottom and will need to look elsewhere than miniaturization to improve technology.
+
+John proposes a digital approach to manufacturing to achieve APM, first at the nano scale then scaling up. Going digital means mapping chemical bonds to a spatial address grid to control molecular structure. Litho, deposition, etching, CMP all treat matter as if it infinitely divisible (analog methods). Importantly, digital fabrication will allow for error checking and greater tolerance.
+
+We can borrow processes from digital IT. When sending packets over a noisy connection, validation bits are used to make sure the incoming information is correct. There are many examples of digital atomic precision among Zyvex and other organizations.
+
+While moore’s law is running out, it can be reflected at atomic scale to represent atomically precise manufacturing at different scales. As we run through atoms to nano, nano to micro, and micro to millimeter, manufacturing will climb up logarithmically through size scales in a similar manner as atomic precision has gotten smaller.
+
+Zyvex is focusing on hydrogen depassivation lithography, which is much more precise than conventional E-beam lithography. Using a digital approach, HDL removes specific hydrogen atoms which allows them to deposit layers of material with atomic level precision. Zyvex plans to scale up using MEMS Scanning Tunneling Microscopy.
+
+Scanning Transmission Electron Microscopes (STEM) work by passing electrons through a sample and on to a detector.  Like a flashlight shining against a hand, the shadow produced by the electron beam can be used to determine the shape of the sample.
+
+Over the last 10 years there has been a revolution in the field of electron microscopy based on techniques such as diffraction from subatomic volumes, beams with orbital momentum, and deep learning advancements.  Deep learning can be used for drift correction, denoising, data processing, and feature finding.
+
+One interesting phenomena is that certain materials degrade when kept under the electron beam of a microscope, such as materials that have sulfur atoms.  This damage process can be used as a production process to induce materials to self assemble by selectively removing atoms from a sample material.  Nanoscale objects can be sculpted by using STEM and SPM together, and this process can be automated.  One of the first experiments is to convert amorphous silicon to crystalline silicon using this process.
+
+Altering this process allows Sergei to place single silicon atoms in a graphene lattice.  It may be possible to build molecules with this process.  Sergei has also been looking at how plasmonic responses change.
+
+# Introduction
+
+I will start by sharing my screen. I want to explain why I believe the world is finally ready for atomically precise manufacturing. Indeed it takes a crisis.
+
+Let me first thank my sponsors: DARPA, Department of Energy, Zyvex, and the QED Consortium which isn't really a sponsor but Quantum is part of the crisis.
+
+Manufacturing precision is critical to human technological progress. Google and I picked out 4 particular inventions: the wheel, ball bearing, steam engines, and computing machines. This is when the first prototypes showed up here on the left-hand side. These were all prototypes, but they made no economic or societal impact until in some cases more than 1,000 years later where in the case of the wheel there were chariots about 1,000 years later. With ball bearings, it took maybe 2,000 years to get the first bicycles to get ball bearings. Steam engines took 1,500 years to produce the precision required to produce the engines and then hte Newcomb engine and the industrial revolution. About 158 years between Babbage's difference engine and the Apple 2.
+
+Feynman had his "plenty of room at the bottom" talk in 1959. Zyvex was founded in 1997. In the face of mountains of evidence in favor of atomically precise manufacturing, the resources for enabling this technology are astoundingly small. I think this is changing though. It takes a crisis.
+
+I'll give a few reasons why APM is getting attention. Solid state quantum technology absolutely needs APM. There's international technology competition around quantum computing. There's also a looming crisis in technology advancement for semiconductor chips. Lots of funding available for disruptive technologies.
+
+First I'll talk about solid state quantum technology. Back in the 80s and 90s I spent a decade of my life trying to make, with a team, to make quantum ... devices... but even with epitaxy, we couldn't make them accurate enough to make them reproducible enough control of energy levels and quantum tunneling rates to make integrated circuits. Classic digital devices are insensitive to fabrication variations, but quantum devices are extremely sensitive. We can plug numbers into tunneling rates and energy states.
+
+If we use semiconductor lithography, we will see huge changes in tunneling rates and energy levels which makes it difficult to make simple quantum devices much less qubits.
+
+Shown graphically, I will go back to HDL (hydrogen depassivation lithography) and we take the very best that lithography has to offer... with ASML, we can make dot sizes of about 26 nm with +/- of 6.5% variation in size which is fine for classical digital devices. In terms of quantum states, you get 0.29 mEV and over 1.16 mEV over here. We get tighter if we get to use HDL though.
+
+It's a crisis because we don't have manufacturing tools to make quantum devices. Zyvex is trying to change this but we're not there yet.
+
+# International competition
+
+The US now only produces 12% of the world's IC now. There's competition in electronics and also quantum. There is now because of this international competition more funding for disruptive technologies than ever before, and we need to take an advantage of this.
+
+# The looming crisis for advancing technology
+
+In Norio Tangicuhi's chart... he coined the term nanotechnology; it was a Japanese semiconductor industry study back in the 70s and 80s and he wanted to plot the bleeding edge of atomic manufacturing precision and extrapolated fairly accurately up to present day and the change in manufacturing precision has been about 100,000 or 5 orders of magnitude. It has taken us from 1910 having horse-drawn carriages to manually-operated telephone exchanges, to everyone having GPS enabled cellphones with access to huge amounts of information. The life expectancy in the US in 1910 was 50 years old, and today it's about 80 years.
+
+Moore's law has benefited greatly from improved manufacturing precision. But the payoff was about a decade ago; I think we have run out of room at the bottom. If we have improved manufacturing precision, we're now down to the quantized level of matter and there's not another 5 levels of magnitude of improved precision. So we will have to replace resolution improvements as driving technology.
+
+# What can we do?
+
+What are we going to do about this? I humbly propose this plan. I think there is a way to pivot to manufacturing in exponential manufacturing capabilities. I want to propose a digital approach to fabrication and manufacturing, first at the nano-scale and then scaling up to larger sizes not only for information technology but for a wide variety of products. We will start with smaller scale nano-scale products, and then move up.
+
+# What is digital APM?
+
+The making and breaking of chemical bonds are binary fnuctions. Which chemical bonds are broken or made will be controlled by a digital address grid or some reference to a global region or something, but we need a digital address grid and we need error detection and correction. It's the only reason why our digital information technology works, so that has to be developed as well.
+
+The vast majority of our nanofabrication, certainly that used in semiconductor fabrication, is analog, like chemical vapor deposition and lithographic etching techniques. We often ignore that matter is quantized. There's a few exceptions creeping in like atomic layer deposition and DiBlock copolymer lithography, but they're missing something here.
+
+# Why is digital better?
+
+Why will digital fabrication be better than analog fabrication? It's for all the same reasons that digital IT is better than analog IT. Reliability of processes, and because of that reliability you will be able to create extremely complex yet reliable systems. We can borrow some things from IT.
+
+There's a process--- you can think of this as massively parallel mechanochemistry, but I can think of it also as addition. Say we can make some identical crystal structures surfaces and we bring them together to form a beautiful single crystal.
+
+Cold welding of ultrathin gold nanowires (2010)
+
+They brought two gold nanowires together, applied a little bit of pressure, and everything they did to try to find the original boundary between the two crystals failed. It was a single crystal. So I think we can do addition without errors.
+
+Say I have an area that is 100x100 surface where we have dangling bonds... but let's say there's a few "added" atoms, maybe some missing vacancies... but I think the 2,000 covalent bonds when we press things together will either add the add items or push them out to the boundaries. Even though there are some imperfections, we can maintain the value of the atomic precision without accumulating errors.
+
+In digital information technology, if you want to send a transmission over a noisy channel, you send data with some validation or parity bits. You throw away bad data, or you can use error correction codes to fix the errors.
+
+What if we had a way to make an exact nanoscale widget to an exact atomic structural specification? We can measure its dimensions, mass, electrical resonance, etc, and if it's not consistent with the specification then we throw the widget away and maybe re-process the material to try again.
+
+There's lenty of atomic precision fabrication going on that I believe can be digitized. There's a lot of beautiful work with transmission electron microscopes. Someone is doing hydrogen depassivation lithography, but not in a digital way. Someone is popping off single hydrogen bonds and he has also shown you can do error correction and detection (Bob).
+
+# Many other opportunities for digital
+
+* Selective atomic-layer deposition
+* Selective atomic-layer epitaxy
+* Selective atomic layer etching
+* Mechanochemistry
+* Scanning transmission electron beam interactions
+* DNA origami
+* Di-Block copolymer lithography
+* Programmed self-assembly
+
+I think this gets a lot easier if you think of these processes in a digital fashion.
+
+I wanted to talk about a way that I think that this can come in and create a new industrial revolution. Note that I am showing an extension which is-- we have run this down, we can't make features any smaller. I'd like to make products larger, so over here I have volumes in terms of cubic microns, cubic millimeters and cubic centimeters. Maybe we achieve absolute atomic precision with some tolerance, and we build up to larger and larger volumes both in terms of physical number of products, not restricted to information processing.
+
+This will have to happen in steps. We will have to go from atoms to nano, then nano to micro, and so on, or some comparable stages.
+
+Someone showed a simple model: whatever the side of your feedstock parts are, if you need to assemble them into 2d or 3d structures and you have a high assembly rate like 10 kHz... but to go up from a square mm to a square meter, you can do that in about 2 minutes. For 100 square meters, it's going to take you quite a long period of time. It gets even worse in three dimensions. To get up to 4 orders of magnitudes it takes years.
+
+Biology works this way too. You start with atoms. You can make lipid membranes. Lipid membranes make cells, cells make organs, organs make organisms, never jumping more than a few orders of magnitude at a time.
+
+# Inverse Moore's law
+
+The easy part of Moore's law was at the start. Inverse Moore's law is that the hard part is at the end. The part where we have to make three-dimensional atomically precise structures? Once we do that, the assembly processes can happen much faster. If we can get to phase 2, scaling will be much faster and we can see the wonders of atomically precise manufacturing happen much sooner. With a substantial investment, we can push this into phase 2 faster and rapidly explore these wonders.
+
+What I really want to do is share with you what I think we can get to at Zyvex labs. We have picked a particular approach (hydrogen depassivation lithography) (HDL). It's a funny version of E-beam lithography but it's way more precise and higher resolution. Because of a few nonlinear functions, there is extremely small exposure zones. We can pick off and pop off individual hydrogen atoms.
+
+We have pixels on a grid, we can identify those pixels on a spatial address grid. Then we can run along a dimer row in an atomically precise way, pop off hydrogen atoms, and if we're careful we can make absolutely perfect digital exposures removing the exact number of hydrogen atoms we want. We have a little bit more than an angstrom +/- in tolerance that we can work with.
+
+Bob Wolkow's group demonstrated ability to put hydrogen atoms back down when they are inadvertently removed. He can remove a hydrogen atom, and put a hydrogen atom back in, demonstrating correction and detection.
+
+# HDL is digital lithography
+
+The binary functions are making and breaking Si-H bonds. Error correction has been demonstrated. We will be massively scaling up with MEMS scanning tunneling microscopes. We can do much much faster because of a responsive z-axis. We should be able to put 7,000,000 STMs in a 300mm wafer.
+
+# Hydrogen depassivation lithography
+
+I want to show you an HDL approach to 3D APM. I want to show how to use this to make three-dimensional structures. Here is a fanciful non-existent crystal lattice with unsatisfied bonds that we will passivate with hydrogen atoms. We can look at these without disturbing the hydrogen atoms; we can go and raise the voltage .... this will give a full monolayer of atoms, do lithography again, goes again, and we repeat.... we can do that in 2 dimensions on the scanning, and then we can build up 3 dimensional structures. We also demonstrated silicon epitaxy, but we haven't done it with atomic precision quite yet.
+
+There's a perfect storm for realizing digital APM. Digital atomic scale fabrication will be a second digital revolution. An inverse Moore's law will be a new industrial revolution. There are many paths to do this. We have made improvements to STM technology that are important to our process.
