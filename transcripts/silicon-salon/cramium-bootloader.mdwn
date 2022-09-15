@@ -1,0 +1,57 @@
+# Bootloader (Cramium Labs)
+
+Good morning. I work for Crossbar and Cramium. We have a new subsidiary of Crossbar called Cramium Labs which works on crypto controllers. Crossbar has been around for 12 years mostly working on resistive memories. Cramium Labs is a subsidiary that uses some of that Crossbar memory technology focusing on cryptocurrency and security where it has more crypto engine demands. This is a brand new division, but about 9 months in development. You can find more information in the link here.
+
+## Bootloader
+
+The question we have today is about the bootloader. We're making chips, not systems, at this point. What should the bootloader do for this community? Should it be very minimum code that only opens up the communication port and OEM will take care of everything else? Should it do all the crypto engines at the API level, and let the OEM do more of the IOs and displays, and customizations? This is the question for this group. Or should it be something in between? How much does the OEM trust the manufacturer? Bunnie mentioned that there's basically no trust. But what can we do to improve that perception?
+
+## Block diagram
+
+Here's a block diagram of a typical crypto processor. This is not necessarily what we're working on but this is pretty standard. It has a lot of accelerators here in the block diagram. All the primitives. It has a large megabyte of non-volatile memory. Besides code, there is also configurations, keys, secrets, and bootloaders and user code and so forth. You maybe only need an external SD card for updates. Other than that, all the code would be running here.
+
+If the code is not big enough, then some of this NVM could be used for updates so there's no reason to use SD cards there because you can use the empty space for that. Once it's validated, you can go back to having free space.
+
+It's a microcontroller, so of course it has IO ports. This is pretty typical. These are the crypto functions that we use to implement the functions themselves: some of them are hash functions, symmetric encryption, elliptic curve cryptography, EdDSA, ECDH, key derivation, secp256k1 curve, Curve25519.... Acceleratorsare designed so that the information remains in the crypto engine for the next atomic operation, so you can use those atomic operations within the crypto accelerators that none of the intermediate values will leave the crypto engines. You only give the inputs, and at the end you get the outputs. That is, if you choose to code it that way.
+
+## Minimalism view
+
+If you look at the minimalistic view of what the firmare looks like with a product like that, there's a small bootloader. This non-volatile memory here is expanded on the right-side of this diagram. Of All the chip bootloader does is open up the ports and let the OEM download an OEM bootloader, so it really doesn't do anything. There's also manufacturer areas and trims and categorization data and so on. Maybe we just move the lifecycle of the device from chip to OEM. Very small amounts of code. This code is just for loading the OEM bootloader once the OEM bootloader is loaded then, you don' t even use that. So there's absolutely no trust in the software that is loaded into this.
+
+## Lifecycle progression
+
+If you look at the lifecycle progression, during the test of the controller we do this part, then we ship it to the OEM and they move the lifecycle from chip to OEM, and maybe they will use some of the slots while doing that, like adding secrets and keys and so on, and it will configure how those slots are going to be used.
+
+It also loads the OEM bootloader, and the chip bootloader would no longer be used, and the reset vector would move from here to here. So this part of the memory can be reused because the OEM still can do everything that the chip bootloader does and a lot more.
+
+The way we're thinking right now is only one-way lifecycle progressions that can only go forward. Once you go from chip to OEM, you can't rollback the chip for security reasons. One of the questions I have at the end is, do we need to go back to some test mode or something where we can have a post-mortem when some parts come back? How do we know what went wrong if we don't have full access into user mode into the chip without being backdoored? You don't want to have a backdoor...
+
+## Full-feature software
+
+The other option is to have full-feature software where everything here, like the cryptographic algorithms, are loaded into the chip bootloader. All the crypto functions get loaded during manufacturing. So you have the tirms and everything of course, but we still move the lifecycle to OEM, but now we put a lot of information into the chip and we might use some keys and passwords space and some of the configurations of those slots.
+
+In this case, not only does it open up the ports, it also.... it has all the crypto functions and once itgets loaded, you can only execute from that, you cannot .. you might have some keys or things like that. It cannot be read or written to, if it is only execute.
+
+It could also additionally have an OEM bootloader that adds additional crypto functions that were not part of the standard offering. Once they add that, they would have to lock it up again, and it needs to be executable-only again.
+
+There's always user space for customizations and upgrades, for post-production updates. This is the standard user code upgradeable, it's signed and it's upgradeable.
+
+## Lifecycle progress
+
+The lifecycle would go from OEM to user mode, this was the OEM lifecycle. So we ship the parts, but then, the user will fill in the rest of the- they will add in the seeds, PINs, and things like that, and of course, the user code then gets loaded also. Once you go to this lifecycle, then this is the finished product.
+
+## Questions?
+
+The questions I have are, what can we do to improve this? How can we use architecture to gain your trust in the chip? The whole idea is that we want to reduce the time to market. If you already have all the codes, then, what other tools can we send to increase your trust in the code and hardware that we are shipping?
+
+Do we need to have some features like supply chain authentication of the chip itself? Should it be also done at the chip level to check authenticity of the chip? Is it important to support reverse lifecycle progression, which could destroy all the secrets? Is that something that is desirable? But then how do you trust that we do really destroy the secrets, and so on?
+
+What should we consider features that should be shipped in such a product? What features should we be concentrating on?
+
+Q: Thanks for the presentation. My biggest thing would be to see the code be open-sourced and be made available whatever that code happens to be. The most trustable for me would be if I had the code, I could compile it and load it into the chip at the factory. That removes the trust from you. You could provide the code, we can compile it and modify it, and then at the factory we know exactly what's going into the device.
+
+So you would prefer the minimalist vision, with the source code? In this market, of course, it has ot be open-source code.
+
+Q: What's in that chip bootloader? I want as little as possible in there.
+
+All it does is let you .. one of these ports to.. That's all it does.

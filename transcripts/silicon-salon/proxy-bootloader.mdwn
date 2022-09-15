@@ -1,0 +1,79 @@
+# Proxy
+
+I am Simon, one of the founders of Proxy. I will remind people what we're building in case you haven't seen the previous presentation, then I will talk a little bit about the steps we're currently taking to ensure hardware integrity.
+
+## What we are building
+
+We are a hardware + software kind of shop. The primary product is a non-custodial wallet for digital identity documents, digital assets, and key management but it also includes things like driver license, FIDO authenticator, and other identity and authentication use cases like that.
+
+Our main focus is on making a product that is easy to use, has good safe enough defaults so that users can't hold it wrong. We want to make some of this cool technology that we're all familiar with to be more accessible to the next 100 million people. How do we make sure it's easy to use, understandable, and it can't be accidentally misused?
+
+Part of this suite in addition to a software mobile wallet we're making a wearable hardware wallet that acts as a companion to the software application. It can be a co-signer in multisig transactions, and it can also be a single signer but that isn't a use case we're focused on because it opens up a lot of tricky situations. We are mostly focusing on it acting as a co-signer and it can also participate in wallet recovery.
+
+The form factor is a ring, so it's extremely constrained in terms of size and power.
+
+## Components
+
+I will talk about the hardware pieces mostly. We have an MCU with a built-in bluetooth stack, bluetooth core. These are all off-the-shelf components. No custom silicon. We have a secure element with an NFC frontend antennae. We have capacitive sensors and fingerprint sensor as well. We provide active-wearer detection and lock the device when removed, and things like that.
+
+The secure element keeps user secret, and also keeps component auth codes which I will talk about in a little bit. It provides resistance to sidechannel attacks, and it's pretty much the place where we store any user secrets and we're also using it as a TRNG source.
+
+As I mentioned, we have an extremely constrained form factor and we're baking all of this into a tiny tiny volume and there's not much board space, physical volume space, or power available. It's pretty tight in there.
+
+## System security perspective
+
+As I mentioned before, the entire system has to operate as one unit. The only secure input/output we have is via NFC. It is directly integrated into the secure element and it's not connected to the MCU and the MCU can't intercept the communication. BLE is a transparent transport for the same... NFC APDU... so it's the same exact channel being established end-to-end between the mobile app and the secure element. Bluetooth is also used for high-bandwidth use cases like loading firmware which aren't transaction critical, but as far as regular operation it's just a transparent envelope.
+
+The secure element itself isolates our applets from any of the pre-installed applets that provide payment functionalities which are not our NFC use case but are also on the device as a feature set.
+
+## Hardware integrity
+
+Some of the things that we use to ensure that all the components in the piece of hardware you receive are binding these components together with keys generated from physically unclonable functions on a couple of these components. The PUF is in the MCU and then we have the fingerprint sensor. 
+
+Physically unclonable functions are generally some property derived from the physical structure of the silicon itself. It has to be unique and unclonable, and it has to be immutable per chip. The key doesn't need to be programmed, so there's few opportunities to intercept and get this root key programming and the key doesn't exist when the power is off. The key is re-generated each time it is used from the physical hardware itslef.
+
+We use these to derive other keys as you will see in a moment.
+
+At manufacturing time, we capture the generated PUF authentication codes from the secure element. The secure element is the only sort of secure storage on the device. It's the only one that is resistant to phsical attacks and resistant to readouts. So that's why we're storing the auth codes, it's a one-time write into the SE and they can be readout but they can't be updated again.
+
+At runtime, we use these auth codes to reconstruct the key using the physical properties. Then derive the actual session keys or encryption keys or whatever from that. We want to minimize the amount of time a reconstructed key is in memory, so it's only done very briefly, and then the constructed key is nuked again once you have derived the session keys. Effectively this bonds together the fingerprint sensor, and the MCU and SE such that they are basically permanently paired.
+
+From the MCU, we key-wrap bus encryption keys which are used for communicating between the MCU and the SE which is a secure communication protocol. They are key-wrapped using this PUF key. Similar to the fingerprint sensor and data matching, the bus comms is often the weakpoint of many devices which are composed of multiple components. It's the easiest to intercept because you can just put in a few probes and pick up stuff for SPI or an IC2 bus. Encrypting everything that goes over memory buses or comms buses is a pretty important step.
+
+We also use this to encrypt sensitive data in flash as well. From the fingerprint sensor side again, there's encryption on the bus again.
+
+Swapping out any of these components breaks the communication. One of the attack vectors we have seen is that if you can't compormise the code or inject code running on the MCU for example, you can often take the MCU off and introduce an MCU that already has compromised code on it. This sort of setup prevents that exact vector.. It can also be used as part of a more comprehensive authenticity check, you can use it to mutually auth all the components not just on the SE or one of the components but actually confirm that all the critical components of the system are still the same ones that were placed there at manufacture time.
+
+## Software firmware integrity
+
+A lot of this is pretty standard because we use off-the-shelf components and we don't have much freedom in customizing this, unfortunately. That's why we're here though, to fix this.
+
+We don't use the chip-provided bootloader because it doesn't have the functionality that we want it to have. It's our own bootloader that won't accept unsigned images, it has downgrade protection, and things like that, and standard MCU memory protection, disabling debugging, all those things apply. Of course they are not guarantees, there have been plenty of glitching attacks and things like that which have allowed MCU memory protection to be removed and debug interfaces to be either re-enabled or at least used to dump memory from a supposedly protected chip. These are definitely not super strong and they could be improved.
+
+The secure applets themselves, we wanted to make sure they are field upgradeable because it's common for them to not be because of how Javacard secure elements work where the data is part of the applet. So once your applet is perosnalized and you have loaded some user keys on there, you effectively can't upgrade that applet because upgrading it would wipe the user information. We have separated our applets between business logic and data storage. The user data storage is extremely simple applet, and it's not field upgradeable, but all the business logic is field upgradeable so we can fix bugs and all those kinds of things.
+
+## Device authentiticty check
+
+This is a work in progress for us. At the manufacturing time, we can register a generated key from the secure element as long as they collected communication codes from the other peripherals and we can store those on our backend. Upon receiving a device, the user can scan it with their phone and NFC, it will issue a challenge and read back a signature or cryptogram that can be verified as a device that was effectively manufactured by us and it's not a clone or a substituted device.
+
+## Do better list
+
+I will wrap up with a few points that I think, I'm not super happy with these.
+
+Secure code integrity checks: a lot of the MCU code verification relies on code running on the MCU itself and it's subject to silicon vendor bugs, glitch attacks, etc. I don't know if there is a way to make this better without having a fully integrated system like the ones we saw presented before. For us, the less reliance we have on the authenticity of the MCU, the better, because of these reasons. Ideally I would like the code integrity checks to participate in device authenticity as well. Not only have you verified the components are still the same but you can verify the hash of your bootloader code for example and be able to do that in a way that doesn't depend on our code itself.
+
+Transparent encryption of memory reads and writes would be nice. Right now we're doing it manually for things we consider sensitive like bio templates. We cannot use DMA between different components directly.. on chip memory controllers that provide for transparent encryption of reads and writes would be interesteing.
+
+We're also looking at physical tamper evidence, like a transparent housing or etching things on it.
+
+Finally, we're interested in authenticity check using WebBluetooth and WebNFC so that you don't have to rely on an app you can't inspect. It should be directly from the browser, and you can use TLS connection from the web server. This is possible right now with mobile Chrome browser, but not from other browsers.
+
+## Questions
+
+Q: Is there a standard for chip supply chain authentication, like curves, or formats, or the protocol workflow?
+
+A: Not to my knowledge.
+
+Q: ...
+
+A: I don't think, it's very much an architectural thing. What do we need to do to verify code on the MCU? You need full access to the MCU's memory space so that you can generate your own hash of the code and then check the signature. Right? Generally there hasn't been a reverse link where the code running on the SE can reach out to the rest of the running system, which is somewhat intentional and enforced by the payment networks because they want it completely firewalled and isolated which makes verification of the specific applet running on the SE much easier but it doesn't have generic memory access to the rest of the system for example and it can't actually do code verification. So now you're stuck with the MCU itself, or maybe a somewhat protected bootloader calculating the hash of a firmware image or passing it into a SE for signature verification which opens it up to some interesting attacks like injecting code is able to still ... you can inject code into empty spaces between functions and whitespaces or things like that, and that code can return the hash that still verifies while allowing arbitrary code to run. To me it seems like an architectural thing that as far as I can see can only be solved by merging the two and making sure it is trusted silicon I guess, or verifiable silicon at least, that has access to the entire chip that is verifying the firmware code in a hardened environment similar to what we saw from the FPGA presentation or something like that. Or maybe Crossbar is working on a hardened MCU that is part of the same package; something like that would make it possible.

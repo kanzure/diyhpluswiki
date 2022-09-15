@@ -1,0 +1,79 @@
+# Validating Lightning Signer
+
+It turns out that Qubes really doesn't like screensharing. That kind of makes sense, I guess.
+
+## Introduction
+
+I want to give an overview of VLS. What is VLS? The VLS project is an open-source project and not a company. We're building a body of software that everyone can build and use and it's not a commercial venture at the moment.
+
+We're focused on designing software that can be used to improve the security of lightning nodes. Lightning is a layer 2 protocol on top of bitcoin. It augments the bitcoin protocol with fast transactions and much more economical fees and some significant improvements in privacy.
+
+The basic concept of VLS is to not have the private keys or other secrets in the online node itself. Instead, ask a remote signer using VLS to sign the relevant messages.
+
+An interesting aspect of the VLS project is that the software is applicable to use cases that are very different. Originally we were thinking about using the VLS software inside a hardware security module to secure an enterprise-scale lightning node. As we went on, we discovered other cases where inexpensive consumer devices could provide custody to end users and this was important for different reasons.
+
+## Team
+
+Our team is small. devrandom and I started working on the VLS project in late 2019. It looks like we have paralleled COVID19... oh well. Previously we both worked together and separately on security software, often related to bitcoin custody. We were well versed in this topic and thought about it a lot. We were recently joined by Jack to help us tune to specific market needs.
+
+## Why is VLS needed?
+
+It is important to understand that lightning nodes are much more challenging to secure than bitcoin hot wallets.
+
+A company that has successfully managed a bitcoin hot wallet will find that operating a secure lightning node involves much more work. The fundamental work of a bitcoin hot wallet is to move the funds from the hot wallet to cold storage. In fact, you only need to leave an amount to cover short-term disbursement. This approach doesn't work at all in lightning, though, because all funds must be in the committed channels and they must be controlled by hot keys. Funds can't be kept cold until needed.
+
+Say a large retailer that has 1 million channels each with $100 dollars. This would be an internet-connected node that has $100 million dollars in hot keys. This is scary, and it's a target of attackers.
+
+Using VLS makes this more secure. It doesn't contain the private keys and secrets. It delegates to a remote signer using VLS which signs all the necessary messages. The remote signer using VLS benefits from minimized attack surface. No gossip, routing, dozens of other things lightning nodes do, just to sign messages securely.
+
+You can also do security-enhanced execution environments; the remote node can run in a specialized environment which is much harder to hack.
+
+One of the things we're doing with VLS is that we guarantee protection of node funds even if the node itself is entirely compromised by an attacker. The thing an attacker would do is compromise your node, then he would have you sign a set of malicious messages like let's close the channel but send me all the money which would mean you lose your funds. But VLS enforces a list of policies ensuring that funds aren't drained from the lightning node via malicious messages. This requires us to hold more state than a blind signing situation.
+
+A completely different use case is providing custody of lightning funds to end-users when they are using cloud-based lightning nodes. If a end user wanted to have a small scale lightning node, an emerging concept is to put the lightning node itself into the cloud and have the end-user direct the node to do them things on their behalf. That makes a lot of sense because it keeps the resource intensive stuff like route finding and gossip in the cloud where it can be better managed. But without VLS, the end-user needs to trust the LSP. If the LSP was compromised or became evil, it oculd craft evil messages which could take oyu rmoney away.
+
+By using a validating lightning signer, in possession of the end user, we get around that problem. The user has actual custody, and that signer will refuse to sign messages that will drain the funds.
+
+## Embedded device requirements
+
+We have designed VLS software to run in security-enhanced execution environments. To us, that means it's written in rust and it tries to avoid using STD features in the core. The stuff that would run in the SE is not using STD features which are large.
+
+The rust itself has thread and memory safety and no garbage collection which are also probably helpful for writing secure software.
+
+The VLS requirements for an embedded device today is that our code fits in 800k of flash. We're still working on the software but that's a good idea of how much flash we will need. We will need 1 kilobyte of RAM per channel, and then a modest fixed amount globally for allow lists and other such things.
+
+The non-volatile storage is the same as the RAM. There is one gotcha in lightning: historical payment hashes grow without bound so we have other ways of mitigating those for use cases that cannot afford to store the historical payment hashes.
+
+We also need an environment that is capable of secp256k1 ECDSA and Schnorr signatures used in bitcoin today.
+
+## Wish list items
+
+Our wish list items that would significantly improve security inlcude tamper-proof hardware which can protect us when the physical security of the device is compromised. If someone steals your VLS signing device, you would like it to not be used to extract your secret or operated.
+
+Secure boot and firmware updates are obviously important. They protect against a bunch of different things, like evil maid attacks, like someone who has momentary access to your deivce, if they can load oyur device with different software then obviously they can steal your funds.
+
+Finally, supply chain security is important especially whne dedicated devices are used. We had a broad specturm of use cases like a hobbyist hardware or stuff commonly available could be used in which case supply chain security isn't important. But if you build a custom device and optimie for VLS, then you would like to be careful with how those were produced and make sure they weren't tampered with in the supply chain.
+
+We have a wide range of cost sensitivity. We will see both high-ends hardware security modules for large retailers, but at the same time we are also delivering benefit to consumers with very very inexpensive devices. The security tradeoffs will be different in those cases. In one case you have a $100 million honeypot and you will want to spend money to make sure there's no attack vectors; in another use case, you are protecting the user's spending money so maybe it's the best for protecting like $5 in that case.
+
+We can run VLS inside a browser because we can compile to webassembly (wasm). We've been using little STM dev boards which are good for demos and proofs of concept. The folks at Stackwork are using VLS on a custom board.
+
+## Sponsors
+
+We would like to thank Spiral and Blockstream for supporting VLS development. We would also like to thank Blockchain Commons for helping us explore this space.
+
+Please connect with us if you have more questions or want to explore what we can do together.
+
+https://vls.tech/
+
+## Questions
+
+All of these presentations will be available hopefully later today including links and things of that nature. Any quick questions before we go to a bio break?
+
+Q: Are there any security issues with number of channels?
+
+A: We have a bimodal problem space here where the enterprises have millions of channels but also cost isn't as significant of an issue. However, the 1k number is more interesting for end-users or consumers. You could make a very small device, and an end user might not need more than one or two channels but let's just say a dozen. We're trying to point out that we don't need a lot of RAM for that. One historical piece of data is the historical payment hashes which need to be stored if you wish to recover when your counterparty has breached, and we have another way to protect against this for smaller devices, like by limiting the number of HTLCs in flight to a reasonable amount of money which is similar to the hot wallet cold storage tradeoff. Sorry if that's complicated.
+
+Q: Why is Schnorr on your list? Are you using taproot-based lightning?
+
+A: Not yet. It's on our roadmap. A lot of lightning will move to Schnorr-based. It has some advantages. There are also some interesting signer configurations which can take advantage of threshold signatures like by saying I want a quorum of these devices to all agree in order to sign this message. That's more distant on our roadmap but it's extremely attractive approach for all the obvious reasons. lnd already has some stuff working with taproot but we're still trying to figure out how to implement this all.

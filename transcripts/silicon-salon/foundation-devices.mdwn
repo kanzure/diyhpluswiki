@@ -1,0 +1,125 @@
+# Foundation Devices
+
+Passport is a next-generation bitcoin hardware wallet. It has a camera, a color screen, and microSD. We have no wifi or bluetooth. On this generation device, that's not something we will do. We will always have an airgapped device.
+
+Improvements over the previous one includes a color screen, removable lithium ion battery, and you can use it while plugged in ... newer slimmer design and more fancy, basically.
+
+## Security
+
+Some of the philosophical points we have are to be as transparent as possible with open-source software, schematics, build materials, this is all online on our github right now. We only purchase components through reputable suppliers and distributors, almost always US distributors right now. We want to use generaly available components, nothing that is funky or hard to acquire if you wanted to build your own Passport from scratch without our knowledge or permission.
+
+We want to minimize the amount of blackbox silicon which is chips running unknown firmware or any binary blobs. Bunnie's solution for putting things into an untrusted zone is kind of the same approach we're taking. As much as possible, we treat that as a dumb transport. If it's some bluetooth wifi NFC chip, we do that, otherwise we try to run code that we write ourselves. We also assemble everything in the US, including circuit boards.
+
+We use STM32H753 MCU, which we use in combination with the atec 608 secure element which are connected by a single wire serial channel.
+
+## Supply chain security
+
+There's a lot of details in the supply chain and its complexity. Where are the components? What about proof of custody along the way to the factory? Who is on the factory floor at the factory? Shipping the device. Getting it into the user's hands. Security at step is very important and we do things for that, but today we are only talking about the silicon parts today.
+
+## PCB assembly
+
+We have a pick-and-place machine that puts these components on to PCBs. We connect to test points over GPIOs on the boards, which lets us do things to verify things that the board was assembled properly and the voltage levels are right and the bootloader and firmware can be verified. We wrote a tool in rust to control the fixture and provisioning.
+
+## Factory provisioning
+
+We didn't want to rely on factory provisioning tools from other vendors. So the first thing we do is load a test bootloader on to the MCU and we run through a series of hardware tests to make sure everything was assembled properly, like testing the screen controller, the secure element, making sure we can communicate with everything.
+
+One of the important security steps is that we have a supply chain secret that is copied to Passport. One thing we didn't do for this round which we might change later is that we didn't want a per-device unique key that we would have to remember because there was some concern from some people that we would be tying this unique ID to someone's physical address or email address to associate a unique ID with them that we could at some point use to associate future transaction data or something.
+
+We flash the normal bootloader and then we restart the Passport device. During the first boot, the MCU and secure element get configured.
+
+## Passport first boot
+
+MCU has a section in bootloader flash where we store the secrets. If we have configured those, we go to the normal boot process, and if we haven't provisioned them then we will do that. Also, the secure element has to be configured and there's two aspects: the slot configuration for what each slot is used for, and how is it protected? Is it readable, writable, and under what conditions? If it's been done already, the bootloader skips ahead and boots up as normal otherwise we will cover those slots down below.
+
+On first boot, the MCU generates a random one-time pad and a pairing sequence and a transaction cache encryption key. Random numbers on Passport are using Bunnie's Avalanche noise source, so thanks for that Bunnie. We also pair this with other sources of randomness that we XOR together including the MCU and SE.
+
+These are basically stored into the internal bootloader flash once they have been generated. The pairing secret is also stored in the SE.
+
+## Secure element
+
+This is a bit of a visual overview of how we configure the slots. There are 15 slots on this device. Slot 8 is particularly large,but we didn't have a need for that. We have a PIN hash, which is a hash of the user's PIN, a PIN attempt random number which is also used as part of the hashing process, some login counting to restrict how many attempts the user has to access the device; the supply chain private key that we talked a little bit about earlier; the user's bitcoin seed, obviously that's important to store. There's also a firmware pubkey that allows you as a user or developer to load your own code. There's some timestamps to prevent downgrade attacks, and then a hash value to make sure the firmware loaded on the device is what it's supposed to be, and that's what the SE uses to turn a secure GPIO pin to turn an LED from red to blue.
+
+## Pairing secret in slot 1
+
+This pairing secret is used to prove the secure element and MCU are a matched set. This is to prevent an attacker from swapping out device components. If you swap out both of them, you are starting from scratch and wouldn't have access to secrets anyway. But without the pairing secret, you can't communicate with the SE.
+
+There's a back-and-forth dance we do to prove that we have knowledge of the secret using an HMAC.
+
+Once you do this, now you can issue the next command: now that I have proven that we know who we are, how do I specify a slot that I want to read or write a slot? And this process repeats every single time we want to read or write a slot.
+
+## Pin stretch in slot 2
+
+We ask the ... we do this so that PIN attempts take longer; so we just repeatedly hash it to take up some time on each PIN attempt.
+
+## Pin attempt hash
+
+The pin attempt hash is a secondary value we use to help limit the number of PIN attempts. We hash it with the result of the key stretched PIN that was used from slot 2.
+
+Once we take the user's PIN, we have keystretched it, we hash it with the value from slot 4, and now assuming ... we XOR it with the one-time pad value that was stored in the MCU flash, so this is an encrypted version of the PIN hash. So even if they reverse engineer or decap the SE and extract the values, they would still not have access to the PIN.
+
+What's important is that as you will see, a lot of these slots have an arrow pointing from a slot to slot 3. What this means is that they require authentication from slot 3 in order to read and write these other slots, depending on a slot's particular configuration. In addition to the unlocking dance, you have to do an unlock to prove that you have knowledge of the PIN. You can't read or write any of these slots that are marked in green without having proven you know the PIN hash.
+
+This value is only readable if the value of the monotonic counter is less than the match count. As the user enters PIN attempts, if they get it wrong, then we increment the counter. Every time we read the PIN attempt hash, we are counting a PIN attempt. So if you keep doing htat, you will eventually run out of attempts, and this slot would be unreadable, and you will therefore be inaccessible all the other slots that relied on slot 3.
+
+Last login counter is used for showing the number of failed attmepts, but it doesn't have to actually be in the SE.
+
+The match count (slot 6) is a little bit weird. It has to be a multiple of 32. Every time you successfully login, we have to bump this to a multiple of 32, meaning we have to bump the monotonic counter up. Say we have 21 attempts, so we have to bump the counter up until it's 21 less than the match count. A little bit weird, but that's hardware for you.
+
+The supply chain private key (slot 7); this slot in the diagram is marked as not readable and not writable. After we configure the slot, this value can't be read by the MCU and can't be modified. We use this to do an HMAC challenge-response with the Foundation validation server to prove that this Passport is a genuine part.
+
+In slot 9, this is the user's seed. The user's entropy bytes are in here and the byte values we usually use to lookup your seed words. These are XORed with the one-time pad from the MCU before storing these. If you were to remove the SE, and use laser fault attacks to extract this, you would still get an encrypted version of the seed; the MCU is easier to compromise than the SE, but again everything helps.
+
+In slot 10, this is the user's firmware pubkey so that the user can choose to trust another pubkey. This is for advanced users that want to burn their own firmware or for developers who want to do experimentation on Passport. The bootloader will only load firmware signed by Foundation keys or those that are signed by this pubkey in slot 10. Only a user that has proven knowledge of the PIN is able to set and install a pubkey into slot 10.
+
+In slot 11, this is the latest firmware timestamp that we have most recently installed. It is only updated when installing Foundation signed firmware. It is not updated when you install custom user build or any of our beta releases because essentially our beta releases rely on te user firmware key as well.  The bootloader will refuse to install older firmware, to prevent downgrade attacks.
+
+In slot 14, this is the hash that we use for turning the security LED from red to blue at boot. This is a combination of the device hash and the firmware hash. The device hash is a combination of the SE serial number, MCU OTP, pairing secret, and the MCU unique ID. If any of these values change, then the security LED will not turn blue on boot and then you should not continue to use your device. This value is updated whenever we update or install valid signed irmware image.
+
+Supply chain validation-- slot 7 contains the private key. There are two methods we use. One was a manual method, which was used in the first version of our Passport Founders edition... but now we use the mobile app for the newest version of Passport which is the one with the color screen, and this is the preferred mehtod obviously if you have the newer device.
+
+In the manual version, which you can still use this on the new Passport, if you happen to be a user that doesn't want to isntall the mobile app, you can still validate using the old manual process. You can do that by going to the website, so you go on your phone or computer, we generate a random challenge, we hash it with the supply chain private key; we sign the challenge with a separate private key of the server, the Passport knows the corresponding public key because it's baked into the firmware, and the Passport checks that this was really signed by the Foundation server... then it asks the SE to perform the HMAC on the challenge, and then return a response. Then we do the same process to turn the bytes into a bip39 seed and we show the first 4 words of that phrase. If those words match up, the user enters those 4 words into the validation website, then the website knows whether you pass or fail because it knows what those 4 words should be.
+
+It's a similar process for Envoy except the user doesn't have to do the typing. Envoy doesn't have to go to the web browser. The user fetches the random challenge from the server directly, it gets presented as a QR code on the mobile phone. The user scans the challenge with Passport, it does the same process to check for a signature, it does an HMAC, it makes a response, and then it is ... scanned by Envoy, and then sends it on to the server and receives a pass or fail result which Envoy then displays to the user.
+
+## Future improvements
+
+That covers supply chain and slot configuration. But some of the future improvements we want is that, with slot 9 which is the secret seed value we would like to encrypt that with the user's PIN. Right now we store a PIN hash in slot 3, but we would like to take an alternate version of this PIN hash and XOR the PIN hash with that as well because tihs would mean you also have to know the PIN. Even if you compromise the MCU and the SE, well without knowledge of the PIN you would still be unable to decrypt the seed. So you would still be looking at a bruteforce attack on the PIN even after decrypting it or obtaining the secure value from the MCU or SE.
+
+Also, the SE library that Microchip provides incorporates some PKI features and they use this part in a lot of supply chain validation processes. For example, I think laser toner cartridges are using this to prove that the part is genuine. We're investigating that as a possible way of doing supply chain validation in the future.
+
+There is a 608a and a 608b SE. There are supposedly some improvements in the b variant, but the level of improvements is not disclosed by Microchip even though we're under NDA. Some people think it may provide additional resistance to laser fault attacks, so we will be upgrading to this new chip on the next pass of next batch of Foundation devices. The device is slower at some operations, but other than timing it is a backwards compatible upgrade. Even for the marketing perception, it seems to be a good idea to upgrade.
+
+## Silicon dreams
+
+What would we want in an ideal secure element in the future?
+
+Some of the current limitations of the SE right now is that it supports a small number of seeds or secrets. We would like to have potentially dozens of root seeds that we are protecting. There's also a single monotonic counter for this which limits you to a single PIN. It would be nice to have multiple monotonic counters or equivalent functionality to track separate login attempts on other PINs.
+
+Running crypto on chip-- right now our SE is really dumb compared to the SEs that Cramium is talking about developing which would be able ot execute arbitrary code. Ours just has some hashing, HMAC, and storing values and retrieving values. But if at least being able to do signatures in the SE would be fantastic, so that we don't have ot.... we have to temporarily bring a secret into memory and then erase it, it would be great to not have to do that.
+
+Having the MCU and SE in the same die or package could be good. I think that's the path that Cramium is on. Ours are separate right now, we kind of like it being separated. In some ways, it's nice that they are separate because there's no way for them to interfere. Maybe they can still be on a single chip but maintain their separation?
+
+Configurable rate limiting to control PIN attempt frequency. I haven't thought about how to do this in hardware. Right now we limit PIN attempts by taking time in the chip to do key stretching. Maybe there could be another mechanism that wouldn't use as much power maybe?
+
+An early issue that we had was- being able to dump the internal state of the secrets might be interesting as a developer version of the SE. It's a black box, and someitmes when you're doing something wrong it can be hard to tell what you're doing wrong. So being able to see the values in there would be helpful.
+
+## Questions
+
+Q: You were saying you would like the chip bootloader to do absolute minimum and you do the rest. You also said you wanted to have it such that someone else could create a product using all the same chips a parallel device. Do you foresee that you might offer a version of Passport that is pre-your-firmware?
+
+A: Yes. I have in my hand a board here with a socket for the SE, so you can place your own SE on it. We will probably put this up for sale in a limited number of devices. There's probably no more than 10 people in the world that might want that. We will be putting that out sometime in the next couple of months. That will come with an MCU which is not locked down. On this particular chip, they call it RDP-levels 0, 1, and 2. At the factory we lock it down to level 2 meaning JTAG is disabled, but when I'm developing I leave it at level 0 so that I can load firmware and debug and things like that. So this version of the product will let you do that. I went through so many SE chips during development and it was useful to pop in a new one.
+
+Q: In the literature on Byzantine Fault Tolerance, and I allow a node to deviate from some communication then the usual result is you need 3f + 1 and if you want 1 to be able to fail you need a minimum of 4... it also means that it's fundamentally impossible for one device to ... if the hardware can deviate from its behavior, or the software can deviate.. Your hardware can have 2 RAMs like one that has the expected firmware and the other has another one. Say the hardware works, but the software is not trusted. I only have two things there. It's fundamentally impossible to solve the problem of one of these devices being faulty. In the literature, it says I need more devices cross-verifying each other. The minimum number would seem to be 4. How could this be applied to hardware? I think the result should be analogous in hardware. This throws me into the realm of using a byzantine fault tolerance or multi-party computation to solve this problem.
+
+A: That's an interesting idea. These devices don't communicate, but you can imagine a shared website or some way of exchanging QR codes or something across devices to see if they all agree. I don't know.
+
+We will talk about this a little bit more. There are some emerging zero-knowledge techniques for some of this like for multi-vendor verification of results... I have seen napkin sketches that have heterogenous hardware, like 2 of the 3 chips to validate the other 2 chips so there's some quorum things as well.
+
+Q: I thought it was interesting that for the authenticity check you're moving from a browser-based check to an app, and we're trying to do the opposite. It highlights some of the tradeoffs you have to make in the different...
+
+A: We thought about that as well quite a bit, which is why we continue to provide the manual option for users. It's easier to not go through it, for sure.
+
+Q: Making it user friendly would be interesting. That's why I was looking at bluetooth to make that user friendly. So that was interesting. On your SE wishlist, you said that pretty much all of that list can be done with ... but then you have to trust the primitives are implemented correctly, or you can't replace runtime on the chip because they are certified. That would be true for even a non-javacard, how do you trust their ECDSA is implemented correctly and isn't using a compromised nonce or something like that?
+
+A: We are investigating other secure elements for future products. Maybe you can share which Javacard you're using.

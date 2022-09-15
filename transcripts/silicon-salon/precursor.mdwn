@@ -1,0 +1,109 @@
+# Bunnie Studios
+
+Secure bootloader and self-provisioning
+
+I just got back from some travels in the United States and now I'm in the Singapore time zone. I got COVID while traveling, and I'm just getting over the end of it so I might crash out before the end of this session and I'll catch up on the notes.
+
+I was asked to talk a bit about the project I'm working on called Precursor and specifically about the secure bootloader and self-provisioning aspects of it.
+
+First I will familiarize people with what Precursor is. This is a picture of the device itself. It's basically a mobile handheld device that you can put in your pocket and walk around with it. It's desgined for communication, voice comms, authentication, a password vault application that we can use to keep TOTP and U2F FIDO passwords that sort of thing. There seems to be enthusiasm about turning it into a cryptocurrency wallet of some sort, but that's not our direct mission. We're focused on communication applications.
+
+The types of people we design this for are primarily at-risk users like politically or financially, perhaps people under threat from advanced persistent threats, or developers and enthusiasts who are interested in secure technology. We also put emphasis on the device design from a bottom-up so that it's not an English-only speaking audience but a global audience. On a piece of hardware like this, you can swap out keyboard overlays with an overlay that has different language glyphs on it for example.
+
+## Why a device?
+
+Anothe rquestion I wanted to cover before getting into the nitty gritty... why are we doing a device and not just a  chip? When we think about security, it's not just private keys, but all your private matters. If you want to protect the end-user secrets, then you have to think about the screens and keyboards being logged so this boils down to a secure IO problem where if you're on Android and you install an IME then this pop-up will show saying hey by the way this thing can keep all your passwords and personal data and you click OK because, what can possibly go wrong? I have a security enclave, where I put my secrets, but I just consented to a keyboard logger, and this is a wonderful backdoor that makes some regimes not care about end-to-end encryption at all because some IMEs are very hard and only a few of them can't handle certain languages.
+
+We want to make sure from the tips of your fingers, to the pixels hitting your eyes, that the entire path is trusted and you have some onfidence that the data -- you know the provenance of the data.
+
+## System leve ldiagram
+
+We have a trusted domain and a non-trusted domain. We throw the wifi stuff and power control into the untrusted domain, and in the trusted domain we have a soft FPGA and audio and keyboard and other things are in the trusted domain.
+
+## Long-term arc
+
+We use an FPGA system to let us vet out use cases, develop apps, but eventually we want to tape this out to ASIC. The fact that we're using FPGA helps us get around a supply chain problem because we can say, well a user can goahead and compile their own CPU with a random seed and makes it harder to insert a backdoor at the CPU level. For cost reasons and reach and performance reasons, we will eventually migrate to an ASIC but I'm very happy that we have a full system that we can run on an FPGA right now that we can vet all the use cases and kernel and the apps. It's a handy dev platform to have such full coverage of the end-application before we do an ASIC.
+
+## Security is a system, not a component
+
+We include the software supply chain in our threat model. We like to think about all the pieces that go into building the hardware, in addition to the pieces that go into the firmware. I had a talk called "From boot to root in one hour". That's the long version of this talk. Boot to root in one hour goes through basically everything from the reset vector itself, it goes all the way back to the SoC Verilog and python descriptions and talks about the process of compiling it, the boot vectors, the secure bootloaders, train of trust, to the root keys provisioned on the device. If you want to take a deep dive, watch that presentation.
+
+We try to track all of the pieces we're putting into the software supply chain so that we know at least how big the attack surface is. Realistically these tools are so complicated that I can't say with any confidence that we know there are no backdoors in any given tool, but at least we have enumerated the tools and the problems we could have with them. In particular, when we think about the firmware side, when we write rust code we try hard to not pull in lots of third-party libraries. Libraries are too bloated to minimize software supply chain attack surface. This all compiles down into FPGA stuff.
+
+## SoC
+
+It's a RISC 32 CPU that gets compiled into the FPGA. On the right hand side of this diagram, we have some memory mapped on, then we have the cryptography complex with all our crypto-hardware primitives in it. From the standpoint of doing secure boot, these are the areas we want to look at: the CPU, some on-chip RAM and ROM, and then we have some keyrom the size of that dictated by the size of the FPGA and we don't use all the bits in there right now. We have a Curve25519 engine in hardware and a sha512 engine in hardware. Those are secure-boot-relevant items.
+
+## Layout of Artifacts
+
+In terms of the artifacts involved in boot, the actual source code... everything in this project is open-source and published online. You can look at the kernel signature check code. The lifecycle of the secrets is that they start with the sort of inside the SPI-ROM... the lower half is the SPI-ROM containing code at rest, the bitstream is encrypted with an aes256 key decrypted by the FPGA, which creates a soft-core, and inside the soft-core has a boot ROM itself and it has a set of keys... and then it does a signature check on the next-level loader, and we have only 30 kilobytes of space. This is a minimal just a signature check shim and run thing. The loader itself then goes and inspects the kernel, sets up the page tables, pulls in the kernel, and then the kernel after it's loaded will finally turn itself back around again and check that both the gatewear itself has not been modified and the lader itself has the correct attributes to it. The whole thing seals itself into a circle at the end of the day.
+
+## Bootloader
+
+The bootloader is in rust except for a small canary pattern assembly stub. Clear the cache, set where the stack pointer is going to be, then jump to rust. It's as small as you can get in terms of an assembly stub. Nothing ugly going on here.
+
+## Chain of Trust
+
+The Chain of Trust starts there. We try to keep the loader minimal. We check the Ed25519 signature against a known set of public keys of the loader itself. The bootloader has some rudimentary graphics on it and drive the LCD and the user would know if the signature check fails and it will print a message. It has countermeasures on ... to fuse out the ROM and make it inaccessible if someone is trying to get secrets out that way.
+
+That jumps to the loader itself, which then again takes another set of public keys, and very importantly at this point here, at this middle box where I'm talking about the loader, we handle all of the suspend and resume things that might happen before we go into the kernel. Suspend and resume is actually a big pain in the ass to deal with in almost any sort of OS because essentially when you're resuming it breaks a lot of ... you can break a lot of security assumptions there. You are taking a machine that basically shutdown completely, wedging values into registers, so it's nice to be able to have an FPGA system because when we have abstraction breaking issues in terms of resume we were able to fix them in hardware and not put horrible bodges inside the OS to deal with that.
+
+If it turns out that resume, the resume process is pretty quick and it short-circuits where we lft off, or we clear the full RAM to make sure no previous session secrets are there. Then there's a long sequence of events where we setup text sections, create virtual memory pages, map all the threads, and then start running the OS itself.
+
+That's the chain of trust in the whole thing it goes through. These two codefiles will walk you through it. They're not too big.
+
+## Key ROM layout
+
+Before I talk about the Key ROM layout, let me talk about the threat model. Most ASIC secure boot is designed on the assumption that you don't trust the user but you have ultimate trust in the manufacturer and the goal is to enforce manufacturer's policies on the user like DRM or some usage case or force an update, and often the aim is to prevent users from running arbitrary code on their devices.
+
+Our threat model is different. We don't trust our manufacturer. We don't trust the supply chain or anyone else's. Our goal is to empower user to control and protect their own hardware, and as much as possible we want to make it complex to tamper with the hardware and we want to prevent remote exploit persistence so that if someone gets a foothold into the device then they shouldn't be able to put code in rest that gets loaded on the next boot without the user knowning.
+
+The key ROM layout is-- the highest privilege key is a self-signing key, it's actually generated entirely in the device itself and that's used to protect code at rest on the device. Normally in a typical ASIC route, this is a factory-burned key that the factory knows and the users have no access to. We also provide a developer public key which is well-known and we use that to publish updates. Anyone can sign with it, the purpose more is to integrity check that data wasn't corrupted on the fly, but it can't do anything for an adversary because anyone can sign it. Then there's a third-party key where if someone wanted to do a certificate authority and publis hcode and say here's a codebase you can use, people can go ahead and opt to trust that particular CA to sign the code. The 
+
+The sign of this ROM is oversized.. didn't make sense to go any smaller. We do some anti-rollback, a global anti-rollback that is implemented because we don't have single e-fuses but we can code an 8-bit word. We can have up to 255 rollback states. We hash all the keys repeatedly. On the first boot, we will hash them 255 times, and every time we want an anti-rollback, we increment the counter and hash it one less time. If we set the rollback bit, then anyone who is authorized to run at that rollback level can hash their current key one more time and decrypt an old image, but you can't predict what the next image will be because it's tantamount to reversing the hash.
+
+The private keys themselves are protected by a password, so even if you are able to dump the entire key ROM you can't sign a code image without the user providing another factor as well. This is another layer of protection, acknowledging that keys are often dumped and extracted.
+
+The whole documentation for this and its discussion is available in the link on the slide.
+
+## Rust pro's/cons
+
+We wrote everything for our bootloaders in rust. The advantage is that rust is a memory-safe language, it's strongly typed, it has pretty good community support for cryptography like through cryptography.rs, but the cons are that you get a larger binary size compared to hand-rolled assembly. If you are targeting an ASIC, then every square mm counts. We were only able to get our bootloader down to 32 KiB. It includes drivers for ed25519... we had to use hardware crypto blocks to keep that binary down to a minimum. We also have some character graphics in there.
+
+There was a steep learning curve with rust; I have a blog post about that that you can read from this slide.
+
+## Self-provisioning
+
+I want to talk about self-provisioning side of things. Self-provisioning is setting up your keys, on the device itslef. The first step is to get a good TRNG. If you don't have a good TRNG, then everything is lost and you can't even really begin. Re-design everything until you do.
+
+We have two TRNGs in our system. We have an Avalanche generator which is an external discrete solution because we can't necessarily trust what's on the chip, and that has an independent hardware monitor of its own to monitor its health. Then there's a ring oscillator in the chip itself. An external discrete TPRNG is pretty easy to tamper with, especially with an Evil Maid style attack. We combine these two and hopefully get the best of both worlds.
+
+The Avalanche generator requires an ADC which is expensive from a BOM cost perspective but it's free on an FPGA. Those get XORed together, get put into a ChaCha CSPRNG... ChaCha8 is not necessary for good performance but it's there because I like belts and suspenders. We have dual FIFO ports for kernel + user output.
+
+We actually have a port dedicated to the kernel itself just for TRNGs because importantly it needs TRNGs early on and then there's a server port where it saves the data.
+
+The next step is to generate your keys. If you're doing RSA, then this is hard because you have to find primes and there's weak keys. But we're using Curve25519 and AES. There are no weak keys: you get a good quality random number, and then you have your keys, and you save them. This is very specific to an FPGA.
+
+When our device boots, it comes out of the compiler with nothing in the key ROM box. It's basically empty. It's just a bunch of random junk. It's not the data you're going to use. The FPGA config engine has no key. That's the state that things start in. We self-provision keys and put them into where they would be located inside of the crypto ROM itself, inside the soft SoC itself. The problem though is that the next time we reload the SoC we will get the old image without the keys inside. So we reverse engineered the bitstream format for the FPGA, we decrypt the FPGA on the fly because we have a copy (it's a zero key), then we patch in our new keys into the bitstream and then we write them back out into the right position in the bitstream and use the new key to encrypt the overall bitstream itself. It's an interesting bootstrapping process. At the end of the day, we can go ahead and blow the hardware encryption key on the device itself and do it in a way where you can't do read-back, AES only boot, and at that point in time the device will be fully sealed, in theory, except for oracle attacks on AES or hardware problems in the FPGA. Otherwise, it's a good way to lock away data after self-provisioning.
+
+## Conclusion
+
+That's secure boot and self-provisioning in a nutshell.
+
+https://precursor.dev/
+
+Q: Will you be doing skywater PDK?
+
+Yes, we're looking at that. We won't be able to fit all our ROM in the device. Maybe copackaging some RAM and ROM and then blobbing over the whole thing once it's verified by the end user.
+
+Q: The FPGA doesn't fit into the form factor of the device does it?
+
+It does. This is an actual real live device.
+
+Q: Why not a camera? That was my biggest challenge with the Precursor when I want to try to use it.
+
+There's a couple of reasons. One of them is that we are extremely disciplined on the hardware supply chain part of not putting anything into the trusted domain that we can't fully have some mechanism to inspect. The FPGA is fully inspectable; the keyboard is inspectable; the LCD you can check under a microscope... if we put a camera IC in there, it has a lot of crap on the inside that we can't see anything about. You can say we're maybe being too extreme there, but that's one reason. Another reason is that because we're running a 100 MHz FPGA, it would be a low resolution low framerate basically stills only. Thta's the other reason we didn't put a camera in there. However, there's enough space on the inside for a camera and there's a GPIO flatflex and there's enough pins and you could put a small maybe CSI camera on the inside if you had the time and inclination to mill a little hole. I haven't had time to do that myself, but it was a thought and I know people would like to have it.
+
+Q: You also have wifi on that. What stacks are you dealing with? I know it's in the not-trusted zone.
+
+It's a chip from Silicon Labs. We just run the vendor's code; it's an encrypted blob that we get. So just whatever code is on it. We basicaly, it presents us an ethernet-like MAC interface. It plugs into a small tcp, we got TLS running on it recently. All the wifi stuff is just out-of-band signaling that we ues to setup the Access Point and SSID and get SSID scans back and that happens in this kind of parallel universe. The firmware provided by the vendors is pretty nifty and it's a blob and we can't inspect it.
