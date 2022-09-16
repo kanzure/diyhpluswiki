@@ -1,0 +1,248 @@
+2022-09-15
+
+Austin Bitcoin Developers Socratic Seminar 32
+
+<https://austinbitdevs.com/2022-09-15-socratic-seminar-32>
+
+# Silicon Salon 2
+
+https://siliconsalon.info/
+
+((Bryan gave another issue))
+
+# p2p: Implement anti-DoS headers sync 25717
+
+In the old days of decentralized money technology, we did checkpoints to do our initial block download and this is bad for the environment boo. This is a move to try to get rid of the checkpoints in the headersync. The second thing a node does when it gets online. First it looks up IP addresses, then it goes to download the headers which is everything in the blocks except the headers.
+
+The issue here is that when you're doing headers sync it wasn't actually checking the difficulty. It would check the difficulty but the concern was that say you have the real chain with all the PoW work but maybe someone else had a minimum PoW blockchain for a million blocks, well your node might be spammed by those blocks and never receive the actual true chain and it would look for the ones in the checkpoints. But this fixes this so that when you first receive headers, you don't store them; once you find the best proof-of-work chain, you re-sync them again but actually store them so you're not DoSed.
+
+assumeutxo is different. jamesob has been working on assumeutxo for a while which improves initial block download but you see these two as parallels. The real purpose of initial block download is you're verifying the current UTXO state. The current UTXO state is all that really matters, but you have to verify against the entire history. For assumeutxo, he's doing it in a staged way where the initial stage is you can have a signed commitment to the current UTXO set so that you can work on top of that while you download blocks in the background. The final stage of this is utreexo and that's a heavy compression of that and ideally you would have that committed into the blocks so you could always check against the blocks for that. This is stopping a DoS vector on the current way you're doing initial sync- first you do it with the headers, but you still don't know if you even have the right headers; the headers have the work in them, but knowing the work can be a DoS vector if you're not verifying. Because you're still doing IBD even with jamesob's work, you would still want something like PR 25717.
+
+To actually do this, you download the headers twice. If you watch bitcoin-qt starting up, it takes like a few seconds to download all the headers. Like if you're doing that on Saturday night nothing better to do.
+
+# khepri
+
+https://github.com/bitcoin-stark/khepri
+
+STARK khepri is a zero-knowledge proof system for making statements about the state of the bitcoin blockchain. Roasbeef says this can validate full blockheader consensus rules. You get a zero-knowledge proof of this, and maybe in the future a proof of all of IBD. If you trust the expanded cryptographic assumptions of this zero-knowledge proof system, then this could be an interesting speedup.
+
+Lightning Labs did a new version of lite clients called neutrino using compact block filters. They use block headers: if you have something that can fully validate blockheader consensus rules in a more efficient way, then this makes neutrino even more efficient which is really cool.
+
+It seems like you would instrument a Bitcoin Core node with this. So the validation you can see it in this diagram in the README: information comes in, it enters the consensus engine which is currently C++ code, so you could write the same rules but in this Cairo language, and on the side you can generate a proof showing people exactly which computations have been done. It creates a proof of exactly what happened in the consensus engine. IBD is just block header processing here.
+
+The only downside of STARKware stuff is that this proving engine that they're building, right now their version is closed-source. However there are open-source proving engines built by community members that aren't at STARKware level but they are similar. It's really cool stuff. The zkSTARK as a scaling methodology that was a Greg Maxwell idea in 2013 with CoinWitness and now it has come to fruition and coming back to bitcoin. This is really cool though.
+
+If you go back to the tweets, you will see roasbeef -- there was a cool offshoot here called zk-taro where everything after the tapscript leaf commitment doesn't need to be bound by bitcoin's crypto primitives. Just think on that for a little bit; there's some interesting things that can happen here. If you're making on-chain transactions, then the proof size grows linearly with each transaction, and you have to carry around an additional proof each time. Wouldn't it be nice that instead of all those proofs you have a single constant size zk-proof no matter how many transactions you do? Wouldn't it be interesting if you could do taro transactions without using bitcoin consensus?
+
+The developers of khepri seem to be ethereum developers. This is one of the rare places where altcoin work is actually coming back home.
+
+If you're going to use a wallet that takes a proof and runs with it, .. you couldn't be totally sure that it's the same consensus that is run by C++ code that we all love and hate. Not even if you review the code yourself. If you're using this over like neutrino, this might be a step better than that, or if you're using this for jumpstarting IBD and you'll eventually actually do IBD, it's probably a reasonable assumption to make because you'll eventually validate.
+
+Is this a recursive STARK? Yes. roasbeef says it is. Validate proof of transaction validity proofs.
+
+If you rewrite the consensus rules, you can't trust them as much; it would be nice to have the consensus rules in a single library and then we could build implementations from those. This is called libbitcoinconsensus or libbitcoinkernel.
+
+# Carl Dong
+
+dongcarl has announced that he is stepping down from bitcoin development and leaving Chaincode Labs. That's a little concerning. He really improved the bitcoin build system by migrating to guix, where you can be more confident that the binary you're running actually corresponds to the source code and nothing was inserted that you didn't want to compile.
+
+One of the things with libbitcoin code early on was the division of bitcoin-qt with the UI, wallet, miner, and node all in one, and that is very hard to maintain especially as you have more developers. There were more components than there were files. It's a mess to maintain and test. It also means it's harder to onboard new people because you have all this tech debt and you have to know how these pieces interact. The idea with libbitcoin was to split consensus pieces into their own libraries. We made substantial progress on libbitcoinkernels on phase 1 with many modules decoupled from non-consensus-critical modules.
+
+The work, though, is still not done. Unfortunately he is not the first bitcoin developer to quit. A few bitcoin developers are saying bitcoin is not a fun project to work on, it can be painful and it attracts janitorial people who shuffle code around you can thrive in Bitcoin Core if you do that.
+
+Carl told me a year ago that he was going to quit in 6 months and he lasted 6 months beyond that, but he does cite some people that will be continuing some of his work. Hopefully the work is continued, but yeah.
+
+Is there some kind of weird political pressure from Davos or maybe Tornado Cash is having contagion into bitcoin? We need to be resilient against bitcoin developers getting burn out. Their privacy also needs to be protected as well. One of the reason why we care about a large number of nodes on bitcoin is that you can shutdown some of the nodes on AWS but it doesn't stop the network. We care about IBD because we need you to be able to use rapsberrypi and still be operating with initial block download in a day or two. There's always a risk if you're working in an area like this. It becomes a central point of failure if just losing a few devs messes things up. We joke about Vitalik Buterin and thankfully things aren't anything like that in bitcoin, but there are still things that we need to improve on and encourage more people to get involved that have technical ability and familiarity. Having something like the base58 courses is so important; getting more people interested in the technical aspects is important. We can't just bemoan the fact that there are big nefarious forces stopping people, we have to be resilient to that.
+
+It takes a long time to get bitcoin developer experience. It's not just like spinning up a node. We need to get more people up now, so that they can be ready in ten years. In the Fedimint project, over half of our contributors are nyms. I hope more projects get developed like this. That would be good.
+
+I subscribe to the theory that all the people leaving are going to be coming back in six months under pseudonyms like Mr. Dongcarl.... Pleb Lab will be having a bitcoin script tutorial workshop on Saturday at noon.
+
+libbitcoinkernel is the exact sort of thing that could hopefully help more people get involved. As a developer, there are big scary projects over there and it's just too big and scary. By making the most important parts of bitcoin much smaller and more approachable just because they are smaller, that's really exciting. We need libbitcoinkernel code to be the same; having multiple implementations is.... well, we do have multiple implementations of bitcoin. There's a go-lang version btcd, and then there's a javascript written version. Having code easy to read is also helpful. I got into bitcoin because jj rewrote all of the bitcoin source code in javascript from the ground-up with no external dependencies, and it made it easy for me to understand and bootstrap my knowledge about how these pieces fit together. It's useful, and having projects like that is useful as well.
+
+There's also libbitcoin, which is an unrelated implementation.
+
+# Tornado Cash
+
+It's interesting to see Coinbase is funding a lawsuit from a few users to sue the US Department of Treasury regarding the Tornado Cash sanctions. I think the people might be anonymous? I think they're users of Tornado Cash and they are putting their necks on the line suing the Treasury.
+
+Treasury also released some clarifications about OFAC sanctions on Tornado Cash. What was actually illegal about it? They came out with a few things to say. They clarified to say interacting with open-source code itself in a way that does not involve a prohibited transaction with Tornado Cash is not itself prohibited, so it's not illegal to run the code or use the code. If you run an ethereum node that has Tornado Cash on it, that's not illegal.
+
+Someone put the code back up on github and I don't believe it has been taken down since then. Matt Green putted up a copy. OFAC also commented on the dot ETH dusting attacks. They said it is illegal to have received that but they will not prioritize enforcement. "We promise to not enforce it" until one day they will....
+
+The really weird one now is you can apply for a special license from OFAC to use Tornado Cash so if you're in the CIA and you need to wash some crypto or something you can just get a license I guess. Let's try applying for a license right now. I kind of don't want to click this link. That might be a bad idea.
+
+There were already exceptions in the original rules for government agencies; so they were already acknowledging the CIA and others could already do whatever. There were already exceptions in the original post.
+
+# cashu: e-cash lightning bitcoin
+
+calle made a really simple non-federated python-based version of Fedimint which is really cool, and he built it in like a couple days. He got a lot of stuff from-- this is a cool example of the power of open-source because he got a lot of code from phyro's minicash project which was inspired by Bryan Bishop's webcash. So it is cool to see an idea come out, someone else takes it and adds to it, and so on. It's cool to see individuals bolting things together to make cool stuff.
+
+It's similar to Fedimint but it's not federated at all. It's just an e-cash mint. It's a nice way to have a private custodial backend. You pay a lightning invoice and you get back e-cash.
+
+# Silent Payment
+
+The Silent Payment spec continues to live and get pushed forward. There's now a proposal to include it into the descriptor language which would be neat. I think there's a pull request associated with this as well. PR 24897. You could just run this and get silent payments for yourself if you wanted to.
+
+Does it still require you to sync the whole chain to keep up with the history? Yes, that's just a primitive of Silent Payments. Maybe with STARKs it could be cheap?
+
+# CVE on StoneWall - Denial of Service
+
+This is one of Samurai's protocols and it's a CVE about coinjoins. It's Antoine Riard so you know it's about fees. Say someone offers to do a STONEWALL to me, and hten I would give him my signed transaction and before he broadcasts that he would broadcast a spending of his inputs like one sat per byte no RBF or anything. My wallet would be stuck waiting for broadcast but it couldn't be because he double-spends his inputs; it's more of a UI issue than a CVE, like showing the error to the user and rectifying that. You can use a paynym, but to use the paynyms in Samurai you have to pay some money to register one. But theoretically, you could create a bad paynym and lock up some funds from every single user if they agree to do a STONEWALL with you. I don't know if they fixed this bug but yeah, they got a CVE registered. They acknowledged it, yeah. They have a history of what happened.
+
+Is STONEWALL their version of payjoin, and does the same attack work on payjoin? My recollection is that this is payjoin but I don't know. I don't use Samurai so I don't know.
+
+# Check your wallet privately
+
+<https://btc.usespiral.com/>
+
+SPIRAL: Fast, high-rate single-server PIR for FHE computation. Basically it's private information retrieval where you can lookup a bitcoin address and get the balance without the server knowing which bitcoin address you were looking at. In theory you could have an electrum server based bitcoin wallet, but completely private. Right now it doxxes you completely in electrum; this is one of the big reasons to run a full node.
+
+Maybe you could use SPIRAL with ... no, this one is a square-based spiral logo. It's a different Spiral. The least they could have done is go clockwise instead.
+
+They also did this with a Wikipedia version too where you can lookup a Wikipedia article and get that information back. I think these people are really into PIR and not as much bitcoin so they probably didn't know about Spiral.... But anyway, this is a pretty wild feature without requiring changes to bitcoin at all. This would be a game-changer in wallet space.
+
+It requires like 18 megabytes of cryptographic information on your initial setup, and it's a few kilobytes for every address after that. But it's still lower resource than running a full node.
+
+When we were talking about compact block filters, one of the concerns is that having lite clients is really bad because people won't run nodes. There might be a similar concern here with Spiral PIR because less people are going to want to run full nodes since lite nodes are even more private with this.
+
+I just realized I haven't actually tried this, so let me try it now.
+
+With private information retrieval, you can do that in lightning path finding. There's a lite-PIR proposal where you don't reveal the paths... so a lite client user is the end user, they won't have to see gossip at all, they just query lite-PIR nodes to do path finding without them knowing the paths that you're trying to take on lightning. I don't think anyone has written an implementation of it, I think it was just a spec paper that someone wrote a while back.
+
+There's much bigger fish to fry in the lightning privacy space, though. You're not giving up the information by retrieving the path, but the path information is still available and a lot of privacy is leaked there. The paths are composing channel balances essentially. Well, it at least removes the gossip. With Breeze wallet, it would take like 30 minutes to sync. You wouldn't want to ask another lightning node on the network how can I get to this other one node? That's the problem. You don't want to reveal the destination. Yeah, there's a lot of other privacy issues on lightning of course, but from a path finding perspective... there's trampoline routing that kinda helps, Phoenix has that but nobody else does yet.
+
+# Mucash: Transparent anonymous transactions
+
+<https://eprint.iacr.org/2022/1104.pdf>
+
+We have an exciting new paper from our resident cryptographer Liam Eagen. We tried to understand this one as well, and once again we failed. We're going to let you describe this.
+
+It's an anonymous transactions protocol. It's sort of conceptually like zcash. The way that anonymous transaction protocols like zcash work is that you have a set of transaction outputs and then every transaction proves that the input to the transaction is in the set of transaction outputs in zero-knowledge, and then it publishes a nullifier for that output which prevents double-spending and it's deterministically generated from the transaction output in a way that it can't be linked back to it. That's the basic idea of anonymous transaction protocols.
+
+In Mucash, I use a new kind of merkle accumulator thing, which is also used in a paper called CurveTrees where with a cycle of elliptic curves and two piedersen hashes you can construct a merkle tree with this structure preserving property and then prove membership very easily.
+
+What are the benefits of this over zcash? In zcash they have a few different versions. You may know that sappling has a trusted setup GROKS snarks... ORCHARD doesn't have a trusted setup, and neither does my Mucash concept. Orchard proofs use something called HALO which is supposed to eventually support non-interactive accumulation of proofs but does not right now. Mine has small transaction sizes for an anonymous transaction system without a trusted setup. It's about 1.3 kilobytes per transaction.
+
+It's also cool because the outputs are committed to in a little merkle tree, so it supports really large numbers of outputs at 1300 bytes per transaction. I think it says up to 1000 outputs per transaction, which is pretty cool. It also supports atomic swaps and payment channels, theoretically, using adaptor signatures. If you think about it, it's kind of a paradox with these anonymous transaction protocols. To construct a transaction, you have to prove your output is in the utxo set, but if you try to do that for an output that doesn't exist yet then you can't do that, so there's a few phases where you can split it up over multiple provers.
+
+This uses Bulletproofs++. With all the caveats, there's no security proof and it's not published in a reputable conference venue so nobody should quite use this yet. It supports multi-party proving and also Bulletproofs++, confidential assets with multiple provers, etc.
+
+Are there any additional cryptographic assumptions? It should be provably correct in the random oracle model assuming the hardness of the discrete log problem in both curves of a cycle of curves. In bitcoin, that would be the hardness of the seqQ hardness problem. If you take the bitcoin secp curve and swap the base and scalar, you get another elliptic curve which is believed to be hard. It's a reasonable assumption, it's thought. So it's just a second curve you would have to trust; HALO also uses a cycle of curves, this is a pretty reasonable assumption that people have been working with for a while now.
+
+# MuSig2-1.0
+
+<https://nitter.net/n1ckler/status/1567168267025874944>
+
+The MuSig2 bip is approaching MuSig2-1.0... this would be big for lightning. This is just the BIP? Okay. lnd has an implementation, there's one in libsecp, they are all working to have just a single standard that works.
+
+For those who are not familiar, Musig is a way to try to formalize the protocol to do signature aggregation. One of the problems with taproot is that you get Schnorr signatures and you can combine signatures to get constant size aggregated signatures and you get more private lightning, like an on-chain lightning output will look like a single key output. One of the problems in lightning privacy right now is that if you want to close the channel, you have to reveal the whole script which doesn't reveal the history of the channel but it does show it was a lightning channel and that lets you make assumptions. Only for cooperative close, of course, but with taproot you can make cooperative closes look like a single key transaction. We hadn't had a formal proof of that kind of construction. MuSig1 had a lot of difficulties and was very interactive. MuSig2 is a better protocol and we're getting closer. It will be introduced in the various lightning implementations, and then there's a question about how to coordinate that upgrade.
+
+Can we skip MuSig3 and go straight to MuSig5? I'll talk to my handler about that.
+
+What is the significant of the x-only pubkey? Do we need to change our lightning identities to be x-only pubkeys? There was some tedious conversion that you had to do originally, and now x-only pubkeys only happens at the end now. Every library has to update now-- now you have two separate pipelines of anything involving a pubkey.
+
+Lloyd has been almost on a jihad to get rid of these x-only pubkeys. He hates it. There's also discussions about how to get around this, and at what point are these conversions really required? One idea is to not do it until we get to the point of the final final state.
+
+Same experience at Lightning Labs implementing this. It's just one of those things if you, probably a lot of these updates from June through August were the Lightning Labs team saying hey this is annoying could you please update this. This happens a lot when you're early to implementing a protocol that isn't even version 1 yet. We're using some of this in production but perhaps some of this shouldn't be a default until it's standardized and fixed. This is one of those things and you don't really know until you go and put this stuff out in the wild and get feedback from developers. Well, it does save a single byte. You can also save bytes by not using multisig, you save a whole HTLC in the middle.
+
+# minimint
+
+MuSig2 is a way of doing k-of-k multisig in taproot, and FROST is a way of doing k-of-n multisig. We did an interesting experiment, some people changed the Fedimint on-chain wallet to be a taproot FROST-based wallet using a rust library called secp512-fun... they optimize for implementing fun protocols early and recklessly, so their implementation may not be functional but it's cool. They were able to make a taproot on-chain wallet for a federation so it could be a 10-of-13 federation that looks like a 1-of-1 multisig on-chain. It's interesting to see researchers trying to deploy this now.
+
+Does this hide the number of federation members to the users? At this layer it does on-chain. What about to users using e-cash? You still need to connect to them independently because you need to know if you have a quorum or if the transaction has been accepted by the federation, you need to actually check that yourself.
+
+# secp256k1: PR 1134
+
+<https://github.com/bitcoin-core/secp256k1/pull/1134>
+
+The big benefit of Schnorr signatures is saving on-chain space, but also the verification where you can actually batch-verify lots of signatures together instead of checking each individual signature you can just add them all up and check it in one go. That wasn't implemented in the original taproot implementation and got it out; there's not too many to batch verify yet, so they didn't prioritize it.... it's probably a year away from being merged, but it's cool to see it being started on.
+
+The summer of bitcoin is a project where they get college students to work for 2-3 months during the summer on some bitcoin projects. They take them through a little learning course and then they throw them into the projects. Fedimint had 2 of them; one of them made some substantial contributions. There's a lot of these Summer of Bitcoin interns who do non-trivial work over the summer and that has been pretty positive I think. This is the best way to learn, just jump into the fire. Classes are good but you do have to try and go actually make something. A lot of these open-source projects are welcoming if you really put in the work and if you can give something back like this batch validation implementation. It's awesome to see an intern championing this kind of hard problem.
+
+Summer of Bitcoin has been a really well done program. 
+
+# Credible Confessions
+
+<https://credibleconfessions.com/>
+
+If you have something you want to publish but you don't want people to know who you are, but you do want them to know that you are one of a group of people then you can use this. It's like a ring signature. You can pull in people's public keys from github and then write a message and then sign it as you, and the resulting ring signature is over all the people's public keys that you have pulled in. If you're an employee at a startup and you want to tell people something, but you don't want your identity to be public but they also want to know that you're not just a person making something up, like a whistleblower. In the original ring signature paper, whistleblowing "how to leak a secret" was the original use case.
+
+I like the idea of this if you think about a future where you join a company and you have a public key as part of the operating procedure. Email should be going around with public keys and the email contents should be signed. You could use these ring signatures in companies. I like things like this as well because we've been in the past few years of needing a blockchain to do stuff, but no you really just need cryptography and you could do cool things with just that. That's what I thought was cool about that.
+
+This seems useful for phishing. If you didn't care about your privacy, you would just sign the email. But here you are attesting that you're a member of this group, like someone in the engineering team. You can pull ssh keys from github, there's an API for that.
+
+# Spookchains
+
+<https://rubin.io/bitcoin/2022/09/14/drivechain-apo/>
+
+It's built off of work by ZmnScpXj. A little while ago, ZmnScpXj did a post where he did a post about using... there were concerns about drivechains, and given other proposals that people were considering you could do the same thing you were doing on drivechains and also showing it's a lot easier than we think to get recursiveness in bitcoin smart contracts. There are some updates there on the roadmap. I don't know if that was Jeremy's purpose in putting this out; he did something similar with just APO (ANYPREVOUT)....
+
+Drivechains is just one proposal out there for how to do sidechains and it requires a soft-fork. There are two BIPs out there. With sidechains in general, you want to take bitcoin from the main chain and put it into a sidechain where in that universe you can do other rules and use bitcoin proof of work baselayer to commit to statechanges in that sidechain's blocks. You could even think of something like Fedimint as that, without the consensus validation requirement. But you put bitcoin into a separate little universe, and use the bitcoin security to guarantee the consensus.
+
+The way that Spookchains works is by using ANYPREVOUT which people might remember from the eltoo proposal which was originally using SIGHASH\_NOINPUT. This is an upgrade to lightning where instead of having penalty transactions you would have a way to publish an eventual state for how that channel should end up. SIGHASH\_NOINPUT lets you commit to a transaction without committing to inputs so you can use any inputs to fund that transaction and some other things that let you increment state. So we both agree to this lightning channel eventually closing; in the sidechain terminology, you can similar to Ruben Somsen's work, we pre-sign a bunch of transactions where we don't know what the inputs are that will fund it but we know what the outputs are going to look like and we can attach them to the outputs if they ever make it on to the chain. So this lets you commit to many different possible states of the sidechain like funding in, funding out. It's pretty gnarly and technical and really complex, but at a higher-level one of the interesting things is that ANYPREVOUT is a primitive that was introduced to improve lightning by improving the bitcoin baselayer. Well-architected primitives open up a whole design space that we weren't aware of previously, where people might not have thought about the potential outcomes. Some people have concerns about drivechains where if we get that other thing then sometimes you can do the thing you don't want; just something to keep in mind in these discussions.
+
+Is it called Spookchains because it has the trusted setup, or is it because Jeremy Rubin is a spook? He might be. Who knows. Okay, moving on.
+
+# Liquid upgrade
+
+There was a big upgrade to Liquid. This is I think a last part in a series about... so Blockstream maintains this library called Elements which are basically future upgrades they experiment with in Liquid. Once taproot came in, they were able to enable all these other things in Elements to start experimenting with those things like bitmatrix that lets you do interesting novel lending protocols. They are experimenting with making miniscript understand covenants. They are a few years ahead of what might end up in bitcoin and playing around with the tooling. It's very detailed.
+
+# PR 25355: I2P add support for transient addresses for outbound connections
+
+We often talk about other private networks that aren't tor, and one of those is I2P. Normally when you make a connection to someone, you give them a pubkey so that when you reconnect you know them so you kind of doxx yourself. But now they changed that so you can have ephemeral pubkeys for each connection, which improves privacy. I think it's very interesting how these other transport layer networks work and how intricate they get.
+
+We do a similar thing for tor where we create a new circuit for every outbound transaction. It's interesting that this wasn't done sooner; might be an oversight. This brings I2P up to the same tier as using tor. Well, tor has better marketing and more users.
+
+# Meshnets article
+
+<https://bitcoinmagazine.com/technical/making-bitcoin-unstoppable-part-one-mesh-nets>
+
+This is an article on Bitcoin Magazine about making bitcoin unstoppable.. she has a whole page detailing governments shutting down the internet after elections and protests. The internet might be decentralized but really it's a network of networks, and it's possible to shutoff the internet in some countries. How would we solve this? Often you can use a mobile network or satellite but it's not the most reliable and data can be expensive. Africa only has 22% internet penetration. She talks about different ways to setup these mesh networks, like in Hong Kong during their protest they are using bluetooth-based mesh networks on your phone but that drains your battery and not everyone has an iphone. She also talks about gotenna, but gotenna are hard to get and you can't just buy a gotenna on Amazon when a crisis starts.
+
+She ends up with a solution that you can use normal wifi routers off the shelf and extend these with attenaes... well not everyone has attenas, and apparently you can use soup cans to extend your wifi radius and use that as a mesh network. I think soup cans for point-to-point mesh networks.
+
+Sending bitcoin data with ham radios is also cool. If you're in a real protest situation, then money is important, and means of communication are also useful. We need other pieces of plumbing. If we're able to create this kind of infrastructure then I think that's useful as well.
+
+# Weird block: 745969
+
+<https://twitter.com/akaKush0/status/1567554622742560768>
+
+Just digging into this block data, they actually went through this in their bitdevs meeting. What's weird about this block is that first it had a very high fee amount. It was over 1 BTC in fees rather than the average of about 0.5 BTC. They found out there's a median fee of 78 sats/bytes, but the mempool wasn't full and lots of other blocks had median fees and most of them were in the 20-30 sats/vByte range just before this block. I hadn't seen this visualizer before; the size of transactions actually tells an observer a lot about maybe your wallet for example. Looking at this visualization, you can see that many of these transactions are almost the exact same size. They dig in a little bit more, and they found that there were 50,000 sat transactions and a lot of them are being paid to the same address. What could account for this- a wallet that had a bug, or an exchange with a weird algorithm? I could see this maybe be some hacker or someone. The guy who did the FROST PR was saying this might be copying a private to a clipboard and it steals it or something, maybe that's what this was. It's not clear why this block happened.
+
+The strangest thing is that the actual fee is constant. They made a constant fee no matter what size. This sounds like a bug though, or someone hardcoding it. Usually you make a fee rate based on a transaction, instead of setting a constant fee. If they had a constant output amount and a constant fee, they are probably hardcoding it. The fee rates are variable, but the fees are coming out the same. There is 186 BTC on one of the UTXOs. Pretty weird.
+
+# Wallet label BIP
+
+<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2022-August/020887.html>
+
+If you export a wallet to a new device or wallet, one thing you lose is the context or labels from your wallet. In this BIP, he is proposing a CSV-based export. In the comments, Trezor came back and said no there's already a json version of this please don't reinvent the wheel. "We have a standard that only we use".
+
+Sparrow is a transaction coordinator, which uses hardware wallets. Ideally you could transport labels between coordinators. If only the hardware wallet manufacturers are using a standard, then it's not so useful if software wallets aren't using it. Why use CSV over json? There are some interesting discussion bits here.
+
+It seems like Craig was frustrated by this experience on the mailing list. Yeah, it's like herding cats and it's impossible to get everyone to agree. I think Blockstream Green does some encrypted cloud backups which isn't compatible with this; Moon has something else.. good luck getting Bitcoin Core to implement that.
+
+We'll skip braidpool since that's a long one.
+
+# migrate legacy wallets to descriptor wallets (PR 19602)
+
+This was merged recently. I think we talked about this a year or two ago. This is the migratewallet RPC command.. the misery of a bitcoin developer: spending 2 years to get a small change merged. There's documentation, RPC stuff, the actual wallet migration, etc.
+
+When I was reading through this, one of the challenges is that wallets are delicate and you don't want to lose information obviously. A lot of the stuff in there is how do you preserve information and how do you deal with wallets in an old format that is kind of broken? It used to be the case that you would have a wallet in Bitcoin Core and you could import watchonly addresses into that wallet and it wasn't deterministically derivable from a main seed for that wallet, so how do you deal with that? This method had to take into account splitting those wallets up, and still making backups incase there was a bug and you missed it. Achow says well message us and we'll fix it, or there's a backup and you'll use that. It's just hard to deal with when you're doing wallets.
+
+# Trezor + Wasabi
+
+Trezor and Wasabi announced at Baltic Honeybadger that they will join forces so you can directly coinjoin from your hardware wallet. One of the downsides of coinjoin protocols is that you need to have a hot wallet but here you can plugin your hardware wallet and you would be able to participate in the rounds. The tricky thing is that the device needs to know enough about the protocol to check that the rules are being followed. It can't just sign blindly because it has to know that it will get the money back. I think the device needs to know a little bit more about the protocol; it needs to recognize the registration transactions. In the first round of coinjoin, you prove you own the UTXOs by doing a first round with a fake transaction. Signing a fake transaction without showing it on the UI is probably a thing a hardware wallet shouldn't do. Anothe rthing is that Wasabi was like 300 inputs and 300 outputs which is hard to do on a hardware wallet. Also, a coinjoin can't last like 10 hours, so you need to ban an input if they don't respond within 5 minutes which isn't a lot of time for hardware wallets.
+
+With Sparrow, if you're coinjoining it's a hot wallet at that point but after 5 or 6 rounds it has a 20% chance of going to your hardware wallet at that point. You're not mixing directly from your hardware wallet, but it might be hot temporarily for a few days and that's a pretty good tradeoff. After it's done coinjoining enough rounds, it will send it straight to your hardware wallet directly. So it adds two extra transactions on your wallet... it uses the hardware wallets for the outputs, but you have to send it to the hot wallet to initiate it. I think you can also directly send to your multisig which is pretty cool, coinjoining to a multisig.
+
+Being able to export labels would be important here. If you have a whole history of coinjoins and you move to a new wallet that doesn't know about that or doesn't remember that, you can easily get rekt.
+
+# Ledger/Miniscript
+
+Ledger has implemented a subset of miniscript to make bitcoin scripts a little more understandable to software and also to represent policies a little bit better. The Ledger hardware wallets are now in every Best Buy store now, that came out last week.
+
+# Glitching tutorial
+
+There is a document describing how to do glitching attacks against the Trezor hardware wallet. If you were sufficiently motivated, you could have gone and tried this given that you had physical access to the hardware wallet. This was a cool in-depth article about how to hack the Trezor hardware wallet.
+
