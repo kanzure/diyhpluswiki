@@ -1,0 +1,21 @@
+# Web of Trust
+
+Some of the public key server operators interpreted GDPR to mean that they can't operate public key infrastructure anymore. There needs to be another solution for p2p distribution of keys and Web-of-Trust.
+
+bitcoin-otc.com continues to be the longest operating PGP web-of-trust using public key infrastructure. Rumplepay might be able to bootstrap a web-of-trust over time.
+
+# Stealth addresses and silent payments
+
+Here's something controversial. Say you keep an in-memory map of all addresses that have already been used. Those are definitely not for you if they are reused addresses, because you don't do that. And that's most of the addresses. This will save you on which transactions you look at; it can't be your output. This also creates an incentive to convince other people to reuse addresses because it reduces your scanning costs. You can make a bloom filter of all the reused addresses and check that. Well, you can have false positives, so that screws the bloom filter over. It's like a scarlet letter list. Here's all the bad people, right? If you implement it correctly, the addresses are provably unique.
+
+The real zero-conf should be "just send the private key". That's even faster than 0conf. Wonder why that wasn't the schelling point that people organized around.
+
+# Anonymous traffic networks
+
+Packet anonymizer using an HSM: the privacy of the traffic is protected by the HSM root of trust. Use an HSM to do tor traffic routing. This could be architected in a way that makes it easier to detect if there is someone tampering with a network, or create an incentive or pressure to make more strongly protected roots of trust, like decentralized roots of trust covenanted by groups.
+
+
+
+
+
+
