@@ -1,0 +1,63 @@
+Github and Bitcoin Core
+
+I think at this point it's quite clear that it's not necessarily a "if" we get off github, but a when and how. The question would be, how would we do that? This isn't really a presentation. It's more of a discussion. There's a few things to keep in mind, like the bitcoin-gh-meta repo, which captures all the issues, comments and pull requests. It's quite good. The ability to reconstruct what's inside of here on another platform doesn't really seem possible in its entirety.
+
+Issues could be reconstructed relatively easily. The code, obviously, won't be a problem. Reviews and tagging things to individual lines as well as sort of like maintaining the thread of what's on github seems nearly impossible. I haven't tried. I haven't been able to find anyone that is able to do it.
+
+Are line-by-line review stuff not in bitcoin-gh-meta? Does it have the emoticon reactions? PRs are considered issues. Does it have the GUI repo? After it was split out? I don't know.
+
+BB: You could make it so that there's a parallel universe and then github becomes a mirror. There would be a single user with posting privileges.
+
+The issue isn't how we do it, it's who will do it. It would just become increasingly more apparent that this move needs to happen. There needs to be a playbook and/or a team that actually makes this come to life. Also, when you start introducing like, if it's gitlab, or something else, but gitlab seems to be gaining momentum as a self-hosted solution. Who will host it?
+
+BB: Github has self-hosted as well. That could be a stepping stone if necessary.
+
+It's like Github Enterprise. You pay them money. It wouldn't be permanent. In the doomsday scenario of github wanting to censor the bitcoin project, if it's self-hosted do they have the ability to somehow interfere with it? They have on-prem hosting. What happens if they cut off your access? They can't ssh in and take it, but presumably a company wouldn't be allowed to keep using it. It might be an alternative to scraping everything, maybe we just keep an on-prem version and it would be easier than keeping it out of a script.
+
+Having a backup is great, but you always have to test re-deployment of the backup before you can rely on it.
+
+What if we are violating the gitlab terms of service by some chance? Well, you're not relying on them, you just use it and host it yourself. There's a gitlab CE community edition which might have a license that they can tweak against projects presumably. But it's your data.
+
+Regardless of gitlab vs github, in terms of migrating as much as you can over, there's that. But there will be some data loss. What is the tolerance for that loss? I think in some ways that's quite positive to just have this breaking moment of using the old platform to migrating to a new platform. There's 450 open PRs. There's 450 open issues right now. Some of that it would be great for having active users like reopen those things. Instead of a migration, are you proposing a clean start? It would be a purge, yeah. The code and issues would come over, but the pending PRs would have to be reopened. Issues are pretty easy to bring over. I don't know how the usernames work. For users that don't have public keys in their github, you can ban those users or freeze their accounts, and existing github users that set their public key can be ported over and verified as the same user.
+
+In my mind, gitlab must have an importer for issues and pull requests. Why are we not using that? We could. It's my understanding that the importer for the pull request part is not as reliable as the issue migration. Can we just pay someone to do this? A contractor wouldn't have to know anything about bitcoin. Just get it running, move everything in. They would give us scripts and codes to do it. There's nothing domain specific here. It's a very specific scoped project. It's good for a bounty or a contractor. There are probably people who are experts at this stuff. We're not experts at this.
+
+What about verifiyability? How would someone verify that all the data was transported over?
+
+Who would host the new one? Well, who would pay for it? Can there be a federated version? What about an IPFS link and then anyone could store it?
+
+Have we ruled out decentralized systems? The radicalue project? I haven't played with it. When you look for a decentralized offering...
+
+Who would be the ongoing admin of the server? Say Chaincode pays for it on AWS... there would be a server. It wouldn't be in the Chaincode building, but they pay the bill, maybe there's a camera. It's a thing. It might feed the trolls. If you don't want us to host it, then help us, and you host it instead. You could setup a primary system, and then a pure backup. Anyone could run a live mirror. If someone doesn't like Chaincode, then switch the DNS to another one. Who would control the DNS? We're not going to solve that question in this meeting.
+
+To minimize criticism, you could have a github repo that has all the scripts you need to spin it up right away. We host it at this DNS, we don't want to, and if you want to run your own, run it in 10 minutes with the docker containers and playbook and now you run it and you have it. We're still on github at this point, but we give ourselves a break in case of fire where anyone-- if github censors, then anyone can spin it up and run it.
+
+Is it worth doing that preemptively or do we want to wait until github gives us cause? Well, if you have two systems, bi-directional syncing is hard. Github should be read-only except for one writer. Once the migration happens, we shouldn't have to do it again in the future.
+
+Why don't we just move off github and just do it? What are we waiting for? The sooner you get off the system and start in the new world, then you don't have to wait. The initial steps you take are the same for both strategies.
+
+The question of who runs the server and who owns it is much more relevant if you're moving. But if you have it already ready to go, then you can go hammer it out about who runs it and owns it later. If you try to do both at the same time, you can have more controversy. If we have something that is better and is a better model, then we should do it. Well, I don't think it will work better. Github for all its faults is actually a good product. I don't think it is. Is it? Does anyone have access with Chaincode or Spiral hosting or both?
+
+The reality is that github is the central authority right now. If we move it to another central authority, it can't be worse. Github might be considered more neutral.
+
+Tornado Cash and youtube-dl are two github stories that matter here. Or the Iranian github repos. Will Chaincode be able to mount as good of a defense as Github has? It's mostly about their lawyers but at the same time there's a fight to be had there in centralized systems against government.
+
+Has anyone talked with github high-level? Just asking them, are they positive about them hosting the bitcoin project? Is that something worth looking at? Github did go to bat for youtube-dl which was fighting the digital media rights conglomerate. Youtube-dl was after Microsoft's acquisition but before the previous CEO left. Would you even believe the answer you get from Microsoft? I don't know if their answer would be relevant. The reason I want to be off github is that morally I think it's wrong they banned the Tornado Cash repository. If they reverse that, it would be good. Github has trained Copilot on open-source software... there's a lot of grey things that they do. As a platform, they are not super great.
+
+I've seen some "Login with Github" even though it's not hosted by github. That might be good for people who are used to github user logins. Using oauth we can have github identities transport over.
+
+A url rewriter for github links owuld be a good start. It could be a redirect domain that goes to github. Later it could be redirected to a new location in the future if things are moved off github.
+
+The immediate action is to find someone to setup as good a mirror as we possibly can and provide a playbook for in the event of an emergency how to move over off github and actually deliver this project. The next move would be to with a wider audience socialize the idea of a move and figure out the details of DNS ownership, who hosts the primary, what other backups there would be, etc. The first action item could be based on a bounty. We could start a document where we say, say we want to hire someone. We should agree on what are the minimum features? What is the criteria for completion? We're going to disagree on those items so let's just write it down... what are the things we want? Maybe someone could make the gitlab github importer work and preserve the metadata better.
+
+Github's graphql API is pretty powerful. The legacy API not so much. But the graphql one is pretty cool. Can you get historical data from it? I looked at it three years ago when I was thinking about doing a twitter bot that would tweet every time someone did a review. That was feasible. Maybe we could supplement whatever is missing with like doing an export while we're still on github and on good terms with them. Github pull request approvals and emoticons might be harder to contextualize, but also fairly marginal in value. But if you're not using natively git things, then that makes you more dependent on bitcoin-gh-meta. We should figure out what the importer catches and what it doesn't. Someone should check. How can the data be organized after it's pulled out? How do we re-create something that is native to how github works, and make it apply to gitlab or some other platform?
+
+Maybe reach out to gitlab and see if this would be a feather in their cap and maybe they could help with this kind of migration. It's kind of their brand.
+
+What if we dump all the lines of code and comments and everything, but we don't worry about having it in gitlab? Just an archived website with static HTML. That might be easier. Having a static one is nice but now you have two or more places to run a search. Does anyone use github search? Sounds like some people might be using github search.
+
+Code comments on pull requests might be hard because some comments might be for branches that no longer exist in a PR or they are attached to a commit that doesn't exist. Github does store the old branches that you think are deleted if it's commented on in the pull requests in the parent repository. Force pushes might be difficult to catch. Force pushes might have an expiration date on github, they have garbage collection rules for that.
+
+Maybe github would be willing to give us a dump of the entire history including force pushes, comments on forked branches, etc.
+
+
