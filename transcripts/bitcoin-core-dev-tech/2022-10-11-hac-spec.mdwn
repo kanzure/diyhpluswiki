@@ -1,0 +1,60 @@
+High-assurance cryptography specifications and workshops (hac-spec)
+
+....
+
+# Far far future
+
+In the far far future, we could get rid of this weird paper notation scheme and do a security proof directly for the specification. Presumably that is much harder than anything else in my slides. But this would rule out a lot of bugs.
+
+Q: But the security proof itself is written in a paper?
+
+A: The security proof itself would be written in hac-spec. And your simulators. The compiler will prove that your proof is correct according to your definitions. That's already Coq for C code. You define a proof, you write the proof in Haskell, then it will verify that the C code matches it. Coq is written in Coq actually. It's a proving language.
+
+Q: That's so cool.
+
+A: It's probably hard to do. Also the question is, security proof, it's just a term. But the security proof might cover certain things and not other things. So then the problem is security definitions. But that's what people in formal verification have been trying to push for 20 years: get rid of papers and write all the proofs in Coq instead. I agree. It's hard to do that.
+
+From my impression of this workshop, I was impressed with this. A lot of stuff is happening. The ecosystem has lots of tool and bad documentation but hac-spec is a sweet spot. Just write your specs in hac-spec and then you can translate it to other languages that allow you to prove things about the specification. Or you can translate into Coq.
+
+You can choose what you want to prove about it. You can incrementally improve the proofs as you go along if you want. In a Coq example, there's lots of variables in there that are from codegen, but maybe if you change the specification then you get new variable names and now you have to adjust your proofs for this new Coq output which is unfortunate. You could write a lemma like this: no integer overflow, no buffer overflow here, and then you produce a proof from that. This requires very specialized skills and a lot of work. I should probably add that.
+
+Q: Is there a proof language in hac-spec?
+
+A: So hac-spec is just for formal definitions for specifications. But it doesn't contain a proof compiler or verifier. So you have to go to Coq or something like that. Yes. You get formalized semantics. It's fully formalized. The semantics of the conversion to Coq is fully formalized. The semantics of hac-spec are formal. But the translation into Coq.... perhaps we should run the tests for Coq as well and see if that works.
+
+# Conclusion
+
+Would you run the Coq code against your test vectors? It's just an idea I had to make sure the Coq code is right.
+
+Q: If I want to write a BIP and prove its correct, I need to write a specification in hac-spec and also write a proof in Coq?
+
+A: Yes. You write your specification in hac-spec and not in Coq so that other people can read it too.
+
+Q: Hopefully you can also write the proofs in hac-spec. No?
+
+A: That doesn't really make sense.
+
+Q: I'm not saying the same language but it should be in the same framework without moving to another framework.
+
+A: Well, there's a reason why people use Coq. It's because there's a large ecosystem.
+
+Q: I tried learning Coq. Never got there.
+
+A: All these things are hard, but if you replace them with something else it's just harder.
+
+If you are an author of crypto-BIPs, then you might want to consider writing your specifications in half-spec instead of pseudocode and completely get rid of the python stuff from your BIPs. In the half-aggregation BIP, I added comments for people who have trouble reading rust. This hac-spec subset is also hard to read for example the question mark operator, this is my best example. No other language has this. It is easy to miss, but it's super important. This really trips me up. Hac-spec forces you to use the question mark operator because you can't return only. You'll probably miss seeing the question mark. They probably formalized the question mark. Previously you could only return errors early, but never OKs.
+
+One question would be, do we actually need pseudocode? Does this help anyone? It also introduces potential for mistakes like either translating between a specification and pseudocode or someone reading pseudocode and misinterpreting it. It might still hurt to understand it. I would rather strip out pseudocode because that's less work.
+
+In the integer overflow check, for that do you also need to write a Coq proof? You need to write a proof for that. If all I'm doing in half-spec is get formal definitions but that's it.. if I assume the python has a formal definition, then it's equivalent. There's no free lunch.
+
+Perhaps there's also a way to do formal verification or formal methods. It's an established research field with little practical relevance outside of some specialized areas. Maybe bitcoin would be a research area where this has application. I've heard banks use this for mainframes. No, they aren't doing that.
+
+Are there applications outside of cryptographic BIPs? Hac-spec is just a subset of rust and you can do many things, the standard library is a bit limited but perhaps there are other applications.
+
+Q: Can you open sockets? I assume no.
+
+Fstar is another interactive theorem prover, similar to Coq. You can also translate it into easy-crypt which is a little bit different because it's a specialized language for doing computer crypto proofs. Hac-spec does not include code generation as part of its goal, the goal is not to generate fast code that matches the spec. With hac-spec, you don't need to be a formal theorem expert to read the specification.
+
+Maybe proof engineering gets easier in the future. Maybe GPT-3/Codex gives you suggestions about how to do the proofs like giving you hints and helping you. Like Coq Copilot. Until then hopefully we get people who do formal analysis on our specs because we can't do it all on our own. "Render me this proof in the style of a Schnorr paper, trending on Art Station."
+
