@@ -14,6 +14,24 @@ The real zero-conf should be "just send the private key". That's even faster tha
 
 Packet anonymizer using an HSM: the privacy of the traffic is protected by the HSM root of trust. Use an HSM to do tor traffic routing. This could be architected in a way that makes it easier to detect if there is someone tampering with a network, or create an incentive or pressure to make more strongly protected roots of trust, like decentralized roots of trust covenanted by groups.
 
+# Signing by hand
+
+One idea is to encrypt/decrypt by hand and export the signing process to a computer using fully homomorphic encryption. You could replace the signature algorithm with a fully homomorphic version of the signature algorithm. Or if it's mostly lattice calculations then it may be possible to do it by hand. Say you get a fully homomorphically encrypted blob and then there's only one algorithm that can run on it to spit out 0 or 1 for verification.
+
+Maybe if you do the thing where you have a fully homomorphically encrypted program, and then the program can't be efficiently modified by other people? Do you need a zero-knowledge proof of signature verification? Or would that need to be run by hand? You need a proof of correct execution which is hard to avoid.
+
+Could you find a curve that would be easier to do by hand? Maybe a binary curve over a binary field. The base field instead of being a large prime would be a Galois field with 2^256 elements or something. I don't know if the operations are easier to do there. I would assume humans might find it easier to operate on base 10. The existing stuff that Andrew has works over the field of 32 elements. But then there's extra machinery to work with...
+
+I suggested a long time ago, no idea how feasible it is, to use mechanical aides. There are computers that can evaluate Fourier transforms. There are multiplication algorithms that are based on Fourier transforms. Like bead machines or mechanical hardware. Something like that maybe could be made to work. It's a matter of time. To evaluate one scalar multiplication of a curvepoint involves something like a thousand Fourier approximations... each point is 10, so there's 100 of them, so there's about 1,000.
+
+We were discussing this yesterday. You could pre-compute... you could have computation look-up tables for all powers already written down in a book and maybe you could do things more efficiently that way. It seems like it would be easy to put in small errors that would result in wrong values that would leak information.
+
+The best case would be like one pairing check. How hard is it to do a pairing computation by hand? It's much more expensive than doing just a single point addition, but maybe it's better than a point multiplication? The expensive part of computing a pairing is the pairing for like BLS-12, say, goes into the field of size p^12 so then there's some r value that is about 256 bits that divides p^12 - 1. So you have to do a multiplication of p^12 - 1 divided by r which is a value with approximately 2000 bits or something. It's a big exponentiation.
+
+Bulletproofs verification by hand would be like Sysphus pushing up a bolder by hand. Doing 1000 point multiplications by hand? Make one tiny error and it's all over. If you make one small tiny error, do you still get a point on the curve? If you make a small error, it depends on how you do it. A random error? If you pick a random x, there's a 50% chance that it's a curvepoint. But a random x and y that you pick? It's most likely not a curvepoint.
+
+Something that you could compute by hand that would make it easier to verify zero-knowledge proofs by hand would be likely to be useful for improving zero-knowledge verifications on computers since it would be easier.
+
 
 
 
