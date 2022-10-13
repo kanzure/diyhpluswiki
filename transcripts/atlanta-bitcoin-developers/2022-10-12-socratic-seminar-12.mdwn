@@ -1,0 +1,179 @@
+2022-10-12
+
+Atlanta Bitcoin Developers Socratic Seminar 12
+
+<https://atlantabitdevs.org/2022/10/12/bitcoin-socratic-seminar-12/>
+
+# Introduction
+
+Welcome to Atlanta BitDevs everyone. First rule of BitDevs is that there are no such thing as dumb questions. Second thing is that there are no dumb questions. Some questions are Top Draft questions meaning we might go hang out at Top Draft at Omni Hotel unless they are closed, and then we go rogue. Sometimes we will say a question is off-topic and let's talk about it over beer later. No photos or videos. We like people talking openly and freely at bitdevs. No personal attacks on people. We usually have a little gag here in Atlanta where this is your first night of bitdevs we give you a sticker. Unfortunately I don't know where my pack of smiley face stickers are. I'm turning into a teacher now. I have a whole box full of random stickers. Just come talk to me afterwards if this is your first time or if you just want one.
+
+# Sponsors
+
+Atlanta Bitplebs is more about the economics of bitcoin. We change it up every week. We help plebs make the choice between cast-iron cooking and stainless steel. I want to thank our sponsors real quick, including NCR, Terminus, and Cardcoins. Thanks to NCR for hosting us. Cardcoins will be sponsoring the socratic sessions on Friday at the TABconf conference. For those of you didn't know, Atlanta has a bitcoin-only co-working space called Terminus Labs. If you want to work around bitcoiners and get involved in the space, then we have a desk for you.
+
+# Agenda
+
+We're not going to do the introductions because of the large crowd and things are running late. We usually introduce ourselves at the beginning and helps people feel comfortable. The introductions tend to be ice breakers. If you do chime in with a question or comment, it might be good to make a quick for anyone who is not familiar with your work like if you're commenting on a particular wallet project maybe mention you made commits to the project. Maybe give a quick blurb about you if it's relevant to what you're talking about.
+
+# Summer of Bitcoin
+
+Summer of Bitcoin pairs you with a project and a mentor. You do your first pull request and you get bootstrapped into the bitcoin community. I recommend it for university students. On the UX design side, we had a group of designers and worked together to work with developers to also create what we were working on. Stephen was actually my mentor for that project.
+
+Q: Did they lift the university student restriction?
+
+A: I'm a high school senior.
+
+Q: You said you worked on bitcoin devkit so you probably worked with Steve and thunder biscuit? Tell us a little bit about what specifically did you work on for these projects. What kind of contributions did you make?
+
+A: I mainly focused on BDK which is an open-source bitcoin wallet development kit. We have tools and libraries to create basically a wallet. It's a library written in rust and its focus .....
+
+Q: It helps you build transaction validation logic and build stuff quicker. Was there a specific issue that Steve said you should specifically tackle and fix? Or was it more exploratory about what you want to build?
+
+A: I was focused on BDK's FFI interface. It's language bindings for the BDK library. The language bindings facilitate other developers writing in other programming languages like Java, python and even Swift so that they have less to worry about on bitcoin development. The CLI is a powerful command line interface that lets you test and also it's very educational. Before using any advanced features that any beginner would try to attempt to use, BDK-CLI is a perfect tool for developers to learn how to build a wallet and what a descriptor is, what a derivation path is, and all these simple things. It also exposes you to the BDK API in case you want to take that information using the command line interface and build your own project whether for a wallet for an exchange or individual projects.
+
+Q: ...
+
+A: I didn't have a lot of experience with Figma and my skill level on Figma was no comparison to other team members on the team. I talked with the team members about how to incorporate this into the design and then the other designers would actually create the design and help with that.
+
+Q: You were the one getting people to use the app and watch where they use it and how they stumble?
+
+A: I setup user interviews and gave them tasks and observed how they interacted with the app and collected their feedback and all the statistics and really try to understand how to best improve the app.
+
+Q: I think thunderbiscuit was impressed by that. He's the developer of padawan wallet. I don't think he had collaborated with a designer before on a project and he was impressed by the project work you put in. What makes for a successful summer of bitcoin student or project?
+
+A: You have to grow from the experience. As long as you grow then you are successful in what you did. For me it was a very new experience and never had worked on open-source projects before so there was a lot of figuring out to be had. Also sticking to the bitcoin topics and learning at the seminars and staying motivated by putting in your full effort. It doesn't how much work effort you have as long as you put your full input into it.
+
+A: I setup my first github account and setup my IDE for the first time. I was learning rust. I was learning a new library along with BDK-FFI which is the language bindings part of the library. There were many days where I wasn't advancing and had no idea how I would make my first pull request happen. ....
+
+<https://summerofbitcoin.org/>
+
+We're trying to get people excited about contributing to open-source bitcoin projects. Thanks for coming out here to Atlanta.
+
+....
+
+# Roll-ups
+
+((Apparently this is an ethereum developer and that's why this doesn't read correctly from bitcoin research history.))
+
+Who has heard of roll-ups? How many of you have studied them in some capacity? Less hands. What we're going to do is, who has looked at this post from John Light? He was funded by HRF to do some research on roll-ups, which are a general category for a layer two system which encompasses a number of different approaches the same way that a payment channel isn't a single thing. We're most familiar with the Poon-Dryja construction of the classic lightning network that your friends and family are using. But there's the Decker-scheme or the Nakamoto channels and the Hern channels.
+
+Roll-ups are a wide category. We will look at two primary categories and then dig into one. They are generally speaking in the ethereum community there is the optimistic schemes and the validity roll-ups zkRoll-ups which don't always use a SNARK or zero-knowledge proof system.
+
+Why do we care about layer two systems? I think we're all pretty aware of this. We like improving bitcoin but we don't want to make tradeoffs to the fundamental constructions of the system. We don't want to pervert incentives or increase node operation costs or things of that nature.
+
+When we're inspecting a given protocol, we first need to look at what are the mechanisms of action. How does it hook into the base protocol? What are the interactions amongst network participants? What is the manifested functionality from it?
+
+In lightning, it's a pretty slim protocol as it relates to the bitcoin consensus system with hashlocks, timelocks, and multisig. The complexity is not at the base system. ((Fee pinning)). There are some assumptions around liveness and interactivity you get some critical features. You have some payment channels that only require an open and close transaction and you can do an unbounded number of transactions between two parties. But it has certain limitations with tradeoffs. You have high interactivity, liveness, liquidity constraints, and routing. All of that makes lightning a little less shining I would say.
+
+When comparing to alternative layer two systems, for me, if you were around in 2013 or 2014 you would remember early conceptions of sidechains which was this magic construction where you could take bitcoin, peg it in, bridge it in as it were. The Blockchain paper didn't have all of that. The question remains, can we draw out a lot of the functionality you get in a classic sidechain while maintaining trust minimality in that bridge when pegging in and pegging out? That is very much the question that roll-ups are trying to answer, okay? They make tradeoffs.
+
+I don't have too much time. What we will talk a little bit about is how a general validity roll-up works. The fundamental problem is this bridge. You have some bitcoin and you want to insert them into a sidechain or some other protocol. The name doesn't really matter. When you take bitcoin and you put a locking script on it, the scripting mechansims within the bitcoin protocol limit the expressability of bitcoin script will limit what you can do with that bitcoin. If you put bitcoin into a locked script and into a federated sidechain, then the participants in that federation have to give you permission to get your bitcoin out.
+
+But imagine you had a magical sidechain that allows you to withdraw without any permission from said federation of signing parties. That's where roll-ups come into play. I want you to imagine now is this sort of process by which... let's go a little deeper rather into the concept of data availability. I think that will put this into context.
+
+When you have a pegout, this is the problem you have in a roll-up how do you allow a person to withdraw funds without trusting a third-party? When you have multiple participants passing around coins in a network where the base system doesn't see that, then how do you know the person who triggers a withdrawal is not cheating? This is a very hard problem. In an optimistic roll-up, what you have is all of the data of the sidechain or the roll-up is actually posted on the mainchain. Well, what's the point of that? You're not providing any scaling. In ethereum, you have a little bit of a different scaling model. Most of the difficulty comes from computation. The data remains on-chain. If a party withdraws and misbehaves, the mainchain can observe the misbehavior on ethereum. You have a delta during which a proof can be produced that some party committed fraud like withdrawing when they did not have the correct ownership rights. We can all see that. This won't be how it works on bitcoin though bceause in bitcoin, computation isn't a problem, bandwidth and storage is where our nodes are most constrained. We're not super interested in optimistic roll-ups.
+
+Where things get interesting is when you can compress .. validate base chain operators, without exposing themselves to their entire activity of it. This is where the magic of zero-knowledge comes into play. Zero-knowledge proofs, mostly familiar with them. You can put your hands down. Zero-knowledge proofs have an interesting history in bitcoin. Early constructions by Greg Maxwell and co came thorugh in 2011-2013 with zero-knowledge contingent payments where you can leverage hashlock to produce a payment scheme where a user would only allow a payment to be released when a secret was published like a password that hashed to something or a sudoku puzzle solution. You can even think of a bitcoin signature like a secp256k1 signature as a somewhat kind of version of a zero-knowledge proof. You are releasing information about the key in the signature, but you're proving a ..... ok I'm not going to transcribe wrong things.
+
+.... take proofs of activity and then insert them into the chain. For every block in a roll-up or a sidechain, you generate a sequencer which generates these proofs and each one of these proofs goes into the basechain, okay? That allows the base users running nodes to validate this activity without actually replaying the whole activity, okay? It creates some interesting tradeoffs, right? You have already noticed well what is the compression you get? What do you get with this sort of compression? It's not as much as you hope, okay? In the most basic construction where you have a two-input two-output witness pubkeyhash transaction, you're going to reduce like the witness size a little bit not a ton, right? It's about, you know, 5x reduction. Not a huge reduction, but it is a reduction. The question is not purely about space reduction but you also have to consider the time in which it takes to validate these proofs which is itself, a potential DoS vector and concern.
+
+Without going into too much depth because I do want to open this up for discussion, if you imagine this system where you have a semi-trusted bridge where you can come in and out of the bridge and the sidechain can have privacy features or scalability features or its own consensus process. If that's something we think we want, then we should investigate if these validation tradeoffs and storage tradeoffs are something that we want. As a community, we have to answer these questions.
+
+How do we get this? We would need to make some minor cchanges to the bitcoin protocol. You'd need to validate these proofs and you would need recursive covenants to keep track of the state. Are we willing to make these tradeoffs? I open up the floor to this general conversation. Do we like roll-ups?
+
+You also have to pick a proof system and zk proof systems are moving quickly with lots of churn. Do we fork and add support for something? You want to do something with efficient validation so we would have to pick the specific thing, commit to it, put it into consensus and probalby never remove it. So we can't just do something generic and upgrade the network next year. Are we going to wait 3 years for this? What happens when it breaks?
+
+The sequencer is still centralized. Another part in the article is validity chains pushing the data off-chain. He mentions validity and some other solutions there. I think he calls it Validium or Validia chain. I'm not sure if htat's a good idea.
+
+This isn't magic. I know I have used the word magic. Someone has to orchestrate these roll-ups, someone has ot order the transactions, these are the sequencers and they have a lot of authority in these systems. If that is good or bad thing, that depends on what tradeoffs you want to make.
+
+You can probably pack generic Schnorr signatures into ZKPs and once someone figures out how to do that, then it's going to be on-chain no matter what.
+
+roasbeef: ... you can take your protocol and make an ASIC or circuit of that. Another way is to create a proof that can prove vallidity and it generalizes. One of the thing is that over the years people have created intermediate representations where you can compile down your computation to a very specific format or something like that. One of the things is that we may not be forced into the actual proof format itself as long as we have a generic verifier. In zcash, they have more ASIC style so it's a specific kind of proof. For now they are probably generic too, so we have been down this path before and this is the constraint system we are all validating against and then we can make tradeoffs around that.
+
+Yes, with great expressability comes a lot of danger as well.
+
+Yes, ubt what I'm trying to say is the VM itself or the set of constraints in the verifier can be somewhat succinct. That additional operation can be proved to e correct as well. You can have a succinct specification of the VM prover itself. That can be shipped. Another thing that has gone into research is recursive proofs like proving that the VM verifier would have accepted something as well. I don't think we're going to be forced into this. You can do this without requiring consensus. You can do zero-knowledge proofs to prove block header validity. That's not a consensus issue necessarily, since it can be useful on p2p. The tooling has been advancing over the past 5 years.
+
+We can already do a generic VM proofs like frisbee or whatever pick your VM, but you still have to pick an algorithm. There are many different options for different STARKs and SNARKs and different formats and curves. You proabbly want to fix that so that you can build something generic and you probably don't want that in consensus. That's the harder part to pick.
+
+roasbeef: All I'm saying is that there are less choices you need to make right now, like field size or something. There's less choices. We have the choice, but ther'es less.
+
+sipa: I don't understand why you mentioned not having something in consensus. I'm only commenting on the choice of introducing some kind of zero-knowledge proof as a consenuss system. Within that framework of possibilities, a consideration is security assumptions. Bitcoin has been traditionally very conservative in its security assumptions and I think for good reason. A good argument, I think, is that even if you say this is purely optional like people who don't want to start using this zk system constructions they could keep their money elsewhere, well if I expect many people to start using it and I don't believe the security assumptions are safe then I also don't want a large part of the bitcoin ecosystem to adopt it because it potentially hurts my money as well.
+
+That's getting deep on fork philosophy. Opt-in functionality as powerful as it can be it has two sides. We all know that while it take, take segwit, it was a low-touch soft-fork, not all soft-forks are created equal even if you can bring in this functionality without that hardness you do make risk of making serious tradeoffs for non-opt-in users.
+
+In 2013, gmaxwell demonstrated that you can make a payment today without a soft-fork by using a zero-knowledge contingent payment. Can this be used to enable this functionality without a soft-fork? Can you first create the additional blockhain, create transactions on there, and then have bitcoin respond to those?
+
+That will be a Top Draft question. ((Then why are we here?))
+
+# lnd: Fail to chain sync issue 7002
+
+I got an error when running lnd. I was unable to sync on testnet3 and was unable to process a block. My error had a blockheight in it at which it was frozen or unable to continously sync. What happened here?
+
+This then progressed into mainnet. I was on testnet, a few other people posted about mainnet so I was thinking to myself what's going on here? I was trying to figure out what the transaction was. Someone posted a link to this tweet about a 998-of-999 tapscript multisig. I got the biggest kick out of this. Effectively it found a bug and takes down half the lightning network.
+
+The testnet transaction was like $20 and 300 to 400 kilobytes in data. The mainnet transaction was similar. What happened here? This was the source or the cause. The breaking down... the actual error itself says that the witness stack is too large. ((lnd uses btcd instead of Bitcoin Core and didn't we tell you that this would happen?))
+
+((lnd isn't validating transactions, they are just parsing transactions and their parsing model is broken.))
+
+What is the witness stack? It's basically the required data format in stack format used to check transaction validity, scripts and signatures. There was a little stackexchange link that was helpful in understanding this. What is too large? What is the exact limit of the stack? In segwit v0, there is a limit of 11,000 or I guess in bip341 it references 10,000 vbytes. Taproot v1 max size went up to implicitly the block size of 4 million vbytes. What this leads to as you're trolling around in lnd like me and btcd and other packages that they realize that btcd has this bug in the consensus layer between v0 and v1 they updated to this weight limit but in the wire parsing package they did not. They had a defense-in-depth redundancy check which is ironic in my opinion because it was a cover-your-ass check in a way and then it turned out to bite them a little bit.
+
+That's kind of the gist of it. In this wire parsing package, you had a max witness item size of 11,000. The theoretic limit should be 4 million, so as a result you get this transaction with almost 400,000 witness items and it would be parsed by the btcd wire parsing package.
+
+How did it get fixed? I never cease to be amazed at how simple code changes just make, just have this massive impact on the entire network. You literally look at the changes and it's just updated to a constant in the btcd wire parsing package. Moving over from v0 segwit to the v1 limit, laolu pushed the hot fix, I was online, I pulled in the patch, and immediately everything started working.
+
+That's the tl;dr of a quick update to lnd. Update your nodes. I don't want to say that bitcoin is in its infancy, I mean lightning; but if this happened and millions of channels had to be forced closed, how would this play out? Does anyone want to talk about scenarios of this nature?
+
+roasbeef: Definitely not a great bug. I was at this jam session actually and got a call from Michael and said what's going on. Once I started looking at the error, I already had everything for the fix but the longest part of this whole cycle was waiting for CI because it takes 40 minutes for a lnd build to build on CI. The big question was what the main impact was. There's the impact on people who are running btcd. For people running on bitcoind, those nodes had the blocks afterwards. btcd didn't actually validate the block because it failed on the block itself so it didn't do the blocks afterwards as well. With nodes out of sync, you could do some clawbacks. I think on Monday we're going to ... all of our tests to see what things owrk and what things don't. The main thing is what's the worst concern? There's a .. CLTV... how much time  in CLTVs, if you have an HTLC, what's the difference between that delta? If they're the same, there's a race condition. If blocks are full, bad things can happen. Sure. Most channels have an interval of a thousand blocks or something. But the default CLTV value is around 4-6 hours or something and this bug was fixed in 3 or 4 hours in far as the PR being up itself. But we wouldn't want HTLCs to be forced; there's a time window. ... so maybe we can [increase that, in the past we were at 144 blocks by default. ... I think the other thing is that, HTLCs ... as everyone knows, everything is up, but some people were saying their nodes crashed but they were really up. There's a future time bound where the timelocks are weird but we didn't reach that window. We have to look at the mean time to recovery; can we get the system back up and patched before that timelock value expires? I think we need to increase the value. Many people actually saw this and they maybe increased their fees or other things. The only things that crashed would be if you restarted your node and rescanned everything.
+
+Defaults matter. Be careful when opening channels. If you open up bigger channels, increase those defaults.
+
+Q: How do watchtowers fit into this story?
+
+roasbeef: They don't. Super good question. We're looking to reproduce this in a test. If there was a breach in that block, it would basically not... I'm pretty sure, but I want to verify this, that if any block came after that, we would claim it properly. We have a generic stream coming in like zeromq on bitcoind and we got those future blocks and make sure the watchtower got those. Or your node would send off new state to the tower too. Ideally what we're going to have is a tower implementation with a different stack and that's how you protect against that kind of problem. Some people like that, but not everyone wants different stacks on the consensus layer. Some people would debate this, but to me it was not. One analogous thing is that we're pretty sure that at some point a node raised a max value to 32 megabytes, was it a bug, was it triggered, no, luckily we foound it pretty fast.
+
+Q: If you had a watchtower with a different underlying node, then that might protect those systems.
+
+We have generally rejected the idea of using multiple bitcoin implementations in bitcoin.
+
+((roasbeef: wtf?))
+
+...
+
+Q: I just wanted to make a comment on dependencies. As a node operator, if you're running lnd and you have a choice between bitcoind and btcd. I know bitcoind has a lot more people on it and a lot more maintainers. If I'm making that decision, then btcd might work in most cases. But if we can get lnd to the point where it doesn't depend on btcd at all, I think that would be nicer because that would mean cleaner dependencies in our layer 2 implementations.
+
+petertodd: Lightning is a curious thing because at the bitcoin layer what serves everyone the best is if everyone goes down at the same time. If everyone goes offline at the same time, then there's no fork and nobody loses money. But if you do an implementation of watchtowers with a different node, you want to be going up or down at the same time as everyone. Your implementation on top of it, maybe your lnd crashes but your watchtower doesn't or vice versa. You have to look carefully at how these things fail and what's likely to happen to make the right decision on whether multiple implementations are good or not.
+
+Q: ... key management. If your watchtower is too reactive, ... states... on chain.... new set of keys for each watchtowers and that means you need some kind of secure module. Otherwise you're just increasing your attack surface for.. watchtowers and swipe the keys.
+
+Q: I work on utreexo and I'm intimately familiar with bitcoin development. I'm disappointed at the maintainership of btcd and the development direction it's going on. I think the taproot implementation of btcd was extremely rushed. I wouldn't be surprised if there was another bug. I've been very disappointed. I wish there was more communication from the maintainer side of btcd from Lightning Labs. It would be great if there was more communication.
+
+roasbeef: If you would like to contribute and help out, you're very much welcome to.
+
+It didn't look like the lnd nodes were visibly effected unless you tried to restart them, otherwise they ran as normal. Is there anything that would prevent the nodes from processing HTLCs if for example they haven't seen a block in like 2 hours?
+
+BlueMatt: ... you would just...
+
+roasbeef: You would see... at some point you start rejecting it as too far in the future. Everything was resolved within "hours" but if it went on for a day or more then timelocks would be too far in the future and everything would be rejecte.d The timeframe was small, but if it had been weeks or more then you would get to a point where there are protocol level errors. If you haven't updated your node, you will begin to see this behavior.
+
+These are now Top Draft questions. We're going to move on.
+
+# Frostimint
+
+I added Frostimint to the list because maybe there would be people in the room that would help me understand it. It's kind of cool. Frostimint, I won't play the whole video here. There's two projects. There's the fedimint project which is the idea of having federated custodians of bitcoin and then you can use Chaumian e-cash to represent the bitcoin but make payments with lightning payments. You can transact privately on this system. There are several contributors of Fedimint in the room. There's a running gag where they go to a hackathon and take the word Fedi and replace it with another word. There's always something. Simplimint. Frostimint is another one. It's flexible round-optimized schnorr threshold signatures...
+
+Well there's multisig like 2-of-3 multisig arrangement, and you need 2 of them to spend or at least 2 of them to spend any 2 of the keys. Technically that's a threshold signature. Multisig is when you need 2-of-2 keys to spend or 3-of-3 keys to spend. .... trying to improve the user experience of coinjoins. There was this interesting call where Dan and Nick Pharaoh did a fork of Fedimint and they added FROST support.
+
+Q: Is FROST merged?
+
+A: Well, everything is merged into something.
+
+Justin: Fedimint has a wallet that is native segwit and ew'd like to upgrade to taproot over time. It's k-of-n multisig. You can't use MuSig so you need to use a threshold scheme like FROST. But unfortunately in FROST one malicious signer can cause it to fail. So this is a half-measure, the next step would be to implement ROAST which Tim Ruffing has been advising us on how to do. It's cool to see this develop because some developers of FROST were looking for some practical place to apply their research project instead of signet or something, so since Fedimint is modular you can add a taproot wallet next to the segwit wallet and choose which one you wanted to use. Over time if we can get ROAST working then we can do bolt12 and have the federation run a federated lightning node. Those are some exciting things about this.
+
+For people who might be hearing about FROST for the first time, or taproot in general, we take something multisig or threshold and we broadcast a transaction for it and commit it to a blockchain and then spend the output. Then you can see all the signatures and you can tell it's a threshold native multisig spend. On FROST, my understanding is that with the aggregate signatures of Schnorr you can make it so that you only have one aggregated signature when you spend that out. Will that create cost savings for the federation Justin because there are less fees due to the smaller byte sizes?
+
+Taproot helps us optimize threshold multisig applications. We also see some people hacking on that in other areas.
+
+
