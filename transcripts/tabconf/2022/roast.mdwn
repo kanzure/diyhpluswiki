@@ -1,0 +1,146 @@
+ROAST: Robust asynchronous Schnorr threshold signatures
+
+Tim Ruffing
+
+paper: <https://ia.cr/2022/550>
+
+slides: <https://slides.com/real-or-random/roast-tabconf22/>
+
+Hey. Hello. My name is Tim and I work at Blockstream. This is some academic work in joint with some of my coworkers.
+
+# Schnorr signatures in Bitcoin
+
+We recently got support for Schnorr signatures in bitcoin, introduced as part of bip340 which was activated as part of the taproot soft-fork. There are three main reasons why we want Schnorr signatures and prefer them over ECDSA bitcoin signatures which can still be used: one is that Schnorr signatures have provable security and give the theory guys more confidence; Schnorr signatures are more efficient; and the main thing is that we can get easier constructions of advanced signing protocols.
+
+# Vision
+
+We have on-chain support for Schnorr signature verification. So we know how to verify a Schnorr signature. Once we have this on-chain, you can build a lot of stuff off-chain on top of this. For example, you can build threshold signatures, you can do multisignatures like MuSig and MuSig2. If it looks like a Schnorr signature, you can put it on the chain and it will be compatible. There's an on-chain consensus layer that had to be changed to support Schnorr signatures. Now that we have that, we don't need to change the on-chain consensus layer again which is nice because changing consensus layer is harder.
+
+Also, with these protocols, if you just look at the blockchain you only see a Schnorr signature but you don't see whether there was a threshold signature protocol or multisignature protocol involved in creating that signature. This also gives compactness, it's only 32 bytes of data no matter what's going on to produce the signature. This is good because block space is expensive.
+
+# Threshold signatures
+
+Maybe you have heard the term multisig before. Multisig is more the term that is used in bitcoin engineering communities, and threshold signatures are more used in the academic communities. Here, you have a t-of-n signature where n signers have shares of a key and at least t must come together to sign a message or transaction. As a remark here, there's also n-of-n special case where you need all the signers which in academic literature is called "multisignature". But here, we are flexible and we have t-of-n.
+
+Unforgeability is the main security property that t signers should be able to create a signature but if you don't have t signers then you shouldn't be able to create a signature. If you have (t - 1) malicious signers, and if they collaborate they should not be able to produce a signature. Another important property is robustness which is that if you have t signers and they really do want to sign a message, then they should be able to do that. This is an anti-DoS property. Even if (t - 1) signers want to prevent a signature, the t signers should still be able to produce a signature. This is the main property we achieve in this talk.
+
+# Why threshold signatures?
+
+There are a lot of applications of threshold signatures. Say you have a 2-of-3 secure personal wallet for coins at home. Instead of just using one device or one wallet, you could split the key into 3 pieces and give the 3 pieces to different wallets and store them in different places. This is good for security because now if an attacker steals only one of your shares then they can't steal the coins. Also, if you accidentally lose one of the devices then it's not so bad because you have the other two devices. This increases security but also reliability.
+
+If you have a bunch of coins, you might want 3-of-6 like Bitfinex to get even higher security. Another application would be for Liquid sidechain watchmen with an 11-of-15 threshold multisig. While those coins are stored in the Liquid chain, they are maintained on the bitcoin chain by the watchmen that keep the coins safe. Here we want a high security level at 11-of-15 but actually we would like to go higher.
+
+# "Multisig" in bitcoin
+
+What you could prevously do in bitcoin is OP\_CHECKMULTISIGVERIFY. With taproot, you now have OP\_CHECKSIGADD. It requires n pubkeys and t signatures. A valid threshold signature is just t signatures.
+
+This is a very simple technique, which can be good for implementers. The key generation is non-interactive. Each signer can generate their own keypair and don't have to talk with each other. The signing process is non-interactive. Another interesting property is that the protocol is accountable which means you can tell which of the t signers actually spent the coin. If you have t malicious parties that steal your coin, at least you can tell which of them signed.
+
+Unfortunately you need to add n public keys on the chain, and if you do spend then you have to pay for t signatures to get into the chain. The parameters t and n are very limited here because blockspace itself is limited. Also, these kinds of transactions or payments are distinguishable on-chain. You can see the n pubkeys or t signatures, so people can see the parameters of the threshold multisig even if they can't see the exact identities of the signers or participants. It's clearly not an ordinary transaction created by an ordinary wallet, which is not good for privacy.
+
+# Native threshold signatures
+
+Ideally, threshold signatures should look like ordinary signtaures.
+
+# FROST
+
+FROST is for flexible round-optimized Schnorr threshold signatures (Komlo and Goldberg 2020). This is a great scheme, it has been proven secure, and it's unforgeable under concurrent signing sessions where a single signer can run parallel signing sessions if necessary. Assumes a suitable key generation protocol.
+
+The FROST protocol is very simple but it doesn't provide robustness like with the anti-DoS property. I want to fix this in this talk.
+
+# FROST: Setup
+
+In this example, we have four signers so n=4. FROST assumes that we have some central coordinator. This is a little bit bad but I can tell you why it's not that bad. What happens here is that the signers only talk to each other via the coordinator. There are no direct p2p communications between them. The reason why this is not so bad is that this coordinator is not trusted for unforgeability. Even if this coordinator is totally malicious and colludes with the other malicious signers, it couldn't steal your coins. But, the coordinator is relied upon for robustness.
+
+The four signers want to create a signature, like a 2-of-4 where 2 of the signers need to come together. They need to talk with each other and if they can't talk with each other then they can't produce a signature. If you assume there is a coordinator, then it's kind of like saying we assume there is a working network. If there is no working network, then we can't talk to each other and can't make progress in the protocol.
+
+# Goal: Robustness (anti-DoS)
+
+Consider a run of the signing protocol with all n signers. Signers are assumed to agree on a message to sign. Here, t signers are honest and willing to sign. But now, the remaining (n - t) signers are malicious and want to try to prevent honest signers from obtaining a signature. Even if this is the case, we would like this robustness property which means that even if there are (n - t) malicious signers then the protocol should still be able to produce a signature anyway. We are satisfied if the coordinator outputs a valid signature but it's really just a simplification; if the coordinator has a signature it can send it around to the parties or to the blockchain directly.
+
+# Asynchronous network
+
+The network assumption that we want for the robustness property is an asynchronous network. The idea here is that we only assume a very weak thing about the network: if the only thing that we assume about the network is that messages between the honest signers and the coordinator arrive eventually. There's no fixed deadline, though. Don't assume any deadline in which messages actually do arrive. The internet makes no guarantees about message delivery. But if we have no delivery, we can't make progress. This is the minimum we can assume for the network. In practice, say we have a signer and the signer is going to send a message to the coordinator and the coordinator may not receive the message. So maybe the message is just slow and it will arrive later, or maybe the signer has actually acted maliciously and will never send a message. At no point in time can the coordinator compute that the signer is crashed, malicious or offline because the message can always arrive later. So this means that we can't have timeouts in our protocol. If you can have a timeout then the coordinator can conclude that the signer is offline and will never respond, then actually what might happen is that the signer comes back online a second later and responds.
+
+# Contribution: ROAST
+
+The contribution of our academic work is ROAST. In one sentence, ROAST is a wrapper around FROST that turns FROST into a robust threshold signing protocol. FROST doesn't have a robustness property. ROAST is a way to use FROST in a robust way. Another comment here is, some people have asked about the relationship between FROST and ROAST? It's not that they are competitors. ROAST fits upon FROST and makes it better, but whether you really need ROAST depends on your setting.
+
+# Setting the stage for ROAST
+
+Say we have four signers at n=4, we have a coordinator in the middle. We have some basic conventions for the rest of the talk: it's 2-of-4 multisig going forward in this talk. When I say "we" I always speak from the point of view of the coordinator. It's easier to talk about that. All messages that we receive (the coordinator receives) are valid. Tihs sounds like a strong assumption but actually it's not, because in FROST really what happens is that whenever we receive a message we can immediately tell if it is valid or not. If we get an invalid message, we can ignore it and pretend it never happened, although in practice you might want to disconnect or assign some penalty to the node or something. But for the purposes of this talk, we can just assume we ignore invalid messages. When I say "session" that always means "FROST session".
+
+# FROST session
+
+FROST has two rounds of communication. In the first round of communication, all the signers send what we call "nonces". I don't need to tell you what a nonce is, it's just a name that I use for a message in the first round. Say signer 1 here sends a nonce. What the coordinator does is it waits for t nonces. Maybe signer 3 sends a nonce next, meaning we have 2 nonces. Here t = 2, so we have 2 nonces. As a coordinator, we start a new FROST session with those two signers. The crucial thing that has happened here is that as a coordinator I have committed to finishing a session with those two parties. We aggregate the nonces into an aggregate nonce or aggnonce. These are sent back to the two signers. Those 2 or t signers in the session then they are supposed to send their signature shares back as the second round.
+
+# FROST is not robust
+
+Say signer 4 now jumps in and sends their nonce; at this point we really can't do it because we've already committed to using the two signers on the left in my diagram. So we just ignore the nonce message because it's not really useful. The coordinator has now received two signature shares which is enough to complete the protocol (we needed 2-of-4). So in this case, everything worked out, and the coordinator outputs a signature. This was a successful round of the FROST protocol.
+
+But maybe the signature share from the 1st signer, ... we can't tell whether it's a malicious node, if it will respond later, or if the other node will just be stalled forever. It doesn't help at all that another signer might later send a nonce because at some point we had to commit to a smaller set of signers. 
+
+# Trivial "solution"
+
+We could run a FROST session for every subset of size t. We could do this, even in parallel. It works. In general this needs n/t sessions and this is quickly infeasible with the size of these values. (4 2) sessions is 6. (15 11) is 1365. (100 67) is 294692427022540....etc.
+
+# Towards a better solution
+
+What could we do instead? This is the point where we received the partial signature from the first signer but not from the 3rd signer. Let's make some basic observations. We have a session running and there is no reason to abort the session because we don't know if the other signer will come back in the future. There's no reason to abort the session.
+
+The pending signer, signer 3, if you start a further session you shouldn't include him because he seems to be slow. There's no point in trying him with another session.
+
+Another point is that we need to start a further session to ensure progress because we don't know if this slow participant will make progress. So the only thing we can do is make another session.
+
+We also saw that maybe signer 4 comes back with their first nonce message, and it would have been nice if when signer 1 sent their signature share that .. they woul dhave already sent a future nonce for a future session in case it would ever be needed. When the 4th signer sends their nonce, then you could immediately start a new session because you have two nonces from two different signers.
+
+If we had to piggyback a fresh nonce on every share .........
+
+# ROAST
+
+One idea is to keep sessions open. We should maintain a set of "pending" (non-responding) signers. Don't include those signers when we start fresh sessions. Whenever we have t signers that are not pending, then we should put them in a session. Finally, piggyback a fresh nonce on every signature share.
+
+# Example execution
+
+I'll walk you through it. Say we have 4 signers and they are all pending at the start of the protocol. They are all meant to send their first message (a nonce). The first signer maybe sends a nonce, and now the first signer isn't pending any more. Another signer, signer 3 sends a nonce, and it isn't pending any more. Now the coordinator assigns these two nodes to a session. This is the first session that we started.
+
+Now we send acknonce back. Maybe a signer replies with a signature share. Once the signer has completed the first session, you can say that the participant is no longer in the session any more. If you have two signers that are not pending, you can put them into a new session.
+
+At this point, I claim that this is a situation where the next message will finish execution. We know there are 2 honest signers that are willing to sign and their messages will eventually arrive. No matter who these 2 signers are, at least one of your sessions will finish. It doesn't matter which session it is that happens to actually finish.
+
+In this situation, we are in a position where we can always finish the protocol.
+
+# Key invariant
+
+The key invariant that makes this work is that every signer is pending in at most one session. This comes from the fact that whenever we had a pending signer, we made sure to not include them in future sessions. Every signer can hold up at most 1 session because if it does that, then we don't include that signer in a future signer.
+
+# Robustness
+
+A ninformal way of defining robustness here is that the coordinator outputs a valid signature after initiating at most (n - t + 1) signing sessions of FROST. To prove this, the idea is that from the key invariant we know that every signer can hold up at most 1 session. This means that (n - t) malicious signers can hold up at most (n - t) sessions but because we started (n - t + 1) sessions then at least one of them must go through.
+
+The other thing we need to form an accurate proof is that we need to always be able to start a new session. We know that one of the signers will respond eventually because the network is asynchronous. So eventually we can always start a new session because eventually we will have t signers that are not pending.
+
+This is all of the basics. The paper has a proof that goes into detail. But these are the high level ideas that make the idea work.
+
+# Experimental evaluation
+
+We implemented an unoptimized python prototype of ROAST. The elliptic curve operations are done by a python library called "fastecdsa". Under the hood it uses GMP which is a general purpose C library. GMP is not really optimized. This is actually slow code.
+
+As a network setup, we have a coordinator on a server in San Francisco, all signers are on a single server in Frankfurt. Round-trip time is 153 ms. It's not perfectly replicating conditions of the Internet but the signers only talk to the coordinator not directly to each other. Every message goes over the Atlantic at least once.
+
+In this setting, we simulated an attacker by saying that these (n - t) malicious signers crash after the first round. This is not the strongest attacker that you could imagine, but this does simulate random crashes of nodes. Or their network might be down. That's what's simulated here.
+
+In this setting, if the signers that crash don't coordinate, so meaning they can't talk to the other signers in a sense to crash in a clever way, then if we have an 11-of-15 threshold multisig setup, then our unoptimized prototype terminates in under a second. Even in a huge setup with 67/100 nodes, it still terminates in 0.7 seconds.
+
+We also simulated a setting where the crashing signers talk with each other and try to disrupt as many sessions as possible, but even in this stronger attack scenario we terminate at 1 second or in 7 seconds with 100 signers. This means that 33 signers are malicious actively preventing you from getting a signature. If you run into that, you might consider transitioning to a new federation or something like that, but even then we terminate in 7 seconds.
+
+# Getting rid of the coordinator
+
+I've talked a lot about no trust in the coordinator but it's only a network assumption. Still if you don't like a trusted coordinator and it being able to stall the protocol, well you can get rid of it by something simple where you pay more for communication. We know there are most (n - t) malicious signers, so if you run (n - t + 1) replicated rounds of ROAST and use (n - t + 1) signers as the coordinators then we know at least one of those coordinators will be honest because we have at most (n - t) .... so we know that run will work because we have an honest coordinator. This increases communication by a factor of (n - t + 1) but it does get rid of a central coordinator.
+
+# Summary
+
+ROAST turns FROST into a threshold signing protocol that is robust (anti-DoS) even in asynchronous networks. It's also very simple. All it really does is start multiple FROST sessions. What's cool about this is that it's not that hard to implement in that you don't need to be a cryptographic engineer to implement this. To implement ROAST, you just need to call FROST in a clever way and you don't really get exposure to cryptographic details that you might get wrong.
+
+
+
