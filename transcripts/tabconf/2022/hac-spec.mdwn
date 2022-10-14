@@ -1,0 +1,136 @@
+Provably bug-free BIPs and implementations using hac-spec
+
+<https://nickler.ninja/>
+
+Alright. Strong crowd here, I can see. That's very nice.
+
+# Introduction
+
+I am Jonas and I will talk about provably bug-free BIPs and implementations. I don't have such a BIP nor such an implementation but if you lower your time-preference enough this could eventually be true at some point. This presentation is only 15 minutes so raise your hand if you have questions.
+
+Just to set the stage. Specifications should be free of bugs, we want them easy to implement and hard to misinterpret. This makes writing specifications a slow and exhausting and thankless process.
+
+This talk presents a tiny step toward improving the whole process and less error prone.
+
+# Bitcoin Improvement Proposal 2
+
+bip2 is probably familiar to most people here. How should BIPs look like and what is the BIP process? This is specified in bip2 which also says "BIPs should be written in mediawiki format". It has its pro's and cons I guess? But alright.
+
+As a result, most BIPs are mostly written in mediawiki format but there's also supplementary material like diagrams which are not mediawiki format. Specifications are generally written in mediawiki format. In the MuSig BIP, we have the signing specification which looks like this, doesn't matter what it says really, but the readability is suspect and not great. It's not terrible, at least. It's pseudocode and we basically made it all up. We just wrote some kind of pseudocode that maybe people can maybe understand. If you look here, secnonce is italics which means it's math or variables, which is hard to see. "Fail if that fails" is extremely important but hard to miss in the specification.
+
+Another problem is correctness. This pseudocode is obviously not executable on a machine which means you can't write tests for it. It's hard to get rid of errors even after 4 or 6 eyes have looked at the code, there will always be something wrong there. Even in the taproot BIP, there's all kinds of errors like conversions of bits to integers and things like that.
+
+It's hard. This means that we have to spend more time trying to improve the situation which makes the whole process slow.
+
+# Reference code
+
+In BIP MuSig2 we don't only have pseudocode, we also have reference code. This is written in python. The readability of python is at least better than pseudocode and it's easier to read if you are an implementer. It is in fact executable and tested, we have random tests, we have test vectors, we even use the weird python type-checker mypy stuff which seems to help find bugs. That's kinda okay.
+
+# Paper
+
+There's also a third representation of the same thing, which is the MuSig2 paper. The readability, I don't know, this is talking about mathematical objects and not something that computers can immediately handle.
+
+# bip-schnorr
+
+In BIP-schnorr, we had a paper, we wrote a specification from which we wrote a reference implementation and then there's the users implementation which looks at the specification and the reference code. Now, the problem is that the paper has a security proof but everything else doesn't have a security proof. This means that if you translate the paper into the spec, then there can be errors. Also, errors can happen when you translate from the reference code and implementers can always misunderstand a specification or the reference code. There's lots of places to make errors.
+
+# BIP half agg
+
+We recently published a BIP for half-aggregation. Here, we just did a very simple thing where we merged the specification and the reference code, and hence have fewer places to make errors.
+
+What is half-aggregation? It's a non-interactive process of aggregating bip340 Schnorr signatures. You could also call it "compression" because it takes a bunch of signatures and makes a smaller signature from those signatures. It consists of two algorithms. The first algorithm we call "Aggregate" which takes a sequence of public keys, messages, and signatures, and outputs an aggregation result and this result is either an aggregated signature or an error. That's the first algorithm. The second algorithm is "VerifyAggregate" which takes an aggregate signature, a sequence of public keys and messages, and outputs a verification result.
+
+What language is this? It's not rust. It's hac-spec. But it's still called halfagg.rs. It actually is also rust, we'll get into that. This is our specification. It's not written in pseudocode, so we can run tests on it.
+
+# rust is better
+
+I claim that rust is a better language for these kinds of things than python. You have a proper type system. You get help from the compiler. Better error handling. And you have the cargo package manager and that whole ecosystem along with it.
+
+For people who are not familiar than rust, then rust is just less readable than python and has a few things that are hard to understand when you first encounter rust like for example the question mark operator. For people who have never seen rust, this seems confusing because it looks insignificant but it in fact is.
+
+halfagg spec is not written in rust, it's written in hac-spec.
+
+# Hac-spec
+
+Hac-spec allows succinct, executable, verifiable specifications for high-assurance cryptography embedded in rust. The syntax of hac-spec is a subset of the syntax of rust which means you can use the rust compiler to produce a program and reuse the rust ecosystem tools.
+
+What does verifiable mean? It means that hac-spec has formal semantics ("precise definition what each operation does").
+
+On the other hand, pseudocode is whatever your intuition says that pseudocode is. Python is whatever the python interpreter does. There is no formal semantics for python. Python is whatever the python interpreter does. Meanwhile, hac-spec has structured operational semantics. Each operator has a clearly defined function. It doesn't really matter what these symbols do. Yeah, let's not get into this. You don't need to know what these are.
+
+To be clear, rust is whatever the rust compiler does too. It's not different from python in that respect. However, hac-spec has formal semantics, but rust doesn't. That's an important distinction. It means that if you run the tests, using, you have to compile a program with the rust compiler which might differ from what hac-spec says the output of the program is. I don't know how practically relevant it is, but perhaps it is.
+
+# Why formal semantics?
+
+It means that the specification is completely unambiguous. This also allows reasoning it. To reason about pseudocode, we have to reason about what our intuitions are about pseudocode which differs from people. But namely, it allows us to use proof assistants and theorem provers to prove properties of code. These are just proof tools that allow us to prove things.
+
+It would help us prove that the spec is free of array out-of-bound access or integer overflows. This is helpful in half-aggregation because you maybe get an unbounded number of public keys to verify against and maybe your computer has a fixed-width int type so the question is when would this overflow and how many signatures could I verify?
+
+The other kind of thing you could prove is whether the spec is complete in the cryptographic proof. Here, completeness means applying the aggregation algorithm to valid bip340 signatures should always yield a valid half-aggregation signature, which can also help reduce bugs.
+
+The other thing we could prove is that the implementation of a specification is correct which would mean that the behavior of the implementation exactly matches that of the spec. This field is called "formal verification".
+
+# Status
+
+So say the paper has a security proof, the spec has a "proof of bug-freeness" and completeness, and the implementation can have a correctness proof. This typically requires implementations to be written in specialized languages. But there can still be an error between some of these leaps.
+
+# Far far future
+
+In the far far future, we could get rid of this weird paper notation scheme and do a security proof directly for the specification. Presumably that is much harder than anything else in my slides. But this would rule out a lot of bugs.
+
+Q: But the security proof itself is written in a paper?
+
+A: The security proof itself would be written in hac-spec. And your simulators. The compiler will prove that your proof is correct according to your definitions. That's already Coq for C code. You define a proof, you write the proof in Haskell, then it will verify that the C code matches it. Coq is written in Coq actually. It's a proving language.
+
+Q: That's so cool.
+
+A: It's probably hard to do. Also the question is, security proof, it's just a term. But the security proof might cover certain things and not other things. So then the problem is security definitions. But that's what people in formal verification have been trying to push for 20 years: get rid of papers and write all the proofs in Coq instead. I agree. It's hard to do that.
+
+From my impression of this workshop, I was impressed with this. A lot of stuff is happening. The ecosystem has lots of tool and bad documentation but hac-spec is a sweet spot. Just write your specs in hac-spec and then you can translate it to other languages that allow you to prove things about the specification. Or you can translate into Coq.
+
+You can choose what you want to prove about it. You can incrementally improve the proofs as you go along if you want. In a Coq example, there's lots of variables in there that are from codegen, but maybe if you change the specification then you get new variable names and now you have to adjust your proofs for this new Coq output which is unfortunate. You could write a lemma like this: no integer overflow, no buffer overflow here, and then you produce a proof from that. This requires very specialized skills and a lot of work. I should probably add that.
+
+Q: Is there a proof language in hac-spec?
+
+A: So hac-spec is just for formal definitions for specifications. But it doesn't contain a proof compiler or verifier. So you have to go to Coq or something like that. Yes. You get formalized semantics. It's fully formalized. The semantics of the conversion to Coq is fully formalized. The semantics of hac-spec are formal. But the translation into Coq.... perhaps we should run the tests for Coq as well and see if that works.
+
+What does the security proof prove in the case of signatures? Does it prove that signatures are unforgeable? Does it prove that it works with taproot tweaking? What exactly do you prove? If you follow the mailing list, just this week we discovered a vulnerability in MuSig2 BIP. It happens usually in rather obscure scenarios as a signer you might be tricked into it but it was a vulnerability in the MuSig2 BIP. The problem was that our proof in the paper is correct, in the specification it's mostly correct, but what we should have done in the specification is said don't use tweaking and then our specification would have been correct. Our spec did not account for tweaking. Security proofs apply to an exact scheme.
+
+To prove something about a specification, you would translate it into another language that be used for that, like Coq and Fstar and easycrypt.
+
+# Conclusion
+
+Would you run the Coq code against your test vectors? It's just an idea I had to make sure the Coq code is right.
+
+Q: If I want to write a BIP and prove its correct, I need to write a specification in hac-spec and also write a proof in Coq?
+
+A: Yes. You write your specification in hac-spec and not in Coq so that other people can read it too.
+
+Q: Hopefully you can also write the proofs in hac-spec. No?
+
+A: That doesn't really make sense.
+
+Q: I'm not saying the same language but it should be in the same framework without moving to another framework.
+
+A: Well, there's a reason why people use Coq. It's because there's a large ecosystem.
+
+Q: I tried learning Coq. Never got there.
+
+A: All these things are hard, but if you replace them with something else it's just harder.
+
+If you are an author of crypto-BIPs, then you might want to consider writing your specifications in half-spec instead of pseudocode and completely get rid of the python stuff from your BIPs. In the half-aggregation BIP, I added comments for people who have trouble reading rust. This hac-spec subset is also hard to read for example the question mark operator, this is my best example. No other language has this. It is easy to miss, but it's super important. This really trips me up. Hac-spec forces you to use the question mark operator because you can't return only. You'll probably miss seeing the question mark. They probably formalized the question mark. Previously you could only return errors early, but never OKs.
+
+One question would be, do we actually need pseudocode? Does this help anyone? It also introduces potential for mistakes like either translating between a specification and pseudocode or someone reading pseudocode and misinterpreting it. It might still hurt to understand it. I would rather strip out pseudocode because that's less work.
+
+In the integer overflow check, for that do you also need to write a Coq proof? You need to write a proof for that. If all I'm doing in half-spec is get formal definitions but that's it.. if I assume the python has a formal definition, then it's equivalent. There's no free lunch.
+
+Perhaps there's also a way to do formal verification or formal methods. It's an established research field with little practical relevance outside of some specialized areas. Maybe bitcoin would be a research area where this has application. I've heard banks use this for mainframes. No, they aren't doing that.
+
+Are there applications outside of cryptographic BIPs? Hac-spec is just a subset of rust and you can do many things, the standard library is a bit limited but perhaps there are other applications.
+
+Q: Can you open sockets? I assume no.
+
+Fstar is another interactive theorem prover, similar to Coq. You can also translate it into easy-crypt which is a little bit different because it's a specialized language for doing computer crypto proofs. Hac-spec does not include code generation as part of its goal, the goal is not to generate fast code that matches the spec. With hac-spec, you don't need to be a formal theorem expert to read the specification.
+
+Maybe proof engineering gets easier in the future. Maybe GPT-3/Codex gives you suggestions about how to do the proofs like giving you hints and helping you. Like Coq Copilot. Until then hopefully we get people who do formal analysis on our specs because we can't do it all on our own. "Render me this proof in the style of a Schnorr paper, trending on Art Station."
+
