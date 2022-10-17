@@ -1,0 +1,79 @@
+Stratum v2
+
+# Introduction
+
+There was an announcement earlier this morning that announced the open-source project implementing Stratum v2 is ready for testing now. Spiral has been contributing to this project for a few years. There's a few other companies funding it as well. It's finally ready for testing.
+
+# History
+
+About 4 years ago or so, Matt proposed BetterHash which focused on enabling miners to be able to do their own transaction selection. There was an independent effort from Braaains that they called stratum v2 which added encryption and authentication between miners and pools and other improvements over stratum v1 like switching from JSON to binary and some other optimizations that were needed over the past 10 years. Those three got together in September 2019 to merge those efforts, and they successfully merged that three years ago. So BetterHash is no longer, but the parts of that we would want are in Stratum v2, and now Stratum v2 is the main proposal out there. Some people are working on braidpool and other projects, but at least for pool mining as it exists today, getblocktemplate was out since like 2012. But the current state of pool mining... braidpool is like a p2pool type thing, right? To my knowledge, it's all consolidated into one proposal and standard.
+
+So three years ago there was a collaboration and one protocol spec, but the only implementation the past few years has been Braaiin's firmware for bitmain machines for stratum v2 and Braaiiins has a pool that implements stratum v2. For the past 2 years, there has been an open-source effort to build an implementation from scratch and that's what is now ready for testing. There's many components to stratum v2.
+
+There's firmware that runs on mining machines, there's pool-side software, and then services that can be run on the mining side like a translation proxy which allows existing stratum v1 firmware machines to connect to a stratum v2 pool. So the open-source implementation (SRII stratum v2 reference implementation). SRI implements job negotiator proxy, which is the subprotocol that allows for miners to do transaction selection. There's also Bitcoin Core work on a new template producer that speaks SP2. Coverdale did that work.
+
+The plan had previously been to write it in rust and that would have been an introduction of rust into the Bitcoin Core project. About a month ago, we talked and we agreed to write it in C++ to remove that friction. Chris said he was more comfortable in rust anyway, so he will likely open a PR in a week or two in the Core repo in a week or two.
+
+Three years ago, I think adoption of Stratum v2 was more of a question mark than the implementation. Would pools adopt it? Would miners adopt it? We're seeing strong response for adoption from pools, miners, and miner manufacturers. There has been interest expressed. I expect to see from one of them an announcement of an implementation soon, and another one as well. As far as pools, Foundry is the largest pool now and they are funding implementation now and I think adoption is looking quite promising. At this point we need to make sure software actually works and fix the bugs. I think we will start seeing real hashrate on stratum v2 next year.
+
+# Stratum v2 for Bitcoin Core
+
+At a high level, the model that Bitcoin Core needs to consider for Stratum v2 is you have the mining pool, you've got some proxy which is a raspberry pi at the farm or maybe something nicer. But basically a raspberry pi at the farm, and then a bunch of ASICs all talking to the same proxy in your farm.
+
+The proxy is running SRI client. There's software that talks to the pool and the ASICs. And also on the same device is running Bitcoin Core. The proxy software that other people are handling is responsible for getting the templates out of Bitcoin Core. Right now they use getblocktemplate but we want to replace that with other magic stuff in Stratum v2, and then the proxy is responsible for building a block template, communicating relevant details of the template to the pool and talking to the ASICs.
+
+So Bitcoin Core is being interrogated by a proxy and all that's matter in this room, right. There is one other model for deployment that should also be considered though, which is to remove Bitcoin Core from the farm and move it out to somewhere else. It's useful to consider a model where both the pool and the farm for whatever reason probably regulation don't want to be responsible for selecting the block template and want to export that role entirely to some third-party basically anyone running a bitcoin node with an option flag turned on.
+
+This means that this communication channel is authenticated. We're changing the cryptographic primitives so that we use ones that Bitcoin Core already supports like secp and AES and maybe ChaCha basically code that is already in Bitcoin Core. Chris Coverdale is working on an implementation of this specific protocol for Bitcoin Core.
+
+getblocktemplate is inefficient. It goes through multiple encodings. We want to flip the model of how work comes out of Bitcoin Core. This is the interesting part. Currently in order to get work data from Bitcoin Core, the pool today and in the future this stratum v2 proxy will call getblocktemplate when it decides it wants a new block. There's a bunch of logic in the pool servers that we want to live in Core. Right now pool servers connect to Bitcoin Core by p2p or zeromq and get notifications for new blocks found, and then they also connect by getblocktemplate which supports longpolling but nobody uses that because nobody actually uses that feature. We really want to flip this on its head. Why does the pool server decide? It doesn't have very much information so usually the logic is pretty dumb. When you learn a block has come in p2p, like the compact block message or a headers message, or every second or every minute or some dumb chunk of time. That's dumb because the pool server doesn't have any relevant knowledge but Bitcoin Core has good knowledge about when to switch to a new block. If some big transaction comes in with a huge fee, you should switch to that template because you want that fee. If nothing relevant has come in for a while, maybe you don't care. If a new block comes in that has just been validated, then you should probably be mining on top of some pre-considered template that hasn't gone through the full createnewblock logic. You can predict what the next block might look like, so you can run throug hit and remove conflicting transactions and go to the next block much faster than you can do today because you have to call createnewblock which is slow today.
+
+If we move the logic from the proxy or the pool to Bitcoin Core, it can be a push protocol instead of a polling protocol. So one of the key goals here is the protocol is push-based. The protocol just connects and gets a notification that says here's new work here's the transactions or whatever and then uses it. You can connect, it actually does, I don't know if Bitcoin Core will ever do this, but it tells you how big the coinbase transaction data needs to be. Pools misimplement getblocktemplate and they say  Bitcoin Core always saves 1k for the block which is never used, like it's always 990k or something. I think there's a way to tell getblocktemplate but pools keep not doing it then they complain their blocks are invalid. I think there's a 1k buffer, and we could get rid of that, maybe it makes sense or maybe it's not worth it. It's a new protocol, so it's exact; the proxy is the one building the block. So the thing communicating to Bitcoin Core knows exactly the size.
+
+Once we have this protocol, then the work is on Bitcoin Core to do all of these other better ideas for how to do blocks. That is obviously a good chunk of work. The ability to switch blocks very quickly is valuable. The ability to decide more actively when to switch to a new block based on transactions coming into the mempool or things like that. Could be a good profitability game for miners, but someone would need to implement that.
+
+The first step is to get the protocol in place. Hopefully ccdle12 will open a pull request in the next week or so. Once we have that in place, we can start optimizing the way in which blocks are pushed to it instead of just I don't know what his current patch does actually.
+
+That's probably all of the relevant details for this audience, at least in terms of future directions and why to be excited.
+
+Q: What's the current state of Core work? Someone opened a PR with a rust component.
+
+A: We chatted with Chris and threw that out basically. The proxy code that exists today- the SRI- stratum reference implementation thing is written in rust, they have a proxy and a pool and it exposes an FFI interface that is C-callable that can do the message de-framing, deserialization and message reading. That was the only part that was going to be intended to be included in Core, and then C++ code would call message deserialization magic but really it's just four messages and so Chris just rewrote it in C++ since it wasn't worth it to fight that battle. He is intending to open the pull request next week.
+
+Q: All the improvements for getblocktemplate?
+
+A: No, nobody has worked on that. It's blocked really on having a push protocol that people actually use. getblocktemplate has long polling, but nobody uses it, so there's no reason to optimize when the long-polling stuff decides to submit a block because literally nobody uses it. No existing pools today. No major pools. There is code to use it, but no major pools use it.
+
+Q: Why not just call in a loop continuously?
+
+A: You'd be holding csmain forever. So you'd compete with accepting new blocks. It turns out that Bitcoin Core is still single threaded.
+
+If there was a push protocol that everyone used, then it would make sense to do that work. We think that with SRI, people would actually use a push-based protocol, and then it makes sense to go do all these optimizations.
+
+Q: You mentioned a situation where if a juicy transaction rolls in, you might want to switch your block template. In that case, you forego a lot of work?
+
+A: No. There's some hardware-level cost to doing a switch. Generally you have to flush... like the chips are designed to just keep rolling and you have to flush them and there's a pipeline. You waste like a pipeline's worth of work but that's like, what, 100 nanoseconds worth of work. It's not much.
+
+Q: Is it that there's no sunk cost because the Poisson thing is memoryless?
+
+A: It's memoryless. If you found a block 10 microseconds ago, you would still process it, you just wouldn't include that new transaction that you just found. I would hope the new Stratum v2 stuff will accept a block that was the previous template, I would assume it does.
+
+You can usually change what you're.. without flushing. Yeah, there's a flag to flush or not.
+
+It's time to get excited about making smarter blocks. Smarter blocks, smarter mining. There's lots of potential for squeezing more revenue out of this.
+
+Q: What if anything have you heard about the feature of stratum v2 that supports individual pool participant selection of a template?
+
+A: Nobody has implemented that yet. A big reason that people got excited is that some of the pools saw the Tornado Cash stuff. Suddenly pools in the US don't want to be responsible for transaction selection. Suddenly there's an interest in regulatory concerns. There's a strong desire to do individual miner template selection.
+
+Another reason I've heard from pools, hearing from their mining customers that like for auditing reasons they want the security of stratum v2 like the encryption and authentication. Their auditors are asking for this. There could be financial and business reasons, too. There are cases where people have lost money because of people MiTM attacking their stratum connections. Most of the major miners know that this could be happening and they are completely unable to detect it statistically. A small farm is not going to notice 0.1% being stolen or something.
+
+The quote I gave in an article, which was just my opinion, success would be 10% of the hashrate by the end of next year would be a great first milestone. I think it would be several years before the majority is reached. Not everyone is going to have miners doing the transaction selection.
+
+One important reason why the proxy people are going to be running is this open-source SRI thing is that it has the code baked in to do your own transaction selectoin. What we'd really like to do and see how it develops but this should be an appliance that someone sells. You buy a raspberry pi or something a little nicer, and it comes pre-loaded with Bitcoin Core and all this other stuff and it does transaction selection. Another cool configuration is like Compass Mining and River and some of these "hosted mining" businesses where as a retail customer you can buy a machine in the cloud but you don't control that machine. If that type of deployment adopts Stratum V2, then as a retail customer I can run a Bitcoin Core node and do transaction selection for my hashrate in the cloud. They give you a way to ssh in and all that. Now Compass doesn't have to do any transaction selection. They might be motivated for OFAC compliance reasons to not be involved in that. Or maybe zero-knowledge proofs of standard transaction selection algorithm was followed, or some other proof of that might be interesting to those miners.
+
+Is there a breakdown of fee earning improvements? Well, right now, fees are low. But I think the ability to guess at the next block and being able to switch. getblocktemplate, it's been years since I've benchmarked it, but it's not fast. It's like 50-100 ms. That 100ms you could have been mining on a block 90% as good, sure not a full createnewblock but still 90% is good and you could have been mining that the whole time. People really like the "no empty blocks" pitch. Might not be enough fees to care, but they like it anyway.
+
+Spy mining... that's the other reason to want to optimize the Bitcoin Core side of things. This kind of breaks spy mining. The open-source proxy that people are implementing will hopefully not implement spy mining, because that's a mess. Bitcoin Core needs to be optimized for this. This is a whole other discussion. I should have covered this actually. One important part of SRI actually being competitive with centralized pools is that the node needs to get blocks really quickly. Probably this nodes need to do something other than just sitting on the p2p network like normal, it probably needs to be doing something smarter like FIBRE network needs to be revived again in addition to the p2p network. Because spy mining is no longer going to happen, that ability of this node to spit out work really quickly when it gets a block becomes even more important. So it needs to be really well optimized. Spy mining only makes sense when the subsidy is high because you have to mine an empty block and you're spy mining so if the subsidy is not high relative to fees then spy mining is useless. Over time, it matters less. .... So probably I would appreciate greatly if someone went and revived that old pull request to download multiple compact blocks in flight. It was an old morcos pull request actually. Someone should revive and merge that pull request because it would make it easier to revive the FIBRE network which needs to exist again to make this architecture make sense. Rebase the morcos PR. Or maybe we will get morcos to do it.
+
+

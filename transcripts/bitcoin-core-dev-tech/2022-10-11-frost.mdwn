@@ -1,0 +1,227 @@
+FROST
+
+libsecp256k1-zkp
+
+FROST PR 138.
+
+# Introduction
+
+I am going to be going over the FROST implementation. I also have an early draft of the BIP. I am going to be focusing on the differences between the paper and the RFC and the overall scheme. This is meant to be an open discussion so feel free to jump in.
+
+# Distributed key generation
+
+Maybe one good place to start is to look at the example file in the PR. It shows how the flow works with the API. The protocol we start off with generating a keypair. We're going to use the secret key to instantiate the share generation.
+
+The way I currently have sharegen is instead of generating all the shares for all the participants in one function call, this function sharegen you generate one share per one participant. So let's say you had 5 participants then you would call this function five times. There may be some more flexibility and efficiency in not having to do all these at once.
+
+It takes a secret key, which is going to be the actual secret that is... so to back up, with FROST PKG, each participant takes a secret and splits it with Shamir secret sharing. At the end, the private key is the sum of all these secrets. Each participant's secret which will be a part of the end private key, the sum of all these secrets will be the end private key, they generate a standard keypair and then pass their key to the sharegen function.
+
+Where Tim had a great suggestion was that for the participant identifiers we're using public keys instead of the traditional 1, 2, 3, 4, 5, and 6. Since we're only using the public key as an identifier, then I thought it would be appropriate to only use the x-coordinate pubkey in that case since we only care about the x-coordinate or some unique way of identifying participants.
+
+So we have the secret key and the x-only public key, and we have the threshold for the scheme provided. We also have this session identifier. The session ID... the reason we need this is because the coefficients are generated deterministically from the inputs to the function. So if, let's say I have Alice, Bob and Carol and Alice generates a share for Bob but for whatever reason the protocol doesn't complete, then if Alice calls the function again for a new round of DKG then the share that was generated on the previous round will work with the same coefficients unless the session ID has changed.
+
+It doesn't have to be deterministic. We could tell the user to provide a new secret key and we wouldn't need a session ID. Wasn't the problem that if you generate different shares then the interpolation works in a way where you .... okay. Now I remember this problem. We could just pass in some secret or some kind of entropy into the function and ask for fresh entropy each time. Whatever that is, say it's a session ID or secret or whatever, ... the same coefficients to be used for each share of the same set. So yeah, it might be useful in certain contexts for a user to stick with the same keypair and then pass in a new session ID each time. I'm not sure if that is actually useful or not.
+
+Q: Is the motivation not to generate all the shares at once, you wouldn't need to worry about this if you were generating all the shares at once?
+
+A: Yes.
+
+Q: Should these be untrusted? It's not classic Shamir secret sharing? Are we sure it's safe to do it deterministic?
+
+A: It's always deterministic from some entropy input. Like you're sampling random coefficients. So what is the basis of that sampling? In secp, we don't draw from /dev/random.. It doesn't matter where the randomness comes from here, but is it safe to do key generation and then sample the same coefficients? I think that's just an implementation detail whether you call the function five times or just once. You're either doing the loop inside the function or outside the function.
+
+If you look at the seed generation line, it hashes the session ID and the secret keys. If you vary the secret key, then reusing the session ID doesn't matter as much.
+
+Q: If five people do key generation once, and then they do it again, and one of them deterministically uses the same coefficients while the others are malicious, is it secure?
+
+A: What would the malicious actors be doing?
+
+Q: I don't know. I don't have an attack.
+
+A: This is all pretty standard Shamir stuff so far.
+
+Q: Yeah, but I haven't seen anyone generate coefficients deterministically before. That's why I'm asking.
+
+A: Let's say instead of deterministically generating them, you pull from /dev/urandom. That's similar to what is happening here except instead of calling /dev/urandom from the code....
+
+Q: But you don't say the session ID should vary for each... That's the difference. I can predict your coefficients.
+
+A: Yeah, the session ID is fresh randomness for each session.
+
+Q: Okay, so the session ID must be fresh and new and random. So it's not deterministic.
+
+A: It's deterministic from the input but the input isn't meant to be deterministic.
+
+If you have Alice, Bob and Carol doing a DKG all using the same secret key and they each have their own session ID that they have used for all their 3 calls to sharegen and now Alice wants to do a different DKG with a different set of participants but wants to use the same secret key. She would provide a new session ID in this case.
+
+Q: Okay, as long as it's written that session ID should be fresh and random then that answers my question.
+
+Maybe we don't want the same-- maybe the first coefficient of the polynomial we don't want that to be the same across all the DKG sessions. That might be a little bit of a deviation from other methods that we don't want.
+
+By the way, taking only the x-only public key feels a little bit sketchy given we use plain public keys everywhere else. Yeah, we could change it to plain public keys. It seems like what could be a problem is that you could flip your public key and the same share is generated? Is that a problem? It's not, because it's just an identifier. What if you use your own public key negated, you get the same share, that's not a problem. Say your identifier was 1 and Tim's was 2 and Elichai's was 3. The integer is 123. We could continue to use the same identifiers for all the DKGs. The identifier, we're not using it for any elliptic curve operations whatsoever. It could be arbitrary, it could be some arbitrary string that is given. If I understand correctly, it's used as a point on the polynomial? It's the x-coordinate for the polynomial so it can't be an arbitrary string, it needs to be a number in the right field so maybe we hash a string into the field. I assume the field is the scalar field of secp. So it shouldn't be zero. We could hash a 33-byte key. It shouldn't be zero, that's important. It cannot be zero. In the polynomial we have ax0, bx to the 1, etc... This is what we're plugging in for the x-value into the polynomial is that identifier. I think this is the first time we have seen someone using the public key as an identifier instead of an index. It's interesting. It came from something Tim saw somewhere.
+
+What if you have the same participant getting multiple shares for whatever reason? They will have the same public key identifier but they could have a subindex that is part of this hash where you hash the public key and the subindex so that you get different identifiers for the same public key. But it gives the same interpolation of 0? Not necessarily... the secret key is not necessarily the counterpart of this public key. It could be, but it doesn't have to be.
+
+I'm seeing now that this is kind of confusing so I think I need to improve this.
+
+Q: Why not just get the public key of that secret key?
+
+A: You could do that. Except the keypair is an input.
+
+Q: The public key is the public key of the share pseudonyms.
+
+A: It's the public key of the recipient that you are giving the share to. That's why it makes sense to have the optional argument. There could be one party that gets more than one share.
+
+Q: So the secret key is the point at 0, and the public key is the index of the party you're sending to.
+
+A: Exactly.
+
+So then we grab the very first coefficient commitment directly from the secret key, multiply by the generator, and then we proceed to derive the remaining coefficients and their corresponding commitments. We use Porter's method for this which is easier to do in reverse order. You start with the last coefficient and then you get to the first one. We get this index hash.. so to generate the coefficients, we hash the seed and then what iteration of the loop we're on. In the ZKP implementation, we use ChaCha20 for this because we can grab two coefficients at a time. This is something I borrowed from Andrew's code. It was using ChaCha20 to grab two coefficients. Yes, that's right.
+
+Ideally I would be using Merlin for this, but Merlin doesn't have a C implementation. Isn't Merlin for transcripts committing and not for random generation? That's true. This is kind of different.
+
+Hash in ChaCha20 is like the standard PRNG method.
+
+That would be the same behavior if we had an LNG construction that gave us randomness. It would do the same trick, conceptually.
+
+The other thing is that the VSS commitment is an optional argument because let's say Alice and I generate a share for myself and then one for Bob and one for Carol. The VSS commitments will be the same each time because it's the same coefficients. So I really only need to generate them once. One way to do it would be to split it out to a separate function to generate the commimtents. The other way would be to pass this optional VSS commitment that it only writes to if you need it. So you pass it through the first call and on the subsequent calls you would leave it as null.
+
+We have the Shamir secret sharing polynomial. The VSS commitment is simply a commitment to each coefficient.
+
+Q: Have you looked at the FROST API in Rust? The dalek one? They get a participant ID, and then they .. just an API example. That could be nice.
+
+A: Yeah, some sort of object that tracks... there's lots of different states to track between these different calls. So yes.
+
+Going back to the example. In a loop for each signer, they generate a share for themselves and then each other participant. Here you can see we're passing a VSS commitment on the first call and then not on the subsequent calls.
+
+By the way, the FROST RFC does not specify the DKG (distributed key generation). It specifies a trusted dealer in the appendix of the RFC and then just the signing and nonce generation. They have a few functions or something. They at least explain some things. Yes, they do, but it's for a centralized trusted dealer. DKG is so hard that nobody wants to talk about it. FROST RFC does verifiable secret sharing and Shamir.
+
+One of the big changes I've made in the protocol is that in the paper, you each participant creates a proof of knowledge for their secret key. This may be one of the reasons I kept the secret key independent because you have to generate a proof of knowledge for it. The sytstem to defend against the rogue key attack, it's interesting to look at key ack style coefficients instead. If we just stick to how it's done here, you have a proof-of-knowledge. The other thing the FROST paper calls for is a broadcast channel. Instead of having the proof-of-knowledge distributed with the shares at the beginning, we wait to distribute the proof-of-knowledge at the end after the participants have seen the VSS commitments from everyone else. Instead of signing arbitrary data to prove knowledge, we're going to sign this thing called the "VSS hash" where when a participant aggregates their shares and verifies each share against the VSS they are then going to create a hash which is each commitment ordered by the identifiers of the participants concatenated into this hash. Then they sign this hash and distribute the signature of the hash. With this we get a proof of knowledge but we also get the broadcast requirement that each participant knows that they received the same commitments as everyone else.
+
+We discussed this a bunch in the PR already, right? I think we should look provable security of the DKG. I'm not sure if it really relies on the proof of knowledge. It does. But it didn't at first. I know, I mean, .. that's assuming.. the first round and the second round. You're asking in which round is it needed? It might be needed in the first round. I don't think it's needed in the first round. Yeah, without it, you can't simulate the.. oh for the simulation you might need it, right. For the security proof. I didn't think of that. Functionally, yeah you don't need it. So if we did need it, we might need to send two signatures: one at the beginning and one at the end. Let me add this as a note and I'll write it up.
+
+How do you verify the shares? You have all the verification commitments. You know the committed structure of the polynomial. You take the x-value identifier and you plug it into the committed coefficients and you raise each identifier by the power of that term. Then you add them all together, and if they equal the commitment to the share which should be on the other side of the equation for the y-value then you know that your share was actually derived from that polynomial assuming everyone else saw the same VSS commitments. You can tweak the VSS so that things cancel out in the exponent and fake the verification, but it would only work for one participant. This is where the broadcast piece comes into play. It ensures the integrity of the VSS.
+
+There's something called the "pubshare" which is the... before we get to that, after all the shares are verified then the participant is going to sum up all their shares and that's their aggregate share and that's what they sign with. They also are going to compute a public verification share (pubshare) that is used for verifying partial signatures.
+
+Q: How is this used to verify partial signatures?
+
+A: The share is what they are signing with. Everyone needs to know the public key for the aggregate share or the commitment to it. When you verify the partial signature, they need the committed form. The signers are able to compute this for everybody else. How do they do that? Well they have all the polynomial coefficient commitments for all of them. Their aggregate share is based on the sum of all those polynomials. So they just take their identifier and plug it into the entire set of VSS commitments across all participants, sum them all together, and that's the commitment to the aggregate share and that can be used to verify the partial signatures.
+
+There's some nice ways we're able to use the libsecp256k1 functions for adding points together for the pubshare. You call that nice? It's all relative. The optimizations that come with that function like the scratchspace and stuff like that. Actually being able to understand these ecmult callbacks, is not super straightforward.
+
+We're simulating closures here, and it's really hard to read because of all the boilerplate. We need to teach Pieter some rust. Maybe just ask him on stackexchange: "how would this look in rust?". Rust is harder to verify is constant time and there's a few reasons it's difficult. The valgrind trick is problematic in rust. First of all you don't have all the valgrind stuff, that's all macros that put assembly that don't have anything in rust like that so you don't have these macros. And it's undefined behavior in rust to have anything uninitialized. You can have like an own value in rust that is uninitialized. You can violate that and say I don't care, or use the macros to mark it.
+
+Actually the last part is to get the actual public key you take all the- you take the commitments to each participant's first coefficient, and add them together. This is the sum of the-- their secret is the sum of all the first coefficients. Their public key is the sum of all the commitments to the first coefficients.
+
+So that's the DKG protocol. That's all you have to do for keygen.
+
+Q: Originally in Musig we were..
+
+A: I took that out. Now the way it works is that, the, so you create the shares, and then you generate the shares then you verify them and you distribute them then you verify them then you aggregate them. Each participant will then have a VSS hash that is returned from share agg. So then down here you just sign the VSS. So there is a potential interesting optimization here, but it would even weaken the idea that this could serve as a proof of knowledge. Instead of signing the VSS hashes with a normal Schnorr signature, they could use MuSig to sign the VSS hashes and then the participants can aggregate these partial signatures and they would have one signature verification instead of n signature verifications.
+
+Also, by the way, if we wanted to for whatever reason, you could make a MuSig key that is also a FROST key. We could take the MuSig key agg coefficient... take the MuSig private key multiplied by the key agg coefficient and split that, and then you would have a public key that works in both FROST and MuSig. That sounds interesting. Just saying you could do it. Not that you would want to.
+
+I got adaptor signatures to work with the FROST implementation. All the applications of adaptor signatures that I could think of required putting FROST into MuSig. Say you were doing cross-chain atomic swaps. The FROST signature would be encrypted using the adaptor protocol, there's a way to do that which is implemented but I don't think it's useful without the nesting of FROST into MuSig. Good luck with the security model. It also supports bip32 tweaking and taproot tweaking, whether that is secure or not remains for another day. But it supports it, at least.
+
+# Signing
+
+The last thing is basically signing, generating the nonces and signing is exactly the same as MuSig2 except instead of the key agg coefficient you're using a Lagrange coefficient. The way we hash the b-value the nonce hash is slightly different in the ordering. Other than that, it's the same code.
+
+Q: Why is it different?
+
+A: Since these are Shamir shares, we need to multiply them by Lagrange coefficients. We're using proof of knowledge instead of key agg coefficient to defend against rogue key attack. That's the first change.
+
+Q: Something about the hash is different?
+
+A: Both FROST and MuSig use a similar trick to defend against Wagner's attack which is the dual nonces and the b equal hash of stuff. They both use the same trick. The ordering of the inputs is slightly different, as specified in the paper. It's a trivial difference. It's the same idea.
+
+There was this thing in the FROST paper we discussed yesterday where they switched to using a separate blinding value for each participant to defend against this really high security scenario where you may not get the same participants that started a signature as finish a signature and whether that matters or not is unclear. So I kept it to how MuSig has done it for now because it's a nice optimization but I have a note in the code about the FROST RFC and why they did it differently there.
+
+Q: What exactly are we hashing?
+
+Let's take a look at that. I think you guys will find the code to be quite familiar. I had a version built on the MuSig APIs so you just call the MuSig APIs for the nonce part at least, not for the partial signing. So let's take a look...
+
+Is the nonce generation is already specified in FROST? I do, but it's not really done yet. The easiest way to look at this would be a side-by-side with the musig code. The MuSig code reflects BIP-MuSig the first version of the BIP and noncegen there has been quite a few changes there. We will probably want to look at harmonizing that between these proposals.
+
+I think it's literally exactly the same for noncegen between FROST and MuSig in secp256k1-zkp. We're not loading a secret key, we're loading a share. That's the main difference. In FROST nonce generation, if you derive the nonces deterministically then you need to know who is participating and somehow put that into your nonce generation about who is participating in the session. Is that happening? Is it necessary? Just in b, not the nonce? Because this will then influence the coefficients. It could be an extra input if you don't already, for defense in depth. Yeah, that's a good idea.
+
+This also has the same recommendation as in MuSig about the session ID. It should not be generated deterministically. You should generate a new nonce each time because of all those attacks we have seen, like interrupting and replaying.
+
+It's the same thing as MuSig with different optional inputs into the hash based on different input parameters. It seems like maybe it could benefit from more abstraction. There's a lot of places where things could be improved. I would love any review or feedback. At this point I can't even see the code anywhere because I've looked at it for a year and a half. Some other eyes on it would be nice.
+
+Q: It would be interesting to take the public key as input here.
+
+A: I think that's still an open question, at least to me. For nonce generation. Because of the tweaking stuff? Yep. It's probably going to be a similar pattern.
+
+Isn't the public key itself, does it really help, the problem isn't the key aggregation coefficient but rather the Lagrange coefficient which you could try to grind as an attacker? You're already binding that session to your public key since you sent the proof of knowledge. I know that doesn't help. It's a good point, it's not even clear if you could meaningfully-- if it would be a good idea at all to use tweaks there. In MuSig, you have this model where the attacker can freely choose public keys. But here... there is only going to be one public key that is tweaked. So maybe it would be very crazy idea to even tweak which of these keys in the existing setup.
+
+There are these crazy ways to update the DKG or something. Like the proactive secret sharing: you commit to a zero-secret and then it just changes the shares. But this is hard.
+
+# Key refreshing
+
+There was a really nice attack where they didn't have a broadcast channel, and during key refreshing... but you don't offer a key refresh mechanism in FROST? No. There was an interesting attack in another DKG scheme where you could because there was no broadcast channel you could send different messages to different people and end up in a state where some of the participants believed that a key refresh was successful so they deleted their old keys but the other participants aborted and you didn't have enough shares for the new key and neither for the old keys. So key refresh is really dangerous, it might be more dangerous than DKG itself. In DKG, you don't have anything at stake yet with the DKG. If the DKG aborts and fails, then you just don't use the resulting key. If key refresh aborts, the money is already in the key. If it aborts, you delete the new shares and you stick with the old ones. You could also say that, at the end of the refresh, ... at the end, if you're required to produce a signature that would be a good way to verify that the new shares work. It could still be used to exclude some people from the threshold. You'll end up with a signature, but some people might have deleted something. t malicious participants can already steal from it though. But without a reliable broadcast channel for key refresh, you might be able to have someone even without t+1 malicious to be able to exclude someone from future signing by lying about their stuff. Like if they abort, not save the new share, they stay with the old one, everyone moves to the new share and now they can't sign any more. Okay, there's no key refresh here, so we don't have that problem. I think that stuff is solvable but definitely we have to be careful with that.
+
+I do think it's desirable to have key refresh for a few reasons. If you want to use this for a 2-of-3 wallet and you lose one of the componetns and then you replace it, then you can refresh without needing to sweep which means no transaction fees. That might not be a big deal, but if you do proactive refreshing every hour then okay you sweep every hour. In a world where fees are really high, ... well that's debated. I've just seen key refresh get fucked too much, and I haven't seen anyone have a threat model that shows the refresh actually helps anything for them. There's a ton of literature about it, not production systems.
+
+I think the other thing attractive about it is that if you use FROST for lightning channel management is that you don't have to close the channel when you refresh the shares. If the fees are very low, then maybe that doesn't matter. Thinking about the long-term vision of lightning key management and bitcoin, if eventually we have high fees then these fee-saving techniques could actually matter.
+
+But then you actually need a broadcast channel, or we do the kind of trick where we sign the data and distribute the signatures to prove that each participant has the same view as everyone else. As far as I remember, the most common way to get a broadcast channel is n^2 communication but this doesn't have that. Well, it does in the DKG process. Each participant generates a signature of their hash and then distributes that to each other participant. That's n^2 communication right there.
+
+# Nonce hash
+
+This is the Lagrange coefficient function. This is the nonce hash. Yeah, let's look at nonce hash. We are serializing each public nonce, hashing each one, adding each one to the hash. It seems to miss the public key for example? Or am I just not seeing it? I'm not sure that was part of the original scheme.
+
+I think in the FROST paper, they just, the commitment list is just the nonces not the public keys. Really? At least the I think the public key that is going to be part of the challenge hash should be in that as well, otherwise I'd be real confused. That's definitely something to take a look at. I think the writeup in the other paper is much better. He meant the proof in the other paper. Yeah, here they don't include the public key. The "l" value is the index of the participant. The public key is fixed and therefore doesn't need to be included. Technically in FROST it's fixed, there's only one public key. The attacker can't choose public keys at signing time. After the DKG, the key is fixed. So you need to do the DKG before signing, okay.
+
+Before sending out nonces, you need to have done DKG. That's assumed. ... in FROST, you can't do that because the key is fixed. Why would you want to send nonces before you aggregate keys? Well, you don't know perhaps the exact signer set yet. You just send out a few nonces. But there's not even a notion of choosing signers.
+
+# Partial sign and negation
+
+FROST partial sign looks very similar to MuSig partial sign. In partial sig verify, we use the pubshare that we generated from before. Oh another thing I should mention is that in DKG, at the end of the DKG, at the end of the aggregate share function, we check to see if the public key has an even or odd y-value and we do the negation there and then as part of the DKG. So basically at the end of DKG, the signing key will always be the correct signing key without any negation required because it already happened.
+
+Q: Is this x-only keys or plain keys as input to the DKG?
+
+A: Well, it's an output of the DKG is the aggregate.
+
+In MuSig, you have every party's pubkey and you can combine them to get the aggregate key. Here, in FROST, you have a DKG and they output the keys.
+
+..... Once you get out of DKG, you don't have to worry about negating until you get to the tweaking stuff like the taproot tweaking where you have to track that. But for signing there's no check for whether you need to negate this or not, which is nice.
+
+# Next steps
+
+Q: What's on your personal roadmap?
+
+A: Right now I'm trying to get a draft of the FROST BIP together over the next few weeks.
+
+Q: Will this look similar to the MuSig2 BIP?
+
+A: Yeah, I'm modeling it off of that.
+
+Q: And no crazy extension stuff? Just basic FROST with taproot tweaking? Or no tweaking?
+
+A: I was thinking about doing it with tweaking.
+
+Q: Okay, makes sense. We could split it out if we wanted to. I'm not suggesting this.
+
+A: It's just a draft to get us started. Those will be ready for review, feedback, my PR is ready for review, the BIP... I'll be inviting you guys to take a look at it whenever you have a chance. Then I want to look at maybe at half-spec implementation. Maybe a python implementation. Maybe I won't do that if I do half-spec. I want to update like my graphviz visualization of the API, and then just focus on gathering feedback. Elichai will be reviewing the PR.
+
+Q: How important do you think it is to make it similar to the IETF RFC both in terms of behavior and also in term of terminology?
+
+A: I think making it as similar as possible is a good idea. They have thought about it probably more than anyone in terms of what the spec should be. It would be less confusing for people. I've tried to use their terminology as much as possible, but there could be places where that might be overdone. There might be conflicts between our terminology and theirs. The thing is, the really complicated weird stuff is the DKG and they don't specify that.
+
+Q: Why don't they specify DKG?
+
+A: Because that's the hard part.
+
+It's the hard part and nobody wants to talk about it. Well they specified it in the first paper and proved it. When I talked with them in April, they said they were working on a spec for it, but it would be a separate RFC. At least at that time, it was their idea. I don't know how far they got. Did they prove it separately or together? They proved it together. So what's the functionality without having DKG?
+
+There's a gap between the paper and what the IETF RFC would have to be for FROST. For example, how do you handle the broadcast channel? In the paper they can just say "broadcast channel" but spec is a different matter.
+
+It could make sense from a spec point of view to do two specs.
+
+# Lightning key management
+
+I want to mention lightning key management. We need a good way to do multisig-style key management for lightning if we want to stop treating lightning wallets as hot wallets that can't hold much funds. We could try to do that with tapscript, but that won't touch the funding keypair. It will still be single key single signature even if we can get the outputs to be t-of-n. So FROST is a really interesting way where potentially all the lightning keypairs could be generated with a DKG, and then we could feel a lot better about putting maybe the entire wallet into the lightning channel without having to have this separate cold storage L1 thing. When you want to interact with L1, you could use splicing or swaps. It's easier to build UX on top of this if you don't have to make a user decide to use lightning or not. This is going to be the best reason to use FROST I think but there's lots of theoretical security work to be done not just for that but getting this stuff in order. This is potentially down the road but I wanted to lay this out as a future that maybe we want to head towards.
+
+Thanks everyone for the feedback. Please take a look at the BIP and the code when you get a chance.
