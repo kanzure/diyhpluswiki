@@ -3,6 +3,7 @@ Notes on Package Relay BIP, implementation, V3, and package RBF proposals from C
 <https://gist.github.com/glozow/8469dc9c3a003c7046033a92dd504329>
 
 Ancestor Package Relay BIP:
+
 * BIP updated to be receiver-initiated ancestor packages only.
 * Sender-initiated vs receiver-initiated package relay.
     * Receiver-intiated package relay enables a node to ask for more information when they suspect they are missing something (i.e. to resolve orphans). Sender-initiated package relay should, theoretically, save a round trip by notifying the receiver ahead of time that "hey, this is going to be a package, so make sure you download and submit these transactions together." As with any proactive communication, there is a chance that the node already knows this information, so this network bandwidth was wasted.
@@ -18,6 +19,7 @@ Ancestor Package Relay BIP:
 * Will polish the updated BIP and post.
 
 P2P Implementation:
+
 * Deduplication of rejected transactions to ensure we don't re-download invalid transactions but also don't accidentally censor things.
     * Splits our rejections cache (m_recent_rejects bloom filter) into fee-related rejection and non-fee-related rejection filters. Anything that fails for fee reasons (including mempool min fee and fee-related RBF) goes into the fee-related rejection filter, and everything else into the other one.
     * For packages and sub-packages that fail, add the transaction group by hashing the wtxids of each of the transactions, sorted lexicographically. Ensure that each group is itself an ancestor package. When a package is partially submitted, exclude the transactions that ended up in the mempool.
@@ -29,6 +31,7 @@ P2P Implementation:
     * Even with de-duplication, it possible to get O(n^2) download if a transaction chain is tx_1 ... tx_25 (tx_i spends tx_i-1), where tx_1 is 0-fee, tx_2-tx_24 are 1sat/vB (just above the node's fee filter), and tx25 pays for all of them? Each one will be rejected, then downloaded again when grouped with another "ancpkginfo." Solution: when announcing transactions to a package relay peer, only announce ones that don't have unconfirmed descendants.
 
 V3 transactions and package RBF:
+
 * Extremely simple, seems to work for LN. Makes mempool people happy because it also might let us get rid of carve-out and limits the size of connected components in mempool.
 * Standardness of a transaction changes depending on chainstate. In the event of a reorg where transactions are re-added to the mempool, it's possible to need to evict V3 transactions in order to enforce its rules. Is this okay? Yes. We have other policies that necessitate the same thing, e.g. descendant limits.
 * Package RBF only allowed for V3 transactions. Is it to ensure the ancestor feerate rule is incentive-compatible? The current rule is not 100% guaranteed so.
