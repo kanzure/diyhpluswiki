@@ -1,0 +1,309 @@
+Austin Bitcoin Developers
+
+Socratic Seminar 33
+
+<https://austinbitdevs.com/2022-10-20-socratic-seminar-33>
+
+# Introduction
+
+Thanks for coming. This is a big turn out. Bull market turn out. Getting started, the idea of a socratic meetup is that it's not a presentation it's a discussion. How many of you guys have been to a socratic seminar before? How many have not? Alright, well welcome. How many of you are visiting from out of town? Someone was saying they flew in just for this event. Not a wedding. Just for this event.
+
+The idea of the meetup is that it's a discussion. We're not experts on everything. We just collected some topics and there are many people in the audience that know more about it than we do. So if you know about a topic, feel free to chime in, ask a question or make a comment.
+
+Some more ground rules: respect other people's privacy, don't directly attribute quotes, Chatham house rules, and no photographs or videos or anything like that.
+
+We have a few announcements but first we have a Nashville meetup to announce? Austin and Nashville is only a 90 minute flight. Do you want to say a few words about the new Nash Bitdevs? meetup.com/bitcoinpark ... were you kicked off twitter? Nice to meet you. Come visit us in Nashville. Come find me at barbeque after this and meet me.
+
+If you are looking for a bitcoin job, look at Bitcoiner Jobs. Who here is hiring bitcoiners right now? Who here is looking for a job? Check out Bitcoiner Jobs if you're on the market.
+
+Another news item is that there's an online hackathon called Legends of Lightning where you can win some bitcoin. If you're looking to take some of the skills you learn at bitdevs and apply them, then check this out. It looks fun, form a team, build a project. There's also non-developer prizes like a design prize and a few others so you can participate even if you're not a developer. There's an Austin Bitcoin Design Club too. The next meetup is December 28. Yeah, bitcoiners don't celebrate the holidays I guess.
+
+# BipBounty
+
+<https://bipbounty.org/>
+
+BipBounty was a program that started organically around the bip119 discussions. Some people on twitter started randomly saying I would pay some x amount of dollars if someone finds a bug in the bip. People thought maybe they could formalize this a little bit, some sort of decentralized way of funding projects and individuals that want to contribute or crowdfund. This was organized through a few different organizations, and the people who did this initial funding. They want to fund more things and they are looking for more feedback.
+
+ajtowns had an interesting mailing list post last week where he created a bitcoin fork that is dedicated to testing. He made an interesting point that there's a proposal to propose, and then there's no like period before which people can play with it and try it and see if it works in practice or not before deployment. One of the problems is basically that the champion of the proposal is responsible for all these steps which centralizes things and creates a false sense of centralization and push away people so that we don't get as much experimentation. So ajtowns created Bitcoin Iquisition which is a signet fork of testnet and then you can build applications on top of it and there are competing proposals like the overlapping proposals ANYPREVOUT and OP\_CHECKTEMPLATEVERIFY from bip119. One of the interesting things you could do is build, and this happened, jamesob built a CTV vault and then someone built an APO vault and then you can compare these two in on-chain fees and see how easy it is to build applications on top of it. This is useful as a playground and could probably plug into the BipBounty situation.
+
+There were was another proposal put out in the last month for a covenants working group. This is another thing where we need a way to experiment with different proposals and see where thye overlap or where our ecosystem knowledge is missing. It's exciting to see all these different mechanisms for incentivizing research, design, and applications, and funding for this. I think this was something highlighted I would argue in all of the different deployments. Bitcoin Optech came out of the segwit wars where a lot of people were seeing that businesses were not well-informed on how to save on fees and we needed some bridges to get the developer community and business community to talk more. We saw a lot of this came out of that, like Brink and Square. This provides forward momentum and community building.
+
+We up here are experts on almost none of the stuff on our list; well, maybe these other two, but certainly not myself. We often introduce topics and give a foundation and people can push back on it, also we have Bitcoin Core contributors here in the crowd. Part of the idea of the Chatham House rules idea is that you can share ideas that were shared in the discussion but don't attribute names to those unless someone explicitly opts-in to that, so that way people can ask questions and push the envelope. With research, this is how we push against accepted zeitgeist or whatever. That's the goal of these discussions. We're just introducing the ideas.
+
+Q: When is there an airdrop? Looking for some forked coins here.
+
+A: Bitcoin Inquisition is a fork of Bitcoin Core which is only capable of running on signet. The special thing is that this can run numerous soft-forks and it has numerous deploy rules. For example, ajtowns proposes that we would be able to deploy all the soft-forks at the same time and see how they interact with each other. Also, we can cancel different deployments at different time and play with the different proposals.
+
+Who knows what signet is? One of the reasons you can do that is because, we found this problem in testnet is that it almost mimics too well the behaviors of mainnet in terms of Proof-of-Work. Since it's not real money, you get unpredictable behaviors and it's hard to deploy proposals. Also there are testnet block storms that have lots of blocks coming in at the same time or giant reorgs. With signet, you don't need proof-of-work. Sometimes you want PoW for a test environment, but you don't really get good predictability. With signet, you can mimic the block times and block delivery which is okay for some certain testing situations and experimentation. It's useful for developers, like as an application developer. There can be many simultaneous signets, anyone can run a signet.
+
+Q: When super signet?
+
+A: It's coming soon.
+
+One thing about Bitcoin Inquisitions and BipBounty is that-- while this was up, aj found a bug in the CTV BIP. It's working.
+
+Q: Adam Back has always said that Liquid has been intended to be a place where you can play with things. Liquid just announced activation of covenants ((or some other change)).
+
+Q: Well, maybe Elements, not Liquid, for playground... Liquid doesn't deploy things as rapidly, it takes a while to do upgrades.
+
+I've been able to spin up a signet more easily than I can get into Liquid. I know there are some gatekeepers for getting proposals into Elements that make it harder to play around with this stuff. I think it's different problems; signet is fake play money and Liquid is real money.
+
+Q: Will there be an Elements signet?
+
+A: Great question. Nobody knows.
+
+# 998-of-999 multisig transaction
+
+<https://twitter.com/brqgoo/status/1579216353780957185>
+
+This was not possible with segwit. This is one of the things possible only after taproot activated. This transaction uses a tapscript. All the data is in the witness side of thing, which is how segwit blocksize increase worked. It's almost a 100 kilobyte transaction.
+
+Moments later, some issues were observed on lnd. It broke all of lnd. The issue was that in segwit v0 we had this rule of witnesses can only I think 10,000 or 11,000 bytes I think. We removed this restriction in taproot because well there was already a block size limit. In btcd, which lnd uses, had a rule that all witnesses needed to be under that size, well only for wire parsing. Once this transaction happened, it broke everything in btcd.
+
+If you're running an lnd node, you wouldn't be able to sync that block and you could sync future blocks that weren't affected. Specifically what it was that.... there were two places in btcd where this constant of max witness size was listed, in the consensus validation code where it was updated correctly for segwit v1. But six years ago when this code was first written, there was a defense-in-depth concept where we shouldn't trust the witness size from blocks and that it should be checked against a constant that was inherited into lnd. When this "poison block" was received by lnd, what it did was validated it as consensus-correct but when it went to go deserialize it and include the information in the local database it couldn't process the block. So, btcd is the backend on lnd and was no longer able to process any new blocks, and couldn't create new channels. In some circumstances, you couldn't close channels. It was a really bad bug, nothing that anyone wants to ever have happen. It was a glaring mistake or error. But as long as people upgraded quickly within 24 hours, there was no real loss of funds which was generally the case but in a decentralized network it's hard to make sure that everyone upgrades. If you hadn't upgraded, then at some point your node performance would degrade because of HTLCs that are in a blockheight significantly far in the future from the last blockheight you synced which would be mid week because the bug was hit on a Sunday. I think we got everyone upgraded in time so that nobody lost any funds but generally not a good thing and everyone was disappointed.
+
+One interesting thing here is that we have had a discussion about some of the differences between layer 1 and layer 2. In layer 1, there is a consensus that most people there's consensus among many that it's better to have one implementation of bitcoin rather than many implementations. On layer 2, there is no such consensus like that, and there are multiple implementations of lightning. Here, the base layer dependency of a certain implementation of a layer 2 implementation caused a problem on.... well, this code, if they still wanted to have this thing of well we got this block from Bitcoin Core and we want to double check it against the rules, then they were still using that in golang and if they didn't change that constant then it would still have been that case. It's not that the layer 1 code was broken, it's that layer 2 was checking some layer 1 rules or something. There is no maintainer of btcd. There was an interesting comment at tabconf that someone was building a utreexo on top of btcd and the guy was saying well this library is not maintained, nobody is fixing bugs, nobody is merging pull requests. They were implementing taproot on layer 2 too. Is that layer 1 code or layer 2 code? Well, nobody is looking at that code. roasbeef is not full-time maintainer of btcd. There is no full time maintainer of btcd. roasbeef as maintainer of btcd is the only person who contributes to it; he implemented taproot in btcd. They were saying, well, lnd has plenty of reviewers. But if you are going to pick dependencies that you're going to review... it's a problem with open-source where some people look at only the stuff they find interesting, but this can also happen in Bitcoin Core because we also use dependencies there to a certain extent.
+
+Q: Have you looked at lnd's dependency list?
+
+A: It's a little big. That problem will exist anyway. If you put it all into lnd, well, you can't review all that code, right? So people will just pick which modules they want to review. You'd think you should care about core-critical stuff. We have this problem in Bitcoin Core where there are certain areas that aren't reviewed. This is why we got rid of the openssl dependency too. We had that for a while. How many people are reviewing the libsecp256k1 dependency in Bitcoin Core? There are many fewer reviewers of that than the total number of reviewers of Bitcoin Core. We were recently having a discussion about Gloria Zhao being a maintainer, but then she's also the main expert on mempool policy stuff and now we have to ask who is watching the watchers right? There are going to be fewer people holding experts accountable. btcd being an alternative implementation is not the cause of this problem, we have this problem everywhere.
+
+Just write bug-free code. It's an impossible problem, you can't write bug-free code.
+
+btcd passed all the test vectors for taproot for the transaction validation. Having this really old 6 year old extra check which was basically in the wrong spot as a belt-and-suspenders kind of approach, I mean sure if more people had looked at it and more people reviewed it maybe it would have been found but this kind of error could happen in any kind of codebase.
+
+One thing that this is emphasizing that-- talking about signet earlier, testing things, running things, and having people use these things before we put them into production is such a huge benefit to the whole ecosystem. I'm excited about ajtowns' Inquisition project and signet stuff. I think that's awesome. It would have been cool if people had done tihs kind of transaction on testnet; well they did both.
+
+We want to stress test APO in this kind of environment. Throw everything at the wall and see what breaks.
+
+If you're writing code, then write end-to-end tests, and then do fuzz testings and dogfooding and so on. Even if this transaction was sent on testnet, would the testnet client break? The original issue that he posted was testnet was down or failed. Then 3 hours later he posted the same issue for mainnet.
+
+This was the first transaction since taproot that was over this size. It's kind of weird that we didn't test transactions of that size before. Why wasn't this caught before? There's the Bitcoin Core static test vectors that test against this. lnd was passing against those but at a higher layer, well the test vectors don't give you a raw transaction it's just small individual pieces to test against so that's why it didn't catch it I think.
+
+The only implementation that hadn't tested this was unfortunately lnd and the test vectors got tested in lnd as well, but only for transaction parsing. This issue was in block parsing. The transaction was smaller than 100 kilobytes, so it was standard, but the leaf script that got executed, the witness script was more than 10,000 bytes which-- the transaction was valid, but not in the block. The btcd code only checked enforcement of the limit at the block limit, and that wasn't caught when implementing taproot.
+
+This type of transaction had not been run anywhere where lnd could have failed. Well, on testnet, but that was 3 hours before the same guy tried it on mainnet.
+
+Testnet is basically fucking unusable. Testnet has this fun property that if there wasn't a block found after 20 minutes, then it resets difficulty to 1. But you don't have to wait; you can just change the time on the block and always mine blocks with difficulty 1. If the last block in the difficulty period has difficulty 1, it resets to 1 for good. So what people do is fudge timestamps on testnet and mine 100 blocks/second.
+
+But people had their lnd nodes break on testnet. If someone would have run this on testnet, then it would have broken and we would have seen it. But it was only a year after taproot was activated that someone went and tried this.
+
+As someone who professionally messes around with bitcoin like this, there's not a lot of glory in getting something out on testnet. So why was there a 3 hour break between testnet and mainnet? Seeing it worked on testnet, but he wouldn't tweet about it or talk about it until the mainnet one went out. I think there is an incentive problem here about fuzztesting in production environments.
+
+Another thing we learned is that we started setting our default timeouts too low. Lightning would have been way more fucked if blocks were full. This is true of all of lightning today, actually. One of the good talks at tabconf was BlueMatt who went off for an hour talking about all the ways that lightning is broken and it was pretty impressive. If you were to dump a bunch of force closes and you can't get your penalties out, then because mempool is empty, thankfully this guy wasn't an attacker and it was on a Sunday and we had relatively empty blocks and we were able to survive. I think a lot of businesses and people running their own nodes will be increasing their default timeouts.
+
+If you go on Bitcoin Core's github and look under contrib for setting up signet, those scripts are in python and it could be improved greatly. You also have to import the entire test library which they don't tell you but you find out the hard way. I think it could be improved greatly the whole process of setting up your own signet node. If you want to take on a project that could greatly help the community, then this would be it.
+
+One other interesting one here just highlights that if you're going to be running a lightning node, then you need to be plugged into the news. There is a different trust level with having bitcoin, but then having bitcoin on lightning is different. When these things happen, you need to hear about them quickly. Update your node.
+
+lnd v14.4 or v15.2 and v15.3 also. Any of those versions.
+
+# LNsploit
+
+<https://www.nakamoto.codes/BitcoinDevShop/LNsploit>
+
+Basically it's like a built on LDK, we started it a month ago. This is a lightning exploitation framework or tool. It's basically just a way to stress test and penetration test the lightning network. It does not run on testnet, right now it hardcodes for regtest but you could put a configuration option to do that I guess. It's only a month old. At tabconf workshop, we demonstrated broadcasting a really large witness script transaction. We had an lnd node that was patched and one that wasn't patched, and we were able to demonstrate broadcasting a previous commitment transaction that stole money from an unpatched node and it never saw that it needed to broadcast the justice transaction. The patched node was able to see that someone was doing something fishy and then a block later it broadcasted a justice transaction. I wanted to do stuff like channel jamming, probing, other things like that. It's just one tool for making it easier to attack lightning. If not us, then who? Nooo. I apologize to lightning protocol devs in the crowd in advance.
+
+Q: Can I steal money with this?
+
+A: On regtest, you can.
+
+There's a workshop on github in one of the issues if you want to follow along with the curriculum from tabconf.
+
+# Taro
+
+Taro is a much anticipated way of issuing assets. There is a daemon that has been released. To my knowledge this doesn't work on lightning yet but it does allow you to send assets, mint, receive, and verify transactions. Any comments on this one?
+
+A couple cool architectural things on this.. one of the things taproot introduced is that in a given output you have the top-level key that controls the output itself, but you can have secondary keys where the assets are represented in the bottom of this MAST script or this large tree. Architecturally just for safety reasons to make sure people couldn't accidentally shoot themselves in the foot and destroy their own assets, the key that controls the top-level asset is an lnd key, and the leaf asset key is held in the taro daemon. There's some cool architectural things for separating things and keeping people from screwing themselves. I think that was a cool one. The community response to this has been amazing. There's been a bunch of submitted bugfixes. This was an early alpha release. In "two weeks" (TM) this will be more usable. The major release after this will be the first one where you probably shouldn't use this on mainnet but we're not going to stop you if you want to use it on mainnet. It's cool to get this out there and see what whacky stuff people are going to come up with.
+
+Q: When will the lightning part start working?
+
+A: We talked about this a lot at tabconf last week. Because taro is dependent on taproot, we need taproot channels in lnd first. The LDK team has been working on taproot channels so we hope we will see it soon.
+
+Q: Is this separate from PTLCs? You can have a taproot channel without PTLCs?
+
+A: Correct. We hope to have successful interop testing by the end of the year. I hope to get our version into lnd and then the taro-on-lightning stuff can't start until that has been merged in. We're looking at some time in Q1 where we might get that working end-to-end. We'll see. Review is very welcome at this point. Testing and bugfixing and stress testing in particular is welcome. It's all open-source. Hopefully people can pull down the code, test it out, give us some feedback, and help us move it forward.
+
+# Bitcoin Core v0.24
+
+We have a new Bitcoin Core release of version v0.24. It's a release candidate, actually. They have a very detailed guide for testing this release candidate. This is like 20-30 scrolls worth of instructions and information. If you would like to start contributing to Bitcoin Core but maybe you're not a programmer, then you can follow along with this and validate that the code written works for you. This would be a fun way to get involved.
+
+# Mempool/RBF
+
+There's not a lot of notable stuff in here.. but there was one mempool RBF change that I think we might talk about. Watchonly miniscript script descriptors are coming out in v0.24, but then descriptor wallets will be coming later. It was merged in previously but this is kind of big because it's deprecating fully the old legacy wallets and moving to full descriptor wallets. There's a whole process for upgrading, maintaining backups but not fully using it any more. It's not fully deprecated yet, but it's starting to be deprecated. Legacy wallets are just a set of keys. Descriptor wallets are essentially a way to describe xpubs in a better way where we not only store how we derive the secret for new outputs but where we keep track of what output type they are and make it more standardized to do import/export, make multisig descriptors and more complex descriptors. In the v0.24 release, we will have a migrator for taking your legacy wallet and for each one make 4 separate descriptors. In v0.24, new wallets are descriptor wallets by default. We are not adding new features to legacy wallets. The descriptor wallet also uses a new database.
+
+Doesn't it have to be 8 descriptors because there is change? We're working on a single descriptor that can do receive and change. It will make a separate descriptor for each output type and each keychain. I really hope we get that improved.
+
+Since v0.23, the default has been descriptor wallets. In v0.24, you get a migration tool, and eventually the old legacy wallets will be fully deprecated.
+
+A descriptor is basically a way of describing what addresses will be produced by your seedphrase. Right now we have this amalgmation of how to describe multisig wallets. You can have single sig, multisig, but it's standardization of the language we're using to describe that so everyone can understand the same language.
+
+If you think about how we have a lot of mobile wallets and the mobile wallets all have their separate paths on how things are derived from the secret and some have different way of expressing mnemonics, but Bitcoin Core doesn't have ways of expressing mnemonics.
+
+The descriptor stores the secret and all the information to derive all the keys with a specific output type. Looking at BlueWallet, it will store the derivation path, it will remember the output type that the descriptor belongs ot, and there is a fixed standard for that. Now when you restore this to another wallet, the wallet no longer has to guess and do the whole table to get back your money.
+
+Q: I was told if I like my legacy wallet I could keep it. Is that still true?
+
+A: You can also still sync a v0.8 client.
+
+Q: I'm planning to go into a coma soon. When I wake up, will I still be able to use my legacy wallet?
+
+A: The migrate tool will stay in Bitcoin Core. Also, this is not a consensus change.
+
+# Zero-conf feedback
+
+Who knows what zero-confirmation transactions are? The idea is that a transaction is not actually secured by the blockchain until it's confirmed and mined into a block. There's some applications that ignore this rule and say if it's in the mempool then maybe that's good enough. But you don't have any guarantees at that point.
+
+Replace-by-fee (RBF) is where you opt-in to this rule where nodes will allow mempool transactions to be replaced by other transactions that pay a higher fee (making this incentive compatible with the network). But this is opt-in; we don't want to be in a zero-conf world because there's no guarantee ever that we can't reverse back from that. Nodes can decide as a group to let you replace because there's no cost to allowing for that.
+
+In this release candidate, there's an opt-in default for replace-by-fee where you no longer have to signal that this transaction can be replaced you just say instead any transaction in my mempool I'll allow a replacement if it follows the RBF rules. This is exciting, but some developers have written applications that relied on incorrect zero-confirmation assumptions.
+
+One team wrote an email to the mailing list and said please don't do this. Our usability and UX relies on zero-confirmation assumptions. There was a long discussion about application development and zero-confirmation transactions. These guys are claiming in the mailing list post that if RBF is turned on then they would have to shutdown 100,000 monthly active users from being able to do lightning payments.
+
+Why can't we just call it unconfirmed transactions? That's what they are. It's interesting though because, that's why we want to get rid of this. We're creating applications on top of a bad assumption. There were some side conversations... the assumption is that you can't talk directly to a miner, which is false. You can talk to miners out-of-band. The interesting thing is that this -- it's like a risk calculation. The hidden costs in credit card payment processing is because merchants have to increase their price because there's a 10% chance of fraud being reported and then the merchant has to increase prices to account for this. So someone made a bitcoin application that took a risk on unconfirmed transactions based on these faulty assumptions... we understand this is bad and they say they are working on a solution but we used this assumption to get out of the door. One of the interesting things to come out of this discussion, ajtowns said look when we came out of this proposal we talked about talking with businesses about the impact on this and we had a PR review club and it was basically all developers and we didn't get feedback. Antoine Riard said about a year and a half ago saying v0.24 will have full RBF and I guess nobody replied. It was announced quite a while ago.
+
+I have a 20 page research report that I've done on Muun. Ask me about all the ways to steal money from Muun. I have a friend that has implemented a unconfirmed transaction double spending attack against Muun. They are a little dramatic saying well we need to turn off lightning, because there are many ways to attack these guys. If only there was a tool that would make it easier to run lightning attacks. Don't do unsustainable things on bitcoin. Well, don't tell me what to do. If people are doing the unsustainable things, then at some point, give them an off-ramp and then do the punishment, right? But it's scary that we can have a few people saying well we are going to introduce a config that effects 100,000 users.
+
+No, we have been talking about this for 7 years. This has been more than sufficient time. What they are doing is ignoring this. They aren't hedging risk; they are accepting that this money is basically gone if someone wants to take it. They are accepting unconfirmed transactions which for 7 years have been known to be payment promises that people may or may not follow through on. After 7 years, people have been discussing this for years, and just to be clear, the patch that implements mempool full RBF and makes your node treat any transaction that fulfills the other RBF criteria as a replacement, it deactivates a single fucking line in Bitcoin Core. Anybody can patch that one line, any user can just patch that one line. In fact, other implementations on the network like Bitcoin Knots have been doing this for years. If we agree about the power of defaults, then mempool full RBF default disabled.. if we're assuming, as per it always has been that 99.9% of the users never change any flags and any defaults then this is not going to emerge on the network especially not because it takes a miner to activate it and miners have been extremely conservative both on bitcoin upgrades and transactio--- it looks like miners will accept these. I think petertodd posted that 97% of miners accept these. If miners are already accepting these, then it's already broken. Unless miners are accepting these directly out-of-band.
+
+# Mempool policy
+
+We have a new proposal from Gloria Zhao. If you want CSV, it's v2.... This is the transaction version number which don't really mean anything, it's not super enforceable but mostly used for relay policy. v2 is for OP\_CSV. OP\_CLTV also. That's consensus. Yes. You have to be v2 to use CSV (checksequenceverify). It's different from segwit v0 script version and segwit v1 script version in the witness. There are script versions, segwit versions, and transaction versions.
+
+There was a previous concept of package relay and it was really complex. It's all mempool-incentive-game-theory. How do you calculate what is incentive compatible for the miners? You're replacing transactions, moving them around, bumping transactions. Lots of DoS vectors.
+
+My understanding that this- one way to look at it is that this package relay proposal is a simplification of package relay. Greg Sanders then posted another sort of an extension of it where you can do a zero-value transaction that would still get relayed. Any transaction that was just OP\_TRUE would be relayed by default. This is kind of like a transaction sponsors.
+
+Q: What is a package?
+
+A: Basically child-pays-for-parent we use this in lightning if you want to bump fees, and we can't do it the other way because of pinning attacks (can't do it with RBF). If you're locking in with pre-signed transactions but you don't know what the fees will need to be when you need to close; so you want to have a child transaction that pays for the parent transaction with a much higher fee. But then you have lots of relay problems about how to relay multiple transactions at the same way. How do you calculate how much fee the child confers to its package of parents? Sanders found a way to do this in a cheaper way and it actually allows for a lot more flexibility.
+
+This is related to the previous topic. What we want to achieve with this mempool is that everyone that runs the node, ... what you want is that the view that you have on the mempool is as close as possible to what a miner would wnat to have in their mempool so that you can estimate fees, see if your transaction is going through, or things like that. So what we want is that the mempool policy should be as close as possible to the mining incentives. If people can replace stuff with a higher fee that would be more attractive for miners in the long run, and we would want that to propagate through the p2p relay network and for everyone to see it. With package relay, for child transactions that is more attractive to mine than just the parent alone, to propagate on the network. What we do with v3 package relay, it creates a new set of rules that only apply to unilateral closes of channels and gets rid of a bunch of pinning attacks that are only concerning to layer 2 protocols. It does this by making the child transaction very small in size which gets rid of some of the pinning attacks and it restricts a transaction to having only a single child. You can't build big trees of unconfirmed transactions any more. Since unilateral closes are already easy to recognize, it's easy to have a separate label or set of rules on them to get rid of a whole set of attack vectors that only effect lightning.
+
+# p2p Erlay support signaling
+
+Erlay is a proposal to make basically p2p messages take up less bandwidth. It's been a research proposal for quite a while. There is now a new implementation starting with a pull request merged that adds a p2p message where two nodes can tell each other they want to engage in this protocol. But so far it doesn't do anything; it's step one of many. But now you can be an early erlay adopter. Boo, bad pun.
+
+This helps with bandwidth. You guys talked about utreexo earlier; so we're getting erlay to mitigate the bandwidth tradeoffs of utreexo? Well, utreexo is kind of far away from Bitcoin Core. Utreexo also helps you have less data. It's sort of like pruning your UTXO set. A pruned node only has the most recent chunk of the blockchain. It still has about 5-6 gigabytes of UTXO data like the current balances. In utreexo, the idea is that you can turn that into a more efficient data structure so that your node is even lighter. It's an existence proof of your UTXO in this set, which you can use a lot less data for.
+
+Erlay is basically the idea that instead of propagating every transaction and then every node telling all of its peers hey I also have this transaction do you want it, instead we sync up the nodes' mempool contents with another peer node. Instead of saying it by txid, we sync up the table of contents of our mempools and we use something called a minisketch which is a very fancy math way of expressing this table of contents and it has the a cool property that it only requires as much sending of data as the difference between two mempools. It is informationally theoretically perfect form of set reconciliation.
+
+If Chainalysis wanted to connect to every single node and wait and see which node broadcasts, then erlay will kind of obfuscate that a little bit better and make that kind of surveillance more difficult.
+
+# Judica VM
+
+This is an interesting announcement from tabconf was Jeremy Rubin's Judica VM. He previously made a tool called Sapio which is a programming environment that allows you to build second-layer protocols on top of bitcoin where you can get graphs of transactions and some rules about when they can be spent. It was built largely for exploring OP\_CHECKTEMPLATEVERIFY but it works without it.
+
+You can do all the pre-signed transactions in Sapio as well. One way to think about it is that we have a lot of different higher-level languages in bitcoin stuff. There's miniscript, script descriptors, a language to write out what outputs should look like. We have descriptors for here's what my wallet would look like, miniscript for describing outputs, but Sapio makes it easy for developers to write out what they want their scripts to look like. It's not just Jeremy. It's a few people. They had this idea that essentially you can also envision a language that across many transactions... if we think about how lightning is essentially this program that we know based on the incentives that these different transactions can be spent under certain conditions, this can be represented in a programming language. You can do this with pre-signed transactions, or with something like bip119 OP\_CHECKTEMPLATEVERIFY or something like discreet log contracts (DLCs). They also have something called an attestation chain- a chain of transactions similar to lightning, where they have this mechanism using taproot where kind of like how eltoo works but you will reveal information that you will lose money if you try to break the rules. If you can guarantee that this transaction chain will behave in a certain way and represent this in a certain way then you can get a virtual machine environment for this. They built at tabconf a whole video game built on top of bitcoin but most of the state should be off-chain because you don't want to manage state on-chain. If someone cheats or we are done with the game, then we need to settle on-chain and make sure consensus enforces our final outcome of our game that we played off-chain.
+
+Q: Are you using the quirk where DLCs if the oracle signs two different things it reveals their private key? Does it use that same mechanic?
+
+A: It's a different quirk but same kind of idea. They basically have this-- each transaction in the chain is revealing the nonce for a previous one. If you were to spend a transaction that is cheating, you will be revealing a nonce that allows you to spend the previous one. This is the same as lightning and DLCs. It's revocation keys in lightning.
+
+Q: Do you have to store anything? Or can you glean this data as a transaction is made?
+
+A: I think you are storing stuff. On ethereum, you don't need to store anything and you trust the ethereum network to do it. But here you need to store your lightning database, your DLC database, or your game state database. Actual execution happens off-chain from bitcoin. The VM itself as ewll as the proof or enforcement is all portable. Even if you are trusting a centralized game server, someone else can use the same mechanics and rules because you're not relying on whoever is storing that state in order to enforce the rules.
+
+Q: How is this different from Fedimint? You guys can have little VMs in your thing.
+
+A: You could run the Judica VM to model Fedimint.
+
+Q: Could you run these VMs embedded in each other?
+
+A: Probably.
+
+# Bit-thereum revisited
+
+<https://www.youtube.com/watch?v=hCjbStBKCEQ>
+
+Lloyd had an interesting youtube talk. This is discreet log contracts based on BLS signatures. Some of the problems with DLCs is that nobody uses them. Lloyd is working on getting DLCs to the point where it's usable.
+
+Q: How many people are using Fedimint?
+
+A: Nobody. Not yet.
+
+Some of the problems of DLCs is that it's expensive, there's transaction fee,s you can't trade positions yet. Even the off-chain stuff, if you have multiple oracles then you're passing around 100 megabytes. You can use APO or CTV to reduce that size, because you have all these pre-signed transaction stuff.
+
+One of the problems with this is that it would take 2 years to get the DLC spec to be upgraded to his new proposal. He has a new model for how smart contract bitcoin cwould work where you can upload code to oracles and that's the execution of your smart contract. Now you don't have to put it on the blockchain, only the participants and the oracle. So a natural place to put this would be a federation where every server would be an oracle and there's some benefits here because there's a native currency in the federation where you could have bets and pay for bets in the currency and trade positions quickly because the federation makes the rules instead of bitcoin consensus. It's not as trustless as DLCs, but it could be interesting to get the same idea working for people and maybe later this can be brought into on-chain bitcoin.
+
+Q: Where does Lloyd have all of this? Is it implemented on secp-k-fun?
+
+A: I think it's just a proposal right now. The DLC spec just means, each month is new research. There's a gun.fun implementation for the old DLC stuff. I don't think there's an implementation right now because the research is still changing so rapidly.
+
+Fedimint uses blinded tokens using BLS signatures. Fedimint is also modular so you can build a module that would do this. A proof of concept of this would be you could do this today I think, but Fedimint is not ready for mainnet yet. I think it's an interesting contract proposal to try to get ethereum-type features into the bitcoin ecosystem in the correct way without being stupid.
+
+Q: Does it require a federation?
+
+A: That's his proposal in this, is that it would work better in a federation because you could trade positions instantly. Eventually you might be able to trade DLC positions on lightning but this is something that is years away at all times.
+
+# Fedimint and FROST
+
+<https://bitcoinmagazine.com/technical/taproot-and-frost-improve-bitcoin-privacy>
+
+A few people implemented FROST multisig for my Fedimint company at a hackathon. They have been working on a FROST implementation in secp256k1-fun, which is a library for experimenting more than about being absolutely correct and secure. They were one of the first ones with a FROST implementation. They hacked it into Fedimint. Now they are thinking about doing ROAST where one of the participants could be malicious and it could still work whereas in FROST it would fail.
+
+We have 10 minutes left. What should we cover?
+
+# MuSig2 BIP
+
+There is now a BIP for MuSig2 that has been published. A minor attack was originally discovered in MuSig. You need to tweak multiple keys or doing multiple signing sessions but theoretically it was possible to forge a signature. It should be fixed soon.
+
+Will taproot channels today be using MuSig2? I think Lightning Labs has MuSig live in production on Lightning Loop but it's not vulnerable to the concurrent signing sessions because they're not doing that. But say you had a server doing 100 DLCs with other people, but it's hard to think of a real scenario where this could be exploited.
+
+It's MuSig to my ears.
+
+# utreexod
+
+Utreexo has a client now that is relatively mature. It's a fork of btcd. They are following the playbook for compact block filters which were implemented in a fork of btcd probably because it's easier to write golang than C++ code. It's a fork, not a branch.
+
+I didn't know about this until tabconf. It's kind of neat. On the utreexo front, there was previously a paper that claimed a huge speedup. There is a new algorithm. It's 4.6x faster. But what they were actually doing was they were supposed to validate a list of values but actually they were only validating the last one. Once you take that out, it's still an increase of about 20% but that's a lot lower than 4.6x. When is good good enough though? How many optimizations do you need before it's time to put it into production?
+
+This wouldn't be a consensus-level thing so it might be something for later on in the validation.
+
+# Lightning Vortex
+
+Lightning Vortex is a project I've been working on for a year. It lets you do coinjoins on lightning or taproot-native coinjoins. I launched this live on mainnet at tabconf but I haven't done one yet. It's live. The download doens't work yet, but... it's live. That's how software development goes. I haven't made an official release. Once we do a real mainnet one, we'll do it. Had a pretty frontend.
+
+Q: Are you guys collecting xpubs?
+
+A: No xpubs. I had a workshop at tabconf. I think I have fixed everything that is wrong about Wasabi and Samurai. No chainalysis, no xpubs, no reused addresses, no fixed denominations. Coordinator is trustless. It's written in Scala.
+
+Q: What are you using for coordination and matchmaking?
+
+A: It's its own coordinator. You connect to the coordinator with a websocket and you do a coinjoin. There's just one coordinator. There's three of them right now- one for lightning, one for taproot, and one for .... I want there to be hundreds of coordinators. I implemented a nostr relay coordinator of these, so that clients can connect to nostr and find all available coordinators.
+
+Q: Are you concerned about running the coordinator once you have a release?
+
+A: Yeah, that's why my friend runs the coordinator.
+
+You can't close a channel with a coinjoin. That's not my fault, that's the lightning protocol's fault. Once we have interactive tx closing, then we can fix that. lnd, please implement this. "Soon".
+
+Q: When I do a cooperative close, it always asks me what address I want to send it into. Can I send it into one of these addresses?
+
+A: You can give an address, but you can't give it the custom transaction with all the other people. You can't do this PSBT funding flow that way.
+
+Q: Does it work with interactive opens?
+
+A: Not yet. I would like it to. I haven't put the time into that. MVP right now. Minimum viable product.
+
+# Lightning fee rate cards
+
+<https://lists.linuxfoundation.org/pipermail/lightning-dev/2022-September/003685.html>
+
+I could talk about this a little bit. I gave a presentation bitcoin++ on these. This is a mailing list post which is apparently how things get done in bitcoin. There's this idea in lightning for a long time that it would maybe be a nice interesting thing if we would be able to have negative rates for channels on lightning. It has to do with lightning and liquidity and pricing of that liquidity. Right now there's really only positive prices so you can charge people money to send or forward a payment and you advertise what that rate is. This is a proposal for what we might want to do to change to make it so that the way we advertise rates in such a way that you could make it possible to advertise negative rates and not completely kill the lightning gossip network. The idea is that if you take the ... there is this proposal from a few weeks ago where why not make it so that you can have negative rates in lightning? Take the existing thing and make the number go negative, right? The problem with this is that you probably don't want to set all your liquidity at a negative rate, and you might want to update it quickly, and now the gossip on the lightning network becomes a lot and now gossip will have a monetary value in a way that it currently does but right now-- negative numbers would mean you get paid to send payments. So having up to date information about where the negative fees are would be a competitive advantage for payments because you could get paid to send payments so that probably wouldn't be a good idea. This is a proposal now for how to put gossip, and let people have negative rates for a certain amount of the liquidity in their channel. The other cool thing about this is that it's a dynamic pricing scheme that is done in a static way so in theory we could significantly reduce the amount of gossip getting put out on the network when balances and channels change. Right now sometimes balances update and then gossip gets updated; so anyway, there's a lot of gossip. This is one proposal for how to change advertising fee rates. This started off simple: how do we get negative rates on lightning? But when you think about it, a lot more complexity emerges. Rene Pickhardt is a data scientist that knows a lot of math and he likes building models about how things flow through the lightning network. His most recent thing is this "price of anarchy" stuff which is a way of calculating the Tragedy of the Commons except in mathy terms. He had a counter proposal where he proposed pricing stuff based on how large your HTLCs are instead of what percent of your liquidity, but larger HTLCs are inherently more expensive because you pay more the higher you... anyway, this is cool. The thing about advertising this data is that, it's an interesting thing is that, in terms of upgading gossip with data. Fee rate cards is like publishing information and it lets people publish more granular information about how they validate liquidity in their channel. You can add that to a protocol. Instead of writing new routing algorithms, you can take this information and use it in their route planning. I think this will get into the advertising side, and then maybe eventually people will start doing interesting routing things with that data. I think that having negative fees might increase arbitrage on liquidity on lightning which might make a new game to play on lightning.
+
+It basically introduces more and better price signals into lightning which we need because we like price signals and more information lets us make better decisions. Part of the need for negative rates is that sometimes you wnat liquidity in the other direction and you want to pay people to send a payment through you so that you have more outbound liquidity. This is better than making an on-chain transaction to get more outbound liquidity.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
