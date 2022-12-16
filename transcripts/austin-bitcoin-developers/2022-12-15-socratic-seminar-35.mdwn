@@ -1,0 +1,187 @@
+2022-12-15
+
+Austin Bitcoin Developers
+
+Socratic Seminar 35
+
+<https://austinbitdevs.com/2022-12-15-socratic-seminar-35>
+
+Welcome to the holiday season seminar.
+
+Q: Where is your Santa hat?
+
+A: Well, I'm Jewish.
+
+This is a meetup where we don't talk about exchange rugpulls and instead focus on development. We have a list of topics on our website. It's kind of like a reading list. If you need something explained to you, you're probably not the only one. Sometimes even among us we're just now reading about these topics. So ask questions. It helps get the conversation going.
+
+buildonl2 is a working group for layer2 developers in bitcoin. They are focused on Liquid, Lightning, and maybe specifically core-lightning. Right now it's just a waiting list but there's a bunch of cool people and projects listed on there. They sponsored her conference she just had in Mexico City. They want it to be more than a discord group- they will have hackathons and conferences to get developers in layer 2 collaborating together. If you are interested in that, sign up.
+
+Q: Was anyone there at the conference in Mexico City?
+
+base58 runs a conference called bitcoin dev++ and there will be another one in April in Austin next. The Austin one here was great last time. They were just ahead of Consensus. It was a developer-focused conference not focused on economics or price. It was good. She had another one in Mexico City last week about on-chain privacy, like Wasabi, joinmarket, Samurai, various other projects talking about privacy. Really high-signal and good conference. I made a personal rule to go to all of Lisa's conferences and you should too. I guess we're doing all of her ads for her. She runs a class called base58, some are online on udemy and some are in person. There was a class in Mexico City that just happened.
+
+The sighash types flags refers to the count of outputs, like all, none, single. I'm so glad I'm not on twitter. If you're curious, this is what it looks like when you're suspended from twitter. We have tried to tweet at Elon Musk. I'm becoming increasingly convinced it was not my anti-proof-of-stake tweeting. It was my anti-China tweeting. So... yeah. Badge of honor? Okay. This is the worst 2 months to not be on twitter though. So much happening. I have my normie friends telling me about Binance freezing withdrawals.
+
+The way that signatures work in bitcoin is that you don't sign the whole data structure. You take a hash of the subset of the transaction and sign that. The signature has a flag for which kinds of things you are taking into consideration in your signature, so that someone else can validate the transaction. You could come up with interesting protocols around changing what you're going to sign. There was a recent proposal earlier this year for TXHASH that would have flags about every little item in the transaction that you could commit to.
+
+exotic sighash types: <https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2015-August/010759.html>
+
+A: Okay, I'm not going to type that into Google.
+
+Q: What could that possibly bring up except that email though?
+
+Someone else: Well, apparently One of the proposed sighashes was "SIGHASH\_DANGEROUSLYPROMISCUOUS".
+
+Six week hackathons are interesting. Normally in a 24 hour hackathon you stay up all night. With 6 weeks though you have a job and your boss gets mad at you. It is a fun time, though, and a lot of cool projects can get made.
+
+# coredev.tech transcripts
+
+Last month we didn't get to a ton of topics. So there's some stuff we had on on last month's list that would still be interesting to cover. At tabconf, there was a meeting of bitcoin developers. They try to do these things when there is a big conference because then a lot of the developers are likely to be there. It's a good time to hang out and meet everyone. There are some transcripts, non-attributed. You can see a few things that were talked about.
+
+There was an interesting discussion on the fee market. There were a few things interesting in here. The point of it is- what is the state of the fee market? Should we worry about it now? What about the future? When should we think about it? What should it look like? We have another 10 or 20 years where the subsidy will be the primary motivator for mining. At some point, that will flip though. That's the intention of the design.
+
+I tried to highlight a few things here. One is where, comments that-- we don't have-- we have had low fees for a while except for the weird spike that Binance called. Blocks are not empty. We're not averaging 200-300 kb. What we're doing is that, what you're seeing if you look at block history, most blocks are basically full-ish but the mempool is not full. Except for some weird spikes, the mempool is staying relatively low. What this basically means is that there is a market developing in time-preference. So basically people are waiting to put their transactions or to broadcast their transactions rather. It's interesting. Some people who are worried about the fee market have put forward that fees in the long-term might not be enough to sustain bitcoin in the long-term because people might use custodians or second layers to wait until they have to settle on-chain.
+
+Another thing that was interesting is, if you mine a new block with nothing in it... What happens if the mempool gets cleared out, there's no new coins, subsidy is zero. Does mining just stop then until you get some more transactions that come in? How do you encourage those transactions to settle? A lot of second layers rely on the fact that you can punish someone with these justice transactions being published to the main chain layer one. But if miners go offline, what then?
+
+The average amount of payments in dollars is up hard. It used to be $1,000 but now on average it is $10,000/payment on average. That's crazy.
+
+We used to have a 2 output average per transaction. Now the average has increased to 3 outputs per transaction. So it's not just destination + change, Bitcoin Core with branch-and-bound will try to do single output but that would bring the count down... but you also have a lot of consolidation and batch transactions. Before 2017, Coinbase.com did a single transaction per withdrawal request. Most likely people are doing batched transactions for withdrawal requests these days. The market adjusted, but perhaps not to the benefit of the miners. I mean that in a neutral way.
+
+There's an analysis of like, what does it look like if we're in a hyperbitcoinized world? Are people just using bitcoin banks and just trusting them? What would it cost to get 5 billion people to open a lightning channel? With the technology today, the stat put out here in the transcript was 3 years. Wrong. You can batch-open channels, you can open 1,000 channels in a single transaction. I think it's 54 bytes to create a channel output. There is a mention of that here, though. That's 3 years with 1 input and 1,000 output transactions. There was some recent tweets with the maths- it's durable in a shorter time than that. Wait what's so bad about 5 billion people adopting something over 3 years? Well, the point is that if there's a crisis. These things don't happen gradually. They happen all at once. Also, blocks are not currently empty. So all of this would have to compete against other bitcoin activity. So the existing lightning channels would also be broken for the 3 years because of the justice transactions... well, then you pay a higher fee.
+
+Maybe we just need to-- the other point at the beginning is that the blocks are full but we're not really competing to get transactions in. If you had a flood of people onboarding into lightning and it takes 3 years to onboard, bitcoin is done at that point because people will have to find another solution. The crisis that would cause 5 billion people to try to get on to lightning? That's why we're building bitcoin.
+
+If everyone got on Cash App, you can pay from Cash App to any lightning wallet because they have good nodes. Federated mints can pop in and out of lightning. There's no way that Fedimint is ready to onboard a billion people. The nature of the crisis would be something like the US government-- now we're going to go after every custodian in bitcoin and we will start hyperinflating the shit out of everything. That's the exact time you want bitcoin, and Cash App is not going to be available. That sucks.
+
+Making serious changes to bitcoin for quickly onboarding 5 billion people.... There is no change proposed in this transcript about the fee market. If everyone realizes at the exact same time they need to be holding keys to their lightning wallets, I just don't think that's likely. Maybe in some jurisdictions but it won't happen across the entire world at the same time. We don't think governments coordinate to screw over their citizens? Do you remember 2020 lockdowns?
+
+There are solutions to these problems. Maybe it's not really a failure mode. Maybe smaller custodians. Maybe everyone just uses family and friends to hold keys. We should anticipate and build products ahead of time. I want everyone in the world able to use bitcoin next week because that's good for my life savings.
+
+Q: Does Project Greenlight do anything to help with this in terms of scalability? Are there any things for onboarding users into single channel outputs?
+
+A: Greenlight doesn't have anything to do with it. You still need one utxo and up to 1,000 channels per transactions. One of the things they mention in this transcript is coinpools, which requires a few soft-forks. That's the end-all be-all solution where a few hundred people can trustlessly control.
+
+Congestion control is another issue. Imagine if a government purposely leaks a plan to shutdown all exchanges and then there's a run on all the banks. What happens if every user on every exchange tries to come out? Then you have a delay.
+
+Q: That's insanely bullish- 5 billion people in 3 years. That's far far faster than any kind of hockey stick adoption
+
+A: No, it's 5 billion people in 1 week. But it might take 3 years.
+
+Q: So it's mentally institutionally bullish then.
+
+It's like when everyone ran out of toilet paper in 2020. Suddenly everyone wanted toilet paper more than anything else. But that's what happens when you have a global emergency.
+
+Q: Why can't we be happy with only having 100 million users? Isn't that a wildly successful system? Do we want to coerce people into using bitcoin even if they don't want to?
+
+Isn't petertodd a fan of tail emission? Yes, but he's usually a fan of things that he also knows how to break. You have to be careful with him.
+
+What about reducing the block size? That was suggested in the transcript as well. The one megabyte block size is kinda arbitrary in a sense. If there is a self-regulating mechanism where we stay below full at one megabyte, then we would probably hit that equilibrium pretty quickly at 300 kilobytes as well.
+
+If the fee market has failed, and proof-of-work has failed and bitcoin has failed and we're all going to die... For all the shitcoins trading on ethereum, they probably have one of the healthiest fee market. Why not increase adoption of bitcoin base layer, applications using bitcoin? Why not implement various bitcoin opcodes? Why not try to get more economic activity and therefore a higher fee market?
+
+We were talking about this at tabconf.. and someone brought up, if fees are a concern then we should look at other chains and see what users are demanding for fees and create similar use cases on top of bitcoin. Someone also gave a talk about this at plebfi Austin. We can implement some DeFi-like things in bitcoin in a secure better way. If we can enable things like CTV, APO or other fancy opcodes, it could potentially help. It's definitely something that people are thinking about. It's just a lot harder to change bitcoin than ethereum.
+
+It's interesting to watch how post-CTV drama where coredev attention has gone. There is some demand out there for more programmability on bitcoin base layer. However, before introducing that new programmability, what we should really do is fix all the pinning attacks on the mempool because any new programmability will be vulnerable to that. For someone who agrees with the sentiment that we should increase capabilities for doing things on the base layer and make things more programmable, that's a solution to the fee market. That's not quite the ansewr I was looking for "fix the mempool first" but I think it makes sense in hindsight. I am optimistic that when I am old and grey and package relay has been merged then maybe we'll get new opcodes.
+
+There's a lot of problems and some of them are almost contradicting. There's a lot of unknowns. We have to think about them. .... you can never perfectly generate electricity. You always need a tool to vet and store excess energy, bceause you have to balance supply/demand. You need to offload production on to a non-zero monetary network. It's cheaper to vent it, if it's not doing anything. It's not cheaper to vent it. You will earn some form of money because in the future when we have a Dyson swarm around the sun, bitcoin will be the world's money and there will be no situation where we have empty blocks. Yeah, you need ASICs. Every cycle you run on the ASIC, degrades those ASIC, so you need to buy more over time. We're having this debate now when the mempool is empty, blocks are relatively full, hashrate is at an all-time high... in 10 years, in 10 to 20 years, .. they are still mining for the subsidy? No, they are mining because they earn money selling energy to bitcoin because bitcoin is valuable. Right now everyone who holds bitcoin is paying a saving fees basically. But in the future we're not going to be socialists subsidizing those dirty bitcoin spenders, and that's how the fees work for payments.
+
+# github
+
+They also talked about migrating off of github for the bitcoin project. Everyone goes to the github.com/bitcoin/bitcoin url. Some systems have been attacked in this manner in the past. Even if you setup another primary system, then you need to trust who sets that up, who runs the backup, who pays the bills, etc. This was just after Tornado Cash got kicked off github. Obviously github is owned by microsoft and they aren't the best company so... maybe the self-hosted version. Some people have a copy of the code base, but then there's also pull requests, issues, and comments, and those discussions are quite valuable. It's useful data to have. If Microsoft pulled bitcoin off github tomorrow, then where do we go? Will we be prepared?
+
+If the main reference goes down, someone mirrors it-- how do you trust it? How do you compare it against what? You can check commit hashes, but commit hashes are SHA-1 which isn't very secure... but yeah. The interesting thing about the history and comments is pretty valuable. Also Github is a great tool and we like using it. It has a humongous social network. If you want people to find your project, it ought to be on github. It has a lot of useful CI tools and collaboration tools. It would suck to have to move off, and it would suck to get kicked off. But we should think about it and be prepared.
+
+# binarywatch.org
+
+Coinkite, the people who make Coldcard and Opendimes, just launched a new service called binarywatch.org where basically every few hours maybe 8 hours they download a ton of releases of a bunch of things and they check the hash and verify the signatures to make sure that the current download on the Bitcoin Core website is correct or what the developers said. They have a website with this information and they have a twitter bot. I don't know if Lisa is still here or listening but the core-lightning one fails a bunch actually.
+
+It's cool to see this site. A lot of people are too lazy to verify their binary's signatures, and if you trust Coinkite then this is a little bit better. Bisq and Wasabi as part of their upgrade process they download all the signatures and they have instructions on how to verify them. I like the idea of getting users used to verifying the binaries and checking against signatures and making sure you don't get supply chain attacked.
+
+Bisq- you should verify it the first time you download it. The Bisq software has embedded in it the public key of what the software was signed by and you can hit that button and verify the download. You only have to verify it the first time, if you trust the code. So that's cool.
+
+bitcoinbinary.org is a sister site. You can basically create a video tutorial on how to reproduce a build. I show how to build the software and check that the hash was confirmed and verified.
+
+# libsecp256k1 v0.2.0 release
+
+libsecp, a 10-year old project, had their first release this week. Congrats to them. They skipped 0.1.0 because that was in a bunch of different versions of their code because they had never done a formal release anyway. libsecp256k1 is very well written, optimized and highly secure. Previously the recommendation was to just use their master branch. Pieter Wuille is taking the slow approach to releases I guess. Wants to be sure.
+
+There was also a transcript of their discussion on this: <https://diyhpl.us/wiki/transcripts/bitcoin-core-dev-tech/2022-10-12-libsecp256k1/>
+
+# Batch validation of CHECKMULTISIG using an extra hint field
+
+<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2022-October/021048.html>
+
+Bitcoin multisig has a bug where it incorrectly pops an extra item off the stack which means the script will fail unless you put a nulldummy or a zero at the start. You say 2-of-3 multisig and then it tries to get 3 signatures off the stack which is obviously wrong. Off-by-one errors are always the hardest to deal with, right.
+
+To fix that, we would have needed a hard-fork. But in segwit, we added a rule in that soft-fork that it had to be 0. In legacy, it's a policy rule that the value must be 0 or nulldummy. It means that nodes won't relay that transaction even if it is valid for a miner to mine it. It wasn't a native consensus rule until segwit scripts. There, we said that miners will enforce that the value has to be.
+
+Mark Friedenbach brought this up and he said, oh I remember this story. One of the problems is that the algorithm we use for CHECKMULTISIG in legacy- and this came up in tapscript discussions-- in tapscript witnesses we deprecated CHECKMULTISIG and instead we use CHECKSIGADD. This is what a similar script would look like in tapscript. The reason for that would allow us to batch validate. We can't batch validate with CHECKMULTISIG because for any partial threshold it's not clear which signature maps to which pubkey. You have to go through each one and you don't know to fail until you get to the end or the minimal failure threshold.
+
+Mark's idea is that you could use this extra item on the stack to say which keys you're going to be signing for. Rather than setting it to 0, you could do a bitmap to say which keys to skip or which ones to check. This would allow you to do batch validation with legacy multisig CHECKMULTISIG. He brings this up because he was surprised when reading through taproot discussions and code, he was surprised that we got rid of CHECKMULTISIG and he was surprised that we wanted to get rid of it for batch validation. Mark thought, well that's odd, we know how to do this with a bitmap. But if you're maintaining another version of bitcoin, then you have to rewrite this in taproot, which is not great. Not only that, but it turns out that the batch validation if you use that extra byte is more space efficient than CHECKSIGADD. For every public key you want to check, you have to have an extra opcode so the bigger that gets ythe more you have. But with CHECKMULTISIG, you don't need an extra opcode for each public key. Well maybe you say that's fine because ew will all use signature aggregation but sometimes you don't want to rely on interactivity sometimes.. sometimes you want bear scripts. I just thought it was interesting that people forgot about using a bitmap and unfortunately committed to a less efficient solution to the problem.
+
+Would Brock's transactions that broke lnd still have been broken if we had used Mark's idea here? Please try on testnet and then give us 24 hours after that too before trying that on mainnet. Thanks.
+
+These bitcoin archaeology things, it's interesting. Long forgotten and then resurrected. Proposals that use bugs or quirks in bitcoin to then improve bitcoin is so cool. This isn't a company where we can just do hard-fork releases all the time.
+
+In Mark's proposal, the first stack item doesn't have to be a single byte. Oh, that's cool. Would it be worth it to do batch validation on ECDSA? We could still soft-fork this in or something because we didn't finalize the policy rule into consensus. We are already doing batch validation direction for Schnorr signatures using the taproot stuff. This is another indication that maybe we did taproot too early. Maybe if we had waited on taproot. No, that wouldn't have helped because people weren't listening to Mark on taproot anyway. Maybe if luke-jr would have proposed it instead of forgetting about it, instead of Mark.
+
+Q: x-only pubkeys were a mistake.
+
+A: Yes, we have talked about that in the past. It complicated implementations. Some people think that bear pubkeys were a mistake. Mark definitely does think it's a mistake yeah. There are a lot of people that think bitcoin is quantum resistant because we hash the public keys and then it was decided for taproot that well let's not do that because we can save a single byte. Well, no, it was because there were 5 million pubkeys that are already exposed. The reason to do naked pubkeys... if everything had been hashed prior, then we would still have a debate about whether it is worth saving a byte. Maybe you would do it, maybe you wouldn't. But the reason why the quantum resistance argument isn't strong enough is that we're already quantum unsafe because of all these other problems, so we might as well save this 1 byte in the meantime.
+
+If you have a hash and a key, you have to commit both to the chain. Committing the hash is extra data that ends up in the chain forever. It doesn't matter that you don't do it at the same time; when you spend, you commit the pubkey and you're committing extra data. Segwit was actually a block size increase.
+
+I'm not on twitter anymore so I have to get this out of my system somehow. This is the one time I leave my house a month. Maybe get me re-instated on twitter so that I won't be so annoying at bitdevs. Call your congressman.
+
+# Enforce incentive compatibility for all RBF replacements (PR 26451)
+
+This is actually a cool PR. Nothing like simple optimization.... simple policy fix. This isn't even fullrbf-- this is about changing one of the existing rules in RBF to try to make it try and work. These are actual comments, not angry people. This is code review and deep analysis.
+
+We have all debated about fullRBF, it's in, who cares. Moving on, Suhas proposed there are ways we can replace transactions and the fee rate decreases which is not good. So let's enforce miner incentive compatibility. But it turns out this is really hard to enforce; say you have a tree of 100 replacements and now it gets really hard. ((Maybe there should be a way to do provable mempool replacements in zero knowledge about the package relay replacement, and then you distribute the mempool delta?))
+
+... package relay is useful for layer 2 protocols because in uncertain fee environments you might want to send transactions out together using child-pays-for-parent (CPFP) etc. They have been working on how to do incentive-compatible package relay. There has been a lot of thought put into this by Gloria. There are miner scores; you want the best way to get the most fees to miners and if like someone is trying to get a transaction through, it's not stealing fees to get that transaction to miners while protecting nodes that are transmitting those transactions from DoS vectors. You can't let every transaction through; it turns out it's a really hard problem to solve.
+
+Original RBF has 5 or 6 rules that you have to meet in order for nodes to agree to relay that replacement transaction. FullRBF is where one of those rules is dropped. Right now this is trying to fix rule 2 in fullRBF. This is an elimination of bip125 rule 2. We already eliminated rule 1, and now we are trying for rule 2.
+
+Rule 1 was just a flag. It was easier. The thing is that there was a lot of fuss around removing the flag. Some people perceived it as being completely incentive compatible and no we only got rid of the flag. Even the idea of fullRBF is a total misnomer because we still have rules around what will be replace-by-fee. It's just a more narrow RBF.
+
+Q: What's wrong with the one that has 3 in it?
+
+A: I didn't read all this.
+
+Q: What is hard to decide about it?
+
+A: There are several problems that came up. Here's one-- one interesting wrinkle is that adding new unconfirmed inputs (to CPFP) is likely uneconomical if one is replacing high feerate children even if replacing low feerate ancestors. We want to get the most fees to miners. But feerate and absolute fee both have different tradeoffs. You want the most fees with the lowest amount of space taken up. You can have a low feerate that pays a lot of fees because it's a big transaction. The problem with that is it's finite block space. You are taking up space that a miner might want to fill up with other transactions. You also have problems in the reverse too. Then, there's also pinning attacks in multi-party protocols. If we had protections against, well, you can only have so many children or you can only have so many ancestors or you have to pay for all the feerates then someone in the protocol could "pin" by putting a transaction in the chain that prevents someone else from replacing that set of transactions. So these are just different variations of those incentive games.
+
+I read this comment in the pull request, and a lot of these complications are about interacting with other rules as well. It might be incentive compatible but now we get to violate another rule and it should be rejected because of that etc.
+
+# Ephemeral Anchors
+
+<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2022-October/021036.html>
+
+This solves rule 3 and rule 5... No, it doesn't solve it for everything. It's for a small subset. Also it's opt-in. It's not a general solution. Why make it more complex? Make everything replaceable. At some level, most miner incentive compatible thing is to let anyone bid on re-bid on transactions. This is a whole separate topic. I'm sorry.
+
+Q: What about rule 4? It's the min relay fee..
+
+A: Meh. Whatever. I'm not going, this is a whole- don't get me started.
+
+Q: What do you think about the mempool in general?
+
+A contributor to the mailing list a while ago proposed-- I'm guessing it was a tongue-in-cheek proposal to eliminate the mempool.
+
+No, the mempool is obsolete. So it has never existed? The function that it serves is no longer useful. What does it serve? It's worth looking at that thread regardless of what the ultimate point was. If you take some of these ideas to their logical extremes, you can see what their purpose is. What would people do if we would get rid of the mempool? Would people publish their transactions somewhere? Would they send it directly to miners? Would they run real-time auctions?
+
+There was a conversation years ago that identified pinning as a possibility, not even as an attack. But you can get pinned by an exchange doing a batched withdrawal because you can't replace because they are paying from your UTXO. This was brought up by-- someone at Blockstream brought it up. These problems have been known for years, it's interesting.
+
+Right now we have two versions of bitcoin transactions. There's 3 versions now: 0, 1, and 2. No, that's in transaction signatures. I don't think there's a transaction v0. Well, that was an oversight. The original proposal for v3 transactions was by the package relay queen herself; it would be opt-in, you set nVersion to 3, and then there would be a new set of rules: everything in RBF applies, and v3 will be replaceable even if it does not signal. Any descendant of a v3 transaction must also be v3. You have to signal it, it's not by inheritance. If you are sending this as a package, the package would fail if not all the transactions are set nVersion to v3. An unconfirmed v3 transaction cannot have more than 1 descendant. I don't know if that's miner compatible.
+
+I think someone brought it up on github already with the RBF flag discussion- you can have this v3 proposal but if it turns out that there's a miner-incentive-compatible way to break the proposal, you would have another person propose a setting where you could cheat with v3. In this case, if you have one unconfirmed transaction-- if that rule is the limit, then you might be tempted to make two ancestors and pay 1000 sats and see if any miners take the bait. You don't even have to wait and see; we already saw that with breaking lightning: just send the transaction straight to the miner. We're not fullRBF anyway because you can always go straight to a miner and negotiate a deal. So therefore the mempool is obsolete.
+
+....
+
+In lightning right now, we have anchor outputs where each party in the channel has an output they can spend to do feebumping. You don't know what the feemarket is going to be in the future so you need to be able to do feebumping. This isn't great for miners or users, because you might estimate wrong or take extra space up. But instead, what if we have an ANYONECANSPEND output in a v3 transaction? This is something we disallow now, but we would add a new rule in policy that says an OP\_TRUE output can happen in a v3 transaction or something. I think it's OP\_TRUE and 0 sats is the current policy rule actually. Or the way it's proposed, rather. It's a zero-value output, no footguns, you're doing it explicitly. Because it's zero-value, it doesn't contribute to utxo set bloat because once it's mined you don't need to keep that in memory for any reason. What this allows is that anyone can both feebump by paying that parent transaction and you don't need two anchor outputs because anyone can do it. What's cool about that is that anyone can do it, not just the parties of that transaction. There are some use cases originally proposed as part of something jamesob and jerm have put forward for transaction sponsors where anyone can feebump without requiring special outputs. There's a lot of benefits for that; a lot of timelock proposals and things like vaults or lightning when you don't know what the fee environment will be then you need to be able to feebump. If anyone can bump those, that's good. Sometimes customers don't even know how to look at the fee market or maybe CZ is going to fuck everyone in the market because he's having fun one weekend. It would be really nice if a company could help out its users in an easier way by spending this extra output. You would still have to opt-in to this, because of the v3 transaction flag. Recently there was an implementation also published to play around with this and test the idea out.
+
+....
+
+
