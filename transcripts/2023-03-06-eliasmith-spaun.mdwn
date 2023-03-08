@@ -1,0 +1,159 @@
+How to build a brain
+
+Chris Eliasmith
+
+2023-03-06
+
+video: <https://www.youtube.com/watch?v=sNe7tbl9j5M>
+
+# Introduction
+
+... in addition to that I'm also involved in a company called Applied Brain Research and a lot of what I will talk about today they have sort of taken and run with the direction of developing sort of advanced AI and doing hardware and all kinds of things that I'm also happy to talk about if people are interested in that.
+
+# Spaun
+
+For today's talk I really wanted to focus on a large scale brain model. In fact I believe it's the world's largest functional brain model and it's called Spaun.
+
+It's the second version of Spaun. The first version of Spaun was published back in 2012 in Science and also as part of my book "How to build a brain" and really what we're trying to do here is build something which is biologically plausible in the sense of it uses spiking neurons and it uses neurotransmitters of the same varieties that you find in the brain areas that are modeled. All the connections that are in the model are in the brain, and we try to scale it up as much as possible while addressing interesting functional aspects of brains. This ranges from everything from perception to motor control and cognition decision making and, you know, everything kind of in between.
+
+In some ways what we're doing here is trying to demonstrate a framework for building these kinds of models. We don't think this model by any means is the end, it's too tiny, but we think that it's a demonstration of a set of techniques and methods that we've largely developed in the lab that can we think be usefully applied to building models that give us insight into both how biological brains function, which is useful for medical purposes, but also allows us to extract computational principles from the brain and use those for commercial applications.
+
+# Biological cognition
+
+So with that in mind um you know really what we're trying to do in this work is build on something that I call in that in my book (the "How to build a brain" book) biological cognition.
+
+So the idea is that we care about cognition, the highest sort of level of sophisticated functioning of biological systems. But: we want to do it in a way where we are understanding the biological mechanisms that give rise to cognition. As many of you know there's lots of cognitive models out there but many of them don't really pay too much heed to using the same mechanisms that we find in biology but for our purposes we think that's actually quite interesting and important to take account of.
+
+We also feel that uh from the biological side there are lots of biological models out there where they build models of the brain but often as they get bigger and more complicated they don't get more functional so they don't do more interesting things. They are instead explaining sort of data of the same variety that is used to construct the model... so they might be trying to replicate voltage changes through populations of neurons um or you know average spiking activity or oscillations that you see in cortical sheets but those aren't really functions from the animal perspective, right, from the perspective of the whole animal.
+
+We believe that brains really the controllers of the body and as we make our models more complicated we should essentially be getting better controllers.
+
+We're using all spiking neurons. We're using simple spiking neurons because as you grow
+these models they take a lot of computational resources, so trying to minimize those for each neuron is great. We have built versions of this model
+that have very sophisticated single cell models in it as well for small parts of the system and I can talk about that as well.
+
+Ultimately the system that we're building and this
+might get lost a little bit in the way that I'm going to present things but the system that we're building really is a great big dynamical system where you have neurons that have voltages that generate spikes and those spikes go through
+synapses that affect sort of neurotransmitters being used to communicate information
+between neighboring neurons, and different neurotransmitters have different kinds
+of temporal effects and so on....  and really that's what we're simulating is this like big complicated
+dynamical system with just a bunch of neurons connected to a bunch of other neurons really like what we think you
+6:02
+know is the sort of computational basis of what happens in biological systems.
+
+So as I go through the model because it's so big I'm going to make it look very structured and talk about particular functions in particular blocks and all that kind of stuff. Ultimately that's really for us to understand what this model looks like kind of from a higher level but always think that whenever I show videos or results this is all being simulated at the level of single spiking neurons all communicating with one another.
+
+# Spawn 2.0
+
+Spawn 2.0 is very similar to Spaun. The name comes from the Semantic Pointer Architecture, which is the technique that I describe in this book, Unified Network.
+
+So it's kind of taking all of the you know as I describe the technique in a bunch of different chunks I wanted to put it all together and show people that you know this is really one unified approach and so we
+built one network that kind of uses all of the techniques that are described in the book to build a system that can do lots of different tasks switch between tasks learn do memory and blah blah blah I'll show you lots of examples of those
+
+We really do them in ways that we think are biologically uh sort of similar to what is going on in biology. This whole network is simulated in a package called Nengo. This is a python package. It has a nice user interface and all kinds of fun things which is freely downloadable and usable for research purposes uh and it's you know built by us and it was built so it could scale to very large models and also build so you can run the same model on many different pieces of hardware because as I mentioned before when these models get big they get computationally expensive and we need to be able to run them.
+
+We want to be able to target the best possible hardware I think so including things like normal market hardware. This particular model the second version is 6.3 million neurons in size uh it
+used to be 2.5 million neurons and the previous version it had about 20 billion connections uh was
+about 7.5 billion. This is this is a lot um but you know it's not on the size of the largest neural
+networks that we see these days 175 billion connections and something like ChatGPT but it is really big uh and I think it's by far the biggest for a biologically uh like a spiking neural network.
+
+It does lots of different tasks and now it does 12 different tasks uh it's a little bit weird to count tasks because some of these tasks are follow my instructions so you can like specify different tasks every time you change the instructions but in any case uh you know it's a bunch of different tests that tried to cover the variety of behaviors that we're interested in understanding in biological systems like motor control perception decision making memory learning etc.
+
+The architecture overall for Spaun 2.0 hasn't really changed a lot from the original uh model it's just kind of made some parts bigger and made other parts slightly more sophisticated, and made other components uh more sophisticated it's probably the best way to think about it.
+
+There's definitely lots of parts of the brain that aren't covered by this model. It's still like 20 times smaller than the actual brain so uh... yeah so we know that we are dealing with a very limited amount of brain matter but nevertheless enough to give us some interesting behaviors.
+
+# Task example
+
+So here's an example of Spaun. Its input is all visual. Its got one fixed eye so it just kind of stares at a screen that's in front of it on the right uh all of the processing is then done in spiking neurons as I mentioned before and then the output that it generates is actually uh muscle contractions so those blue lines that you see on its arm so it has one arm as an output with three degrees of freedom and it contracts muscles to move that arm and that arm is physically modeled so it has like mass and length and everything.
+
+What the brain is doing is generating muscle contractions just like our brain generates muscle contractions in order to generate its output. Here, we can watch it doing a simple test. It's doing a simple task. We're showing it two images and if the image matches images match the rates of one and if they don't match right to zero so the first two didn't match those two did match the last two did match those were two dots right so it's writing a one um it's also going to be just like classification of digits. There, we
+showed it a two and it can write it a two uh same thing over and over and as you can see there's like different tensions in these muscles showing up. That's what the colors are in the muscles and it's generating output based on its input right doing this kind of simple perception test.
+
+One thing that's interesting is that we can begin to look inside the model. It's kind of the point of building models. Now you can see in the background is all the spiking activity and one part of the visual cortex and over top of that we've laid the image that just based on those spikes you would think is there this is actually not sufficient for solving this test because you actually have to remember long enough to write out the digit that you've seen and so there's also a working memory area that's being involved in this particular task and you can see that now in the in the new bubble that shows up so the digit goes there and actually stays there for a certain length of time and is used until it's written and then it gets uh you know ready for the next input. There's also a motor system which is basically determining the trajectory that it wants to move the arm through in response to the classification and that is then being you know the sort of other processing through cerebellum that turns that into muscle contractions and actually uh makes the arm move in the way that you see.
+
+Alright so this kind of gives you this an example of a you know fairly simple perceptual test. The updates here is that you know it can now look at like full color images and do the classification across a thousand different categories and that's what it was using when it was kind of saying are these both monkeys or both dogs or whatever at the beginning.
+
+That's great but of course in some ways it's just perception and if we want the system to be a cognitive system it needs to be doing more sophisticated kinds of tasks. So this is an example of a task uh which I'm just going to pause here for a second uh based on something called Raven's Progressive Matrices. This is a standard intelligence test and what's going on is basically we're showing input to the system and it's trying to figure out what the pattern is uh in order to complete this matrix of inputs and filling in the question mark at the end. We're going to show it some different patterns of numbers and then have to figure out what's going in at the end. It's never seen this pattern before it's basically figuring it on the fly in the same way that people have to learn your intelligence tests. At the beginning we're just showing it a couple different inputs so one one two ones and then three ones each of those squares is sort of distinguished by these arrows and then we're showing it a pattern of fours and then we're going to show it a pattern of fives and and then we'll show it a question mark and say what would you write how would you complete this pattern. Next it writes out five fives and this is just kind of one example of the sort of pattern that it does.
+
+I should also say that Raven's Progressive Matrices includes kinds of patterns that the model doesn't do although we have built a model like this a full rated matrix use as well um but I didn't integrate the whole thing into Spaun.
+
+But in any case I think in some ways this is kind of like an undeniably cognitive uh behavior and so you know it's important that it's exactly the same model. Let's do both of these tasks and in order to get it to switch between tasks all we do is give it a different visual input so if we say we show it like an A and A one then it knows it's doing perception the perception task if we show it uh an a seven then it knows that it's doing the progressive matrices test and so on and nothing is changing uh in the model between any of the tests and it and it does all kinds of stuff in the interest of time I won't show them all to you um but you know it's it's a pretty good variety of things that we think covers simple to complex reasonably complicated uh sorts of reasoning and the one I'm going to show you at the very end of the presentation is what I would say is kind of its most sophisticated sort of cognitive behavior at this point.
+
+# Implementation
+
+Before I get to that though I want to give some sense of how the model is working uh and what are the techniques that it's using. As I mentioned Spaun includes a semantic pointer architecture uh which is described in my book ("How to build a brain") the methods for uh-- and and really you should think of the semantic pointer architecture as having four essential elements.
+
+These include ways of incorporating semantics into the neural representations, representing syntactic structure which you need for cognitive uh behaviors into those same neural representations, being able to control the flow of information through the system as well as doing things like motor control, and then integrating all of that with learning and memory both long term and short-term memories as well as sort of on-the-fly learning of the type that we see in biological systems. Of course all of this is being done with spiking neurons.
+
+Specifying all of these things throughout the book I do it in at kind of a higher level of abstraction um and uh you can and you can think of it as kind of defining dynamical systems in high dimensional vector spaces and you need a technique for taking that and then embedding it into neural circuits. We have this NEF set of methods, neural engineering framework, which is my previous book, which basically lets you take any dynamical system that you can define and build a spiking neural network that will approximate that dynamical system.
+
+So kind of coupling those two things one is a sort of architecture how do biological systems function another is a compiler how can I take any function and compile that into a spiking neural network bring those two methods together and that lets us build models like Spaun and build models as I mentioned that we think are models of biological cognition.
+
+# Semantic pointers
+
+What are these semantic pointer things that I've mentioned a couple of times? This is a general way of understanding representation that is biologically responsible and very efficient and maps onto all kinds of features of biological representations that we see throughout visual systems motor systems and cognitive systems.
+
+One way to think about this is that we're defining essentially vectors which we're calling these semantic pointers but they're sort of special vectors because they uh are highly compressed representations of you would think of as raw sensory data.
+
+I've got a picture of the visual system on the right hand side there and I think this is kind of the most intuitive way to think about semantic pointers where you have like an image coming into your eye it then goes through various you know layers of processing V1 V2 before each of those layers of neurons actually has fewer and fewer neurons in it as you go up the visual hierarchy and that means basically by definition that you're compressing the information from the lowest level to the highest level so there's some kind of compression operation that's happening as you go through the visual system and you can think of the as the highest level semantic pointer as being the most compressed Vector at the top of that visual representation.
+
+So you know if you're trying to remember what you just saw remembering that compressed representation is going to be more efficient than trying to remember the original you know uncompressed image and you can so you can think of that as like this semantic pointer.
+
+It's semantic in the sense that you know if you show similar images you'll get a similar compressed representation and it's a pointer in the sense that it's compressed so it's not all of the data. It's just some small version like kind of like a pointer in computer science that you can you know put into your memory-- you could pass it to language systems you can do all kinds of things with it more efficiently than taking the full thing it's encoding and passing that all around.
+
+This combination of incorporating semantics and doing this kind of compression for efficiency reasons is what these vector representations are like and they generalize across you know
+not only vision but for motor control, we're doing cognitive operations for doing structured working memory, and so on.
+
+We basically can take any kind of uh continuously or discreetly structured representation, right, so language or maps or visual systems, or sort of visual inputs or auditory inputs etc, and build these kinds of representations and then pass them around through the model in order to do the kinds of computation that we want.
+
+So the sort of system that we're passing this through um we can think of from two different perspectives. One is the anatomical perspective... so this is kind of these are the parts of the brain that are in the model and so a lot of these should look kind of familiar. The one comment I will make is that you know the thalamus and the basal ganglia which is in the orange dot dashed box are subcortical.. um so they're sort of inside and everything else is kind of on the cortical surface. You can see things like you know a vision system in red you can see sort of executive systems and memory systems in green and you can see motor systems in purple and different parts of that those systems have you know slightly different functions that they're mostly focused on. Everything in the model is kind of mapped in a way that's consistent with our current understanding about what different parts of the brain are doing.
+
+The other kind of perspective we can take is what I call the functional perspective and this is more like a box scenario diagram. This is kind of like how when I'm trying to perform some specific function is information moving through the system in order to realize that function and so you can see that you know we have now boxes where we don't have any anatomical labels but we have functional labels right. So the red stuff is doing visual compression through a hierarchy of some kind, the orange part is doing something like action selection and information flow control. So that piece of angle is important for the green boxes at the top they're doing working memory and and so on and so forth.
+
+As we uh sort of scale this model up we can either be adding boxes or we can be making the things inside those boxes more complicated uh. Either one of those things is going to mean that our model is getting more and more complicated but it also should be getting at the same time more functional. We always want to have complexity and function tightly coupled and I think this often comes apart in some other large-scale uh brain models in ways that it shouldn't and so here we want to be really clear that function-- there's always a functional perspective on the kind of models that we're building.
+
+I still haven't really told you how the model works for a simple example. So the example we're going to look at is just remembering digits. So if I just tell the model a bunch of digits, what does it exactly do? So let's say we show the number two as an image. This gets compressed through this visual hierarchy into as I mentioned a lower dimensional semantic pointer. That semantic pointer because it's the number two has shown up and this model knows that it's doing a working memory task will then be routed through the action selection system. The action selection system sitting there saying oh okay I'm waiting for numbers to show up. A number showed up I'm going to now turn those white boxes- you can think of those as gates- like turn some of those gates on so that compressed representation can flow into my working memory. Once it flows up to the working memory the memory will sit there and basically uh take you know have that same compressed representation and just store it as long as it can and if you leave it there too long it will fade away and you know we've done all kinds of comparisons between our working memory model a human working memory and we show that they match very well. Here we're trying to store that representation as long as possible and if other digits come in they'll be put into that working memory as well. You can show as many digits as you want and it will try to do its best job possible of remembering all of them um just like people do.
+
+So once we show a question mark um now this is something that it knows is an indicator that it has to respond to. It has to spit out the list of numbers that it has remembered. So far so the action selection system is the thing that will recognize that and then take the information that was in working memory and now transmit it towards the motor output system. This will now go through you know some more uh sort of connections between the areas get to the motor system and be converted into a bunch of points. You know it was a two, so now there's going to be a bunch of points that are like the handwriting of Spaun for a two uh that is basically a low dimensional representation of the trajectory that we're trying to get the system to go through and it will be turned into a higher dimensional representation of the muscles that need to be contracted on the arm in order for that trajectory to be realized. This is kind of like a decompression operation.
+
+That's the intuitive perspective. But we can also take a more sort of detailed mathematical view on this. We start with an image which is about 784 dimensions... the number of pixels that you've got in your image that has been compressed through our compression operation down to a 50 dimensional representation. This is a deep sort of compressed semantic pointer. We can then map our perceptual representation into a conceptual one so that you know Spaun really knows that two comes after one and it's before three and it has all these like conceptual relations that it knows about numbers. We then map from that perceptual space into this conceptual space which is a non-sparse to a sparse representation. We can then encode that into memory so it remembers that there's a two. The way we do this is-- and it remembers what order the digits were shown in as well.
+
+... That's kind of a more mathematical view where I'm talking about all these as being essentially vector representations. We would use the NEF to implement all the operators. There's circular convolution and addition and all the compressions and everything-- we can use the NEF methods for embedding all of those kind of high level descriptions into spiky neural networks.
+
+Returning to Spaun 2.0 for a bit. It's some nice improvements. It now recognizes characters at the same accuracy as people. It's got better handwriting. Absolutely everything inside the model is spiking. There was a little piece of the motor system that wasn't in original Spaun. The memory recall uh more accurately matches human memory recall across lists of arbitrary lengths.
+
+You can do all kinds of fun memory tasks with Spaun 2.0.. it matches more Raven's Progressive Matrices patterns than the original Spaun 1.0 did. It has a much bigger vision system. This is now a vision system where you're basically seeing images that you can show it on the left and it's classifying those on the right uh and you know it does a pretty good job of this, not as good as our sort of state of the art non-spiking network would, but, you know, very competitive. It makes some mistakes but for the most part it gives you some pretty reasonable answers.
+
+One of the interesting things about this is that everything here has been implemented in spiky neurons. We can compare it very directly to exactly the same behaviors that we record from the cortex of behaving animals. I don't have the slide here but we can show that it has very similar tuning curves etc etc.
+
+On the motor side we've added adaptation to the motor control system. This video here is showing the the adaptive controller that is inside Spaun running on neuromorphic hardware controlling a robot arm. Again, just showing that you can take these models and do more commercial applications with them. .. Uh here it's basically we've given it a weight that it's never encountered before and it's learning how to use that weight to reach to this target that it's seeing and you can see after a couple of reaches it gets much better and then basically it now knows how to move through the entire space given this new dynamics that it had never experienced before which is kind of an unknown tool in this case in order to in order to do the blue chain um actually that what I just described happens a little bit... oh no sorry this is just showing it after it's trained for 30 minutes and then it just reaches immediately to the right spot.
+
+# Mental gymnastics
+
+The last thing I wanted to show was what I call mental gymnastics. Just to give you a sense of what I mean by this I like to do little audience participation. Follow the following instructions and let me know what you get at the end. Imagine a capital V and then imagine a capital B and rotate the capital B 90 degrees counterclockwise. Put it on top of the V. Erase the back of the B. What is the shape that you have? Exactly. I saw some of you put fingers in the shape of a heart. Hearts and ice cream cones are hte two answers that you tend to get. What you're really doing there is that you're basically just getting a bunch of verbal input from me, you're generating internal representations, you're manipulating the internal representations, and hten going through several steps before you generate an output.
+
+What we're doing here with our instruction following is something kind of similar but obviously more simplified. The instructions that we can show to Spaun basically are of the form uh you know if such and such happens on your input side do this thing and doing this thing could be like do an entire task or it could be classify something in some particular way so I could say you know if you see the number two then or if you.... or sorry I could say if you see a police car write out the number two or if you see a police car write down te number eight or whatever. You just make up arbitrary you know mappings um you can then uh take results from any one of the previous steps and use them in a subsequent step.
+
+If you show spawn the M it knows that it's going to be doing this general instruction following. You can also give it a series of instructions and then just tell it to follow one of them. I can say you know just follow instruction number two that I gave you. Or you can say move to the next subtask so move to the next instruction after the one that I give you.
+
+Just a few simple examples of that. Here is one, it's doing a question answering task which means I give you a series of digits and then I ask you questions. I might say four seven two what was in position number two and you would say seven. Or I could say where was the two and you'd say it was in the third position, right? So just answering questions about a list of numbers.
+
+Here's another exmaple where we're basically saying okay do this question answering test we're showing it for digits and we're asking what's in position three and so it writes out as six so now we're saying okay with the same list what is in uh the two or sorry where where is the two and it said it's in the first spot and then we're saying what is in position two and it's saying the seven.
+
+The thing that's different about this from the original model is that we just show the question
+once and then we can give it a bunch or sorry the input once and then we can ask it a bunch of different questions and keep switching things around. We can basically change the question uh without having it yeah be having to remind it what the original list of digits was.
+
+In some ways it's not super impressive but you know this is sort of an improvement over what the original Spaun models do.
+
+This next one is a little bit more interesting here we're basically just getting it to do a bunch of different tests all in a row after giving it one set of instructions... so here we're starting with a list we're just saying remember this list, and then we're saying increment all of the values in that list by three.... it's then writing out the answer and now we're going to ask it to do question answering on the lists that it has generated. We're going to say what's in position two and now it writes out a five. ...
+
+The last task which I think is the most sophisticated one um this is going to combine a bunch of different tests. It's going to use information from previous tasks to do subsequent ones and so on. I'll just walk you through it. This is basically like the Ravens Progressive Matrices saying okay what's the pattern in these inputs I'm showing as you go from a one to a three a two to a four and it basically is like oh that's incrementing motion and then it's doing question answering.. say what's in position two of this list and it wrote out a seven and then it's saying apply the pattern that you got in number one to this list and apply the pattern means add. Now it's writing a 6 9 and 4 which is adding two to all of those numbers and now it's having it apply the pattern to the position that you asked about previously. You asked it about position two and it had found a pattern equal to twos with adding two and two and getting four. That's a lot going on very quickly so I will rerun this video. it's only 30 seconds long.
+
+This is fairly complicated instruction following. It's able to do all a huge variety of combinations of things that you might possibly do and we call that one task because we basically think you know it's a task where we've got a sort of simple vocabulary set of instructions and things that you can you know combine in all kinds of interesting ways to see how the system does.
+
+# Conclusion
+
+So that's the last example that I wanted to show. I'll just conclude by saying that we think it's very important to take this kind of functional perspective on building models uh that are neurologically plausible to help us better understand how brains work. We think Spaun and NEF and nengo help address these issues but there's still a very very long way to go obviously. The model that we have built here is much simpler than real brains and we can definitely talk about that in offensive gory dteails later on. I still think that it is the world's largest functional brain model so it seems to be getting us to places where we haven't been before, from a sort of you know understanding how biological cognition works perspective. I'll stop there and take questiosn.
+
+34min
