@@ -1,0 +1,140 @@
+Austin Bitcoin Developers
+
+Socratic Seminar 38
+
+<https://austinbitdevs.com/2023-03-16-socratic-seminar-38>
+
+<https://satsx.dev/>
+
+# Bitcoin Core App project
+
+We have a little bit of a different format today. We will have a new demo of a Bitcoin Core GUI. They have been making it beautiful and usable.
+
+Hello. I am jarolrod. I am going to be talking about the Bitcoin Core App or GUI. Bitcoin Core I don't know if a lot of you know about it. It might be an underground project around here. Bitcoin Core is important and provides you everything you need to participate in the network. It's a full node, wallet, and a GUI.
+
+Satoshi released bitcoin as a GUI originally. In 2012, to now, it had the bitcoin-qt widgets GUI. If any of you have used it, it feels a bit industrial and intimidating to use. It's also slow because there's some locking calls in there. Not the best experience.
+
+Also, it's a part of the codebase htat hasn't received a lot of love and attention in recent years. I'm happy to announce that this has changed.
+
+We and a group of people have been working on revitalizing the GUI. We have reached our first milestone, which is running a full node. We have set groundwork to work with designers. If you look at the history of Bitcoin Core and its GUI, its designers have made something that look really bad. We don't make things beautiful, designers do. There's a vibrant design community called the bitcoin design community. We have been working with them on the design side.
+
+We built a technical foundation for the app and interface with the internal node. We have a design system for the app. We have a visual design system that should help us iterate more quickly. Most importantly, it's a fully validating node. Let's do a demo.
+
+I think that most nodes run on a desktop computer or a computer, right? I think that's boring. We know people run their nodes on raspi's, but what if we just throw it out there into the world and let it run on a phone? This demo will run on a phone. I'm cheating a bit- it's running on signet. It's a fully synced node, running on signet. The PR this is running on was opened a few hours ago. It's fully synced on signet. This is just a node runner without a wallet. Here is the main element is a block clock. This displays to you the blocks in the past 24 hours. It also shows how much time has passed since the last block. We show some dots to show your internet connection quality to the bitcoin network.
+
+We can configure it a little bit. We can turn on dark mode. I'm sure a lot of people here like that. I am running pruned mode but you don't have to. Signet is only a little more than a gigabyte of data. You can enable listening and have nodes connect to you from your mobile phone if you have port forwarding enabled and all that setup. You can also enable/disable the RPC server. Think about other applications that use a bitcoin node as a backend. What does this look like where this is running on a phone? What kind of applications communicate with this?
+
+Here we can see the peers I'm connected to. Only outbound, no inbound connections here. The people in the design community have also changed the sorting here; if you want to isnpect the nodes you're connected to.. say you're interested in the direction, I'm only having outbound here. But you can sort by inbound, outbound, user agent. The network traffic tab shows the bytes received and sent from your node. You can visually see a window into what your node is doing.
+
+That's it for v1. I cheated here on signet. But I've had this on mainnet before. I only wanted to do one demo. This is the app on the desktop. I talked about this a little bit. Putting this out into the world on a mobile phone is an interesting development because of what people can do with it. If you have a Bitcoin Core full node, and a lot of development happens on Bitcoin Core like assumeutxo or utreexo. Putting this on a phone- there's interesting things that can happen. We're planting seeds for where bitcoin goes next. We want to lower the barrier from a computer to a phone and a lot of people in this world do everything from their phone. Not everyone has a laptop or desktop. Many people do everything from a phone. Why can't they participate and validate the bitcoin network from a phone?
+
+Next we will work on wallet functionality with a hot wallet communicating with an external signer and exploring multisig in Bitcoin Core and a multisig user flow. Bitcoin Core has arrived on mobile. I hope this shows that Bitcoin Core is cool to work on. I want to give a shotout to the bitcoin design community without which this wouldn't be possible. We have calls every Wednesday. Call 51 is on March 22.
+
+Here are some wallet designs just to give you an idea of where this is going. We need your input. We need more help to bring this forward.
+
+<https://bitcoincore.app>
+
+Q: What about power usage on a phone?
+
+A: It's resource intensive even on a computer. On a mobile phone it's also resource intensive. I think phones are getting more powerful. Bitcoin Core runs nicely on a rasp pi. Something like a top-end Samsung is faster than a rasp pi. This is an $80 phone and I synced on mainnet taking 2 or 3 days. I don't think that's so bad. That could improve though as these mobile devices improve on speed.
+
+Q: With RPC, would other apps be able to...?
+
+A: Like Specter? Yes. Can it work with android? We'll see. There's still a lot more to develop. If you want Specter on a phone or think about any other bitcoin application, your bitcoin core node is also on your phone.
+
+Q: Are you using <https://github.com/greenaddress/abcore> from 8 years ago for mobile builds?
+
+A: No. We're using QML under the qt widgets. We have the same dependencies as Bitcoin Core.
+
+Q: A few years ago we separated UI into a separate repository. Does that help make this possible?
+
+A: Yes. Also people who are interested in the GUI know where to go. I think it helps. It should help with the wallet too.
+
+Q: There's been a few attempts like Egor- abcore and Udi was contributing to it. He was doing something productive, believe it or not.
+
+A: There have been many attempts. This is the first attempt where we have got pretty far and have a community behind it.
+
+Q: What about choosing our own frontend?
+
+A: We separate the development about where you open up PRs. The separation of the UI and the other parts of Bitcoin Core- not much has been done there. I think it's difficult to do so. What has more traction would be to completely separate the consensus layer into a library and then have Bitcoin Core use that as a library. I think that would be more feasible to accomplish.
+
+# MarcoFalke
+
+A recurring topic is that a prolific contributor has left the project again or step down from maintaining the project. We've had a few of these recently. Last month I think Jeremy Rubin quit. MarcoFalke is a low key contributor but very prolific or the most prolific. If you look at a graph of how many tests are made, he's just an animal. He did a lot of the important janitorial work to keep the software running smoothly. There's an idea about maybe we should ossify Bitcoin Core and not change any rules but you still need to work on it and make sure the software still works as computers change.
+
+Marco's big project was improving testing. The protocol, you might be in a position that it should ossify. But it could be tested better. There are bugs to be found. It's something to think about when people like Marco are stepping down. He has paid his dues for sure. Something that I think about a lot is replenishing this set of contributors. It takes a long time to build up the knowledge and experience that Marco and others have.
+
+He's been doing this for 7 years. It's hard to stay in a job for 7 years. It might be burn-out. Bitcoin Core doesn't have an HR department. We need education initiatives so that in 7 years there are more Marcos. If there aren't, it's a big problem.
+
+# Lightning Labs Taro lawsuit
+
+Lightning Labs has a project called Taro which is used for sending assets over the lightning network. A shitcoin company called Tari Labs is suing them because they don't know the difference between Taro and Tari I guess. It's a lawsuit.
+
+Q: What does a temporary injunction on development have to do with a trademark lawsuit?
+
+No idea. You're asking for logic. Maybe they did this lawsuit because Tari had no marketing. It also speaks to how poorly informed the legal system is about how these projects. fluffypony is suing here? This is his project? fluffypony is from Monero. He's one of the people involved in Monero. That's really strange.
+
+They can still develop internally but they can't publish any of their development work. They can't do any external updates. roasbeef's hands are not at risk here. They just can't publish any public updates. So that's good. Also I think they just wanted a name change... What's funny is that originally there was some debate that, and I don't think it had much grounding but maybe more than this current suit, but RGB was also doing this kind of second layer asset protocol on top of lightning. They had problems with it. There was an internal for Taro originally was a rip-off of RGB. CMYK, right? It's all a playoff off the original "colored coins". If you can issue assets on top of bitcoin- there's colored coins, RGB, CMYK, and then they went with Taro because that's a riff of it being on taproot.
+
+# Wolf
+
+Wolf is a startup accelerator <https://wolfnyc.com/> and it was announced 6 months ago. They have been accepting applications and they have accepted 8 teams into their first cohort. I think there's at least one or two Austin community member in these teams. That was pretty cool. Any thoughts on this? Someone who comes to this meetup from time to time.
+
+# Ledger 2.0 multisig
+
+Ledger was really bad at multisig. It was basically unusable. It wasn't quite unusable but they took shortcuts. Different companies have different priorities- that's fine. Ledger is still the most widely used signing device that is available on the market- they are available in Best Buy stores everywhere. It's just a shame that there were problems with multisig. I'm a software engineer at Unchained and I've been working on this project for the past couple months. Back in 2021, we discussed at this meetup that Ledger came out with a Ledger 2.0 release of their bitcoin app. They had several new features including a new protocol for interacting with multisig devices which took it from a bottom of the pack in terms of multisig security to really the top-end and innovating a lot of new things. Not just getting up to standard but introducing new standards and moving the ecosystem forward.
+
+We've been working on adding support for these new features. One of the challenges with multisig is that single sig is a lot easier to build for because you have a single device with a single key and the signing is done right there. It's easy. Multisig has a lot of extra factors and data to manage. Multisig is a type of wallet like threshold signatures, like a 2-of-3 signature requirement. Multisig is an improvement in security. But it does add extra risks. For example, a swap attack where in a single sig you can verify that- let's say you are receiving to an address and you want to verify that address is one that you control. An airgapped wallet device can check itself and make sure that this address is one that it can create. Multisig is different, and you're just one of the keys so you can't verify that the wallet is one that you control or that you fully approve because signmessage doesn't work for individual keys. Say you're in a 2-of-3 and you're 2 of the keys but an attacker switches out one or two of the keys and now you went from having the majority of the keys to being only one of the keys in the group and the device only recognizes its own key. Now your device might be approving the transfer of ownership of the funds. It correctly identifies its own keys, but it doesn't check that the user doesn't control all of the majority of the keys. We don't want the device to have to know about the other keys, but we do want it to know about the wallet. In Ledger 2.0 wallet for bitcoin, they added the ability to register wallets and know about wallets. We implemented this at Unchained Capital too. Ledger has only 4 kilobytes of memory. They came up with a way to do stateless registration where the application coordinator whether Unchained, Sparrow, Casa or Caravan will send the wallet over, and the device will say okay we will replay that information to you. This is the name of the wallet, these are the keys involved, and you have to verify each of those keys and make sure you know those other keys. You verify the quorum. Once it's registered, there's a signature using an HMAC which is a hash of a verification that only that seed can create. It's actually using a standard pioneered by Satoshi Labs called slip21 I believe to give you this very short string that is basically verification that says yes this user has approved it. When you go to do another interaction with the device, like that example where an attacker might switch out a key. Say you want to receive more funds to your wallet, Ledger can verify the address and say not only am I one of the keys but I recognize which wallet this address belongs to. Their implementation works even in the low resource environment and also they don't store the state on the device. If your device were to be compromised in some way, if someone were to force you to enter your PIN, you have no history on your device of your wallet information. The privacy of your wallets are not compromised. You just have this key. The wallet registration information gets stored osmewhere else. It also allows for a better ecosystem of seedless protocols. If your seed was wiped from this device, and you import the seed into another device that supports this protocol, the registrations are stored elsewhere and you don't have to upload it again. To recognize a wallet means that the ledger hardware wallet can indicate to you that a certain address belongs to a specific wallet that you know about. Wallets have two descriptors as part of them. The receive addresses that you generate to give to the outside world. Any time you're creating a transaction and you need to send funds back to yourself, you need to generate an address from the change descriptor. They introduced a concept called a "wallet policy" which is a way to say the type of address like pay-to-scripthash, nested p2wsh, p2sh, etc, and all the other types and also pay-to-taproot now. It also tracks the keys that are in the wallet.
+
+Q: Isn't this a little contrived? Why would you be copying an address without verifying it?
+
+A: It's a UX improvement.
+
+We tried to have as much of this work be open source as possible. We exposed this functionality to our own clients, but we used tooling that we built out in the open in unchained-wallets and unchained-bitcoin projects. This unchained-wallets uses HWI which is maintained by Bitcoin Core but it is written all in javascript and lets you have an abstraction over basically you don't have to know the device you're trying to interact with. unchained-bitcoin has utilities for working with bitcoin wallets. We also built the first PSBT v2 implementation written in javascript in the unchained-bitcoin project. Ledger's bitcoin app will only support this new version of PSBT and there were no other libraries that worked with it. So this PSBT v2 is now available in unchained-bitcoin.
+
+Q: Has anyone else adopted this wallet policy?
+
+A: As far as I am aware, nobody has really leveraged this. To use this new flow you need to persist. The platform has to persist this registration. If you don't, Ledger will make you register at each new interaction. Each new interaction you have to register a wallet again. It's cumbersome. As far as I'm aware, Caravan and Unchained are the first ones that persist this in a way that is portable. Sparrow has supported Ledger's new app for a while now but they don't persist it. However, they do support Caravan's wallet configuration file and I think soon they will- if you register your Ledger wallet on Unchained, you can take that registration file and go to Caravan and go to Sparrow and use it there. It's limited but it's getting there.
+
+In Caravan we have a testing suite- if you're not sure playing around with this or putting your own funds at risk, then in Caravan we have an open-source test suite with some test words and you can play around with the new features and confirm an address and sign transactions and od other things. If you want to practice that before upgrading your device that has another seed, that's a good way to verify the functionality of your device.
+
+# Robosats
+
+There was a bug on robosats. They are a p2p no KYC way to buy bitcoin. They use lightning. They tried to add on-chain support and someone double spent them and stole 5 million sats off of them so they halted withdrawals and stuff. They put out a bounty. But someone found the race condition between how they were processing invoices and stuff. Kind of interesting. Withdrawals are now re-enabled.
+
+If they didn't know how it was done, then how did they notice it? Well, their balance was now 5 million sats lower. The money was gone. Cheap lesson. They got lucky. Robosats monthly volume is 20 bitcoin so it's not like there's thousands of BTC going through here, but yeah 5 million sats is probably a lot for them. They do an escrow service? It's like an escrow service. One way to exploit an escrow service is to steal it before it's been confirmed. I think it was a double spent so they got a double payout or something, probably multiple withdrawal requests. If they used confirmations, then they wouldn't have this problem, right? Are these zero-conf transactions? They were using on-chain swaps so maybe. I think it was an internal error or concurrency bug, like multiple queues or something. They mentioned switching to a single background thread.
+
+# Codex32
+
+<https://secretcodex32.com/>
+
+If you attend any conferences that Andrew Poelstra attends, then you would already know that he has a way of using Shamir's secret sharing sharding scheme for seeds without using a computer. You can do it by hand.
+
+Read more here: <https://diyhpl.us/wiki/transcripts/btcpp/2022/volvelles/>
+
+# utreexo
+
+kcalvinalvin posted to the mailing list that he will be using service bit 24 (1 << 24) to signal nodes are utreexo capable nodes on testnet and signet. This is useful for initial block download. It's a new merkle tree data structure where you insert a proof that is about 1 kilobyte in size to proof the state of the current UTXO set. The current UTXO set is all the UTXOs that could be validly spent. Whenever you receive funds, your node validates that the funds are spendable by checking its own UTXO set against the inputs of the transaction you are given. How do you know those inputs haven't already been spent? Well, you check against the UTXO set. The problem though is that the UTXO set is about 3-4 gigabytes right now. It will grow in size as there are more hodlers or as the ecosystem grows. We could compress that utxo set down to 1 kilobyte using a merkle tree structure.
+
+Read more here: <https://diyhpl.us/wiki/transcripts/mit-bitcoin-expo-2019/utreexo/>
+
+# assumeutxo
+
+Read more here: <https://diyhpl.us/wiki/transcripts/bitcoin-core-dev-tech/2019-06-07-assumeutxo/>
+
+# MuSig2
+
+The third candidate for the bip is getting posted.
+
+Read more here: <http://diyhpl.us/wiki/transcripts/stephan-livera-podcast/2020-10-27-jonas-nick-tim-ruffing-musig2/>
+
+# c-lightning PR 6092
+
+... You had to put in the entire preimage of that description into the invoice which breaks LNURL for some people. A lot of people use core lightning, then lnbits, then something on top of it, and then another thing, and getting that description all the way through the API layer just isn't ever going to happen. Six months ago it was deprecated and then it was removed and then their servers all broke, so they reverted it and you can use it now. It was interesting. The fix is getting the rest of the industry to comply... they still want to do this change. The fix long-term is to do what they want, but they should just make it optional really. Maybe set a flag if you want it really. LNURL could upgrade so that you pass a description too, because LNURL interfaces with your lightning node and they could update the spec so that they pass the description--- but LNURL is like, good luck changing all those implementations. That's the thing about specs. They get sticky. Most people aren't going to read a spec. They will just try to get something done really.
+
+# Fedimint
+
+I have some fedimint stuff.
+
+Read more here: <https://diyhpl.us/wiki/transcripts/btcpp/2022/fedimint-ecash/>
+
