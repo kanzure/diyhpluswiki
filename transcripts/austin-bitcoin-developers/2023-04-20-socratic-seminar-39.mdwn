@@ -1,0 +1,158 @@
+2023-04-20
+
+Austin Bitcoin Developers Socratic Seminar 39
+
+<https://austinbitdevs.com/2023-04-20-socratic-seminar-39>
+
+It's a smaller group this time. Disappointing. This is more like a bear market vibe. The price doubled, and fewer people showed up? How many of you are first time here? A new low. Almost everyone is a repeat. This is a discussion-style meetup. It's not a presentation. Most of the topics we aren't experts on. Buck isn't here this month so the audience will get to participate more I guess. Don't attribute comments to specific people. No photos. With that, is Lisa here for her trivia question? She's not here? Well that's heartbreaking.
+
+For the last few months we have been doing trivia questions so we will keep doing it. The question this month is that 2012 introduced a soft-fork BIP to prevent duplicate transactions so that transactions wouldn't have duplicate txids. How many transactions had duplicate txids broadcast? Zero, one, two, four. Broadcasted, or mined? Mined. What bip number? The answer was two. How this happened was the-- the txid is calculated by hashing the transaction so in theory they should never be the same. In a coinbase transaction, the inputs can be whatever, and they can mine to the same address. They mined over their transaction and destroyed 50 BTC. They fixed it by including the blockheight in the coinbase. This trivia question is sponsored by base58. They are also organizing a conference in Austin later this month for April 28-30 at bitcoin++ conference. A lot of preparation has gone into this. There will be a lot of interesting talks and a hackathon over the weekend. Tabconf has been the big technical conference last few years. Hopefully this one gets on that level. On a speaker level, Tadge Dryja the author of lightning is coming and giving a talk. Justin will be talking so maybe don't go.. just show up after his talk I guess. But it should be really good. One of my favorite conferences. It's designed to be a 101-- so if you go to the first day, you will be better prepared for the second day even if you are not starting off super technical. If you want to learn and get a little bit more technical, then I think this would be the place. How I learned to code was I went to a hackathon and I was useless and over the weekend I learned HTML and learned how to code. Just show up if you're curious. You get pulled along with it.
+
+Can you pull up the Bitcoin Commons twitter? Next week we're having the Nakamoto Forum Debate Series. The day before that will be Austin litdevs and the day after it will be Austin bitcoin design club. Tuesday, Wednesday and Thursday will have something here at the Commons every single day and then bitcoin++ hackathon too. If you guys have never gone down the energy rabbit hole of bitcoin mining but also just generally energy then this debate will be highly entertaining and you will learn a lot. WHen I started to co-host the Houston bitcoin meetup and meeting miners and energy professionals, you start to understand how complex energy is and how hard it is to extract it and develop it. Jesse Peltan will be debating, and Tuur Demeester will be moderating. Jesse Peltan is the CTO of Hodl Ranch. He has worked with Gideon Powell a long time. He dropped out of college to rack and stack miners in 2017. Right now there's 360 exahashes/sec mining bitcoin. In 2017, it was 5 exahashes/sec. Jesse and Gideon built a substation out in West Texas about 50 megawatts just to mine bitcoin. When you think about the foresight and the cajones to do that.. Jesse is a power maximalist. I'm personally a hydrocarbon person. I think Steve is going to get rekt. In this debate series, there's two people who really understand bitcoin and both are in energy. Steve has a better moustache.
+
+Getting into the news, let's congratulate Unchained Capital on raising a $60m Series B capital round. Unchained has been an amazing and generous partner for this meetup for over 4 years now. We have asked to use their office 50 times now and every time they have said yes. They are the foundation of the Austin bitcoin community for the past 5 years so huge props to them. I hear unsubstantiated rumor that we will no longer be meeting at cooper's after the meetup but maybe Three Forks instead? I'll talk to them I guess. Don't put words in my mouth.
+
+Mutiny Wallet has raised $300k in Austin. Almost as impressive. If they don't sponsor Three Forks, then we will do McDonalds personally. We founded this out of a hackathon project. We all met here in Austin as well. They all met here at the Bitcoin Commons and have done hackaday hackathon projects together. It's good to see the community we have built to start to impact the bitcoin community. There were a few hackathons. One of them was at Unchained but also PlebLab. Our first ideation phase was at the old PlebLab a year ago, yeah the closet.
+
+Another piece of good news is Alexey Pertsev, the Tornado Cash developer, has been freed pending trial. He is a developer of an ethereum project that did mixing. He has been released but that's good news. He was in jail by the Dutch since August. They didn't want to let him out because they thought he would flee. He's out on house arrest with an ankle bracelet or will be released next week. Tornado Cash got sanctioned last year. Someone arrested him for developing unsanctioned software. Do we know what the charges are? Was it just for authoring it or for running a service based on it? They charged him with money laundering. Any time there is people developing open-source software or getting targeted like this, like by CSW, if it's a bigger risk to contribute to open-source software then fewer people will do it and the chances of success get lower. This was privacy software. That's the taboo thing to do in crypto. There's a lot of nuance with how you pitch privacy software, how you market it, and how you make profit from it. How is it different than Wasabi Wallet? It's the same thing. It was the Wasabi of ethereum but a lot bigger. Wasabi has a coordinator that executes contracts which is a little bit different. They are not rational people. Same thing with Bitcoin Fog recently too. It was activity in North Korea that they were alleging for Tornado Cash. If you are working on privacy tools, then maybe you should think about blocking certain countries because then I would definitely get in trouble but if I just serve the Western world then maybe that would... is that a real effect? I agree, if you don't want to go to jail then don't serve North Korean users. But the problem is that if you build an actually private system, then you wouldn't know they are North Korean or not. Tornado Cash was just an ethereum contract. They don't have IP addresses in the contracts. You don't know where the money was coming from geographically. The distinguishing thing is that if you are providing a service that is different from putting out open-source software... if you are providing a service and someone uses your shit and it's a service then that's very different from publishing open-source privacy software that people could use and you have no hand in it. It doesn't prevent you from developing privacy tool. Is what you are doing doing a business as a service or are you just publishing software? The coordinator would be a service compared to a bitcoin coinjoin. With Tornado Cash, you could make the argument that he was not a service provider because he was just a developer and someone made a frontend. But he also operated the DAO, but that's unclear- they just sanctioned the project. They don't understand it either. The whole thing is selective enforcement anyway so they will make up anything they want to get you on. Last year the Treasury department came out and clarified they did not sanction a piece of software but someone operating a server and offering a service. People can disagree about that, but they came out and clarified we're not just targeting anyone targeting this software but just this particular service. There was a website where you could interact with the service.
+
+# OP\_VAULT
+
+There is a new update to OP\_VAULT. There was a podcast for Bitcoin Review the other day about OP\_VAULT which was really good. The idea is to have in a bitcoin primitive in the consensus protocol that you can put bitcoin into a vault which means instead of setting up a multisig where you say 3-of-5 keys can sign for this but instead you put it into a vault and say if you are spending money from this address then it needs to go to the checkpoint first. If it goes to the checkpoint and you didn't authorize it, you have some time to sweep it back. It should be an upgrade for institutional custody. As long as we can check within your timeout, which could be like a week, then our funds can't be stolen and that was kind of like a huge next level step from what we have today. Right now we have 3-of-5 multisig and if 3 of those keys are stolen then a thief can take all your bitcoin but here you can sweep it back.
+
+The original OP\_VAULT proposal had some weirdness that jamesob was describing- he didn't use things like, there were complications with taproot and malleability issues being brought back in with it. So basically they redesigned it to incorporate the other covenant proposals we have had over the years. The origina lproposal was OP\_VAULT and OP\_UNVAULT ,but now there is OP\_VAULT and OP\_RECOVER. Instead of UNVAULT, there is now just CTV which was Jeremy Rubin's proposal and now they are using TAPLEAFUPDATEVERIFY by ajtowns a while ago. They are merging all these proposals into one proposal. By doing this, you get all the nice benefits that you could in his proposal. There's no more raw pubkeys in the outputs it's just all looking like normal taproot happy path and you can kind of do it on arbitrary scripts. Luke-Dashjr was saying this wouldn't work before with something he wanted, but now this new proposal would. It is a good culmination of previous covenant proposals over the past few years. Getting activation is another story but it's a cool proposal with a BIP number, I think it's bip345.
+
+Q: Based on my understanding, we're all just talking about signature schemes and what's a valid transaction or not. Can someone explain if-- someone can broadcast a transaction, the network would see it as valid, and then someone can come back later and say that previously valid transaction is actually not valid because it went to somewhere it's not supposed to go?
+
+A: It's sort of that. It's instead that the first transaction wouldn't be valid-- these coins can't be... if you get all the keys, you can spend the coins to any address. With covenants, you can only spend it to a certain address. You are enforcing that it must go to the checkpoint. So if signatures were valid but it wasn't going to the right address, then the rest of the network would reject the transaction. Instead of enforcing it by signatures, it's enforced by an opcode.
+
+Q: What if the keys of the address you're sending to are also compromised? It's turtles all the way down problem. People making changes that potentially have unintended consequences that I personally seek benefits to not necessarily ossification now but when I look at something like this, keys turtles all the way down problem and ultimately you will need to have a secure location for physical keys. Even if the first hop is invalidated, then there must still be ultimately control for the next address or next keys. There must be other ways to solve for key security and redundancy.
+
+A: Yes, it is turtles all the way down in terms of keys stuff. But you can change your security model. Today it's all these keys are maximally important kind of thing.
+
+Q: Has anyone done any research on how expensive or how big these OP\_VAULT transactions are in vbytes and what that would look like in mempool and mining? If you have a bunch of conditionals in the script, wha twould the size be?
+
+A: It should be pretty small. The new updated version of OP\_VAULT works in taproot and then you can have tapleafs for your different situations. You don't list out addresses but you do a CTV hash or something. It should be minimal in size. In terms of unintended consequences, the last two soft-forks like taproot and segwit were complete overhauls on how a transaction is validated and stuff. But VAULT is just repurposing one of the OP\_NOP opcodes.
+
+Q: If these are keys, can you effect the same thing on the client side-- if any bitcoin leaves this address, keys used can only go to another address that I control? 
+
+A: Bryan and super here have built a version of this without requiring a consensus change and it requires pre-signed transactions and deleting keys. It's not ideal. You can't prove you deleted a private key so you can't get the same level of group security or something.
+
+Q: Conceptually I'm excited about this. This could allow people to do things autonomously for how things are done at banks like delay mechanisms and be able to do it natively in bitcoin. It will also reduce the cost of insurance because now you have more checks and balances.
+
+What are the downsides to the OP\_VAULT proposal? The concept is more complex but the implementation seems to be slightly easier. The hard thing with CTV was always explaining it. The great thing about jamesob's OP\_VAULT is that it was optimized for a specific use case. In this new update, it became CTV again. The use case is still the same but how it works is a little more complex. The script interpreter changes are now more simple. Less likely to introduce a bug, too.
+
+Q: If it's still doing CTV, then why not just do covenants with CTV?
+
+A: You could. But OP\_VAULT gives you recursion whereas with CTV you have to calculate that out indefinitely. I think there are fee savings and fee bumping and batching a lot better. There might be some privacy improvements. Batching might be important for institutional use cases.
+
+Q: One thing that this gets you that CTV didn't; when you want to unvault, you have to say where you want it to go after the countdown but you know it's only going to that address. It's either there or it's going back into your vault. CTV doesn't get you that. When you set it up with CTV, you don't know where the unvaulting address is going to be.
+
+Q: What about DLCs?
+
+A: Well, you could do a cool thing with DLCs and CTV. But then someone suggested we could replace OP\_UNVAULT with CTV because it's a better version of it that has already been well-tested by Jeremy and everyone trying to prove Jeremy wrong and stuff. So that's why it was replaced.
+
+Q: I have never heard of someone running multisig that has had their bitcoin stolen. In theory, VAULT would be cool but on the ossification side, the side that says developers are the biggest risk to bitcoin seems in my view probably accurate. These guys I know and I like them and know they don't have bad intentions but if in theory 3-of-5 could be compromised but virtually every lost bitcoin hasn't had anything to do with multisig then it seems like we're searching for a problem more than making solutions to real problems.
+
+A: Multisig doesn't always make sense. In 2019, Binance got hacked and lost 7,000 BTC. If they were using multisig, it wouldn't have mattered because they were signing any--
+
+Q: But those were hot wallets.
+
+A: Yes, but you could do hot wallets with approvals. It should help with inside jobs at exchanges. Most of the stolen bitcoin has been at exchanges.
+
+A: It's a "one more key" problem. If you could secure your last key, why not secure your first key?
+
+Someone has been draining ethereum wallets and nobody has figured out how they are draining them. It's a bit of a mystery. If you have a programmable money, then you should be able to program the money to stay put no matter what. Maybe they compromise all your keys in a multisig. Some of these people are using hardware wallets and nobody knows how this guy is stealing it. But you can't tell your money "don't move". It would be cool if the consensus was that this money is not able to move and if it does move then I have a way to sweep it back no matter what.
+
+In the world of physical security, any locksmith says you can't prevent theft but you can delay the process as much as possible so that the thief is more at risk while he is trying to execute his theft. To me, this proposal plays into that.
+
+# LinkingLion
+
+This is a privacy researcher had a nice writeup about an entity that seemed to be linking transactions. A few people noticed ranges of IPs .... it seems to listen for announcements of transactions for the short amount of time it is connected. Maybe this is Chainalysis or some government trying to figure out where transactions are originating and getting an IP address from that. Broadcasting transactions is a hard problem in bitcoin to do it privately. The best way to do it is standard practice like creating a tor connection to a node, broadcasting the transaction and then never talking to that node ever again. You can probably just repurpose the mempool debugging software for some of this surveillance really. A few years ago in a bitcoin class one of the things we did was write a crawler to go connect to bitcoin nodes. It's one extra step to listen for transaction announcements.. it's expensive to make all these transactions but you can pinpoint where the transaction was broadcast. A lot of the IP addresses are through a VPN and a bunch of them are from other random cloud service hosts.
+
+If you are using your own node, you can be doxxing your IP address with your own transaction broadcast. If you want VPN-level privacy, you can do it with mempool.space or blockchain.info for broadcasting transactions. They can still see you, of course. If your node is tor-only, then you should also be safe. If you're not accepting inbound connections, then you're most likely safe. See also bitcoin-submittx.
+
+# ZeroSync
+
+There's a new nice writeup about ZeroSync in Bitcoin Magazine. The idea of ZeroSync is it's an alternative way to do full validation of the blockchain but without having to download it all and manually verifying it. You could make a proof system with a zero-knowledge proof to prove that the blockheaders are all valid or prove that the difficulty adjustment rules are all followed and that each block points to its parent. If such a proof existed, then you could verify the proof instantly and you'd basically be able ot do initial block verification instantly with a caveat that there is more aggressive cryptography assumptions but it would be an interesting tool and help with use cases. It's "instant on" for block validation. They make a bold claim that if-- a node with the zerosync system would be able to bootstrap with a single proof stronger than Bitcoin Core by default because Bitcoin Core by default doesn't check signatures in the early history of blockchain at this point. There might be fancy cryptography here but it would check more. This might be the first useful thing to come out of Ethereum so far. It is using a proof system that was developed by ethereum people.
+
+.... there's a huge asymmetry in the time it takes to verify vs producing a proof. Making a proof is extremely slow. Some of these proofs it takes longer than 10 minutes to generate them so you will never catch up to the chaintip if you were trying to do this.
+
+Pruning makes it so that you don't have to store the whole blockchain. Assumevalid means you don't have to validate the signatures... utreexo means... and zerosync means you only have to prove. At what point do we turn off the whole thing and not even use bitcoin any more? Maybe just a single signature that we check. The bitcoin full node is the abstraction and we can make it easier and easier to use. One of the scary things in the bitcoin core developer discussions is maintaining incentives for people to run archival full nodes. You don't want a world where people stop running those archival full nodes. There's good benefits to these proposals but you don't want people to stop running nodes.
+
+This is different from utreexo. ZeroSync is using STARKs using fancy cryptography. Utreexo uses merkle trees.
+
+# Sparkle: Fully Adaptive Schnorr Threshold Signatures
+
+This is similar to ROAST which is a Taproot threshold multisig scheme but it's not ROAST and we're not smart enough to tell the difference. The paper has comparison to other things but not ROAST. It seems like it has- there might be more states in the process where parties can become malicious and it might still work, that's at least our current understanding.
+
+# Extremely Simple, Single-Server PIR with Sublinear ...
+
+It uses private information retrieval (PIR). They know a set of addresses you might have asked about but they don't know the exact one. There was another one of these called Spiral. These are all in the PIR umbrella I guess. This shows you can do private information retrieval very quickly like a 160 GB database and only 40 ms of computation time to make your query. A lot of these other PIR schemes have an assumption that there are two servers and the two servers won't collude. This only has a single server... and the other one was like you have to download 200 GB to use this, on the client side. Maybe it won't work totally but it's a step in the right direction. Neutrino had blockfiltering where you query only part of the address and you are guaranteed to get a set of addresses back. Blockfilters is like downloading a filter of every block and then get an estimation of that address in the block.
+
+# Floresta
+
+Floresta is a utreexo-enabled electrum server. Instead of having an electrum server that accepts an address and gets a transaction back, this is a tool that -- the downside is that it's maybe a terabyte of data or 100s of gigabytes. There's a huge index of addresses pointing to transactions. This one uses utreexo to make it so that the operator of the electrum server doesn't need to have as much hardware drive space occupied by this. I don't think it will be terribly useful; if you're-- maybe if you are running Umbrel for yourself, it could be nice. You can find utreexo peers and use it directly. There's a fork of btcd that has utreexos built in. You'd have to connect this to that node and then it would work. This is not on top of btcd- it's pure rust. It talks to them. Oh, yeah. It depends on the other people running that. You'd need to find full nodes running utreexo.
+
+# secp256k1 release
+
+libsecp256k1 had a small security release. The compiler for the C code did some automatic optimizations to make it faster and now they have to tell the compiler to not do that because you could do timing analysis to figure out how long the computer is taking to sign something and then extract key operation. They had to turn off this compiler feature. Super niche thing but kind of interesting to see the heights of security we are striving for in bitcoin. Achieviving constant-time cryptography operations is like galaxy brain. There's a lot to think about that.
+
+# Stratum v2 update
+
+There is an update for Stratum v2.. it's an overhaul of how miners talk to mining pools. The always dream of it was I want the individual miner to select transactions to mine, so the miner should run the full node and get more decentralization. That way the mining pool can't censor transactions. Stratum2 has other stuff too. The recent update was Job Negotiator, allowing miners to select transactions. The job negotiation is done by the individual miner. That's exciting to finally get this dream and it's happening.
+
+Q: Will pools actually use this? It makes sense in theory. But if I'm running a mining pool, and I'm beholden to a regulatory agency, and someone is going to pass me transactions that I would otherwise want to censor, then the regulator won't look at them and say okay because you're deciding to run this software. Will the economics allow pools to open this up?
+
+A: Pools don't really do anything. It's the miners that do the work. Miners could broadcast mined blocks if they wanted to, but instead pools have been doing this historically.
+
+Another perspective on incentives is that if I'm a bitcoin miner and I don't have to run a full node or create blocks then I can just run a machine and plug it in and go. I guess I don't have to. But if I don't have to, then I won't be doing so. I want the simpler experience. Running stratum v2 is harder than the current thing.
+
+If mining pools are actually censoring and people are trying to pay to get their transactions into the mining pool, then there are fees on the table that aren't being otherwise picked up. Maybe you run a full node and have access to the extra paying transactions. If the pool wants to censor, will they take your proposed blocks and reject it?
+
+# PR 27446: Allow configuring signet
+
+One of the things we wanted at Mutiny Wallet was a signet with a certain block time of a custom bitcoin signet network. Testing bitcoin software is always kind of hard. To do it on your own computer, you can run regtest. To share it with people, you can use testnet. But now you just use signet. You want to change the difficulty adjustment to target a different block time instead. What you could do is build your own signet nodes and put up the binaries for people to download with the different config. Or you can have signet in default Bitcoin Core support this kind of feature for different signets- remember this is for app developers not for node developers.
+
+# PR 27050: Don't download witnesses for assumevalid blocks when running in prune mode
+
+This could be a huge savings in bandwidth for IBD. A lot of bitcoin developers NACKed this because assumevalid is default=on and if everyone was using this nobody would be storing witness data. Who would you be downloading witness data from if nobody has it any more? Well you could set assumevalid to mandatory and then nobody would ever need to download witnesses.
+
+# BIP draft: Terminology for transaction components
+
+This is a valiant effort by murch to make a BIP for what does every bitcoin term mean. Good effort.
+
+# Civ Kit: A peer-to-peer electronic market system
+
+I can't tell if this is profound or nonsense. It's a p2p marketplace on top of nostr. If it's more than 10 pages, then it is usually nonsense. It's really complex. Lightning was more than 10 pages though. Lightning is nonsense. It uses lightning, onion messages, escrow is done in a lightning commitment transaction. Has anyone looked into this? It's basically craigslist on nostr.
+
+# Route blinding
+
+Route blinding makes lightning possibly more private when you receive. It was finally merged this morning after 3 years. Now only 6 years until an implementation. No, not really. It's already implemented in eclair. It's supposed to be coming soon in lnd. It works by basically you give an introduction point saying send money here and here's encrypted data to tell them and they will forward payments along to me. In an invoice, you can say here's a node I'm connected to and here's a node they are connected to to find them. But the problem is that everything is visible. But what if you could turn that into an onion or if there's 2 hops then there's the second one or penultimate one is not visible. It's like tor hidden services for lightning payments. This could be useful for LSPs where you want them to help but not see everything that happens. The downside is that this needs more data in the invoice.
+
+Q: Is there any kind of standard for saying I'm willing to handle a big data invoice because I'm not scanning a QR code? or what if we can do this for bolt11? What if you can do it with LNURL?
+
+Q: Doesn't this force hte payer to go through a higher fee route than they would otherwise have to?
+
+A: Yes.
+
+Q: Isn't that an attack vector where you give them a path and take a shitload of fees?
+
+A: You can do that today already by having a path to a final wallet and take a lot of fees on your last hop. Hopefully wallets would notify the user that the fee is about to be 10 BTC or something and click "no"....
+
+Q: Will this be the death of direct channels?
+
+A: Direct channel payments aren't that private. But it won't obsolete them.
+
+You can still have a direct channel payment where you tell them you're the introductory payment. You can put a fake route. I think you can use fake route blinding. You can just say hey I'm just the entry point and there's this guy behind me who's actually getting the money believe me. You could definitely do that. This is what translnd was. You can setup blinding paths.
+
+# Hierarchical channels
+
+We don't understand these. Does anyone understand these? John Law wrote this email. Off-chain resizing of channels. It adjusts channel balances without on-chain balances. Normally you have to close the channel if you want to do that. It's actually just paying an invoice but with extra steps.
+
+# lightning-knd
+
+It's a project using LDK. It's like a full routing node using BDK and LDK. Designed for cloud services really. Way too much nix in this project. It's good to see these BDK/LDK projects.
+
+....
+
