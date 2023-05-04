@@ -1,0 +1,72 @@
+2023-05-03
+
+Anti-exfiltration: Preventing key exfiltration through signature nonce data
+
+ChristopherA: Andrew Poelstra is Director of Research at Blockstream which is a team of cryptographers, bitcoin developers and network engineers with extensive research working on the bitcoin protocol. He has invented several bitcoin scalability and privacy technologies including taproot, musig, scriptless scripts, adaptor signatures, sidechains, and I had the honor of working with him for several years while working at Blockstream.
+
+Andrew: At Blockstream Research, we do cryptography focusing on signatures and variants of signatures. We also work on smart contract language design. Today I am going to talk about the signatures project that we have been working on for a few years called anti-exfiltration.
+
+I thought it might be funny to open the first talk of the morning with a bunch of equations. This is the only equation I will show: s = kG + e * xG.
+
+This is the equation for a Schnorr signature. What I want you to take away from this is not what the exact formula is or what the plus or multiplication operations are, but rather you can think of an elliptic curve (EC) signature either ECDSA or Schnorr being a linear equation in two secret pieces of data.
+
+The idea here is that you have one piece of secret data is your actual secret key which corresponds to your public key. That's permanent. For your signature, you generate an ephemeral value that we call a nonce. You can think of it as an ephemeral key. The premise here is that every signature will represent an equation, and from grade 9 linear algebra you might remember that if you have a system of linear equations then if you have as many equations as you have unknowns then you can solve it, but if you have more equations than unknowns then you might not be able to solve it because it's unknown or inconsistent. If you have fewer equations than unknowns, then you also can't solve it because you have an infinity of possible solutions. As long as every singature equation we publish comes with another unknown- always one more unknown than equations- then nobody can extract your secret information because there's 2^256 possible solutions and nobody can distinguish your key from anyone else. Your signature should use your secret key.
+
+One immediate consequence of this is that if you don't generate a new nonce and you reuse a nonce from a previous signature you used, then someone can invert the matrix and solve this and do a direct computation to get your secret key. Most people are familira with that the idea that you should not reuse nonces when doing EC signatures. Also, you shouldn't use two nonces when the nonces are related by a known offset.
+
+Even if you don't reuse your nonces, then even slight deviations from randomness, then if you have enough signatures then you can use these lattice techniques dating back to the early 2000s where Breitner implemented this in 2019 and were able to extract a bunch of secret keys from signatures on the bitcoin blockchain exploiting nonces that were not uniformly random. If you use HMACs or other clever tricks, you can even bias the nonces in a way that only a specific attacker knowing the key to the HMAC can observe the bias and extract the keys while to everyone else it will look uniform.
+
+It is absolutely essential that nonces are generated at uniformly random. If a hardware wallet is generating the randomness, then the user doesn't really have any way to verify this. From the user's point of view, the hardware walle tis a black box that is producing signatures. If you think your hardware wallet is biased, you can try to break your signatures yourself, but short of tha tthere's not a lot of options.
+
+There's a few solutions to this issue.
+
+The standard solution to these nonce choice issues are things like deterministic nonces from RFC6979. You have a hash function, you have a secret key, and you generate a nonce that way. If you use a hash function like sha2 which seems empirically to have uniform output, then great, you will never reuse a nonce because you are always putting the message you're signing into your input so the message changing changes the nonce too. Also, you won't have any bias unless it's broken. So you can use deterministic nonces.
+
+As a user of a hardware wallet, the hardware wallet is a black box and maybe they're using RFC 6979 or maybe they're not and as a user there's no real way for you to tell. Maybe you can try to reproduce the signatures and see if it seems to happen to match the deterministic algorithm you expect, maybe. Or maybe they are feeding in ephemeral randomness, which is a goo didea, then you can't verify it either.
+
+In the crypto world, whenever you have a problem where nobody can verify something without getting access to secret data that you don't want them to have, then you could use a standard solution like a zero-knowledge proof. ZKPs are a cryptographic construction where you are able to prove some statement is true such as "this signature was generated using a specific deterministic nonce algorithm". You don't reveal your secret key, or your nonce. It is kept all private.
+
+Until 5 or 6 years ago, ... ZKPs are very expensive to produce and they take elaborate cryptography and the implementation is complex. Today, thanks to a lot of research from various people in the cryptocurrency world, it's now practical to produce zero-knowledge proofs on commodity compute hardware. Nobody expected this 10 years ago.
+
+If you're on a secure element or in a hardware wallet, though, it's not practical yet to generate these kinds of proofs. Another problem is that these proofs work in a way where you have to protect some permanent secret data and you use ephemeral random data to protect it. So the ZKPs themselves have nonces. If you don't have a ZKP that the ZKP was produced legitimately, then you have this infinite regress issue going on-- nonces all the way down.
+
+The ZKP doesn't go on the blockchain, so that's nice. But we would like to have a better, more efficient solution and doesn't itself have its own nonces.
+
+One solution that is a neat idea is to say that suppose for the rest of this talk that the host computer and hardware wallet are not simultaneously compromised nor colluding or biasing nonces no matter what you do. But what if the host has its own key, and the hardware wallet has its own key? They could produce a multisignature.
+
+In an EC multisig, the two participants combine their keys at key setup time, and then they combine their nonces at signing time. They both contribute some randomness. If one party tries to bias, the other party biases the bias and then nobody knows. It requires the host to have a key.
+
+A typical bitcoin wallet workflow requires the hardware wallet to have a seed and deterministically derive keys from the seed. The idea is that you could generate an infinite stream of keys that any other hardware wallet would be able to reproduce. You could also do this with a second hardware wallet.
+
+There are benefits to this, regardless of nonce bias- with two hardware wallets, if one of them is compromised, then even with that nonce bias then you might have two different wallets from two different vendors.
+
+But now you have twice the key management problem. You have more keys to back up. With two hardware wallets, you have to buy more hardware. Also the protocols aren't so mature. There's also some implementation complexity to this.
+
+If you only have one hardware wallet and you want to use a host as one side of this, then well host computers are generally not designed to securely store cryptographic material.
+
+A variant of this is that instead of using a strong EC key you could use a passphrase but this adds user complexity. There could be ransomware or you could lose your keys.
+
+What's my solution? It takes the multisig premise here which is that you have two participants and they mix their randomness in together and they avoid biases. The trick here is that for purposes of key ex-filtration through this nonce sidechannel you don't need to worry about key bias. You do at key setup time, you want to make sure your key is not compromised or coming from some debian RNG that only has 32 bits of entropy or something silly like that. Empirically it appears that you don't care about small amounts of bias in your key. It's only in the nonce where even a small compromise is the end of the world.
+
+So what we're going to do is do a weak form of multisignature where rather than combining the keys, we will just combine the nonces at signing time. The cool thing is that since the nonce is ephemeral, you can throw it away after use. So you can have a host computer that generates randomness, not even really good randomness, ... the host computer can generate this, pass it to the hardware wallet, the hardware wallet produces a signature and mixes in this randomness in some way that the host is able to verify and then the host throws away the randomness.
+
+We call our solution anti-exfil or anti-exfiltration. Cryptography is the field of cryptography related to trying to steal information through secret side channels. I encourage you to check the Wikipedia page, it's obscure 90s cypherpunk stuff. We changed the name though to exfil because it's a more widely known term.
+
+The premise is that the host will provide a random challenge to the hardware wallet and it will tweak the nonce it gets in a way that commits to the challenge and in such a way that the host can verify this tweak, and also this re-randomizes the nonce and eliminates bias. We will stick a hash function in there so even if the host randomness isn't that high quality we still do a complete re-randomization. As long as the attacker hasn't compromised the hardware wallet producing the original untweaked nonce, and the host, then we can't extract any information from here.
+
+We will jump to the very end now. We have a few bonus slids on the technical issues.
+
+<https://blog.blockstream.com/anti-exfil-stopping-key-exfiltration/>
+
+<https://github.com/opentimestamps/python-opentimestamps/pull/14>
+
+This is implemented on Blockstream Jade which is a hardware wallet that we manufacture.
+
+When I was researching for this talk, I found an old implementation from 2017 where I tried to insert this into opentimestamps which uses commitment schemes. Opentimestamps is for where you take some data you want to prove existed before a certain date, and you can commit to it into a giant merkle tree, and you put a commitment to the merkle root into the bitcoin blockchain. Since bitcoin has strong timestamps that are expensive to forge, you basically get a commitment to your data in the bitcoin blockchain proving that the data existed before that bitcoin block which gives a one-way proof of timestamping. In 2017 I was thinking of using this nonce tweaking trick not to tweak by random data but what about by some data that I want to timestamp? Then you can get this anti-exfil technique. If you trace through all the commitment structures here, you end up with a blockchain where -- the signature ... to the merkle tree.. so for free you get opentimestamps behavior and you can't distinguish an opentimestamps commitment from anything else and we can get blockchain space used down from 32 bytes down to 0 bytes. Just a neat piece of history on anti-exfil work.
+
+Jade does not have a secure element. The way Jade works- there are two modes. One is where you don't store key material and you type in your seed material every single time you turn on your device. Another mode is we have this other crypto technique where we store the key material where it is encrypted against the user's PIN where you need interaction between the user and our PIN server (and you can run your own PIN server if you want), and the PIN server is able to enforce a PIN trial denial of service limit and the PIN server doesn't know what the PIN is. We are able to outsource and basically treat some other server... it's another protocol, and it's open-source. Jade itself is written in C. For anti-exfil, the protocol is a bit of an ad hoc thing but you can read it in the source code. I think we have some design documentation. This is implemented in libsec256k1-zkp which is called from our GDK library which is used by Jade. We have a general purpose wallet library called GDK. It requires modifications to PSBT like we need for Musig and we might even be able to reuse some of the musig fields for PSBT. In order to do this protocol, basically rather than having a half-round of interaction where the host gives a transaction to sign and then receives back a signature then we add one more round of interaction to that so the host sends a challenge, gets a nonce back, and then the host sends the randomness and gets a signature back. So you would need one extra field. The premise here is that - PSBT might not be the right layer to implement this. Maybe it is. PSBT is generally used for multiple participants all producing a transaction together, and it's also used by hardware wallets as a way for the host to communicate with the hardware wallet. It's one participant but sort of split. The host and hardware wallet are the same person so they can afford to do some more ad-hoc stuff in passing things. We haven't proposed an extension to PSBT.
+
+Chosen nonce attack workbook: <https://github.com/stepansnigirev/chosen_nonce_demo/blob/master/HD_key.ipynb>
+
+
+

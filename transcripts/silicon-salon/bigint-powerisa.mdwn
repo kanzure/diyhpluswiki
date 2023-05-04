@@ -1,0 +1,83 @@
+
+
+* <https://ftp.libre-soc.org/siliconsalon2023.pdf>
+* <https://libre-soc.org/openpower/isa/svfixedarith/>
+* <https://opentitan.org/book/hw/ip/otbn/doc/isa.html>
+* <https://libre-soc.org/openpower/sv/biginteger/analysis/>
+* <https://libre-soc.org/openpower/sv/biginteger/mulmnu.c/>
+* <https://libre-soc.org/openpower/sv/rfc/ls003/>
+
+# Introduction
+
+Open silicon costs money to manufacture. The solution that Libre-SOC found was to create RED Semiconductor Ltd. We are a commercial organization that mirrors what has been an open-source project for the last 4 years. The simple reason for this is money. It takes about $10 million pounds to get a chip manufactured. We are developing through libre-soc a leading edge next-gen architecture microprocessor with vectorization and all developed under libre-soc. To get it into silicon that we can supply into a market or the open-source community then you need to take the poison pill of going commercial simply because of costs. People might want to ask me about that later. I'm the opening act. Luke will give the presentation on the technology.
+
+# Who are we?
+
+Libre-SOC is researching and designing instructions which will be proposed to the OpenPOWER ISA working group for official inclusion in the Power ISA. There exists a sandbox area but we want this to be part of the mainstream Power ISA.
+
+# What are the challenges faced by big integer math?
+
+By big integer math I mean elliptic curve, Diffie-Hellman, RSA, etc, the whole lot. When you have the whole post-quantum thing, it's hard to-- things get undermined and as Andrew mentioned there's also zero-knowledge proofs and people are constantly iterating and improving on those. If you put one of those into silicon, it will typically take 3 years. Actual FIPS certification also takes 5-7 years. At any point in that, if you get superceded or a fault is found, then that's 3 years worth of money down the drain. Things like AES have lasted the test of time and it's worthwhile to put those into circuits.
+
+The other issue is that if you have 32-bit or 64-bit then the performance sucks. The first temptation is to add SIMD instructions and the second temptation is to do custom instructions and now the problem is worse because you have hardly-used compiler toolchains that are specific to that system and they are not general purpose instructions. You then have a nightmare of a software toolchain for a small dedicated space. There's lots of software toolchain complexity for a small delicate task.
+
+# Algorithms
+
+Go back to the algorithms real quick. We want everything to be general purpose. We want general purpose instructions that end up in mainstream compilers and the mainstream software toolchains and libraries. We looked at this and said let's go back to the algorithms... let's start with Knuth's algorithm D and algorithm M. Karatsuba, and so on. The first thing to note about SVP64 whic his the vector extension for PowerISA that we have been developing at libre-soc is that it has looping as a primary construct. This is similar to existing instructions. It says, I want you to loop on hte next instruction using the next instruction as a template. It's radically different from SIMD and Cray-style vectorizers. We are using scalar registers here. We're not doing dedicated vector registers.
+
+......... Using this vector looping concept, you get for free an arbitrary length vector negate. The next bit is that carry in and carry-out for add is 1 bit,but how can we do 64-bit carry-in and carry-out to create a scalar vector operation? If you have a scalar by a vector then you can just do a loop around it and then you have Knuth algorithm D and algorithm M.
+
+If you look at other ISAs, the irony is that with the exception of Intel's DSLD instruction and maybe Intel mullex, they typically will drop half of the result on the floor. So the multiplier will drop the high half of the result or the low half of the result, and divide will drop either the modulo or the divide result and you need two instructions to get it. This is except for x86. The typical RISC ISA will need 2 instructions to get the thing.
+
+# Turning add-with-carry into a vector-add operation
+
+PowerISA has an instruction called add-with-carry. If we chain them together, the carry-in in the first one becomes a standard carry-in for the LSB of your big-integer operation. The carry-out from your 64-bit add, on the next add you use it on the carry-in and you chain them all together. Part of the task I'm doing is doing a chain of logically obviously things but just doing them very very quickly.
+
+If we can express this in a way where you can specify how many of these operations you want to do in a chain, then you have one instruction that does vector-vector add. Real simple, right?
+
+# Vector-scalar shift
+
+Vector-scalar shift is more complex. One is you want to shift by greater by 64 bits, then you select the scalar register you want to shift from. Less than 64 bits? What we have is a normal shift will put 0s-- so if you are shifting left, you put 0s in the LSBs at the bottom. You throwaway the bits at the top. When you start doing big integer math, you actually need to fill in those bits at the bottom. This is the bit shift right. A naieve thought on this is that you would just do an operation which does un[i] >> s and that would seem to be ideal. It turns out though that you need a full vector-copy and you can't do the operation in place. If you are doing that, then you're in a register file where you are doing 4096-bit arithmetic and it's a lot of 4096-bit registers.
+
+What we did instead was the input side that gets set to 0 you source from a second input register. That's what gets shifted in and effectively it's a 64-bit carry in. The bit that is normally thrown away by a shift instruction you instead put it into a second output and consequently again you can-- that output becomes the chain going into the next instruction. Again, using the vector prefixing you repeat that, chain things together, and you have done in-place a vector by scalar-shift.
+
+# Vector-scalar multiply
+
+Vector-scalar multiply, again, exactly the same thing with multiply. The Intel mulex instruction doesn't have the add. There's a paper about using a couple of new instructions like multex and addex where they interleve them. It's an interesting paper from 12 years ago. Instead, we can do it based on multiply and accumulate. Normal multiply-and-accumulate would treat the input register going into the LSB what you would do is slightly different... it effectively would, it's the same as the vector-vector add except that here what we're doing is bringing in just like in long-multiplication we bring in the extra 64 bits digit from the previous column and because you're producing a 128-bit result that high half goes into a carry-out register and when you do the chaining it becomes the carry-in of the next digit. Each time you call this instruction, it produces a new digit of your vector by scalar multiply.
+
+There's exactly the same story for vector-scalar divide. I'm delighted to be able to say that the implementation of these two instructions, the chained divide and chained multiply are actually inverses of each other including on the carry-in which is really interesting. You can have a modulo as input which gets included in the division. It's not a from scratch thing. We also had to special case overflow because if you look closely at Knuth's algorithm, it's not divide by zero but there's something similar it's special case where you can't store the result in 64-bit registers.
+
+# Summary so far
+
+The initial concept was the usual 1-bit carry-in and carry-out and then extend it to 64-bits. The result is that you get, for free, a scalar vector arithmetic and you can do simple loops on top of that and then you have Knuth algorithms D and M. As a beautiful piece of irony, the original version had a carry SPR and it would have been a 32-bit carry at the time. They deprecated this, actually. That was rather annoying. Hence we are proposing these new instructions to make up for it.
+
+It turns out that the hardware is not made more complex by doing this because you are not doing any 64-bit hardware. You are not requiring 128-bit operations with 256-bit results. You're just outputting the second half of what is normally thrown away as the carry-out. But ISA has a bad rap for doing big integer because they don't have these instructions and you end up with complex carry workarounds.
+
+# Other projects
+
+The complication in hardware which makes RISC proponents freak out is that you need 3-in and 2-out instructions. But with microcode you can do some chaining and get 3-in and 1-out, for example. ((Check the slides))
+
+I looked at OpenTITAN. It has 256-bit wide data path with 32 256-bit wide registers. Zero-overhead loop control would have been much better. As much as I love the lowRISC team for the fact it is a community interest company, but I wince slightly when I find out what they have done. The initial code that they used is formally verified but having added 256-bit... .. unfortunately 256-bit arithmetic is unlikely to complete in a reasonable amount of time. If you can do everything in 64-bit or 32-bit, then there's a chance that you can complete formal verification proofs within a few weeks of CPU time. But 256-bit formal verification won't complete before the heat death of the universe. 256-bit is great for EC25519 but for RSA and others, you run into exactly the same problem as Scalar ISA, just worse.
+
+The OpenTITAN shift instruction is immediate-only and does not have shift-by-register amount. It does merge the 2 operands, so it has the core of the thing I showed you from an earlier slide. .... by comparison, the vector-chained 64-bit one, you can use a single scalar register as the 64-bit carry-in and 64-bit carry-out. Although it sounds like it's not possible to do in place, that you might end up overriding a thing, that vector looping can go in the reverse direction. We can take part of the carry-out going into one register which then you have the previous-- I've worked it out.
+
+# Conclusion
+
+We went back to the Knuth D and M algorithms and examined what they were trying to achieve. You can do 64-bit carry-in and carry-out. Keeping to 64-bit or 32-bit PowerISA-- or 64-bit maximum hardware means that if you are doing a formal correctness proof then it will complete in a reasonable amount of time. It's reasonably straightforward to do these kind of ISA operations.  It might freak out pure-RISC proponents (3-in 2-out) but look at the number of instructions, and algoirthm efficiency, and it speeds up general purpose code which means that it will end up in general use and you won't end up with more of a maintenance headache.
+
+Here's the pseudocode for these instructions. We have unit tests for all of them. You can see here that the product is RA * RB which is the normal way but we add in the carry-in on top of it as well. And then we return both the high-half and the low-half.
+
+Q: Where are you right now in terms of beginning to test this out or look at the actual performance improvements? Obviously 64-bit is useful but a lot of our crypto-- which crypto algorithms would it have the biggest impact on?
+
+A: All of them. Anything that requires arbitrary length big integer math. Although it's 64-bit registers, that's just the base unit. So you can set the vector length to 32. So you end up with a chain of quantity 32 each 64-bit registers, in one instruction, which is 4096. So our first CPU will have 128 64-bit registers. Again you have the standard load/store. If you really want to go to 31684-wide registers, then you go back to the standard Knuth algorithm. Take a look at mulmnu.c - this one has the Knuth algorithm.
+
+Our first target will be a 22nm node process. We will have the vector instruction set in it. Due to a quirk of how it works, what we're intending to do is although it will be single issue those single issues will be capable of issuing multiple scalar instructions into the backend pipeline. So it's a single issue of multiple vector scalar operations.
+
+Technically where we are- we have simulations..
+
+<https://git.libre-soc.org/?p=openpower-isa.git;a=tree;f=src/openpower/decoder/isa;hb=HEAD>
+
+We are moving to a clock cycle accurate simulation and we're also moving to a full FPGA implementation probably by August 2023. We are ready to lay out our first chip because we have solved sufficient of the key critical problems on the design of the chip. We're raising venture capital money. We need money and we're looking for volunteers and people to get involved in the project. We think we're close to VC funding. From the day we're VC funded, we will have a prototype chip through a shuttle run within 18 months, and a commercially available chip subject to fab availability within 24 months and this will probably be the first open-source microprocessor of this power and capability available in the market for people to use.
+
+
+

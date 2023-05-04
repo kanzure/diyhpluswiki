@@ -1,0 +1,98 @@
+Pitfalls and approaches to open-source security on semiconductors
+
+Cramium Labs, Inc.
+
+Mark Davis
+
+# Introduction
+
+We will tlk about background on intellectual property rights, ASIC design flow, copyleft, practical considerations, license approaches, and Cramium's approach.
+
+Does open-source hardware really achieve the same purposes as open-source software? What about open-source licenses for hardware?
+
+# Intellectual property
+
+You might suppose that this kind of thing is obvious and settled but there is in fact controversy in intellectual property. Copyright started with an act in 1790 and then technology made the the world more complex. There are guidelines around what can be copyrighted and what not. Something more utilitarian is often subject to patent not copyright; the expression of an idea is copyrightable but not the idea itself. If there's limited room for expression, then that effects the copyrightability.
+
+For those of you who are as old as I am, you might recall that there was a time when people questioned whether software could be copyrighted at all. From first principles, you could deduce that it's not a priori obvious that software could be copyrighted. A seminal case over this was in 1983. The district court ruled the opposite- that it is not copyrighted, and it was reversed by an appelate court.
+
+If you look at the executable form, does it meet these tests? The district court opined that it did not meet the copyrightability test. It's not obvious from first principles. We tend to forget that today because it was 40 years ago.
+
+I would just point you to some references that discussed this. A chip design involves diverse design artifacts which if you were to compare them on first principles then they compare in varying ways. There's much debate about which intellectual property rights even apply to hardware at all.
+
+There are some great analogies to software in the papers, but these are papers not case law. I will mention a few case law items I found interesting. One case holds that a schematic is copyrightable; but a schematic is only one of many types of design artifacts in ASIC development.
+
+Another thing that bears mentioning is that there was a specific act in 1984 called the SCPA. A lot of people misunderstood this; it is not a copyright or patent or trademark or trade secret. It's a sui generis right of "maskwork". Unlike a copyright, it must be registered. This is only one design artifact used in making a chip and it has its own one-off right of its own.
+
+Also in reference 24, it makes it clear that a lot of people don't regitser this maskwork right so it's not used all the time.
+
+What intellectual property rights apply to hardware? "Every single effort to tackle the problem of opppp"......
+
+# ASIC design flow
+
+Some parts of the chip start wit hwhat's looking like a programming language. You could say that VHDL or Verilog is somewhat like source code for software. Then there's the digital/logic part where you take that logical description and then you get into something that starts to have more relationship to the factory, like the RTL, or descriptions of gates and so on, like netlists. It might have drive strength, setup, and you map that into this and you create a sea of gates called a netlist. Some authors talk about an analogy like compiling software into a machine code instruction set. Library has a completely different meaning here than from software.
+
+The libraries do have proprietary information of the factory at which you fabricate the chip at. The next step has even more proprietary information- the netlist is a logical thing, but then you need to map it into a physical mapping of the gates in this process. All of this information like the sizes, the inductance, the resistance, the manufacturability is all proprietary information from the foundry and the foundry engaging a third-party vendor. You might not see it directly or have a contractual relationship but typically they engage third-parties to get their IP available for it.
+
+That's just the logic part. There's much more to chips. There's also memory, which isn't considered logic. They end up getting compiled into the chip by a special tool that makes them more efficient. It's often to bring in phase-lock loops, power regulators, a processor core, some non-volatile memory, a fuse for calibration, we talk about TRNG, and then vanilla things like USB is complex and you don't just connect a logic gate to the pin of the chip there needs to be a physical driver there and even other specialized logic functions. These can come in various ways and this effects what is 'complete source'. Some of these might come in as RTL, or they might be hard-layouts that get plugged in by the fabless company and sometimes the fabless company doesn't even have access to the final layout and it's plugged in by the foundry.
+
+There's timing checks; laborious scripts development for timing- it's hard to use the code if you don't have this. Test benches, that's another one. In software, you can incorporate software and compile and test it. In chips, you can't just do that. It's extremely expensive. If you are licensing a chip component from someone, you license it from them and then import test benches and if the vendor doesn't have those then their block isn't going to be that useful.
+
+There are tools that insert IP into your netlist or into your final design like membist- memorybist for self-test. Each unit has to be tested as you make it. These are all digital. You also have analog where you do schematic and you use items from the physical design kit to help you design and layout and verify that. There's a bunch of other quasi manual tweaks to the layout. Software building might take minutes. If you go back and change one line of your RTL, though, you take 6 weeks to get back to the same point. All these things modify your final artifact which is a GDSII form which is ultimately what creates the photographic plates that go to the factory.
+
+I don't expect you to absorb all these details. But there are many stages and they involve varying third-party IP. Those types of artifacts are fundamentally disimillar. In software, an object and binary aren't that different and there's linker-locators and resolving things. We think of software as hierarchical but it's all just code in the end. But that's not the case with chips. There's real, physical hierarchy of fundamentally dissimilar items.
+
+For each of those items, what's the correct licensing? What is the correct IP type or the right IP rights? What is "source" here? What is "complete" or "corresponding source" in this domain? It's much more complex in hardware than in software.
+
+# Copyleft
+
+I think some of you know this but some don't- it's a term that was coined to describe licenses that promote and require proliferation instead of prohibiting proliferation like a copyright.
+
+So typically when you use inbound copyleft, you receive a license but subject to certain obligations to further publish and sublicense whatever you create. So what is the boundary of that which you are obligated to provide an outbound license to? Licenses are described as permissive, or weakly reciprocal, or if they cast a wider net then they are strongly recipricoal. 
+
+For software licenses, the two points are what do you have available to work with? What are the rules? There's a small amount of license text, and then a huge amount of corpus of literature and de facto practice interpreting what copyleft means. There's also a small body of case law around this too. There's been entire careers just in the interpretation of copyleft.
+
+# Incompatibility
+
+All of this whether the text in the license, or opinion around this-- but all of it has terms like statically linked, dynamically linked, system library, procedure call, etc. These are all software terms. In GPLv3, there are terms but they only have meaning in software. How would you interpret this for hardware? It's like taking a rule from baseball and asking how to apply it to baseball - it's basically nonsense.
+
+Why does this matter? What do people mean when there is a copyright conflict? If you make a product that combines something that has a copyleft license and a proprietary license, then in some cases the boundary of licensing might expand to include the proprietary code. So you might have an obligation to not disclose the proprietary work, but you might have an obligation that you must publish or sublicense. To whom you have that obligation, again, is a field of controversy but you have conflicting obligations. ASIC design is more complex and has more design artifact types and avoiding this conflict is more complex than in software.
+
+There are large companies that will not allow any GPLv3 in through the door simply because it's too complex for software licensing. If companies have that position for software, then you could question what should be your position in hardware be where it's even more complex to determine the ramifications?
+
+There are real risks and consequences here. Early in open-source software it was enforcement and guided by ideology for open-source. More recently there have been patent trolls and copyright trolls. The difference here is that, if it's copyright then that has statutory damages and you don't have to show actual damages. That's really what gives open source its teeth according to this reference. But a big difference between software and hardware is that a software provider might quickly modify their code. ASIC vendors can't do that; which might introduce more risk and leverage in this area.
+
+# Practical considerations
+
+What is the purpose of open-source hardware? Why do we think it's desirable? You can make an analogy to software again. Does open-source hardware really provide these freedoms? Like those espoused by gnu.org? It's harder to say it does, because certain materials you can publish them but you can't really emulate precisely what will happen when you build silicon. Actually building the actual silicon is extremely expensive. It also involves a lot of third-party IP to get to a workable chip.
+
+I constantly hear about people who are immersed in software saying oh I read an article about this open design workflow. Does it really work? It has a place in the ecosystem. I wouldn't want to say it's not useful but I think people tend to underestimate the vast difference between a low-NRE desig nflow for prototyping and what you need to be in a semiconductor business. Chips have gotten exponentially better in cost, size, performance. But this has been accompanied by an exponential increase in design costs. These low NRE design flows are not the same thing at all. A 3d printer at the consumer level doesn't mean you can be in the lego brick business, just in terms of manufacturing tolerances, volume, and cost. Electrons are free, and atoms are expensive.
+
+# Inspectability
+
+With code, you can end up with a file and get a hash of the file. But with ASIC there are so many diverse layers of hierarchy- how do you know what you get back matches what you think it is? Unit by unit- just because one is inspected doesn't mean that all the chips are the same. So there are things like signature, like test vectors, optical scanning, but each of those is limited and it's not the same as software comparison.
+
+# Business considerations
+
+If I am licensing open-source software, then maybe the community can make some improvements and I could incorporate those. But in hardware, if someone makes these improvements then it's not necessarily easy for me to incorporate the improvements. Everyone in the ecosystem has these high costs for building chips.
+
+# Licensing approaches
+
+If you go to opencores.org, you can see a bunch of licenses. The most common approach when people put RTL on a site like this is to use a software license. That's the most common approach. This addresses all the problems I've brought up by simply ignoring them.
+
+Some of the references point out the problems with that- so some say there should be hardware specific licenses, like TAPR, CERN, CERN-OHL-W, SolderPad, OSHWA, etc. These are all very different in their philosophy. When you read their rationales, they are all quite different.
+
+I think the CERN licenses are well thought out, like the permissive, reciprocal weakly, reciprocal strongly. All the software terminology is usually about libraries and system libraries and dynamic linking and instead CERN starts with hardware terminology like is a component available and then apply that to board-level hardware and chip design. I've never seen IPIL used. It's embedded in an academic paper somewhere. I'm unaware of any use of that license in industry yet.
+
+It's a nascent field. Instead of using software licensing, let's create new licenses that are specific to hardware.
+
+# Cramium's approach
+
+Our approach, subject to change, is that we're building a chip and we're publishing an outbound CERN-OHL-W license. This diagram illustrates what can be done with it. The idea is that the core cryptography is implemented in these blocks but there's also a RISC-V core interfacing to some countermeasures that are physical things you can't emulate in a FPGA board anyway. So we meet the CERN-OHL-W definition anyway. All of this will be published under that license. This will help you instantiate it off-the-shelf-- buy a PC, buy a FPGA board, and instantiate it and run it. When the chip comes, then you can run those same things and verify that the chip responds in the same way. This is the goal. There are certain things that are exactly what's on the chip, some things are like what's on the chip but can't be the same because of third-party issues, and then some functions are generic and we can't emulate them precisely.
+
+On in-bound IP, there's no copyleft copyright licensed components that we're using. While not legally required, our goal is that the inbound and outbound would match the same, that seems like a good faith way of engaging with the community.
+
+On inspectability, take a look at Bunnie's blog post where he discusses inspectability. We are making this package, at his request, it's a wafer level PCB, and you put a re-distribution layer on top of the die and after singulation and backgrind you flip the whole thing over and mount it on a PCB. That means the backside is basically the raw wafer and you can put infrared laser through that and get some imaging. He goes into why that is useful in inspecting the die. It won't inspect down to the gate level because that's a micron wavelength.
+
+Open-source software itself is a developing field with open questions and controversies. Open hardware is comparably immature, and ASIC is even less mature htan that. The fundamentals are not clear, even the community goals. What are you trying to achieve? There's complexity in implementation especially in copyleft given that complexity and varied artifiacts in an ASIC desig nflow. Despite these problems, we want to carry the ball forward as much as we can at Cramium.
+
