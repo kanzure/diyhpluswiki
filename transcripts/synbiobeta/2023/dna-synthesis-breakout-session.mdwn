@@ -1,0 +1,123 @@
+2023-05-23
+
+synbiobeta DNA synthesis breakout session
+
+christopher ghadban, alix ventures
+matt hill, elegan
+tim lu, senti biosciences
+patrick boyle, ginkgo
+jacob becraft, strand
+cristina butterfield, metagenomi
+
+CG: Alright. I think we're supposed to have someone hit record, at least. Thank you for coming. It's been recording this whole time. The red light would have been distracting I guess.
+
+CG: Thank you everyone for coming this afternoon and joining us with our wonderful panelists to talk about how the next generation of DNA synthesis and supply will unlock healthcare. On stage, we have our co panelists. Matt, do you want to kick off a brief introduction?
+
+Matt: Yes. Thanks so much. I am a reformed diagnostician. I was at a diagnostics company for a number of years then funded Elegen in late 2016, early 2017 with a real mission to solve the DNA supply problem. I was watching the field for a few years and realized this was one of the things holding back the field of synthetic biology and the fantasy of revolution in biotech that we had been thinking about for decades.
+
+Tim: I used to be at MIT faculty. Started when synthesis wasn't there yet, and now it has transformed. At Senti Bio, we are creating smarter and better cell therapy, have cells that hunt down cancer cells and provide treatments.
+
+Patrick: I've been at Ginkgo for almost 11 years. I was a student in synthetic biology before that. My role was first building out our design team. HWat if you could design any sequence you wanted and you had that DNA available, how would you scale that? My journey started as a grad student going into Ginkgo, 6 years as a PhD, I designed six genes during that time and hand designed those genes in Microsoft Word and had to get sign off from my advisor. Since then, ew have built a sophisticated software stack with API endpoints to deal with suppliers and we generate tens of thousands of genes on a monthly basis. That's 10 years of evolution, and a lot of the field is waking up to this possibility.
+
+Jake: I'm a co-founder at Strand Therapeutics. We're a next gen mRNA therapeutics company, and we try to expand mRNA's therapeutic index and go beyond vaccines and liver delivery and then deliver to other tissues. This is the first time I've been on a panel where as a synthetic biologist for a long time but here less experienced. This is fun.
+
+Cristina: I am a senior director of biochemistry at Metogenomi. My passion in life is biochemistry and uncovering diversity. I'm in awe of nature. Animals, nature, how do these work? In grad school, I studied biochemistry in an organism. As a postdoc, I went to UCB and studied environmental genomics and got some genomes from soil. At UC Berkeley we launched Metagenomi to capitalize on the depth and breadth of diversity from the natural environment. We use AI and big data science to explore 400 terabytes of data and uncover new CRISPR tools and apply them to in vivo and cell therapy products.
+
+CG: Based on what we're hearing, it sounds like you haven't juts been in the space for a while. But in this area of synthetic biology, this began with our ability to manipulate DNA. Matt, as our resident expert, can you give a brief overview?
+
+Matt: These guys have been doing this for longer than I have. The other smight be able to contribute more hitsory. Paul Burke in 1973 or 1971 when he did the first recombinant DNA. Stan Coen and the other one put this into ecoli in 1973 and this kicked off of the big revolution in recombinant DNA. Then there's a long slow build up to where we are today. The first obvious-- PCR came out in the early 1980s. The first oligo synthesizers for PCR reagents and primers started to come online in the late 1980s like Jim Hudson... and then oligos were pretty much all you could get until the late 90s, and then we were at the early days of gene synthesis by putting together oligos to make genes. I wasn't in the field but some of them may have been involved in iGEM competitions... any history that you want to recap?
+
+CG: We started a synthetic biology lab around iGEM back in 2010 as an undergrad.
+
+Matt: That was my diagnostics period. I was off doing other things. I got very excited and started coming to Synbiobeta in 2014 or 2015 timeframe and hearing the story about synthetic biology and where it's all going and the genomics revolution from the early 2000s, and that lense on genome kicked off of this era of hey what if we can program biology? This is why we are here today. We need tools to do this in a scalable ways. Elegen is trying to make headway in this area.
+
+GC: So it sounds like we have come a long way from the time of only 6 genes during a PhD. How has the supply of synthetic DNA really changed over the course of your careers?
+
+Cristina: In the beginning of my career, it was all oligos. When we're studying environmental microbiology background, we couldn't synthesize every gene we were interested in. Often when doing functional genomics, it's amplifying physical DNA, so using degenerate primers to target genomes of as many organisms as we can and then pull them out and learn about them. That's where the field was for a long time. Even with metagenomics, and using short read NGS to stitch together pieces of metagenomes. We couldn't synthesize those genes even then. Over the course of my career, it has been a fabulous complement this technology building with massive sequencing depth that we're able to achieve now. I love to get my hands on new proteins. The pace that we're able to get the DNA synthesized and get the proteins out and engineer them is frustratingly slow. We're at least now able to synthesize genes in a couple of weeks and be able to use them in the lab. This is still too slow for protein engineering. We want to keep up and push ahead for CRISPR engineering- we want new large tools in terms of the size of genes and that's still a struggle to get synthesized. We utilize as high throughput as we can gene synthesis and oligo libraries are important for us in the CRISPR space, and variant libraries for protein engineering. We're using anything and everything available. We're kind of right with the DNA synthesis space as we're super demanding and we're using every tool available at the moment within our company.
+
+Matt: You build a lot of these tools in house as well as external supply?
+
+Cristina: Nature has evolved all kinds of CRISPRs and tools to reconfigure and reprogram DNA and we're taking those out, studying them, and transplanting them into humans.
+
+Patrick: There's an unlimited demand for DNA synthesis if you can get it cheaper and faster. We've made a lot of progress but imagine learning programming the first time you had to pay for every line of code that you're entering into your python IDE. We're still thinking in terms of oh I wish I could get this one week faster but things really unlock once we reach those next levels of scale because we're still thinking about how much every base pair costs at this point.
+
+Jake: As an mRNA company in the past few years-- research scale DNA, like scale, supply, and throughput everything- it has been a revolution. Cloning 6 genes in grad school? When I was in grad school we had a few more tools than that. It's still not like it is today when you can get all this research scale DNA. The other part that is woefully inadequate is the supply of high quality DNA for actual clinical scale studies. One of the things we found at Strand very early on in process development work... mRNA drugs and mRNA vaccines are all made from a DNA template. So you make DNA, then you do other stuff, then you in vitro transcribe that into mRNA and then you purify that. One of the things we found pretty early on is that the mRNA quality that we got out at the end was highly dependent on the DNA quality put into the system. It might make sense, but it's not that obvious that this would matter this much. You would think it should just be the template to read, but it matters. I was shocked to find that the vast majority of DNA based therapeutics whether it's making viruses, synthetic DNA, synthetic mRNA, are made by just scaled up "cleaner versions" of bacterial-scale-up that we were doing in our lab. For instance, if you do molecular cloning in a lab, you take a plasmid, you put it into a bacteria, you grow over night, you miniprep it and you call this pure. But if you were to turn this into a drug, it would be a very different process. It is, but it's kind of not. I was blown away that there wasn't a different fancier system that companies use. There's a lot of GMP DNA suppliers out there and they are completely not created equally. They bring all sorts of different qualities and different downstream products from that. The variability ytou get in clinical grade materials is unacceptable to me, as an engineer, to look at it and say wow these are all companies that are created equally in my head maybe all trusted companies but they go into the clinic and it's still huge variability. There's a lot of room in growing next-gen DNA production capabilities that are going to be easier to scale, cleaner, non-bacterial based production systems from next-gen companies, that's what I find super exciting. If you zoom in at Cerepto, one of the first gene therapy companies, multiple times manufacturing issues have almost killed them. Manufacturing issues hurt them and it's because of DNA supply chain problems. We don't talk about this enough.
+
+Matt: I agree. We're trying to solve these problems.
+
+Tim: These manufacturing issues were happening during the pandemic too. Operation Warp Scale was trying to figure out, do we need more bioreactor fabs? No, it's about the process. All the CDOs are about clinical trials, not for manufacturing.
+
+Jake: I got kicked out of Operation Warp Speed because they were refusing money to CMOs and I complained on CNBC. We got a vaccine and we couldn't figure out how to make it. They said repeal the patents, but I said their supply chain was insufficient.
+
+Matt: I talk with customers every day. We hear the voice of customers loud and clear. It's a challenge. It's not the therapeutic itself. It's hard to get people excited about building this core capability here.
+
+GC: It sounds like we have some excited people here in the audience. On the topic of scale, Patrick, you were leading the gigabase scale team at Ginkgo. We'd like to hear more about the challenges and successes in bringing it into use on your platform.
+
+Patrick: 5 or 6 years ago, we announced the 1 billion basepair contract at Synbiobeta and people thought we were crazy at the time. We have since re-upped our contract with Twist. We were building this foundry to serve all kinds of companies across sectors like agriculture, pharma, and industrial, and we can't have a specialized pipeline for each project that we do. DNA synthesis represents raw design capacity moving into the facility. By partnering with Twist and setting targets around hitting 1 billion bp, it helped us live in the future for thinking about scale. Rather than building it piecemeal, we asked, what does the information and platform we need to build 1 billion bp? how can we turn that into our roadmap? We borrowed lessons from other areas of tech. The semiconductor industry did this well with Moore's law: if you know that semiconductors get better in 18 months, then as a software developer you can work on software today that will run on computers from 2 years from now. We approached DNA synthesis the same way. Working with Twist early we figured out that- early on they had an Excel form, and if you're a PhD in the lab you can copy-paste into the form and send it in. But we were running over the maximum attachment size with the emails we had with Twist. So we setup an API. Today an engineer at Ginkgo needs to drive a DNA design to Twist, they enter it into our design software, our API talks to their API, all the synthesis checks, quoting, etc, that's all taken care of by the API and then our synthesis team receives a barcoded plate back and it moves smoothly into the rest of the process. These things now move smoothly because of our scale. We had to commit to large infrastructure before this started working.
+
+Matt: Semiconductors had Moore's law with clear improvement. Are we having clear improvements consistently in synthesis?
+
+Patrick: There's a bottomless appetite for scale. The world I want to live in is one where DNA is basically free. If you think about things like DNA data storage, a lot of applications open up when you reach that kind of scale. We planned around that. There are some real barriers in terms of where the current chemistry can go. I'm excited to see where enzymatic synthesis can go on this front. You can use biology to make the process better. Think about applying something like Ginkgo's foundry used for the enzymes in DNA synthesis and have a self-improving loop there. We're nowhere near where we should be on that front. I'm excited to see the innovation in that space. There's endless room for improvement.
+
+Matt: If you can commit to a billion basepairs-- when you commit to a silicon fab, you can drive down the cost. Will more capital make synthesis better? Or are we at the capped at where the synthesis can be?
+
+Patrick: This is an area similar to chip foundries. If you can basically rather than investing in the factory itself, you have a supply agreement for a pre-agreed supply agreement for the capital to build that. So finding the process step changes to invest in, like going from 15nm to 3nm in the hcip industry, that model makes sense. But you need the conviction that the next process node will drive that improvement.
+
+Jaime: It's cool to hear Patrick talking about how Ginkgo interfaces with DNA synthesis providers. Benchtop devices are coming online and changing the game. From the perspective of the panelists, how do you guys see benchtop DNA synthesis effecting your respective business models or not? Is it a tool that will be useful to you? Will you pivot in that direction or is it irrelevant?
+
+Patrick: for benchtop, for me, is it solving turnaround time or cost. Form factor is not-- again, I don't even like to think about physical DNA. I want designs going to experiments, not DNA. The machine that it passes through is less relevant, rather than improving on one of those dimensions that's what has my focus. For me, if you can achieve desktop synthesis then you are achieving breakthroughs at larger scales. I'm looking for underlying chemistry that enables that and how it helps on the scale front.
+
+Matt: I take an agnostic views on this. So far we don't find customers want to deploy in house. There are some exceptions to that, like large pharmas that want a degree of control. Most customers aren't begging for deployable implementation. We have capability that could go there, but we're not seeing the demand.
+
+Cristina: If there was something off-the-shelf that could do what we want, we would invest. So internally we have built DNA synthesis internally for our own uses. We're still buying fragments but we assemble in-house to cut down on that turnaround time and get a higher success rate. So much of our DNA that we need really long fragments and they fail at synthesis so we need to bring the fragments in house and clone. IN house we want to solve plasmid construction and if you could do that with a benchtop device then yes- at the scale we need and throughput...
+
+Matt: is that a stopgap but if it was available from a service provider why not?
+
+Cristina: I want my DNA now. I want the turnaround time.
+
+Tim: No customers cares how it is done. They just want it done.
+
+Jacob: One day in synthetic biology, we will stop talking about our cloning methods in our PhD defenses. I think we're probably done talking about cloning methods. Eventually we will stop talking about the DNA. The Ginkgo foundry has always impressed me because it's about scaling. On benchtop, I've seen some of the models for doing benchtop synthesis models and the economics make more sense when you're doing bespoke work that a contractor is not going to be able to do it or they will do it slowly more than their core thesis as a company. If they are really good at making oligos or strands, then I don't need to do that in my already cap-ex crowded benchspace to do this other thing that probably IDT or others are already doing... IDT and others in this space that I'm most familiar with using. Super great turnaround times on their core products. Drop that into my chasis and then do hamilton/opentrons robots to do the rest, that's more efficient for automation.
+
+Patrick: Making a product with synthetic biology shouldn't involve you thinking about how to build DNA. Hopefully that problem just goes away. We need to obsess about this. It makes it harder for outsiders to access what we're doing in synthetic biology. Nobody wants to hear about how you make plasmids. They want to hear about the therapeutics you're making. I don't know if a desktop machine would fit for throughput in our facility. Don't take pride in how you make your DNA. It's kind of like starting a tech company and taking pride in building your own servers when AWS is three. Cloning should not be a point of pride. We have to move beyond cloning as a point of pride.
+
+Cristina: As a team builder, in ensuring the longevity of my organization I'm super protective of my scientists and the science and the creativity. DNA synthesis is not the problem we're trying to solve. We're trying to solve human disease. I want them to focus on this and DNA synthesis should be a solved problem and spend your PhD thinking about hard problems. DNA synthesis is still a hard problem but we have different hard problems.
+
+Jake: It's like saying, I don't give a shit about DOS. It's cool that you were able to use DOS but it's not helpful to computer science now to have known DOS or whatever. Cloning should go away.
+
+Patrick: In your PhD generation, you had Gibson assembly.
+
+Jake: Yeah we had gibson assembly just before I got into my PhD. It helped a lot.
+
+CG: We talked about throughput and length, what about complexity for gene circuits?
+
+TIm: Traditionally this has been one of the bottlenecks for creating long DNA with repetitive patterns. Especially things that involve esoteric organisms or bunch of sequences that you want to re-capultiate into a bunch of things. This is very frustrating. This to us is a place where we struggle sometimes and we're asking a provider to make long sequences. We don't want to think about what's in there but it still needs to play a role in the suppliers that we're using and how they are making DNA.
+
+CG: Matt, where are things today? What kind of work are you doing to overocme bottlenecks?
+
+Matt: I share a vision with these other folks. Nobody should have to care about where the DNA comes from. You want to snap your fingers and have the DNA show up as quickly as possible. When I entered the field, and I came from the diagnostics world, I ran into DNA synthesis problems just for oligos. We were pioneers of high multiplex capacity like 20,000-multiplex single tube reactions and just to get that many oligos took us 6-8 weeks just for oligos let alone genes. This was 2011-2012 timeframe. I wasn't working in synthetic biology at the time. I got fascinated. In 2016, I realized nobody had made much progress. We were still talking about gene fragments and some Gibson assembly. Great technique but you're assembling 1,000 smaller fragments into longer things. The industry had solved the- sort of solved the oligo to the initial fragment step but that's as far as it went in the 2017 timeframe. The vision behind Elegen is that no single technology would solve the entire problem. In my opinion is that you can't solve a complex additive manufacturing process- and Ginkgo probably knows this well- you can't solve it using a single innovation you have to innovate really pieces in the process. Bring lenght, bring accuracy, so that's what we're doing at Elegen. So the idea is todeliver ot the community, the long term vision is as long as you want at arbitrary complexity and reasonable price very fast. We're on the market today with 7kb DNA in 7 days with 1 error in 70,000 which is 20x better than most of your gene synthesis providers. Tomorrow or right now I'm announcing an early access program to DNA that is up to 20 kb, in a few weeks, pure clonal, as well as enhanced complexity which you can exceed what you can typically get on gene synthesis companies.
+
+Jacob: Does this scale with length? With IDT or other suppliers, it's been gated on length. Sometimes especially with new tech, like when IDT announced the 4kb g-block, it was still cheaper to assemble smaller blocks together with Gibson assembly.
+
+Matt: This is the tricky part. Pricing models we can discuss offline.
+
+Jacob: Is it a rapid increase as you increase that length?
+
+Matt: We have innovated some efficiencies that lets us bring efficiencies to the DNA production process. The costs scale reaosnably with the length. You don't have this large step function. If you do some of the traditional techniques- a lot of the traditional suppliers are using traditional techniques. There hasn't been much innovation in DNA synthesis. It's been more about scaling foundries rather than innovating on the methods you use. Our 7kb DNA does not touch a cell at all. But we're albe to deliver clonal DNA from our process, which lets us bring scalability to that process that other folks don't have. You must innovate. There's been a lack of sound innovation across the steps that matter. Elegen is unique in that we have looked at the system as a whole and with laser focus we have changed the steps that had problems.
+
+CG: ... you were mentioning enzymatic scale up and purification.
+
+Matt: We do not use an enzymatic approach. We see that as complementary but we don't need enzymatic chemistry. It can produce high quality oligos but it doesn't get you to a gene to get the types of error rates we get to for 1 in 70,000 you need other steps. We use phosphoramidite chemistry for the first foundational step to our process. We don't need TdT to get to high quality but it could be helpful I'm sure.
+
+CG: Our panelists using the DNA, any questions for Matt while we're here?
+
+Matt: Ginkgo has done an amazing job building out an internal production capability. Most companies don't have the capital resources to do that. So we're, we're trying to democratize that in a sense. Other groups should be able to do what Ginkgo is doing in some respects. Not to encourage your competitors but other people should be able to do what you do without whatever it cost for your biofoundry. As a foundre of Elegen, most people don't think about what it costs to build out and staff these internal biofoundries. I know there has been a fixation on price over the years and we're cognizant that price matters. There's a fixation on price. If you're buying low quality fragments and you're agssembling DNA, it's probably costing you far more than you think, like 30-40 cents per base because you're not at the efficiency of Ginkgo most likely. Most people don't have that efficiency, like if you're running the process once a week and then your Hamilton automation system-- you're spending a lot of money on that DNA and not realizing it.
+
+
+
+
+
+
+
+
+
