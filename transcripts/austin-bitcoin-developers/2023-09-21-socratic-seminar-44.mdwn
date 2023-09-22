@@ -1,0 +1,282 @@
+Austin Bitcoin Developers
+
+Socratic Seminar 44
+
+<https://austinbitdevs.com/2023-09-21-socratic-seminar-44>
+
+This is the anniversary of bringing the meeting back after COVID. Alright, so how many of you have been to a bitdevs before? How many of you are here first time? Wow. These are bear market numbers. Okay. Last month felt like a bull market. First thing is we try to have conversational style meetups. We are just facilitating a conversation and introducing the topics. Hopefully people in the audience will chime in and bring what they know. We try to have a discussion style meetup. Chatham house rules, so don't say who said what, which encourages candor. Also, no photographs or anything like that.
+
+First off, we have a base58btc trivia question. In the first version of Bitcoin Core, fees worked differently than they currently do. How were fees set originally in bitcoin? Was it by coin age, by byte count, by coin age + total value, or there were no fees. What is the answer and could you explain it? My understanding is that in the original version of Bitcoin Core there were no fees. They got quickly added after the fact by Gavin Andresen. They had a two-tier system where some people got free fees and other people had to pay. I don't know the exact details.
+
+Q: So for the earliest transactions, the value of the inputs and outputs are both equal?
+
+A: That would be a good research project.
+
+Q: I guess fees are implicit, so they didn't know where to put it: make a difference, and then we will find a place to put it in the block.
+
+If you would like to learn more facts like this and skills to work in bitcoin, then you can take her class on lightning. When is the next one? It's not just her it's the world's bitcoin education corporation. Week of bitdevs in November. And one in Switzerland. Okay, so come back in 2 months time and start preparing. We will see you then. It's the same week, double header here in Austin. Learn about lightning then stick around and do the taproot class they are offering. Learn all the things in bitcoin in one week, then go to Austin BitDevs.
+
+# OpenSats
+
+OpenSats has published a little bit about how they see the future of bitcoin protocol infrastructure stack looking. Do you want to comment on this? For those of you who don't know OpenSats, how many people here don't know about them? OpenSats is a non-profit- we like to give grants and help people donate to bitcoin infrastructure development. We recently had a large donation and we are now sending money to open-source projects like on nostr, lightning and Bitcoin Core. We try to think about what kind of projects are we going to focus on. What does bitcoin infrastructure look like in the next decade? What kind of projects do we hope people will build? What does anonymous decentralized networks look like a decade from now? What kind of projects can we do as an ecosystem to help grow and scale bitcoin without losing our core values of decentralization? Just some thoughts we had on that. OpenSats was kind enough to put it up.
+
+Q: Are there some exitsing projects that OpenSats is already funding in this thesis?
+
+A: We have been funding the stratumv2 project. We want to preserve the decentralized nature of bitcoin transactions-- it's not just mining pools that pick transactions, but it goes down to miners. There are other projects and applications in the process. There's some around privacy. We also recently I think payjoin is also part of that. I don't think all the grant money has been given out. Applications are still open. Many projects otherwise have to ask for venture capital. If you are building a project that doesn't have consumer input or you think it is good and important to contribute to, or an existing project you want to add to, and you wnat some support for full time work then OpenSats is a good place to apply to. Last month I mentioned if you want help figuring out what a good grant proposal looks like, then feel free to reach out.
+
+# Coldcard
+
+Coldcard had a vulnerability disclosed this month. My understanding is that there are multiple secure elements in the Coldcard. One of them... they used infrared-pulsed laser microscope and fancy stuff to get, something to do with the PINs.
+
+Yeah so, the mk4 basically has a microcontroller that is the "MCU" secure element 1 which is a atec608b and then secure element 2 which is the Maxim ds28c36p which was laser fault injected. They did laser fault injection on the second secure element which has 13 slots. With this, they were able to see if there are trip pins in use. There has been some back and forth because they claimed they could combine with a previous attack from mk3 to get access to the seed.
+
+Q: What are trip pins?
+
+A: Trip pins are a feature for the Coldcard where you could enter a PIN, wipe the device, go to a decoy wallet or a duress wallet. This would show you that there were trip PINs in use on the Coldcard. To compromise and actually get a seed out of the Coldcard, you would basically need to compromise all three- the MCU, the ATEC608a, and then the Maxim. They have pairing secrets with each, they are constantly XORing and using sha256 HMAC. To actually extract seed from Coldcard, you would have to compromise all 3. We felt this validated our architecture actually.
+
+Anyone disagree?
+
+Q: Is this Ledger again? They tried this before. They have a hard-on for you guys.
+
+A: We are the little brother in the room. The big brothers are Trezor and Ledger who have the capital and we are grateful that they even pentest our stuff like this but it's kind of a flex yeah. In general, if you are securing $500k or a million dollars worth of UTXOs probably don't do it on a single sig device. I think this is also a great moment to say we should have multi-vendor multisig. I don't hate you for using an additional wallet from a competitor. As a user, you should definitely look into diverisfying to multiple vendors no matter who you are using.
+
+Q: ... mk5 or something? Is that the plan?
+
+A: TBD. I talked with ndk about it. There are some other funnier approaches, like they keep lasering your secure element so why not put their secure element in your device so that they pwn themselves when they try? Kudos to the Ledger guys for spending this time and money on us.
+
+... I worked in the embedded space, and this guy was concerned about the mk3 one but this one is a nothingburger compared to the first.
+
+A: You have to compromise all 3. The previous one was a 32 byte pairing secret between the two... but this is why they..
+
+Q: You are also screwed if they get physical access, I feel.
+
+A: In general, you should try to not lose physical access of any hardware wallet you have.
+
+# Satslink
+
+This seems to be a new esp32 Coinkite device with bluetooth, wifi and all kinds of things that are surprising. I look forward to seeing what this is used for. I don't know if anyone in this room knows more maybe you could buy one. It looks like the same enclosure as the q1. This is an esp32 based device. It's not the precursor device.
+
+# Chainalysis
+
+Our friend of the meetup Bryan got slandered by Chainalysis. You guys remember last month we talked about how Chainalysis in court was saying yeah no scientific basis for our stuff? After that Bryan was named as an expert witness and said yeah audit the code and see if and how it works or not. So they kind of slandered Bryan by saying he doesn't have a computer science degree and said well he does biohacking stuff and he wouldn't be good auditing code. Bryan said he can't comment on it.
+
+# Gridless
+
+... representative for Bitmain or something. He says 500 megawatts in 6 months. Some great news. It's great to see bitcoin mining get more and more geographically distributed.
+
+Q: What energy sources do they leverage there?
+
+A: All energy is purchased from the government. They have several dams along the Nile. They have several smaller dams. The largest one has capacity for 6,000 MW. Several are operational now which feeds into the national grid. There are substations and.. it's hydro-power.
+
+Awesome, good to have you back.
+
+# utxo-dealership
+
+<https://github.com/supertestnet/utxo-dealership>
+
+Super is not here? He gave a good presentation at tabconf. I recommend watching the video. He made a utxo-dealership where you can swap UTXOs with people but the purpose of this is to swap UTXOs with miners. You can get a fresh new UTXO that has no history because it's from a miner. So it's a privacy feature for bitcoiners, and he sold it like a used car salesman. It's just using HTLCs and stuff and doing some swaps. Is the other team member here? Got it. Nailed it. Talk to him if you want to learn more. Ask him next month.
+
+# opvault-demo
+
+<https://github.com/jamesob/opvault-demo>
+
+This came out this morning. James O'Beirne we have been talking about his OP\_VAULT proposal for like a year now. He has been working to add it to Bitcoin Core eventually. He has a work-in-progress PR for Inquisition which is one way to test Bitcoin Core soft-forks. He has a demo wallet of it now.
+
+There's a nice video on youtube showing how it works ( <https://www.youtube.com/watch?v=7Zwm5iHFyBQ> ). He did the happy path and then the unhappy path like when you turn off the watchtower, you have someone broadcast a coin and then you broadcast the savior transaction.
+
+It's all written in python. It's easy to read. It's cool to see this stuff worked on.
+
+There is some comment in here about watchtowers. What is that coming from? It's just python code? Okay. Watchtowers are just looking for the UTXO to be published, and you know what it is going to look like.
+
+If you watch the youtube video, you see you broadcast the transaction and then the console fills up with the watchtower freaking out and then he types in a command and gets his money back. It's cool to see that visualization of the wallet working.
+
+# ZeroSync headers sync
+
+<https://twitter.com/roasbeef/status/1700598667546419552>
+
+This was announced at tabconf 2 or 3 weeks ago. It's cool. ZeroSync we talked about before but right now you click this button on their site and you can verify every single bitcoin header that has ever happened on the chain in a Zero-Knowledge Proof (ZKP). The end goal is to verify the entire bitcoin blockchain and sync instantly. Downloading the data is different, but you could sync the headers and get the UTXO set. They have the headers working, and they are working on more.
+
+In the talk, they make this ZKP proof that costs them like $8,000 of cloud computing to build the proof. To do the whole chain right now would be a few million dollars. They were talking about all the challenges and how they could make it faster and cheaper over time.
+
+Q: What costs a million dollars?
+
+A: To build a proof. This proof is like, doing all this stuff and doing this fancy cryptography and hashing to kind of build the ZKP that this is the correct chain. The server they were using had 500 GB of RAM and tons of storage and a bunch of CPUs.
+
+Q: How big is the proof?
+
+A: It's only 100 KB.
+
+This is just headers only right now, for $8,000 for the proof. The million dollars comment is about verifying the whole chain entirely. They have some ideas for reducing the cost of this computation. They were talking about full consensus rules with sha256, and then transactions but not scripts and then lastly the script interpreter would be done in zero knowledge eventually.
+
+With the header chain, you have a proof and then you can take any header and say yes this is valid part of the bitcoin blockchain. With the more expensive one, you can take a transaction or UTXO and maybe it states against the proof and says this is a valid transaction and an unspent output.
+
+It's just the latest header and latest proof. Then you can start syncing from there. This covers difficulty, proof of work, only headers so it does not include UTXO set. For the million dollar one it would include the current state of the UTXO set so that you could instantly sync a wallet. Furthermore, you could combine this with utreexo to only download your own UTXOs which is super small, then verify it and have an instantly synced wallet.
+
+The other cool thing is that this is all running in your browser and it's written in wasm. So you could have a node in your browser with fully verifying the chain.
+
+I want to put this in mutiny wallet. It cost them $8,000 to make a proof and they did it once and we're already a few thousand blocks ahead of that. If they could get the cost down, and put one out every single day, that would be really cool to have. If the mempool gives us false chain data, then we could detect that in a browser wallet.
+
+The other thing is that they can't prove to you that there isn't a different longer chain. That's one thing they stress in the video.
+
+Q: How large is the compute? Can you farm out this compute to other people?
+
+A: I don't know. Well, he paid AWS $8,000.
+
+It has to be parallelizable for that. I'm not sure if it is parallelizable. I don't know if you could distribute the 500 GB of RAM across other people. If they were parallelizing it, they would probably be using lots of GPUs.
+
+He has a slide at tabconf of the whole breakdown of why it cost so much. I don't understand this stuff but it's interesting. He wants to switch to GPUs, okay. That would probably reduce the cost a bunch. That's usually how you parallelize it. It's all GPUs.
+
+# Replacement for APO + CTV
+
+<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2023-August/021907.html>
+
+The guy who wrote this is - I think this was born out of a frustration from people who want APO vs who want CTV don't need to be at odds. It's a manufactured conflict. APO is ANYPREVOUT and CTV is CHECKTEMPLATEVERIFY. They were two separate proposals that introduced covenants in different ways.
+
+The original motivation for APO was for the eltoo protocol which is another way to enforce channels in lightning in a more efficient way. CTV on the other hand was born as a way to do non-generalized covenants to do things like congestion control and OP\_VAULT which is what inspired jamesob to build out his own vault primitive.
+
+They are both simple but powerful primitives. With APO, you could simulate things like drivechains I think someone came out with a proposal for that in weird ways but it's interesting.
+
+This proposal here is a way of doing both pieces of functionality with a single proposal. The way it does this proposal was using another proposal using TXHASH and also CHECKSIGFROMSTACK.
+
+The idea with TXHASH is basically... today we have things called sighashes. You have a flag that says here's what I am signing in the transaction. So then the interpreter can pull up things from the transaction what was hashed and then signed. And ANYPREVOUT commits to things that are not the input: so you don't commit to the inputs, and you let anyone add any inputs they want.
+
+This was offered as an alternative to CTV because CTV commits to all the hashes of the transactions that it would spend to. So what if we make a hash from these things, and then verify a signature on top of that hash and use CHECKSIGFROMSTACK? TXHASH was proposed in a way that we could version this so that different versions would mark how we build out these various hashes.
+
+At one point the proposal lists out the... in the proposal there are different hash modes. Hash mode 0 is a hash of bip119 which is CTV. If the hash mode is 1, then it looks like APO. There are basically five total versions proposed here.
+
+Another thing is that soft-forks are hard and expensive in terms of community and review time and testing and building it all out. So this proposal is a way of saying everyone could get what they want and we could have all these projects but with only one soft-fork. You could get efficiencies in DLCs with CTVs.
+
+So if you do this one thing, you can get each of them. Maybe there is reason to be against a proposal, but being mutually incompatible is not one of them. He did a good interview on the Stephan Livera podcast recently. There was also a good podcast on MuSig2 for BitGo. He also talked about how he came up with this proposal. Pretty cool.
+
+I don't know if it will garner support. CTV and APO and ... okay, OP\_NOP instead of OP\_SUCCESS who cares. It's also one of these things where it splits up the attention in the community in general. The really neat thing about OP\_VAULT is that it actually uses OP\_CTV. Did that replace unvault? Yeah, CTV is the unvault. So there is a concrete use case and he is building actual applications that people can use. At the very least it will hopefully bring some attention to these things should not be viwed in opposition. It could be both.
+
+TXHASH is at least a useful vehicle to understand some of the commonalities. It's probably too complex. It's a full system basically. SIGHASHes are very complex and this is kind of like rebuilding the SIGHASH system inside of script.
+
+# Private collaborative custody with FROST
+
+<https://gist.github.com/nickfarrow/4be776782bce0c12cca523cbc203fb9d/>
+
+This guy has been working on FROST stuff a bunch. We were talking about FROST on hardware wallets a couple months ago. He has been doing a bunch of research on different FROST applications. He came up with a private collaborative custody with FROST where it's like on-chain multisig where you have different keys. The collaborative custody companies can see the keys. But with FROST, you can do it in a more private way where they blindsign with this and you don't have to trust the third-party. Not the privacy, just the security.
+
+This takes advantage of the fact that when you do a FROST signature everyone contributes one share. So there's some wiggle room such that when the signing service gives a signature then they don't need to know what they are signing and they will also never see any proof of this on the blockchain. That's a high level way to think about this.
+
+It's pretty cool. It's a little scary. It's basically a blind signer. So this service would have to be heavily authenticated and secured.
+
+It does highlight just generally the benefits of collaborative custody. This is the thing I was debating because in this system the collaborative custody can't censor... we also can't censor we can just choose whether or not to sign. You don't know what the onboarding process would be; the blind signing might.. they can still choose not to sign or shutdown. The better advantage is that you can do with some multisig setups today is not knowing the bounds. When you are setting up a multisig wallet, everyone has to share the xpubs, you create the wallet and once you have that you can generate every possible.
+
+Today collaborative custodians can offer blinded xpubs which is a proposal from Flaxman. You can do this stuff as well maybe with 75% of the benefits in the way that works is that-- you can't, the censoring signatures or censoring transactions it's true to a certain extent but the way blinded xpubs works is that you generate a child xpub from the company's xpub at some path the custodian wouldn't know. It would be a semi-random number or random xpub. The custodian cannot, it would be very expensive to just scan the blockchain for all possible xpubs that end up getting pushed on chain. So you can keep it private until you need the company to sign. If you ever needed them to sign, then you would reveal to them the pubkey and the path and you would ask them to sign with that key. In that thread, Flaxman mentioned there's a way to do blinded signing with the blinded xpub protocol. You might be able to hide other transactions.
+
+You have to sign the message digest. It's a transaction hash. If you're scanning the chain, you can find the sighash that you signed. No, you can prevent that because you can use Schnorr blind signatures and then they don't know what they signed. How do they not know what they signed? I don't know how Schnorr blind signatures work. I think you can blind it. They can see it's their signature but they... but they know what message they are signing. So you don't know what message you are signing? Does that work with FROST though? I assume so.
+
+There is a blind signing nostr thing where you can type in any message and with Schnorr it will sign it and they don't know what they are signing. Just a terrible hardware wallet right?
+
+It is worth noting that this requires that. I don't know if they mention that in the blog post. You can't have a private blind signer without having a blind signer. You can't just use FROST. You also need a blind signing mechanism is what I'm saying.
+
+Is FROST secure with nested blinding? I don't know. Okay, he does mention it in the post. Okay.
+
+Q: ... pass the message, but the on-chain footprint you can't trace anything about the transaction you signed?
+
+A: That would be the idea. The signature is just one signature and you don't have-- so it would look like anyone's random wallet signature. So you wouldn't be able to tell oh this was an Unchained client for collaborative custody. You don't know which 2-of-3 signed.
+
+Q: I wrote about multisig vs MPC. One of the benefits is who created the signature and who is accountable if the signature happens when a signature shouldn't have happened. It seems like a scenario where it is fun science but in practice you should prefer on-chain multisig for accountability reasons.
+
+In the author's defense, he acknowledges that in the post. He says a lot of companies would probably not be able to offer this because really they do want to be able to audit post-facto on the chain. When you are asked to sign in the blinded xpub scheme, you have to know, and before that point you don't need to know anything.
+
+One of the use cases for collaborative custody is to hire a key agent to be able to assist in an inheritacne situation. I think private collaborative custody in FROST is challenging because they don't know who you are and you don't know who they are really. So it's like a really bad hardware device. Well, they might know your identity and they sign when you login or you could heavily KYC the person but you won't necessarily know that they own bitcoin or how much bitcoin they own.
+
+At the point where you have a piece of authentication, where this blind signer needs you to have a piece of authentication to get you to that key, then why not just have that key yourself? If all it takes is some KYC data, how is that any different from a worse custodian or something other than some privacy? Getting on zoom is not very blind. Well, you blind your on-chain bitcoin not your identity. Anyone would be able to do this on behalf of someone else and get a signature and do their transaction. They wouldn't know.
+
+Maybe it needs to be one piece of a bigger quorum. Maybe it's more like a hot wallet, and other members would be less blinded and have more controls? Someone could just get a video of your face and do an AI deepfake or something. I don't know. They will figure something out.
+
+# Bitcoin-like script symbolic tracer
+
+<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2023-August/021922.html>
+
+Bitcoin script is kind of hard to read. It's hard to parse. Basically this tool... the idea is that you put in a script, they have a fancy one here in the email, I don't know what that script does but he says this tool will create a tree of possible case that could happen so that you can check are there any edge cases or anything. It traces down every single possible path and so like, he has, he put this fancy script and says.. the first IF branch will always fail, so then you can remove that one. The analysis report will show the possible outcomes. You can parse out everything that can happen in the script including success conditions and fail conditions.
+
+In the github repo, they have extensions for adding other opcodes. Wasn't this the whole motivation for miniscript was to be able to do static analysis? Kind of. Miniscript has you can still-- miniscript, you can write logic bugs in your miniscript. But this tracer will show you the logic. Seems like ChatGPT but for scripts? I wouldn't call it that.
+
+# Prune unspendable UTXOs from the UTXO set
+
+<https://github.com/bitcoin/bitcoin/pull/28400>
+
+With ordinals and inscriptions, the last 6 months has gained multiple gigabytes in the UTXO set. Right now we prune out like things like OP\_RETURNs that we know that can't be spent. There are more outputs that we can show cannot be spent. So they want to prune out from the utxo set all the p2pk transactions with invalid pubkeys or if there's a multisig with an invalid pubkey then prune that out. There are like 20,000 UTXOs like this. There's a fair bit. A pay-to-multisig is going to be a huge output. SuredBits found a bug because a taproot did a similar thing with an invalid pubkey. If it's a valid transaction then go ahead and let it go through, but prune anything that it is impossible to spend through.
+
+Q: Can someone explain the-- prune the UTXO set by identifying invalid transactions that cannot be signed?
+
+A: This is a response to ordinals... ordinals have grown the UTXO set, and we want to find a way to shrink it and this is one way to do it.
+
+Q: Is there something about those transactions that this applies to?
+
+A: Stamps just take an image and takes every 32 byte chunk and says it's a pubkey and encodes that into a transaction until an image is encoded. But 90% of those are not going to be valid pubkeys because they are from the image not from generating pubkeys.
+
+Q: If it's a 32-byte x-only pubkey, I think half of those are going to be valid though.
+
+A: If you are doing multisig with at least 2, then it's going to...
+
+Q: As long as they are n-of-n...
+
+That was actually one of the things here too. If they need 3 signatures but there are only 2 pubkeys, then that's obviously invalid and you can discard that as well.
+
+I worry about stuff like this for utreexo because the logic is going to get kind of crazy. Your utxo set is going to be different, right? That would be an issue. With utreexo, you need to at least do it once. And then you need to agree on a utxo set with others. With utreexo, you can have a compressed utxo set. You still need the full thing. So you need a proof for it. It will be a smaller set, but the logic for calculating it will be more convoluted. One person with this on, one person with it off, you couldn't do utreexo between them.
+
+# Compressed bitcoin transactions
+
+<https://bitcoinops.org/en/newsletters/2023/09/06/#bitcoin-transaction-compression>
+
+Bitcoin transactions have a standard format. The smallest transaction is about 150 bytes. This person was wondering if there is a way to make them even smaller for things like IBD (initial block download). The idea is let's find the most minimal way to encode everything into a transaction. Instead of having an outpoint, why not encode it in the same way as in lightning where you have a block index, transaction index, and output index, and that's only 4 byte. What about using minimal encoding of integers and fallback to full size if needed? What about stuff like for a non-taproot signature you can do pubkey recovery where if I give you a signature and a hash and then this signature goes with this hash and the public keys goes like this because you can then remove pubkeys from transactions and just derive it from the signature there. There's a lot of ways to reduce excess data. You wouldn't do this for consensus or block data, but this could save bandwidth for other purposes. It's an interesting thought process that maybe this is useful somewhere. It's not like gzip or something. It's a few bytes here, a few bytes there.
+
+# Adaptor signatures
+
+<https://twitter.com/n1ckler/status/1693650163774963946>
+
+There is an entire adaptor signatures written into libsecp256k1-zkp. Adaptor signatures are the fundamental thing behind DLCs and PTLCs and all the cool stuff with Schnorr and taproot all need adaptor signatures. We can do it with ECDSA but it is ugly and it would be pretty bad. With Schnorr, you can do it really cleanly. I was looking at it today. It's only like 200 lines of code. A summer of bitcoin student did it. It was cool. Summer of bitcoin ended a while ago but he's still working on it. That was cool to see.
+
+Q: What do people use right now if it wasn't in libsecp256k1-zkp?
+
+A: They have an ECDSA version of it in that library. I think it's merged? I don't know. That's what we were using for DLCs. Nobody is using PTLCs yet. But the problem with the ECDSA version is that the size is way bigger and there's a security proof I think it's there but it's more questionable. This is the "poddles".. discrete log equivalents. They are both in the -zkp library.
+
+The security proof for the existing one is more questionable- it's correct but it's just very complex. Adaptor signatures don't go on-chain, it's all off-chain. The problem with the 2p-ECDSA.... the size is like 97 bytes over 64 bytes. But it can add up for DLCs. CTV kicks its butt yes. I'm excited to see adaptor signatures get more used.
+
+Didn't it used to be ElementsProject/ and now it is called BlockstreamResearch on github? I think they forked it to BlockstreamResearch now. I think Blockstream Research is building its own brand and Elements Project just doesn't sound right.
+
+# Scaling lightning with simple covenants
+
+<https://lists.linuxfoundation.org/pipermail/lightning-dev/2023-September/004092.html>
+
+A lot of CTV motivations is for things like OP\_VAULT. But there are not a lot of talk yet for using CTV for scalability. So here they are talking about how to use covenants to scale Lightning. Right now you have to be online and share a UTXO between people. Lightning won't scale if every single person needs to do that. So we need a way to share UTXOs between people.
+
+Channel factories is the naive way. Let's have everyone in the room share a UTXO. But if one person is offline, then nobody can update the state of the lightning channel and then you get a force close. For causal users, you might have an app that isn't open and then you can't sign. It just won't work.
+
+It was interesting in the opening here just talking about the practical limitations of opening a channel factory. 1,000 people is out of the question. 100 people would be hard. If you organized everyone, except the last person, then you have to start over completely with the way channel factories work today.
+
+We have that problem with Wasabi even today. Just making sure everyone is online and then there are DoS vectors. Which is fine for coinjoin, because you aren't necessarily needing of time. But with lightning channels, presumably you want to get onboarded and start making payments or receiving payments.
+
+So in this email, they were talking about the end user setting up a mobile wallet and accepting their first lightning payment. He suggests that instead of each user own their own channel or participating in the channel factory, he calls it a time-out tree. You have a covenant tree of everyone who is going to be getting a channel, kind of like ARK where everyone has a UTXO in the tree but it's actually a channel. Then there's one dedicated user like LSP or something who is the dedicated user who is always online. The covenant is that at the end of this timeout, the LSP can spend the money but before the timeout it's a normal lightning channel. This lets you have these on-chain... you can have everyone have their own channel inside of a UTXO. The only problem is rolling over after the timeout. It's a hack how they do it: they create a new channel, in the next round, then you send your entire balance from that first channel to the second. So you can have these roll-overs without ever going on-chain. It's weird because you can't really send your whole balance on lightning, you have these reserves, HTLC limits, and fees, so it would be kinda hard.
+
+It's the first actual proposal combining CTV or any covenant with lightning so that's a new application. If you could do this, then you could have a very scalable LSP and lightning wallet on mobile phones. The other problem is that you have to send your full balance to the new channel.
+
+One of the key insights we got from some of the more limited covenants is that there is this idea that you can do this in a non-interactive way. When there were talks about doing DLCs with CTVs where you do a non-interactive contract where you can deposit directly into a DLC from an exchange. If you are pre-determining the outputs that a single UTXO is committing to, then you can reduce the interactivity, which is how you can scale these things.
+
+...
+
+Q: ...
+
+A: You are penalized if you break the contract early. Similar to force-close. You will have to pay for everyone else's because you have unwound the commitment.
+
+Q: Seems expensive.
+
+A: It has similar on-chain comp to... it doesn't have a transaction every 5 minute thing, but if you have to force-close you're going to have a ton of transactions on chain. Most of it will be burned in fees.
+
+Q: It basically prices out enforceability.
+
+A: Yeah, unless you had a large amount of money. If you are batching maybe a ten or a hundred people, maybe it's manageable. But just don't force-close it, right? Nevermind.
+
+# UTXOracle.py
+
+<https://utxo.live/oracle/UTXOracle.py>
+
+It's a python script that by looking at the UTXOs on the blockchain they are able to figure out the bitcoin price at the moment without checking any exchange or any other data source for what the market price is. You can see this by looking at round numbers in bitcoin transactions. You might be able to influence the price that they see by constructing certain transactions, you can literally test this on regtest. But it shows the herd mentality of humans. We basically operate in a relatively predictable way and people like round numbers and you can extract a market price. He came to Austin Bitdevs about 2 years ago and presented the idea. You can at least check the price an exchange is giving you, and then check against the blockchain.
+
+Someone on twitter was saying this works until everyone uses it. Yes, that's what Bryan was just saying it. If everyone is on the bitcoin standard, then it also operates differently. But it works because the majority of humans operate in similar ways. But most people aren't going to use this. They are just speculators and investors and stuff. Even if you do buy something with bitcoin, it's going to be priced in dollars. If the bitcoin price doubles in a minute, then that data won't show up on chain for a day or two.
+
