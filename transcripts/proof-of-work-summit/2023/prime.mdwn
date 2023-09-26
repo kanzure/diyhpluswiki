@@ -1,0 +1,95 @@
+Prime layer 1 for bitcoin and new opportunities for miners
+
+Maxim Orlovsky
+
+Maxim Orlovsky is one of the key thinkers in our space trying to move bitcoin forward from some of the limitations that Vlad spoke about this morning. Today he is going to be talking about the Prime layer one for bitcoin.
+
+# Introduction
+
+Some of you may know us: the LNP/BP Standards Association. Hopefully this will work. Some of you know us as the creators of RGB which is a smart contracting system for bitcoin and lightning. These are made with a new paradigm Peter Todd calls client-side validation which appeared from the early works of Peter Todd from 2016. Many years have passed until we were able to introduce this.
+
+# Client side validation
+
+The core idea of client-side validation is to not keep data on chain or accessible by all the users. Only the owner or beneficiary or party of the smart contract holds, knows and validates the state of the contract which means great scaling and privacy gains.
+
+# Prime
+
+It's a new layer one for bitcoin made with RGB and client-side validation. With RGB the original idea was to use blockchain as a commitment layer. We don't store smart contracts in the blockchain layer. No user data. Just a cryptographic commitment. We use a special primitive called a single-use seal which allows us to reuse the bitcoin blockchain as a way to prevent double spending.
+
+# How blockchain works
+
+Then we asked ourselves: do we need a blockchain at all? The answer that we found is that we don't need blockchain as it is today. How it works today is that a blockchain is a chain sequence of blocks where the header of the block points to the previous block and commits to the previous hash of the block. The block itself commits to a set of transactions through a merkle tree root. The core property of blockchain is that everyone validates every transaction from everyone and as a consequence it has poor scaling properties. It also has poor privacy because the blockchain is a public ledger even though the ledger is decentralized the data is centralized which allows Chainalysis and many many other bad effects.
+
+# How prime works
+
+Here, we change that concept. We still have a sequence of block headers. Unlike the block chain, each client validates its own part of transaction history. Others in the world don't just not validate it, but they don't see it. By doing this, we actually gain privacy and scalability. Each party validates just its own part of transaction history.
+
+# Double spending prevention
+
+A few tricks are required to do this. It was impossible before client-side validation. With the existing blockchain, you would be able to do double spending or you would do a double commitment and nobody else would validate that. If you see some data from another user, you have no proof that he didn't send someone else a different version of the history. No uniqueness of history.
+
+We have a new primitive based on merkle trees and we replace a UTXO with a single-used seal definition which is a random 256 bit number. It's not a private key. It's just a random number. The client wants to send it, it sends transaction referencing the UTXO to the miner. It can be any transaction or smart contract state.
+
+There is an interactive protocol with the miner and the miner builds a large merkle tree pretty much the same as it builds a bitcoin block. But the places where this transaction gets into the tree is a well defined place, it is the value defined by the seal divided by the width of the tree. If a transaction has happened, then there is a proof that it can only happen in a single place of the tree.
+
+When you do the transfer, you provide these proofs and the proofs of access of the transaction in the previous blocks. You disclose what was in this place where this transaction may happen. If there was not something else there, then it shows that it was not spent before.
+
+# Scalability
+
+The bitcoin blockchain allows for something on the order of a dozen transactions per second. With Prime, it scales logarithmically with the number of transactions. Visa is about 5,000 tx/sec and prime is about 20 million tx/sec because we do not store this huge merkle tree. [....] This system potentially can scale to a level of something like solar system scale civilization.
+
+The price of this is that the user will need to keep about 6 gigabytes of data per year per single seal that they have. The system is structured such that most of the data is reusing the same seal.
+
+# Privacy
+
+There is no public transactions. There is no concept of an address and therefore no reusable addresses. No chain analysis is possible. There is interactivity required with miners but we have a schema where the miners are doing a big multi-peer lightning channel and you use a special product of that which allows you to keep the user.
+
+# Other advantages
+
+It is post quantum: doesn't use elliptic curves. There is no script at the Prime layer 1. It will help ossify the system faster. There are no soft-forks required because the system is quite simple and doesn't do any public validation. We do not need public consensus changes on the validation because each party uses their own smart contracts and they are free to upgrade in their own ways. Another interesting thing is that because the layer 1 is stateless, no coin is possible. There will be no coin possible on the layer 1. This means that this system would be an upgrade from bitcoin blockchain and bitcoin can continue to exist as a main asset of this system.
+
+# Native PoW mining algorithm
+
+Prime also provides a native proof of work mining algorithm. The miner creates the large merkle root and he needs to find the bits of the merkle root such that all seals submitted by the users which are related to their transactions need to get into a dedicated certain place. We need to find a number when we divide the value of seals you always get a decent result in the merkle tree for a location. This uses sha256 hashing but also it's not acceptable to bitcoin ASICs because there is a different structure of this computation and other operations involved like modulo operation. It can also run on modern CPUs and GPUs. It can be bootstrapped without ASICs. 
+
+To give an idea of the workload, with an Intel i9 CPU processor it takes 10 minutes to find a solution for 200,000 seals.
+
+# Bootstrapping mining
+
+For a while, the Prime mining will be lower hashrate than bitcoin but we will get to bitcoin's hashrate many years later. Prime will be secured by pegging into bitcoin proof of work algorithm on existing blockchain ((mainstay?)). After this, the pegging would be removed and Prime will run this proof of work algorithm without dependency on proof of work.
+
+# Pegging
+
+Pegging will be done with a different kind of merged mining. Today you can merge mine by submitting a hash to the miner and he includes this hash into his coinbase transaction. That's how it works these days. There was a proposal to improve it which requires a soft-fork. But this version does not require a soft-fork. Miners need to be aware of sidechains, they need to do their own validation and they need to upgrade their software.
+
+# Single-use seal merge-mining
+
+We can use the same concept as used in RGB and use a single used seal where we do single used seal merged mining where you don't need a miner to participate in mining this other sidechain or something or some other chain. This algorithm can be applied not only to Prime but any existing sidechain. The idea is that at the genesis of the chain you decide some transaction in the bitcoin blockchain and you pick a UTXO which is ANYONECANSPEND and then a miner, any miner, creates a new transaction in which it commits to the header of the block he found and this transaction includes an anyonecanspend output. [...]
+
+This algorithm does not require a soft-fork on bitcoin. It does not require interaction with existing bitcoin miners. The miners do not need to run or validate anything new. Main chain miners and network do not even need to know about the sidechain or sidechain miners. Moreover, there is a permissionless participation for new sidechain miners and it is applicable to any ideal sidechain so we are planning to use it with prime. But other sidechain projects may use it instead of waiting for the soft-fork bip301 to be activated.
+
+# Road to Prime: permissionless launch
+
+The roadmap to launch Prime is quite straightforward. All we need is a technical implementation. Most of the business logic is already part of the RGB protocol. The layer 1 can be implemented in about one year. No soft-fork will be required for bitcoin.
+
+# FAQ
+
+Bitcoin can eventually move to this system. Today it exists as part of the bitcoin blockchain. With RGB, we are developing a way how bitcoin can be lifted into RGB system on layer 2 and then eventually when bitcoin blockchain becomes less and less used then bitcoin can continue to exist in the Prime layer on top of bitcoin prime. The way how bitcoin will be moved to RGB is this trustless peg-in and cryptoeconomically secure trustless peg-out.
+
+# Radiant: peg-out state channels
+
+We call this peg-out "Radiant". It is made with a state channel. It's a lightning-like state channel with a sequence of timelocks. When you peg out, you ask a federation to setup such a channel. It runs verifiers. These verifiers are open set, so they all provide a state but it's made from a community so they can't predict because they use reified randomness. If you don't agree with a set of verifiers, then you can penalize them with slashing a stake and you can use special arbiters who can come from an open set and they need to reach consensus. If it's not reached, then the process starts again and the arbiters are also slashed on their stake. We also have a proof of strong nash equilibrium that provides a guarantee that this system is cryptoeconomically secure which is worse than being cryptographically secure but still much better than what you can achieve with a federation today.
+
+# Modularized approach
+
+These 3 things comprise the whole system: it's Prime, seal mining, and Radiant. RGB is a Turing complete smart contracting which is tightly connected to Prime. You can do deploy and mine sidechains without miners and without a soft-fork. And Radiant is a cryptoeconomically-secure peg-out from bitcoin mainchain which is an alterantive to bip300 drivechains but no soft-fork.
+
+# Implementation
+
+How are we going to do this? We want to develop layers on top of bitcoin and for bitcoin. Right now we are crowdfunding for people interested in funding this development. It's not funded by a coin or ICO or anything like that. It's developed in the same way RGB was developed. If you are interested, join the community and become a member of the association at lnp-bp.org/membership.
+
+# Q&A
+
+Q: What happens if a miner refuses to give you a proof of inclusion?
+
+
