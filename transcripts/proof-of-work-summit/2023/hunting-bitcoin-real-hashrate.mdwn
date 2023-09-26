@@ -1,0 +1,98 @@
+Hunting for Bitcoin's real hashrate
+
+Jameson Lopp
+
+# Introduction
+
+Alright. So, why are we here today? Really it's because proof of work is a fascinating phenomenon. It has a variety of different applications. I think most of us here are familiar with using it of course for mining or securing proof of work consensus networks. But PoW is a technology that has existed for about 30 years now. It's really only in the past decade or so it has started to get more acceptance and understanding. It's the understanding aspect that I as a researcher find particularly interesting. When I was asked to come here and talk about proof of work, I wasn't entirely sure what I was going to talk about. Over the years many things about PoW have been interesting to me. On my own blog, I found 10 different essays and research pieces that I have done over the past decade that I have tagged with proof of work or mining. Most of tem investigating the various aspects of block creation and hashrate distribution and historical aspects of mining. But in 2021, you will see that I used PoW on my own website to stop all the stupid spambots that are trying to use my contact form to send me advertisements and spam that I don't want. It works pretty well for that. But there are so many aspects of PoW and its application that merits further exploration.
+
+# Satoshi's perspective
+
+Proof of Work I think was interesting from Satoshi's perspective he talked about it in a few different ways as PoW is a solution to synchronizing essentially the dissemination of data in the blockchain network. How do we take a piece of data and somehow modify it or alter it or give it this characteristic of integrity so that we can then share that data out with the world without a care for which intermediaries or third parties may have handled that data at some point? As Satoshi said, PoW has this really nice property that it can be relayed through untrusted middle-men. The proof of work is its own self-contained piece of digital integrity. It is simple mathematical construct where you take that data, you run a very simple algorithmic computation on it and you can be ensured that it has not been tampered with and someone has put a decent amount of energy into ensuring that data.
+
+# measuring proof of work
+
+I will now talk about the difficulty of measuring proof of work. This gets into the mechanics of the poisson distribution of the expected output from a given amount of hashrate. These matters are probabilistic and they are not perfect in that you can look at a proof of work and know exactly how much time, money, cost and CPU cycles were used to make that proof but you can get a generally good idea. These proof networks work so well because you can scale these up to millions of machines around the world that are all working in concert and the law of distribution and averages makes this work out nicely.
+
+But if you are looking at only one particular proof, then you don't know how much work went into it. I have found the measurement problem very interesting. I think of proof of work as the wind or the natural phenomena that is out there. We know that there are a ton of miners out there mining proof of work networks but we can't precisely know or measure how much of that there is or the amount of computational cycles going into these proofs.
+
+# Estimating the global hashrate
+
+But I wondered: how close can we get to accurately being able to measure the amount of computational cycles or the global network hashrate? I will specifically talk about delving into trying to understand the bitcoin hashrate. Much of what I will talk about will be applicable to other proof of work networks but there will be caveats around data collection.
+
+How much work went into a proof? The specifics aren't super specific you don't need to know this but it's a simple formula where you can look at the known difficulty target for a given block, and the number of leading zeros in the proof that were required, you can work backwards from there to know if the difficulty was so much then we expect that somewhere around this amount of work would be required to be put into it.
+
+The variable that goes into estimating global hashrate and global level of work being performed is the number of trailing blocks: how long of time window are you looking at to figure out aggregate average of total number of expected hashes to be performed over a given amount of time? Thankfully we don't have to do this math by hand. If you are running a node, you can run getnetworkhashps (per second) then it gives you the numbers for you.
+
+# Hashrate estimation discrepancies
+
+If you check websites that tell you the global hashrate, and then you try to line up these different charts then you might find that they don't align with each other. Sometimes they are using different algorithms or estimation methods or they are doing a different time range to try to make their own estimates.
+
+This can be problematic if you want to know real accurate hashrate.
+
+# Hashrate Index
+
+Hashrate Index is a website that has some thought pieces around particular estimates and why you should use them. They believe that the 7 day trailing estimate is a pretty good approximation for total hashrate. We can see in this chart it is pretty smooth and not too volatile.
+
+# Kraken's "True hashrate"
+
+Kraken put out a whitepaper a few years ago for what they called "true hashrate". They did not converge on a specific algorithm to give you the best and most accurate hashrate. Rather what they did is they took the daily 140 block estimate and they would then use a 30 day rolling average of each of those daily estimates. Find the standard deviation for that, and then what you see... that's the actual volatile chart is that daily hashrate. Then what they would do is find that standard deviation which is the blue shaded region in the graph, and then calculate the 95% confidence band of what the true global hashrate was. Unfortunately, this is like 40% in either way potential deviation. So I would say that if you're calling that a confidence range then I would not be very confident of picking any particular number in that range.
+
+# Hashrate estimate volatility
+
+I tried to understand the matter myself. A few months ago I had a blog post where I started writing a bunch of scripts to output many many different hashrate estimates across different time ranges. For simplicity, here are my different estimates across different ranges. It's highly volatile if you are only using the past 10 blocks which is about 2 hours worth of data. Once you get up to around 3 day or 300-500 block timeframe, then that starts to smooth out a bit more. But the downside is that the shorter timeframes can have more distortion and more volatility on the hashrate and make the hashrate appear a lot higher or a lot lower than it really is.
+
+I think it's generally agreed that the 7 day or around the 1000 block hashrate is a pretty good mixture before getting that volatility and getting something that is a bit more predictable and accurate.
+
+As you go out to 10,000 blocks or multiple weeks yes it's smoother but it's always going to be off by more because you start lagging whatever the real hashrate is. If you think about it, there are lots of miners out there constantly adding machines to this network and you will be several weeks behind whatever the real hashrate is.
+
+# braaaiinnns pool data collection efforts
+
+One of the interesting and novel things that I stumbled upon is that there is a for us to start to get a better idea of what the actual accuracy of these measurements or estimates are. If you are doing hashrate estimates, then the goal is to only work off of the data that is available to you in the blockchain. The problem with this is that you have no external source that you can check against. What I found earlier this year is that the braaains mining pool has started to collect a "realtime hashrate". For the past couple of years what they have been doing is that every few minutes they ping every mining's pool API back there and they get back the self-reported hashrate is. Thankfully they were kind enough to give me a full data dump of all these measurements. I chunked it into blocks of data.
+
+I quickly discovered that for the first year or so of this data set, it seems very wrong. My suspicion is that they were not collecting from all the mining pools. But after that first year, it starts to line up pretty well. It seems like they started to collect data form all the public mining pools.
+
+I have been using this data for performing my calculations around to figure out how well the pure blockchain data based estimates are performing.
+
+# Hashrate estimation error rates
+
+I started calculating error rates. The one-block estimate is insanely wrong. You can be 60,000% off from whatever the real network hashrate is. When a miner gets lucky and finds a block a few seconds from the last block, it's not because the hashrate went up by 60,000% it's just luck. It has to do with the distributoin and finding these "lottery numbers" as it were. So we have to throw out those blocks.
+
+The 10-block estimates, you can see these are getting better. This is gets down to an error rate range of 300-400% which is still pretty bad. This is still worse than the Kraken "true hashrate" that they did back in 2020.
+
+Say we go to 50-blocks, and we are under 100% average error rate. There are some nice striations here. Once we get into the 500-block half-week of data range, then we can get under 10% of error rate estimation. If we just plot this all out, what is the average hashrate estimation error rate for this 12 month data set I was working on? It is obvious from this chart that the further out you go, the better your error rate gets.
+
+I did not stop at 1000 blocks. Because you get to the point where you start lagging behind the hashrate by too much. When you look at the 1,000 to 2,000 block estimates. We can see here eventually you get around the 1200 block more than 7 days of data and the error rate starts ticking up again because you are too far behind.
+
+Somewhere in the 1100 to 1150 block range of trailing data will give you the best estimates. Same thing if we look at hashrate estimate standard deviation, it seems to match up to the optimal amount of data to use. An average error rate of under 4% with a standard deviation of under 3 exahash/sec if you are using this 1100-1150 block trailing data window.. that's not bad.
+
+# Can we do better?
+
+What if we can blend the accuracy of the week-long estimates with the faster reactions and volatility of the short-range estimates? I wrote a script that blends the 100 block estimate with the 1100 block estimate and it iterated through a bunch of different combinations of three different variables. One of htem was looking at the different estimates for the number of trailing blocks and the previous blocks before that block, anywhere from 10-100 of blocks for previous estimates. Then a variable for weighting for the shorter-term estimate if it was higher, and then a variable for weighting .. I was using the long-term estimate as a baseline.
+
+My script tried a bunch of permutations. It took several days to run. I parallelized it. I had 5 million different data points. From each run where I was looking at 10-range trailing block ranges here, I found some interesting patterns. Weighing the short-range estimate at about 20% seemed to give the most accurate error rates and standard deviations for that given range. I only did up to 100 trailing blocks for that first run.
+
+So we can see here that this was actually a failure. Remember, we were trying to beat that 1150 block estimate. None of these new results were even close. We haven't found a strictly better algorithm yet.
+
+# Blending hashrate estimates
+
+So then I thought we should do even more blending of more hashrate estimates. In my next run, I blended 10, 100, 1000 block estimates and my script was a little bit more complex. I said that if any of these estimates are more than 1 standard deviation away from the baseline 1100 block estimate, then I would give it a 10% weight otherwise I would give 10% weight to the long-term estimate. I also tried setting some cut-off where if it was lower than the baseline then I would throw it out. From trying out a bunch of different weights, the greatest accuracy improvement came from throwing out all the short-term estimates that were lower than the baseline estimate and this is because the general trend for the hashrate is "up" and to the right. So if your estimate is going down, it's almost always wrong.
+
+From that, I settled upon an algorithm that had an average error rate of 3.495% with a standard deviation of 2.69%. This was a slight improvement.
+
+# Final results
+
+Most websites are publishing 1-day estimates which have a 6.7% average error rate. Savvier sites are reporting 3-day average which is 44.4% average error rate. Best sites use the 7 day average of 3.82% average error rate. I was able to improve on this by 13% on the error rate and 14% on the standard deviation just by spending a few days on the problem. I think there is room for improvement in future work. I had some assumptions here, like only working with one year of data. It also assumes pools are sharing accurate data. It also assumes there is not much shared hashrate between pools.
+
+# Questions
+
+Q: We will have another halvening in next March, 2024. What do you anticipate in terms of hashrate?
+
+A: The interesting thing about the halvening is that it is very well known. Miners are hurtling towards it full steam ahead. Hashrate has been going crazy. Miners are not stupid. They are already calculating their profitability after the halving. I think we can definitely anticipate that hashrate will keep going up. At the point of the halvening, some of the less profitable miners will have to drop off the network. I bet that it will be minimal.
+
+Q: Why know a more accurate hashrate? What are people using these numbers for? Why would it be better for it to be more exact?
+
+A: There's not necessarily a financial incentive. If you are a miner and you want to know what you are competing against, then maybe having slightly better accuracy. One of the reasons I started to look into this was because I was annoyed by a lot of the influencer accounts out there publishing stuff like the bitcoin network hashrate hits 500 exahash or something. This happens for many aspects in this space but often people will post a single data point and they won't talk about how they achieved that or what the assumptions were for how they derived that number. I wanted to get to a standard to help reduce the noise. When we are trying to talk about something, if we're not all working off the same assumptions then we're going to be taking past each other and it will be a waste of time.
+
+
+
