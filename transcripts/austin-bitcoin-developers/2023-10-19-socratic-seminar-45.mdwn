@@ -1,0 +1,197 @@
+Austin Bitcoin Developers
+
+Socratic Seminar 45
+
+<https://austinbitdevs.com/2023-10-19-socratic-seminar-45>
+
+We got old school bitdevs here today. Small group. Bear market. Who wants totalk about logic gates and bitcoin script? Welcome to bitdevs, episode 45. How many of you have been here before? How many of you is this your first time? It's a discussion style meetup. We introduce some topics. We're like the moderators. We try to get a discussion going. On some topics there will be more discussion than others. Our audience usually has experts on these topics. If you have an opinion or something to add, please chime in.
+
+We are using Chatham house rules. In order to foster an open space for dialogue, please don't attribute comments or opinions to specific names. Don't say who said what. People should feel free to say their opinions on certain things. We have people with different levels of experience. Someone else in the crowd might know an answer. No photos or video without direct consent of those in the picture.
+
+# trivia question
+
+This question is from base58 school. According to bip32, the chaincode is passed in as the key to the hmac function for the next leaf in a derivation. What is the first chaincode? Is it "bitcoin seed", 32-bytes of 00, right bytes of a bip39 hmac, left bytes of a bip39 hmac? The answer was (A), "bitcoin seed". For people's wallets across blockchains they all use "bitcoin seed" even if it's not used in bitcoin sometimes. Kind of crazy.
+
+<https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki>
+
+# MARApool block 809478
+
+This was right after the last bitdevs. If you remember MARA, they were the mining pool that was censoring transactions. Marathon. They said they weren't censoring transactions. But it wasn't breaking consensus. They just chose to not mine OFAC-non-compliant transactions. They reverted on that? Recently they got caught when they mined a block with good proof-of-work but they mined the transactions in an invalid order and they lost money from that by not getting the block.
+
+People saw it on testnet, and then it was on mainnet too. It was a transaction ordering issue. People were trying to figure out why they were messing with transaction ordering. Maybe it was something with ordinals? The first transaction that appears in the block gets the lower ordinal, right, so maybe they were trying something around that.
+
+I don't think they are running their custom ordering software anyway. They also claimed it was a small amount of their hashrate and they got unlucky. But I would suspect maybe they were incompetent and screwed up.
+
+Q: Is it still not clear why?
+
+A: They said beta software that they're testing. It's not clear.
+
+Q: How does it get resolved? They mined it. It goes out to consensus. And then consensus says no. What was the time between the previous block and new block?
+
+A: Every other miner needs to get the next block to mine upon. What would have happened is that all the miners rejected that block when it came through, and built on the same block tha tthey wer epreviously mining on top of. So they were reorged out of the chain or orphaned.
+
+Someone was just watching their bitcoin node and saw a weird statement in their log. It was a block that had enough proof of work but had invalid transactions. It's a rare occurrence. It was immediately rejected by the full nodes.
+
+In the past, it has been a problem that miners sometimes don't run consensus rules. They should, but some of them don't. There was at one point asicboost where you could try to optimize mining and the ANTminer group tried to patent it silently in a way to order transactions in a way to maximize the way to find a correct block faster. They used entropy of re-ordering transactions or something like that. The point is that, that was shutdown by segwit; but transaction ordering is one of the ways you try to find a valid hash and get a new nonce. But once proof of work got hard enough, then nonce iterating wasn't enough, and then wiggling around with the timestamp as a new source of entropy was another one because there's a 2 hour window. Bitcoin Core isn't always used by miners. Sometimes miners have custom software. In ethereum, because of miner-extractable value, everyone runs custom software. Maybe someone was doing something like that here.
+
+Q: Does this open up an opportunity for double spending?
+
+A: No. It's invalid. You have to mine a valid block.
+
+Q: How did anyone see this?
+
+A: It was mempool.space. They are well connected on the network.
+
+Q: Don't nodes that propagate bad blocks get banned?
+
+A: It's a good point. Yes.
+
+# Covenant tools soft-fork
+
+jamesob who was author of OP\_VAULT has a soft-fork pull request to Bitcoin Core putting together OP\_VAULT, OP\_CHECKTEMPLATEVERIFY (CTV), and SIGHASH\_ANYPREVOUT. This is a combination of ajtowns, and Jeremy Rubin's work and jamesob's work. It's a combination of a few different covenant soft-forks. He talked about activation in the pull request too. It's a long pull request.
+
+First, I thought it was a nice idea to not have conceptual debates on a github thread and it gets hard to follow... so going into this process with complete clarity knowing that people would have a lot of opinions and somewhat controversial, putting it somewhere elsewhere. It's worth reading. There's a lot of different threads about the history of the different protocols, and talking about what qualifies as something worth activating or debates about what should happen before you put these proposals forward. In his proposal, he is proposing bip9 activation instead of bip8 which was used for taproot. He is trying to use a different activation mechanism.
+
+One of the things mentioned here is that the bip9 activation mechanism-- for one of the things bip9 allows for is that you can set different bits for what you want to activate. With bip9, you could have multiple proposals going in parallel. It's an interesting quirk of bitcoin history of what was envisioned about what would be possible. It is kind of naive to think you might be able to have multiple upgrades to bitcoin happening at once. We can barely have one happening at any given time as it is. I like reading proposals like this and see where the ecosystem is. There is a strong political element to the question of activation process. I think this proposal as well is part of a process building up recently about there was this original idea that a lot of these parallel proposals were in contradiction or competition but they aren't really-- instead, they are complementary we could do a lot of things with them and they are more stable than we have been acknowledging. Some of them are less stable. ANYPREVOUT and bip118 has had more changes to it recently, where as bip119 has not had any changes to it recently and has had more use cases brought to it with the introduction of OP\_VAULT. ... One of the things that jamesob has been trying to do is these debates shouldn't be happening out on twitter. Maybe not even on the bitcoin-dev mailing list either.
+
+One of the things this proposal would start to neable is LN-symmetry and one of the things is you want this whole proposal to enable symmetry. You want this proposal ... one of the discussion points is that nobody is using DLCs yet and the optimizations for DLCs happens off-chain. If these optimizations were happening off-chain, then would it make a difference? It's some interesting questions. What about having upgrades like this? It could potentially make a lot of other optimizations for the protocol possible. It's great to see jamesob pushing these ideas forward.
+
+It reminds me that every time we do one of these soft-forks we just jam a bunch of different things in there. Segwit was 4 or 5 different things. It's not surprising that people are proposing to throw a ubnch of things together. Taproot was Schnorr plus MAST graftroot new pubkeys etc.
+
+One of the oppositions to this proposal is that we shouldn't have any more omnibus proposals. BlueMatt proposed a while back a cleanup soft-fork which was rejected for being too complex. jamesob here is pushing back and saying here's a set of complementary related upgrades. Similar to segwit and taproot.
+
+Q: Do you know how this would optimize the ...
+
+A: .. right now for DLCs where you might bet on the price of bitcoin there's like 80,000 outcomes you have to sign. You have to create 80,000 signatures, send them, verify them, and it's hard to do this efficiently on the phone. Instead, what if you could commit to -- negotiate pubkeys and then generate the same address. Once you deposit funds into that address, then the DLC is ready to go. It's a non-interactive DLC. With a covenant-backed DLC, you could just do this without an interactive component.
+
+Pre-signed transactions can be optimized with some form of covenants like ANYPREVOUT or CTV. DLCs are something that require a lot of pre-signed transactions to agree to publish at any given time. But you get optimizations with covenants. BitVM, which we will talk about in a bit, same thing. You get some optimizations from covenants. Channel factories, same thing- you get optimizations from moving away from pre-signed transactions. For batch slice-in for lightning channels, you need ANYPREVOUT. It avoids extra signature changes. Anything that requires off-chain signatures can benefit from covenants.
+
+We can talk about BitVM optimizations with CTV later. I saw a thread talking about how you can do trustless pegs or do something similar to Liquid. I think that's our next topic? Any time I see a topic like let's exchange pre-signed transactions then you should think okay that protocol could benefit from covenants.
+
+Q: Will there be consensus on this proposal?
+
+A: Do it with CHECKSIGFROMSTACK both at once.
+
+Is there indifference to the proposal or is it skepticism or both? I think there is-- the way I understand the current situation is that a lot of people are mad that taproot enabled ordinals. That's a narrative in their head. I don't have the skill to dig into these. Even if a bunch of technical people came out strongly affirming it that this was a really great upgrade for bitcoin, even then I think they would get a lot of pushback that taproot caused ordinals.
+
+I think it was segwit that caused ordinals.
+
+Taproot enabled BitVM which enabled covenants. There's a lot of untrue narratives out there... Is this running on Inquisition? I'd like to see some apps and possible usage built on these things. It's scary to change bitcoin. When you have a great app-- like it would be cool if Lightning Symmetry was built.
+
+It kind of us. LN Symmetry is like, there are some examples of it. APO is less built out than CTV. I think it's working or close to working of an implementation of LN Symmetry as a fork of CLN. I would like to see real video demos for non-technical people.
+
+Okay, if you need to see real-life real-world applications before it's worth activating, then there's a list of here's all the things that can be built but the reality is that until there's money at stake people don't want to build things out. How many really cool lightning applications did you see built on top of lightning prior to the application of segwit? Basically zero. There wasn't any lightning hackathons until a couple years after segwit activation.
+
+We had lightning on litecoin for a little while. There was ten people using lightning. Nobody was really using it. What if we had waited for better lightning before the segwit soft-fork? It's a chicken-egg problem. Not as many people even if there were some people building on top of lightning not really that many until segwit was activated...
+
+I think another soft-fork isn't going to happen until many years from now. I think taproot needs some very public wins before are going to have any sort of palate for another soft-fork. It took many years for segwit to permeate and appear. Taproot hasn't had enough time to deliver. Yes, asicboost was fixed by segwit but it was not widely seen. The majority of problems in bitcoin, most people don't know about it. The thing about bitmain being a problem? You don't want to wait until it's too late.
+
+Another reason is that it won't come from Bitcoin Core because anyone who has merged activation logic is being sued by an advanced persistent threat actor.
+
+Q: Do they theorize on any potential risks of a covenant soft-fork?
+
+A: Showing some ability for an undefined collective of people to spontaneously come together to agree to run different code to deploy changes would be one risk... How long something is out gives you an opportunity to analyze risk.
+
+One of the things that is on this reading list here is drivechains. Often it's the simplicity of a proposal. Or the amount of time it's been published. It becomes easier to identify risks the more simple the proposal. There was a bounty put out for any vulnerabilities in CTV. Even prior to that, there were issues in there. BitVM showed that almost anything can be done on bitcoin already and those risks already exist because of taproot.
+
+Q: What if we scare people into upgrading?
+
+A: What, like a spooky October soft-fork?
+
+# BitVM
+
+Q: What is BitVM?
+
+I wish supertestnet was here. This is the one time I wanted him here. This is a cool idea by Robin Linus. Okay. Who understands this? Who knows what a nand gate is?
+
+Is this something live on bitcoin? It's possibly live on bitcoin. supertestnet has a few implementations. You can use that if you want to.
+
+You can take any program and break it down into boolean logic circuits and operations. Those operations can be represented in a tapleaf script. A logic gate is boolean operations, ones and zeros. You can instruct these boolean circuits to do adding and subtracting. It's a primitive from which you can do any computation. If you can build switches, then you can build a computer.
+
+He's essentially doing this using bitcoin script. Imagine a bitcoin script where you can essentially have two hashes that you need to present and if you present one hash then it pushes a zero to the stack. If you present another one, then it pushes to aonther-- there is a penalty mechanism. You both have to agree on what the computation or program is. If you reveal the computation to be one thing, but the other person knows it has to be something else, then you can collect both hashes. So then you can sweep the money. That's my naieve interpretation of how it all works.
+
+That's my understanding. Stephan Livera and supertestnet were talking and right now you can do all the computation in normal bitcoin scripts. But there are no variables across transactions. But BitVM lets you do that across transactions. Having revealed or not revealed the hash is like your state. Each hash is reused. The way you reveal the hashes is how you push 1's and 0's. That's my understanding.
+
+It's worth pointing out that the bandwidth costs to do anything interesting at all is hilraious. It's so impractical as to make it almost worthless at this point. .... A lot of the twitter chatter on this was "turing complete on bitcoin" blah blah blah. Here, you can see what it looks like to add in bitcoin script. This is what the script looks like to create this. Not all of this has to be revealed, thanks to taproot. But the point is that to create something like this is really complex.
+
+One of the things important about that is that in order to write the 2 lines of python code to add 2 numbers, there's a lot of switches going off in your computer and virtual machine to get these things to work. The excitement for BitVM was definitely overblown. But it's a computer science research project and in that sense it is interesting. All you need is a few primitives in order to build up and do impressive things.
+
+Someone built an 8-bit computer inside of Minecraft. First of all, it's totally impractical. That's not a useful computer. Nobody will use that computer for anything. But the point is that once you build a mechanism of primitives of other things, and if that system is expressive enough then you can build something that could be infinitely expressive.
+
+In bitcoin, there are costs imposed such that you could cap that. By doing it in tapleafs, you can hide most of that. The second thing that we learn in BitVM is that the right way to write smart contracts on blockchains which need to be decentralized, expensive, but possible to run and validate and very secure. The other thing that you need to do is that you don't use it to store state. You just use it to punish people. It's more like a judge, rather than having the whole state of all everything. You can do the logic off-chain, negotiate with your partners, and if someone cheats then you go to the chain to abjudicate. It's only when someone cheats that it goes on chain, like in lightning.
+
+Once you have the flexibility and expressiveness in tapleafs provided by taproot, you only need a few simple primitives and you're willing to do off-chain protocols then you're able to do tons of things with that system. Whether that makes sense, I don't know. But it's neat.
+
+For one hand of poker, it's multiple gigabytes of data to use BitVM. But at least it's off-chain data. For small stakes where you are spending, where the buy-in is $5 or $10 then you're not going to do something like that. We use hot wallets for small amounts of money. But for your life savings, we use distributed cold storage right? High stakes poker, maybe it makes sense to exchange gigabytes of information to know that you don't need to trust anyone in order to verify who won certain games or not.
+
+Does it seem feasible to reduce this? I think it's worth pointing out that in principle you don't need to use nand gates. It's just arithmetic circuits. You can label your nodes with 32-bit add. It doesn't need to be bitwise nand. Those are the kind of data-savings you can talk about. You have a circuit or a graph of computations connected together. They take inputs from each other. There's an interactive protocol where if the prover equivocates about the- then the verifier can verify by doing a search through the circuit in log time. If you do 32-bit adds, then it would be 1000x less data, say. I'm not sure exactly what the details are. I think they did it with nand gates because it's simple and it's easy to say that nand is universal for circuits. It's an open question how to do it with more complex operations.
+
+One of the points in the paper is that with a nand gate, then you can do other operations. Well, I mean, it's like each of the hashes are very large. I don't know how many nand gates are in a 32-bit add, but if you could replace it with just a single operation then it would be 1000x smaller. It's a fun research project.
+
+I was wondering if he would comment on this discussion of the two-way pegs using BitVM. How is that supposed to work? It seems vague.
+
+This is a 2-of-2. Part of this construction is that it is a 2-of-2 multisig. You only need 2 of the hashes to punish the counterparty. If you were to expand that to more options, then you would need to collect more hashes and then it would blow up in size and bandwidth. With 2-of-2, you only need the counterparty to be wrong. If there were more players, someone could cheat but you don't have all the hashes to collect the funds. Their whole model breaks down outside of 2-of-2.
+
+You could break it up with a hub-and-spoke model. It's the verifier that you need one of, but you can have many people relying on that one verifier and it could be a public proof. Robin from ZeroSync says this came out of his interest in zero-knowledge proofs and he wants to find a way to use ZK proofs in bitcoin and without a new opcode and soft-fork.
+
+The way the 2-way peg works is that, with this plus covenants you can negotiate partial ownership of a single UTXO and then do computation on top of it.
+
+Q: Is this just an intellectual exercise?
+
+A: It depends on who you talk to. It is the same as all interesting things start. It might become something. Or not. There are some interesting primitives in the paper. There are "bit commitments". They have a shorthand for doing this script as a "bit commitment" which is like how do you use bitcoin script to express an on/off switch? The second primitive is how to write a nand operation. Both of those things can be done today with bitcoin script.
+
+I think the way to think about it is that if you looked at the original computers they were built out of vacuum tubes. You needed a switch. Then you needed rooms of computers to build that kind of thing. After a long time, you could build more sophisticated computers. But those old computers, they were limited by physics in a way that bitcoin is more about information physics and those limits.
+
+It's useful in the sense that you can see what you can come up with. When you know the things that are possible today, you start to think about what optimizations can be made on top of it. To the earlier conversation like well do we need to do certain things like this but maybe it's not possible to do in an optimized way but now we can see well actually it's possible today then maybe we cna optimize it and then it suddenly becomes worth it.
+
+ZmnScpXj mentions you could do this with points instead of hashes using scriptless script BitVM. It would be a lot of adaptor signatures. It's all off-chain. Verifying all those signatures could take 365 days for all we know.
+
+# Replacement cycling attack disclosures
+
+This is a vulnerability that was recently disclosed. There's a few interesting things about this. Every implementation of lightning has been patched for this but if you read the bitcoin-dev mailing list thread, then none of them have been sufficiently patched because there is no sufficient solution. In the pdf, he talks about how this is still vulnerable.
+
+And not just package relay, not just lightning, but basically any layer-two protocol that relies on pre-signed transactions and punishment/justice transactions. The good side is that this has been out for a while. The CVE is out. The announcement.. nothing is sufficiently patched because it's not possible yet. To our knowledge nobody has been taken advantage of.
+
+If you have a channel, an inbound, and then an outbound, and both of those are malicious then they can steal bitcoin from you. The way this is done in simple terms is that the way that... these are all examples-- on-chain DLCs, coinjoins, payjoins, peerswap and submarine swaps, batch payouts, transaction 'accelerators', wallets with time-sensitive paths, etc. What these have in common is that if you're trying to come up with a contract with a peer is that the way to do this in a trustless way is that if you violate this contract then I get to take all the money. To grow these kinds of networks, you have multiple states and pre-signed transactions that have different sets of timeouts.
+
+There are things called "pin attacks". This is basically a pinning attack. The idea is that if you can pin the justice transaction, and if you can pin... maybe LN Symmetry would fix this.. no, it's even the current state is vulnerable. LN Symmetry only helps with the older states. In lightning, my base understanding of how this is taken advantage ofi s that you have something called the CLTV delta. In order for lightning to work, if you are routing a payment, you have one payment saying this would timeout if I'm unable to settle it after this outgoing part of the channel will timeout after 100 blocks and the other one an incoming one will timeout after 144 blocks. Then that delta is where this vulnerability comes in. If you have malicious nodes on either side, if you can pin the transactions in between-- so this transaction you are routing is not able to be settled, then once you get past the timeout then you're able to pull all the funds from the other parties. I'm probably missing a few details.
+
+It was previously believed that the only way to take advantage of this was by flooding the mempool. When blurat was exploiting lnd, and nodes were not processing blocks then you wouldn't know if you had to publish your justice/punish transactions. Luckily, it was caught and nodes were patched. If the delta is not long enough, then people can exploit your node missing out on justice that needs to be handed out.
+
+You don't need to flood the mempool in order to prevent someone's legitimate transaction from being committed to on blockchain and everyone settling correctly. That's concerning. It impacts a lot of different protocols. It's not expensive to exploit. You just need to be relatively well-connected on the network and including to the nodes you are exploiting and the miners to which you are sending out replacement transactions.
+
+The way pinning works is that you are going to replace a legitimate transaction with an illegitimate transaction with one marked replace, and you stick it in the mempool.
+
+Q: What's the cycling stuff?
+
+A: The replacement cycling attack... the point of the cycling is that there is that delta between the time that each side of the; you have two channels but each side of the transmission of a transaction with the HTLC. There's that delta where the attack happens. If the delta is 44 blocks, then for each block that gets mined you are cycling the replacement.
+
+One of the mitigations published, in the patches, was to more frequently try to catch and replace the pinning attacks. One way to prevent these attacks is to make it too costly for the attackers. It's difficult to drain this away in fees. The way to prevent this for smaller channels is that nodes now have to... but you have to do that for every single block. So that's the cycle.
+
+ZmnScpXj talked about what part of the lightning protocol makes lightning vulnerable to this kind of attack. You can do a channel between two parties very simply. You just need two forks of the script. But with lightning, because you need chains of transactions to close them out, that's where this threat becomes more real. You do part of the reason you have that is that lightning is not just an agreement between two nodes but it's actually a network through which you can route and this is what exposes it to be even more of a risk.
+
+This is not solved by package relay updates. I don't think people understand just how complex the mempool is and how many problems it introduces. This is part of the reason why people have proposed getting rid of the mempool.
+
+A follow-up is listening to BlueMatt's video "Lightning is Fucked" from Tabconf 2 years ago. He talks at 2x speed for 45 minutes about what all is wrong with lightning. In this thread, he says the only way to fix it is for miners to.... he called all the mitigations childish. Ultimately the only fix for this issue is when miners keep a history of transactions that are seen and try them again after they failed to enter the mempool.
+
+In the paper, it's mentioned here are the mitigations. Typically when you have a CVE report, some formal report of vulnerabilities, typically you release them to software that might be impacted and allow them to silently upgrade and then later release an announcement of a vulnerability. You don't typically see CVEs announced where the mitigations don't actually fix the problem.
+
+We typically say "it's still early" and yeah people are still learning and the price of bitcoin is low.. but it's also still early in that attackers that might attack bitcoin just don't care enough and aren't paying close attention. There are problems out there, and it hasn't been patched.
+
+I can't remember mempool vulnerabilities being actively exploited like this. But it's out there in the open. It doesn't matter until it really matters. It just goes to show how early it is. Apparently nobody knows enough to exploit it right now. Maybe only 100 people on the planet can even exploit it or mitigate it right now.
+
+So know who your channel partners are and make sure they won't exploit you. But you have to make sure you don't get screwed if they get exploited, but you could start losing liquidity.
+
+With many of these lightning vulnerabilities, it requires a lot of capital and lock-up and time. There's a certain point where these are not traditional CVEs and there are known vulnerabilities we have known since lightning started. It doesn't excuse the seriousness of it. It's just that we know about lightning jamming attacks and a handful of other attacks that cost timing and money.
+
+CVEs aren't typically about game theory, they are active software exploits. But lightning is about game theory.
+
+Mass exit attacks are another one hanging over our heads. But again it requires a lot of time and capital. In the replacement cycling attack, it's cheaper. But you can do the same thing for mass exit with pinning where a state actor floods the mempool. Say a state actor wanted to steal bitcoin coming out of exchanges... remember, FTX attacked Binance and flooded the network. Ordinals flooded the network. It's expensive and it takes coordination. Replacement cycling takes only two channel partners. But if an exchange is being stolen from on the withdrawals, then you as a lightning user would just wait because there's going to be a mad rush to real bitcoin instead of on-exchange custodial bitcoin.
+
+The replacement cycling attack can be an attack on a single individual or node. The mass exit attack raises red flags all over the network. But this is something that can be more targeted. This is terrifying. We should not be okay with this. Especially if you live in a place where you are more at risk from your government. Before it was an attack on the whole network, but here they can do targeted individual attacks.
+
+
+
+
+
+
