@@ -1,0 +1,84 @@
+Austin Bitcoin Developers
+
+Socratic Seminar #46
+
+<https://austinbitdevs.com/2023-11-16-socratic-seminar-46>
+
+# lightning trivia
+
+There will be a btcpp.dev conference in Austin in May. This is the mothership conference of my conferences. My joke about bitcoin++ is that everyone likes a themed party so every bitcoin++ has a theme. The one in Beunos Aires is payments and getting paid in bitcoin. The one in May is going to be bitcoin scripts. There will be people coming to talk about bitcoin scripts. We have 14 tickets left at this price. We are also taking sponsors.
+
+A channel can have at most how many HTLCs before it has to be closed/spliced? 2\^48 - 1 ... You only have 6 bytes to stuff data into. You stuff them in the locktime in the sequence number. So you only have 6 bytes. Wait, this is wrong. It's 43 because... it's next at a single time in a channel. In flight HTLCs at once... if you try to... this is the mssage size, a signature is like 106 bytes.
+
+There are two types of restrictions. There's the number of HTLCs in flight, and the number of commitment transactions. They are related because the number of commitment transactions is related to the number of HTLCs you could have in flight.
+
+# Bitescrow / escrow-core
+
+<https://stacker.news/items/300057>
+
+We released bitescrow on October 31st. We finished our protocol for doing non-custodial escrow on bitcoin. The protocol is ready, the API is ready, our backend server is actively in beta.
+
+In the prelude in the README, it has the mission statement of what we're trying to do. We are trying to build an escrow platform using bitcoin. Michael Saylor owns a lot of bitcoin and he talks about bitcoin as a digital asset. Yet, it's not really used as collateral in finance or for anything. It's still a niche use case to use bitcoin. We wanted to solve this problem. We wanted to make bitcoin mainstream and force hyperbitcoinization to make everyone use bitcoin not because they are trying to make a political statement but because like the Internet it's just the best thing around and you would be stupid to not use it. We tried to make escrow cheaper and faster and better. We wanted to make bitcoin programmable again.
+
+Tade Dryja was talking about non-interactivity: if we could compute something rather than communicate something, we would rather compute something. We want to limit the rounds of communication. We don't want to leak information, either. Keys are radioactive and we don't want to touch your private keys. We don't want to be able to access your private key at all.
+
+The proposal structure is a json object. PSBTs are serialized and they never touch the blockchain. Anyone that wants to use PSBTs has to find a library that parses it or write a parser themselves. But I wanted something easy to use where you can use our library to parse it or you can write your own.
+
+In this example of a proposal, it lays out different spending paths. Each one will be a bitcoin transaction that could potentially happen for the different payout scenarios. When this proposal is transformed into a contract, the participants of the contract will sign all of these different transactions. It is a set of pre-signed transactions. As an intermediary, we only select the outcome.
+
+The contract can define what the arbiter can do and who the arbiter is.
+
+...
+
+We can use fraud proofs to show how to close the contract, the way that everyone has signalled us to. That's pretty much it. We broadcast a transaction at the end, and then the money moves.
+
+Q: What are you looking for people to do with this?
+
+A: I want developers to... how do you collaboratively build a transaction? That's already a hard thing in bitcoin. Here we are using MuSig which is a brand new thing. There's no signing device that I know of besides hackathon projects that can do MuSig. So we essentially have to build our own signing device and build all the tooling to do all this stuff. So not only build the protocol, the server, and the client, but also demos, and signing devices. We have to literally build everything.
+
+How do I expect developers to interact with this? I have this proposal of what would be a standard for a software signing device. This is what we came up with, and these are the primitives you need to interact with someone's private key through a signing device to be able to do business with them. So this is a list of what we need. We need to be able to derive a keypair from a path, we need to be able to .... we need MuSign and the sign which would allow us to get you to sign transactions and do MuSig stuff with us.
+
+Q: How will you monetize this service? What is the business strategy?
+
+A: We charge fees. For every contract, we can charge an upfront fee in order for us to host your contract. We can also charge a fee on the backend. We can make the contract free to start but if the contract settles then maybe we collect a fee then. There are different ways for us to collect fees. Right now we collect fees when the contract closes. That's our business model for now.
+
+# halfin was not satoshi
+
+Jameson Lopp wrote a blog post saying Hal Finney was not Satoshi Nakamoto based on analyzing posting times where Satoshi was posting and replying during a foot race that Hal Finney was actively participating in. Satoshi replied to Mike Hearn at that same time, and there was a Satoshi transaction. So either Hal scheduled all of this to occur while he was running, or he's not Satoshi and someone else did it. Smartphones weren't really popular yet. I thought this level of analysis was cool.
+
+At the beginning, he has this nice section where he says it doesn't really matter and he's not going to share his own theories about who Satoshi actually is because it's a distraction. The more interesting part of this is the digital detective work and tracking all the data, the blocks, and all the emails and things and less about proving who Satoshi is.
+
+# tapsigner 2fa
+
+Megawatt used a tapsigner to have 2FA for their network. This is interesting because they used the tapsigner in a way that we foresaw someone would eventually use it... They kept the PIN on the server just because they knew who would be using it anyway, since it's all internal anyway. I think this was interesting because there were some issues with RSA earlier in the month, and secp256k1 is the curve with the greatest money behind it making it a large honey pot.
+
+tapsigner is basically a key NFC card. It can be used with Nunchuk today as a way to secure funds. They use a PIN that you use while you tap it, they keep it, but that's okay because they aren't securing the phones (?). If someone was to lose the tapsigner, then they wouldn't know the PIN and that would protect it. So there's the physical card plus the PIN. And the PIN is a 2fa for the device itself.
+
+To use this as 2fa, the server that uses this gets a public key, then they get a message from you, the device signs it, and then they provide the proof of 2fa. I think Trezor also has some library available... for like password management as well.
+
+# bitcoin-dev mailing list
+
+<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2023-November/022134.html>
+
+<https://twitter.com/kanzure/status/1721915515520659510>
+
+# bitcoinjs vulnerability
+
+<https://twitter.com/bax1337/status/1724534339206033532>
+
+There was also a libbitcoin RNG issue a while back... this one is for bitcoinjs, but they don't describe what the actual vulnerability is. "Randstorm". Basically they didn't have enough entropy in the generation of private keys. It should have been 1 in a trillion, and it was instead 1 in some number of thousands. Ridiculous. Blockchain.info was using this. Dogecoin. Block.io... a bunch of decent sized ones. It's been fixed for 8 years now. This was from 2016 and it's just now being announced.
+
+Q: How did they notify people? How would you know who was a user?
+
+A: They would tell blockchain.com and notify users.
+
+# Opcode explained
+
+<https://opcodeexplained.com/>
+
+This is a website made by thunderbiscuit. It has an explainer for almost every opcode. He has all the individual pushbyte opcodes too. He doesn't have all the complicated ones yet. I think he has CHECKTEMPLATEVERIFY on it, where you can learn about upcoming proposed ones as well.
+
+
+
+
+
