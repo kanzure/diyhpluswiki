@@ -1,0 +1,74 @@
+Brian Minnick
+
+ENMC045 - A Self-Replicating 3D Printer
+
+Regeneron International Science and Engineering Fair (ISEF) 2021
+
+video: <https://www.youtube.com/watch?v=B79FJWt8syY>
+
+paper: <https://diyhpl.us/~bryan/papers2/self-replication/A%20self-replicating%203d%20printer%20-%20Brian%20Minnick%20-%202021.pdf>
+
+Hello, I am Brian Minnick from the Academy of Engineering and Technology, a student from the Academies of Loudoun in Leesburg, Virginia ((Purcellville, Virginia?)) and I have created the first self-replicating machine in the form of a fully 3d printed 3d printer.
+
+From a self-replicating factory on earth, which could raise the standard of living across the globe, to a self-replicating lunar factory which could mass produce solar-powered satellites at virtually no cost to Earth, the self-replicating machine has many revolutionary applications.
+
+The purpose of my project is to create the first proof-of-concept of an autonomous self-replicating machine in the form of a print-in-place fully 3d printed 3d printer.
+
+There were four critical problems that I would have to solve to accomplish this goal: conductive material and motor, control motors without using a microprocessor, store a digital model without a microprocessor, and hotend and kinematic system.
+
+First, 3d printers ((generally)) cannot print electronics or motors needed to move the printer.
+
+Second, all 3d printers use microprocessors or computers to control the printer but these microprocessors are impossible to print.
+
+Similarly, a digital model must be translated into a form which the printer can read, again without microprocessors.
+
+Finally, the frame and motion system of the printer must be fully 3d printed in one piece so that the machine can easily assemble itself.
+
+# Materials
+
+To solve the first problem, I have created a novel conductive material which is 98.3% more conductive than the best commercial alternative.
+
+Use of a biopolymer to build 95 percent of the 3D printer makes it possible for materials to be grown on other planets. As for the other five percent, the printer uses small amounts of a PEEK (polyether ether ketone) polymer, a polarizable magnetic material made from iron particles and plastic, and a conductive solder paste material made from an alloy of tin and other metals.
+
+This allows for a functional 2-pole brushed DC motor to be printed. A 3-pole motor was also built.
+
+I began by testing a commercially available conductive material, which proved to have poor conductivity. I tried developing a novel composite conductive material by adding fine wire bits into the commercially available material, but this only improved conductivity by 50 percent. My next attempts involved innately conducting polymers and printing with solder wire directly, but these experiments were not successful. I next thought of making my solder globules smaller when chaining them together to form a solid conductor. This led to solder paste, which could be sintered into a solid trace using a hot air gun or through controlled heating in an oven. The resulting solution demonstrated 98.3 percent less resistivity than the best commercial alternative material.
+
+The novel conductive material was the part of the project that took me the longest to solve.
+
+# Motor controller
+
+To solve the second problem, I created this fully 3d printable motor controller to replace the computer on the fully 3d printed 3d printer.
+
+# Programmable data strip
+
+To generate the data strip that the motor controller reads, containing a digital model to be printed, I created a custom program (written in python) that encodes a digital model into a physical data strip. It takes each linear movement in a digital model and encodes it in a row in an output data strip. The beauty of this control system is that it can be used with any kinematics; it doesn't have to be a 3D printer. The same motor controller and data strip system can be used to control robotic arms, specialized data strip duplicators, or a method of loading and unloading data strips to print different parts.
+
+Due to some design limitations of the motor controller, I had to implement two machine learning techniques (a customized genetic algorithm resistance optimization and gradient descent) to reduce error by 99.99%.
+
+To print a model, the printer must have a data strip representing the model to be printed. The data strip has columns and rows, where each row corresponds to a linear movement of the printer, and each column corresponds to one particular function of the data strip. Within each row, each column can be toggled on or off, and the distribution of "activated" columns encodes the rotation speed and direction for all of the motors on the printer. This acts as a heading -- the direction the printer will move in. The length of each row encodes how long the printer moves in that direction.
+
+In addition, a system that automatically advances the data strip at a constant rate was designed and implemented. The system uses wheels printed from TPU, a flexible polymer, to pull the data strip through the machine. A compliant PLA wheel that does not require the use of another material is under development.
+
+19th-century street organs inspired the data strip system.
+
+# Frame and motion system
+
+To solve the final problem, I designed the frame and motion system of the printer to be fully printed in place. This means that the printer is printed in one piece and does not require any assembly.
+
+# Project history
+
+I worked solely out of my bedroom. The nature of the project demanded that all pieces be 3D printed, so I could build the tools I needed to complete the project myself. It took thousands of hours of work.
+
+A print-in-place toy robot -- one of my first ever prints -- inspired the print-in-place kinematics used for self-assembly.
+
+# Conclusion
+
+All of these individual components have been combined into a final proof-of-concept. My printer is the first proof-of-concept of an autonomous self-replicating machine which was the design goal for this project. All of this marks a significant step forward. Engineers working on this problem before have estimated that the autonomous self-replicating machine could only be made in the next few hundred year, but with my advancement such a machine is feasible within the next 10 years, and I am extending my project to make that happen.
+
+<https://projectboard.world/isef/project/enmc045---a-self-replicating-3d-printer?utm_source=eng_art_21901>
+
+further discussion: <https://gnusha.org/logs/2024-02-20.log> and <https://gnusha.org/logs/2024-02-21.log>
+
+see also: <https://hackaday.io/project/11914-relayreprap>
+
