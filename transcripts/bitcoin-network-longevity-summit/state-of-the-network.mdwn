@@ -1,0 +1,126 @@
+State of the Bitcoin Network
+
+# Introduction
+
+Thank you to all the participants for putting this together and coming. Thank you for coming and talking about this issue. It's near and dear to my heart. I will present this information as factual as possible while also being someone who is raising funds for these developers. I'll try to be impartial. We have a representative from someone at another funding organization. We have someone affiliated with other developer funding organizations here. This is not a one organization show. The other person here might have some commentary before or throughout this conversation. Go ahead and interrupt this presentation if you want; it doesn't need to be me just speaking.
+
+# Who am I?
+
+I am the executive director of a charity that funds bitcoin software development. We are funding seven individuals who contribute to Bitcoin Core. This is the software that is running the network. It's node software. It's not something like bitcoin or on top of bitcoin, but it's actually bitcoin.
+
+We are entirely funded by community donations. This is my main job. I also contribute to a technical publication in bitcoin called Bitcoin Optech which has a weekly podcast and a weekly newsletter.
+
+I also contribute to the Bitcoin Core project itself. There are in-person meetings that happen with developers twice a year. Separate from fundraising for my organization, we also fundraise for these in-person meetings for Bitcoin Core developers. Sometimes there are presentations but it's code review, hanging out, hacking on code, etc. It's developers getting together because otherwise they are all over the world.
+
+So I have an interesting vantage point I can share.
+
+# A tale of two assets
+
+This is not an apple-to-apple comparison. On the one side, there is Meta/Facebook which has a $1.2 trillion dollar market cap and more than 20,000 engineers on average making $200-400,000/year. On the other side, you have bitcoin which is a $1.3 trillion market cap, with about 40 developers. Obviously there are some differences here; one is a business, the other is a digital asset and software network. Not an entirely fair comparison.
+
+# Why are developers needed in bitcoin?
+
+Some people say well Satoshi Nakamoto threw the code over the wall and it was finished. But that's not the case. There are two observations I'd like to point out for bitcoin and development that illustrates the needs for developers.
+
+We're building a digital asset and financial system on top of bitcoin. And it's entirely open-source code. The other observation is that all software requires maintenance. There will need to be people working on maintaining this codebase.
+
+# What kind of maintenance work?
+
+I should say that not all the work that developers do on bitcoin are doing maintenance; indeed ,some are working on features or protocol changes. If you look at actual code changes in a given week or month, most of the work is maintainence related work.
+
+There's four types of maintenance in the literature on software maintenance: corrective, like fixing bugs. On the Bitcoin Core github repository, there's a way to surface an issue like a button is not working in the GUI or a more serious crash in the software.
+
+There's the notion of "adaptive" maintenance, like when there are operating system compatibility issues. Last year I think Apple changed how MacOS was architected in some way which broke Bitcoin Core on MacOS at the time. We can all agree that we need developers around to make sure Bitcoin can keep running on Mac computers. Also, dependencies fall in this category. The "xz" compression library project used in a lot of open-source software-- that repository was targeted intentionally over a long period of time where someone was able to inject a backdoor into the project. Thankfully, luckily, someone found that backdoor was snuck in and it was found before it was rolled out to millions of machines. So checking dependencies is something else that developers have to do.
+
+There's also "preventative" maintenance, like fuzz testing where you take pieces of the Bitcoin Core software and throw quasi-random inputs at it- almost like mining- and see if your random inputs to the code cause anything to break or not work correctly. So there are people working on fuzzing Bitcoin Core. It's a very promising security approach. Fuzzing, not fuzzy.
+
+There's also general code review, and we will go into some statistics about this.
+
+The last type of maintenance for software is "perfective" maintenance where you improve the performance, reliability, and maintainability of the software. For example, making the software faster, improving the underlying database, or otherwise fixing features to work faster.
+
+# Who pays for this kind of work?
+
+If this was a traditional business, then the engineer would have corporate salary and stock options and the normal benefits. If you are a crypto project, then you might have a token sale or VC funding or some kind of developer tax to take money from the community and route that to the programmers working on the token project. Most open-source software projects are based on volunteer contributors.
+
+I don't mean to pick on Stellar, but I thought this was interesting. I dug into this one. Their development fund is $950 million dollars. $150 million ecosystem support fund. $770 million use case investment fund. And $460 million user acquisition fund. It's a total of $2.3 billion dollars that they have given themselves. That was actually in 2019, so this number is now $3.5 billion.
+
+That's how you would do it if you were a crypto project.
+
+# Who pays for it in bitcoin's ecosystem though?
+
+When bitcoin started, obviously Satoshi was not being paid at all. It was 100% volunteer time. It wasn't until Bitcoin Foundation was paying gavinandresen that someone was getting a salary to work on bitcoin. It's been a long truck up since then. I would say most developers are now being paid at least something. Over time, the community has donated more financial resources so that people can continue to work on the software.
+
+This is a picture of Gloria. She is an example of this time-vs-money balance. At some point, someone has to give time or money. She was originally a computer science student in college, she got a Google job offer when she graduated, but she also got a grant offer in the bitcoin ecosystem. She was offered $100,000 to come work. Google offered her easily 2-3x that amount, I don't know the number. As a community we donated $100k, and she donated her time because she could have been at Google making a lot more money. Lucky for us, she made that sacrifice because she is now a full-time Bitcoin Core developer, maintainer, and mentor to younger developers.
+
+We want to capture as many Gloria's as we can, and not just prey on their altruism or hope they have a wealthy family member to support them.
+
+# Who is funding Bitcoin Core development now?
+
+There are some self-funded development funding organizations, like venture-backed entities or they have wealthy benefactors to fund bitcoin developers each year. These are specific to the Bitcoin Core projects and some of these fund other work but companies like Blockstream, Chaincode, Gemini, Paradigm, Spiral, etc. These orgs do not take donations or that's not their mode of operation. They have profits or other financing from someone to have them continue to do this.
+
+On the other hand, there are charitable development funding organizations. There's Brink, BTrust, MIT DCI, HRF, OpenSats, Vinteum, 2140, etc. Some of these are non-profits. 2140 is a coming soon organization out of Europe based out of Amsterdam firing up a dev funding organization right now. Honorable mention.
+
+For the charitable dev funding orgs, it's important to note that each of us have dozens of supporters. If we didn't have the support of other organizations, then our charity wouldn't be able to fund developers ourselves. So I want to acknowledge that behind each one of these charitable dev funding orgs, there are 10 or 20 sets of individuals that are donating or organizations donating to those organizations.
+
+# Bitcoin developer funding challenges
+
+Awareness remains to be an issue. Many organizations aren't aware that there's an issue for funding bitcoin development. Sometimes people are still being paid half market rate salary. Sometimes people get paid but only in bull markets. Or they think someone else will help, sort of a "tragedy of the commons" there.
+
+On the sustainability front, donations tend to follow the bitcoin price which is not exactly what you want. You don't want developers to "sometimes" be working, and other times not working. Developers want a long-term sustainable career, and cyclic donations doesn't help with that. The salaries are not competitive, often less than what they could go get working in the industry. Recruiting is also another sustainability issue. It takes time to go out and train new developers and get them up to speed.
+
+# Bitcoin developer funding opportunities
+
+On the funding front, we could better fund established Bitcoin Core developers in a long-term way. We could also increase compensation to help with retention and recruiting. We shouldn't need bitcoin developers to take a hit to work on the bitcoin development. I think it would be reasonable to add 2-3 new developers per year at least.
+
+There are some things that we could be doing, but aren't. The bitcoin source code is one of the biggest honeypots in history, so people are looking at it, but I think it would be worthwhile to pay for security audit firms to engage more eyes on this code. I think funding that would make sense. I think there are other things we could be doing beyond just funding more engineers.
+
+Ideally, we should keep some principles: we want the funding to be voluntary, transparent, decentralized, preserve developer autonomy, and focus on the true commons of the bitcoin ecosystem. There's a lot of work being done at higher layers that seems to be venture funded or have some financial incentive to back like ICOs. But in this core protocol work, there's this common underlying issue.
+
+The outcome we want is a stronger, more robust layer one bitcoin to build this digital economy that we are all working towards.
+
+# Outro
+
+Bitcoin is the most widely used crypto protocol and asset and software, and its developers have no foundation or fundraise. What do we do about it? I think that's what this event is about.
+
+Q: We fund all kinds of tech. The list you have right there, what is the dollar amount you need to add 2-3 developers/year. But what about as a whole package? All the line items?
+
+A: I think there is a forthcoming presentation that gets into the dollar amounts. We could assume $250,000 on average for developer. That would be $10m on the high end for 40 developers. Some of the organizations are already funding that. The gap is probably $5-7m?
+
+Q: How does it help the organization grow as far as-- if someone is going to invest on this program, this list you have, what do you get in return?
+
+A: Hopefully it's secure bitcoin software that we can all use.
+
+Q: Explain?
+
+A: Well, bitcoin has bugs. Some of them are known. Some of them are not known. We want engineers fixing these, combing for them, etc. This is maintenance work. There's also performance improvements and other things that need to be done.
+
+Q: Of the four categories, is work evenly distributed? Do all developers focus on all the categories?
+
+A: Some people are focused on specific areas. We personally fund people more focused on testing and review. But some people focus on making improvements or new features. The breakdown as a project on a whole, hard to say.
+
+Q: How many ETF sponsors are there right now? There are 13 ETFs. These are companies with traditional firms that have a lot to lose if this thing doesn't work. Would they tap their VC arms? Seems like they might have a strong incentive for this project to move forward. It's a bad look if this thing fails.
+
+A: Well we don't want to be leaning too much into give us money or else the network goes down.
+
+Q: We have partnered with an ETF and they pledged some donations.
+
+Q: What about legal protection for the core developers? Craig Wright is not Satoshi Nakamoto. We can all say that now officially. There were a lot of legal issues related to that. Thankfully someone stepped in to finance that defense. Is that sustainable? How do we protect core developers from these vixatious litigants?
+
+A: COPA happened to step in. There were a lot of cases with that adversary unfortunately. There is a bitcoin developer defense fund which is a separate organization. I hope some of the policy type organizations can make sure open source developers are more protected as well. I hope people are doing due diligence on the policy side.
+
+Q: There were a core developers that decided to step down because of the legal repercussions.
+
+A: And some that decided to come back. But yes.
+
+Q: What about a list of all these foundations and funds, is there a central list?
+
+A: There was a spreadsheet a while back but it's outdated. No. It's just what I know, I didn't ask everyone exactly who is giving you what funds.
+
+Q: It's hard to know what everyone else is doing.
+
+Q: Could the bitcoin protocol itself have something centralized and have a pooled organization for bitcoin? Wall Street is stepping in. They are probably asking for it. Maybe it's time for a new Bitcoin Foundation.
+
+A: That's antithetical to bitcoin. The last one did not go so well. The developers are not very interested in that happening. I think the whole magic of bitcoin is that there is no bitcoin organization.
+
+A: I echo this. There would be hesitancy about putting too much under one organization. But that doesn't mean you can't use some economies of scale to aggregate information and publish things.
+
