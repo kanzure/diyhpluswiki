@@ -1,0 +1,39 @@
+# Mailing list headaches
+
+Warren Togami
+
+Satoshi's original vision was apparently sourceforge and the sourceforge mailing list. In 2015, we moved away from sourceforge for the mailing list. We had a hard time picking a host deemed to be neutral at the time. We didn't want to deal with this. At the same time, nobody wants to do any work.
+
+<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2015-June/008637.html>
+
+At the time, there was an effort to upgrade to mailman3 because a bigger number is better. Also, some moderators were appointed. Over time it dwindled down to one moderator. Unfortunately, late last year, the Linux Foundation informed us about their intent to discontinue their mailing list hosting services. Mailman2 has been unmaintained upstream for years. It has severe problems from a maintainability perspective, security perspective, the next slide is about that. They tried to throw money at this to fix mailman2 but they failed. Now they want to shut it down, they told me that they had 20,000 other project lists most of which are moved to groups.io. I haven't tried it, but being a commercial service, I think many of us have a kneejerk reaction to proprietary non-open-source things. At least that was the thinking back then.
+
+Q: Why not use a PGP whitelist and only accept PGP-signed email?
+
+Mailman2 is problematic. Recently it hit us hard. The moderation load hasn't been that load because we would whitelist people who were not causing problems and everyone else would get into the mod queue. But it broke in August 2018 and someone figured out how to spoof emails. We now have to manually moderate every post ever since, which is not sustainable. Recently the mailing list server had a coincidental corruption bug.
+
+Use pgp-signed email and whitelist the keys. The problem here is that mailman doesn't implement this, and we don't want to increase the friction too much. Every time this topic comes up, people offer to maintain a mail server. But it's difficult to not get randomly blacklisted by commercial email services. Nobody here has time to deal with this. Also, admindb on mailman uses a single shared password among all the moderators, and there's no accountability. Look up SPF, DKIM, DMARC, most of this is poorly or not at all supported by open-source mailing list managers. LKML is also equally in trouble. Keeping SMTP servers off of arbitrary commercial blacklists is hard. Linux Foundation is technically responsible for the LKML mailing list. There's dozens or hundreds of them. It's one of the busiest mailing lists in the world. They are using majordomo, an even earlier open-source mailing list manager. The only reason it works is because there's a dictator babysitting it with heavily customized code that only he understands, and they are afraid of his bus factor because nobody understands what he has done now and he wont let anyone touch it.
+
+Q: What if we stop using a mailing list?
+
+Before we get there... the mailing list is still running, they are putting pressure to shut it off, it's not just us it's also lightning-dev. They have a plan to shove it off to OSUOSL, who has somehow agreed to maintain it. But they have the same software maintenance problems as all of us. They are offering to keep the subdomains, all the email addresses remain the same, and the archive URLs and permalinks remain the same. Our community could donate some money to OSUOSL since they're a 501c39 non-profit. They are fairly well known and well-described. Bryan and I are investigating groups.io. Keeping permalinks is important for things like patent priority. History is important for not breaking backlinks.
+
+If it's unmaintainable, then it doesn't matter that you can see the mailing list.
+
+Q: Could we add mailing list functionality to bitcoind?
+
+We shouldn't migrate the mailing list subscribers to Google because this a list of email addresses of bitcoin developers and this should be kept somewhat private.
+
+There might be some alternative to mailing lists, like web forums, which could have better moderation. Some of us would rather use Google Groups over a forum. Developers use mailing lists, so it's blasphemy. We moved the mailing list because the Sourceforge forum was unusable. All developers are facing this mailing list problem. Couldn't we band together and find a solution?
+
+If keybase had a mailing list product... I could ask them to add a mailing list feature.
+
+Q: What about MIT or DCI?
+
+MIT has a big mailing list deployment. We could ask them.
+
+This has been a bigger problem for us than other projects due to the adversarial nature of our problems... What about the bitcointalk replacement? They were doing migration of the database a while back. They are probably stalled. It seems comparable to nodebb or discourse. That's the same blasphemy problem. The blasphemy problem isn't an actual problem.... It wont be blasphemy if it doesn't work anymore.
+
+Let's come up wit hthe requirements then different people can research their pet solutions and say how it solves their problems. Do we care about proprietary vs open-source? Do we care about the privacy of the list of subscribers? Does it have to be email? Do we care about permalinks? Do we care about web-accessible things?
+
+
