@@ -12,9 +12,9 @@ The conversation has been anonymized by default to protect the identities of the
 
 Agenda: <https://github.com/bitcoin-sydney/socratic/blob/master/README.md#2021-07>
 
-First IRC workshop on L2 onchain support: <https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-June/019079.html>
+First IRC workshop on L2 onchain support: <https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-June/019079.html>
 
-Second IRC workshop on L2 onchain support: <https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-June/019148.html>
+Second IRC workshop on L2 onchain support: <https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-June/019148.html>
 
 # Basics and BIP 125 RBF
 
@@ -300,11 +300,11 @@ We do have a check right now called min relay transaction fee. That is requiring
 
 # Future ideas - SIGHASH_IOMAP and fee sponsorship
 
-SIGHASH_IOMAP: <https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-May/019031.html>
+SIGHASH_IOMAP: <https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-May/019031.html>
 
-Fee sponsorship: <https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-September/018168.html>
+Fee sponsorship: <https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-September/018168.html>
 
-We’ve been through pinning, we’ve been through these rules and packages and package relay. Those are all relevant now or soon. Let’s talk now about the future to finish this off. What can the future look like? What is the ideal mechanism to do fee bumping of pre-signed transactions such that it can bypass these rules and still not cause denial of service attacks and be sound from a P2P perspective, bandwidth perspective and from a layer 2 protocol design perspective? The two proposals I want to focus on are Antoine Riard’s SIGHASH_IOMAP and Jeremy Rubin’s sponsorship idea. [This](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-September/018168.html) is the sponsoring one. Let’s talk about that first. This is Jeremy Rubin’s idea. What he has proposed is like CPFP but on crack or without having to plan for it you can sign your transaction, sign one of the inputs and say “I am increasing the fee of this transaction. You can only include this transaction in the block if that transaction I’m sponsoring is in the block as well.” It is very flexible in that you can take any transaction you want to be in there, any layer 2 pre-signed transaction with whatever fee rate and say “I am going to sponsor this transaction with one of my wallet inputs”. That’s basically the idea.
+We’ve been through pinning, we’ve been through these rules and packages and package relay. Those are all relevant now or soon. Let’s talk now about the future to finish this off. What can the future look like? What is the ideal mechanism to do fee bumping of pre-signed transactions such that it can bypass these rules and still not cause denial of service attacks and be sound from a P2P perspective, bandwidth perspective and from a layer 2 protocol design perspective? The two proposals I want to focus on are Antoine Riard’s SIGHASH_IOMAP and Jeremy Rubin’s sponsorship idea. [This](https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-September/018168.html) is the sponsoring one. Let’s talk about that first. This is Jeremy Rubin’s idea. What he has proposed is like CPFP but on crack or without having to plan for it you can sign your transaction, sign one of the inputs and say “I am increasing the fee of this transaction. You can only include this transaction in the block if that transaction I’m sponsoring is in the block as well.” It is very flexible in that you can take any transaction you want to be in there, any layer 2 pre-signed transaction with whatever fee rate and say “I am going to sponsor this transaction with one of my wallet inputs”. That’s basically the idea.
 
 This needs a soft fork and as you say it is on crack because it is not a CPFP or a RBF. It is literally a transaction that has no relation whatsoever to the transaction you are concerned about. There is no connection whatsoever, that high fee transaction is saying “You can only mine me if you also include this other transaction that is not related.”
 
@@ -370,7 +370,7 @@ It would be good to have package relay already deployed and solve some safety ho
 
 # Transaction mutation proposal
 
-<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-June/019046.html>
+<https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-June/019046.html>
 
 There was an alternative proposed solution, it was semi failed. The idea was to allow you to change transactions after they’ve been signed, to mutate them. Outputs tend to go towards one party or the other so one party can reduce one of the outputs after it has been signed. If we put a Tapscript in there that says “Under these conditions this output can be reduced with a signature from this key.” That would increase the fee. The problem with that idea is that in layer 2 protocols the outputs are not owned exclusively by one party yet. Or at least as soon as the commitment transaction is broadcast you don’t know who owns those funds even if they are in a `to_self` output or a `to_remote` output. In the `to_self` case you don’t know who they are going to yet. How do you decide where they get the funds from to reduce an output? You have to put some kind of limit in there, you can reduce this output by this amount. If you set that limit too high you can do a griefing attack where you broadcast an old commitment transaction in a channel you no longer have much interest in and burn a large fee to a miner to grief the other person. What is the logic to set the limit of the fees you can reduce? The advantage of this mutation scheme is clearly you do not need coins from outside the protocol coins. The coins that went into the channel in the first place, you can use those coins to bump the fee rather than getting them from the wallet. My concern is that is difficult from a UX perspective to always have coins around. It would be a nice thing to get rid of, you could just use the channel coins to bump the fee but it turns out to be rather involved. I am thinking that one of these two proposals is probably better.
 

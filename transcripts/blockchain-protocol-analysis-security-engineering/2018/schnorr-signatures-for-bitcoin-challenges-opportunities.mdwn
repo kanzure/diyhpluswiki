@@ -62,7 +62,7 @@ Seems like an almost obvious question and win. We can make the same security ass
 
 # Taproot
 
-One scheme that can benefit from this sort of new Schnorr signature validation opcode is <a href="https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-January/015614.html">taproot</a>, which if you've been following the bitcoin-dev mailing list over the past few days you may have seen mentioned. Taproot is a proposal by Greg Maxwell where effectively the realization is that almost all cases where a script gets satisfied (where an actual spend occurs) and there are multiple parties involved can almost always be written as "either everyone involved agrees, or some more complex conditions are satisfied". Taproot encodes a public key or the hash of a script inside just one public key that goes on to the chain. You cannot tell from the key whether it's just a key or if it's a key that also commits to a script. The proposed semantics for this allow you to either just spend it by providing a signature with the key that is there, or you reveal that it's a commitment to a script and then you give the inputs to satisfy that script. If that signature used in the taproot proposal was a Schnorr signature, then we get all the advantages I talked about for Schnorr signatures. So not only could this be used for a single signer, but it could also be the "everyone agrees automatically" by using a native Schnorr multi-signature.
+One scheme that can benefit from this sort of new Schnorr signature validation opcode is <a href="https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-January/015614.html">taproot</a>, which if you've been following the bitcoin-dev mailing list over the past few days you may have seen mentioned. Taproot is a proposal by Greg Maxwell where effectively the realization is that almost all cases where a script gets satisfied (where an actual spend occurs) and there are multiple parties involved can almost always be written as "either everyone involved agrees, or some more complex conditions are satisfied". Taproot encodes a public key or the hash of a script inside just one public key that goes on to the chain. You cannot tell from the key whether it's just a key or if it's a key that also commits to a script. The proposed semantics for this allow you to either just spend it by providing a signature with the key that is there, or you reveal that it's a commitment to a script and then you give the inputs to satisfy that script. If that signature used in the taproot proposal was a Schnorr signature, then we get all the advantages I talked about for Schnorr signatures. So not only could this be used for a single signer, but it could also be the "everyone agrees automatically" by using a native Schnorr multi-signature.
 
 # Scriptless scripts
 
@@ -122,7 +122,7 @@ We're working on a BIP for Bellare-Neven based interactive aggregate signatures.
 
 That's all.
 
-<a href="https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-July/016203.html">bip-schnorr</a>
+<a href="https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-July/016203.html">bip-schnorr</a>
 
 # Q&A
 
@@ -148,4 +148,4 @@ A: The most commonly deployed Schnorr-like signature is ed25519 which is very we
 
 ----
 
-"<a href="https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-January/015696.html">Design approaches for cross-input signature aggregation</a>"
+"<a href="https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-January/015696.html">Design approaches for cross-input signature aggregation</a>"

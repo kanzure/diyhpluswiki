@@ -16,7 +16,7 @@ The conversation has been anonymized by default to protect the identities of the
 
 # PoDLEs revisited (Lloyd Fournier)
 
-https://lists.linuxfoundation.org/pipermail/lightning-dev/2021-January/002929.html
+https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/lightning-dev/2021-January/002929.html
 
 We’ll start with me talking about my research into UTXO probing attacks on Lightning in the dual funding proposal. I will go quickly on it because there are a lot of details in that post and they are not super relevant because my conclusion wipes it all away. I think we’ve discussed this before if you are a long time Sydney Socratic attendee, maybe the first or second meeting we had this topic come up when the dual funding proposal was first made by Lisa from Blockstream. This is a proposal to allow Lightning channels to be funded by two parties. The reason for doing that, both parties have capacity at both sides. Both sides can make a payment through that channel right at the beginning of the channel. The difficulty with that is that it creates this opportunity for the person who is requesting to open the channel, say “I am going to use this UTXO”, wait for the other guy to say “I will dual fund this with you with my UTXO” and then just leave. Once the attacker has learnt what UTXO you were going to use he now knows the UTXO from your wallet and then just aborts the protocol. You can imagine if you have a bunch of these nodes on the network that are offering dual funding the attacker goes to all of them at once and just gets a bunch of information about which node owns which UTXO on the blockchain and then leaves, does it again in a hour or something. We want to have a way to prevent this attack, prevent leaking the UTXOs of every Lightning node that offers this dual funding. We can guess that with dual funding, probably your node at home is not offering that, maybe it is but you would have to enable it and you would have to carefully think about what that meant. But certainly it is a profitable thing to do because one of the businesses in Lightning is these services like Bitrefill where you pay for capacity. If anyone at home with their money could offer capacity in some way to dual fund it might become a popular thing and it may offer a big attack surface. One very intuitive proposal you might think of is as soon as this happens to you, you broadcast the UTXO that the attacker proposed and you tell everyone “This guy is a bad UTXO”. You shouldn’t open channels with this guy because he is just going to learn your UTXO and abort. Maybe that isn’t such a great idea because what if it was just an accident? Now you’ve sent this guy’s UTXO around to everyone saying “He is about to open a Lightning channel”. Maybe not the end of the world but the proposal from Lisa is to do a bit better using a trick from Joinmarket which is this proof of discrete logarithm equality or we’ve called it PoDLE. What this does is creates an image of your public key and UTXO against a different base point. It is fully determined by your public key, by your secret key, but it cannot be linked to your public key. It is like another public key that is determined by your public key but cannot be linked to it unless you have a proof that links the two. What you do is instead of broadcasting a UTXO you broadcast these unlinked coins. No one can link to the onchain UTXO but if that attacker connects to them they’ll be able to link it.
 
@@ -46,7 +46,7 @@ Correct. You would learn new funds before they are used but they are eventually 
 
 # Lightning dice (AJ Towns)
 
-https://lists.linuxfoundation.org/pipermail/lightning-dev/2021-January/002937.html
+https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/lightning-dev/2021-January/002937.html
 
 Slides: https://www.dropbox.com/s/xborgrl1cofyads/AJ%20Towns-%20Lightning%20Dice.pdf
 
@@ -186,7 +186,7 @@ A - To have a channel, a routing node pointing towards a use case like this whic
 
 # Taproot activation
 
-Taproot activation meeting 2: https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-February/018380.html
+Taproot activation meeting 2: https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-February/018380.html
 
 Let’s talk about Taproot activation so we can actually have this thing working on mainnet. 
 

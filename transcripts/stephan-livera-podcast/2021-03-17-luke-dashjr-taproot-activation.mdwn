@@ -8,11 +8,11 @@ Date: March 17th 2021
 
 Audio: https://stephanlivera.com/episode/260/
 
-Luke Dashjr arguments against LOT=false: https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-February/018498.html
+Luke Dashjr arguments against LOT=false: https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-February/018498.html
 
-T1-T6 and F1-F6 arguments for LOT=true and LOT=false: https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-February/018380.html
+T1-T6 and F1-F6 arguments for LOT=true and LOT=false: https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-February/018380.html
 
-F7 argument for LOT=false: https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-February/018415.html
+F7 argument for LOT=false: https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-February/018415.html
 
 Transcript by: Stephan Livera Edited by: Michael Folkson
 
@@ -108,9 +108,9 @@ LD: I’m trying to think. I’m not sure that there was too much else.
 
 SL: So let’s move on to Taproot now. We’ve got this new soft fork that most people want. There’s been no serious sustained objections to it. Can you spell out your thoughts on how Taproot activation has gone so far?
 
-LD: We had three, maybe four [meetings](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-January/018370.html) a month or two ago. Turnout wasn’t that great, only a hundred people or so showed up for them. At the end of the day we came to consensus on pretty much everything except for the one lockinontimeout (LOT) [parameter](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-February/018425.html). Since then a bunch of people have started throwing out completely new ideas. It is great to discuss them but I think they should be saved for the next soft fork. We’ve already got near consensus on Taproot activation, might as well just go forward with that. There’s not consensus on lockinontimeout but there’s enough community support to enforce it. I think we should just move forward with that how it is and we can do something different next time if there’s a better idea that comes around. Right now that is the least risky option on the table.
+LD: We had three, maybe four [meetings](https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-January/018370.html) a month or two ago. Turnout wasn’t that great, only a hundred people or so showed up for them. At the end of the day we came to consensus on pretty much everything except for the one lockinontimeout (LOT) [parameter](https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-February/018425.html). Since then a bunch of people have started throwing out completely new ideas. It is great to discuss them but I think they should be saved for the next soft fork. We’ve already got near consensus on Taproot activation, might as well just go forward with that. There’s not consensus on lockinontimeout but there’s enough community support to enforce it. I think we should just move forward with that how it is and we can do something different next time if there’s a better idea that comes around. Right now that is the least risky option on the table.
 
-SL: With lockinontimeout there’s been a lot of discussion back and forth about true or false. And other ideas proposed such as just straight flag day activation or this other idea of [Speedy Trial](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-March/018583.html). Could you outline some of the differences between those different approaches?
+SL: With lockinontimeout there’s been a lot of discussion back and forth about true or false. And other ideas proposed such as just straight flag day activation or this other idea of [Speedy Trial](https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-March/018583.html). Could you outline some of the differences between those different approaches?
 
 LD: The lockintimeout=true is essentially what we ended up having to do with SegWit. It gives a full year to the miners so they can collaborate cooperatively and protect the network while it’s being activated early. If the miners don’t do that for whatever reason, at the end it activates. If we were to set lockinontimeout=false we essentially undo that bug fix and give miners control again. It would be like reintroducing the inflation bug that was fixed not so long ago. It doesn’t really make sense to do that. At the end of the day it is a lot less secure. You don’t really want to be running it as an economic actor so you would logically want to run lockinontimeout=true. Therefore a lot of economic actors are likely to run it true. In most of the polls I’ve seen most of the community seems to want true. As far as a flag day, that’s essentially the same thing as lockinontimeout=true except that it doesn’t have the ability for miners to activate it early. So we’d have to wait the whole 18 months for it to activate and it doesn’t have any signaling. At the end of the day we don’t really know if it activated or if the miners are just not mining stuff that violates Taproot which is the difference of whether it is centralized or decentralized verification. It is economic majority still, that will matter for the enforcement, but you want to be able to say “This chain has Taproot activated.” You don’t want it to be an opinion. I say Taproot is activated, you say it isn’t. Who’s to say which one of us is right? Without a signal on the chain we’re both in a limbo where we’re both saying the same thing about the same chain and there’s no clear objective answer to that question, is Taproot activated.
 
@@ -150,15 +150,15 @@ LD: You would hope so. But regardless, what we do with legitimate soft forks has
 
 # Bitcoin Core releasing LOT=false and UASF releasing LOT=true
 
-Luke Dashjr on why LOT=false shouldn’t be used: https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-February/018498.html
+Luke Dashjr on why LOT=false shouldn’t be used: https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-February/018498.html
 
-T1-T6 and F1-F6 arguments for LOT=true and LOT=false: https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-February/018380.html
+T1-T6 and F1-F6 arguments for LOT=true and LOT=false: https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-February/018380.html
 
-F7 argument for LOT=false: https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-February/018415.html
+F7 argument for LOT=false: https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-February/018415.html
 
 SL: The other argument I have heard is if Bitcoin Core were to release a client with LOT=false and another contingent of developers and users who want to go out and do similar to the UASF and release an alternate client with LOT=true. The average user can’t review all the Bitcoin code and they would now have to decide whether they want to run this alternate client that does include LOT=true. So what are your thoughts on that aspect?
 
-LD: That’s no riskier than running the one with LOT=false. LOT=false for other reasons doesn’t come to a coherent view of consensus. It will not be very useful to people who are on the LOT=false client. For that reason, I think Core releasing LOT=false would actually be an abdication of duties towards users. Obviously Bitcoin Core, there’s this expectation that it’s going to follow what the users want and be safe to use. LOT=false is simply [not safe](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-February/018498.html) to use.
+LD: That’s no riskier than running the one with LOT=false. LOT=false for other reasons doesn’t come to a coherent view of consensus. It will not be very useful to people who are on the LOT=false client. For that reason, I think Core releasing LOT=false would actually be an abdication of duties towards users. Obviously Bitcoin Core, there’s this expectation that it’s going to follow what the users want and be safe to use. LOT=false is simply [not safe](https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-February/018498.html) to use.
 
 # Dealing with unlikely chain splits
 
@@ -182,7 +182,7 @@ LD: After the full year you’re no longer relying on that assumption. The miner
 
 # Speedy Trial
 
-Speedy Trial proposal: https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-March/018583.html
+Speedy Trial proposal: https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-March/018583.html
 
 Speedy Trial support: https://gist.github.com/michaelfolkson/92899f27f1ab30aa2ebee82314f8fe7f
 

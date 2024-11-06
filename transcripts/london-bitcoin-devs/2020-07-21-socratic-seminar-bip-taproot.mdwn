@@ -80,7 +80,7 @@ MF: Russell do you remember looking through the BIPs from Johnson Lau and Mark F
 
 RO: I wasn’t really involved in the construction of those proposals so I am not a good person to discuss them.
 
-MF: Some of the interesting stuff that I saw was this [tail call](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-September/015028.html) stuff. An implicit tail call execution semantics in P2SH and how “a normal script is supposed to finish with just true or false on the stack. Any script that finishes execution with more than a single element on the stack is in violation of the so-called clean-stack rule and is considered non-standard.” I don’t think we have anybody on the call who has any more details on those BIPs, the Friedenbach and Johnson Lau work. There was also Jeremy Rubin’s [paper](https://rubin.io/public/pdfs/858report.pdf) on Merklized Abstract Syntax Trees which again I don’t think Jeremy is here and I don’t think people on the call remember the details.
+MF: Some of the interesting stuff that I saw was this [tail call](https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-September/015028.html) stuff. An implicit tail call execution semantics in P2SH and how “a normal script is supposed to finish with just true or false on the stack. Any script that finishes execution with more than a single element on the stack is in violation of the so-called clean-stack rule and is considered non-standard.” I don’t think we have anybody on the call who has any more details on those BIPs, the Friedenbach and Johnson Lau work. There was also Jeremy Rubin’s [paper](https://rubin.io/public/pdfs/858report.pdf) on Merklized Abstract Syntax Trees which again I don’t think Jeremy is here and I don’t think people on the call remember the details.
 
 PW: One comment I wanted to make is I think what Russell and I talked about originally with the term MAST isn’t exactly what it is referred to now. Correct me if I’m wrong Russell but I think the name MAST better applies to the Simplicity style where you have an actual abstract syntax tree where every node is a Merklization of its subtree as opposed to BIP 114, 116, BIP-Taproot, which is just a Merkle tree of conditions and the scripts are all at the bottom. Does that distinction make sense? In BIP 340 we don’t use the term MAST except as a reference to the name because what it is doing shouldn’t be called MAST. There is no abstract syntax tree.
 
@@ -206,7 +206,7 @@ PW: The way to accomplish that is by saying “We are going to take the key path
 
 # Greg Maxwell Bitcoin dev mailing list post on Taproot (2018)
 
-https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-January/015614.html
+https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-January/015614.html
 
 MF: One of the key points here once we have discussed that conceptual type stuff is that pre-Taproot we thought it was going to be an inefficiency to try to have this construction. The key breakthrough with Taproot is that it avoids any larger scripts going onchain and really doesn’t have any downsides. Greg says “You make use cases as indistinguishable as possible from the most common and boring payments.” No privacy downsides, in fact privacy is better and also efficiency. We are getting the best of both worlds on a number of different axes.
 
@@ -256,7 +256,7 @@ MF: With a pay-to-script-hash you still need to have that script to be able to s
 
 # AJ Towns on formalizing the Taproot proposal (December 2018)
 
-https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-December/016556.html
+https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-December/016556.html
 
 MF: The next item on the reading list was AJ Town’s first attempt to formalize this in a mailing list post in 2018. How much work did it take to go from that idea to formalizing it into a BIP?
 
@@ -268,7 +268,7 @@ PW: Clearly we cannot just put every possible idea and every possible improvemen
 
 # John Newbery on reducing size of Taproot output by 1 vbyte (May 2019)
 
-https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-May/016943.html
+https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-May/016943.html
 
 MF: One of the first major changes was this post from John (Newbery) on reducing the size of the pubkey. The consideration always is we don’t want anyone to lose out. Whatever use case they have, whether they have a small script or a really large script, we don’t want them to be any worse off than before because otherwise you then have this problem of some people losing out. It seems like a fiendish problem to make sure that at least everyone’s use case is not hurt even if it is a very small byte difference. I suppose that is what is hanging over this discussion and John’s post here.
 
@@ -300,7 +300,7 @@ MF: A few people were dreading the conversation. But we won’t discuss activati
 
 # Pieter Wuille mailing list post on Taproot updates (no P2SH wrapped Taproot, tagged hashes, increased depth of Merkle tree, October 2019)
 
-https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-October/017378.html
+https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-October/017378.html
 
 MF: The next item on the reading list, you gave an update Pieter in October 2019 on the mailing list. The key items here were no P2SH wrapped Taproot. Perhaps you could talk about why people wanted P2SH wrapped Taproot. I suspect it is exactly the same reason why people wanted P2SH wrapped SegWit. There is also tagged hashes and increased depth of Merkle tree. 
 
@@ -348,11 +348,11 @@ https://bitcoinops.org/en/newsletters/2020/02/19/#discussion-about-taproot-versu
 
 MF: There hasn’t been much criticism and there doesn’t appear to have been much opposition to Taproot itself. We won’t talk about [quantum resistance](https://bitcoin.stackexchange.com/questions/91049/why-does-hashing-public-keys-not-actually-provide-any-quantum-resistance) because it has already discussed a thousand times. There was this post on the mailing list post with potential criticisms of Taproot in February that is covered by the Optech guys. Was there any valid criticism in this? Any highlights from this post? It didn’t seem as if the criticism was grounded in too much concern or reality.
 
-PW: I am not going to comment. There was plenty of good discussion on the [mailing list](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-February/017618.html) around it.
+PW: I am not going to comment. There was plenty of good discussion on the [mailing list](https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-February/017618.html) around it.
 
 # Andrew Kozlik on committing to all scriptPubKeys in the signature message (April 2020)
 
-https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-April/017801.html
+https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-April/017801.html
 
 MF: This is what Russell was alluding to. This is Andrew Kozlik’s post on committing to all scriptPubKeys in the signature message. Why is it important to commit to scriptPubKeys in the signature message?
 
@@ -376,23 +376,23 @@ PW: It was a known problem and we had to fix it. In any successor proposal whate
 
 Greg Maxwell on Graftroot (Feb 2018)
 
-https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-February/015700.html
+https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-February/015700.html
 
 AJ Towns on G’root (July 2018) 
 
-https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-July/016249.html 
+https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-July/016249.html 
 
 Pieter Wuille on G’root (October 2018)
 
-https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-October/016461.html 
+https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-October/016461.html 
 
 AJ Towns on cross input signature aggregation (March 2018)
 
-https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-March/015838.html
+https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-March/015838.html
 
 AJ Towns on SIGHASH_ANYPREVOUT (May 2019)
 
-https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-May/016929.html
+https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-May/016929.html
 
 MF: The next links are things that didn’t make it in. There is Graftroot, G’root, cross input signature aggregation, ANYPREVOUT/NOINPUT. As the authors of Taproot what thought do you have to put in in terms of making sure that we are in the best position to add these later? 
 

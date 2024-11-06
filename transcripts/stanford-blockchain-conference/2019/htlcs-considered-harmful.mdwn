@@ -44,7 +44,7 @@ There's a lot of reasons. It's a free option, there's a griefing attack, and the
 
 This problem has gone mainstream recently which is great. The problem here is that we had Alice locked hers first and then Bob locks her. This matters when you're doing a multi-asset bet with HTLC. Usually Alice goes to complete the payment immediately, but what if Alice just sits and watches the price and decides last minute to do it? Alice is getting a free option to execute the transaction. It could be, though, that the price moves and the trade is no longer economic. They could let the HTLC timeout and cancel the trade. In the unlikely event that litecoin market price rises, Alice can complete the transaction and get her new money. This is basically an American-style call option. This is worth a premium, but Alice isn't actually paying that premium in an HTLC. In fact, in lightning, if you bail an HTLC you don't actually pay any fee for it at all. So this is a vulnerability and can be attacked.
 
-My good friend ZmnSCPxj made a good argument for a single-asset lightning network on lightning-dev a month ago. It's a good analyiss, I recommend looking at: <https://lists.linuxfoundation.org/pipermail/lightning-dev/2018-December/001752.html>
+My good friend ZmnSCPxj made a good argument for a single-asset lightning network on lightning-dev a month ago. It's a good analyiss, I recommend looking at: <https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/lightning-dev/2018-December/001752.html>
 
 # Griefing problem
 

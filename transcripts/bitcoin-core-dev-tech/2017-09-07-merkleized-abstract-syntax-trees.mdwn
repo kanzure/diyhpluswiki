@@ -2,7 +2,7 @@
 
 # Merkleized abstract syntax trees (MAST)
 
-<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-September/014932.html>
+<https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-September/014932.html>
 
 I am going to talk about the scheme I posted to the mailing list yesterday which is to implement MAST (merkleized abstract syntax trees) in bitcoin in a minimally invasive way as possible. It's broken into two major consensus features that together gives us MAST. I'll start with the last BIP.
 
@@ -33,7 +33,7 @@ What are the issues with OP_CHECKSIGFROMSTACK? ... You could do <a href="http://
 
 If you don't mind the exponential blow-up, then all things reduce to "long list of ways to unlock this, pick one". The exponential blow-up in a merkle tree turns into a linear blow-up in ways to unlock things, but still exponential work to construct it.
 
-One of the advantage of this over <a href="https://github.com/bitcoin/bips/blob/775f26c02696e772dac4060aa092d35dedbc647c/bip-0114.mediawiki">jl2012's original bip114</a> ((but <a href="https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-September/014963.html">see also</a>)) is that, besides being decomposed into two simpler components... go fetch pubkeys out of a tree, then have key tree signatures, it also helps you deal with exponential blow-up when you start hitting those limits, you could put more logic into the top-level script. How hard is it to make this ... pull out multiple things from the tree at once, because there's sharing to look at. Yes that was some of the feedback, it's doable, and you have to work out the proof structure because it's meant for single outputs. In the root you might have n which is the number of items to pull out. So it might be 3 root leaf leaf leaf proof. But without knowing what that n was, you basically have to use it as a constant in your script, the root is a constant. I think it would be interesting to have a fixed n here.
+One of the advantage of this over <a href="https://github.com/bitcoin/bips/blob/775f26c02696e772dac4060aa092d35dedbc647c/bip-0114.mediawiki">jl2012's original bip114</a> ((but <a href="https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-September/014963.html">see also</a>)) is that, besides being decomposed into two simpler components... go fetch pubkeys out of a tree, then have key tree signatures, it also helps you deal with exponential blow-up when you start hitting those limits, you could put more logic into the top-level script. How hard is it to make this ... pull out multiple things from the tree at once, because there's sharing to look at. Yes that was some of the feedback, it's doable, and you have to work out the proof structure because it's meant for single outputs. In the root you might have n which is the number of items to pull out. So it might be 3 root leaf leaf leaf proof. But without knowing what that n was, you basically have to use it as a constant in your script, the root is a constant. I think it would be interesting to have a fixed n here.
 
 The outer version is the hash type or explaining what the hashes are. So the history behind this is that at some point we were thinking about these ... recoverable hashes which I don't think anyone is seriously considering at this point, but historically the reason for extending the size ... I think my idea at the time when this witness versioning came up, we only need 16 versions there because we only need the version number for what hashing scheme to use. You don't want to put the hashing version inside the witness which is constrained by that hash itself because now someone finds a bug and writes ripemd160 and now there's a preimage attack there and now someone can take a witness program but claim it's a ripemd160 hash and spend it that way. So at the very least the hashing scheme itself should be specified outside the witness. But pretty much everything else can be inside, and I don't know what structure that should have, like maybe a bitfield of features (i am not serious about this), but there could be a bit field that has the last two are hashed, into the program.
 
@@ -71,22 +71,22 @@ The version of merklebranchverify in the link is on top of Core and that's a har
 
 So merklebranchverify maybe should be deployed with the non-SegWit version.. but maybe that would send a conflicting message to the users of bitcoin. Segwit's cleanstack rule prevents us from doing this immediately. Only in v0.
 
-Need some candidate soft-forks that are highly desirable by the users. Maybe signature aggregation, maybe luke-jr suggestion anti-replay by <a href="https://github.com/bitcoin/bips/blob/master/bip-0115.mediawiki">OP_CHECKBLOCKATHEIGHT</a> <a href="https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2016-September/013161.html">proposal</a>. Needs to be highly desirable by the user to qualify for this particular case though. Needs to be a small change, so maybe not signature aggregation, but maybe signature aggregation since it's still highly desirable.
+Need some candidate soft-forks that are highly desirable by the users. Maybe signature aggregation, maybe luke-jr suggestion anti-replay by <a href="https://github.com/bitcoin/bips/blob/master/bip-0115.mediawiki">OP_CHECKBLOCKATHEIGHT</a> <a href="https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2016-September/013161.html">proposal</a>. Needs to be highly desirable by the user to qualify for this particular case though. Needs to be a small change, so maybe not signature aggregation, but maybe signature aggregation since it's still highly desirable.
 
 They can break a CHECKSIGFROMSTACK... in a hard-fork. CHECKBLOCKHASH has other implications, like transactions aren't-- in the immediately prior block, you can't reinsert the transaction, it's not reorg-safe. It should be restricted to like 100 blocks back at least.
 [a]I approve this chatham house rule violation
 
 ----
 
-<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-September/014932.html>
+<https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-September/014932.html>
 
-<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-September/014979.html>
+<https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-September/014979.html>
 
-<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-September/015022.html>
+<https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-September/015022.html>
 
-<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-September/014963.html>
+<https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-September/014963.html>
 
-<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-September/014960.html>
+<https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-September/014960.html>
 
 <https://www.reddit.com/r/Bitcoin/comments/7p61xq/the_first_mast_pull_requests_just_hit_the_bitcoin/>
 

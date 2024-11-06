@@ -220,7 +220,7 @@ John: Correct. So what can they do? So when the block's transaction's chain is v
 
 # Fraud-Proofs
 
-So, we were talking about fraud proofs. In general, they're pretty difficult. This is a [post from Luke](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-March/013756.html) on the mailing list. The generalized case of fraud proofs is likely impossible, but he had an implementation of a fraud-proof scheme showing the block isn't over a certain size. This was during the 2x time period. People were worried that a 2x chain might fool SPV clients. This would be a way to tell an SPV client that this header you've got is committing to a block that is larger than a certain size. And you don't need to download the entire block. That's a narrow example of fraud-proof.
+So, we were talking about fraud proofs. In general, they're pretty difficult. This is a [post from Luke](https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-March/013756.html) on the mailing list. The generalized case of fraud proofs is likely impossible, but he had an implementation of a fraud-proof scheme showing the block isn't over a certain size. This was during the 2x time period. People were worried that a 2x chain might fool SPV clients. This would be a way to tell an SPV client that this header you've got is committing to a block that is larger than a certain size. And you don't need to download the entire block. That's a narrow example of fraud-proof.
 
 Audience member: Does this solution protect you against the DoS attack vector?
 
@@ -406,7 +406,7 @@ John: I don't know about that.
 
 Cross talk...
 
-John: I know there is a GitHub repo from Peter Todd called [bloom-io-attack](https://github.com/petertodd/bloom-io-attack) so maybe you can try that at home if you want. But, "a single syncing wallet causes 80GB of disk reads and a large amount of CPU time to be consumed processing this data." [[source]](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2016-May/012636.html) So it seems trivial to DoS.
+John: I know there is a GitHub repo from Peter Todd called [bloom-io-attack](https://github.com/petertodd/bloom-io-attack) so maybe you can try that at home if you want. But, "a single syncing wallet causes 80GB of disk reads and a large amount of CPU time to be consumed processing this data." [[source]](https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2016-May/012636.html) So it seems trivial to DoS.
 
 Audience member: Highly asymmetric.
 

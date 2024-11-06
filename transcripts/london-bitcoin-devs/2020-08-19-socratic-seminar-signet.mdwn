@@ -138,7 +138,7 @@ MF: I don’t think many people are monitoring it for obvious reasons. Because i
 
 # testnet4
 
-https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-June/017031.html
+https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-June/017031.html
 
 MF: Peter Todd back in 2018 when they were discussing a reset of testnet put forward the view that testnet should be a large blockchain. That motivation that AJ said earlier about wanting to reset the testnet just because it gets too big, it takes too long to sync, IBD takes too long. Peter is saying in this mailing list post that you actually want it to be similar size to mainnet if not bigger. Let’s say the block size, block weight discussion starts up again in 5 years, you want to know what is possible before there starts to be performance issues across the network. Perhaps you do want testnet to be really big for those use cases, to experiment with a massive chain prior to thinking about whether we should blocks sizes smaller or bigger or whatever.
 
@@ -224,7 +224,7 @@ KA: Yes the signature commits to the block itself. So you have to have the block
 
 # Signet on bitcoin-dev mailing list (March 2019)
 
-https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-March/016734.html
+https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-March/016734.html
 
 MF: This is the announcement on the dev mailing list. Let’s have this discussion then on having one Signet which everyone uses or having multiple Signets. The problem that I foresee if there is just one is that then you get into the same issue that you do on mainnet where it is like “I want my change on Signet.” Jeremy Rubin comes and says “I want CHECKTEMPLATEVERIFY” and you go “Right fine.” Then someone else comes along with a change that no one is particularly interested or everyone thinks is a bad idea. “I want this on Signet.” Then you are in the same situation that we are on mainnet where it is very hard to get new features on the Signet. It needs at least with you and AJ as the signers it needs you or AJ to sign off that change is worthy of experimentation on Signet. Would you agree that is one of the downsides to having one Signet that everybody uses?
 
@@ -286,7 +286,7 @@ MF: At your [workshop](https://diyhpl.us/wiki/transcripts/advancing-bitcoin/2020
 
 KA: There are several issues that you have to tackle when you are trying to test out new features with the Bitcoin setup. Once you turn it on if you find a bug do we reset the chain now? I think AJ has been working on various [ideas](https://bitcoin.stackexchange.com/questions/98642/can-we-experiment-on-signet-with-multiple-proposed-soft-forks-whilst-maintaining) to make it so that you can turn it on but then you say “Oops we didn’t actually turn it on. That was fake. Ignore that stuff.” Then you turn it on again later. So you can test out different stages of a feature even early stages. You can turn it on, see what happens and then selectively turn them off after you realize things were broken. 
 
-AT: The problem is if you turned Taproot on two weeks ago all the signatures for that would’ve been with the [square version of R](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-August/018081.html). If we change it to the even version of R they’d be invalid if you tried running the future Taproot rules against them. I think you can make that work as long as you keep updating the activation date of Taproot so that all those transactions, they weren’t actually Taproot transactions at all, they were pretend OP_TRUE sort of things that you don’t need to run any validation code over anymore. You only have to do the Taproot rules from this block instead that previous block. Going back to the current version of Signet, that does allow you to accept non-standard transactions.
+AT: The problem is if you turned Taproot on two weeks ago all the signatures for that would’ve been with the [square version of R](https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-August/018081.html). If we change it to the even version of R they’d be invalid if you tried running the future Taproot rules against them. I think you can make that work as long as you keep updating the activation date of Taproot so that all those transactions, they weren’t actually Taproot transactions at all, they were pretend OP_TRUE sort of things that you don’t need to run any validation code over anymore. You only have to do the Taproot rules from this block instead that previous block. Going back to the current version of Signet, that does allow you to accept non-standard transactions.
 
 KA: I don’t think so.
 
@@ -328,7 +328,7 @@ MF: I hadn’t thought much about Lightning in terms of what you’d need on Sig
 
 KA: I have pull requests to make it possible to do Lightning stuff. 
 
-MF: I am just going to highlight some good resources on Signet for the video’s sake. There’s your mailing list [post](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-March/016734.html) initially announcing Signet. Then there’s the Signet [wiki](https://en.bitcoin.it/wiki/Signet) which talks about some of the reasons why you’d want to run Signet and some of the differences between mainnet and Signet. I think we’ve gone through a few of these. 
+MF: I am just going to highlight some good resources on Signet for the video’s sake. There’s your mailing list [post](https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-March/016734.html) initially announcing Signet. Then there’s the Signet [wiki](https://en.bitcoin.it/wiki/Signet) which talks about some of the reasons why you’d want to run Signet and some of the differences between mainnet and Signet. I think we’ve gone through a few of these. 
 
 “All signets use the same hardcoded genesis block (block 0) but independent signets can be differentiated by their network magic (message start bytes). In the updated protocol, the message start bytes are the first four bytes of a hash digest of the network’s challenge script (the script used to determine whether a block has a valid signature). The change was motivated by a desire to simplify the development of applications that want to use multiple signets but which need to call libraries that hardcode the genesis block for the networks they support.” Bitcoin Optech
 

@@ -102,7 +102,7 @@ Last week I worked on some internal Blockstream stuff. I have also been updating
 
 When I was in Zurich a few weeks ago I spent some time talking to Christian about how to update our accounting stuff. I would really like to get an accounting plugin done soon. I did some rethinking about how we do events, it is an event based system. Coins move around, c-lightning emits an event. I am going to make some changes to how we are keeping track of things. I think the biggest notable change is we will no longer be emitting events about chain fees which kind of sucks. There is a good reason to not do that. Instead the accounting plugin will have to do fee calculations on its own which I think is fine. That is probably going to be the biggest change. Working through that today, figuring out what needs to change. Hopefully the in c-lightning stuff will be quite lightweight and then I can spend a lot of time getting the accounting plugin exactly where I want it. That will be really exciting. I am also going to be in Atlanta, Wednesday through Sunday at the TAB conference. I am giving a [talk](https://www.youtube.com/watch?v=mVihRFrbsbc&t=6470s), appearing on a panel and running some other stuff. I will probably be a little busy this week preparing for the myriad of things someone has signed me up for. If anyone has suggestions about topics to talk about you have 24 hours to submit submissions if there are things on Lightning you want to hear about. 
 
-Something to get rid of next after we’ve got [rid of the mempool](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-October/019572.html).
+Something to get rid of next after we’ve got [rid of the mempool](https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-October/019572.html).
 
 That was brave. I think it is great. I think you are wrong but that is ok. 
 
@@ -238,7 +238,7 @@ It is fatal. Then you go to the error logs and it says that the password wasn’
 
 I think there should be something out to stderror. But also we should probably use a specific exit error code in the case... That would be a lot easier to detect. PRs welcome. It is a simple one but it is the kind of thing that no one thought about. Just document it in the lightningd man page. Pick error codes, as long as nothing else gets that error code it would be quite reliable. I think `1` is our general error code, `0` is fine. `1` is something went wrong, anything up to about `125` is probably a decent error, exit code for hsm decoding issues. As you say it makes perfect sense because it is a common use case. If you ever want to automate it you need to know.
 
-Minisketch looks as if it is close to merge, if you want to use Minisketch for gossip stuff. You posted an idea before on the [mailing list](https://lists.linuxfoundation.org/pipermail/lightning-dev/2018-December/001741.html). I have an old branch that pulls in a previous version of Minisketch.
+Minisketch looks as if it is close to merge, if you want to use Minisketch for gossip stuff. You posted an idea before on the [mailing list](https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/lightning-dev/2018-December/001741.html). I have an old branch that pulls in a previous version of Minisketch.
 
 You did actually code it up as well? It was more than just a mailing list post? I didn’t see the branch.
 

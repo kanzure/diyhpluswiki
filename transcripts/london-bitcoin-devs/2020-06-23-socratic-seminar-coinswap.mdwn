@@ -166,7 +166,7 @@ AG: Yeah.
 
 # Design for a CoinSwap implementation (Chris Belcher, 2020)
 
-https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-May/017898.html
+https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-May/017898.html
 
 MF: This is Chris’ mailing list post from May of this year. There’s also the [gist](https://gist.github.com/chris-belcher/9144bd57a91c194e332fb5ca371d0964) with more details on the design. How does this proposal differs from your work Adam in 2017?
 
@@ -400,7 +400,7 @@ BM: We already have Coinjoin and Lightning.
 
 RS: I like the argument of Coinjoining first and then using the result in a CoinSwap. That seems pretty good in the sense that you do have some anonymity already. Whoever receives that UTXO is not going to receive a fully tainted UTXO, it is already mixed with other Coinjoins.
 
-nothingmuch: For completeness, submarine swaps also bridge the gap. That pertains to Adam’s point about CoinjoinXT. You can effectively have a Coinjoin transaction where one of the outputs is a submarine swap that moves some of the balance into a Lightning channel just like you can have a CoinSwap transaction either funded or settled through a Coinjoin. An interesting [post](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-June/017970.html) from the Bitcoin dev mailing list recently is about batched CoinSwaps where you have a single counterparty as a maker servicing multiple takers’ CoinSwaps simultaneously which again blurs the boundary between Coinjoins and CoinSwaps.
+nothingmuch: For completeness, submarine swaps also bridge the gap. That pertains to Adam’s point about CoinjoinXT. You can effectively have a Coinjoin transaction where one of the outputs is a submarine swap that moves some of the balance into a Lightning channel just like you can have a CoinSwap transaction either funded or settled through a Coinjoin. An interesting [post](https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-June/017970.html) from the Bitcoin dev mailing list recently is about batched CoinSwaps where you have a single counterparty as a maker servicing multiple takers’ CoinSwaps simultaneously which again blurs the boundary between Coinjoins and CoinSwaps.
 
 # Succinct Atomic Swaps
 

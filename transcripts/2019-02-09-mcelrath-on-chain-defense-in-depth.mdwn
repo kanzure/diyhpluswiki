@@ -165,11 +165,11 @@ Remember, a vaulted UTXO is a UTXO encumbered such that the spending transaction
 
 * Russell O'Connor, Marta Piekarska: [OP\_CHECKSIGFROMSTACK](https://fc17.ifca.ai/bitcoin/papers/bitcoin17-final28.pdf) and <https://blockstream.com/2016/11/02/covenants-in-elements-alpha/>
 
-* Jeremy Rubin, 2019: [OP\_SECURETHEBAG](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-June/016997.html) or [here (also has more on NOINPUT and CHECKSIGFROMSTACK etc)](https://diyhpl.us/wiki/transcripts/bitcoin-core-dev-tech/2019-06-06-noinput-etc/)
+* Jeremy Rubin, 2019: [OP\_SECURETHEBAG](https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-June/016997.html) or [here (also has more on NOINPUT and CHECKSIGFROMSTACK etc)](https://diyhpl.us/wiki/transcripts/bitcoin-core-dev-tech/2019-06-06-noinput-etc/)
 
-* OP\_CAT + OP\_CHECKSIGFROMSTACK <https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-May/016946.html>
+* OP\_CAT + OP\_CHECKSIGFROMSTACK <https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-May/016946.html>
 
-* OP\_CHECKTXOUTSCRIPTHASHVERIFY <https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-October/016448.html>
+* OP\_CHECKTXOUTSCRIPTHASHVERIFY <https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-October/016448.html>
 
 Eyal, Sirer and Moser wrote a paper in 2016 and showed it at Financial Crypto 2016. They proposed a new opcode OP\_CHECKOUTPUTVERIFY.
 
@@ -205,7 +205,7 @@ Because the SIGHASH depends on the input txid, which in turn depends on the prev
 
 The way this works is that when you do EC recovery on a signature, you have three things really-- you have a signature, a pubkey, and you've got a message. Those are the three things involved in verifying a signature. The pubkey and signature are obvious to everyone here right? The message here is really the SIGHASH. It's a concatenation of a whole bunch of data extracted from the transaction. It depends on the version, hash of the previous outputs, and the outputs, and various other things. The signature authorizes that. What we want to do is not depend on the pubkey in the input. That creates a circular dependency where you can't do EC recovery.
 
-There's a proposal out there called [SIGHASH\_NOINPUT](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-December/016549.html) which was originally proposed for the lightning network where it would be nice to be able to take the set of outputs on the channel and be able to rearrange them, without making an on-chain transaction. If my transactions commit to the txids on-chain, then I can't do that. SIGHASH\_NOINPUT decouples your lightning transactions from those inputs and let you rearrange those, and therefore let you add more funds and remove funds from the transaction. I think it's very likely that NOINPUT will be implemented and deployed because it is so helpful to the lightning network. So, can we repurpose SIGHASH\_NOINPUT for a vault?
+There's a proposal out there called [SIGHASH\_NOINPUT](https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-December/016549.html) which was originally proposed for the lightning network where it would be nice to be able to take the set of outputs on the channel and be able to rearrange them, without making an on-chain transaction. If my transactions commit to the txids on-chain, then I can't do that. SIGHASH\_NOINPUT decouples your lightning transactions from those inputs and let you rearrange those, and therefore let you add more funds and remove funds from the transaction. I think it's very likely that NOINPUT will be implemented and deployed because it is so helpful to the lightning network. So, can we repurpose SIGHASH\_NOINPUT for a vault?
 
 # Schnorr BIP and SIGHASH\_NOINPUT discussion
 
@@ -311,15 +311,15 @@ In all cases here, batching is difficult. This is one consequence of this. You g
 
 # Related
 
-<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-February/015793.html>
+<https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-February/015793.html>
 
-<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-August/017229.html> [or](https://www.coindesk.com/the-vault-is-back-bitcoin-coder-to-revive-plan-to-shield-wallets-from-theft) <https://twitter.com/kanzure/status/1159101146881036289>
+<https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-August/017229.html> [or](https://www.coindesk.com/the-vault-is-back-bitcoin-coder-to-revive-plan-to-shield-wallets-from-theft) <https://twitter.com/kanzure/status/1159101146881036289>
 
 <https://blog.oleganza.com/post/163955782228/how-segwit-makes-security-better>
 
 <https://bitcointalk.org/index.php?topic=5111656>
 
-"tick method": <https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-August/017237.html>
+"tick method": <https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-August/017237.html>
 
 <http://web.archive.org/web/20180503151920/https://blog.sldx.com/re-imagining-cold-storage-with-timelocks-1f293bfe421f?gi=da99a4a00f67>
 

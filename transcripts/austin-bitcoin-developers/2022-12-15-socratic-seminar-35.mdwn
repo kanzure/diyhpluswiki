@@ -24,7 +24,7 @@ The sighash types flags refers to the count of outputs, like all, none, single. 
 
 The way that signatures work in bitcoin is that you don't sign the whole data structure. You take a hash of the subset of the transaction and sign that. The signature has a flag for which kinds of things you are taking into consideration in your signature, so that someone else can validate the transaction. You could come up with interesting protocols around changing what you're going to sign. There was a recent proposal earlier this year for TXHASH that would have flags about every little item in the transaction that you could commit to.
 
-exotic sighash types: <https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2015-August/010759.html>
+exotic sighash types: <https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2015-August/010759.html>
 
 A: Okay, I'm not going to type that into Google.
 
@@ -110,7 +110,7 @@ There was also a transcript of their discussion on this: <https://diyhpl.us/wiki
 
 # Batch validation of CHECKMULTISIG using an extra hint field
 
-<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2022-October/021048.html>
+<https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2022-October/021048.html>
 
 Bitcoin multisig has a bug where it incorrectly pops an extra item off the stack which means the script will fail unless you put a nulldummy or a zero at the start. You say 2-of-3 multisig and then it tries to get 3 signatures off the stack which is obviously wrong. Off-by-one errors are always the hardest to deal with, right.
 
@@ -158,7 +158,7 @@ I read this comment in the pull request, and a lot of these complications are ab
 
 # Ephemeral Anchors
 
-<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2022-October/021036.html>
+<https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2022-October/021036.html>
 
 This solves rule 3 and rule 5... No, it doesn't solve it for everything. It's for a small subset. Also it's opt-in. It's not a general solution. Why make it more complex? Make everything replaceable. At some level, most miner incentive compatible thing is to let anyone bid on re-bid on transactions. This is a whole separate topic. I'm sorry.
 

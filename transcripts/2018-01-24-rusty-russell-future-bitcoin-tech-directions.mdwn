@@ -93,7 +93,7 @@ But bip114 is not the only game in town. There's a separate pair of proposals (b
 
 # Taproot
 
-<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-January/015614.html>
+<https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-January/015614.html>
 
 There is, however, a problem with MAST which is that MAST inputs are obvious. You're doing a MAST payment. There's a proposal called taproot. This is why you check twitter during talks. It uses a new style of pay-to-pubkeyhash. You can-- the users, when they are setting this up, use a base key and a hash of a script that they want the alternative to be. They use that to make a new key, then they just say use this new thing and pay to that key. They can pay using key and signature like before. Or you can reveal the base key and the script, and it will execute the script for you. In the common case, it looks like pay-to-pubkeyhash which helps fungibility. In the exceptional case, you provide the components and you can do MAST. This overrides what I had said earlier about MAST coming soon because this proposal looks really awesome but taproot doesn't have any code yet.
 
@@ -159,7 +159,7 @@ Covenants would be a powerful improvement to bitcoin scripts. Current bitcoin sc
 
 <http://diyhpl.us/wiki/transcripts/gmaxwell-confidential-transactions/>
 
-<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-December/015346.html>
+<https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-December/015346.html>
 
 Enough about scrips for a moment. The blockchain is public. In particular, the amounts are public, and this actually reveals a lot of information. By looking at the amounts, you can often tell which one is a change output and going back to the same person. All that nodes really need to know is not necessarily the amounts, but rather that there is no inflation in the system. They only need to know that the sum of the input amounts is equal to the sum of the output amounts plus the miner fee amount. They also need to kknow that there was no overflow. You don't want a 1 million BTC transaction and a -1 million BTC transaction.
 
@@ -237,7 +237,7 @@ As far as I know, nobody is actually working on it, so it's in the further futur
 
 # Rolling UTXO set hashes
 
-<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-May/014337.html>
+<https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-May/014337.html>
 
 Another subset of the UTXO set problem is that there's no compact way to prove that UTXO set is correct. XORing all the UTXOs together is not secure. There's this idea of a rolling UTXO set hash. You can update a 256-bit number, it's fairly easy to calculate, you can update this one hash when a new block comes in. If you're a full node, you can record your UTXO set hash and then validate that your UTXO set hasn't been corrupted. But it also helps the idea of initial node bootstrap and initial block download. If you get TXO hash from someone you trust, say someone writing the bitcoin software, you can go anywhere and get the UTXO set, and you can download it, and just check that the hash matches. Maybe if things keep getting bigger, then this might be a middle ground between running a lite node and running a fully-validating full node from the dawn of time itself.
 
@@ -293,7 +293,7 @@ Neutrino inverts this. The full nodes produce a 20 kilobyte block summary and th
 
 # NODE\_NETWORK\_LIMITED (bip159)
 
-<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-May/014314.html>
+<https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-May/014314.html>
 
 <https://github.com/bitcoin/bips/blob/master/bip-0159.mediawiki>
 

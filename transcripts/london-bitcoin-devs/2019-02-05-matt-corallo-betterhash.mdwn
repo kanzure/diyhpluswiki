@@ -8,7 +8,7 @@ Date: February 5th 2019
 
 Video: https://www.youtube.com/watch?v=0lGO5I74qJM
 
-Announcement of BetterHash on the mailing list: https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-June/016077.html
+Announcement of BetterHash on the mailing list: https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-June/016077.html
 
 Draft BIP: https://github.com/TheBlueMatt/bips/blob/betterhash/bip-XXXX.mediawiki
 
@@ -106,7 +106,7 @@ A - XXX. No I haven’t bothered to get it a BIP number yet. There are a few mor
 
 Q - Is it public?
 
-A - There is a post on the [mailing list](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-June/016077.html) and there’s a [link](https://github.com/TheBlueMatt/bips/blob/betterhash/bip-XXXX.mediawiki) actually in the Meetup description to the current version on GitHub.
+A - There is a post on the [mailing list](https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-June/016077.html) and there’s a [link](https://github.com/TheBlueMatt/bips/blob/betterhash/bip-XXXX.mediawiki) actually in the Meetup description to the current version on GitHub.
 
 Vendor messages, there’s a general trend right now. If you run a mining farm, monitoring and management is actually a pain in the ass. There is one off the shelf solution that I am aware of. They charge you a certain number of dollars per device. It is Windows only, it is not a remote management thing, you have to be there and it is really bad. Most farms end up rolling their own management and monitoring software which is terrible because most of them are people who have cheap power, they are not necessarily technical people who know what they are doing. We want some extensibility there but I am also not going to bake in all the “Please tell me your current temperature” kind of messages into the spec. Instead there is an explicit extensibility thing where you can say “Hi. This is a vendor message. Here is the type of message. Ignore it if you don’t know what that means. Do something with it if you do.” That is all there. That is actually really nice for pools hopefully and for clients. I don’t know why you’d want this but someone asked me to add this so I did. I wrote up a little blurb and how you can use the vendor messages to make the header only, final Work protocol go over UDP because someone told me that they wanted to set up their farm to take the data from broadcast UDP, you don’t have to have individual connections per device and shove it blindly into the ASIC itself without an ASIC controller whatsoever. I don’t know why you’d want to do that but if you do and you are crazy this is explicitly supported. There is a write up of how you might imagine doing such a completely insane thing. 
 
@@ -208,7 +208,7 @@ A - No it doesn’t really change it. Payouts are orthogonal and in fact not imp
 
 Q - Could you not do it in a trustless way? That would be cool. Somehow the shares already open a Lightning channel or somehow push things inside a channel?
 
-A - Intuitively my answer is no. I haven’t spent much time thinking about it. Bob McElrath has some designs around fancier [P2Pool](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-August/014893.html) that he claims does it. I am intuitively skeptical but I haven’t thought about it. Maybe it works, talk to Bob or go read his post.
+A - Intuitively my answer is no. I haven’t spent much time thinking about it. Bob McElrath has some designs around fancier [P2Pool](https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-August/014893.html) that he claims does it. I am intuitively skeptical but I haven’t thought about it. Maybe it works, talk to Bob or go read his post.
 
 Q - It could be some referential thing, maybe it is Lightning-esque where whatever you are doing in the Lightning channel points back to the hash of the block that you are doing it in?
 
@@ -232,7 +232,7 @@ Q - Bob didn’t come up with this, it was me.
 
 A - Chris, do you want to explain P2Pool?
 
-Chris Belcher: [P2Pool](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-August/014893.html) works, these shares form a share chain. Every node in P2Pool verifies this share chain and makes sure it pays out to the right people. When a real block is found the hashes get paid in proportion to how much work they have contributed to the share chain. You could make it trustless so that they can’t cheat each other. That’s a summary of how it works but it is dead, there are loads of problems with it unfortunately.
+Chris Belcher: [P2Pool](https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-August/014893.html) works, these shares form a share chain. Every node in P2Pool verifies this share chain and makes sure it pays out to the right people. When a real block is found the hashes get paid in proportion to how much work they have contributed to the share chain. You could make it trustless so that they can’t cheat each other. That’s a summary of how it works but it is dead, there are loads of problems with it unfortunately.
 
 Its biggest problem was it was bad UX. It reported a higher stale rate because it had this low inter block time so you had naturally high stale rates. But what mattered for the payouts, for a centralized pool if you have a stale rate you miss that many payouts, in P2Pool if you have a stale rate you can still get payouts for stale shares, the only thing that matters is your stale rate in comparison to other clients. And so you have a lot of miners who were running P2Pool and it said “Hey you have a 2 percent stale rate” and they were like “F\*\*\* this. My centralized pool says I have 0.1 percent stale rate. I am not going to use P2Pool.” And so P2Pool died for no reason because it had bad UX.
 

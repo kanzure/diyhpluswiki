@@ -38,7 +38,7 @@ Channels on their own are great, but they aren't enough. A channel when you thin
 
 # Atomic multi-path payments
 
-<https://lists.linuxfoundation.org/pipermail/lightning-dev/2018-February/000993.html>
+<https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/lightning-dev/2018-February/000993.html>
 
 Now we're going to move on to one new technology called atomic multi-path payments (amps). The problem is that you need a path on the network between multiple nodes on the graph. The problem is that if Alice wants to send 8 BTC she has to-- these numbers are the capacities in the direction towards Felix. There's a capacity in both directions. If Alice wants to pay Felix she wants to send 8 BTC but she can't because each path on its own doesn't have enough capacity. And Felix at a time can only receive up to 10 BTC because he has that inbound liquidity, but he's unable to because of the single path constraint. This is solved by atomic multi-path payments.
 
@@ -62,7 +62,7 @@ We're going to be working on AMPs in the next few months.
 
 # Splicing overview
 
-<https://lists.linuxfoundation.org/pipermail/lightning-dev/2017-May/000692.html>
+<https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/lightning-dev/2017-May/000692.html>
 
 Splicing is another cool technology. I think roasbeef came up with the scheme I'm going to present today. There's a lot of different ways to do this. We're still in the research phase. I am just going to present an example that is sort of familiar and easy to graph.
 
@@ -102,7 +102,7 @@ In terms of sweeping outputs, here's an example script of one of the scripts in 
 
 HTLC output scripts are a little more involved but they have script templates too and follow the same general format. There's SIGHASH\_ALL which is one of the sighash flags used in bitcoin required for this... the state space can manifest on chain because of thse 2-state layers of HTLC. Using SIGHASH\_SINGLE it's more liberal than SIGHASH\_ALL and allows us to get this down to a linear amount of space required for the signatures.
 
-And finally, in <a href="https://blockstream.com/eltoo.pdf">eltoo</a>, there's a recent proposal for <a href="https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-April/015908.html">SIGHASH\_NOINPUT</a> which is evne more liberal and it requires just one signature for all HTLCs. This will make this watchtower stuff pretty optimal in my opinion.
+And finally, in <a href="https://blockstream.com/eltoo.pdf">eltoo</a>, there's a recent proposal for <a href="https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-April/015908.html">SIGHASH\_NOINPUT</a> which is evne more liberal and it requires just one signature for all HTLCs. This will make this watchtower stuff pretty optimal in my opinion.
 
 # Watchtower upgrade proposals
 

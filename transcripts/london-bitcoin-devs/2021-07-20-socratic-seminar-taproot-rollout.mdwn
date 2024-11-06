@@ -182,7 +182,7 @@ AJ Towns tweet on those running a premature Taproot ruleset patch being forked o
 
 MF: I did listen to your podcast Andrew with Stephan Livera that came out in the last couple of days. You said a lot of people have been trying with their wallets to send Bitcoin to mainnet Taproot addresses. Some of them failed, some of them succeeded and some of them just locked up their funds so they couldn’t even spend them with an anyone-can-spend. Do you know what happened there?
 
-AC: There is a [mailing list post](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-October/018255.html) from November where this testing was happening. I think Mike Schmidt had a big [summary](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-November/018268.html) of every wallet that he tested and the result. There were some wallets that sent successfully. These used a bech32 address, not a bech32m. This was before bech32m was finalized. Some of them sent successfully and made a SegWit v1 outputs, some of them failed to parse the address, some of them failed to make the transaction. They accepted the address but something else down the line failed and so the transaction wasn’t made. Some of them made a SegWit v0 address which means that the coins are now burnt. As we saw on the website there are some Taproot outputs out there and there are some that should have been Taproot outputs but aren’t.
+AC: There is a [mailing list post](https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-October/018255.html) from November where this testing was happening. I think Mike Schmidt had a big [summary](https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-November/018268.html) of every wallet that he tested and the result. There were some wallets that sent successfully. These used a bech32 address, not a bech32m. This was before bech32m was finalized. Some of them sent successfully and made a SegWit v1 outputs, some of them failed to parse the address, some of them failed to make the transaction. They accepted the address but something else down the line failed and so the transaction wasn’t made. Some of them made a SegWit v0 address which means that the coins are now burnt. As we saw on the website there are some Taproot outputs out there and there are some that should have been Taproot outputs but aren’t.
 
 MF: They sent them to bech32 Taproot addresses rather than bech32m Taproot addresses and the bech32 Taproot addresses can’t be spent. Is that why they are locked up forever?
 
@@ -256,7 +256,7 @@ CR: Sparrow does support and use descriptors but it doesn’t directly influence
 
 # The descriptor BIPs
 
-MF: Descriptors overdue for a BIP, Luke says. There is a [bunch](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-June/019151.html) of descriptor BIPs. 
+MF: Descriptors overdue for a BIP, Luke says. There is a [bunch](https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2021-June/019151.html) of descriptor BIPs. 
 
 AC: There is a [PR](https://github.com/bitcoin/bips/pull/1143) open. Feel free to assign 7 numbers for me, thanks.
 
@@ -308,7 +308,7 @@ Then I have some links on Lightning.
 
 https://btctranscripts.com/advancing-bitcoin/2020/2020-02-06-antoine-riard-taproot-lightning/
 
-https://lists.linuxfoundation.org/pipermail/lightning-dev/2019-December/002375.html
+https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/lightning-dev/2019-December/002375.html
 
 https://github.com/ElementsProject/scriptless-scripts/blob/master/md/multi-hop-locks.md
 

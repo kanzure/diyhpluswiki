@@ -14,7 +14,7 @@ The conversation has been anonymized by default to protect the identities of the
 
 # Tainting, CoinJoin, PayJoin, CoinSwap Bitcoin dev mailing list post (Nopara)
 
-https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-June/017957.html
+https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-June/017957.html
 
 ….
 
@@ -108,7 +108,7 @@ Yes because it is not a OP_CLTV it is nLockTime. You can change the script to in
 
 # Disclosure of a fee blackmail attack (Rene Pickhardt)
 
-https://lists.linuxfoundation.org/pipermail/lightning-dev/2020-June/002735.html
+https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/lightning-dev/2020-June/002735.html
 
 Let’s move onto this cousin I would say of attacking the Lightning Network. This is more or less very similar to what we just talked about. Instead of the attacker getting the funds it is a blackmail situation. Nobody can claim the funds but you can negotiate with your counterparty, you get half I get half sort of thing. I think Rene Pickhardt had a good TL;DR here. This attack demonstrates why opening a channel is not an entirely trustless activity. You actually do need to have a little bit of trust with your peer. With this attack the attacker will reliably only be able to force the victim to lose this amount of Bitcoin. 
 
@@ -136,7 +136,7 @@ I can broadcast a commitment transaction and claim the HTLC later, you don’t k
 
 # Pinning: The Good, The Bad, The Ugly (Antoine Riard)
 
-https://lists.linuxfoundation.org/pipermail/lightning-dev/2020-June/002758.html
+https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/lightning-dev/2020-June/002758.html
 
 This is related to a lot of this higher level work on fees on Lightning. The game theory of the Lightning Network really relies on how fees interact with things and how quickly we can get things included in the blockchain to enforce these HTLC contracts. This mailing list post is talking about how the mempool works in Bitcoin. A mempool is where we collect transactions before they get included in a block. We usually prioritize them by fee rate so if you have the highest fee you are likely to be included in the next block. If you have a low fee it may be a few days before your transaction is included. We saw this behavior play out in the 2017 rampant market speculation that was going on. As Antoine says here the “Lightning security model relies on the unilateral capability for a channel participant to confirm transactions.” That means I don’t care what my peer thinks in my Lightning channel, I want to go to the chain now and he can’t do anything to stop me. That is a fundamental property that we need in Lightning to make the security model work. “This security model is actually turning back the double-spend problem to a private matter” which I thought was a really interesting insight here. “… making the duty of each channel participant to timely enforce its balance against the competing interest of its counterparties.” Not the entire Bitcoin ecosystem is responsible for enforcing say consensus rules, it is you that is responsible for enforcing the rules of your channel. There is nobody else that can help you modulo maybe watchtowers or something like that. As a byproduct of this from the base level you need to make sure we have effective propagation and timely confirmation of Lightning transactions because it is a cornerstone of the security model of Lightning. This is where it really starts to get interesting. Antoine points out here that “network mempools aren’t guaranteed to be convergent”. If somebody is running a Bitcoin node in Japan, somebody is running one in San Francisco, there is some network latency, one transaction is propagated to you faster on one side of the world. Another conflicting transaction is propagated faster on the other side of the world. You could end up with two different states of the world and then reject the other person’s state because it conflicts with what you see. You think it is invalid because you saw something else first. Order matters when keeping a local mempool. As Antoine says here “If subset X observes Alice commitment transaction and subset Y observes Bob commitment transaction, Alice’s HTLC-timeout spending her commitment won’t propagate beyond the X-Y set boundaries.” They will have two different states of the world. One set of the Bitcoin nodes will think the transaction is invalid, another set will think it is invalid and we won’t come to any sort of convergence on what mempools are. The whole point of a blockchain is to converge on a set of UTXOs over a long period of time. This is why we need confirmations to make sure that history is final onchain. A proposal that Antoine has is being able to unilaterally and dynamically bump the fee rate on any commitment transaction is a property that we need to ensure the Lightning Network’s security model is fully realized. “Assuming mempool congestion levels we have seen in the past months, currently deployed LN peers aren’t secure against scenario 2a and 2b.” One of these scenarios requires work at the base layer. 
 
@@ -178,7 +178,7 @@ https://bitcoinops.org/en/newsletters/2020/04/29/#new-attack-against-ln-payment-
 
 David Harding wrote this. He puts in concrete terms the different sorts of attacks on Lightning. You can have “preimage denial” which is Mallory can prevent Bob from learning the preimage by giving the preimage settlement transaction a low fee rate that keeps it from getting confirmed quickly. If Bob is only looking for preimages in the blockchain he won’t see Mallory’s transaction while it remains unconfirmed. The key thing with this preimage denial attack is Bob doesn’t have a mempool. He can only see what is in the blockchain. If Mallory, being malicious, gives a transaction a low fee it can look like the payment preimage has been revealed and Bob doesn’t know it. Mallory can steal Bob’s funds here. The second thing David talks about is prior to broadcasting the preimage settlement transaction she can prevent miners and Bitcoin relay nodes from accepting Bob’s later broadcast of the refund settlement transaction because the two transactions conflict which is just what we were talking about. They “both spend the same input (a UTXO created in the commitment transaction). In theory Bob’s refund settlement transaction will pay a higher fee rate and so can replace Mallory’s preimage settlement but in practice Mallory can use various transaction pinning techniques to prevent that replacement from happening.”
 
-The scenario described by David there, it is the first scenario described in Antoine’s mailing list [post](https://lists.linuxfoundation.org/pipermail/lightning-dev/2020-June/002758.html). Since then we have discovered a new scenario of pinning on the commitment transaction. Those are the most concerning ones and not fixed by anchor output. 
+The scenario described by David there, it is the first scenario described in Antoine’s mailing list [post](https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/lightning-dev/2020-June/002758.html). Since then we have discovered a new scenario of pinning on the commitment transaction. Those are the most concerning ones and not fixed by anchor output. 
 
 There are three proposed solutions. Require a mempool, beg or pay for preimages and settlement transaction anchor outputs. It is interesting stuff. A lot more scrutiny on the Lightning Network security model in the last month so we can build a more resilient network.
 
@@ -202,7 +202,7 @@ You want the mempool evaluation of them to be atomic.
 
 # BIP draft: BIP 32 Path Templates (Dmitry Petukhov)
 
-https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-July/018024.html
+https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-July/018024.html
 
 This is similar to a wallet descriptor but it is kind of like a BIP 32 xpub descriptor, what valid BIP 32 paths to use with this xpub. What this lets you do is say if you are developing a wallet and your wallet only uses an account at index 0 with HD purpose 84, 0 and 1 for if it is change or not. In that example 0 to 5000, for the coin index, this makes it a lot easier for other wallets to be compatible with each other. Right now if you import an Electrum wallet into another wallet you will need to rescan and randomly search around to try to find the coins. With this you say exactly where your coins are going to be because it comes from this wallet with this descriptor. On Wasabi there is a lot of pushback on going off the most minimal implementation of BIP 44 where you are just using the purposes, the default account, zero and one for if it is change or not. This allows you to get outside of the box with that stuff and use it in more creative ways without other wallets not being able to find it unless they explicitly look for those random things. You just tell them my coins will be here, you should look here. I think that will be huge for backups and wallet interoperability. 
 
@@ -244,7 +244,7 @@ Absolutely. Anything where you have an untrusted but computationally strong serv
 
 # Time Dilation Attacks on the Lightning Network (Gleb Naumenko, Antoine Riard)
 
-https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-June/017920.html
+https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-June/017920.html
 
 Right now for a Lightning channel if I am broadcasting a revoked state or if I am trying to close a channel and redeem a HTLC you need onchain access. You need to view the chain. We know that since the beginning of Lightning you need to watch the chain. What we didn’t know is eclipse attacks against Lightning nodes are far more worrying because I can announce the block on the real chain but I am doing so with a slowdown in announcements. Accumulating this slowdown the view of the chain by your Lightning node is going to be 20 blocks back. When I know that your view of the blockchain is 20 blocks back I am going to close the channel and the revocation delay is going to be 19 blocks. I am going to withdraw the funds and you are not going to be able to punish me. When your Lightning peer reaches the same height the timelock is going to already be expired. You need to see the chain but you also need to see the chain in a timely manner. Time is super important in Lightning. The cool thing about these attacks is you don’t need to assume hashrate for the attacker. Your counterparty doesn’t need to be a miner. 
 

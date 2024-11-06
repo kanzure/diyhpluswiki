@@ -30,7 +30,7 @@ This has many similarities with proof systems. In the extreme, we can aim for a 
 
 # Signature system improvements
 
-Regarding improvements, I want to talk about three things. One is <a href="https://diyhpl.us/wiki/transcripts/blockchain-protocol-analysis-security-engineering/2018/schnorr-signatures-for-bitcoin-challenges-opportunities/">Schnorr signatures</a>. Some of you may have seen that I recently a couple days ago published a <a href="https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-July/016203.html">draft BIP for incorporating Schnorr signatures into bitcoin</a>. I'll talk a bit about that.
+Regarding improvements, I want to talk about three things. One is <a href="https://diyhpl.us/wiki/transcripts/blockchain-protocol-analysis-security-engineering/2018/schnorr-signatures-for-bitcoin-challenges-opportunities/">Schnorr signatures</a>. Some of you may have seen that I recently a couple days ago published a <a href="https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-July/016203.html">draft BIP for incorporating Schnorr signatures into bitcoin</a>. I'll talk a bit about that.
 
 I will also be talking about <a href="https://diyhpl.us/wiki/transcripts/bitcoin-core-dev-tech/2017-09-06-signature-aggregation/">signature aggregation</a> (or <a href="https://bitcoincore.org/en/2017/03/23/schnorr-signature-aggregation/">here</a>), in particular aggregation across multiple inputs in a transaction. There's really two separate things, I believe. There's the signature system and then the integration and we should talk about them separately. Lots of the interest in the media on this topic are easily conflated between the two issues.
 
@@ -55,7 +55,7 @@ Another thing that we can do is focusing on this too, we want <a href="https://d
 
 # Schnorr signature BIP draft
 
-A few days ago, I published a <a href="https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-July/016203.html">Schnorr signature BIP draft</a> which was the combined work of a number of people including Greg Maxwell. And many other people who are listed in the BIP draft. This BIP accomplishes all of those goals. It's really just a signature scheme, it doesn't talk about how we might go about integrating that into bitcoin. I'm going to talk about my ideas about that integration problem later.
+A few days ago, I published a <a href="https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-July/016203.html">Schnorr signature BIP draft</a> which was the combined work of a number of people including Greg Maxwell. And many other people who are listed in the BIP draft. This BIP accomplishes all of those goals. It's really just a signature scheme, it doesn't talk about how we might go about integrating that into bitcoin. I'm going to talk about my ideas about that integration problem later.
 
 # Schnorr signature properties
 
@@ -79,7 +79,7 @@ Another advantage of Schnorr signatures, and it's one of the more exciting thing
 
 # Cross-input signature aggregation
 
-<a href="https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-January/015696.html">Cross-input signature aggregation</a> is from the fact that the Schnorr signature construction where you can sign the same message with multiple keys, this can be generalized to having multiple different messages be signed by different people and still have just a single signature. The ability to do so really would in theory allow us to reduce the total number of signatures in a transaction to just one signature. This has been the initial drive for going and looking into Schnorr signatures and it's such an awesome win. There are many complications in implementing this, it turns out, but this is the goal that we want to get to. It has an impact on how we validate transactions. Right now, every input you just run the scripts and out comes TRUE or FALSE and if there's FALSE then the transaction is invalid. This needs to be changed to a model where script validation returns TRUE or FALSE and also returns a list of pubkeys which is the set of keys that must still sign for that input, and then we need a single signature that can do this, and it needs to be a transaction-wide rather than transaction input-wide.
+<a href="https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-January/015696.html">Cross-input signature aggregation</a> is from the fact that the Schnorr signature construction where you can sign the same message with multiple keys, this can be generalized to having multiple different messages be signed by different people and still have just a single signature. The ability to do so really would in theory allow us to reduce the total number of signatures in a transaction to just one signature. This has been the initial drive for going and looking into Schnorr signatures and it's such an awesome win. There are many complications in implementing this, it turns out, but this is the goal that we want to get to. It has an impact on how we validate transactions. Right now, every input you just run the scripts and out comes TRUE or FALSE and if there's FALSE then the transaction is invalid. This needs to be changed to a model where script validation returns TRUE or FALSE and also returns a list of pubkeys which is the set of keys that must still sign for that input, and then we need a single signature that can do this, and it needs to be a transaction-wide rather than transaction input-wide.
 
 Another complication is soft-fork compatibility. The complication is that when you want different versions of software to validate the same set of inputs, and there is only a single signature, you must make sure that this signature and they both understand that this signature is about the same set of keys. If they disagree about the set of keys or about who has to sign, then that would be bad. Any sort of new feature that gets added to the scripting language that changes the set of signers, is inherently incompatible with aggregation. This is solvable, but it's something to take into account, and it interacts with many things.
 
@@ -89,7 +89,7 @@ Another new development is thinking about new sighash modes. When I'm signing fo
 
 # SIGHASH\_NOINPUT
 
-Recently there has been a proposal by cdecker for <a href="https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-April/015908.html">SIGHASH\_NOINPUT</a> where you sign the scripts and not the txids. The scary downside of this construction is that they are replayable. I pay to an address, you spend using the SIGHASH\_NOINPUT and then someone else for whatever reason can send to the same address then the receiver of that first spend can take the first signature, put it in a new transaction and can take the new coins that were spent there. So this is something that should only be used in certain applications that can make sure this is not a problem.
+Recently there has been a proposal by cdecker for <a href="https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-April/015908.html">SIGHASH\_NOINPUT</a> where you sign the scripts and not the txids. The scary downside of this construction is that they are replayable. I pay to an address, you spend using the SIGHASH\_NOINPUT and then someone else for whatever reason can send to the same address then the receiver of that first spend can take the first signature, put it in a new transaction and can take the new coins that were spent there. So this is something that should only be used in certain applications that can make sure this is not a problem.
 
 # eltoo
 
@@ -115,7 +115,7 @@ I want to make an intermediate step here, where I want to go into what is a 'una
 
 # Taproot
 
-However, if you think about the scenario here.. we want everyone to agree generally, still we have to publish on the chain is our key and the top-right branch hash. It's an additional 64 bytes that need to be revealed just for this super common case that hopefully will be taken all the time. Can we do better? That is where <a href="https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-January/015614.html">taproot</a> comes in. It's something that Greg Maxwell came up with.
+However, if you think about the scenario here.. we want everyone to agree generally, still we have to publish on the chain is our key and the top-right branch hash. It's an additional 64 bytes that need to be revealed just for this super common case that hopefully will be taken all the time. Can we do better? That is where <a href="https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-January/015614.html">taproot</a> comes in. It's something that Greg Maxwell came up with.
 
 Taproot gives the ability to say-- it's based on the idea that we can use a construction called pay-to-contract which was originally invented by Timo Hanke in 2013 I think, to tweak a public key with a script using the equation there on the screen.
 
@@ -133,13 +133,13 @@ If we start from this assumption that there exists a single key that represents 
 
 Delegation means we're now going to permit spending, by saying "I have a signature with this taproot key (the key that represents everyone involved)", revealing a script, revealing a signature with a key on that script, and the inputs to it. There's a group of participants that represent the "everyone agrees" case, and they have the ability to delegate spending to other scripts and other particpants.
 
-The advantage of <a href="https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-February/015700.html">graftroot</a> over a merkle tree is, you can have as many spending paths as you want and they are all the same size. All you do is reveal a single signature. The downside here is that it is an inherently interactive key setup. You cannot spend as-- if you are a part of this s1, s2, or s3. You cannot spend without having been given the signature by the keys involved.
+The advantage of <a href="https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-February/015700.html">graftroot</a> over a merkle tree is, you can have as many spending paths as you want and they are all the same size. All you do is reveal a single signature. The downside here is that it is an inherently interactive key setup. You cannot spend as-- if you are a part of this s1, s2, or s3. You cannot spend without having been given the signature by the keys involved.
 
 This may mean difficulty with backups for example, because your money is lost if you lose the signature for example.
 
 # Half-aggregation
 
-There is another concept called <a href="https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-May/014272.html">half-aggregation</a> ((unpublished improvements forthcoming)) that Tadge Dryja came up with that lets you half-aggregate signatures non-interactively together. It doesn't turn them into an entire single thing but it turns them into half the size. With that, graftroot even for the most simple of cases is more efficient in terms of space than a merkle branch. But there are tradeoffs.
+There is another concept called <a href="https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-May/014272.html">half-aggregation</a> ((unpublished improvements forthcoming)) that Tadge Dryja came up with that lets you half-aggregate signatures non-interactively together. It doesn't turn them into an entire single thing but it turns them into half the size. With that, graftroot even for the most simple of cases is more efficient in terms of space than a merkle branch. But there are tradeoffs.
 
 # Taproot and graftroot in practice
 

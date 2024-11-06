@@ -44,7 +44,7 @@ What's an anchor output? The anchor outputs are the way essentially that you pre
 
 # TXHASH + CHECKSIGFROMSTACKVERIFY
 
-<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2022-January/019813.html>
+<https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2022-January/019813.html>
 
 Taproot activated recently. People are asking, what's next? Some people were asking about CTV and ANYPREVOUT. There's a heated discussion with drama lately. Then Russell O'Connor dropped a bomb about TXHASH + CHECKSIGFROMSTACKVERIFY which kind of lets you do both things in a single proposal. Well, kind of.
 
@@ -88,7 +88,7 @@ Alright, let's move on.
 
 # CTV improve DLCs
 
-<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2022-January/019808.html>
+<https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2022-January/019808.html>
 
 DLCs are discrete log contracts. It's like a way to do DeFi on bitcoin. An oracle attests to an event and then you can form a bitcoin transaction on that and change the outcome based on what the oracle signs. You can do the same thing in bitcoin using adaptor signatures. For my super bowl bet, we had three transactions based on the possible outcomes. We had a signature for each of them, the oracle posted an event and when that oracle signature goes out they make one of the transactions valid and then it completes. Three outcomes is pretty simple, but with the bitcoin price there's technically infinite outcomes for what it could be but there's still millions of signatures required in DLCs. It's a nightmare.
 
@@ -104,7 +104,7 @@ The same thing that is possible is what makes another benefit of CTV possible is
 
 # CTV signet
 
-<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2022-February/019925.html>
+<https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2022-February/019925.html>
 
 There is now a signet for CTV that behaves in a more predictable manner. If you want to play around with it, you can test it on this signet.
 
@@ -138,7 +138,7 @@ You can make people pay for BOLT12 messages and you can ratelimit it by making p
 
 # Replace-by-fee
 
-<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2022-January/019817.html>
+<https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2022-January/019817.html>
 
 We have like 10 minutes left; we can keep talking about this, but I want to move on to RBF. If the network looks like this in 10 years, then you could argue that bitcoin has failed. We need to be paying transaction fees. The base layer needs to have utility. We need to figure out how to deal with this stuff. There were two debates on the mailing list that were super interesting recently. This is back to bitcoin layer 1 which implicates lightning though because we're talking about these second layer protocols that rely on previously signed transactions because paying for fees is really difficult...
 
@@ -152,7 +152,7 @@ When was package relay put into Bitcoin Core? It's not fully in there. There are
 
 # Fee bumping
 
-<https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2022-February/019879.html>
+<https://gnusha.org/url/https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2022-February/019879.html>
 
 jamesob started a thread; he was noting that, wow this is complex. Why are we spending so much effort throwing in hacks? The way he described it is that CPFP and RBF are hacks because we're not dealing with fees in a sensical way for the way we're doing transactions today. The foundational problem being identified in all of these discussions is that right now when you're paying for fees, you're paying for fees- the entity paying for fees is the same thing that the fees are paying for. So a transaction has to pay for its own fees, and the propisition is... if you have a transaction you're setting in stone for lightning network for example where you don't know what the fee market is going to be in a few years if you're talking about inheritance protocols... you might be locking in too high of a fee or too low of a fee. jamesob gets into this; you should be able to pay separate from that thing you're paying for, so that you can prepare the transaction ahead of time and say okay I've signed and committed to spending these utxos; when I'm ready to broadcast it, then that's when I should decide how much to pay. This harkens back to transaction sponsors where you publish another transaction at the time that says I want to pay for this other transaction and if it doesn't get in then don't take my utxos to pay for that.
 
