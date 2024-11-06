@@ -67,3 +67,11 @@ The corresponding code over here on the right, once we have converted it to work
 # Performance
 
 So the real question then is how long does this take and how long does it take to execute? The pre-computation is relatively costly, where we setup a pool of bit commitments between the two sides. For the case of a SHA-1 argument where the prover's privacy is protected, it takes 40 minutes to calculate that on my machine whic his a 200 MHz pentium processor, and 6 megabytes of data is exchanged. Once you get to the protocol, it takes about 100 seconds and only 22 kilobytes. The zero-knowledge proof takes about 2x as many resources.
+
+# Other
+
+From MS Dousti on stackexchange: "As far as I understood, the idea is to use a special (malleable) commitment to the preimage, give the commitment to the verifier, and then replace the internal SHA-1 operations with special operations acting on the commitments. Finally, the verifier gives back the result to the prover, who decommits it, and shows it to equal to the SHA-1 image. Hal Finney does not give much detail into what the commitment and the special operation are, but concludes that the implementation took a few hours to execute."
+
+
+
+
