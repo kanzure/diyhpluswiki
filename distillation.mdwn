@@ -1,0 +1,85 @@
+# Memory distillation
+
+```
+18:20 < fenn> the existence proof of AI model distillation is good news for technologically mediated telepathy (of human brains)
+18:21 < fenn> even without anything approaching a 1:1 mapping of either individual neurons or overall architecture, a broad communication channel can allow rapid and precise transfer of knowledge from one format/brain to another
+18:21 < fenn> probably we can learn directly from AI models and vice versa
+...
+16:16 < fenn> we could train organoids and then distill their output logits (or whatever it is) into a digital neural network
+16:17 < fenn> even though there's no direct readout of the network weights
+16:17 < hprmbridge> kanzure> is the argument that biological learning is faster and cheaper, but not for general execution after training?
+...
+16:20 < fenn> how do you know you have successfully emulated the bio network?
+16:21 < kanzure> the simulated or emulated version matches the behavior of the physical one (physical reservoire computing stuff goes here)
+16:21 < kanzure> just faster in silico
+16:21 < fenn> not necessarily faster
+16:22 < kanzure> you've lost me. so not for performance but for longevity you want weight transferance from in vivo to in silico?
+16:22 < kanzure> s/longevity/replicability
+16:23 < fenn> silicon is more parallelizable i guess; for large networks on current GPU architectures with memory separate from compute, the cost of moving bits around swamps everything else and even a 20Hz brain is faster
+16:24 < fenn> it costs about the same to run 1 mind as 16 minds, and you get diminishing returns around a batch size of 64
+16:24 < kanzure> what do you mean "even though" there's no direct readout of network weights? how did you get to "distill their output logits" if there's no weight readout?
+16:25 < fenn> a blob of flesh on an electrode array with N electrodes has N "output neurons" which we can compare to the input and output layers of a neural network
+16:26 < fenn> if we train the flesh to output probabilities of the next word, say, that information can be used to efficiently train a neural network to think the same way
+16:26 < fenn> we aren't looking at it under a microscope at all
+16:27 < fenn> this technique is being used already for transferring knowledge between language models and image generation models
+16:27 < fenn> er, between models of the same type, including such types as language and image
+16:27 < kanzure> idea is biological tissue would learn faster/more cheaply? because training is expensive compute/energy when in silico?
+16:27 < fenn> right
+16:28 < kanzure> and transferance is through repeated querying? i haven't been following the LLM stealing prompt stuff
+16:28 < fenn> also maybe we can replicate the thinking pattern by training another blob of flesh to reproduce the probability distributions
+16:29 < kanzure> (the thing where you query an LLM a bunch of times and reconstruct its weights in another model)
+16:29 < fenn> going directly from flesh to flesh might work, i have to think about it
+16:29 < fenn> yeah that is what i am talking about with "distillation"
+16:29 < kanzure> what is the term of art for that?
+16:29 < fenn> it's called that because usually you go from a large model to a small model
+16:30 < fenn> "model extraction"
+...
+11:39 < fenn> "In Greg Egan's "jewelhead" stories, everyone gets a jewel implanted in their head at the age of 18. The jewel gradually learns to predict the brain's responses to stimuli, without inspecting the internals of the brain. When the jewel's predictions become indistinguishable from perfect, the organic brain can be removed surgically, and the person lives happily ever after (the jewel grants
+11:39 < fenn> immortality)."
+11:39 < fenn> https://static.wikia.nocookie.net/battleangel/images/b/b7/BAA09_16_brain_bio-chip.jpg/revision/latest/scale-to-width-down/1000?cb=20201008151023
+11:39 < fenn> knowledge distillation
+...
+07:31 < hprmbridge> kanzure> anyway, if we can get the same results with hydrogels that's pretty exciting because among other things we can probably print pre-designed hydrogels
+07:31 < hprmbridge> kanzure> and there's a wide variety of materials we can mix into the hydrogels to explore different performance across a range of voltages etc
+07:32 < hprmbridge> kanzure> hope the performance is ok.
+07:32 < hprmbridge> kanzure> maybe we can directly translate machine learning models from software into hydrogels after training.
+07:33 < hprmbridge> kanzure> (and the fidelity of that process itself can be subjected to machine learning)
+07:45 < hprmbridge> kanzure> they probably have self-healing properties and maybe you can excise, cut, and surgically recombine different gels together to get aggregate behavior you want
+08:23 < hprmbridge> kanzure> "Certain hydrogels can repair themselves after being cut or damaged. This self-healing ability is due to reversible bonds or dynamic crosslinking within the polymer network. Hydrogels can swell or shrink in response to specific stimuli, such as changes in temperature, pH, light, or the presence of certain ions or chemicals. They can also shrink due to the evaporation of their water and later be
+08:23 < hprmbridge> kanzure> re-hydrated."
+08:25 < hprmbridge> kanzure> you could embed piezoelectric nanoparticles.
+08:31 < hprmbridge> kanzure> you could do photocleavage, photooxidation or photoactivation for ion patterning, or projection photolithography to cure polymer crosslinking in predefined patterns (low resolution is not a problem because you can have very large gels if you want to, instead of needing everything to be nano lithography scale)
+...
+13:56 < hprmbridge> kanzure> maybe you can crosslink and then decellularize a large mammalian brain to get an iontronic gel based on electrolyte/ion distribution as a deeply non-linear system.
+13:59 < hprmbridge> kanzure> or some form of DNA crystal(line) or DNA gel. I don't see evidence that people are making these molecularly identical.
+...
+15:59 < kanzure> "Natural systems possess rich nonlinear dynamics that can be harnessed for unconventional computing. Here, we report the discovery that a common potato (Solanum tuberosum) can serve as an effective physical reservoir computer, leveraging its electrochemical properties for complex data processing tasks. By introducing time-varying electrical stimuli via electrodes, we exploit the potato's internal ionic interactions and heterogeneous tissue structure to perform computational tasks, including spoken digit classification and gesture recognition. Our experiments demonstrate that this biological substrate exhibits dynamic responses comparable to traditional reservoir computing systems, achieving high accuracy in these tasks. This bio-based computing approach expands the range of material substrates suitable for physical computing, leveraging the intrinsic properties of biological materials for advanced information processing."
+...
+12:25 < fenn> i don't remember if i've talked about it here much, but in AI there's this technique called knowledge distillation where you can train one network to predict the activations of another network, and then you get the same behavior out the end without having to train from scratch
+12:27 < fenn> it seems a lot easier to hook up a relatively small number of transcievers to neurons in a brain and predict those activations, vs completely scanning every synapse and dendrite and axon and cell body and so on, then somehow come up with a way to turn that structural data into functional data
+12:28 < fenn> just collect functional data to start with
+12:28 < fenn> of course this requires the brain to be operating, and could take a really long time to cover a large fraction of state space
+12:30 < fenn> distilling also completely bypasses the rather difficult technical problem of emulation. since the student network can be any architecture at all, you can train a model that matches your inference hardware really well
+12:33 < fenn> stimulating the brain to cover such a wide variety of states would itself be a subjectivity-fracturing experience, you wouldn't know if you were the clone or the original
+12:35 < fenn> uh, unless you've been thusly-stimulated and then cloned, and could tell the difference (presumably being stimulated twice would be a similar experience, but being cloned would be different from being stimulated)
+12:38 < fenn> you might not remember the process either way
+12:53 < hprmbridge> kanzure> wasn't this a greg egan story
+13:20 < fenn> yes, permutation city. but then it goes off the rails with some "but everything mathematically possible is real!" crap at the end
+13:21 < fenn> also the movie "abre los ojos"
+13:21 < fenn> i do not recommend jumping off of tall buildings
+13:22 < hprmbridge> kanzure> no the other story
+13:22 < hprmbridge> kanzure> about the diamond that confuses itself
+13:22 < fenn> i must not have read it
+13:23 < fenn> oh it's literally called "Transition Dreams" heh
+13:24 < hprmbridge> kanzure> "learning to be me"
+13:25 < fenn> 'dreams that your new, robotic brain has as it is being "filled up" with the patterns copied from your old, organic brain'
+13:26 < hprmbridge> kanzure> not a diamond, a jewel, sorry
+13:26 < fenn> battle angel alita has a similar thing
+13:27 < fenn> worth noting that the new architecture won't necessarily learn in the same way as the old one
+14:21 < hprmbridge> kanzure> nectome is involved, somehow
+```
+
+see <a href="https://gnusha.org/logs/2024-08-23.log">https://gnusha.org/logs/2024-08-23.log</a>
+
+OK, I can't find it in the logs at the moment, but there was significant discussion about 3d printing of biological neural networks or organoids with defined topology (or other hydrogel-based biocomputing substrate alternatives) such that you could preserve or transfer inherent "weights", like a neural network quine that learns its own weights while retaining some other beneficial behaviors, or using physical reservoire computing to encode high dimensional data and training a smaller model on the dynamics or something? If you can precisely reconstruct a neural network by printing a neural network with all the saved connectivity or other parameters, then you can preserve and possibly retrieve biological memorys, make them replicable, reusable, subject to preservation, digitization, etc.
+
