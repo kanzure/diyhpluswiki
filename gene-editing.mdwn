@@ -49,19 +49,103 @@ Various DNA editing and genome editing techniques
 * dCas9-acetyltransferase (dCas9-p300)
 * telomerase
 
+transposase stuff:
+
+* [Programmable gene insertion in human cells with a laboratory-evolved CRISPR-associated transposase](https://www.science.org/doi/10.1126/science.adt5199)
+* [RNA-guided DNA insertion with CRISPR-associated transposases](https://science.sciencemag.org/content/early/2019/06/05/science.aax9181)
+* [Targeted DNA integration in human cells without double-strand breaks using CRISPR RNA-guided transposases](https://www.biorxiv.org/content/10.1101/2023.03.17.533036v1)
+
+more stuff:
+
+* [Programmable epigenome editing by transient delivery of CRISPR epigenome editor ribonucleoproteins](https://www.nature.com/articles/s41467-025-63167-x)
+
+* tiny cas9 for optimized expression and delivery
+* humanized cas9? immuno-camouflaging?
+
+base editors, prime editors, expanded PAMs like SpRY, mini/split editors, dual editors, high-fidelity/off-target mitigation, organellar editing, RNA editors, epigenome editors, CASTs/casposons, etc..
+
+# High-level and clinical reviews
+
+* **Cell Review — “Past, present, and future of CRISPR genome editing technologies.”** Wide-angle survey that contrasts nuclease, base, and prime editing; touches delivery, safety, and emerging systems. Great one-stop read. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0092867424001119?utm_source=chatgpt.com)
+* **Frontiers Genome Editing (2024) — “Advances in CRISPR-Cas technology and its applications.”** High-level review spanning DNA/RNA editors, delivery, and clinical status. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC11669675/?utm_source=chatgpt.com)
+* **Signal Transduction & Targeted Therapy (2023) — “CRISPR/Cas9 therapeutics: progress and prospects.”** Compares editor classes (including BE/PE) with delivery vectors and disease areas. [Nature](https://www.nature.com/articles/s41392-023-01309-7?utm_source=chatgpt.com)
+* **Translational Medicine (2024) — “Cutting-edge applications of base editing and prime editing in disease therapy.”** Head-to-head BE vs. PE applications, safety/efficacy, and what’s next clinically. [BioMed Central](https://translational-medicine.biomedcentral.com/articles/10.1186/s12967-024-05957-3?utm_source=chatgpt.com)
+* **Gene Therapy (2025) — “Prime editing: therapeutic advances and mechanistic insights.”** PE generations (PE2/PE3/PE5, epegRNAs, mini/split), performance vs. BE, and translational read-through. [Nature](https://www.nature.com/articles/s41434-024-00499-1?utm_source=chatgpt.com)
+* **“Recent advances in therapeutic gene-editing technologies” (2025).** Broad state-of-the-art review of genetic *and* epigenetic editors with preclinical innovations. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S152500162500200X?utm_source=chatgpt.com)
+
+# Base editors (CBEs/ABEs, enhanced/dual/split/mini, SpRY PAM expansion)
+
+* **Trends in Biotechnology (2023) — “Recent technological advances in base editing.”** Covers CBE/ABE families (APOBEC/AID, TadA), BE3/BE4max, ABE7.10/ABE8e/miniABE, windows, fidelity, and engineering knobs. [ScienceDirect](https://www.sciencedirect.com/science/article/abs/pii/S2468451123000284?utm_source=chatgpt.com)
+* **DNA Repair (2024) — “Advances in base editing: a focus on base transversions.”** Good for non-canonical edits, editor architectures, and byproduct control. [ScienceDirect](https://www.sciencedirect.com/science/article/abs/pii/S1383574224000280?utm_source=chatgpt.com)
+* **Nature Communications Biology (2024) — “Comprehensive evaluation of near-PAMless base editors.”** Practical look at **SpRY-based CBEs/ABEs** (e.g., BE4max-SpRY), prediction of efficiency/outcomes across \~45k sites. [Nature](https://www.nature.com/articles/s42003-024-07078-5?utm_source=chatgpt.com)
+* **Nat Comms (2024) — “PAMless DNA interrogation mechanisms.”** Mechanistic perspective on **SpRY** and relaxed-PAM targeting—useful context for BE4max-SpRY design/limits. [Nature](https://www.nature.com/articles/s41467-024-47830-3?utm_source=chatgpt.com)
+* **MDPI (2025) — “Efforts to downsize base editors for clinical applications.”** Summarizes **mini-BEs**, split designs for delivery, and size/fidelity trade-offs. [MDPI](https://www.mdpi.com/1422-0067/26/5/2357?utm_source=chatgpt.com)
+* **Cell Reports Methods/Elsevier (2024) — “Engineering miniature CRISPR-Cas **Un1Cas12f1** for cytosine base editing.”** Mini-nuclease platform overview (Cas12f1-BEs) relevant to payload-limited delivery. [ScienceDirect](https://www.sciencedirect.com/science/article/abs/pii/S0169409X24001819?utm_source=chatgpt.com)
+* **Nucleic Acids Research (2025) — “Direct delivery of stabilized Cas-embedded CBEs.”** Trends in **protein (RNP) delivery** of BEs—ties to off-target and transient exposure benefits. [Academic Oxford](https://academic.oup.com/nar/article/53/1/gkae1217/7925243?utm_source=chatgpt.com)
+* **mBio (2022) & follow-ons — Dual base editors.** Landscape for **simultaneous A→G & C→T** editors and newer dual strategies. [ASM Journals](https://journals.asm.org/doi/10.1128/mbio.02296-22?utm_source=chatgpt.com)
+
+# Prime editors (generations, mini/split, performance)
+
+* **Gene Therapy (2025) — prime editing review**. Great on **PE2/PE3/PE3-NG**, enhanced PE (ePE), pegRNA/epegRNA engineering, and delivery. [Nature](https://www.nature.com/articles/s41434-024-00499-1?utm_source=chatgpt.com)
+* **Cell Reports Methods/Nat Methods ecosystem — split/compact PEs.** (Included in broader reviews; practical for **miniPE**/**split-PE** delivery constraints.) [Nature](https://www.nature.com/articles/s41434-024-00499-1?utm_source=chatgpt.com)
+
+# RNA editors (protein base editors / dCas13-ADAR; optical control)
+
+* **RNA Biology (2024) — “Programmable RNA targeting with CRISPR-Cas13.”** Survey of **Cas13/dCas13** tools (knockdown, **ADAR fusions for RNA A→I**, diagnostics). [Taylor & Francis Online](https://www.tandfonline.com/doi/full/10.1080/15476286.2024.2351657?utm_source=chatgpt.com)
+* **Nat Commun (2024) — “Photoactivatable Cas13 RNA base editing.”** Optogenetically induced A → I and C → U editing with spatial control. [Nature](https://www.nature.com/articles/s41467-024-44867-2?utm_source=chatgpt.com)
+* **Frontiers Mol Neuroscience (2023) / Mol Ther (2023) — harnessing endogenous **ADAR**.** Reviews programmable **A-to-I** editing using endogenous/exogenous ADARs, specificity strategies. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC10244592/?utm_source=chatgpt.com), [Cell](https://www.cell.com/molecular-therapy-family/molecular-therapy/fulltext/S1525-0016%2823%2900005-9?utm_source=chatgpt.com)
+
+# Precision & safety (high-fidelity, off-target, inducible control)
+
+* **Review — “Unintended CRISPR-Cas9 editing outcomes: SVs and how to avoid them.”** Pairs well with BE/PE safety discussions. [PubMed](https://pubmed.ncbi.nlm.nih.gov/37093294/?utm_source=chatgpt.com)
+* **Opto/chemo control reviews (2024–2025).** Roundups of **optogenetic CRISPR** and **chemically inducible gRNA/effector** systems; relevant to **optogenetically-/chemically-induced base editors**, azobenzene-gRNA concepts. [ScienceDirect](https://www.sciencedirect.com/science/article/abs/pii/S0167779925002574?utm_source=chatgpt.com), [PubMed](https://pubmed.ncbi.nlm.nih.gov/40681400/?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC12073707/?utm_source=chatgpt.com), [Academic Oxford](https://academic.oup.com/nar/article/51/8/4064/7076483?utm_source=chatgpt.com)
+
+# Organellar genome editing (mitochondria and chloroplast)
+
+* **Nature Reviews Methods Primers-style review (2024) — “Base editing of organellar DNA with programmable deaminases.”** Excellent on **DdCBE/TALED** for **mtDNA** & **chloroplast** (C→T and A→G). [PubMed](https://pubmed.ncbi.nlm.nih.gov/37794167/?utm_source=chatgpt.com)
+* **BMB Reports (2024) — “Mitochondrial genome editing: strategies, challenges, and opportunities.”** Nucleases, **DdCBE**, **TALED/TALED-ABE**, delivery hurdles. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC10828433/?utm_source=chatgpt.com)
+* **Trends in Plant Science (2025) — chloroplast genome rewriting (perspective).** Context on **plastid base editing** advances (e.g., **A→G cpDNA** TALEDs). [Cell](https://www.cell.com/trends/plant-science/fulltext/S1360-1385%2824%2900350-9?utm_source=chatgpt.com), [Nature](https://www.nature.com/articles/s41477-022-01279-8?utm_source=chatgpt.com)
+
+# Programmable endonucleases & recombinases (ZFNs, TALENs, CASTs/casposons, homing)
+
+* **CASTs/CRISPR-associated transposons review (2024).** RNA-guided integration without DSBs; complements BE/PE in payload insertion space. [ScienceDirect](https://www.sciencedirect.com/science/article/abs/pii/S0734975024001757?utm_source=chatgpt.com)
+* **ZFN engineering review (2024).** Useful background on **programmable endonucleases** alongside TALENs and Cas9. [Advanced Online Library](https://advanced.onlinelibrary.wiley.com/doi/full/10.1002/advs.202310255?utm_source=chatgpt.com)
+
+# Epigenome editors & writer fusions (dCas9-p300, methyltransferases)
+
+* **Frontiers in Medicine (2025) — “Precision scalpels for the epigenome: next-gen editing.”** Broad epigenome-editing overview (activation/repression), including **dCas9-p300**. [Frontiers](https://www.frontiersin.org/journals/medicine/articles/10.3389/fmed.2025.1613722/full?utm_source=chatgpt.com)
+* **Critical Reviews in Biochemistry & Mol Biol (2024) — “Epigenome editing for targeted DNA (de)methylation.”** Summarizes **DNA/histone methyltransferase** fusions and best practices. [Taylor & Francis Online](https://www.tandfonline.com/doi/abs/10.1080/10409238.2024.2320659?utm_source=chatgpt.com)
+* **Biochem Biophys Res Commun (2023) — “Epigenome editing based on CRISPR/dCas9-p300.”** Focused review on **dCas9-p300** acetyltransferase systems. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0014482723000988?utm_source=chatgpt.com)
+
+---
+
+## Subject to reference map
+
+* **Core CBEs/ABEs & classic builds (BE3/BE4max, ABE7.10/ABE8e, eA3A-BE3, miniABE):** Trends Biotech 2023; DNA Repair 2024; Cell 2024. [ScienceDirect](https://www.sciencedirect.com/science/article/abs/pii/S2468451123000284?utm_source=chatgpt.com)
+* **Expanded PAM & **BE4max-SpRY** (near-PAMless):** Nat Comms Biology 2024 (near-PAMless BE evaluation); PAMless mechanism paper. [Nature](https://www.nature.com/articles/s42003-024-07078-5?utm_source=chatgpt.com)
+* **Dual/orthogonal/split/mini base editors:** mBio dual BE review + mini/split & delivery trends. [ASM Journals](https://journals.asm.org/doi/10.1128/mbio.02296-22?utm_source=chatgpt.com), [MDPI](https://www.mdpi.com/1422-0067/26/5/2357?utm_source=chatgpt.com), [Academic Oxford](https://academic.oup.com/nar/article/53/1/gkae1217/7925243?utm_source=chatgpt.com)
+* **Prime editors (PE2/PE3/PE3-NG, ePE, miniPE, split-PE) & BE vs. PE comparisons:** Gene Therapy 2025; Translational Medicine 2024; Cell 2024. [Nature](https://www.nature.com/articles/s41434-024-00499-1?utm_source=chatgpt.com), [BioMed Central](https://translational-medicine.biomedcentral.com/articles/10.1186/s12967-024-05957-3?utm_source=chatgpt.com), [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0092867424001119?utm_source=chatgpt.com)
+* **RNA editors (dCas13-ADAR, protein base editors) + optogenetic control:** RNA Biology 2024; Nat Commun 2024 photoactivatable Cas13. [Taylor & Francis Online](https://www.tandfonline.com/doi/full/10.1080/15476286.2024.2351657?utm_source=chatgpt.com), [Nature](https://www.nature.com/articles/s41467-024-44867-2?utm_source=chatgpt.com)
+* **High-fidelity/off-target mitigation & gRNA-independent effects:** SV/off-target review; broad safety discussion in Cell 2024. [PubMed](https://pubmed.ncbi.nlm.nih.gov/37093294/?utm_source=chatgpt.com), [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0092867424001119?utm_source=chatgpt.com)
+* **Delivery (AAV/LNP/RNP) & tissue targeting:** Nat Biomed Eng 2025 + delivery overviews. [Nature](https://www.nature.com/articles/s41551-024-01296-2?utm_source=chatgpt.com), [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S1818087623000818?utm_source=chatgpt.com)
+* **Organellar (mitochondria & chloroplast):** Methods-style organellar deaminases review + BMB Reports 2024 + plant plastid updates. [PubMed](https://pubmed.ncbi.nlm.nih.gov/37794167/?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC10828433/?utm_source=chatgpt.com), [Nature](https://www.nature.com/articles/s41477-022-01279-8?utm_source=chatgpt.com)
+* **Epigenome writer fusions (dCas9-p300, methyltransferases):** Frontiers Med 2025; CRBMB 2024; BBRC 2023. [Frontiers](https://www.frontiersin.org/journals/medicine/articles/10.3389/fmed.2025.1613722/full?utm_source=chatgpt.com), [Taylor & Francis Online](https://www.tandfonline.com/doi/abs/10.1080/10409238.2024.2320659?utm_source=chatgpt.com), [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0014482723000988?utm_source=chatgpt.com)
+* **CASTs/casposons & other mobile systems:** CASTs review. [ScienceDirect](https://www.sciencedirect.com/science/article/abs/pii/S0734975024001757?utm_source=chatgpt.com)
+
+
 ---
 
 [berkeleygenomics.org primer on methods of germline engineering](https://berkeleygenomics.org/articles/Methods_for_strong_human_germline_engineering.html):  statistics of chromosome selection, number of polygenic gene edits/iterations required for a desired IQ increase
 
 ---
 
-"Programmable editing of a target base in genomic DNA without double-stranded DNA cleavage" <http://pubmedcentralcanada.ca/pmcc/articles/PMC4873371/>
+[Programmable editing of a target base in genomic DNA without double-stranded DNA cleavage](http://pubmedcentralcanada.ca/pmcc/articles/PMC4873371/)
 
 "Here we report the development of base editing, a new approach to genome editing that enables the direct, irreversible conversion of one target DNA base into another in a programmable manner, without requiring dsDNA backbone cleavage or a donor template. We engineered fusions of CRISPR/Cas9 and a cytidine deaminase enzyme that retain the ability to be programmed with a guide RNA, do not induce dsDNA breaks, and mediate the direct conversion of cytidine to uridine, thereby effecting a C→T (or G→A) substitution. The resulting “base editors” convert cytidines within a window of approximately five nucleotides (nt), and can efficiently correct a variety of point mutations relevant to human disease. In four transformed human and murine cell lines, second- and third-generation base editors that fuse uracil glycosylase inhibitor (UGI), and that use a Cas9 nickase targeting the non-edited strand, manipulate the cellular DNA repair response to favor desired base-editing outcomes, resulting in permanent correction of ~15-75% of total cellular DNA with minimal (typically ≤ 1%) indel formation. Base editing expands the scope and efficiency of genome editing of point mutations."
 
 ----
 
-"A programmable Cas9-serine recombinase fusion protein that operates on DNA sequences in mammalian cells" <http://evolve.harvard.edu/123-RecCas9.pdf>
+[A programmable Cas9-serine recombinase fusion protein that operates on DNA sequences in mammalian cells](http://evolve.harvard.edu/123-RecCas9.pdf)
 
 "We describe the development of 'recCas9', an RNAprogrammed small serine recombinase that functions in mammalian cells. We fused a catalytically inactive dCas9 to the catalytic domain of Gin recombinase using an optimized fusion architecture. The resulting recCas9 system recombines DNA sites containing a minimal recombinase core site flanked by guide RNA-specified sequences. We show that these recombinases can operate on DNA sites in mammalian cells identical to genomic loci naturally found in the human genome in a manner that is dependent on the guide RNA sequences.
 
@@ -79,7 +163,7 @@ Various DNA editing and genome editing techniques
 
 ----
 
-"Redesigning recombinase specificity for safe harbor sites in the human genome" <http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0139123>
+[Redesigning recombinase specificity for safe harbor sites in the human genome](http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0139123)
 
 "... we set out to identify mutations that enable unrestricted recombination between minimal recombination sites."
 
@@ -88,11 +172,9 @@ Various DNA editing and genome editing techniques
 ----
 
 
-"A photoactivatable Cre-loxP recombination system for optogenetic genome engineering" <http://www.nature.com/nchembio/journal/v12/n12/full/nchembio.2205.html>
-
-"Synthetic recombinase-based state machines in living cells" <http://science.sciencemag.org/content/353/6297/aad8559> <http://www.scottaaronson.com/blog/?p=2862>
-
-"Improved properties of FLP recombinase evolved by cycling mutagenesis" (1998) <http://download.bioon.com.cn/view/upload/month_0910/20091007_99bbd816c18feb072157AFvSy0C0i3om.attach.pdf>
+* [A photoactivatable Cre-loxP recombination system for optogenetic genome engineering](http://www.nature.com/nchembio/journal/v12/n12/full/nchembio.2205.html)
+* [Synthetic recombinase-based state machines in living cells](http://science.sciencemag.org/content/353/6297/aad8559)
+* [Improved properties of FLP recombinase evolved by cycling mutagenesis](http://download.bioon.com.cn/view/upload/month_0910/20091007_99bbd816c18feb072157AFvSy0C0i3om.attach.pdf)
 
 "Continuous evolution of site-specific recombinases with highly reprogrammed DNA specificities"
 
@@ -149,19 +231,13 @@ book chapter about zinc-finger recombinases <http://www.scripps.edu/barbas/pdf/G
 
 # Fusion proteins for programmable methyltransferase
 
-"Genome-wide programmable transcriptional memory by CRISPR-based epigenome editing" <https://www.cell.com/cell/fulltext/S0092-8674(21)00353-6>
-
-Optogenetic control of a DNA methyltransferase: "Epigenetic editing of Ascl1 gene in neural stem cells by optogenetics" <http://www.nature.com/articles/srep42047>
-
-"Efficient targeted DNA methylation with chimeric dCas9–Dnmt3a–Dnmt3L methyltransferase" <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5389507/>
-
-"Targeted DNA methylation in vivo using an engineered dCas9-MQ1 fusion protein" <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5508226/>
-
-"DNA epigenome editing using CRISPR-Cas SunTag-directed DNMT3A" <https://genomebiology.biomedcentral.com/articles/10.1186/s13059-017-1306-z>
-
-"Targeted DNA methylation in human cells using engineered dCas9-methyltransferases" <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5532369/>
-
-"Ezh2-dCas9 and KRAB-dCas9 enable engineering of epigenetic memory in a context-dependent manner" <https://epigeneticsandchromatin.biomedcentral.com/articles/10.1186/s13072-019-0275-8>
+* [Genome-wide programmable transcriptional memory by CRISPR-based epigenome editing](https://www.cell.com/cell/fulltext/S0092-8674(21)00353-6)
+* [Epigenetic editing of Ascl1 gene in neural stem cells by optogenetics](http://www.nature.com/articles/srep42047)
+* [Efficient targeted DNA methylation with chimeric dCas9–Dnmt3a–Dnmt3L methyltransferase](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5389507/)
+* [Targeted DNA methylation in vivo using an engineered dCas9-MQ1 fusion protein](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5508226/)
+* [DNA epigenome editing using CRISPR-Cas SunTag-directed DNMT3A](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-017-1306-z)
+* [Targeted DNA methylation in human cells using engineered dCas9-methyltransferases](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5532369/)
+* [Ezh2-dCas9 and KRAB-dCas9 enable engineering of epigenetic memory in a context-dependent manner](https://epigeneticsandchromatin.biomedcentral.com/articles/10.1186/s13072-019-0275-8)
 
 # nanopore + polymerase
 
@@ -187,4 +263,4 @@ ligand-linked peptide inhibitor, with azobenzene, to inhibit an active domain in
 
 * [[protein-engineering]]
 * [[genetic-modifications]]
-
+* [[gene-therapy]]
