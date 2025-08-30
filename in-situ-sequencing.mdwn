@@ -1,0 +1,134 @@
+# In situ sequencing
+
+## Reviews
+
+* **“Museum of spatial transcriptomics” (Nat Methods, 2022)** — panoramic field map spanning ISS, MERFISH, seqFISH, analysis trends. [Nature](https://www.nature.com/articles/s41592-022-01409-2?utm_source=chatgpt.com)
+* **Padlock probe–based in situ sequencing (Annu Rev Genom Hum Genet, 2023)** — clear review of targeted ISS chemistry (padlock + RCA), performance, and applications. [PubMed](https://pubmed.ncbi.nlm.nih.gov/37018847/?utm_source=chatgpt.com), [Annual Reviews](https://www.annualreviews.org/content/journals/10.1146/annurev-genom-102722-092013?crawler=true&mimetype=application%2Fpdf&utm_source=chatgpt.com)
+* **Multiplexed spatial transcriptomics methods & the road to multi-omics (Frontiers Cell Dev Biol, 2024)** — compares ISS, FISH, NGS-based approaches; discusses ExM combos. [Frontiers](https://www.frontiersin.org/journals/cell-and-developmental-biology/articles/10.3389/fcell.2024.1378875/full?utm_source=chatgpt.com)
+* **Spatial analysis toolkits for RNA ISS (WIREs RNA, 2024)** — survey of pipelines for decoding and analyzing ISS data. [Wiley Online Library](https://wires.onlinelibrary.wiley.com/doi/abs/10.1002/wrna.1842?utm_source=chatgpt.com)
+* **Spatial transcriptomics in pathology/medicine (Am J Pathol, 2025)** — methods + analysis focus with clinical lens. [American Journal of Pathology](https://ajp.amjpathol.org/article/S0002-9440%2824%2900276-1/fulltext?utm_source=chatgpt.com)
+
+## In situ sequencing (ISS) — key methods
+
+* **Original ISS in preserved tissue (Nat Methods, 2013)** — padlock probes + RCA; targeted detection in FFPE sections. [PubMed](https://pubmed.ncbi.nlm.nih.gov/23852452/?utm_source=chatgpt.com)
+* **FISSEQ protocol (Nat Protocols, 2015)** — sequencing-by-synthesis of cDNA amplicons in fixed cells/tissue; genome-wide flavor of ISS. [Nature](https://www.nature.com/articles/nprot.2014.191?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC4327781/?utm_source=chatgpt.com)
+* **HybISS (Nucleic Acids Res, 2020)** — sequencing-by-hybridization readout; simpler implementation for targeted panels. [Oxford Academic](https://academic.oup.com/nar/article/48/19/e112/5912821?utm_source=chatgpt.com), [PubMed](https://pubmed.ncbi.nlm.nih.gov/32990747/?utm_source=chatgpt.com)
+* **BaristaSeq (Nucleic Acids Res, 2018)** — optimized padlock-based in situ **barcode** sequencing; used for neuronal projection mapping (BARseq). [Oxford Academic](https://academic.oup.com/nar/article/46/4/e22/4668654?utm_source=chatgpt.com), [PubMed](https://pubmed.ncbi.nlm.nih.gov/29190363/?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC7836778/?utm_source=chatgpt.com)
+* **STARmap (Science, 2018)** — hydrogel-tissue chemistry + in situ DNA sequencing for intact 3D tissue. Follow-on **STARmap PLUS** adds protein co-detection (Nature, 2023). [Science](https://www.science.org/doi/10.1126/science.aat5691?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC6339868/?utm_source=chatgpt.com), [PubMed](https://pubmed.ncbi.nlm.nih.gov/36732642/?utm_source=chatgpt.com)
+* **ExSeq (Science, 2021)** — expansion microscopy + in situ sequencing gives nanoscale-resolved RNA maps. [Science](https://www.science.org/doi/10.1126/science.aax2656?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC7900882/?utm_source=chatgpt.com)
+* **Rapid/crowdedness-robust ISS (bioRxiv, 2022)** — faster, higher-density decoding in padlock-based ISS. [BioRxiv](https://www.biorxiv.org/content/10.1101/2022.11.16.516714v2.full.pdf?utm_source=chatgpt.com)
+* **Open-source high-throughput targeted ISS (Nat Commun, 2024)** — practical, sensitive targeted ISS workflow. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC11385644/?utm_source=chatgpt.com)
+
+## Multiplexed FISH — modern & next-gen
+
+* **MERFISH (Science, 2015)** — error-robust barcoding enables thousands of RNAs per cell; (Vizgen MERSCOPE). [Science](https://www.science.org/doi/10.1126/science.aaa6090?utm_source=chatgpt.com), [PubMed](https://pubmed.ncbi.nlm.nih.gov/25858977/?utm_source=chatgpt.com)
+* **seqFISH+ (Nature, 2019)** — transcriptome-scale (10k genes) imaging with sub-diffraction resolution. [PubMed](https://pubmed.ncbi.nlm.nih.gov/30911168/?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC6544023/?utm_source=chatgpt.com)
+* **osmFISH (Nat Methods, 2018)** — cyclic smFISH without barcodes; large-area tissue mapping. [PubMed](https://pubmed.ncbi.nlm.nih.gov/30377364/?utm_source=chatgpt.com), [Nature](https://www.nature.com/nmeth/articles?type=brief-communication&year=2018&utm_source=chatgpt.com)
+* **HCR RNA-FISH v3.0 (Choi et al., 2018; protocols & 10-plex 2024)** — enzyme-free amplification with strong background suppression. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC6031405/?utm_source=chatgpt.com), [Molecular Technologies](https://www.moleculartechnologies.org/supp/HCRv3_protocol_generic_slide.pdf?utm_source=chatgpt.com), [The Journal of Experimental Biology](https://journals.biologists.com/dev/article/151/4/dev202307/344014/HCR-spectral-imaging-10-plex-quantitative-high?utm_source=chatgpt.com)
+* **ClampFISH 2.0 (2022)** — fast, scalable amplified RNA FISH; multiplexing. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC9838136/?utm_source=chatgpt.com), [BioRxiv](https://www.biorxiv.org/content/10.1101/2022.03.16.484659.full?utm_source=chatgpt.com)
+* **π-FISH “rainbow” (Nat Commun, 2023)** — multiplex detection of RNA/DNA/proteins in the same tissue. [Nature](https://www.nature.com/articles/s41467-023-36137-4?utm_source=chatgpt.com)
+* **MERFISH with branched-DNA amplification (2019)** — boosts signal, detection efficiency. [Nature](https://www.nature.com/articles/s41598-019-43943-8?utm_source=chatgpt.com)
+
+## Commercial “next-gen” in situ platforms
+
+* **10x Genomics Xenium** — subcellular targeted RNA + optional protein. [Nature](https://www.nature.com/articles/s41592-025-02617-2?utm_source=chatgpt.com), [PubMed](https://pubmed.ncbi.nlm.nih.gov/40082609/?utm_source=chatgpt.com), [eLife](https://elifesciences.org/reviewed-preprints/107070?utm_source=chatgpt.com)
+* **NanoString/Bruker CosMx SMI** — high-plex RNA(+protein) imaging at single-cell/subcellular scale; several comparative/preprint studies. [BioRxiv](https://www.biorxiv.org/content/10.1101/2024.10.03.616013v1.full-text?utm_source=chatgpt.com)
+* **Vizgen MERSCOPE (MERFISH)** — technical concordance vs RNA-seq and multi-omic co-staining examples. [Life Science Alliance](https://www.life-science-alliance.org/content/6/1/e202201701?utm_source=chatgpt.com), [Vizgen](https://vizgen.com/wp-content/uploads/2022/11/True-multiomic-in-situ-single-cell-imaging_Wang-et-al_SFN-2022.pdf?utm_source=chatgpt.com)
+
+## Live-cell “in situ” RNA/DNA imaging (not sequencing)
+
+If you need living tissue/cells, current sequencing methods still require fixation; live-cell work uses CRISPR imaging instead:
+
+* **LiveFISH / CRISPR–Casilio & related** — label genomic loci in live cells, including non-repetitive sites; tracks dynamics. [Nature](https://www.nature.com/articles/s41467-022-29343-z?utm_source=chatgpt.com), [PubMed](https://pubmed.ncbi.nlm.nih.gov/31488703/?utm_source=chatgpt.com)
+* **CRISPR-Cas13/Csm RNA imaging** — live-cell tracking of endogenous RNAs at single-molecule resolution (reviews + 2025 Nat Biotechnol). [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC8959342/?utm_source=chatgpt.com), [Frontiers](https://www.frontiersin.org/journals/cell-and-developmental-biology/articles/10.3389/fcell.2022.866820/full?utm_source=chatgpt.com), [Nature](https://www.nature.com/articles/s41587-024-02540-5?utm_source=chatgpt.com)
+
+## Software & pipelines
+
+* **starfish (JOSS, 2021)** — open pipeline for image-based transcriptomics (MERFISH/seqFISH/ISS). [Journal of Open Source Software](https://joss.theoj.org/papers/10.21105/joss.02440?utm_source=chatgpt.com), [The Open Journal](https://www.theoj.org/joss-papers/joss.02440/10.21105.joss.02440.pdf?utm_source=chatgpt.com)
+* **FISH-quant v2 / Big-FISH (Genome Res, 2022)** — modular smFISH detection/segmentation toolkit. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC9074904/?utm_source=chatgpt.com), [GitHub](https://github.com/fish-quant/big-fish?utm_source=chatgpt.com)
+* **PIPEFISH (Patterns, 2023)** — CWL-based unified pipeline for FISH spatial transcriptomics. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S2666979X23001817?utm_source=chatgpt.com)
+* **Sopa (Nat Commun, 2024)** — technology-agnostic, memory-efficient pipeline for image-based spatial omics. [Nature](https://www.nature.com/articles/s41467-024-48981-z?utm_source=chatgpt.com)
+
+## Main methods
+
+* **Fixed tissue, targeted panels (FFPE or fresh-frozen):** HybISS, STARmap/STARmap PLUS, Xenium, CosMx, MERFISH. (HybISS/STARmap for open protocols; Xenium/CosMx/MERSCOPE for turnkey). [Oxford Academic](https://academic.oup.com/nar/article/48/19/e112/5912821?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC11332722/?utm_source=chatgpt.com), [10x Genomics](https://www.10xgenomics.com/platforms/xenium?utm_source=chatgpt.com), [Life Science Alliance](https://www.life-science-alliance.org/content/6/1/e202201701?utm_source=chatgpt.com)
+* **Large gene counts without sequencing chemistry:** seqFISH+ (10k genes) if you can handle long imaging runs. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC6544023/?utm_source=chatgpt.com)
+* **Ultrahigh spatial resolution / nanoscale context:** ExSeq (ExM + ISS). [Science](https://www.science.org/doi/10.1126/science.aax2656?utm_source=chatgpt.com)
+* **Live cells/tissue:** CRISPR imaging (DNA with LiveFISH; RNA with Cas13/Csm). (Sequencing in situ still generally requires fixation.) [PubMed](https://pubmed.ncbi.nlm.nih.gov/31488703/?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC8959342/?utm_source=chatgpt.com)
+
+# FISSEQ
+
+## Core FISSEQ & reviews
+
+* **FISSEQ, first report (Science, 2014)** — untargeted in situ RNA sequencing via cross-linked cDNA “rolonies” and SOLiD SBL imaging. [PubMed](https://pubmed.ncbi.nlm.nih.gov/24578530/?utm_source=chatgpt.com), [Mali](https://mali.ucsd.edu/uploads/3/1/0/0/31002267/science_2014.pdf?utm_source=chatgpt.com)
+* **FISSEQ protocol (Nat Protocols, 2015)** — detailed, bench-ready workflow; sample prep, crosslinking, imaging cycles, analysis. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC4327781/?utm_source=chatgpt.com), [Kalhor Lab](https://kalhorlab.bme.jhu.edu/wp-content/uploads/2022/07/2015_Lee-et-al._Nature-Protocols_Fluorescent-in-situ-sequencing-FISSEQ-of-RNA-for-gene-expression-profiling-in-intact-cells-and-tissue.pdf?utm_source=chatgpt.com)
+* **Padlock-probe ISS review (Annu Rev Genom Hum Genet, 2023)** — complements FISSEQ by covering targeted ISS; good for contrasts and hybrid designs. [PubMed](https://pubmed.ncbi.nlm.nih.gov/37018847/?utm_source=chatgpt.com)
+* **Recent overviews (2023–2025)** — succinct sections on FISSEQ vs. other spatial methods and where it fits today. [Wiley Online Library](https://onlinelibrary.wiley.com/doi/10.1002/advs.202206939?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC9891446/?utm_source=chatgpt.com), [BioMed Central](https://molecular-cancer.biomedcentral.com/articles/10.1186/s12943-024-02040-9?utm_source=chatgpt.com)
+
+## “FISSEQ-adjacent” and next-gen alternatives
+
+These all keep the “sequence DNA amplicons in place” idea but change chemistry/physics to boost accuracy, depth, or tissue thickness.
+
+**Optics/chemistry to beat crowding & errors**
+
+* **STARmap (Science, 2018)** — hydrogel-embedded amplicons + **SEDAL** two-base ligation decoding for low error in thick tissue (3D). [Science](https://www.science.org/doi/10.1126/science.aat5691?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC6339868/?utm_source=chatgpt.com)
+* **STARmap PLUS (Nature, 2023)** — STARmap with simultaneous **protein** co-detection; thousands of genes at subcellular voxels. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC11332722/?utm_source=chatgpt.com), [Nature](https://www.nature.com/articles/s41586-023-06569-5?utm_source=chatgpt.com)
+* **ExSeq (Science, 2021)** — **expansion microscopy + in situ sequencing**; comes in untargeted and targeted flavors, enabling long reads and nanoscale mapping. [Science](https://www.science.org/doi/10.1126/science.aax2656?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC7900882/?utm_source=chatgpt.com)
+
+**New ligation/sequencing chemistries**
+
+* **INSTA-seq / PRICKLi (preprint)** — **bidirectional ligation** (paired-end in one cycle) to cut imaging cycles; links in situ UMIs to NGS for longer reads and RNA-protein accessibility info. [BioRxiv](https://www.biorxiv.org/content/10.1101/722819v2.full-text?utm_source=chatgpt.com)
+
+**Targeted barcode & panel readouts inspired by in situ SBS/SBL**
+
+* **BaristaSeq (NAR, 2018)** — optimized padlock-based **in situ barcode sequencing** (Illumina-style SBS) with higher efficiency/accuracy. [Oxford Academic](https://academic.oup.com/nar/article/46/4/e22/4668654?utm_source=chatgpt.com), [PubMed](https://pubmed.ncbi.nlm.nih.gov/29190363/?utm_source=chatgpt.com)
+* **BARseq (Cell, 2019)** and **BARseq2 (2021)** — uses in situ sequencing to map neuronal **projections**; BARseq2 adds multiplex **gene expression** readout in the same cells. Recent atlases extend to brain-wide maps. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0092867419310748?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC8178227/?utm_source=chatgpt.com), [Nature](https://www.nature.com/articles/s41586-024-07221-6?utm_source=chatgpt.com)
+
+See also: [[DNA nanoscopy]] technique.
+
+## FISSEQ practical stuff
+
+* **Hands-on FISSEQ protocol** (step-by-step, including FFPE compatibility and imaging). [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC4327781/?utm_source=chatgpt.com), [protocols.io](https://www.protocols.io/view/fluorescent-in-situ-sequencing-fisseq-of-rna-for-g-mgsc3we.html?utm_source=chatgpt.com)
+* **Pipelines for decoding/analysis:** **starfish** supports FISSEQ/ISS-style assays; 2024 **ISS toolkits** review covers modern upstream→downstream workflows. [Journal of Open Source Software](https://joss.theoj.org/papers/10.21105/joss.02440?utm_source=chatgpt.com), [spacetx-starfish.readthedocs.io](https://spacetx-starfish.readthedocs.io/?utm_source=chatgpt.com), [The Open Journal](https://www.theoj.org/joss-papers/joss.02440/10.21105.joss.02440.pdf?utm_source=chatgpt.com), [Wiley Online Library](https://wires.onlinelibrary.wiley.com/doi/abs/10.1002/wrna.1842?utm_source=chatgpt.com)
+
+# MAPseq and BARseq
+
+## Reviews
+
+* **Barcode-based connectomics (concept + limitations summary, 2024)** — short overview contrasting MAPseq, BRICseq, BARseq, and ConnectID, incl. tradeoffs for adding transcriptomes. [eLife](https://elifesciences.org/articles/85419?utm_source=chatgpt.com)
+* **From MAPseq to BRICseq and beyond (2021)** — narrative review of barcoded projection mapping from the Zador lab lineage. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC8099946/?utm_source=chatgpt.com)
+* **Neural circuit research with molecular barcodes (2025)** — broader survey placing MAPseq/BARseq among barcoded neurotech. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0168010225000549?utm_source=chatgpt.com)
+
+## MAPseq — essentials
+
+* **MAPseq (Neuron, 2016)** — seminal method: infect neurons with a diverse RNA-barcode virus; bulk-sequence dissected target regions to read one-to-many projections at scale. (Open access.) [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC6640135/?utm_source=chatgpt.com)
+* **MAPseq (primary index / PubMed)** — canonical reference & metadata. [PubMed](https://pubmed.ncbi.nlm.nih.gov/27545715/?utm_source=chatgpt.com)
+* **MAPseq2 (preprint, 2025)** — protocol update reporting \~3–4× higher barcode detection sensitivity and \~10× lower cost vs. original MAPseq. [ResearchGate](https://www.researchgate.net/publication/392975273_MAPseq2_a_sensitive_and_cost-effective_barcoded_connectomics_method?utm_source=chatgpt.com)
+
+## BARseq — essentials
+
+* **BARseq (Cell, 2019)** — combines MAPseq with in situ sequencing at the source area to keep somatic/spatial context while still bulk-sequencing targets; maps thousands of neurons in one brain. [Cell](https://www.cell.com/cell/fulltext/S0092-8674%2819%2931074-8?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC7836778/?utm_source=chatgpt.com)
+* **BARseq2 (Neuron, 2021)** — adds **multiplexed gene-expression readout** in the same barcoded neurons (projection + transcript markers in situ). [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC8178227/?utm_source=chatgpt.com), [PubMed](https://pubmed.ncbi.nlm.nih.gov/33972801/?utm_source=chatgpt.com)
+* **Axonal BARseq (Nat Commun, 2023/2024)** — sequences barcodes **along axons** to resolve branch-specific projection patterns at scale. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC9949159/?utm_source=chatgpt.com), [Nature](https://www.nature.com/articles/s41467-024-52756-x?utm_source=chatgpt.com)
+
+## Related / next-gen offshoots
+
+* **BRICseq (Cell, 2020)** — “brain-wide individual-animal connectome sequencing”; a MAPseq variant designed for robust region–region connectivity within single animals and for linking connectivity to activity/genes/behavior. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC7771207/?utm_source=chatgpt.com)
+* **MERGE-seq (eLife, 2024)** — **retrograde AAV barcodes + scRNA-seq** to jointly profile projectome and transcriptome; paper also benchmarks BARseq/MAPseq/ConnectID tradeoffs. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC10914349/?utm_source=chatgpt.com)
+* **ConnectID (method referenced in MERGE-seq)** — **MAPseq + scRNA-seq** pairing; raises transcriptome recovery but with modest joint-cell yield. (Cited/quantified within MERGE-seq). [eLife](https://elifesciences.org/articles/85419?utm_source=chatgpt.com)
+* **Rabies-based barcoded neuroanatomy (eLife, 2024)** — barcoded rabies vectors with in situ and single-cell sequencing for retrograde and trans-synaptic labeling; expands barcode tracing to synaptic hops. [eLife](https://elifesciences.org/articles/87866?utm_source=chatgpt.com)
+* **Projection-TAGs (Nat Commun, 2025)** — kit-like **retrograde AAV** toolbox where each target gets a unique RNA barcode for multiplexed tracing + multi-omic profiling; conceptually adjacent to MAPseq/MERGE-seq. [Nature](https://www.nature.com/articles/s41467-025-60360-w?utm_source=chatgpt.com)
+
+## BARseq and MAPseq applications
+
+* **Max throughput across many targets** → **MAPseq / BRICseq** (bulk-NGS readout; highest cell counts; no somatic imaging). [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC6640135/?utm_source=chatgpt.com)
+* **Keep somatic spatial context; add limited gene panels** → **BARseq / BARseq2** (in situ sequencing at source; BARseq2 adds tens-to-\~100 genes). [Cell](https://www.cell.com/cell/fulltext/S0092-8674%2819%2931074-8?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC8178227/?utm_source=chatgpt.com)
+* **Resolve axonal branching patterns** → **Axonal BARseq**. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC9949159/?utm_source=chatgpt.com)
+* **Joint projectome + full scRNA-seq transcriptomes** → **MERGE-seq / ConnectID** (lower joint-cell recovery than pure BARseq2 gene panels, but richer transcriptomes). [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC10914349/?utm_source=chatgpt.com)
+
+# See also
+
+[[expansion microscopy]], [[DNA nanoscopy]], [[mapseq]]
+
+See [[lineage-tracing]] for other cell tracing and cell lineage tracing techniques.
+
