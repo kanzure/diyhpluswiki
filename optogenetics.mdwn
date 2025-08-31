@@ -1,6 +1,128 @@
 See also [[optogenetic-axon-guidance]] and [[biosight]].
 
-# A) Recent overviews or reviews for optogenetics for freely moving / freely behaving animals
+# Optogenetics basics
+
+* **Boyden et al., 2005 (ChR2 in neurons)** — the paper that showed a *microbial cation channel* (ChR2) can be expressed in mammalian neurons to drive spikes with millisecond precision using blue light.
+  *Intuition:* light opens a non-selective cation channel (Na+, Ca\2+, H+) → fast depolarization → spikes. [Nature](https://www.nature.com/articles/nn1525?utm_source=chatgpt.com), [PubMed](https://pubmed.ncbi.nlm.nih.gov/16116447/?utm_source=chatgpt.com)
+* **Zemelman et al., 2002–2003 (precursors)** — “genetically ChARGed neurons” and photochemical gating of heterologous receptors laid conceptual groundwork: make chosen cells light-sensitive by *introducing light-responsive proteins/ligands*. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0896627301005748?utm_source=chatgpt.com), [PNAS](https://www.pnas.org/doi/10.1073/pnas.242738899?utm_source=chatgpt.com)
+* **Halorhodopsin/Arch (optical silencing)** — pumps that move Cl⁻ in or H⁺ out to hyperpolarize and silence neurons; later refined (eNpHR3.0, ArchT).
+  *Intuition:* light-driven ion pumps set membrane potential away from spike threshold; beware pump side-effects (e.g., chloride load). [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC6010559/?utm_source=chatgpt.com)
+
+# Opsin families
+
+* **Fast/bright ChRs for excitation:** Chronos, CheRiff, C1V1/Chrimson (red-shifted), ChRmine (ultrapotent).
+  *Intuition:* mutations/species mining tune photocurrent, spectrum, and kinetics to balance *less scattering (red)* vs *fast gating and big currents*. Representative papers: Chronos/CheRiff/Chrimson (2015), ChRmine (2020). [Nature](https://www.nature.com/articles/s41598-023-31384-3?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC8435545/?utm_source=chatgpt.com)
+* **Anion-conducting channelrhodopsins (GtACR1/2)** — channel (not pump) inhibitors with large, fast hyperpolarizing currents; often better inhibition than pumps.
+  *Intuition:* opening a high-conductance Cl⁻ channel shunts/exerts E\_Cl-limited hyperpolarization; soma-targeting helps avoid axonal depolarization. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC12220681/?utm_source=chatgpt.com)
+* **Step-function opsins (SFO/SSFO; SOUL)** — bistable ChR2 mutants where brief pulses toggle long-lived open/closed states.
+  *Intuition:* mutations (e.g., C128S/D156A) stabilize the open state → much higher light sensitivity but reduced temporal precision; great for state setting. [PubMed](https://pubmed.ncbi.nlm.nih.gov/19079251/?utm_source=chatgpt.com), [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0896627320302397?utm_source=chatgpt.com)
+* **Soma-targeted variants** — add Kv2.1 motifs to concentrate opsins at soma/dendrites → stronger, cleaner control; works for excitatory and inhibitory opsins (stCoChR, stGtACR).
+  *Intuition:* trafficking tags change membrane localization to where you *want* the current. [eLife](https://elifesciences.org/articles/63359?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC6175909/?utm_source=chatgpt.com)
+* **Bidirectional single-vector control (BiPOLES)** — fused Chrimson (excite, red) + GtACR2 (inhibit, blue) with balanced expression.
+  *Intuition:* color-orthogonal push/pull in the *same* cells, controlled by wavelength. [PubMed](https://pubmed.ncbi.nlm.nih.gov/34312384/?utm_source=chatgpt.com)
+
+# Deep light delivery
+
+* **Upconversion nanoparticles (UCNPs)** — NIR in, visible out locally to drive opsins; demonstrated transcranial behavior modulation in mice.
+  *Intuition:* exploit NIR tissue windows; UCNPs convert NIR to blue/green/red *in situ*, cutting scattering/absorption losses from surface. [Science](https://www.science.org/doi/10.1126/science.aaq1144?utm_source=chatgpt.com), [CBP](https://cbp.brain.riken.jp/files/Chen-2018-science-679.full.pdf?utm_source=chatgpt.com)
+* **Ultrapotent/red-shifted opsins + surface illumination** — systemic AAV + ChRmine enabled *implant-free* deep optogenetics in mice (mm-scale).
+  *Intuition:* combine very light-sensitive opsin + red-shifted excitation + skull illumination → sufficient photons reach targets. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC7878426/?utm_source=chatgpt.com)
+* **Hardware** — wireless µLED implants; flexible/waveguide photonics.
+  *Intuition:* reduce tethering and heat, deliver patterned light close to targets. Good overviews: wireless optoelectronics/photonic probes. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0896627316310042?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC5640477/?utm_source=chatgpt.com)
+
+# Opsin-free optogenetics (without microbial opsins)
+
+Some of these are not optogenetics. Sorry.
+
+* **Infrared neural stimulation (INS)/mid-IR modulation** — pulsed IR heats membranes → membrane capacitance changes → spikes; no gene transfer.
+  *Intuition:* dT/dt at the bilayer changes capacitance and currents (optocapacitance). Power/thermal safety are the limiting factors. [Nature](https://www.nature.com/articles/s41378-020-0153-3?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC8115038/?utm_source=chatgpt.com)
+* **Photothermal/optocapacitive nanoparticles** — gold or other absorbers tethered to membranes convert light to heat locally to excite neurons.
+  *Intuition:* nanoscale heaters generate fast capacitive currents in nearby membrane patches. [PubMed](https://pubmed.ncbi.nlm.nih.gov/25772189/?utm_source=chatgpt.com), [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S000634951731247X?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC9042976/?utm_source=chatgpt.com)
+* **Photopharmacology (azobenzene photoswitches, PORTLs/PTLs, LiGluR)** — covalently tether photoswitchable ligands to endogenous receptors (e.g., iGluRs, GPCRs) to make *native* proteins light-responsive.
+  *Intuition:* light flips azobenzene (trans↔cis) to present/withdraw the ligand from the binding site; fully genetic options exist via UAA incorporation. Great for subcellular, receptor-specific control. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0896627307003443?utm_source=chatgpt.com), [American Chemical Society Publications](https://pubs.acs.org/doi/10.1021/acscentsci.5b00260?utm_source=chatgpt.com)
+
+# Optogenetic components beyond ion flux
+
+* **Opto-signaling modules** — CRY2–CIB (blue-light dimerization/oligomerization), LOV-based iLID/LOVTRAP, PhyB–PIF (red/far-red). Used for optoSOS (Ras/ERK), opto-Rho/Rac, opto-Wnt, opto-Trk, etc.
+  *Intuition:* light toggles protein–protein interactions and localization; signaling follows. Exemplars: optoSOS; CRY2/CIB; iLID; LOVTRAP. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC3925772/?utm_source=chatgpt.com), [PubMed](https://pubmed.ncbi.nlm.nih.gov/21037589/?utm_source=chatgpt.com), [Nature](https://www.nature.com/articles/nmeth.3926?utm_source=chatgpt.com)
+* **Opto-GPCRs (OptoXRs; 2024 bistable inhibitory Opto-GPCR)** — chimeric rhodopsins driving GPCR cascades with light; recent bistable inhibitory variants expand multiplexing.
+  *Intuition:* graft intracellular loops from the GPCR of interest onto a light-activated rhodopsin scaffold. [ScienceDirect](https://www.sciencedirect.com/science/article/abs/pii/S0959440X19300557?utm_source=chatgpt.com), [Nature](https://www.nature.com/articles/s41592-024-02285-8?utm_source=chatgpt.com)
+* **Light-tunable CRISPR** — photoactivatable Cas9 (split-Cas9 reassembled by light), LACE/dCas9-based transcriptional control, light-caged or light-expressed gRNAs.
+  *Intuition:* restrict editing/activation to illuminated spatiotemporal windows. [PubMed](https://pubmed.ncbi.nlm.nih.gov/26076431/?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC4412021/?utm_source=chatgpt.com)
+
+# Gene delivery and gene editing for in vivo optogenetics
+
+* **AAV as the workhorse** — tropism/serotype choice (e.g., AAV9/PHP variants), promoters (hSyn, CaMKIIα), and soma-targeting tags (Kv2.1) determine where/how much opsin you get. Review overviews are useful. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC10319350/?utm_source=chatgpt.com)
+* **Knock-in strategies in post-mitotic neurons** — SLENDR/vSLENDR (HDR with AAV donors), HITI (NHEJ-based insertion) when HDR is rare; these let you place opsins/tags at defined loci or label endogenous proteins.
+  *Intuition:* pair Cas9 cut with donor template (HDR) or directionally designed NHEJ donors (HITI) to install payloads in adult brain. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC5691606/?utm_source=chatgpt.com)
+* **Why it matters** — precise knock-ins can stabilize expression, match endogenous regulation, or achieve cell-type specificity without large promoters; HITI works in non-dividing neurons. [PubMed](https://pubmed.ncbi.nlm.nih.gov/27851729/?utm_source=chatgpt.com)
+
+# Emerging techniques
+
+* **Transcranial control with NIR + materials or ultra-sensitive opsins** — UCNPs and ChRmine push depth while avoiding craniotomies in mice; translation will hinge on safety, dosing, and light budgets in large brains. [Science](https://www.science.org/doi/10.1126/science.aaq1144?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC7878426/?utm_source=chatgpt.com)
+* **Wavefront-shaping & virtual waveguides** — scatter-engineered light delivery to guide photons deeper with less damage. [Nature](https://www.nature.com/articles/s41467-023-40864-z?utm_source=chatgpt.com)
+* **Nanophotonics & wireless implants** — on-chip beam shaping and battery-free µLEDs promise dense, patterned deep-brain illumination with minimal tethers. [Nature](https://www.nature.com/articles/s44328-025-00024-3?utm_source=chatgpt.com), [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0896627316310042?utm_source=chatgpt.com)
+
+---
+
+# References
+
+**Foundational & reviews**
+
+* Boyden et al., 2005 (ChR2 in neurons). [Nature](https://www.nature.com/articles/nn1525?utm_source=chatgpt.com)
+* Yizhar et al., 2011 (Neuron primer). [Cell](https://www.cell.com/neuron/pdf/S0896-6273%2811%2900504-6.pdf?utm_source=chatgpt.com)
+* Deisseroth, 2017 (form & function of ChR). [Science](https://www.science.org/doi/10.1126/science.aan5544?utm_source=chatgpt.com)
+
+**Excitation & inhibition toolsets**
+
+* Chronos/CheRiff/Chrimson review set (2015). [Nature](https://www.nature.com/articles/s41598-023-31384-3?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC8435545/?utm_source=chatgpt.com)
+* ChRmine (ultrapotent, red-shifted). [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC9042976/?utm_source=chatgpt.com)
+* GtACR1/2 (anion channels). [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC12220681/?utm_source=chatgpt.com)
+* SSFO/SOUL (bistable). [PubMed](https://pubmed.ncbi.nlm.nih.gov/19079251/?utm_source=chatgpt.com), [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0896627320302397?utm_source=chatgpt.com)
+* Soma-targeting (stGtACR, stCoChR). [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC6175909/?utm_source=chatgpt.com), [eLife](https://elifesciences.org/articles/63359?utm_source=chatgpt.com)
+* BiPOLES (bidirectional, dual-color). [PubMed](https://pubmed.ncbi.nlm.nih.gov/34312384/?utm_source=chatgpt.com)
+
+**All-optical & deep access**
+
+* Cellular-resolution 2P holography reviews. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC10234433/?utm_source=chatgpt.com), [Nature](https://www.nature.com/articles/s41392-022-01234-1?utm_source=chatgpt.com)
+* UCNP-mediated NIR optogenetics (Science 2018). [Science](https://www.science.org/doi/10.1126/science.aaq1144?utm_source=chatgpt.com)
+* Implant-free deep optogenetics with ChRmine. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC7878426/?utm_source=chatgpt.com)
+* Wireless/flexible photonics for optogenetics. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0896627316310042?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC5640477/?utm_source=chatgpt.com)
+
+**Opsin-free**
+
+* INS/mid-IR modulation (opsin-independent). [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC8115038/?utm_source=chatgpt.com)
+* Optocapacitance/nanoparticle photothermal stimulation. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC9042976/?utm_source=chatgpt.com), [PubMed](https://pubmed.ncbi.nlm.nih.gov/25772189/?utm_source=chatgpt.com)
+* Photopharmacology (LiGluR; PORTLs/PTLs; in vivo reviews). [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0896627307003443?utm_source=chatgpt.com), [American Chemical Society Publications](https://pubs.acs.org/doi/10.1021/acscentsci.5b00260?utm_source=chatgpt.com)
+* Critical perspective on magnetogenetics. [PubMed](https://pubmed.ncbi.nlm.nih.gov/25532138/?utm_source=chatgpt.com)
+
+**Genetically encoded pathway control**
+
+* CRY2–CIB (light dimerization), iLID, LOVTRAP. [PubMed](https://pubmed.ncbi.nlm.nih.gov/21037589/?utm_source=chatgpt.com), [Nature](https://www.nature.com/articles/nmeth.3926?utm_source=chatgpt.com)
+* OptoSOS (Ras/ERK). [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC3925772/?utm_source=chatgpt.com)
+* OptoXRs & new opto-GPCRs. [ScienceDirect](https://www.sciencedirect.com/science/article/abs/pii/S0959440X19300557?utm_source=chatgpt.com), [Nature](https://www.nature.com/articles/s41592-024-02285-8?utm_source=chatgpt.com)
+* Light-tunable CRISPR (paCas9; LACE; caged gRNAs). [PubMed](https://pubmed.ncbi.nlm.nih.gov/26076431/?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC4412021/?utm_source=chatgpt.com)
+
+**Editing & delivery enabling opto**
+
+* SLENDR/vSLENDR (AAV-HDR in adult brain). [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC5691606/?utm_source=chatgpt.com)
+* HITI (NHEJ knock-in in non-dividing cells). [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC5331785/?utm_source=chatgpt.com)
+* Practical AAV delivery considerations (overview). [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC10319350/?utm_source=chatgpt.com)
+
+Other:
+
+* **Two-photon holography & cellular-resolution photostimulation** — pattern light in 3D while imaging calcium/voltage.
+  *Intuition:* scan‐less holography or multiplexed 2P focuses light onto many ROIs simultaneously, enabling precise ensemble control + imaging. Start here: Packer et al., Emiliani/Papagiakoumou reviews. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC10234433/?utm_source=chatgpt.com), [Nature](https://www.nature.com/articles/s41392-022-01234-1?utm_source=chatgpt.com)
+
+---
+
+# Caveats
+
+* **Light budgets & heat:** red/NIR scatters less but most opsins need visible photons; UCNP/ChRmine help but dose & safety scale badly with brain size. [Science](https://www.science.org/doi/10.1126/science.aaq1144?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC7878426/?utm_source=chatgpt.com)
+* **Inhibition gotchas:** Cl⁻ tools can change intracellular chloride; soma targeting mitigates axonal depolarization. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC6010559/?utm_source=chatgpt.com)
+* **Opsin-free approaches:** impressive demos, but many require high irradiances or nanoparticles; mechanisms (thermal vs. capacitive vs. mechanosensory) must be quantified carefully. [Nature](https://www.nature.com/articles/s41378-020-0153-3?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC9042976/?utm_source=chatgpt.com)
+
+# Recent overviews or reviews for optogenetics for freely moving / freely behaving animals
 
 * **Wireless optogenetics hardware** (compact survey): *Wireless Devices for Optical Brain Stimulation: A Review of Current Developments for Optogenetic Applications in Freely Moving Mice* (Cellular & Molecular Bioengineering, 2024/25 e-collection). Focuses on wireless powering, comms, device classes, trade-offs for unconstrained behavior. [PubMed](https://pubmed.ncbi.nlm.nih.gov/39949492/?utm_source=chatgpt.com)
 * **Patterned light in behaving mice**: *Recent advances in light-patterned optogenetic photostimulation in freely moving mice* (Neurophotonics, 2024). Covers head-mounted optics, near single-cell patterning on the move, road map for next steps. [PubMed](https://pubmed.ncbi.nlm.nih.gov/38404422/?utm_source=chatgpt.com)
@@ -8,7 +130,7 @@ See also [[optogenetic-axon-guidance]] and [[biosight]].
 * **Integrated bioelectronics + optogenetics for brain–body circuits** (perspective with behaving-animal emphasis): *Integrated Bioelectronic and Optogenetic Methods to Study Brain–Body Circuits* (ACS Nano, 2024). Summarizes ultrapotent/red-shifted opsins and wireless μLED systems used in freely behaving animals. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC11544702/)
 * Optical delivery tech that pairs well with free behavior: Review of optical fiber technologies for optogenetics, including flexible/biodegradable interfaces that reduce tethers and bulk. [ScienceDirect](https://www.sciencedirect.com/science/article/abs/pii/S0030399224007904?utm_source=chatgpt.com)
 
-# B) Optogenetic stimulation across in vitro and in vivo (broad reviews)
+# Optogenetic stimulation across in vitro and in vivo (broad reviews)
 
 * **Comprehensive primer across cells -> organisms**: *Optogenetics for light control of biological systems* (Nat Rev Methods Primers, 2022). Covers actuators (ion channels, GPCRs, cyclases), targeting, illumination strategies (1p/2p, holography), applications from cultures/slices to behaving animals. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC10627578/)
 * **Biophysics & opsin fundamentals**: *Optogenetic control of neural activity: the biophysics of microbial rhodopsins in neuroscience* (Quarterly Reviews of Biophysics, 2024). Excellent for mechanism-level understanding that informs both in vitro and in vivo stimulation design. [Cambridge University Press & Assessment](https://www.cambridge.org/core/journals/quarterly-reviews-of-biophysics/article/optogenetic-control-of-neural-activity-the-biophysics-of-microbial-rhodopsins-in-neuroscience/6F9E422992D9418D9418B5F5B5DC5178?utm_source=chatgpt.com)
