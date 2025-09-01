@@ -126,6 +126,33 @@ See also: [[DNA nanoscopy]] technique.
 * **Resolve axonal branching patterns** → **Axonal BARseq**. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC9949159/?utm_source=chatgpt.com)
 * **Joint projectome + full scRNA-seq transcriptomes** → **MERGE-seq / ConnectID** (lower joint-cell recovery than pure BARseq2 gene panels, but richer transcriptomes). [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC10914349/?utm_source=chatgpt.com)
 
+# Intracellular imaging via in situ sequencing
+
+
+[CODEX multiplexed tissue imaging with DNA-conjugated antibodies](https://pmc.ncbi.nlm.nih.gov/articles/PMC8647621/)
+
+"The CODEX technology was licensed by Stanford University to [Akoya Biosciences](https://www.akoyabio.com/), and the instrumentation and reagents are now commercially available."
+
+"Co-detection by indexing (CODEX) relies on DNA-conjugated antibodies and the cyclic addition and removal of complementary fluorescently labeled DNA probes" isn't that just Exchange-PAINT? but not superresolution microscopy.
+
+"CODEX shares several limitations with other multiplexed imaging techniques. First, antibodies are expensive. Purified antibodies suitable for use with FFPE tissues generally cost $300––600 per 100 μg; antibodies suitable for FF tissues are often less expensive at ~$100 per 100 μg (provides enough for ~100–200 multicycle stains). Sufficient maleimide-modified DNA oligonucleotides for ~20 antibody conjugations cost ~$800 (source: TriLink BioTechnologies). Fluorescently tagged DNA oligonucleotides sufficient for ~100 reaction cycles cost ~$400 (source: Integrated DNA Technologies). In addition, each antibody requires individual conjugation and validation in a unified staining protocol. Certain antibodies or clones are not suitable for multiplexing (e.g., antibodies may have pH requirement for antigen retrieval that are incompatible with the CODEX unified staining protocol)."
+
+
+[Modified aptamers enable quantitative sub-10-nm cellular DNA-PAINT imaging](https://pmc.ncbi.nlm.nih.gov/articles/PMC6345375/)
+
+"SOMAmer reagents represent a unique class of aptamers that contain modified bases employing hydrophobic residues, similar to the amino acid residues abundantly found in antibody epitopes for high-specificity and high-affinity binding of proteins. These base modifications increase the range of protein targets for which high-affinity ligands can be selected."
+
+aptamers seem to be better from a size perspective, but why did this study not do in situ sequencing of barcodes? looks like direct imaging of a fluorescent hybridizing imager sequence per tagged [[aptamer]]?
+
+why not [[antibody]] labeling with DNA tag barcode tails and then do in situ sequencing?
+
+[**Fluorescent in situ sequencing of DNA barcoded antibodies**](https://www.biorxiv.org/content/10.1101/2020.04.27.060624v1.full) - this is a very cool article, although needs to be switched over to aptamers instead of antibodies.
+
+Church complains that "Although effective, in situ hybridization (ISH) of oligonucleotides conjugated to antibodies only scales linearly with the number of iterative labelling reactions and does not take advantage of the data density of DNA (4^n where N = the number of bases in the oligos). For instance, one 20 nucleotide-long ISH probe encodes 1 bit of information whereas the sequencing of this length encodes 4^20 (over 1 trillion) bits. Recently, Goltsev et al have shown a sequencing based approach to read out the location and identity of barcoded antibodies, however the chemistry chosen did not take advantage of high density base space and therefore drastically reduced the sequence diversity that could be investigated."
+
+
+
+
 # See also
 
 [[expansion microscopy]], [[DNA nanoscopy]], [[mapseq]], [[fisseq]]
