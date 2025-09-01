@@ -1,6 +1,6 @@
 # Cell therapy
 
-Cell therapy surpasses gene therapy in precision and durability of therapeutic effect because it engineers autologous (or, increasingly, allogeneic but universally edited) cells ex vivo.
+Cell therapy surpasses [[gene therapy]] in precision and durability of therapeutic effect because it engineers autologous (or, increasingly, allogeneic but universally edited) cells ex vivo.
 
 Our ability to engineer large synthetic programs into cells ex vivo is vastly greater than our ability to deliver large multi-kb upgrades through in vivo gene therapy. In addition, you can get quality assurance and validation while in vitro before insertion into human. Or, alternatively, you can also test in vitro, in vivo in animals, etc.
 
@@ -40,8 +40,9 @@ Some other things that can be done:
 
 These strategies are modular and combinations might be able to achieve layered immunity control while still permitting sustained systemic secretion of the therapeutic compound.
 
-
 ## CAR T cell therapy
+
+[In vivo CAR T cell generation to treat cancer and autoimmune disease](https://www.science.org/doi/10.1126/science.ads8473) -- a gene-delivery system to generate CAR-T cells in vivo by dosing of a CD8-targeted lipid nanoparticle carrying anti-CD19 CAR mRNA.
 
 ## various autologous stem cell therapy methods
 
@@ -136,3 +137,104 @@ other immune focused trogocytosis articles:
 * Historical review and approvals up to 2023: Mitra et al., *J Transl Med* (2023). [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC10225594/?utm_source=chatgpt.com)
 * Monitoring/persistence & antigen loss tech landscape: Chen & Ma, *Am J Pathol* (2024). [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0002944024001627?utm_source=chatgpt.com)
 
+# MHC editing strategies
+
+goal: better resist the host immune system, like in allogeneic cell therapies or universal donor stem cells.
+
+## MHC (HLA) Editing Techniques
+
+See [[gene editing]] for more gene editing techniques.
+
+[Synthetic immune checkpoint engagers protect HLA-deficient iPSCs and derivatives from innate immune cell cytotoxicity](https://www.cell.com/cell-stem-cell/fulltext/S1934-5909%2823%2900365-X)
+
+### Direct MHC Disruption
+
+Knocking out MHC class I and/or II expression in therapeutic cells reduces visibility to CD8⁺ T cells. Since MHC-I isn't essential for cell survival, many cancers naturally employ this as an immune-evasion tactic [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S1525001620305530?utm_source=chatgpt.com), [Frontiers](https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2021.636568/full?utm_source=chatgpt.com).
+
+Conversely, this tactic risks triggering natural killer (NK) cells, which attack cells lacking MHC-I—termed “missing self.”
+
+### Stealth Transgenes
+
+“Stealth” transgene strategies target both MHC class I and II to evade host immune detection. Early studies show promise in engineered T cells successfully avoiding cellular immune responses [Journal of Infection and Chemotherapy](https://jitc.bmj.com/content/12/5/e008417?utm_source=chatgpt.com).
+
+### Viral-Strategy Mimicry
+
+Many viruses have evolved to inhibit MHC antigen presentation by:
+
+* Blocking peptide entry via TAP inhibitors
+* Retaining MHC-I in the endoplasmic reticulum (ER) or Golgi apparatus
+* Directing MHC for degradation via ER-associated pathways [Frontiers](https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2025.1540159/full?utm_source=chatgpt.com).
+
+Therapeutic cells imght be able to mimic immune stealth we see in some viruses by co-opting these mechanisms with targeted gene edits, like by modifying antigen-processing pathways.
+
+---
+
+## Immune-Modulating Receptor Engineering
+
+### Alloimmune Defense Receptor (ADR)
+
+In alloimmune defense receptor (ADR) strategies, therapeutic T cells are empowered to eliminate activated host T and NK cells while sparing resting immune cells. By targeting the avictation marker 4‑1BB, ADR-expressing T cells resist rejection and persist in vivo when co-expressed with CAR constructs [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC7854790/?utm_source=chatgpt.com).
+
+---
+
+## Stem Cells & Allogeneic Grafts: Toward Universal Donors
+
+[[Gene editing]] of pluripotent stem cells (iPSCs) to make "stealthy" universal donor cells for cell replacement therapies that need to avoid immune attack [Nature](https://www.nature.com/articles/d41586-024-00590-y?utm_source=chatgpt.com). Strategies include MHC knockout combined with immune shielding techniques to evade T and NK cells.
+
+---
+
+## Epigenetic & Transcriptional Modulation
+
+### Reactivating MHC or Downregulating Detection Pathways*
+
+* Tumors often downregulate MHC via epigenetic suppression or via downregulating key transcription factors like NLRC5 [Frontiers](https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2022.844866/full?utm_source=chatgpt.com).
+* CRISPR–dCas9 epigenetic tools can potentially be used to fine-tune gene expression, such as either dampening antigen presentation in therapeutic cells or, in broader contexts, restoring it during immunotherapy [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S2329050121000759?utm_source=chatgpt.com).
+
+---
+
+## Emerging strategies for immmune system evasion
+
+* **Partial MHC Retention + Non-classical HLA**: Completely removing classical MHC risks NK detection. A nuanced approach might knock down classical MHC while expressing non-classical or inhibitory HLA molecules to suppress NK activity, akin to tumor evasion tactics [Wikipedia](https://en.wikipedia.org/wiki/Immunoediting?utm_source=chatgpt.com).
+* **NK Checkpoint Modulation**: Therapeutic cells might express ligands that bind NK inhibitory receptors (like HLA-E to interact with KIRs), or modulate KIR pathways to escape NK-mediated killing [Nature](https://www.nature.com/articles/s41392-025-02280-1?utm_source=chatgpt.com).
+* **Local Immune Suppression**: Engineering cells to secrete immunosuppressive cytokines (e.g., TGF-β) selectively could locally dampen the host immune response while minimizing systemic impact.
+* **Mapping Virus-Derived Peptides**: Incorporating viral peptide sequences that interfere with MHC pathways—as viruses do—for controlled immune evasion, though highly speculative and risky.
+* **Combining ADR and MHC Editing**: Pairing MHC disruption with ADR-type systems might create "immune-evasive but immune-persistent" cells that both hide and defend.
+
+---
+
+## Summary table
+
+| Strategy                                 | Description                                                | Pros                        | Cons / Risks                             |
+| ---------------------------------------- | ---------------------------------------------------------- | --------------------------- | ---------------------------------------- |
+| **MHC (HLA) knockout**                   | Remove MHC-I/II to evade T-cell detection                  | Strong stealth              | NK-mediated rejection                    |
+| **Stealth transgenes**                   | Modulate both MHC classes                                  | Broader evasion             | Complex engineering                      |
+| **Viral mimicry (TAP, retention, etc.)** | Disrupt antigen presentation akin to viral proteins        | Highly efficient stealth    | Potential dysfunction, off target        |
+| **ADR (alloimmune defense receptor)**    | Kill activated host T/NK cells via 4‑1BB targeting         | Active defense, persistence | Target specificity, immune dysregulation |
+| **iPSC “stealth” editing**               | Develop universal donor cells                              | Wide therapeutic potential  | Needs multi-path evasion strategies      |
+| **Epigenetic modulation (CRISPR-dCas9)** | Fine-tune MHC-related genes                                | Reversible, tunable         | Off-target effects, stability issues     |
+| **NK checkpoint modulation**             | Express NK inhibitory signals (e.g., HLA-E) or target KIRs | Evade NK scrutiny           | Over-inhibition risks                    |
+| **Local immunosuppression**              | Local cytokine release (e.g., TGF-β)                       | Context-specific tolerance  | Risk of local immune suppression         |
+| **Combined ADR + MHC editing**           | Hide and defend simultaneously                             | Maximal persistence tactics | Highest complexity and risk              |
+
+---
+
+### MHC and HLA references
+
+* MHC knockout and tumor evasion: [BioMed Central](https://molecular-cancer.biomedcentral.com/articles/10.1186/s12943-023-01899-4?utm_source=chatgpt.com), [Wikipedia](https://en.wikipedia.org/wiki/Immunoediting?utm_source=chatgpt.com), [Frontiers](https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2021.636568/full?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC7854790/?utm_source=chatgpt.com), [Wikipedia](https://en.wikipedia.org/wiki/Molecular_mimicry?utm_source=chatgpt.com), [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S2329050121000759?utm_source=chatgpt.com), [Wikipedia](https://en.wikipedia.org/wiki/Cancer_immunology?utm_source=chatgpt.com)
+* Stealth transgenes in T cells: [Journal of Infection and Chemotherapy](https://jitc.bmj.com/content/12/5/e008417?utm_source=chatgpt.com)
+* ADR strategy for allogeneic CAR‑T: [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC7854790/?utm_source=chatgpt.com)
+* Viral immunoevasins/TAP interference: [Wikipedia](https://en.wikipedia.org/wiki/Immunoevasin?utm_source=chatgpt.com)
+* Stealth stem cells/universal donors: [Nature](https://www.nature.com/articles/d41586-024-00590-y?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC9643905/?utm_source=chatgpt.com)
+* Epigenetic tools: [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S2329050121000759?utm_source=chatgpt.com)
+* NK and non-classical HLA strategy: missing ref.
+
+---
+
+Multi-layered approach for immune evasion or resistance:
+
+1. **Hide** — Edit out or modify MHC molecules.
+2. **Defend** — Engineer immune-targeting receptors like ADR.
+3. **Suppress** — Modulate local or systemic immunity.
+4. **Balance** — Evade both T cells and NK cells by blending classical and non-classical signals.
+5. **Leverage Epigenetics** — Use precision control over immune-related gene expression.
+6. **Combine** — Stack strategies for robust, long-lived therapeutic cells.
