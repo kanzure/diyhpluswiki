@@ -1,0 +1,43 @@
+# DNA ticker tape memory
+
+“DNA molecular ticker tape” denotes schemes that transduce fast, analog biological signals into a writable nucleic-acid substrate so that time-varying activity is later recovered by sequencing and algorithmic “nucleotide-time alignment.” Early articulations (Marblestone, Kording, Boyden, Church and colleagues) framed polymerase-based recorders whose misincorporation spectra or elongation rates are modulated by intracellular variables (e.g., Ca²⁺), together with decoders that invert noisy polymerase kinetics to reconstruct the input waveform under realistic biophysical constraints.[PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC3597383/?utm_source=chatgpt.com), [PLOS](https://journals.plos.org/ploscompbiol/article?id=10.1371%2Fjournal.pcbi.1003145&utm_source=chatgpt.com) Subsequent theory introduced dynamic-time-warping alignment and design rules for start-time synchronization and polymerase speed/infidelity, thereby formalizing limits on temporal precision and bandwidth.[PLOS](https://journals.plos.org/ploscompbiol/article?id=10.1371%2Fjournal.pcbi.1005483&utm_source=chatgpt.com) Experimentally, the most direct “ticker” advance uses terminal deoxynucleotidyl transferase (TdT) to encode environmental cues including divalent ions such as Ca²⁺—into growing DNA with ∼minute-scale timing, demonstrating stimulus-to-DNA transduction and ratiometric decoding in vitro.[PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC8982284/?utm_source=chatgpt.com), [PubMed](https://pubmed.ncbi.nlm.nih.gov/34591459/?utm_source=chatgpt.com) In parallel, sequential genome-editing recorders (e.g., prime-editing–based DNA "typewriter") trade millisecond resolution for capacity and robustness, writing ordered, multisymbol histories into genomic “tapes” that can capture event order (not unlike [[lineage tracing]]) and dosing in cells.[Nature](https://www.nature.com/articles/s41586-022-04922-8?utm_source=chatgpt.com) For in vivo neuronal contexts, current molecular approaches emphasize integrative tagging (e.g., light- and Ca²⁺-gated FLiCRE) or protein-chain “expression recording islands,” which report activity histories on minutes-to-days timescales rather than spike-resolved tickers.[ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0092867420315324?utm_source=chatgpt.com), [Nature](https://www.nature.com/articles/s41587-022-01586-7?utm_source=chatgpt.com) Comprehensive reviews consider CRISPR acquisition/base-editing tapes, polymerase-based tickers, and transcriptional/protein recorders and highlight remaining challenges: coupling to fast neural variables, controlling initiation/clocking, error models under cellular conditions, and scalable readout.[Nature](https://www.nature.com/articles/s41576-018-0052-8?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC11394691/?utm_source=chatgpt.com)
+
+[Of toasters and molecular ticker tapes](https://journals.plos.org/ploscompbiol/article?id=10.1371%2Fjournal.pcbi.1002291&utm_source=chatgpt.com) (Kording, 2011)
+
+[Physical principles for scalable neural recording](https://www.frontiersin.org/journals/computational-neuroscience/articles/10.3389/fncom.2013.00137/full?utm_source=chatgpt.com) (2013)
+
+[Statistical analysis of molecular signal recording](https://pmc.ncbi.nlm.nih.gov/articles/PMC3715445/?utm_source=chatgpt.com)
+
+[Molecular recordings by directed CRISPR spacer acquisition](https://www.science.org/doi/abs/10.1126/science.aaf1175?utm_source=chatgpt.com)
+
+[Nucleotide-time alignment for molecular recorders](https://journals.plos.org/ploscompbiol/article?id=10.1371%2Fjournal.pcbi.1005483&utm_source=chatgpt.com) (2017)
+
+[Multiplex recording of cellular events over time on CRISPR biological tape](https://pmc.ncbi.nlm.nih.gov/articles/PMC7869111/) (2017)
+
+[DNA-based memory devices for recording cellular events](https://pmc.ncbi.nlm.nih.gov/articles/PMC6492567/) (2018)
+
+[Rewritable multi-event analog recording in bacterial and mammalian cells](https://pmc.ncbi.nlm.nih.gov/articles/PMC5898985/) (2018)
+
+[Recording temporal signals with minutes resolution using enzymatic DNA synthesis (TdT)](https://kalhorlab.bme.jhu.edu/wp-content/uploads/2022/07/2021_Bhan-et-al._Journal-of-the-American-Chemical-Society_Recording-Temporal-Signals-with-Minutes-Resolution-Using-Enzymatic-DNA-Synthes.pdf?utm_source=chatgpt.com) (2021)
+
+[A time-resolved, multi-symbol molecular recorder via sequential genome editing](https://www.nature.com/articles/s41586-022-04922-8?utm_source=chatgpt.com) (2022)
+
+[Scalable biological signal recording in mammalian cells using Cas12a base editors](https://pmc.ncbi.nlm.nih.gov/articles/PMC9246900/?utm_source=chatgpt.com) (2022)
+
+[Engineering Ca2+-dependent DNA polymerase activity](https://www.biorxiv.org/content/10.1101/2023.05.11.540423v1?utm_source=chatgpt.com) (2023)
+
+[Recording of cellular physiological histories along optically readable self-assembling protein chains](https://www.nature.com/articles/s41587-022-01586-7) (2023)
+
+[Molecular recording using DNA typewriter protocol](https://experiments.springernature.com/articles/10.1038/s41596-024-01003-0?utm_source=chatgpt.com) (2024)
+
+[Analysis and control of untemplated DNA polymerase activity for guided synthesis of kilobase-scale DNA sequences](https://www.biorxiv.org/content/10.1101/2024.08.29.610422v1.abstract) (2024)
+
+[Toward DNA-based recording of biological processes](https://pmc.ncbi.nlm.nih.gov/articles/PMC11394691/?utm_source=chatgpt.com) (2024)
+
+[Molecular recording: Transcriptional data collection into the genome](https://pmc.ncbi.nlm.nih.gov/articles/PMC10547096/?utm_source=chatgpt.com) (2024)
+
+TODO: Where is the George Church quote about using an insect brain for surveillance purposes, recording action potentials in each neuron through DNA ticker tape technology, and then using DNA sequencing to reconstruct the video surveillance data later? Was this from an hgp-write conference? It's probably in the IRC logs...
+
+See also [[lineage tracing]], [[mapseq]], and [[gene editing]] for other possible mechanisms for in vivo cellular event recording.
+
+
