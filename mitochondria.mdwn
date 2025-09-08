@@ -37,7 +37,7 @@ mitochondria doping?
 [Mitochondrial origins of the pressure to sleep](https://www.nature.com/articles/s41586-025-09261-y)
 
 
-random facts that may be important for health:
+## random mitochondrion facts that may be important for health
 
 - cardiolipin (diphosphatidylglycerol) is 20% of the inner membrane
 - cardiolipin is composed of 18:2 in SAD americans and other livestock, but 22:6 is [preferentially utilized](https://www.mdpi.com/1422-0067/13/11/15447 "Dietary Docosahexaenoic Acid (22:6) Incorporates into Cardiolipin at the Expense of Linoleic Acid (18:2): Analysis and Potential Implications")
@@ -48,3 +48,58 @@ random facts that may be important for health:
 - PINK1/PARKIN control mitophagy
 - Thyroid hormone (T3) increases mitochondrial biogenesis, raises expression of oxidative phosphorylation proteins and uncoupling proteins
 - [bezafibrate](https://pmc.ncbi.nlm.nih.gov/articles/PMC7059007/ "Metabolic effects of bezafibrate in mitochondrial disease") and other PPAR agonists, AICAR an AMPK activator (not ALCAR), and compounds that activate PGC‑1α indirectly (exercise, sirtuin activators like nicotinamide riboside / NMN for NAD+ boosting) can increase mitochondrial biogenesis
+
+# mitochondrial transfer
+
+including spontaneous intercellular mitochondrial transfer.
+
+[Mitochondrial transfer/transplantation: an emerging therapeutic approach for multiple diseases](https://cellandbioscience.biomedcentral.com/articles/10.1186/s13578-022-00805-7) -- ".. Intercellular mitochondrial transfer can occur through tunnelling nanotubes (TNTs), extracellular vesicles (EVs) (such as cell-secreted nanobodies including exosomes, microvesicles, and apoptotic bodies), and gap junction channels (GJCs)." This article has some good references for each phenomenon.
+
+
+## Program or enhance TNT-mediated mitochondrial transfer
+
+* Miro1 (Rho-GTPase)
+  *Ahmad et al., EMBO J (2014).* Overexpressing Miro1 in mesenchymal stem cells (MSCs) markedly increases intercellular mitochondrial transfer (largely via TNTs) and improves rescue efficacy in injury models; Miro1 knockdown impairs it. [EMBO Press](https://www.embopress.org/doi/10.1002/embj.201386030?utm_source=chatgpt.com)
+  *Babenko et al., (2018).* Extends this: Miro1-high donor cells donate mitochondria more efficiently and improve recovery after experimental stroke. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC6017474/?utm_source=chatgpt.com)
+  *Reviews cementing the mechanism and its use in MSCs/epithelium:* Las & Shirihai (2014) and later syntheses. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC4193928/?utm_source=chatgpt.com)
+
+* Building more “highways” with M-Sec/TNFAIP2.
+  *M-Sec discovery/mechanism.* M-Sec (TNFAIP2) induces TNTs in cooperation with RalA and the exocyst; N-terminal polybasic region binds PIP2 to localize at the plasma membrane during TNT initiation. Overexpression increases TNTs; depletion reduces them. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC2918763/?utm_source=chatgpt.com), [Nature](https://www.nature.com/articles/srep33548?utm_source=chatgpt.com)
+  *Functional outcome.* In podocytes, M-Sec–dependent TNTs are required for mitochondrial transfer; knockout/knockdown diminishes transfer and exacerbates injury. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC8259684/?utm_source=chatgpt.com)
+
+* A recent “platform” example in immunotherapy.
+  *Baldwin et al., Cell (2024).* Bone-marrow stromal cells form nanotubes to CD8⁺ T cells and deliver mitochondria, boosting T-cell metabolic fitness and antitumor efficacy, and positioning TNT-mediated donation as an engineerable therapeutic modality. [PubMed](https://pubmed.ncbi.nlm.nih.gov/39276774/?utm_source=chatgpt.com), [Cell](https://www.cell.com/cell/fulltext/S0092-8674%2824%2900956-5?utm_source=chatgpt.com)
+
+* Dialing transfer up/down by cytoskeletal regulators.
+  Down-regulating MICAL2PV (an actin/methionine oxidase splice variant) increases TNT-mediated mitochondrial transfer; the splice form normally suppresses TNT formation. [EMBO Press](https://www.embopress.org/doi/10.15252/embr.202052006?utm_source=chatgpt.com)
+
+## How to localize/bind mitochondria to TNTs
+
+Key idea: TNTs are mostly F-actin–based (some thicker ones also contain microtubules). To bias mitochondria into TNTs, you attach motors/adaptors on mitochondria that bind actin or microtubules, and/or you enrich TNT-forming proteins at the membrane.
+
+* Actin-based coupling (into classic thin TNTs):
+  • Myo19 is an OMM-associated myosin that processively transports mitochondria on actin—a direct mechanical link to F-actin inside TNTs. (Great for “loading” mito onto actin tracks.) [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC9065997/?utm_source=chatgpt.com)
+  • Miro1/2 recruit Myo19 to mitochondria; Miro proteins are bona fide OMM receptors coordinating actin- and microtubule-based mitochondrial movement. [PubMed](https://pubmed.ncbi.nlm.nih.gov/30111583/?utm_source=chatgpt.com)
+  • Spire1C (mitoSPIRE1) anchors to mitochondria and nucleates actin on the OMM—strengthening mito–actin contacts that favor entry/retention in actin-rich TNTs. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC4574297/?utm_source=chatgpt.com), [PubMed](https://pubmed.ncbi.nlm.nih.gov/26305500/?utm_source=chatgpt.com)
+  • Myo10 (unconventional myosin X) promotes TNT formation; boosting Myo10 increases TNT occurrence and vesicle/organelle transport within them (useful for “making more tracks”). [The Company of Biologists](https://journals.biologists.com/jcs/article/126/19/4424/53824/Myo10-is-a-key-regulator-of-TNT-formation-in?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC5474251/?utm_source=chatgpt.com)
+
+* Microtubule-based coupling (useful in thicker TNTs that contain MTs):
+  • TRAK1/2 adaptors + KIF5 (kinesin-1) link mitochondria to microtubules. TRAK1 enhances KIF5B processivity, enabling long-range mito transport—relevant for wider, MT-containing TNTs. [Nature](https://www.nature.com/articles/s41467-020-16972-5?utm_source=chatgpt.com)
+  • Direct evidence that mitochondria ride microtubules inside intercellular nanotubes exists in cell models, supporting the MT-coupling route when tube caliber allows. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC5833423/?utm_source=chatgpt.com)
+
+* Programmable/tunable tethers you can adapt for TNTs (toolbox papers):
+  • Chemically inducible dimerization (CID) lets you tether mitochondria to chosen structures on demand (rapamycin FKBP–FRB; also split-FRB variants). Prior work shows inducible ER–mitochondria and PM–mitochondria contacts using TOM20-FRB + organelle- or membrane-anchored FKBP—a template you could adapt by fusing FKBP to a TNT-enriched protein (e.g., M-Sec or Myo10) to bias mitochondria into TNTs. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC2860863/?utm_source=chatgpt.com)
+  • ActuAtor (Listeria-inspired) recruits an actin-polymerizing module to user-defined membranes (including mitochondria via TOM20 tags) upon rapamycin, generating local actin forces—handy for “pushing” mitochondria along actin-rich protrusions like TNTs. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC10872831/?utm_source=chatgpt.com), [BioRxiv](https://www.biorxiv.org/content/10.1101/2020.03.30.016360.full?utm_source=chatgpt.com)
+
+### biological mitochondrial transfer techniques
+
+* To program donors to donate more mitochondria through TNTs: Overexpress Miro1 in donor MSCs or stromal cells; consider co-boosting M-Sec or Myo10 in the network-forming cell type to increase TNT density. [EMBO Press](https://www.embopress.org/doi/10.1002/embj.201386030?utm_source=chatgpt.com), [Nature](https://www.nature.com/articles/srep33548?utm_source=chatgpt.com), [The Company of Biologists](https://journals.biologists.com/jcs/article/126/19/4424/53824/Myo10-is-a-key-regulator-of-TNT-formation-in?utm_source=chatgpt.com)
+* To bias mitochondria into TNTs and keep them there: Enrich Miro1/2–Myo19 on the OMM (for F-actin TNTs) and/or Miro–TRAK–KIF5 (for MT-containing TNTs). [PubMed](https://pubmed.ncbi.nlm.nih.gov/30111583/?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC9065997/?utm_source=chatgpt.com), [Nature](https://www.nature.com/articles/s41467-020-16972-5?utm_source=chatgpt.com)
+* To test direct “binding/localization” strategies: Use CID with TOM20-FRB on mitochondria and FKBP-M-Sec or FKBP-Myo10 at TNT membranes to inducibly dock mitochondria to TNTs; verify by live imaging of Mitotracker/PAgfp-mito and line-scan intensity along TNTs. (This leverages established CID organelle-tethering systems.) [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC2860863/?utm_source=chatgpt.com)
+
+Separately, mitochondria can be transferred via direct injection.
+
+
+
+
+
