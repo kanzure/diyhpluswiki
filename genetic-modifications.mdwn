@@ -105,15 +105,55 @@ In these populations, the rs4988235(T) allele is both the more common allele and
 body fat distribution SNPs - <a href="https://www.biorxiv.org/content/early/2018/04/18/304030">ref</a>
 
 <a name="hyperosmia" />
-### Hyperosmia (increased odor sensitivity)
-
-rs1953558 - sensitivity to sweaty odor (isovaleric acid)
-
-### Smell
+### Smell, olfactory perception, hyperosmia, macrosmia
 
 rs6591536 - detection of β-ionone (floral) fragrance
 
+rs1953558 - sensitivity to sweaty odor (isovaleric acid)
+
+TODO: other hyperosmia (increased odor sensitivity) alleles? other hyperosmia in general?
+
 TODO: see IRC logs for more information about olfactory neurons, olfactory cells, receptors, and canine olfactory receptor genetics that could be copied over to human.
+
+Olfaction in humans is molecularly mediated by GPCRs (olfactory receptors). In insects, olfactory receptors are an unrelated group of ligand-gated ion channels.
+
+Olfaction bypasses the thalamus and goes straight to cortical and limbic areas. Olfactory receptor neurons -> olfactory bulb -> piriform cortex and amygdala etc
+
+[Kv1.3 -/- mice have a 1,000- to 10,000-fold lower threshold for detection of odors](https://pmc.ncbi.nlm.nih.gov/articles/PMC2737549/) and an increased ability to discriminate between odorants
+
+TODO: simple transplantation of olfactory receptor genes from elephant or dog.
+
+TODO: machine learning or computational design of olfactory receptor genes and insert a few thousand of these into the human genome. Instead of relying on existing olfactory genes found in nature, we could target various compounds that are of high human interest.
+
+number of olfactory receptor genes by species: cow 1186, opossum 1188, rat 1207, elephant 1948, koala 1500, human 400, dogs 1100, pigs 1100; dogs, which are reputed to have good sense of smell, do not have the largest number of functional olfactory receptor genes.
+
+dog:
+
+* dog macrosmia might be due to [airflow in the nasal cavity](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2871809/).
+* "1/8 of a dog's brain is devoted to analyzing smells"
+* "canine olfactory bulb is 40x larger than in humans (relative to total brain size)"
+* "A bloodhound can detect 1 part per 10 trillion, roughly equivalent to detecting a single drop of blood diluted in 20 olympic-sized swimming pools."
+* if the canine olfactory limit is one part per trillion for certain molecular targets, then the operational scent threshold limit might be closer to one part per billion or worse depending on dog training, dog/handler teamwork efficiency, distractions, etc.
+* [olfactory imprinting](https://gnusha.org/logs/2025-07-02.log) and neural coding of olfactory signals to neural discrimination puts a damper on neuralink olfactory sensor plans? this seems like an easy one or two orders of magnitude performance improvement on scent tracking tasks if by using neuralink you can decouple signal detection from animal behavior.
+
+TODO: Develop a recombinase-driven genetic circuit that enables olfactory sensory neurons to stochastically assemble novel olfactory receptor variants from modular gene segment, analogous to immune V(D)J recombination. Make a biologically plausible strategy to generate in vivo receptor diversity and systematically enhace odor sensitivity and selectivity. Take inspiration from in vivo affinity maturation, V(D)J recombination, CRISPR bacterial immune system memory, [(synthetic recombineering) diversity-generating retroelements](https://www.biorxiv.org/content/10.1101/2025.03.24.644984v1), [(synthetic) shufflons (site-specific recombinase card shuffles)](https://www.biorxiv.org/content/10.1101/2024.10.25.620183v2), PilV pilus tip reprogramming, pilus sequence recombination schemes in bacteria, segmental gene conversion from silent cassettes, antigenic variation schemes, [CRISPR-X](https://pubmed.ncbi.nlm.nih.gov/27798611/), [TRACE / T7-RNAP-guided mutagenesis](https://www.nature.com/articles/s41467-021-21876-z), [CoMuTER (Type I-E Cas3 mutagenesis)](https://www.nature.com/articles/s41467-023-39087-z), various [base editor and prime editor randomization](https://pmc.ncbi.nlm.nih.gov/articles/PMC10828429/) toolkits... possibly there are some in vivo continuous evolution and mutagenesis schemes that might be appropriate, but many seem to either have an in vitro step or are intended for in vitro environments instead of in living animal, like [in vivo affinity maturation of edited B cell repetoires (BCRs)](https://www.nature.com/articles/s41551-024-01184-9?utm_source=chatgpt.com)... We need [in vivo affinity maturation for non-antibody targets](https://www.biorxiv.org/content/10.1101/2024.12.24.629435v1).
+
+relevant IRC logs:
+
+* <https://gnusha.org/logs/2017-09-01.log>
+* <https://gnusha.org/logs/2023-01-16.log>
+* <https://gnusha.org/logs/2025-07-02.log>
+* <https://gnusha.org/logs/2025-09-14.log>
+
+other:
+
+* this is a generalized molecular sensor. everyone should have one of these in their homes, labs, at work, etc.
+* see <a href="https://www.biorxiv.org/content/biorxiv/early/2018/06/28/358739.full.pdf">A scalable, multiplexed assay for decoding receptor-ligand interactions</a>.
+* intranasal stem cell paper, deliver stem cells with hyaluronidase which makes connective tissue more permeable
+* if you snort enough canine olfactory stem cells would your sense of smell change? see: [Cell-based therapy restores olfactory function in an inducible model of hyposmia](https://www.sciencedirect.com/science/article/pii/S2213671119301468)
+* [Poor human olfaction is a 19th century myth](https://www.science.org/doi/10.1126/science.aam7263)
+* odor prediction: [A principal odor map unifies diverse tasks in olfactory perception](https://www.science.org/doi/10.1126/science.ade4401)
+
 
 ### Taste
 
@@ -121,13 +161,23 @@ sweetness - TAS1R2
 
 umami - TAS1R1
 
-sourness - PKD2L1
+T1R generally covers both sweet and umami flavor
+
+saltyness - ENaC
+
+sourness - PKD2L1, TRPM5
 
 spiciness - TRPV1
 
 signal - GNAT3, TRPM5, PLCB2
 
-bitterness - TAS2R4, TAS2R5, TAS2R16, TAS2R8, TAS2R38, TAS2R48 see also <a href="https://www.biorxiv.org/content/early/2018/04/06/296269">ref</a>
+bitterness - T2R - TAS2R4, TAS2R5, TAS2R16, TAS2R8, TAS2R38, TAS2R48 see also <a href="https://www.biorxiv.org/content/early/2018/04/06/296269">ref</a>
+
+Taste is GPCRs (G-protein coupled receptors) and some ion channels. Taste perception goes from receptors -> cranial nerves VII, IX, X -> solitary nucleus -> thalamus -> gustatory cortex.
+
+TODO: look at olfactory perception enhancement proposals on this page and apply to taste as well?
+
+let a new era of total gluttony now commence.
 
 ### Pain sensitivity
 
@@ -1465,8 +1515,6 @@ What about radiation resistance? Here's a case in the literature where radiation
 
 * copy-paste some of the gene therapies from earonesty's list: <https://web.archive.org/web/20150907230432/http://www.documentroot.com/2014/08/gene-therapies-i-want-to-see-developed.html>
 
-* olfactory receptor genes, see <http://gnusha.org/logs/2017-09-01.log> and <a href="https://www.biorxiv.org/content/biorxiv/early/2018/06/28/358739.full.pdf">A scalable, multiplexed assay for decoding receptor-ligand interactions</a>. Copy olfactory receptor genes from canines.
-
 * gallstone disease - variants in ABCG8 and TRAF3 <a href="https://www.biorxiv.org/content/early/2018/02/20/265728">ref</a>
 
 * diving; large spleen - PDE10A mutations, thyroid hormone modulation; BDKRB2 - affects constriction of blood vessels in the extremities; FAM178B - related to carbon dioxide blood levels.
@@ -1541,7 +1589,11 @@ What about radiation resistance? Here's a case in the literature where radiation
 
 * TODO: make a generic embryological platform for [[cell-specific expression]] and cell life cycle control during embryological development to target specific progenitor cell types or proliferators to increase their abundance, or otherwise regulate their proliferation or upregulate/downregulate, such that we can modularly plugin or swap out which cells we are targeting, based on cell lifecycle, rather than having to focus on unique genes related to those specific tissues or organs. Or will we have to edit specific to each tissue type due to quorum sensing and other growth limiting factors? <a href="https://linkinghub.elsevier.com/retrieve/pii/S0092-8674(00)81237-4">Loss of CDK inhibitor p27Kip1</a> globally increases organ size and causes multiorgan hyperplasia. Consider CDK4/Cyclin-D1 overexpression. Generic proliferation effectors shown to scale progenitor pools during development.
 
+* TODO: larger neurons on surface of brain for interface with brain-computer interfaces?
+
 ## Microbiome
+
+* TODO: intracellular protein recorders inside gut microbiome to report on metabolism?
 
 ### dental caries vaccine
 
