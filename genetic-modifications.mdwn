@@ -4,7 +4,9 @@ This is a collection of human germline genetic modifications that has been colle
 
 Please note that many of these candidate mutations need to be re-checked, double checked, and further studied. Be aware that sometimes the statistical power is somewhat lacking, study designs are sometimes bad, and such. Other times, there are very well known mutations that will definitely work. There's no magic short cut other than doing the work and figuring it out.
 
-# Gene candidates for human germline genetic modification
+[[!toc  ]]
+
+## Gene candidates for human germline genetic modification
 
 ### CD47 suppression
 
@@ -210,6 +212,8 @@ chronic back pain - rs12310519 in SOX5, rs7833174 between CCDC26 and GSDMC, and 
 
 * FAAH pseudogene microdeletion leading to pain insensitivity and forgetfulness <a href="https://bjanaesthesia.org/article/S0007-0912(19)30138-2/fulltext">ref</a>; "We report the causative mutations for this new pain insensitivity disorder: the co-inheritance of (i) a microdeletion in dorsal root ganglia and brain-expressed pseudogene, FAAH-OUT, which we cloned from the fatty-acid amide hydrolase (FAAH) chromosomal region; and (ii) a common functional single-nucleotide polymorphism in FAAH conferring reduced expression and activity. Circulating concentrations of anandamide and related fatty-acid amides (palmitoylethanolamide and oleoylethanolamine) that are all normally degraded by FAAH were significantly elevated in peripheral blood compared with normal control carriers of the hypomorphic single-nucleotide polymorphism. The genetic findings and elevated circulating fatty-acid amides are consistent with a phenotype resulting from enhanced endocannabinoid signalling and a loss of function of FAAH." (however, please note that <a href="https://twitter.com/cremieuxrecueil/status/1757849663644848211">FAH-OUT doesn't seem to be real</a> from looking at UK biobank data)
 
+* TODO: various pain management things, including anesthetics, analgesics, pain killer compatibility, toxicity?
+
 ### Protective mutations for heart attacks
 
 * PCSK9 - 80% lower risk
@@ -221,6 +225,8 @@ chronic back pain - rs12310519 in SOX5, rs7833174 between CCDC26 and GSDMC, and 
 * ASGR1 - 34% lower risk
 
 See <a href="https://twitter.com/skathire/status/1068564803759861762">here</a> and <a href="http://www.kathiresanlab.org/wp-content/uploads/2017/03/Khera-Kathiresan-CAD-Nat-Rev-Genetics-2017.pdf">ref</a>.
+
+increase compatibility with pacemakers, optogenetic pacemakers (use optogenetic ion channels), heart implants, artificial valves, etc.
 
 ### Increased metabolism
 
@@ -450,7 +456,8 @@ in OHCs, replace TMC1/2 isoforms with fast-gating variants from dolphins or echo
 for tectorial membrane stiffness modification, can this be done surgically? collagen-based hydrogel as a replacement maybe? basal turn implants?
 
 <a name="cognitive" />
-# Cognitive
+<a name="intelligence" />
+# Intelligence, cognitive ability, learning and memory
 
 <a href="../images/TKTL1_corticogenesis.png"><img src="../images/TKTL1_corticogenesis.png" style="float: right; width: 220px; border: none;"></a>
 
@@ -1061,22 +1068,30 @@ here is what gpt-o3 says about sleep pressure invulnerability: "Candidate mechan
 
 * insomnia - <a href="https://www.biorxiv.org/content/early/2018/02/01/214973">ref</a>
 
-# Theoretical "heterozygote advantages" genes
+## Hedonistic imperative david pearce stuff
 
-The principle here is that diseases such as sickle cell or Tay-Sachs, among many others, persist in a population because having one 'good' and one 'bad' copy of the gene offers a significant advantage - in disease resistance, intelligence, etc.
+David Pearce specifically proposed:
 
-While it would be nice to find a point mutation that would mimic the benefits of heterozygosity, the most straightforward option would be to give someone both variants of the gene, with ~50% expression of each.
+* modify pain sensitivity or insensitivity, see other notes on this page. david pearce is a big fan of SCN9A deletion or modification.
+* in [_Hedonistic Imperative_](https://www.hedweb.com/hedethic/hedon1.htm?utm_source=chatgpt.com) david pearce argues for enlarging mesolimbic dopamine circuitry, selectively boosting mu-opioid and serotonin pathway function, and disabling several countervailing inhibitory feedback processes (e.g., auto-receptors located on the same surface of the same neuron that released the neurotransmitter it responds to, often acting as a built-in inhibitory brake such as by inhibiting further synthesis or release of the neurotransmitter, a form of negative-feedback control over neuronal signaling) to raise hedonic set-points.
+* remove dynorphin (aversive/kappa system) from reward circuits
+* remove pro-aversive peptides (or peptidergic inputs) such as bradykinin, nociceptin/orphanin FQ, and substance P -- these are related to genes or receptors such as BDKRB1/2, OPRL1/PNOC, and TAC1/NK1R
+* polygenic tuning of mood, personality, pro-social tone, hedonic set-point: consider modifications or changes related to COMT, SLC6A4 (SERT), FAAH, ADRA2B (often called the “ADRA2B deletion variant”), and OXTR.
 
-[Efficient introduction of specific homozygous and heterozygous mutations using CRISPR/Cas9](https://www.nature.com/articles/nature17664) -- there is at least one other technique for doing this, perhaps the other one wasn't co-authored by the ex-president of stanford (an independent panel found "manipulation and/or grossly inadequate data handling"? in other research).
+reference table: dynorphin–κ system (PDYN/OPRK1) (stress/ahedonia), bradykinin (BDKRB1/2), nociceptin (PNOC/OPRL1), substance P (TAC1/NK1R)
 
-Using heterozygous alleles is useful because we know several exact effects of +/- gene dosage, whereas it would take possibly substantial trial-and-error to figure out the exact expression profile to replicate via synthetic gene circuit for expression of that same gene. It's not necessarily "50% expression" merely because the effect is caused by heterozygosity..
+polygenic hedonic tuning (human alleles): COMT, SLC6A4, FAAH, ADRA2B, OXTR.
 
-It could be possible to program germline genomic programs that cause heterozygotic allele dosage depending on cell type or [[cell-specific expression]] throughout development or post-birth gene expression, instead of whole-body heterozygotic allele. So some cells or tissues or organs in the body can be homozygous for the allele while other cells can have different gene dosage and therefore different expression. In general it is probably better to have whole-body heterozyous programming for an allele because you can do upfront sequencing and quality control on the genome before making a fetus, whereas chromosome editing during development (or later in life) will have more moving parts that need to be more carefully quality controlled upfront.
+mouse and related studies, not necessarily referenced by david pearce hedonistic imperative:
 
-While this document is mainly about germline genetic engineering for whole-body genetic modification, it would also be interesting to consider any beneficial impact from heterozygotic allele gene editing in different cell populations in the adult via adult gene therapy or cell therapy.
+* [dynorphin–κ-opioid system modification](https://www.jneurosci.org/content/23/13/5674?utm_source=chatgpt.com): reduce dysphoria/anhedonia, produce anti-stress anti-depressant like effects in rodents
+* [OPRM1 copy number affects social reward](https://pmc.ncbi.nlm.nih.gov/articles/PMC29364/?utm_source=chatgpt.com)
+* endogenous enkephalins naturally inhibit anxiety, and preproenkephalin (PENK) knockout increases fear/anxiety. increase mu-opiod receptor targeted signaling, more enkephalin signaling.
+* [FAAH -/-](https://www.nature.com/articles/npp201080?utm_source=chatgpt.com) mice show reduced anxiety and reduced depression-like phenotype
+* [DAT -/- or DAT knockdown rodents are hyperdopaminergic and hyperactive](https://pubmed.ncbi.nlm.nih.gov/8628395/?utm_source=chatgpt.com), hyperlocomotive, more willing to work for rewards
+* [ΔFosB overexpression in nucleus accumbens heightens sensitivity to rewards](https://pmc.ncbi.nlm.nih.gov/articles/PMC2653197/?utm_source=chatgpt.com) (including natural rewards like sucrose/sex); CREB in NAc often shows the opposite (blunting reward; pro-depressant when high).
 
-TODO: vitamin D linked heterozygotic advantage mutation that allows for escape from accelerated clearance. Causes lower risk of severe respiratory infections and better pregnancy outcomes at high latitude. GC1F/GC1S.
-
+<a name="longevity" />
 # Longevity
 
 * rs2149954 (EBF1 gene?) and rs4420638 (see "<a href="https://academic.oup.com/hmg/article/23/16/4420/625655/Genome-wide-association-meta-analysis-of-human">Genome-wide association meta-analysis of human longevity identifies a novel locus conferring survival beyond 90 years of age</a>" -- which includes other allele recommendations), however note that rs4420638 (near the TOMM40/APOE/APOC1 locus) has been associated with "poorer delayed recall performance". And the rs2149954 alle has been associated with low blood pressure in middle age, and decreased cardiovascular mortality risk, independent of blood pressure.
@@ -1208,7 +1223,7 @@ telomeres:
 * fat-specific insulin receptor knockout (FIRKO) produces a lean phenotype with increased lifespan via different adipose insulin signaling. [PubMed](https://pubmed.ncbi.nlm.nih.gov/12543978/?utm_source=chatgpt.com)
 * adiponectin overexpression (ΔGly Tg): healthier aging with a median lifespan increase, knockout shortens lifespan. [eLife](https://elifesciences.org/articles/65108?utm_source=chatgpt.com)
 
-# Liver-driven endocrine signals
+## Liver-driven endocrine signals
 
 * FGF21 transgenic (liver-secreted "starvation" hormone) [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC3466591/?utm_source=chatgpt.com)
 
@@ -1286,6 +1301,7 @@ galapagos tortoise: DNA repair, mitochondrial homeostasis, enhanced immune pathw
 
 * mitochondrial target of rapamycin (mTOR), mTOR inhibitors, etc...
 * endocrine niches broadcast longevity or aging signals; you don't need every cell to change, instead targeting key "broadcast" cell types can move systemic aging (fat, endothelium, hypothalamus, skeletal muscle).
+* TODO: chemical activators of telomerase
 
 [Big mice die young but large animals live longer](https://pmc.ncbi.nlm.nih.gov/articles/PMC3651517/?utm_source=chatgpt.com)
 
@@ -1504,6 +1520,22 @@ Abbreviations: ACE, angiotensin-converting enzyme; ACTN3, actinin binding protei
 * <a href="https://en.wikipedia.org/wiki/Preproenkephalin">preproenkephalin</a> for pain reduction
 * rs17822931 - dry earwax, sweat production, body odor. "rs17822931(T;T) individuals were at least 5-fold less likely to use deodorant, consistent with them being "genotypically nonodorous"".
 
+# Theoretical "heterozygote advantages" genes
+
+The principle here is that diseases such as sickle cell or Tay-Sachs, among many others, persist in a population because having one 'good' and one 'bad' copy of the gene offers a significant advantage - in disease resistance, intelligence, etc.
+
+While it would be nice to find a point mutation that would mimic the benefits of heterozygosity, the most straightforward option would be to give someone both variants of the gene, with ~50% expression of each.
+
+[Efficient introduction of specific homozygous and heterozygous mutations using CRISPR/Cas9](https://www.nature.com/articles/nature17664) -- there is at least one other technique for doing this, perhaps the other one wasn't co-authored by the ex-president of stanford (an independent panel found "manipulation and/or grossly inadequate data handling"? in other research).
+
+Using heterozygous alleles is useful because we know several exact effects of +/- gene dosage, whereas it would take possibly substantial trial-and-error to figure out the exact expression profile to replicate via synthetic gene circuit for expression of that same gene. It's not necessarily "50% expression" merely because the effect is caused by heterozygosity..
+
+It could be possible to program germline genomic programs that cause heterozygotic allele dosage depending on cell type or [[cell-specific expression]] throughout development or post-birth gene expression, instead of whole-body heterozygotic allele. So some cells or tissues or organs in the body can be homozygous for the allele while other cells can have different gene dosage and therefore different expression. In general it is probably better to have whole-body heterozyous programming for an allele because you can do upfront sequencing and quality control on the genome before making a fetus, whereas chromosome editing during development (or later in life) will have more moving parts that need to be more carefully quality controlled upfront.
+
+While this document is mainly about germline genetic engineering for whole-body genetic modification, it would also be interesting to consider any beneficial impact from heterozygotic allele gene editing in different cell populations in the adult via adult gene therapy or cell therapy.
+
+TODO: vitamin D linked heterozygotic advantage mutation that allows for escape from accelerated clearance. Causes lower risk of severe respiratory infections and better pregnancy outcomes at high latitude. GC1F/GC1S.
+
 <a name="george-church-wishlist" />
 # George Church's human genetic engineering wish list
 
@@ -1713,7 +1745,7 @@ What about radiation resistance? Here's a case in the literature where radiation
 <a name="regeneration" />
 # Regeneration
 
-Make a general embryological platform for **regeneration**. Salamanders achieve this through dedifferentiation but perhaps for human we can achieve this via in vivo maintenance of primordial pluripotent stem cells throughout adult life.
+Make a general embryological platform for regeneration. Salamanders achieve this through dedifferentiation but perhaps for human we can achieve this via in vivo maintenance of primordial pluripotent stem cells throughout adult life. There might be other ways to achieve this goal around healing.
 
 [Transient inactivation of Rb and ARF yields regenerative cells from postmitotic mammalian muscle](https://pmc.ncbi.nlm.nih.gov/articles/PMC2919350/?utm_source=chatgpt.com)
 
@@ -1844,6 +1876,8 @@ Tetracycline response elements, i.e. tet-on and tet-off, can be used for transge
 * improved gyrification, sulcri, encephalization things
 
 * appearance, face genetics, symmetry, which parent does the child look like, etc
+
+* resistance to cryoprotectant toxicity for cryonics, cryovitrification, etc
 
 ## Microbiome
 
