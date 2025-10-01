@@ -49,20 +49,32 @@ RNA barcoding paper ("multiplexed analysis of projections by sequencing")
 
 "To translate anatomical questions to a format amenable to sequencing, we label neurons uniquely with random nucleic acid sequences ("barcodes"). As a first proof of principle, we recently described MAPseq, a method for reading out long range projections with single neuron resolution [18]. In MAPseq, we infect neurons with a pool of barcoded virus particles and thus uniquely label e very infected neuron with the barcode sequence carried by the viral particle that infected the neuron. The barcode is then expressed as an mRNA and is transported into axons, where we detect the barcode mRNA by sequencing as a proxy for the axonal projection of every labeled neuron. MAPseq allows the simultaneous tracing of thousands and potentially millions of single neuron projections - presenting a speedup of up to five orders of magnitude over traditional, microscopy-based methods. While MAPseq provides information about area - to - area connectivity at single neuron resolution, it does not provide single-neuron information about neuron-to-neuron connectivity."
 
-"Here, we introduce SYNseq, a method for converting synaptic connections into a form suitable for readout by high-throughput DNA sequencing. SYNseq consists of four steps: neuronal barcoding, trafficking of barcodes to the synapses via tight association with engineered synaptic proteins, joining of barcodes into a form suitable for sequencing, and reconstruction of the network connectivity (Fi g. 1). Briefly, a pre-synaptic mRNA barcode is trafficked to the presynaptic terminal via association with an engineered version of the Neurexin1B (Nrx1B) protein. Likewise, the postsynaptic barcode is trafficked to the postsynaptic terminal via association with a modified Neuroligin1AB (Nlg1AB) protein. Across a synapse, the presynaptic SYNseq components are covalently linked to the postsynap tic SYNseq components and then immunoprecipitated for further biochemical manipulation to link the pre- and postsynaptic barcodes."
+"Here, we introduce SYNseq, a method for converting synaptic connections into a form suitable for readout by high-throughput DNA sequencing. SYNseq consists of four steps: neuronal barcoding, trafficking of barcodes to the synapses via tight association with engineered synaptic proteins, joining of barcodes into a form suitable for sequencing, and reconstruction of the network connectivity (Fi g. 1). Briefly, a pre-synaptic mRNA barcode is trafficked to the presynaptic terminal via association with an engineered version of the Neurexin1B (Nrx1B) protein. Likewise, the postsynaptic barcode is trafficked to the postsynaptic terminal via association with a modified Neuroligin1AB (Nlg1AB) protein. Across a synapse, the presynaptic SYNseq components are covalently linked to the postsynaptic SYNseq components and then immunoprecipitated for further biochemical manipulation to link the pre- and postsynaptic barcodes."
 
+## Connectome-seq
 
+[Connectome-seq: high-throughput mapping of neuronal connectivity at single-synapse resolution via barcode sequencing](https://www.biorxiv.org/content/10.1101/2025.02.13.638129v2.abstract) (2025)
 
+"Connectome-seq relies on the labeling of synaptic connections using engineered protein-RNA complexes to translate a synapse into a pair of unique RNA barcodes. The intended outcome is that one barcode will be associated with the pre-synaptic neuron and the other with the post-synaptic neuron, allowing for later profiling via high-throughput sequencing."
 
+"Two protein anchors, termed SynBar (synaptic barcoding), were designed: PreSynBar to target presynaptic terminals and PostSynBar to target postsynaptic sites. PreSynBar consists of a modified neurexin 1β protein fused to the large fragment of split-GFP (GFP1-10) and an RNA-binding domain, λN22 peptide, similar to other reported designs. PostSynBar is based on neuroligin 1, also fused to the complementary small fragment of split-GFP (GFP11) and the same RNA-binding domain."
+
+"These trans-membrane protein constructs are designed to interact at synapses, reconstituting GFP and bringing together their associated RNA barcodes to anchor at the synaptic membranes. The protein scaffolds were largely adopted from the SynView constructs, where split-GFP fragments are embedded inside the synaptic proteins rather than at their N-terminals."
+
+"Nuclei contain both cellular transcriptomes and copies of either PreRNA or PostRNA, allowing identification of cell types and their associated barcodes. During gentle brain tissue homogenization, the cell membranes connecting pre-synaptic terminals to axons and post-synaptic sites to dendrites are physically separated. The exposed membrane surfaces at both the pre- and post-synaptic compartments then reseal, forming structures called synaptosomes. Since PreSynBar and PostSynBar proteins are connected across the synaptic cleft, tightly bound to the associated RNA barcodes, these protein-RNA complexes should remain intact as long as the synaptic interface is preserved. This allows synaptosomes to maintain the paired PreRNA and PostRNA information from connected neurons, providing direct evidence of synaptic connections. By matching barcodes between nuclei and synaptosomes, we can link the identity of connected neurons and map their connectivity patterns."
+
+"Workflow for parallel isolation of nuclei and synaptosomes. Following AAV injection into pre- and postsynaptic regions, brain tissue is processed through differential centrifugation. Slow spins yield crude pre- and post-nuclei, while a fast spin of the supernatant of the slow spin produces the synaptosome fraction."
+
+processed about 20,000 synaptosomes/hour
+
+See also [Network cloning using DNA barcodes](https://pmc.ncbi.nlm.nih.gov/articles/PMC6511037/) (Zador 2016/2019) and <https://gnusha.org/logs/2025-09-30.log> for an idea to reconstitute the biological topology from genomic data. As mentioned on [[brain uploading]].
 
 # See also
-
-[Connectome-seq: high-throughput mapping of neuronal connectivity at single-synapse resolution via barcode sequencing](https://www.biorxiv.org/content/10.1101/2025.02.13.638129v2.abstract)
 
 See [[in situ sequencing]] for more about BARseq, BARseq2, etc.
 
 See [[lineage tracing]] for other cell tracing and cell lineage tracing techniques.
 
-One interesting alternative is *compressive sensing* like "[Rapid learning of neural circuitry from holographic ensemble stimulation enabled by model-based compressed sensing](https://www.biorxiv.org/content/10.1101/2022.09.14.507926v3.abstract)" or this [ref](https://www.cell.com/patterns/fulltext/S2666-3899(23)00224-6).
+One interesting alternative is *compressive sensing* like "[Rapid learning of neural circuitry from holographic ensemble stimulation enabled by model-based compressed sensing](https://www.biorxiv.org/content/10.1101/2022.09.14.507926v3.abstract)" or this <a href="https://www.cell.com/patterns/fulltext/S2666-3899(23)00224-6">ref</a>.
 
 
