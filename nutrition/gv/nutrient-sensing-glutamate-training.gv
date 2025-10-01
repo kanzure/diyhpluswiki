@@ -1,0 +1,181 @@
+#!/usr/bin/env -S dot -v -Tx11
+// connections would optimally be labelled with legitimate correlations
+// which would involve something like
+//  1) get https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_foundation_food_json_2025-04-24.zip
+//  2) remove broadly inedible "foods" (e.g. dry grains, uncooked meats)
+//  3) remove new world foods (e.g. nightshades, sweet potato)
+//  4) remove neolithic foods (e.g. grains, legumes, dairy, branded foods)
+//  5) group related foods
+//  6) group related nutrients
+//  7) remove non-essential nutrients besides glutamate while retaining stuff that should
+//     probably be considered essential, like DHA/EPA/AA, menatetrenone, and collagen
+//  8) remove linoleic acid, alpha-linolenic acid, carotinoids, and vitamin D
+//  9) run correlations between glutamate and every other nutrient
+// 10) remove negative correlations
+
+digraph Nutrients {
+  rankdir=LR
+  newrank=true
+  node [shape=box, style=filled, fillcolor=white]
+
+  subgraph cluster_input_distribution {
+  label="Training Input Distribution: Selection Effects"
+    subgraph cluster_receptors {
+      label="Regulatory\nsensing"
+      style=filled
+      fillcolor=lightcoral
+      node [shape=circle]
+      T1R1
+      T1R3
+      mGluR1
+      mGluR4
+    }
+
+    "L-Glutamate"
+    "Cooked\nanimal\ntissues"
+
+
+    subgraph cluster_elements {
+      label="Essential\nElements"
+      style=filled
+      fillcolor=lightgrey
+      Iron
+      Zinc
+      Iodine
+      Sulfur
+      Copper
+      Sodium // More directly handled by ENaC
+      Calcium
+      Chlorine // More directly handled by ENaC
+      Selenium
+      Potassium
+      Chromium
+      Manganese
+      Magnesium
+      Phosphorus
+      Molybdenum
+    }
+
+    subgraph cluster_amino_acids {
+      label="Essential\nAmino Acids"
+      style=filled
+      fillcolor=tan
+      Valine
+      Lysine
+      Leucine
+      Histidine
+      Threonine
+      Isoleucine
+      Methionine
+      Tryptophan
+      Phenylalanine
+    }
+
+
+    subgraph cluster_vitamins {
+      label="Essential\nVitamins"
+      style=filled
+      fillcolor=lightblue
+      "Pantothenic\nAcid"
+      Pyridoxine
+      Cobalamin
+      Riboflavin
+      Thiamine
+      Niacin
+      Biotin
+  // Presumably anticorrelated
+  //  Folate
+  //  "Vitamin C"
+  //  Phylloquinone
+  // Essential, but not really nutritional
+  //  "Vitamin D"
+    // Would be handled in combination with CD36 or the FFARs
+    //    "Retinoic Acid"
+    //    Tocopherols
+    //    Tocotrienols
+    //    Menatetrenone
+    }
+
+
+
+    // Better handled by GPR120/FFAR4?
+    //subgraph cluster_fatty_acids {
+    //  label="Essential\nFatty Acids"
+    //  style=filled
+    //  fillcolor=lightyellow
+    //  "Arachidonic Acid"
+    //  "Eicosapentaenoic Acid"
+    //  "Docosahexaenoic Acid"
+    //}
+
+    // Receptors
+    {
+      T1R1
+      T1R3
+      mGluR1
+      mGluR4
+    } -> "L-Glutamate" -> "Cooked\nanimal\ntissues"
+    // Connect Glutamate to all fatty acids
+    // Better handled by GPR120/FFAR4?
+    //Glutamate -> {
+    //  "Arachidonic Acid"
+    //  "Eicosapentaenoic Acid"
+    //  "Docosahexaenoic Acid"
+    // } [minlen=1]
+
+    "Cooked\nanimal\ntissues" -> {
+    // Connect Glutamate to all amino acids
+      Histidine
+      Isoleucine
+      Leucine
+      Lysine
+      Methionine
+      Phenylalanine
+      Threonine
+      Tryptophan
+      Valine
+    } [minlen=2]
+
+    // Connect Glutamate to all vitamins
+    "Cooked\nanimal\ntissues" -> {
+      Thiamine
+      Riboflavin
+      Niacin
+      "Pantothenic\nAcid"
+      Pyridoxine
+      Biotin
+    // Presumably anticorrelated
+    //   Folate
+    //   "Vitamin C"
+    //   Phylloquinone
+      Cobalamin
+    // Essential, but not really nutritional
+    //   "Vitamin D"
+    // Would be handled in combination with CD36 or the FFARs
+    //  "Retinoic Acid"
+    //  Tocopherols
+    //  Tocotrienols
+    //  Menatetrenone
+    } [minlen=1]
+
+    // Connect Glutamate to all elements
+    "Cooked\nanimal\ntissues" -> {
+      Calcium
+      Phosphorus
+      Potassium
+      Sulfur
+      Sodium // More directly handled by ENaC
+      Chlorine // More directly handled by ENaC
+      Magnesium
+      Iron
+      Zinc
+      Manganese
+      Copper
+      Iodine
+    // maybe find a paradigm to exclude brazil nuts? e.g. when serving size exceeds Institute of Medicine's Dietary Reference Intake max values
+      Selenium
+      Molybdenum
+      Chromium
+    } [minlen=3]
+  }
+}

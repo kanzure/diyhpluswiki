@@ -1,0 +1,58 @@
+#!/usr/bin/env -S dot -v -Tx11
+// connections would optimally be labelled with legitimate correlations
+// which would involve something like
+//  1) get https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_foundation_food_json_2025-04-24.zip
+//  2) remove broadly inedible "foods" (e.g. dry grains, uncooked meats)
+//  3) remove new world foods (e.g. nightshades, sweet potato)
+//  4) remove neolithic foods (e.g. grains, legumes, dairy, branded foods)
+//  5) group related foods
+//  6) group related nutrients
+//  7) remove non-essential nutrients besides glutamate while retaining stuff that should
+//     probably be considered essential, like DHA/EPA/AA, menatetrenone, and collagen
+//  8) remove linoleic acid, alpha-linolenic acid, carotinoids, and vitamin D
+//  9) run correlations between glutamate and every other nutrient
+// 10) remove negative correlations
+
+digraph Nutrients {
+  rankdir=LR
+  newrank=true
+  node [shape=box, style=filled, fillcolor=white]
+
+  subgraph cluster_input_distribution {
+  label="Current Input Distribution: Selection Effects"
+    subgraph cluster_receptors {
+      label="Regulatory\nsensing"
+      style=filled
+      fillcolor=lightcoral
+      node [shape=circle]
+      T1R1
+      T1R3
+      mGluR1
+      mGluR4
+    }
+
+    "L-Glutamate"
+    "Monosodium\nglutamate"
+
+    subgraph cluster_elements {
+      label="Essential\nElements"
+      style=filled
+      fillcolor=lightgrey
+      Sodium // More directly handled by ENaC
+    }
+
+    // Receptors
+    {
+      T1R1
+      T1R3
+      mGluR1
+      mGluR4
+    } -> "L-Glutamate" -> "Monosodium\nglutamate"
+
+    // Connect Glutamate to all elements
+    "Monosodium\nglutamate" -> {
+      Sodium // More directly handled by ENaC
+      // Chlorine // More directly handled by ENaC
+    }
+  }
+}
