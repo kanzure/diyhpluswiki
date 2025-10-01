@@ -1,4 +1,4 @@
-#!/usr/bin/env -S dot -v -Tx11
+#!/usr/bin/env -S sh -c '( printf "%s\n" "digraph SomeGraph {"; cat $0; printf "}" ) | dot -v -Tx11 # ikiwiki graphviz.pm sucks'
 // connections would optimally be labelled with legitimate correlations
 // which would involve something like
 //  1) get https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_foundation_food_json_2025-04-24.zip
@@ -13,7 +13,7 @@
 //  9) run correlations between glutamate and every other nutrient
 // 10) remove negative correlations
 
-digraph Nutrients {
+//digraph Nutrients {
   rankdir=LR
   newrank=true
   node [shape=box, style=filled, fillcolor=white]
@@ -43,4 +43,4 @@ digraph Nutrients {
       Chlorine
     }
   }
-}
+//}
