@@ -1488,6 +1488,36 @@ in voles: Vasopressin V1a receptor (Avpr1a) gene transfer via AAV-V1aR overexpre
 
 in voles: oxytocin receptor upregulation in nucleus accumbens (NAc), part of the ventral (limbic) striatum, enhances alloparental behavior and partner preference formation ([ref](https://pmc.ncbi.nlm.nih.gov/articles/PMC3210320/?utm_source=chatgpt.com))
 
+## Brain uploading (prepatory)
+
+### Full connectome recording via synaptic barcoding and its in vivo reconstruction
+
+[[Cell lineage]] and barcoding techniques like brainbow, [[MAPseq ("Multiplexed Analysis of Projections by Sequencing")|mapseq]], the [[in situ sequencing]] variant BARseq, or [Connectome-seq](https://www.biorxiv.org/content/10.1101/2025.02.13.638129v2.abstract) use genetic programs to decorate neurons and synapses throughout the brain so that the connectivity (connectome) can be recovered by DNA sequencing instead of electron microscopy [[brain imaging]] for [[brain uploading]]. To some extent this is often achieved by lentivral or AAV delivery of genetic payload into adult brain to target some of the neurons. intraparenchymal delivery of AAV is undoubtedly helpful for this. However the information is, at this time, only recovered postmortem. (In fact, it is plausible that postmortem AAV or microinjection may (for a short period of time postmortem) be able to do some amount of barcoding). Future versions might be able to emit SYNseq or synaptic barcoding information via exosome export of DNA or something.. but for now it is a postmortem procedure.
+
+Germline compared to AAV synaptic cartography can achieve significantly better distribution and coverage (namely 100% coverage) of cells and neurons in the brain can be achieved via germline genetic engineering of brainbow-style or synaptic barcoding schemes. The effect of this is to grow a human brain that is "extra prepared" for brain uploading via DNA sequencing as opposed to requiring neural anatomy reconstruction via scanning electron microscopy.
+
+In the future it may be possible to deliver genomically encoded full neural network topology information such that a molecular biology program can [reconstruct the original neuronal topology or connectome](https://pmc.ncbi.nlm.nih.gov/articles/PMC6511037/). See also <https://gnusha.org/logs/2025-09-30.log> for more speculation about what this kind of multi-cellular genetic program would require. It very likely would be in vitro neural circuit reconstruction long before it is ever in vivo human reconstruction... if ever.
+
+### Other speculative neuronal enhancements to assist with brain uploading
+
+These are mostly fanciful ideas that should be validated in an animal model first.
+
+Organelle- or compartment-specific tags (e.g. mitochondria, dendritic spines, axon terminals): Improve automated segmentation by giving EM-visible landmarks or fluorescent anchors.
+
+Membrane-tethered reporters: Aid in delineating neuronal boundaries for optical microscopy or electron microscopy.
+
+EM-detectable tags (e.g. APEX2, miniSOG, HRP-fusion proteins): Enable correlative light and electron microscopy, helping bridge genetic labeling with ultrastructural reconstruction.
+
+Add various GFP or fluorescent indicators to neurons. Fluorescent voltage indicators and other fluorescent indicators are available.
+
+Use the oscillatory waves cell identity visualization trick and couple it to barcoding information somehow.
+
+DNA ticker tape memory for calcium spike recording, action potential spike recording, or intracellular protein recorders. Needs to be coupled with cellular export into bloodstream, or maybe only activate it shortly before death. It is unclear what level of information can be recorded or retrieved from this. Similarly with the fluorescent indicators, it may not be wise to express them throughout life and instead wait to activate them until later or maybe during cell death programs.
+
+Various genomically encoded nanobodies can be expressed for antibody-based tagging and staining.
+
+Consider anything that would help with postmortem [[expansion microscopy]] for [[brain imaging]].
+
 <a name="longevity" />
 # Longevity
 
@@ -2457,7 +2487,7 @@ Tetracycline response elements, i.e. tet-on and tet-off, can be used for transge
 
 * resistance to cryoprotectant toxicity for cryonics, cryovitrification, etc
 
-* TODO: make a document or system for GWAS variants, or alleles, or other mutations, indels, chromosomal microdeletions, etc, for which variants to avoid when making a germline genetically engineered human. Simply eliminating non-consensus genome mutations will substantially improve health and longevity, as Bram Cohen likes to point out. There is also some additional value in intentionally avoiding known-harmful mutations or alterations.
+* TODO: make a document or system for GWAS variants, or alleles, or other mutations, indels, chromosomal microdeletions, etc, for which variants to avoid when making a germline genetically engineered human. Simply eliminating non-consensus genome mutations will substantially improve health and longevity, as Bram Cohen likes to point out. Did he not publish on this? there's no reference for this concept? There is also some additional value in intentionally avoiding known-harmful mutations or alterations.
 
 * acromegaly-like targeted GH/IGF-1 receptor improvement in hands to increase hand size?
 
