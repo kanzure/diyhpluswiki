@@ -1,18 +1,4 @@
 #!/usr/bin/env -S sh -c '( printf "%s\n" "digraph SomeGraph {"; cat $0; printf "}" ) | dot -v -Tx11 # ikiwiki graphviz.pm sucks'
-// connections would optimally be labelled with legitimate correlations
-// which would involve something like
-//  1) get https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_foundation_food_json_2025-04-24.zip
-//  2) remove broadly inedible "foods" (e.g. dry grains, uncooked meats)
-//  3) remove new world foods (e.g. nightshades, sweet potato)
-//  4) remove neolithic foods (e.g. grains, legumes, dairy, branded foods)
-//  5) group related foods
-//  6) group related nutrients
-//  7) remove non-essential nutrients besides glutamate while retaining stuff that should
-//     probably be considered essential, like DHA/EPA/AA, menatetrenone, and collagen
-//  8) remove linoleic acid, alpha-linolenic acid, carotinoids, and vitamin D
-//  9) run correlations between glutamate and every other nutrient
-// 10) remove negative correlations
-
 //digraph Nutrients {
   rankdir=LR
   newrank=true
