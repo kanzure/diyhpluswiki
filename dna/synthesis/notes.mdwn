@@ -1,22 +1,172 @@
-Here are some notes on oligonucleotide synthesis using phosphoramidite chemistry, including notes on an inkjet DNA synthesizer based on the [POSAM project](http://bioinformatics.org/pogo/).
+# Oligonucleotide synthesis chemistry
 
-<div id="summary" />
-# Summary
+[[!toc levels=5 ]]
 
-The project goal is to design, build and operate an open-source DNA synthesizer. There are [many interesting DNA synthesis projects](http://diyhpl.us/wiki/dna/projects) that could be pursued given the availability of large quantities of cheap large-scale highly-parallel DNA synthesis. Ultimately the chemistry of phosphoramidite synthesis will guide and inform the machine design, but so far the best direction seems to be using an inkjet for depositing 100s of millions of drops per second of chemical reagents onto a surface.
+<a href="http://diyhpl.us/~bryan/papers2/DNA/oligonucleotide-synthesis-by-phosphoramidite-method-cycle-diagram.png"><img src="http://diyhpl.us/~bryan/papers2/DNA/oligonucleotide-synthesis-by-phosphoramidite-method-cycle-diagram.png" /></a>
 
-Each drop is a "pixel" that acts as a unique reaction chamber for the reagents. Each layer of the image builds upon the surface-bound reaction results of the previously deposited reagents. Different DNA molecules are formed inside each droplet pixel region on the surface. The DNA molecules are covalently bonded to either the surface or to microbeads on the surface. The droplets don't intersect or merge their contents together because of surface tension and distance.
+# Background
 
-The inkjet can target each drop and deposit different chemical reagents into every drop on every "round" of the synthesis cycle. Because of side-reactions, moisture and other errors, the length of the DNA molecule that can be manufactured inside of each location is limited to perhaps 100 to 200 bp at most, and usually must be at least 20 bp to be of any utility. Conjugation and ligation is necessary to combine short DNA molecules into longer DNA molecules. Although the synthesis cycle is well-known, the design for mechanically moving the separate strands together remains to be determined for this DNA synthesis machine. Once short DNA molecules are placed together, reactions such as Gibson assembly or Ligase Cycling Reaction or extension PCR can be used to combine short DNA molecules into longer DNA molecules. The POSAM synthesizer was designed to create DNA hybridization arrays, where the DNA would be left on the surface and not combined into longer DNA molecules. Perhaps the machine's design will use really tiny pipette tips to transport short DNA from multiple drops to a single reaction chamber?
+An oligonucleotide is a linear polymer consisting of nucleoside units connected via phosphodiester linkages, where each internucleotide bridge is a triester formed between the 3'-hydroxyl of one sugar moiety and the 5'-hydroxyl of the adjacent nucleoside through a central phosphorus(V) atom bearing a non-bridging oxygen with formal negative charge at physiological pH. The backbone comprises alternating β-D-2'-deoxyribofuranose (or ribofuranose for RNA) residues and phosphate groups in the canonical 3'→5' regioisomeric orientation, with each pentose C1' position bearing a nucleobase (adenine, guanine, cytosine, thymine, or uracil) via an N-glycosidic bond that adopts an anti-conformation in B-form duplexes.
 
-The conjugation of these DNA molecules is critical to the formation of superlong DNA molecules between 5K bp (basepairs) and 1M base pairs. The human genome has approximately 3B base pairs, and DNA synthesizers from the 80s were making 100 bp molecules at best.
+During solid-phase synthesis, we construct the oligonucleotide architecture iteratively by detritylating the 5'-O-DMT protecting group, coupling a nucleoside-3'-O-(2-cyanoethyl-N,N-diisopropyl)phosphoramidite using tetrazole or similar activators to form a phosphite triester, oxidizing the P(III) intermediate to the P(V) phosphotriester with iodine/water/pyridine, and capping any unreacted 5'-hydroxyls with acetic anhydride.
 
-Note that DNA synthesis and DNA sequencing are two distinct procedures. Sequencing is reading, synthesis is writing. The cost of DNA sequencing (reading) has been falling quickly over the past decade, but synthesis has not moved as much.
+Synthetic oligonucleotides produced by solid-phase synthesis are chemically identical to natural DNA segments of equivalent sequence once all protecting groups are removed, though synthetic oligos may occasionally retain trace protecting groups or linkage isomers (such as residual cyanoethyl groups on the phosphate or rare 2'→5' linkages from synthesis errors), and they lack the higher-order chromatin organization, epigenetic modifications (like 5-methylcytosine), and protein associations found in genomic DNA within cells. Thus, a purified synthetic oligonucleotide and a natural DNA fragment of the same sequence are (usually) structurally indistinguishable at the molecular level, differing only in context, length conventions, and potential minor impurities from synthesis.
 
-The project is self-funded and communication with the team can be achieved by looking at the [[hplusroadmap]] IRC channel.
+The evolution of oligonucleotide synthesis methodologies progressed through multiple phosphorus-based chemistries that revolutionized nucleic acid research. The **phosphodiester approach**, pioneered by Khorana and colleagues in the 1950s-1960s, employed solution-phase P(V) chemistry using dicyclohexylcarbodiimide (DCC) activation to condense fully protected nucleotide monomers, enabling the first chemical gene synthesis despite laborious purification and modest yields. The **phosphotriester method**, developed by Letsinger in the 1960s and refined by Reese in the 1970s, utilized fully protected phosphate intermediates as neutral triesters (with aryl groups like 2-chlorophenyl or simple alkyl groups such as methyl protecting the non-bridging oxygen), permitting organic solvent-based synthesis with improved coupling rates compared to phosphodiester chemistry but requiring post-synthetic removal of phosphate protecting groups.
 
-<div id="oligonucleotide-synthesis" />
-# Oligonucleotide synthesis using the phosphoramidite method
+## **Historical Overview of Oligonucleotide Synthesis**
+
+The chemical evolution of oligonucleotide synthesis represents a trajectory from labor-intensive solution-phase couplings of pentavalent phosphorus—plagued by ionic shielding and sluggish substitution kinetics—to high-efficiency solid-phase methodologies exploiting the superior electrophilicity of trivalent phosphorus. The early era was defined by the **Phosphodiester Approach** (Khorana), which utilized unprotected phosphate monoesters and carbodiimide-mediated activation, enabling the first gene synthesis but suffering from pyrophosphate formation and extensive ion-exchange purification requirements. To mitigate the solubility and side-reaction limitations imposed by the anionic backbone, the **Phosphotriester Approach** (Letsinger) introduced fully protected, neutral phosphate triesters, facilitating the use of organic solvents and powerful sulfonyl condensing agents. A paradigm shift occurred with the introduction of P(III) chemistry; the **Phosphite Triester Approach** (Letsinger) demonstrated that trivalent phosphorus species, specifically phosphorochloridites, coupled orders of magnitude faster than their P(V) counterparts due to the lower activation energy required to access the trigonal bipyramidal transition state. This laid the groundwork for the **Phosphoramidite Approach** (Beaucage & Caruthers), which stabilized the P(III) center via a P–N bond, yielding the stable monomers that drive modern automated synthesis. Concurrently, the **H-Phosphonate Approach** emerged as a P(III) alternative exploiting the tautomeric equilibrium of phosphonate monoesters to allow global oxidation, while intrinsic backbone modifications were realized via the **Methylphosphonate Approach**. By transitioning from P(V) condensation to P(III) coupling followed by in situ oxidation, the field achieved the stepwise yields (>99%) required to assemble long genomic sequences with high fidelity.
+
+### **Solid-Phase Peptide Synthesis (Merrifield approach)**
+
+While not an oligonucleotide chemistry per se, the **solid-phase peptide synthesis (SPPS)** methodology introduced by R.B. Merrifield in 1963 provided the conceptual and mechanical framework upon which solid-phase oligonucleotide synthesis was subsequently built. Departing from solution-phase methods where every intermediate required isolation, Merrifield utilized an insoluble cross-linked polystyrene-divinylbenzene resin functionalized with chloromethyl groups (chloromethyl polystyrene). The carboxyl-terminal amino acid was anchored to this support via a benzyl ester linkage, allowing the peptide chain to grow in the C-to-N direction—opposite to the biological ribosomal translation. The alpha-amino group of the incoming amino acid required temporary protection, initially achieved using the acid-labile tert-butoxycarbonyl (Boc) group.
+
+The synthetic cycle consists of repetitive deprotection and coupling steps: the Boc group is removed with trifluoroacetic acid to expose the alpha-amine, neutralized with triethylamine, and coupled to the next C-activated Boc-amino acid using dicyclohexylcarbodiimide (DCC) to form the amide bond. A critical evolution in this field was the introduction of the **Fmoc/tBu strategy** by Carpino, which employs the base-labile 9-fluorenylmethoxycarbonyl (Fmoc) group for alpha-amine protection, removal via piperidine, and acid-labile tert-butyl ethers/esters for side-chain protection. This orthogonal protection scheme avoids the repetitive acidolysis of the Boc method and allows final cleavage from the resin using trifluoroacetic acid rather than the hazardous liquid hydrogen fluoride required for Boc chemistry. It was the successful automation of these heterogeneous phase reactions—driving equilibria with excess reagents and removing byproducts via simple filtration—that inspired Itakura and Riggs to adapt the concept for nucleic acids, fundamentally shifting oligonucleotide synthesis from solution to the solid phase.
+
+### **The Phosphodiester Approach**
+
+The **phosphodiester approach**, developed by Khorana and colleagues during the 1950s and 1960s, represents the foundational methodology for chemical oligonucleotide synthesis. This method relies on phosphorus(V) chemistry in solution, wherein fully protected nucleoside-3'-phosphates are condensed with 5'-hydroxyl-bearing nucleosides.
+
+The activation strategy is mediated specifically by carbodiimide coupling reagents, most commonly dicyclohexylcarbodiimide (DCC) or later variants like 1-ethyl-3-(3-dimethylaminopropyl)carbodiimide (EDC). The mechanism proceeds through the activation of the phosphate monoester to form a highly reactive phosphoric anhydride-type intermediate (or acyl phosphate). The 5'-hydroxyl group of the acceptor nucleoside then attacks this electrophilic phosphorus center to form the internucleotide phosphodiester linkage.
+
+A critical limitation of this chemistry is that the resulting internucleotide phosphate oxygen remains unprotected and anionic during synthesis (with a pKa of approximately 1). This anionic charge creates a "shielding" effect that repels incoming nucleophiles, drastically reducing reaction rates, and mandates the use of polar solvents like pyridine to maintain solubility. Furthermore, the unprotected phosphate oxygen remains nucleophilic, competing with the 5'-hydroxyl for the activated monomer. This leads to complicated side reactions, including the formation of 3'-to-3' pyrophosphate branches or cyclic triphosphates.
+
+To ensure successful synthesis, robust protection strategies were required, including N-acyl groups on exocyclic amines of nucleobases (benzoyl for adenine and cytosine, isobutyryl for guanine) and acid-labile groups like monomethoxytrityl (MMT) for primary hydroxyls. Ultimately, the presence of branched impurities necessitated laborious isolation procedures using anion-exchange chromatography to resolve the desired linear product.
+
+### **The Phosphotriester Approach**
+
+The phosphotriester approach (Letsinger) uses protected phosphate triesters with aryl or alkyl groups that are removed after chain assembly, developed by Robert Letsinger at Northwestern University as an improvement over phosphodiester chemistry.
+
+The **phosphotriester approach**, pioneered by Robert Letsinger in the 1960s and advanced by Colin Reese in the 1970s, represents a pivotal evolution in oligonucleotide synthesis by employing pentavalent phosphorus(V) chemistry from the outset, utilizing neutral, fully protected phosphate triester monomers to facilitate condensation in aprotic organic solvents, thereby circumventing the aqueous incompatibilities and side reactions plaguing the earlier phosphodiester method of Khorana, which relied on direct P(V) activation of phosphomonoesters prone to hydrolysis, pyrophosphate formation, and N-acyl migration. In this methodology, 5'-hydroxyl-terminated oligonucleotides (with nucleobases bearing standard acyl protections such as benzoyl for adenine/cytosine and isobutyryl for guanine, and 5'-O-monomethoxytrityl or similar acid-labile groups) are condensed with incoming 3'-O-protected nucleoside phosphorotriesters—wherein the phosphate bears two non-bridging protecting groups, typically an aryl moiety like 2-chlorophenyl (removable via base-catalyzed hydrolysis or sulfide reduction) and a smaller alkyl such as methyl or (later in the phosphoramidite era) 2-cyanoethyl for orthogonal deprotection—via activation of the triester phosphorus to an electrophilic species using condensing agents like mesitylenesulfonyl tetrazole, 2,4,6-triisopropylbenzenesulfonyl chloride, or arylsulfonyl azoles (or possibly other related sulfonyl azoles like MSNT?), enabling nucleophilic displacement at the 3'-position to form a new internucleotide phosphate triester linkage with coupling yields of 90-95% per step, though limited by steric bulk and diastereomeric mixtures at phosphorus. Unlike the phosphite triester (phosphoramidite) method, which constructs the backbone through transient trivalent P(III) phosphite triesters subsequently oxidized to P(V) phosphates for enhanced reactivity and scalability, the phosphotriester strategy maintains P(V) throughout chain assembly, offering inherent stability against autoxidation but necessitating rigorous post-synthetic deprotection protocols (e.g., removal of aryl groups using oximolysis (like with aldoximes) or thiophenolate-based methods, or β-elimination for cyanoethyl) to unmask the anionic phosphodiester backbone, alongside global removal of exocyclic and 2'-O protections via ammonolysis; this approach, while enabling solid-phase adaptations in the 1970s, yielded to phosphoramidite dominance due to slower kinetics and greater susceptibility to β-elimination side products, yet it laid foundational principles for modified backbone synthesis, including phosphorothioates via thioester intermediates, and remains relevant for specialized applications requiring pre-oxidized phosphate scaffolds.
+
+((Note: The hallmark of the phosphotriester era was predominantly aryl (and related) phosphate protections. 2‑cyanoethyl became the dominant non‑bridging phosphate protecting group with the rise of phosphoramidite chemistry; while CE can be used in triester contexts, it was not “typical” of classic triester synthesis.))
+
+Developed by Robert Letsinger and subsequently refined by Colin Reese to resolve the solubility complications caused by charged ions in the earlier phosphodiester method, this chemical approach preserves the phosphorus atom in its pentavalent oxidation state. However, it disguises the negatively charged oxygen atom by attaching a temporary protecting group. This group is usually an aryl moiety—such as a 2-chlorophenyl or 2,5-dichlorophenyl group—or an alkyl group like trichloroethyl.
+
+The fundamental building block used in this process is a nucleoside three-prime phosphate diester. This molecule is chemically activated by "super-condensing agents," specifically compounds like 1-(mesitylene-2-sulfonyl)-3-nitro-1,2,4-triazole or 2,4,6-triisopropylbenzenesulfonyl chloride, in the presence of nucleophilic catalysts such as N-methylimidazole. This reaction generates a highly energetic sulfonyl-phosphate triester intermediate that is primed to accept a chemical bond from the hydroxyl group located at the five-prime position of the target molecule.
+
+The resulting product is a fully protected phosphate triester that carries no net electrical charge and dissolves easily in lipids. This lipophilic nature allows the synthesis to proceed using standard organic solvents, such as dichloromethane and chloroform, while effectively preventing the formation of unwanted pyrophosphate branches. However, the coupling proceeds via an associative bimolecular nucleophilic substitution mechanism at the phosphorus center rather than a direct displacement. This process requires the nucleophile to attack the tetrahedral phosphorus to form a crowded pentacoordinate (trigonal bipyramidal) transition state, a geometric constraint that contributes to reaction kinetics significantly slower than those observed in trivalent phosphorus chemistry. Furthermore, removing the protective groups after synthesis presents a significant challenge; the aryl protecting groups typically generally require oximolysis to be removed. This process employs reagents such as the syn-isomer of 2-nitrobenzaldoxime or pyridine-2-aldoxime ions to trigger a nucleophilic attack on the phosphorus atom, thereby causing the structure to fragment into the desired phosphodiester.
+
+Colin Reese had a central role in developing aryl-protected triester chemistry which was important for phosphotriester method development. While Letsinger introduced the phosphotriester concept, the robust aryl phosphate protecting groups (2-chlorophenyl, etc.) and the sulfonyl azole coupling agents that made the method practical were worked out by Colin Reese’s group in the 1970s.
+
+### **The Phosphite Triester Approach (Chloridite Chemistry)**
+
+The phosphotriester approach (using pentavalent phosphorus from the start with protecting groups on all three oxygens) is fundamentally different from the phosphite triester approach (which uses trivalent phosphorus intermediates that are subsequently oxidized to pentavalent phosphate), with the former being Letsinger's earlier methodology and the latter (phosphoramidite chemistry) representing the modern standard developed in the 1980s.
+
+This method, introduced by Letsinger, represents the first successful exploitation of the reaction kinetics of **trivalent phosphorus**. Reagents are synthesized by reacting a nucleoside protected at the 5-prime position with phosphorus trichloride or an installable alkyl dichlorophosphite at low temperature to generate a nucleoside **phosphorochloridite**. The chlorine atom renders the trivalent phosphorus center intensely electrophilic. Upon addition to a nucleoside with a free 5-prime hydroxyl group and a tertiary amine base, coupling occurs almost instantaneously via nucleophilic substitution, forming a **dinucleoside phosphite triester**. This intermediate is distinct from the phosphate found in the natural backbone in that the trivalent phosphorus atom renders the internucleotide linkage chemically unstable and highly susceptible to acid cleavage. Therefore, it necessitates immediate oxidation—typically using a mixture of elemental iodine, water, and a base—to the **pentavalent phosphorus** state to stabilize the backbone against hydrolysis during subsequent cycles. While this validated the speed of trivalent phosphorus chemistry, the phosphorochloridite monomers are extremely hygroscopic and susceptible to hydrolysis and disproportionation, rendering them unsuitable for storage or use in automated delivery systems.
+
+### **The Solid-Phase Triester Approach (Itakura-Riggs)**
+
+The operationalization of phosphotriester chemistry into a robust solid-phase platform was achieved in the mid-1970s through the seminal work of Keiichi Itakura and Arthur Riggs at the City of Hope National Medical Center, a methodology that enabled the first total chemical synthesis of a functional gene, specifically that encoding the hormone somatostatin. Merging the principles of Letsinger’s neutral backbone strategy with the solid-support concepts pioneered by Merrifield for peptides, this approach utilized a copolymer of styrene and divinylbenzene as the stationary phase, to which the 3'-terminal nucleoside was tethered via a succinate linker. The synthesis relied on the stepwise addition of nucleoside 3'-(p-chlorophenyl)phosphate diesters, which were activated in situ using powerful arylsulfonyl azoles, such as 2,4,6-triisopropylbenzenesulfonyl chloride (TPS-Cl) or related sulfonyl azoles such as 1-(mesitylene-2-sulfonyl)-3-nitro-1,2,4-triazole (MSNT). These condensing agents were critical for overcoming the kinetic sluggishness of the pentavalent phosphorus center within the heterogeneous matrix of the solid support, as they generated highly reactive sulfonyl triazole intermediates that were less prone to sulfonating the 5'-hydroxyl nucleophile than the sulfonyl chlorides used in solution phase. The method utilized dimethoxytrityl groups for 5'-protection, establishing the protic acid deprotection cycles that remain standard today, while the internucleotide p-chlorophenyl protecting groups were retained until the final cleavage step to suppress backbone hydrolysis. Although the coupling times remained significant—often requiring 30 to 60 minutes per nucleotide to drive the second-order nucleophilic substitution to completion—and necessitated extensive high-performance liquid chromatography purification to remove truncated failure sequences, this technology provided the first scalable route to synthetic DNA. This culminated in the successful assembly of the 14-amino acid somatostatin gene and subsequently the human insulin gene, fundamentally launching the era of recombinant DNA technology and modern biotechnology before the eventual dominance of phosphoramidite chemistry.
+
+### **The Phosphoramidite Approach**
+
+The **phosphoramidite approach** to oligonucleotide synthesis, conceptualized by Serge Beaucage and Marvin Caruthers in the late 1970s and refined for automated solid-phase implementation by the early 1980s, stands as the cornerstone of modern nucleic acid assembly. This methodology revolutionized the field by exploiting the distinct chemo-physical properties of trivalent phosphorus, specifically shifting away from the hard-to-handle chlorophosphites of earlier eras to the stable yet reactive N,N-dialkylphosphoramidite monomers. The fundamental unit of this chemistry is the nucleoside 3'-O-(2-cyanoethyl-N,N-diisopropyl)phosphoramidite. The brilliance of this molecular design lies in the diisopropylamino moiety, which stabilizes the phosphorus atom toward air and moisture under neutral conditions through significant steric shielding and the electron donation inherent in the P-N bond (but previously it was believed that the diisopropylamino group stabilizes P(III) via p‑π to d‑π orbital donation which is now an outdated belief). This stability allows for the robust storage and handling of monomers, a stark contrast to the moisture-sensitive reagents required in phosphotriester or H-phosphonate methods, while maintaining a high susceptibility to protonation that is leveraged for activation during coupling.
+
+The synthetic cycle proceeds on a solid support, such as controlled pore glass or polystyrene, beginning with the selective deprotection of the 5'-dimethoxytrityl (DMT) group using dilute acid, typically trichloroacetic acid in dichloromethane. This releases a chromophoric trityl cation—often monitored at 498 nm to calculate stepwise yields—and exposes a free 5'-hydroxyl nucleophile. Coupling is initiated by introducing the 5'-DMT-protected phosphoramidite monomer in the presence of a weak acid activator. While 1H-tetrazole (pKa approximately 4.9) was the historical standard, sterically hindered sequences or specific secondary structures often necessitate more potent activators like 5-ethylthio-1H-tetrazole or 4,5-dicyanoimidazole. The activator protonates the aminophosphine nitrogen, converting the stable diisopropylamine into a facile leaving group and generating a highly electrophilic tetrazolyl-phosphite intermediate. The 5'-hydroxyl of the support-bound oligonucleotide then attacks this intermediate via associative nucleophilic substitution at the chiral phosphorus center, yielding a phosphite triester linkage. To ensure sequence fidelity, any unreacted 5'-hydroxyl species are immediately "capped" via acetylation with acetic anhydride and N-methylimidazole, effectively terminating failure sequences and preventing "n-minus-1" deletion impurities.
+
+Following coupling and capping, the internucleotide linkage exists as a labile P(III) phosphite triester, which is susceptible to acid-catalyzed scission. To secure backbone integrity, this intermediate is oxidized in situ to the stable pentavalent phosphate triester. The standard oxidation utilizes iodine dissolved in a mixture of tetrahydrofuran, pyridine, and water. Mechanistically, iodine attacks the phosphorus lone pair to form a P-I phosphonium adduct (this is a bit simplified and incorrect, but basically there is a standard iodine/water/base oxidation), which is subsequently displaced by water to yield the phosphate. In sophisticated variants, such as the stereocontrolled synthesis of therapeutic antisense oligonucleotides, this oxidation step is replaced by sulfurization using reagents like 3H-1,2-benzodithiol-3-one to generate phosphorothioate backbones. Crucially, the phosphate remains protected by the 2-cyanoethyl group throughout the cycle. This specific protecting group was a significant innovation over simpler alkyls, as it facilitates clean removal via a beta-elimination mechanism (retro-Michael reaction) during the final ammonolysis deprotection. The advantage of CE is that it is cleanly removable under basic conditions via β‑elimination without harsh reagent (and the problem with earlier protections was harsh deprotection conditions and side reactions).
+
+This highly optimized chemistry achieves stepwise yields routinely exceeding 99%, allowing for the synthesis of DNA and RNA oligonucleotides up to 200 mers with high fidelity. The method accommodates a vast array of orthogonal protection schemes, such as tert-butyldimethylsilyl for the 2'-hydroxyl in RNA or base-labile acetyl, benzoyl, and isobutyryl groups on the exocyclic amines of nucleobases. Furthermore, the approach supports the incorporation of sensitive modifications, including 2'-fluoro substituents, locked nucleic acids, and azobenzene linkers, typically validated by anion-exchange HPLC and mass spectrometry. By resolving the historical challenges of P(III) instability through the ingenious use of amine leaving groups and rapid oxidation cycles, the Beaucage-Caruthers methodology provides the scalability and functional group tolerance required for the industrial production of primers, therapeutic siRNAs, and aptamers.
+
+### **Phosphoramidite Chemistry with Alternative Activators**
+
+While 1H-tetrazole served as the standard activator for phosphoramidite coupling throughout the 1980s, the demand for higher coupling efficiencies—particularly for sterically hindered modifications like RNA (2'-O-TBDMS), LNA, or long-chain synthesis—necessitated the development of more potent activators. The limitation of 1H-tetrazole lies in its modest acidity (pKa approximately 4.9) and its crystalline nature, which can lead to precipitation in automated fluidics lines.
+
+To enhance the reaction kinetics, the field moved toward activators with lower pKa values (higher acidity) and improved nucleophilicity to accelerate the formation of the reactive protonated phosphoramidite-activator complex. Prominent among these is **5-ethylthio-1H-tetrazole (ETT)** (pKa approximately 4.3) and **5-benzylthio-1H-tetrazole (BTT)**, which offer superior solubility in acetonitrile and faster activation rates for RNA synthesis. A structurally distinct class of activator is **4,5-dicyanoimidazole (DCI)**. Although less acidic (pKa approximately 5.2) than tetrazole, DCI acts as a highly effective nucleophilic catalyst, displacing the diisopropylamine to form a reactive imidazolium-phosphite intermediate without the risk of acidic depurination or explosive hazards associated with tetrazoles. Furthermore, **pyridinium salts**, such as pyridinium hydrochloride or imidazolium triflate, function by pure acid catalysis and have been utilized in specific contexts, particularly for the activation of cyclic phosphoramidites or in coupling reactions where non-nucleophilic conditions are preferred to avoid side reactions with electrophilic centers on modified nucleobases.
+
+In modern solid-phase synthesis, the 5'-O-dimethoxytrityl (DMT) group is the standard temporary protecting group.
+
+For accurate information on modern RNA synthesis, consult literature on **2'-O-TBDMS RNA phosphoramidites** with standard 5'-DMT protection and β-cyanoethyl phosphate protection, or specialized methods like **2'-ACE or 2'-TOM chemistry**.
+
+### **The H-Phosphonate Approach**
+
+The **H-phosphonate approach** to oligonucleotide synthesis, pioneered by Froehler and Matteucci, represents a distinct mechanistic paradigm compared to phosphoramidite chemistry, primarily characterized by the deferral of phosphorus oxidation until the completion of chain assembly. Central to this methodology is the use of nucleoside 3'-H-phosphonate monoesters. Contrary to erroneous reports suggesting oxidative synthesis via sulfuryl chloride, these monomers are correctly prepared through the phosphitylation of 5'-O-protected nucleosides using reagents derived from **phosphorus trichloride** and limited base (typically imidazole) or via transesterification with **diphenyl phosphite**, followed by mild aqueous hydrolysis. This sequence yields the stable H-phosphonate monoester anion.
+
+H‑phosphonate monoesters are **tetracoordinate P(V)** species. While they are often discussed in the context of P(III) due to the presence of the P-H bond and their synthetic origin, structurally they exist as the **phosphonate** tautomer.
+
+The H-phosphonate structure is:
+
+```
+    O
+    ‖
+RO–P–H
+    |
+    O⁻ (or OH)
+```
+
+This is a **tetra-coordinate** phosphorus with:
+- One P-H bond
+- One P-O(R) bond
+- One P=O bond
+- One P-O⁻ (or P-OH) bond
+
+The H-phosphonate monoester adopts a **tetrahedral** geometry. The phosphite-phosphonate tautomerism involves a rare phosphite form—P(OR)(OH)₂—which is truly tricoordinate with a lone pair. However, the equilibrium overwhelmingly favors the dominant **H-phosphonate form** (HO)(R-O)P(=O)H. Unlike the tricoordinate phosphite, the stable H-phosphonate is a **tetracoordinate P(V)** species where the "lone pair" has formed the phosphoryl (P=O) bond. Therefore, the phosphorus center is saturated with four substituents and does not possess a stereochemically active lone pair in its ground state.
+
+The synthetic cycle relies on the chemoselective activation of the H-phosphonate monoester using sterically hindered acid chlorides, such as **pivaloyl chloride** or **adamantoyl chloride**, in solvents like pyridine or acetonitrile/pyridine mixtures. This reaction generates a highly reactive **mixed carboxylic-phosphonic anhydride** (or an acyl-phosphonate intermediate). This electrophile undergoes nucleophilic substitution by the 5'-hydroxyl group of the support-bound growing chain. The resulting internucleotide linkage is a **dinucleoside H-phosphonate diester**. Crucially, the phosphorus-hydrogen bond provides sufficient steric and electronic protection to the phosphorus center, rendering it resistant to the coupling conditions and eliminating the need for transient protection of the internucleotide phosphate oxygen.
+
+The hydrolytic stability of the P-H bond permits the accumulation of H-phosphonate diester linkages throughout chain elongation, bypassing the need for iterative oxidation cycles. Upon completion of the sequence, a single conversion step determines the final backbone structure, offering a unique versatility unavailable in phosphoramidite chemistry. For the generation of native phosphodiesters, oxidation is typically achieved using iodine in aqueous pyridine, where water serves as the essential nucleophilic oxygen donor. Conversely, the backbone can be modified under strictly anhydrous conditions to create analogues: sulfurization with elemental sulfur yields phosphorothioates, while oxidative amidation—utilizing Atherton-Todd conditions with carbon tetrachloride and primary or secondary amines—produces phosphoramidates. This capacity for divergent functionalization from a common H-phosphonate precursor makes the method unexcelled for the synthesis of complex, phosphate-modified oligonucleotides.
+
+While the coupling kinetics are generally slower (5–30 minutes) compared to phosphoramidite chemistry, and the reagents are susceptible to hydrolytic degradation if not strictly anhydrous, the H-phosphonate method remains unexcelled for the synthesis of phosphate-modified backbones and analogues where orthogonal protection strategies would otherwise be prohibitive.
+
+### **The Methylphosphonate Approach**
+
+This methodology is distinct because it generates a non-ionic, isosteric DNA analogue characterized by a direct phosphorus-carbon bond. The synthesis cannot utilize standard phosphorylating agents; instead, it employs **methyldichlorophosphine** or **methylphosphonamidites** as the starting source of phosphorus. This phosphorus-carbon bond is robust and withstands all standard biological and chemical degradation pathways.
+
+The coupling process involves the reaction of a nucleoside methylphosphonamidite protected at the five-prime position (activated by the clinical agent tetrazole) with the five-prime hydroxyl group of the oligonucleotide chain bound to the solid support. This reaction forms a methylphosphonite intermediate containing a trivalent phosphorus atom. This intermediate is subsequently oxidized—typically utilizing tert-butyl hydroperoxide or elemental iodine—to create the final methylphosphonate linkage containing a pentavalent phosphorus atom.
+
+A critical chemical feature is that the resulting phosphorus atom constitutes a chiral center, meaning it can exist in either the R-phosphorus or S-phosphorus configuration. Because standard chemical synthesis techniques are not stereoselective, an oligomer of length "n" will exist as a complex mixture of two raised to the power of "n" diastereomers. The isomers possessing the R-phosphorus configuration generally base-pair with ribonucleic acid (RNA) with higher affinity than those with the S-phosphorus configuration. Furthermore, the electrically neutral nature of the backbone significantly alters solubility—necessitating the use of hydrophobic interaction chromatography for purification—and modifies its cellular uptake properties.
+
+A methylphosphonate linkage (where the phosphorus is bonded to a methyl group, a doubly bonded oxygen, and two different nucleoside oxygens) is chiral. Because standard synthesis does not control this stereochemistry, the resulting oligonucleotide is indeed a racemate (a mixture of diastereomers). This implies that they actually have *massive* diastereomeric complications.
+
+### SES group
+
+The 2-(trimethylsilyl)ethanesulfonyl (SES) group has been used as a phosphate-protecting group in oligonucleotide synthesis, offering orthogonality to other protecting groups through its fluoride lability. The SES group can be removed with fluoride sources like TBAF, providing an alternative to the standard β-cyanoethyl (CE) protecting group, though CE remains dominant due to its compatibility with ammonia deprotection and lower cost.
+
+### **Thiophosphoramidite Chemistry (Eckstein and colleagues)**
+
+The **thiophosphoramidite chemistry**, often synonymous in practical application with the synthesis of phosphorothioate oligonucleotides via modified phosphoramidite protocols, was systematically advanced by Fritz Eckstein and colleagues in the 1980s to address the rapid enzymatic degradation of natural phosphodiester DNA in biological milieus. This methodology departs from the canonical synthesis during the oxidation step; rather than converting the transient internucleotide phosphite triester P(III) intermediate into a phosphate diester using aqueous iodine, the protocol employs a sulfurizing agent to install a sulfur atom at the non-bridging position, yielding a chemically robust P(V) phosphorothioate linkage.
+
+The pioneering protocols realized that the trivalent phosphorus of the phosphite triester is a soft nucleophile capable of attacking elemental sulfur (S8), historically dissolved in a mixture of carbon disulfide and pyridine or carbon disulfide and lutidine to facilitate solubility and kinetics. However, due to the flammability and toxicity of carbon disulfide, the field evolved to utilize more efficient, soluble, and rapid sulfur-transfer reagents such as 3H-1,2-benzodithiol-3-one 1,1-dioxide (Beaucage reagent), tetraethylthiuram disulfide (TETD), or phenylacetyl disulfide (PADS). These reagents function by delivering an electrophilic sulfur species to the P(III) center, affecting oxidative sulfurization with high conversion rates consistent with automated synthesis cycles.
+
+A defining chemical consequence of this modification is the creation of a chiral center at the phosphorus atom, as the non-bridging sulfur and oxygen atoms render the phosphate non-prochiral. Consequently, the synthesis of a phosphorothioate oligonucleotide of length n results in a racemate mixture of 2 to the power of n diastereomers, comprising both Rp and Sp absolute configurations at each linkage. Eckstein's work was instrumental in characterizing that these stereoisomers possess distinct physicochemical properties; generally, the Rp diastereomer tends to pair (in a sequence-dependent manner) more faithfully with complementary RNA and mediates RNase H recruitment more effectively, while the Sp isomer displays greater resistance to specific nucleases. Although standard solid-phase synthesis produces a random stereochemical mixture (stereorandom), the introduction of the phosphorothioate backbone was the critical breakthrough that enabled the first generation of antisense nucleotide therapeutics (such as Fomivirsen) by conferring sufficient metabolic stability to survive serum nucleases and enter cells, largely due to the increased lipophilicity. Phosphorothioate linkages increase nonspecific protein binding and this high protein binding is a defining pharmacological feature of phosphorothioate oligos and contributes to their in vivo distribution and half-life.
+
+### **Morpholino Oligonucleotides**
+
+Developed by James Summerton and Dwight Weller in 1997 to address the limitations of charged phosphate backbones, **Morpholino oligonucleotides (PMO)** represent a radical structural redesign where the deoxyribose sugar is replaced by a six-membered morpholine ring, and the anionic phosphodiester linkage is substituted by a non-ionic phosphorodiamidate group. The synthesis of these oligomers avoids the standard phosphoramidite coupling cycle. Unlike earlier misconceptions suggesting a simple oxidative conversion of ribose, PMO monomers are actually produced via elaborate multistep synthetic routes designed to construct the six‑membered morpholine scaffold and subsequently install the phosphorodiamidate functionality.
+
+Assembly typically proceeds on a solid support (such as aminomethyl polystyrene), where the operative coupling chemistry involves the reaction of a 5'-hydroxyl-bearing morpholino subunit with an incoming monomer featuring an activated **chlorophosphorodiamidate** or **fluorophosphoramidate** tail group. Because the backbone is uncharged at physiological pH, morpholinos eliminate the electrostatic repulsion between the synthetic oligomer and the target RNA, often resulting in high binding affinity despite the structural deviation from natural nucleic acids. Furthermore, the replacement of the ester linkage with a phosphorodiamidate bond and the sugar with a morpholine ring renders the backbone completely resistant to nucleases and generally incapable of recruiting RNase H, making them steric blocking agents rather than catalytic degraders of RNA.
+
+### **Peptide Nucleic Acids (PNA)**
+
+Introduced by Peter Nielsen and colleagues in 1991, **Peptide Nucleic Acids (PNA)** constitute a DNA mimic in which the entire sugar-phosphate backbone is replaced by an achiral, uncharged pseudopeptide scaffold composed of repeating **N-(2-aminoethyl)glycine** units. The nucleobases are attached to the secondary amine of the backbone via a methylenecarbonyl (acetyl) linker. Despite this profound chemical alteration, PNA retains the ability to hybridize with complementary DNA and RNA with remarkable specificity and thermal stability, adhering to Watson-Crick base-pairing rules.
+
+From a synthetic perspective, PNA oligomerization is indistinguishable from solid-phase peptide synthesis and utilizes **Fmoc** (or occasionally Boc) chemistry rather than phosphoramidite nucleotide chemistry. The monomers are N-protected amino acids containing the nucleobase side chain. Synthesis proceeds via the activation of the monomer's carboxylic acid using peptide coupling reagents such as HATU (1-[Bis(dimethylamino)methylene]-1H-1,2,3-triazolo[4,5-b]pyridinium 3-oxid hexafluorophosphate) or HBTU in the presence of a base like diisopropylethylamine, followed by nucleophilic attack by the terminal primary amine of the growing chain. Because the backbone is strictly non-ionic, PNA/DNA duplexes lack the inter-strand electrostatic repulsion found in DNA/DNA duplexes, leading to significantly high melting temperatures that are largely independent of salt concentration. However, this extreme affinity and poor water solubility often necessitate the conjugation of solubility-enhancing amino acids (like lysine) or the use of shorter oligomers.
+
+### **Locked Nucleic Acids (LNA)**
+
+**Locked Nucleic Acids (LNA)**, also known as Bridged Nucleic Acids (BNA), were pioneered by Jesper Wengel's group (and independently by Imanishi) in 1998. The defining chemical feature of the LNA monomer is a bicyclic furanose unit containing a **2'-O,4'-C-methylene bridge**. This covalent tether structurally constrains (or "locks") the ribose sugar into the **C3'-endo** (North) conformation, which is the pucker characteristic of A-form RNA helices.
+
+Unlike PNA or Morpholinos, LNA synthesis is fully compatible with standard DNA/RNA automated synthesis. The monomers are phosphoramidites, specifically 5'-O-DMT-LNA-nucleoside-3'-O-(2-cyanoethyl-N,N-diisopropyl)phosphoramidites. Due to the pre-organized structure of the sugar, the entropic penalty of duplex formation is substantially reduced. Consequently, the incorporation of LNA monomers into an oligonucleotide increases the thermal melting temperature (Tm) of the duplex by anywhere from 2 to 8 degrees Celsius per modified nucleotide. This high affinity allows for the use of much shorter probes (typically 8-15 mers) for successful hybridization. The synthesis follows the standard tetrazole-mediated coupling and iodine oxidation cycles, although the bulky bicyclic system can occasionally require extended coupling times to overcome steric hindrance at the 3'-phosphorus center.
+
+
+## Other methods
+
+other stuff to think about:
+
+* phosphodiester approach (Khorana, 1950s-1960s)
+* phosphite triester chemistry
+* methylphosphonate approach
+* phosphoramidite approach
+* H-phosphonate approach
+* 2'-O-TBDMS RNA phosphoramidites with standard 5'-DMT protection and β-cyanoethyl phosphate protection,
+* 2'-ACE or 2'-TOM chemistry
+* 2-(trimethylsilyl)ethanesulfonyl (SES) group has been used as a phosphate-protecting group in oligonucleotide synthesis
+
+# Phosphoramidite method for oligonucleotide synthesis
+
+Here are some notes on oligonucleotide synthesis using phosphoramidite chemistry.
 
 <a href="http://diyhpl.us/~bryan/papers2/DNA/oligonucleotide-synthesis-by-phosphoramidite-method-cycle-diagram.png"><img src="http://diyhpl.us/~bryan/papers2/DNA/oligonucleotide-synthesis-by-phosphoramidite-method-cycle-diagram.png" /></a>
 
@@ -64,30 +214,192 @@ Highly sensitive to water. Commonly carried out in anhydrous acetonitrile.
 
 The newly formed tricoordinated phosphite triester linkage is not natural and is of limited stability under the conditions of oligonucleotide synthesis. The treatment of the support-bound material with iodine and water in the presence of a weak base (pyridine, lutidine, or collidine) oxidizes the phosphite triester into a tetracoordinated phosphate triester, a protected precursor of the naturally occurring phosphate diester internucleosidic linkage. Oxidation may be carried out under anhydrous conditions using tert-Butyl hydroperoxide or, more efficiently, (1S)-(+)-(10-camphorsulfonyl)-oxaziridine (CSO). The step of oxidation is substituted with a sulfurization step to obtain oligonucleotide phosphorothioates (see Oligonucleotide phosphorothioates and their synthesis below). In the latter case, the sulfurization step is best carried out prior to capping.
 
-# solid supports
 
-# linker chemistry
+# Manual DNA synthesis by hand
 
-linkers go here
+[Syringe method for stepwise chemical synthesis of oligonucleotides by hand](https://diyhpl.us/~bryan/papers2/DNA/Syringe%20method%20for%20stepwise%20chemical%20synthesis%20of%20oligonucleotides.pdf) (1982) by tanaka and letsinger.
 
-# Inkjet printing steps
+abstract: "A simple procedure is described for synthesis of oligonucleotides by phosphite chemistry. Chains can be constructed rapidly with minimal equipment (a syringe and reagent bottles). The method is illustrated by synthesis of d-TGCAGGTT. Pertinent supporting data on the effect of variations in the detritylation, condensation, oxidation, capping and cleavage steps in the synthetic approach and in isolation procedures are also presented."
 
-1. Printing
+"Adaptation of phosphite-triester chemistry to solid phase syntheses conducted on silica gel has led to rapid procedures for the machine synthesis of defined oligonucleotides. Although highly attractive for use in laboratories where extensive synthetic work is done, the machines suffer the disadvantage of being expensive to buy or troublesome to construct."
 
-2. Washing
+"We describe herein a modification which permits one to conduct the repetitive synthetic steps rapidly with minimal equipment."
 
-3. Oxidation
+"In principle, the operator sets up a series of small capped jars, each of which contains one of the solvents or reagents required in the synthesis. The silica support bearing a covalently attached nucleoside is placed in a syringe equipped with a filter at the base. Synthesis is carried out by successively drawing solutions in and expelling them from the syringe.  The cycle is repeated for each nucleotide unit added to the chain; so the only operation required throughout the building step involves manipulation of the syringe. At the end of the cycles, the oligonucleotide is deprotected, removed from the silica, and isolated by previously described procedures."
 
-4. Washing
+This protocol describes the older methyl phosphorodichloridite method (Matteucci-Caruthers, early 1980s), which was largely superseded by phosphoramidite chemistry.
 
-5. Detritylation
+## Bill of Materials (BOM) for Nucleoside Phosphorochloridite Reagent Preparation Protocol
 
-6. Washing
+All items assume standard laboratory handling under inert atmosphere (argon or nitrogen) unless otherwise noted.
 
-# Reagent suppliers
+**Important Safety Notes (General):**
+- This protocol describes preparation of **nucleoside methylphosphorochloridites** using the methyl phosphorodichloridite method, an older approach for oligonucleotide synthesis that has been largely replaced by phosphoramidite chemistry.
+- Reagents and solvents listed are hazardous: flammable (THF, acetone), toxic (pyridine), highly moisture-sensitive and corrosive (methyl phosphorodichloridite). Handle all materials in a fume hood with appropriate PPE (nitrile or neoprene gloves, safety goggles, lab coat).
+- **Methyl phosphorodichloridite reacts violently with water**, releasing HCl gas and forming phosphonic acid derivatives. Ensure completely anhydrous conditions.
+- **Consult current Safety Data Sheets (SDS), your institutional chemical hygiene plan, and receive proper training before attempting this procedure.** This document does not substitute for professional safety training.
 
-<div id="abi391" />
-# ABI 391
+### 1. Equipment and Consumables
+
+- **Septa-sealed vials (30 mL, e.g., Pierce or equivalent)**: For anhydrous storage of moisture-sensitive reagents. Quantity: 2-4 per batch. **Note:** Use thick butyl rubber septa compatible with syringe needle puncture.
+
+- **Butyl rubber septa**: To seal storage vials under inert atmosphere. Quantity: 1 per vial. Hycar septa may not provide adequate moisture barrier; butyl preferred.
+
+- **Needles (18-22 gauge)**: For syringe transfers and inert gas inlet/outlet. Quantity: 6-10 per preparation.
+
+- **Syringes for inert atmosphere pressure equalization**: Small plastic syringes (1-3 mL) fitted with drying tube. Quantity: 1-2 per sealed vessel.
+
+- **Indicating Drierite (anhydrous CaSO₄ with indicator)**: For filling pressure-equalization syringes and monitoring moisture. Quantity: 10-20 g. **Note:** Blue indicating Drierite turns pink when saturated; regenerate or replace as needed.
+
+- **Gastight glass syringes (5-10 mL, e.g., SGE or Hamilton)**: For quantitative transfer of moisture-sensitive reagents under inert conditions. Quantity: 2-3 of varying sizes. **Note:** Dry by heating in oven (120°C) or flame-drying before use.
+
+- **Round-bottom flasks (10-25 mL)** with ground glass joints and magnetic stir bars: For nucleoside dissolution and phosphorochloridite formation. Quantity: 1 per nucleoside derivative (4 for standard T, C, A, G set).
+
+- **Magnetic stir bars**: PTFE-coated, appropriate size for 10-25 mL flasks. Quantity: 4-6.
+
+- **Rubber septa** for round-bottom flasks: To maintain inert atmosphere during reaction. Quantity: 4-6.
+
+- **Centrifuge tubes (polypropylene, 15-50 mL)**: Compatible with organic solvents and capable of withstanding low temperature. Quantity: 2-4. **Note:** Confirm THF/pyridine compatibility.
+
+- **Vacuum desiccator or vacuum manifold**: For final drying of products. Quantity: 1 (shared equipment).
+
+- **Rotary evaporator**: For solvent removal under reduced pressure. Quantity: 1 (shared equipment).
+
+- **Thin Layer Chromatography (TLC) supplies**:
+  - Silica gel TLC plates (e.g., Merck or Whatman, 250 μm layer): For reaction monitoring. Quantity: 5-10 plates.
+  - Reverse-phase TLC plates (C18-modified silica): For nucleoside derivative analysis. Quantity: 3-5 plates.
+  - TLC developing chambers with lids. Quantity: 1-2.
+  - UV lamp (254 nm and/or 365 nm): For visualization. Quantity: 1 (shared).
+
+- **HPLC system** (optional, for detailed analysis): Any system capable of reverse-phase (ODS/C18) and anion-exchange chromatography. Columns as appropriate for nucleoside separation.
+
+- **NMR spectrometer**: Capable of ³¹P NMR (typically 162 MHz on a 400 MHz instrument). Quantity: 1 (shared instrumentation). **Note:** For verification of phosphorus oxidation state and purity.
+
+- **Inert gas source (argon or nitrogen)**: Dry gas from cylinder with regulator and appropriate tubing/needles. Quantity: Continuous supply. **Note:** Pass through indicating Drierite column to ensure dryness.
+
+- **Cold bath equipment**: Dry ice/acetone or dry ice/isopropanol bath capable of reaching -78°C. Quantity: 1 setup with appropriate dewar.
+
+- **Freezer**: -20°C or -80°C for reagent storage. Quantity: 1 (shared). **Note:** Most protocols use -20°C for short-term or -80°C for long-term storage; "-70°C" is non-standard.
+
+### 2. Silica Support Materials (if using solid-phase synthesis)
+
+- **Controlled pore glass (CPG) or silica gel (high purity)**: 
+  - Specifications: 500-2000 Å pore diameter, 80-120 mesh for column synthesis.
+  - Quantity: 1-5 g per batch depending on scale.
+  - **Note:** Originally another document said "Davidson 62 silica" (140-200 mesh, 140 Å pore) functionalized with nucleosides. Derivatization involves attachment of nucleosides via succinyl linker. Loading typically 20-40 μmol/g for synthesis applications.
+
+- **Succinic anhydride**: For creating carboxyl-linked spacer on silica/CPG. Quantity: 0.5-2 g. **Hazard:** Corrosive; causes burns. Reacts exothermically with moisture.
+
+- **4,4'-Dimethoxytrityl chloride (DMTr-Cl)**: For loading determination via colorimetric assay (orange DMTr⁺ cation, λmax ~498 nm in acidic solution). Quantity: Small amount for analytical use (1-10 mg).
+
+**Note on silica derivatization:** This is a specialized procedure requiring separate detailed protocol.
+
+### 3. Solvents (Anhydrous, Rigorously Dried)
+
+All solvents must be freshly dried and stored under inert atmosphere. Test for water content (Karl Fischer titration ideally <50 ppm H₂O).
+
+- **Tetrahydrofuran (THF), anhydrous**: 
+  - Preparation: Distill from sodium/benzophenone ketyl (purple endpoint indicates dryness) or use Sure/Seal bottles. Store over activated 4Å molecular sieves under argon.
+  - Quantity: ~50-100 mL per 1 mmol scale preparation.
+  - **Hazards:** Flammable (flash point -14°C). Forms explosive peroxides upon prolonged storage—test before use with peroxide test strips; never distill to dryness.
+
+- **Pyridine, anhydrous**:
+  - Preparation: Distill from calcium hydride or use Sure/Seal bottles. Store over activated 4Å molecular sieves under argon.
+  - Quantity: ~50-100 mL per 1 mmol scale preparation.
+  - **Hazards:** Toxic by inhalation and skin absorption; strong unpleasant odor. Handle exclusively in fume hood. IARC Group 3 (not classifiable as human carcinogen, but avoid exposure).
+
+- **Acetonitrile, anhydrous** (optional, for alternative workup):
+  - Quantity: 20-50 mL if used.
+  - **Hazards:** Flammable, toxic.
+
+- **Pentane or hexanes, anhydrous**: For precipitation and washing. Quantity: 100-200 mL.
+  - **Hazards:** Extremely flammable; use with adequate ventilation.
+
+- **Dichloromethane (methylene chloride)**: For TLC mobile phases or optional extractions. Quantity: 50-100 mL.
+  - **Hazards:** Suspected carcinogen; use in fume hood.
+
+- **Methanol, anhydrous**: For quenching small aliquots during reaction monitoring. Quantity: 5-10 mL.
+  - **Hazards:** Flammable, toxic.
+
+- **Deionized water**: For TLC mobile phases (non-anhydrous application). Quantity: 50-100 mL.
+
+### 4. Reagents
+
+#### Protected Nucleosides (for 1 mmol scale preparation):
+
+- **5'-O-(4,4'-Dimethoxytrityl)-thymidine [d-(DMTr)T]**
+  - Quantity: 1 mmol (~545 mg, MW ~545 g/mol)
+
+- **5'-O-(4,4'-Dimethoxytrityl)-N⁴-benzoyl-2'-deoxycytidine [d-(DMTr)Bz-C]**
+  - Quantity: 1 mmol (~640 mg, MW ~640 g/mol)
+
+- **5'-O-(4,4'-Dimethoxytrityl)-N⁶-benzoyl-2'-deoxyadenosine [d-(DMTr)Bz-A]**
+  - Quantity: 1 mmol (~664 mg, MW ~664 g/mol)
+
+- **5'-O-(4,4'-Dimethoxytrityl)-N²-isobutyryl-2'-deoxyguanosine [d-(DMTr)ibu-G]**
+  - Quantity: 1 mmol (~650 mg, MW ~650 g/mol)
+
+**Notes:**
+- These are standard protected nucleosides for oligonucleotide synthesis, available from commercial suppliers (Glen Research, ChemGenes, etc.) or prepared by literature procedures.
+- Store desiccated under argon at -20°C.
+- **Hazards:** Organic compounds; potential irritants; handle with gloves.
+
+#### Key Reactive Reagent:
+
+- **Methyl phosphorodichloridite (methyldichlorophosphite, CH₃OPCl₂)**:
+  - Quantity: 1.1-1.5 mmol per 1 mmol nucleoside (1.1-1.5 equiv; ~145-200 mg; MW ~133 g/mol)
+  - Preparation: Distill under inert atmosphere (bp 31-32°C/12 mmHg or 93-94°C/760 mmHg). Collect middle fraction. Store in septum-sealed vial under argon at -20°C.
+  - Purity check: ³¹P NMR should show single peak at **δ +199 ppm** (referenced to 85% H₃PO₄ at δ 0, or adjust reference accordingly). Note the positive chemical shift due to highly deshielded P(III) with two chlorines.
+  - **Hazards:** Reacts violently with water producing HCl gas and heat. Corrosive; causes severe burns. Toxic by inhalation. Use only under rigorously anhydrous conditions in fume hood. Dispose of waste by quenching carefully with cold saturated sodium bicarbonate solution.
+
+#### Drying Agents:
+
+- **Calcium hydride (CaH₂)**: For drying solvents before distillation. Quantity: 5-10 g per liter of solvent.
+  - **Hazards:** Reacts with water to produce hydrogen gas (flammable). Add to solvents cautiously.
+
+- **Molecular sieves, 4Å (activated)**: For maintaining solvent dryness during storage. Quantity: 20-50 g.
+  - Activation: Heat at 300°C under vacuum for several hours, cool under inert atmosphere, store in sealed container.
+
+#### NMR Reference:
+
+- **85% Phosphoric acid (H₃PO₄)** or **triphenyl phosphate**: External reference for ³¹P NMR (δ 0 ppm for H₃PO₄).
+  - Quantity: 0.5-1 mL for external reference capillary or coaxial insert.
+
+### 5. Analytical Standards and Expected Results
+
+#### ³¹P NMR Chemical Shifts (referenced to 85% H₃PO₄ at 0 ppm):
+
+| Compound | δ (ppm) |
+|----------|---------|
+| CH₃OPCl₂ (starting material) | **+199** |
+| CH₃OP(Cl)O-Nucleoside (product) | **+185** |
+| CH₃OP(O-Nucleoside)₂ (dimer side product) | **+157** |
+| CH₃OP(O)(H)O-Nucleoside (hydrolysis/oxidation product) | **+26** |
+
+These are **positive** values (downfield), not negative. P(III) compounds with electronegative substituents are strongly deshielded.
+
+#### TLC Analysis:
+
+- **Silica gel TLC**: Typical mobile phases include dichloromethane/methanol mixtures (e.g., 95:5 to 90:10). Rf values depend on specific conditions and are not universally transferable.
+- **Reverse-phase TLC**: Acetonitrile/water or acetone/water gradients.
+- **Visualization**: UV absorbance (254 nm for nucleobases); phosphomolybdic acid staining for phosphorus-containing compounds.
+
+Specific Rf values are method dependent and not universal standards.
+
+#### Quality Control:
+
+- Desired product: >90% purity by ³¹P NMR (single major peak at δ +185 ppm).
+- Absence of CH₃OPCl₂ (δ +199 ppm) indicates complete reaction.
+- Minimal oxidation product (δ +26 ppm) indicates good anhydrous technique.
+- Coupling yield on solid support: typically assessed by DMTr⁺ release (measure A₄₉₈ after acid treatment).
+
+### 6. Waste Disposal
+
+- **Phosphorus-containing wastes**: Quench carefully with cold saturated NaHCO₃ solution in fume hood to neutralize HCl and hydrolyze remaining P-Cl bonds. After bubbling ceases, dilute and dispose as halogenated aqueous waste per institutional guidelines.
+- **Organic solvent wastes**: Collect separately as halogenated or non-halogenated organic waste.
+- **Pyridine waste**: Collect in dedicated container and dispose through environmental health & safety.
+
+# ABI 391 oligonucleotide synthesizer
 
 - [ABI 391 manual](http://diyhpl.us/~bryan/papers2/DNA/abi391/ABI%20391-manual.pdf)
 - [ABI 391 phosphoramidite chemistry from the manual](http://diyhpl.us/~bryan/papers2/DNA/abi391/chemistry.txt)
@@ -134,8 +446,23 @@ The 5'-protecting group, dimethoxytrityl, is attached to each nucleoside phospho
 
 To remove oligonucleotides from the solid supports, use concentrated ammonium hydroxide for simultaneous decyanoethylation and cleaving. Next, the base protecting groups are removed by the addition of fresh concentrated ammonia and incubation at 55 degrees celsius.
 
-<div id="posam" />
-# POSAM
+# POSAM project summary
+
+Notes on an inkjet DNA synthesizer based on the [POSAM project](http://bioinformatics.org/pogo/).
+
+The project goal is to design, build and operate an open-source DNA synthesizer. There are [many interesting DNA synthesis projects](http://diyhpl.us/wiki/dna/projects) that could be pursued given the availability of large quantities of cheap large-scale highly-parallel DNA synthesis. Ultimately the chemistry of phosphoramidite synthesis will guide and inform the machine design, but so far the best direction seems to be using an inkjet for depositing 100s of millions of drops per second of chemical reagents onto a surface.
+
+Each drop is a "pixel" that acts as a unique reaction chamber for the reagents. Each layer of the image builds upon the surface-bound reaction results of the previously deposited reagents. Different DNA molecules are formed inside each droplet pixel region on the surface. The DNA molecules are covalently bonded to either the surface or to microbeads on the surface. The droplets don't intersect or merge their contents together because of surface tension and distance.
+
+The inkjet can target each drop and deposit different chemical reagents into every drop on every "round" of the synthesis cycle. Because of side-reactions, moisture and other errors, the length of the DNA molecule that can be manufactured inside of each location is limited to perhaps 100 to 200 bp at most, and usually must be at least 20 bp to be of any utility. Conjugation and ligation is necessary to combine short DNA molecules into longer DNA molecules. Although the synthesis cycle is well-known, the design for mechanically moving the separate strands together remains to be determined for this DNA synthesis machine. Once short DNA molecules are placed together, reactions such as Gibson assembly or Ligase Cycling Reaction or extension PCR can be used to combine short DNA molecules into longer DNA molecules. The POSAM synthesizer was designed to create DNA hybridization arrays, where the DNA would be left on the surface and not combined into longer DNA molecules. Perhaps the machine's design will use really tiny pipette tips to transport short DNA from multiple drops to a single reaction chamber?
+
+The conjugation of these DNA molecules is critical to the formation of superlong DNA molecules between 5K bp (basepairs) and 1M base pairs. The human genome has approximately 3B base pairs, and DNA synthesizers from the 80s were making 100 bp molecules at best.
+
+Note that DNA synthesis and DNA sequencing are two distinct procedures. Sequencing is reading, synthesis is writing. The cost of DNA sequencing (reading) has been falling quickly over the past decade, but synthesis has not moved as much.
+
+The project is self-funded and communication with the team can be achieved by looking at the [[hplusroadmap]] IRC channel.
+
+## POSAM general
 
 * [posam user manual chapter 1: assembly](http://bioinformatics.org/pogo/POSAM_Man_Ch1_Assembly_v1-2_040601.pdf)
 * [posam user manual chapter 2: operations](http://bioinformatics.org/pogo/POSAM_Man_Ch2_User_v1-0_040414.pdf)
@@ -192,4 +519,7 @@ miscellaneous materials:
 - inkjet head
 - exhaust filter cartridge
 - parafilm
+
+
+
 
