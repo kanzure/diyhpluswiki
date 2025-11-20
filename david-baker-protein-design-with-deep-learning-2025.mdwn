@@ -1,0 +1,599 @@
+David Baker: Design of new protein functions using deep learning
+
+2025-10-28
+
+video: <http://youtube.com/watch?v=bxGFK0wl3rw>
+
+abstract: "Proteins mediate the critical processes of life and beautifully solve the challenges faced during the evolution of modern organisms. Our goal is to design a new generation of proteins that address current-day problems not faced during evolution. In contrast to traditional [[protein engineering]] efforts, which have focused on modifying naturally occurring proteins, we design new proteins from scratch to optimally solve the problem at hand. Increasingly, we develop and use deep learning methods to design amino acid sequences that are predicted to fold to desired structures and functions. We produce synthetic genes encoding these sequences and characterize them experimentally. In this talk, I will describe several recent advances in protein design."
+
+"The Frontiers of Physics Lecture Series brings renowned scientists to the UW to offer free lectures on exciting advances in physics with the goal of fostering an appreciation of science and technology in our community. This Fall we are honored to welcome Nobel Laureate, Dr. David Baker."
+
+LLM summary: David Baker's lecture elucidates de novo protein design using generative AI diffusion models, trained on the Protein Data Bank by iteratively noising and denoising atomic structures of ~150,000 natural proteins to generate novel folds conditioned on functional motifs, such as binding interfaces or catalytic sites; this inverse approach—starting from desired function, generating sequences via lowest-energy physics principles or AI, synthesizing genes, and expressing in cells—enables proteins untethered from evolutionary families (10^130 sequence space dwarfs nature's ~10^10 occupants), yielding high-affinity binders (e.g., snake venom antitoxins, TNF inhibitors, insulin mimetics for resistance), immunotherapeutics dimerizing T-cell receptors for solid tumors like pancreatic cancer, amyloid aggregation blockers (tau, Aβ), de novo proteases cleaving targets with 10^8 rate enhancements, nanopores for silicon nitride sequencing with ligand-gated sensors, allosteric switches reconfiguring assemblies, enzymes degrading PET plastics or synthesizing TB drugs, biomineralization templates for ZnO/hydroxyapatite nanostructures, and minimal chlorophyll-binding photosystems; atomic-level diffusion (RFdiffusion/RoseTTAFold Diffusion) and metagenomic sequence augmentation further generalize to non-protein molecules (DNA/RNA, glycans, lipids), hybridizing physics for data-sparse regimes like mineral interfaces.
+
+[[!toc levels=5]]
+
+# Welcome and Physics Department Overview
+
+Thank you. Welcome everyone. Thank you all for joining us this evening. My name is Deeb Gupta and I'm the chair of the physics department.
+
+The Frontiers of Physics lecture series is hosted by the department at UW and generously supported by donors.
+
+Before turning things over to our main attraction tonight, I'll just take a few minutes to say a few words about the department.
+
+The department lies within the College of Arts and Sciences, the University of Washington. Within this college, we fall under the Division of Natural Sciences.
+
+For scale, we have about 300 majors, 200 graduate students. Here's a photo from our most recent graduation. The intro courses serve around 2,000 students per quarter through campus.
+
+This educational mission is intricately linked to our research mission. We have a very broad research program run by faculty, postdocs, and students. The following are examples, definitely not exhaustive.
+
+Understanding the fundamental aspects of nature forms a multifaceted frontier of physics, probing the boundaries of what is well understood to what remains a mystery.
+
+Our particle theorists reach beyond the standard model to aim to explain the nature of dark matter, the nature of gravity, and its relation to quantum physics.
+
+Our Institute for Nuclear Theory is a national center hosting numerous workshops, hundreds of visitors on frontier nuclear and astrophysics questions.
+
+Our particle experimentalists are engaged in experiments and analysis of the highest energy collisions at CERN. Within our Center for Experimental Nuclear Physics and Astrophysics, CENPA, searching for dark matter, exploring the short-range nature of gravity, also probing the fundamental nature of neutrinos.
+
+One major recent highlight has been the measurement of the anomalous magnetic moment of the muon elementary particle. And for this and other related work, faculty member David Hertzog was elected to the National Academy of Sciences earlier this year.
+
+The same anomalous magnetic moment, but for the electron, was a key reason for the physics Nobel Prize to Hans Dehmelt at the department in 1989, also the first Nobel Prize for the University of Washington, enabled by the invention of particle trapping for ions later for neutral atoms.
+
+These traps are now central to another current frontier of physics: quantum information science. Many quantum systems often show unexpected behaviors from potential routes to useful quantum technologies of the future.
+
+In addition to experimental efforts, we also have theorists engaged in quantum dynamics. Researchers in our incubator for quantum simulation are working on bridging gaps between theory available technology towards useful quantum computation and simulation.
+
+Our department has pioneered aspects of topological quantum physics as recognized by the 2016 Nobel Prize to David Thouless at the department. Many-body correlated quantum phenomena are actively pursued in our Thouless Institute for Quantum Matter.
+
+Quantum science and quantum matter efforts feature experimentalists, theorists, strong connections across campus, including with engineering.
+
+Recent achievement in this area was the experimental observation of the fractional anomalous quantum Hall effect, for which Professor Xiudong Xu was awarded the Discovery Award from the National Academy of Sciences this year.
+
+So as I said, these are examples. Many research areas were not covered. Apologies for that.
+
+Another frontier area is biological physics, another active area in the department, and this is the frontier we'll be hearing about today, of course.
+
+We're extremely proud to have David Baker as an adjunct member of the department. And it's great that his family is also here. His father, Marshall, is an emeritus member of our department.
+
+Just a moment, I'll turn things over to Andrew Laszlo to introduce David.
+
+But let me just conclude by noting that one of the positive forces that makes this evening possible is the philanthropic support of generous people who want to ensure that the cutting edge of scientific discovery is brought to the public in a very accessible way.
+
+We're grateful to all those who have contributed to help make this lecture series possible. And similarly, we deeply appreciate donors whose generosity enable students, faculty, and research programs to have additional resources outside of external research grants that help achieve the excellence for which they're known.
+
+So we invite you to stay connected with the physics lecture series, this Frontiers of Physics Lecture series and to the department as a whole. Encourage you to explore how your support can make a difference as well.
+
+These two QR codes will take you to the FPLS series and the Department of Physics. And thank you for your interest, your involvement, your support, and thank you for attending tonight.
+
+# Speaker Introduction by Andrew Laszlo
+
+Over to you, Andrew.
+
+Good evening everyone. It is fantastic to see so many of you all here tonight. My name is Andrew Laszlo. I am a research assistant professor here in the physics department.
+
+My field of research is biophysics. I develop nanopore sequencing technology and also use nanopores to study molecular motors that walk on DNA and RNA.
+
+The Frontiers of Physics lecture series started in 2016, and it allows us to bring scientists from around the world who have made some of the greatest discoveries of our time here to Seattle to speak to all of us and share the context and excitement of their work.
+
+So these speakers have included now 11 Nobel laureates, three of our own faculty who received the 2021 Breakthrough Prize in Fundamental Physics, and other luminaries at the forefront of discovery.
+
+The topics covered range from the smallest to the largest scales and cover topics that have fundamentally advanced human technology and our understanding of the universe and how we as humans fit into it.
+
+This lecture series is made possible by the vision and generosity of Dr. Patrick O'Hara and Professor David Kaplan, and comes together with the work of a diverse group of faculty members and physics community members who assemble the series every year.
+
+Our speaker today is actually a local. He grew up here in Seattle and graduated from Garfield High School. He went on to Harvard University, got a BA in biology, PhD in biochemistry from University of California, Berkeley, followed by a postdoc at UC San Francisco.
+
+Professor David Baker is now a UW professor of biochemistry, a Howard Hughes Medical Institute investigator and director of the Institute for Protein Design, just over here.
+
+David Baker's work is really remarkable. And at the risk of oversimplifying, basically everything that does a thing in a cell is a protein. And these proteins are sort of nanotechnological marvels, okay. They are atomically reproducible, and they enable all the fundamental processes that make life possible.
+
+So biotechnologists like myself often look to life to find the tools that we need. So we go over and find a bacterial membrane protein that is just right for sequencing DNA, and we borrow that. Or we go over to Archaea and we grab a molecular motor that walks on DNA and will feed it through the nanopore in just the right way and, you know, grab that.
+
+And there are entire companies whose entire catalogs are derived from proteins that are borrowed from the tree of life. And this strategy really only has one problem, and that's that life has not yet evolved a solution to many of the problems that we face. So things like forever chemicals, microplastics, climate change, or zoonotic diseases.
+
+And so Professor Baker's work is really focused on solving these problems with de novo design of proteins. So from the ground up, making proteins that don't exist in nature but are capable of solving some of the most pressing problems of the 21st century.
+
+So for this work, David has received numerous accolades. I'll list only a few of them here, including the Feynman Prize in nanotechnology, the 2021 Breakthrough Prize in Life Sciences and the 2024 Nobel Prize in Chemistry.
+
+Following the lecture, we'll have a brief Q&A led by my colleague, Professor Xiucheng Xu. And so there are mics. It's hard to see them here in the dark, but there's one in this aisle here and this aisle here. And so please come down to the mic to ask your question so that everybody can hear it. And recording the lecture is not permitted.
+
+# David Baker's Lecture: Introduction to De Novo Protein Design
+
+But, okay, without further ado.
+
+All right, well, thanks, Andrew, for that very nice introduction. I think you could have gone on to give my talk for me probably better than I can.
+
+And I want to thank all of you for coming tonight and the Frontiers of Physics lecture series for making this kind of event possible. This is a very nice event for me. My parents, Marsha and Marshall, are here, my friends, David Kaplan and Jens Gundlach who are both colleagues and climbing partners and former students. It's really nice to be here.
+
+After you get a Nobel Prize you get invited to many, many things that you really, really don't want to do and I say no to all of them because I have an absolute no travel rule. But when I was invited to do this, I was very, very excited to do it. So this is actually probably my first real public lecture in a long time.
+
+Can you hear me okay? Okay. All right. So I'll jump into it.
+
+---
+
+So I'm going to tell you about designing new proteins today that do new things. And Andrew already introduced this perfectly. And I'm going to steal that. I'm going to use your quote. So everything that does a thing in a cell is a protein. Is that okay if I borrow? Okay, all right.
+
+So here's a visualization of this. Each one of these blobby things is a protein, and they're each busy doing the job that they have in a cell, whether it's moving complicated transport vesicles from one place to another, or making or breaking chemical bonds. They're all doing something.
+
+And as Andrew said, up until fairly recently, the only proteins we knew about were the proteins that are in our bodies or in other living organisms. And they have exotic names like Disheveled or Humpback or Cas9. And they were each sort of lovingly identified by a scientist who kind of devoted their career to them. And they kind of have become sort of like the Elven runes in Lord of the Rings, where there are these things that were passed down from, you know, generations, millions or billions of years of evolution. And they have all these marvelous properties.
+
+But I'm going to tell you about today that we can actually make brand new proteins pretty much from first principles and that we can make them do all kinds of new things to solve some of the problems that Andrew mentioned.
+
+# The Central Dogma and Inverse Protein Design Approach
+
+And so the problem of biology is shown here. We of course have genomes in our bodies that encode genes. What these genes do is they encode the amino acid sequences of proteins, and those amino acid sequences then fold up into protein structures which carry out biological functions.
+
+So really, the study of molecular biology over the past 50 years is pretty much summarized here. It's identifying genes. That's what Patrick O'Hara did when he was at Zymogenetics, identified many, many genes in the human genome that could have important medical relevance, and then understanding the proteins and what they do.
+
+But I'm not going to talk about this tonight. Instead, we're going to go in the opposite direction. We're going to start with a new function that doesn't exist and work backwards towards an amino acid sequence that encodes a protein that has the structure and function we want, the function that we're trying to make.
+
+And then once we have that new protein, we make a synthetic piece of DNA that encodes it. We have to make a synthetic piece of DNA because this is a brand new protein, so there's no gene in any organism which can encode it.
+
+Once we have that synthetic piece of DNA we put it into a bacterium or a yeast cell or some kind of biological organism that then produces the protein and we can see whether the protein solves the problem we were trying to solve.
+
+And so tonight what I'm going to tell you about is examples of problems where we started out trying to solve a problem, and then I'll tell you about the protein we made to solve it. But first, I'm going to tell you something about the methods that we use to do this.
+
+# Scale of Protein Sequence Space and Historical Engineering Approaches
+
+So just to give you a feeling of the size of the problem: proteins there are 20 different types of amino acids and a typical protein is made out of a hundred and has at least a hundred amino acids in the sequence so you can imagine a very long word with a hundred letters and there are 20 possibilities for each letter and so it turns out that there are an astronomical number of such sequences, 10 to the 130th power.
+
+The number of unique proteins in nature is far, far smaller than this. And moreover, the proteins that exist in nature that Andrew told you a little bit about, and I showed you the picture of, they fall into groups called families because of evolution. So the proteins in a monkey or a mouse are not so different from our proteins, and the same protein, the corresponding protein that has the same function in a mouse and in us is actually in the same group.
+
+So if this whole thing represents all possible proteins, then the proteins in nature are just occupying a very small part of this space.
+
+And what protein engineers had done for many years is to look in nature for a protein which carries out the new function they wanted or maybe made some small changes to an existing protein.
+
+And what I'm going to tell you about today is making proteins completely from scratch, so not based on any existing protein.
+
+# Early Physics-Based Design Methods
+
+So when we first started working on this problem, we used physically based models. And so this is what a picture of part of an unfolded protein looks like, where each of these round circles is an atom.
+
+And we developed models which allowed us to estimate the interactions between all these atoms. And the principle that we used first to predict structure and then to design new structures was that proteins, they're these very long, complicated molecules. And we know from biology that they fold up into unique structures.
+
+And the principle that we used was that all systems eventually will end up in their lowest energy state and in particular proteins will eventually end up in their lowest energy state.
+
+So to predict the structure of a protein we basically tried many many different possible shapes and found the one where the atoms fit together the best to give the lowest energy. Likewise, to design a new structure, we had to search through possible sequences for that protein to find the one where that structure has the lowest energy. And hopefully this will work.
+
+So this is an example of how a calculation like that works. So this is a particular protein shape that didn't exist in nature. And then I told you there are 20 different types of amino acids.
+
+And what you see in this animation is a calculation where we're kind of like a jigsaw puzzle, trying all the different shapes for all the different amino acids or combinations of the amino acids, searching for one where there's the best fit of all the amino acids together, sort of like a three-dimensional jigsaw puzzle.
+
+And we used this sort of method to make proteins, and that was fairly successful, but we were always limited in the accuracy with which we could build new proteins and predict the structures of existing proteins.
+
+# Shift to Deep Learning and Diffusion Models
+
+So about six or seven years ago, we turned to deep learning methods. So whereas in the methods I told you about just a moment ago, we're trying to, we're basically, we were calculating all the interactions between all pairs of atoms with a very detailed sort of physical chemical model, it's entirely different with these deep learning models.
+
+So, to illustrate how they work, I'll briefly explain how image generation programs like DALL-E work. One takes a very large number of objects, data, and adds noise to each individual data, like in this case, each image on the Internet.
+
+So you first collect all the images, and then you add noise to different extents. And then a network is trained to remove the noise at each step like predict from what from this image what the original image was and obviously as it gets as you get more and more noise it gets harder and harder.
+
+Once this network has been trained it has the very useful property that if you start with a completely random image and you progressively remove the noise with the network you've trained, you end up with a new image that looks like it could have come from your training set, the set of all the images on the internet, but actually it's completely new.
+
+So we did exactly the same thing with protein structures. So biologists and biochemists, biophysicists have solved the structures of 150,000 or more different proteins. And so in those proteins, they know they've determined where all of the atoms are, and there can be thousands of atoms. So there's a very rich database of information.
+
+So we took each one of those structures and add increasing amounts of noise to them, and then we trained a network to remove the noise. And once we had done that, we found we could start with completely random collections of residues and progressively remove the noise, and we were left with a structure that looked to a biochemist like a perfectly reasonable protein structure, but actually it was completely new.
+
+So just as in the case of images, it's not very useful just to have a network or a process that will generate a new image. In the same way, it's not very useful to have a process just generates a new protein. You want to be able to tell the process what you want.
+
+So for example with images you can say generate an image of a cat lying on a table. In the case of proteins we similarly want to condition the process the generation process and we want to do that by specifying the function of the protein we want to make.
+
+# Conditioned Generation: Example with Insulin
+
+So a first example of how we can do this is shown here. So this is the structure of insulin, which of course is very important in modulating blood sugar, and this is the insulin receptor to which insulin binds.
+
+And we were interested in seeing whether we could make improved versions of insulin that might work for patients who were resistant to the normal insulin.
+
+And so we basically give the diffusion process this as a condition and tell it to make a protein which should bind this structure. And this is an animation of the actual diffusion, the denoising calculation.
+
+And if you are biochemists, you would recognize that this protein actually looks like it could bind insulin because it's very complementary in shape, like a hand into a glove.
+
+So when we actually make these proteins in the lab, we find that they do activate insulin signaling, and they do work on forms of the receptor that are mutated in patients with insulin-resistant mutations. So we're excited about those as possible therapies.
+
+# Medical Applications: Antitoxins and Immunotherapies
+
+So now, for the rest of my talk, I'm going to just give you a few examples in different areas of the types of new proteins we can design. I'll begin with applications in medicine.
+
+So snake venom is toxic because there are toxins in the venom that wreak havoc in the body they interfere with many central processes so one of the first applications we made of these new diffusion methods was to design proteins like the one in blue here which bind very tightly to the snake toxin and block their activity.
+
+And these proteins are very effective at protecting animals from the lethal effects of the toxin.
+
+We've been very interested in designing proteins for treating cancer. One of the ways in which proteins in our bodies can impact cancer and infectious disease is by activating the immune system.
+
+And so we've been designing proteins which activate the immune system selectively in the region around the cancer. So this is one such design protein, which brings together two cellular receptors, which induce a strong anti-cancer response.
+
+And we have very promising results now with treating even quite difficult cancers like pancreatic cancer. And this work was done in collaboration with two clinicians at Dana-Farber who are now very excited about pushing this towards clinical development.
+
+Sort of the opposite problem from not having your immune system activated enough to treat cancer is autoimmunity and so for many many there have been many medications that have been developed to treat autoimmunity and they target a protein called TNF or its target the TNF receptor shown here.
+
+And this is a diffusion calculation. So I should say diffusion methods are a form of one example of what are generally known as generative AI methods. As you can see, we're just generating a solution to this problem starting from scratch.
+
+So here is, this is the protein that gets generated. And again, it sort of fits around the target like a hand around a glove. And this protein is a very potent blocker of this TNF signaling, which is involved in autoimmunity.
+
+And again, this protein looks very promising compared to current medications for treating immune disease, autoimmune disease.
+
+# Antibody-Like Binders and Intrinsically Disordered Protein Targets
+
+Now, we can also not only tell the diffusion process that we want to target a specific protein of interest, but we can tell it what type of protein we want to make.
+
+And for those of you who are familiar with the pharmaceutical industry and biotech industries, you'll know that antibodies are by far and away the preferred type of protein drug.
+
+So we can tell this diffusion process not only to make a protein which binds at a particular site but also we can say we want it to be in the antibody class. And then the method generates proteins which look like antibodies, and one of these is the structure we were trying to make, and one is the experimentally determined structure which we determined after we made the protein, and they're very, very similar.
+
+And so we can, so antibodies are very big, complicated molecules, and the way they interact with their targets are through these loop regions down here. And again, through solving structures of these designed antibodies, we can see how the structures that we are trying to design agree with what the actual case is when we make the protein and determine the structure experimentally. And you can see they're very close.
+
+And then a final type of targets that are relevant medically are proteins which don't really have any defined structure on their own. And there are many of these proteins play important roles in biology. They also play important roles in disease like neurodegenerative disease because the misfolding of proteins can lead to amyloid plaques, which are associated with Alzheimer's and other diseases.
+
+So you can see here, in this case, since the target, which is in gray, doesn't have any defined structure on its own, in this generative AI calculation, it's folding up along with the protein that we are designing, which is in these colors here.
+
+And using this, we've been able to make binders to many different protein targets, including proteins like dynorphin or peptides that are involved in chronic pain, proteins involved in amyloid connected to diabetes, and a number of other proteins that are of considerable interest, including prion proteins, which are proteins that can transmit disease purely in themselves.
+
+So we've been particularly interested, as I mentioned, in blocking proteins that form the amyloid fibrils associated with neurodegenerative disease.
+
+And so if you take these proteins, which have names like amyloid beta and tau, and you take those proteins, you put them into solution, they very rapidly aggregate. But when we take these proteins we've designed, they block this aggregation as shown here. So completely suppressing the formation of those fibers.
+
+And we can go beyond this by taking proteins which bind to these disease-associated proteins. For example, the tau protein. Tau is the major, most strongly implicated protein in many neurodegenerative diseases.
+
+And we can use this binder to direct the cell's protein quality control machinery to actually destroy the protein. So this is basically an extract of all the proteins in the cell, just visualizing the tau protein. And we put our binder in with this signal to destroy the protein, it completely disappears.
+
+So we have collaborators, Brian Kraemer at the University of Washington, who are now actively seeing what this does to neurodegenerative disease models in animals.
+
+My colleague, Neil King, at the Institute for Protein Design, used these methods to design the first clinically approved medicine, a COVID vaccine, first designing these self-assembling particles here and then taking part of the coronavirus and putting it on the surface of the particles. And he found this elicited a very strong response to the virus itself. And that, like I said, is our first approved medicine. We're obviously hoping there'll be many more.
+
+# Technological Applications: De Novo Nanopores and Sensors
+
+So that's sort of an overview of some of the examples of applications in medicine. Now I want to tell you about applications in technology.
+
+And so we've been very interested in, Andrew mentioned nanopores, and he and Jens Gundlach here at the University of Washington have done really amazing work in working out how to sequence DNA using nanopores. And they used some of the nanopores which have been identified that exist in nature.
+
+And we were interested if we could sort of generalize this by making nanopores up from scratch. And so here it shows nanopores that we designed using the methods I showed you with these holes in the middle that have increasing size.
+
+And as you expect as you make the size bigger, the amount of current that can go through these nanopores when they're embedded in a membrane increases.
+
+Now we can take those nanopores and turn them into sensors by putting at the top of the pore another protein that binds a specific small molecule. For example, in this case, cholic acid.
+
+And basically what happens in the absence of cholic acid, the ions can go through the pore, but then with cholic acid, the pore closes and ions can't go through anymore. This is the amount of current going through the pore.
+
+So we're excited about this as being a very general way of making sensors for what's in the surrounding chemical environment.
+
+Now, these pores are embedded in the lipid membranes, which surround cells, but you could imagine that it would be much more effective to embed these pores in a more robust medium, like a silicon nitride chip.
+
+And so you can drill pores in a silicon nitride chip. And then we've been working very closely with Jens Gundlach's group to first design proteins that can fit into these pores and then measure the current that's going through.
+
+And one of the fun things about this problem is that nature, of course, never evolved proteins to fit into silicon nitride chips. So this is really a totally new thing for a protein to do. And so we've had to make new types of pores.
+
+And Jens' group has shown that these pores, when they insert in, give rise to very stable currents. And very recently it's found that these can, that DNA molecules can translocate through these, which opens the door to really much more highly multiplexed DNA sequencing and also general sensing using the principles that I talked about earlier.
+
+# Protein Switches and Controllable Assemblies
+
+So another thing that we've been very excited about doing on the technology side is designing switches. And so first I'll show you kind of an abstract form of a protein switch.
+
+This is a protein that is designed to go from this straight form to this bent form when this effector is added. And Phil Leung who here where are you Phil. So Phil designed this protein when he was a graduate student in my lab. And it's really quite remarkable. It shifts from this state to another.
+
+And then we took this protein and built it into these types of nanostructures with this triangular one. And you can see in this triangle, it's straight. But then when this effector molecule is added, which Phil also designed, it induces this bend.
+
+And you can see if you make each of these into a bend, then the whole thing turns into a square. And this is what the experimental results look like. Here's the original one without the effector, and it's a triangle. This is the electron microscopy data showing this.
+
+And then when the effector is added, it turns into a square. And here's another design where a square turns into a pentagon.
+
+So you might say, what's the point of designing triangles that turn into squares? And you would be asking a very good question, because we haven't quite figured out the point either yet.
+
+But we can take this concept and use it to make something that actually is useful. So I told you before about the way that the design of proteins that activate the immune system to fight cancer. And this is another such design shown in blue.
+
+And this in light gray and dark gray are proteins that on the surface of immune cells that get brought together. And that elicits a very strong anti-cancer response.
+
+But you don't want too much of an immune response because that can be very toxic. And so you want to be able to turn it off.
+
+And so now we have this effector coming in, and instead of turning a triangle into a square, it's kicking this white subunit away, and that leads to an immediate stopping of signaling.
+
+So this is the amount of signal, and then if you don't add the yellow effector, the signaling increases. But if you do add it, it completely shuts down.
+
+So in this way, we're working to make medicines that only work in the right time and place in the body.
+
+# Sustainability Applications: De Novo Enzymes and Catalysts
+
+Now I want to talk briefly about applications in sustainability. And one of the key things that I haven't talked about yet that important here is we can use these same methods to design proteins that make and break chemical bonds.
+
+And the basic idea is we take we specify the geometry and arrangement of a small subset of amino acids, which we hypothesize will carry out a chemical reaction, either a bond-making or bond-breaking chemical reaction.
+
+And then we use the same diffusion approach to now, we basically, the conditioning process condition here is not to design a protein, not to generate something that will bind the target, but instead generate a protein that will hold all these amino acids in exactly the right place to catalyze the chemical reaction.
+
+And I haven't really told you very much about how the experiments work, but as I said, for each design, we make a synthetic gene, and these synthetic genes, we ordered 96 designs in each case, so each one of these wells has a different synthetic gene in it, and we add bacteria to each well, and the genes go in, and then they make the proteins, and we can determine which, if any of these proteins, actually carries out this chemical reaction.
+
+We can measure the chemical reaction because if this is a bond-breaking reaction, in this case, there's a change, a big increase in fluorescence, which we can measure.
+
+And so the best design we found here, we were very happy to see, had a very high activity. That means it could catalyze very, very many rounds of the reaction.
+
+So we've been using this approach to design catalysts for a number of different types of chemical reactions. We've been using it to make design proteins that make chemical reactions, and we're working now with the Gates Foundation to see if we can come up with cheaper and better ways to make tuberculosis drugs, where the goal is to make them as cheap as possible because they're needed in large quantities in parts of the world where there aren't a lot of resources to pay for expensive drugs.
+
+And we're also making proteins to break chemical bonds, for example break the chemical bonds in different types of plastics like PET. And we are in both cases having very promising initial results and so we're excited to see how far we can get on these problems.
+
+# De Novo Proteases and Biomineralization
+
+So I talked before about antibodies as therapeutics. And the way that these usually work, I'm going to come back here to the TNF, binding the TNF receptor, that interaction I was talking about that's important for autoimmunity.
+
+The way that antibody therapeutics, which probably many of you have taken, work, is by binding to the receptor or to the TNF-alpha to block the interaction so you do not get strong immune responses.
+
+The problem here is you need a lot of this antibody to block the interaction because for each of these receptors or TNF-alpha molecules, you need something to block it. Otherwise, it will restore the signal.
+
+Now, what we were excited about was the possibility that we could make a new type of drug that, instead of just blocking the interaction, actually acted like molecular scissors and chopped up the receptor.
+
+And the advantage is that you could then have one drug molecule that destroys many receptors, and so you can get by with much, much smaller amounts of drug, which means that you have to put less protein in you, and less protein has to get made, so it would considerably reduce the cost.
+
+So we have designed proteins now that are proteases, which means that they cut other proteins. These are pictures of two of them. We have ones that work with a metal ion, zinc, and other ones that work with just the natural 20 amino acids.
+
+And these are very exciting for us. They are very proficient catalysts. So they increase the rate of breaking of these bonds in proteins, like these bonds here, by eight orders of magnitude.
+
+And so now what we're doing is to design these proteins to cut targets that are involved in autoimmunity and pathogenesis and other areas to see if we can now make sort of combining the ability to make binders with the ability to cut bonds to make a much more effective type of therapeutic.
+
+And now in sort of a completely different area we've been fascinated by the materials that we see in nature such as bone and tooth and shells which combine proteins which are organic molecules with inorganic compounds like calcium carbonate and calcium phosphate.
+
+So we've been very interested in programming the growth of semiconductor materials like zinc oxide. And, of course, there's no proteins in nature that do this because biology didn't really care about semiconductors. Humans care a lot.
+
+So we designed proteins that are complementary to the zinc oxide lattice. And when we make those proteins, this is such a designed protein, and we add zinc oxide, we see the zinc oxide forming in the middle.
+
+So we're excited about this as a new way of templating semiconductor materials.
+
+And another example here, this is using a material that's more familiar to biology, hydroxyapatite, or calcium phosphate, which is an important component of tooth.
+
+So here we design proteins, which again are complementary to a calcium phosphate lattice. And if we take these proteins, these are electron micrographs shown here. We can see they have this cylindrical or circular shape with a hole in the middle.
+
+But the hole is where when we add calcium phosphate, we predict they will fill in. And that's exactly what we see when we add calcium phosphate. We can make tubes, and like this one shown here, this is looking down the center or looking from the side. And the tubes are empty when we don't add calcium phosphate, and when calcium phosphate is added, they fill in.
+
+And if we look in the electron microscope, we can see crystals that are clearly hydroxyapatite forming within this.
+
+So imagine being able to make new materials like tooth and bone, but now with arbitrary shapes that are programmed by design proteins.
+
+# Photosynthesis Mimics and Model Improvements
+
+And then finally, I want to tell you a little bit about photosynthesis. So at the heart of photosynthesis are proteins called the photosystems, which basically transduce absorption of light into separating electrons to ultimately drive all the chemistry needed for reducing and oxidizing compounds in plants.
+
+So these are very big complicated proteins and so what we've been doing is designing small proteins that sort of take the business end of these very complicated big proteins and sort of isolate it, and we can design proteins that hold these chlorophyll molecules in exactly the same arrangement.
+
+And then we can build these proteins into higher-order structures shown here, where each of these blue proteins here is one of these chlorophyll dimer holding proteins.
+
+So we're very interested now in increasing the light harvesting capacity of these systems and coupling these to chemical reactions which require removal or injection of electrons.
+
+And just a couple comments on how we're trying to improve these models that I've told you about briefly. So the generative AI diffusion methods, which I described at the beginning, the diffusion was carried out at the level of amino acid residues.
+
+But as we aim to design more and more sophisticated protein functions, we need to be able to control things at the level of atoms rather than amino acids.
+
+And so this shows an animation from our latest diffusion methods, which are carrying out the diffusive trajectory at the level of atoms rather than residues. And you can see as this develops, these different shaped things coming off are different amino acids that are being generated as the protein comes together.
+
+And then just as far as general modeling of biology, you've probably heard something about the AI models for biology, and there's a lot of interest in this with all the work that's being done on language models.
+
+And so we've been developing a general model that can model many of the different types of interactions that happen in cells.
+
+And one thing that we've been excited about is we can take data that's out there in the form of just the sequences of all the different organisms that live in places like hot spring vents. They're called metagenomes, large collections of microorganisms, determine their sequences, predict their structures.
+
+And when we do this, we can improve the performance of these models. When we train on these kind of data which are many many millions of these sequences we can improve the model in many different areas.
+
+So the original model is shown in orange and the improved model, after training on this metagenome sequence data, is shown in blue.
+
+So there's many, many different types of data sets in biology, and we're excited now about sort of moving up the biological complexity ladder by extending these models by training on all these diverse data sets.
+
+# Conclusion of Lecture
+
+So I tried to show you today how we're designing proteins to attack problems in medicine, technology, and sustainability.
+
+There are many, many important problems to solve. And all of these things are things that nature or evolution never really cared about during the biogenesis of all the proteins that, you know, in living things.
+
+And that's why it's so exciting to be able to design new proteins. And all this work was done by really wonderful colleagues here and around the world and the many amazing students in postdocs and other people I've been able to work with while I've been at the University of Washington.
+
+So, yeah, thanks for your attention. Happy to take questions.
+
+# Q&A Session
+
+Thank you, Professor Baker, for such an inspiring talk. Now we open the floor for asking questions to Professor Baker. There are two mics in each of the aisles.
+
+Oh, I can bring to you. So please welcome, if you are in the upper floor, unfortunately you have to come to the first floor to ask questions. And I will give this first and you will come the next. Go ahead.
+
+So I was wondering, how would you know if it was completely effective, especially since a lot of AI models have had histories of freaking out. Sorry, a lot of AI models have a history of freaking out, like deleting every single code in a system.
+
+Yeah, I'm sorry, it's really hard to hear. Yeah, maybe you'll come here. Maybe I should come here. Yeah, I was wondering. Sorry, can you say that one more time? So some AI models I've seen, they delete all the code because they freaked out.
+
+Well, we make all of our code freely available so people can use these methods to make proteins really all over the world. So, yeah, so where there's... When the code's been deleted, you can't do much with it. Okay. All right. Thank you.
+
+Could you briefly introduce yourself, like your name, before you start our questions? Thank you.
+
+Q: Okay, I'm Lynn Gottlieb, and I'm a UB, University of Buffalo graduate, and a double husky as well. And my question is about using your models for medicine, specifically for ovarian cancer, which is something that, first, it's hard to diagnose, and secondly, once it's diagnosed, it has a very high death rate. Do you know if there's work being done to create models for ovarian cancer specifically?
+
+A: Yeah, there's a lot of progress being made in treating many different forms of cancer, including ovarian cancer, using really a wide range of methods, that we can use both cell-based therapies and protein-based therapies like the ones that I described. A lot of these new efforts are still early on, so I think it may still be a few years out.
+
+Is it okay we can turn on the light? You'll be helpful. Thank you.
+
+Q: Thank you for inspiring talk. I am from NVIDIA. Thanks. You mentioned about the use of the diffusion like image generation and how do you prepare the data for this protein. Like for images, you can collect data by scraping the web, but what do you do for the proteins?
+
+And second question, for constraining the generation, like you want to generate the protein that properly fits to some geometry. How do you ensure that the generation properly fits to the constraints? So those are the two questions.
+
+A: So the first question is where do you get the data to train these kind of models? And we're very fortunate that for the protein structures, there have been generations of scientists who determined the atomic structures of proteins and then put them into a public database. And then there were other people who curated the database. So there is still, it's called the Protein Data Bank. It's a very, very large and well-maintained database, which was really key to the work I described.
+
+One of the challenges in applying AI methods in other areas of biology is there isn't that kind of database.
+
+Then the second question is, well, how do we actually constrain the models to generate the type of, generate what we want? And we do that by when we're training the model, we specify, for example, we might specify just the positions of a few of the amino acids and then the model learns to build a structure that holds those few amino acids together in the right geometry.
+
+Or we might specify for a protein-protein complex the structure of one partner and then the model learns to build proteins that bind to the partner. So it's basically by, during the training process.
+
+Q: Thanks for the answer. I do have a few more follow-up questions. For the data, by looking at this existing database, aren't you constraining yourself to this small domain of the proteins that you describe in your slides? Let see. You have to get closer to the mic. Sorry. Aren't you constraining your training data to the known types of the proteins. You mentioned that there's a wider range of protein types that's not really discovered in nature or haven't been explored. But then aren't you constraining this model?
+
+A: Yeah, I think what you're saying is that if we just train on the proteins that exist in nature, why might we not be missing out on large parts of the protein space? And in fact, that was what I was worried about when we started. But it turned out that these models, that there's enough diversity in what we're training on, that we can make really quite new things, that these models can generalize very well.
+
+And so it could be that there are some types of structures they can't make, but by and large, we really haven't seen any limit in their ability to generalize. Okay, thank you.
+
+All right, thank you.
+
+Q: Hi, I'm Ruchan. I'm an alum from UW. My questions are, how did you learn deep learning to a point where it's useful for your research since these methods weren't around earlier? And also, how did you find these strange or wacky applications of your research that's so much outside biomedicine?
+
+A: Right. Well, I think the first question is, how do you learn new things, which is a good question. I think it's always good to try to learn new things, and I was very lucky to have some very smart and energetic graduate students and postdocs who could learn new things much better than I could. But science is always changing, so you always have to be learning new things. If you do the same thing over and over again, then, you know, then you don't learn new things as much.
+
+And then as far as the applications, yeah, I'm not really an expert in a lot of these new areas we're working in, but it's kind of the same answer that, you know, you have to learn new things and learn about them, and you have to, you know, find people in the world who not only are experts, but they're willing to help you learn also.
+
+Q: Okay. Thank you so much for the great talk. I'm an undergraduate at UW, and my question is, what kinds of constraints are there on, like, what is actually possible with these models and what is like out of reach with these proteins if anything.
+
+A: Yeah that's a good question. Well I think what possible is really our inspiration for that is all the amazing things that occur in the processes of life. Those are all mediated by proteins. So if you think about anything that exists in any crazy animal plant or microorganism, those sort of processes should be amenable to protein design.
+
+Things which are hard are things solving problems requiring really global scale because it's hard to make proteins at a really enormous scale. And proteins are also, you know, they're kind of soft materials. So that's one of the reasons we've been excited about this biomineralization. If we could template the formation of inorganic structures, we could get around one of the limitations of biological materials.
+
+Thank you.
+
+Q: Great. Could you help to adjust the microphone? Yeah, hi. I'm Fred Castles, formerly of NIAID and PATH, and currently consulting. Wonderful presentation. Thank you so much.
+
+Early on, you talked about influenza, hemagglutinin, and generating a monoclonal to that. What about the reverse? Can you take a monoclonal and then generate the antigen from that, ultimately for vaccine design?
+
+A: Right. So, yeah, so my colleague Neil is doing that, and we have been using that type of approach for vaccine design for a number of years, starting when Bill Schief was here many years ago. And there we do exactly that. We identify an antibody which is very effective at blocking a pathogen. And then we design a protein that elicits that antibody that sort of is complementary in shape. And that approach has worked quite well for training the immune system. And it's showing promise now even for very difficult challenges like an HIV vaccine, where it looks like you have to do that elicitation in several steps.
+
+Thank you. Okay, great.
+
+Q: Hello, my name is Coral. I'm from Orcas and I'm eight years old. My question is, with all the proteins in the world, what's one protein that you would want to make?
+
+A: Oh, that's a good question. Well, yeah. Well, one of the things that proteins do in nature is they are machines and motors, and they, like when we move, they're little protein motors that make our muscles move. And so right now we're very excited about making new types of machines and motors.
+
+Thank you. Wonderful. Thank you.
+
+Q: Thank you so much for the wonderful lecture. I'm a sophomore at Lincoln High School, and my question is, how do sugars that are attached to certain proteins affect how the process of diffusion works for creating successful binding for those proteins?
+
+A: I'm sorry, can you say that one more time?
+
+Q: If a protein has, in nature, has a certain sugar bound to it, how will that affect the diffusion process?
+
+A: Right. So that's important coming back to the influenza, the flu virus, and HIV. Both of those viruses have many sugars on their surface, which are there to block immune recognition. So our first diffusion methods couldn't really treat that sugar. So we just had to aim for regions where we knew there weren't sugars.
+
+But the most recent methods I talked about where we're modeling all the atoms, now we have all the sugars there. So the proteins can sort of hone in and the diffusion process goes in between the sugars pretty much.
+
+Thank you.
+
+Q: Thank you for your wonderful talk tonight. And my name is Tanza. I'm a second-year physics student. And my question is, after the AI model generated the protein we want, how do we sustainably synthesize the DNA sequence for the desired protein? Or when we are generating the protein does the model need to concern what kind of protein structure we want to use based on the method we synthesize DNA such as [[CRISPR|gene-editing]]?
+
+A: Yeah, you're asking how do we actually make the DNA that encodes the protein? Yeah, well, that's a good question. And I should say that, you know, any kind of advances in science almost always depend on previous advances.
+
+And so during the Human Genome Project, there were a lot of advances in [[making DNA|dna/synthesis/notes]]. And so now it's [[very easy to synthesize a gene that encodes any new protein you want|dna/synthesis/notes]] to. It's just, you know, A's, T, G, and C in a particular order.
+
+So we are regularly obtaining, you know, 100,000 different genes encoding different proteins, designed proteins. So that part was really solved during the genome projects, how to make DNA very effectively. We actually just buy these genes from a company. Actually, there are several companies that make genes, and we are always negotiating for better prices.
+
+Thank you.
+
+Q: You mentioned newer models being able to incorporate things like lipids and hydrocarbons. I was wondering how you update what was originally amino acid embeddings to more general cases like steroids or lipids or hydrocarbons.
+
+Right. So how would you include, go beyond amino acids to include lipids or other things in? Well, we can now, with the latest models, include anything that, basically anything that's made out of atoms, any arrangement of atoms.
+
+The most important way, though, that we've extended these to new compounds is to now include RNA and DNA, because we can also encode those in sequences. So we have recently generalized this so we can make new RNA molecules with new shapes and new functions. OK, great.
+
+Q: Hello. I'm a postdoc at Fred Hutch. And when I was an undergraduate, I remember exploring the protein folding problem using a program called Foldit which is when I first became aware of work from your lab I think. And it was kind of a video game like where the player helped to solve a protein structure but it was also a citizen science type initiative where the lab was gathering data you know from this video game about how protein structures were folded. So I was wondering, I have the impression, I guess, that stuff like that has been totally superseded by AI, but I'm wondering if you still see a role for citizen science in your field.
+
+A: Yeah, well, Foldit still is going on. And, yeah, so it's a game that we developed a number of years ago with Zoran Popović, who's a professor in computer science. And at that time, we were very interested in involving the general public in solving these problems. And that was back when we were mainly working with the physical models. And they had the problem they really couldn't see far enough. and we were interested in whether humans could see a little further and do some of the problem solving at a higher level.
+
+And we found, or the game players really showed that that was possible, which was very exciting. I would say that the AI methods now also can look further than the physical models. The physical models had sort of a hard time seeing further than the distance of interactions between two atoms, which is about 10 angstroms.
+
+Q: Hi, I'm an undergraduate student at the University of Washington, but I was wondering for the rheumatoid arthritis treatments, if you're cutting off the TNF receptors with protease, how does that affect normal immune response slash inflammation? Because I know that TN, or I've seen that TNFR2 has been seen to affect normal homeostasis and help with normal immune response, but then TNFR1 is considered more harmful. Do you guys target TNFR1 for that kind of treatment?
+
+A: Right, so in that case, that's one of the advantages of targeting TNFR1 rather than TNF. So, right, so we're specifically targeting TNFR1 in that case. We have other molecules that specifically target TNFR2, so it depends on whether you want to dampen or increase the immune response.
+
+Thank you.
+
+Q: Hey, I'm Siddharth. I'm an undergrad at the University of Washington. I was wondering what types of things can you condition the diffusion model on, and how do you generate the data to train a diffusion model conditioned on these different things. And what was the last part I guess how do you is there any data augmentation or anything you have to do to the data set to like actually condition the model.
+
+A: Right. So we use the Protein Data Bank quite heavily, but sort of on my last slide, I was talking about augmenting the data. There is a lot of data in biology that's not protein structures. It might be, for example, these two proteins bind each other, or this protein binds DNA. We don't, the structure isn't known, but we're now working hard to make use of that sort of data for data augmentation because the limited data is a problem.
+
+But for training the model to do the task I showed tonight, the binding problem, and the catalytic site-supporting things, it turns out that you have to be clever in how you use the data you have. But as I showed, it is possible to condition these models to obey constraints quite effectively. That said, augmenting with more data will be really important to make these models better.
+
+Q: Hi. Is this on? Yes. I'm seeing you're designing genes and you're designing amino acids and you're designing proteins that do wonderful things. And I, being a math major, look at the whole picture, and I'm wondering, is there an oops factor? In other words, are there things that you design a genetic sequence, and it starts doing things far beyond what you wanted and things you can't control anymore?
+
+A: Oh, well, we more often have the opposite problem, that we design things that look beautiful on the computer, that they should solve a critical world problem, and then they don't do anything at all. So we haven't had cases where we design a protein that does something very different from what we aimed. Sometimes we get pleasantly surprised, and we design a protein to solve a problem, and it actually works way better than we thought. So that's sort of the pleasant type of surprise.
+
+Q: Hi. I'm visiting with the Port Angeles High School, and I was wondering if you've ever tried making proteins for, like, paralyzed people, and, like, if you try making, like, proteins or, like, structures to help with the nervous system, like, connecting so they can, like, have motion again, if you've ever, like, tried anything like that.
+
+Sorry, can you say the last part of our...? Get closer to the mic, it's a little hard to... Like if you've tried making proteins or any type of structure to help with the nervous system and like help them gain motion again, if that's like possible.
+
+A: Oh, I see. Yeah. I think designing proteins that interact with the nervous system is a very, very important area now. We're trying to make, sort of come up with new ways of addressing neurons, but it's very early still.
+
+Q: Hey, good evening, Dr. Baker. My name is Lee, and I'm doing research. I'm an undergraduate researcher in Ruholla Baker Lab, and my question is from two of my observations. Observation number one is that when we are utilizing design proteins in human receptors, we see, we actually see de novo signaling cascade pathways that we don't normally see using the native or natural ligands. And observation number two is that I am aware and I know there are some startups that utilizes machine learning to do embryonic genetic sequencing. So, for example, here's a startup called Nucleus Genomics that fund raised $32 million last three years. And I wonder, do you foresee a future where RoseTTAFold or RFdiffusion, et cetera, collaborate with companies like that so humans can design [[human embryos and to make super smart babies and stuff like that?|genetic-modifications]]
+
+A: So I didn't hear the last part.
+
+Q: I wonder, well, AI-designed proteins collaborate with companies that does genetic sequencing so we can design an embryo that actually exceeds the limits. like physical or mental limits that humans have.
+
+A: Oh, I see. Well, OK. So you're asking about designer embryos. Yes. Yeah. Well, as you said, there is work going on in that. We're not involved in that I think most of those efforts are involved in are sort of focusing on trying to identify you know genetic diseases and fixing the problem that you know genetically. But, yeah, that's, of course, a whole new, that's a whole field, which is controversial enough that I probably shouldn't comment on it anymore tonight. But yeah, I mean, protein design methods can be used in general, as I've showed for quite a variety of things.
+
+I mean, so today I'll give you a less controversial example. So I have a visiting professor from Purdue on sabbatical in my lab who works on wheat. And one of the problems with wheat is that there's wheat rust. there's funguses that make a lot of the wheat crop just not usable, where there's a toxin, and fusarium it's called.
+
+And so he came here to see if there was a way of genetically modifying wheat plant, wheat so that they're resistant to the fungal pathogens. And I think that is a, that's something that's very interesting where there's a specific problem and we're essentially,
+
+So modifying the genome of wheat, or we would like to try, to make it resistant to these pathogens. Right now, people just spray a lot of fungicide everywhere, but that's not very effective and not very good for the environment.
+
+Before, due to the time constraint, we can only see more questions. So I think two of you can stay, and you can stay. And then sorry for the rest, but we do have a limited time. Okay, let's go.
+
+Q: Thank you again for your presentation. My name is Sonali. I'm an undergraduate student here at UW. And you mentioned that there might be some sustainability applications in terms of, like, breaking down plastics and dealing with, like, photosynthesis. Do you think there's further applications for potentially carbon capture? or I've read some research of using algae to like break down oil or other toxic waste. Do you think protein design has some applications within that field?
+
+Yeah, well, I think so. So carbon fixation, most of the carbon fixation on the planet is done by a protein called Rubisco. And so that shows that proteins can fix carbon. And there are some there a lot of interest right now in fixing carbon in smokestacks when it concentrated.
+
+And so we're working with groups trying to improve the capture of carbon under those circumstances. We're also collaborating with a group who's trying to improve the efficiency of Rubisco itself.
+
+As for breaking toxic compounds, we are trying now to break down the sorts of bonds found in forever chemicals, like the PFAS compounds, and those are very difficult to break. That's why they're called forever chemicals. But again, given the precedent of what we see in nature, we think it should be possible.
+
+Thank you. Great. Thank you.
+
+Q: I'm an exchange student from Tokyo. Can you tell me more about your view on physics calculation with protein design? In your view, do you foresee any major breakthrough in protein design based on first principle or physics-based model in the future?
+
+Well, when – so we were developing – we were working for many years on physically-based models. And then when we started developing deep learning models, we found they were very effective. and it seems certain that there should be a way of putting the two together.
+
+One of the reasons why that has been difficult, one of the problems with physical models, that they had many parameters and we didn't have a good way of determining their values.
+
+With the deep learning methods, it's kind of like having a model. It's got 100 million parameters, but you have a way of fitting those parameters by training on a large data set.
+
+Where the physical models are important, is in places where there really isn't much data. So when we want to model how a protein might interact with a mineral surface or with types of compounds that are just not encountered in nature, then the physical models are still important.
+
+Thank you very much.
+
+Q: Right. So I have two questions. The first one is that you are designing new proteins that don't exist in nature. Could there be any unwanted consequence that we end up polluting our world with something new? Just like in history, we designed plastic. And at that time so plastic is something totally human made that does not exist in nature But later we figure out it very difficult to get rid of plastic So this is the first question.
+
+Second is that Sorry I didn’t quite catch the first question. Are you saying could we be designing things that might afterwards be problematic? Yeah, so because we are designing new proteins that don't exist in nature.
+
+A: Right. So let me just stop with that. So one of the problems in medicine is that if you put a new protein into the body, then it can cause an immune response. So we're working on ways now to reduce the immune response.
+
+Another general question that I get asked a lot is, might people use these methods to make proteins which are dangerous? And there, the answer is that nature has already figured out how to make very, very dangerous proteins, like we talked about the viruses like influenza virus and other types of toxins. So I see many more applications for protein design in blocking sort of dangerous proteins that exist in biology.
+
+Right, yeah. Yeah, okay, thank you. I think you also answered the second question I was about to ask. Thank you.
+
+Q: Okay, thanks. Great. Okay, our last question. So my question was more general, like about your work and then like two specific things. I was wondering like in general, beyond like anti-immune response, what was the main benefit that being de novo provides, like de novo therapeutic or de novo technology, and specifically for things like antibody therapeutics, where there's been a lot of traditional antibody therapeutics, and then also like nanopore DNA sequencing. We already have lots of different DNA sequencing mechanisms. So I was just wondering what the unique advantage of de novo was, in your words.
+
+A: Yeah, well, that's a very good question. And the answer is that if there's already a protein in nature which solves the problem you're trying to solve, then there's no need to build things from scratch.
+
+Coming to nanopores, the work we're doing with Jens on making nanopores that fit into silicon nitride chips, there is nothing in nature to use there. We have to build it from scratch. There just is nothing in nature to use there, so we have to build it from scratch.
+
+So the approach of taking things that exist in nature or modifying them a little bit works very well when there are things that already sort of solve the problem. But if you want to do something really new, then you need to build it from scratch.
+
+Thank you.
+
+All right. So thank you for our distinguished speaker. Thank you for your insightful speech and Q&A. And also, I'd like to thank you for your wonderful parents and family joining the event. And you really give us this wonderful journey to share our night. And I would like to thank everyone who joined the event today because of your support and make this a memorable event. And thank you for everyone. We should have a good, safe home. And look forward to seeing you in the next event.
+
+## LLM extracted insights
+
+- **Inverse Design Paradigm**: Bypass central dogma by specifying function/structure first (e.g., binder geometry, catalytic triad positions), conditioning diffusion to scaffold compatible backbones/residues, enabling exploration of vast non-natural sequence space beyond evolutionarily clustered families.
+
+- **Diffusion Generative Modeling**: Noise PDB structures/residues/atoms, train denoising network (analogous to DALL-E); reverse-process pure noise conditioned on targets (e.g., fixed partner pose for binders, residue positions for catalysts) yields high-confidence designs (often <1Å RMSD to experimental structures), generalizing via latent manifold interpolation.
+
+- **Conditioning Tricks**: Motif scaffolding (fix catalytic residues), partner-conditioned binding (complementarity emerges via shape/electrostatics), topology specification (e.g., antibody-like CDR loops), multi-objective (binder + protease active site); atomic diffusion handles disorder/glycans.
+
+- **Experimental Pipeline Insight**: High-throughput (96-well gene synthesis/expression/assay), success rates ~1-10% for complex functions; validate via cryo-EM/X-ray, functional metrics (KD < pM, kcat/KM >10^6 M^-1 s^-1).
+
+- **Physics-AI Synergy**: Early Rosetta energy minimization/jigsaw packing for de novo folds; AI extrapolates, physics validates extremes (e.g., non-biological interfaces like SiN); lowest-free-energy funnel ensures foldability/stability.
+
+- **Key Applications Pivot**: De novo trumps mining when nature lacks solutions (e.g., SiN nanopores, semiconductor templating, effector-switched immunotherapies); catalytic destruction (proteases) > stoichiometric blocking (antibodies) for dosing/cost.
+
+- **Scaling Insight**: Metagenomes augment sequence data for better generalization; RNA/DNA design extends to nucleic acids.
+
+## Transcription Difficulties and Uncertainties
+
+- **Repetitions from Chunking**: Phrases like "when we take these proteins we into solution, they very rapidly aggregate. and tau, and you take those proteins, you put them into solution, they very rapidly aggregate." cleaned to single coherent instance; similar for nanopores/SiN.
+
+- **Names**: "Deeb Gupta" → likely "Deep Gupta"; "David Herzog" → "David Hertzog" (muon g-2); "Xiaodong Zhu" → "Xiudong Xu" or "Xu Dongxiao" (fractional AQHE); "Hans de Meltin" → "Hans Dehmelt"; "SENPA" → "CENPA"; "Ruholla Baker Lab" → likely "Roland Dunbrack" or misheard, but context undergrad lab; "Zorn Pupovic" → "Zoran Popović"; "Bill Sheaf" → "Bill Schief".
+
+- **Technical Terms**: "RFID fusion" → "RFdiffusion" (RoseTTAFold Diffusion); "Rosita fold" → "RoseTTAFold"; "Elfin runes" → "Elven runes"; "Disheveled or Humpback" → likely "Dishevelled", "Hunchback" (Drosophila genes).
+
+- **Mishears**: "Orcus" → "Orcas" (island); "protons or" → "proteins or"; "wheat rust... fusarium" → Fusarium head blight/toxins; "Port Angeles High School" clear.
+
+- **Ambiguities**: Exact collaborators (e.g., "Brian Kramer" → "Brian Kraemer"); "incubator for quantum simulation" → likely "IQSS" or similar; minor pauses/echoes ("I kind of hear an echo") preserved narratively but smoothed.
+
+
+
+
