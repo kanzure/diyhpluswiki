@@ -39,7 +39,7 @@ This wishlist contains some speculation and brain storming and shouldn't be cons
 * gene editing proteins (see [[gene editing|gene-editing]] for various effectors or components that could be used in protein engineering)
 * enzymes for [[DNA synthesis]]
 * molecular recording (like in vivo DNA-based recording devices, for debugging or otherwise, [[lineage tracing]] techniques, [[DNA ticker tape]] memory, see "Of toasters and molecular ticker tapes" by Kording)
-* protein binding affinity stuff ([protein-protein interaction](https://en.wikipedia.org/wiki/Protein%E2%80%93protein_interaction)) 
+* protein binding affinity stuff ([protein-protein interaction](https://en.wikipedia.org/wiki/Protein%E2%80%93protein_interaction))
 * catalytic activity, enhancement of catalysis or reduction of catalysis
 * synthetic metabolisms
 * biosensors
@@ -75,91 +75,83 @@ Well, it's probably time to update this page... lots of recent <a href="https://
 
 This might get a little sloppy.
 
----
-
-## 1. Core Engineering Strategies (Mechanistic Foundations)
+## Core Engineering Strategies (Mechanistic Foundations)
 
 | Strategy | Mechanistic Basis | Typical Applications | Key Design Levers |
 |----------|-------------------|----------------------|-------------------|
-| **Coiled‑coil / Leucine‑zipper dimerization** | Helical packing of hydrophobic residues; electrostatic surface charge | Stabilizing enzyme activity, scaffold assembly, synthetic signaling | Length of helical repeat, hydrophobic‑index, charge pattern |
-| **Site‑Directed Mutagenesis** | Precise amino‑acid substitution at a defined position | Changing substrate specificity, thermostability, removing protease sites | Alanine scanning, saturation mutagenesis at catalytic or interface residues |
-| **Rational Active‑Site Redesign** | Structural knowledge (X‑ray, cryo‑EM) + computational modeling | Enhancing catalysis, altering reaction mechanism | Catalytic triad geometry, transition‑state stabilization, electrostatic complementarity |
+| **Coiled‑coil / Leucine‑zipper dimerization** | Helical packing of hydrophobic residues; electrostatic surface charge | Stabilizing enzyme activity, scaffold assembly, synthetic signaling | Length of helical repeat, hydrophobic‑index, charge pattern. Stability is tuned with core-packing (a/d layers), electrostatic e/g pairs and helix length. |
+| **Site‑Directed Mutagenesis** | Precise amino‑acid substitution at a defined position | Changing substrate specificity, thermostability, altering protease cleavage sites via targeted mutations at recognition motifs | Alanine scanning or saturation mutagenesis at catalytic or interface residues for functional mapping |
+| **Rational Active‑Site Redesign** | Structural knowledge (X‑ray, cryo‑EM) + computational modeling | Enhancing catalysis, altering reaction mechanism | Catalytic triad geometry in serine-protease-like enzymes (many enzymes such as lyases, isomerases, radical SAM lack a triad), transition‑state stabilization via electrostatic pre-organisation or proton-shuttling residues, electrostatic complementarity |
 | **Fusion Protein Construction** | Covalent linkage of two domains via a linker | Chimeric enzymes, tagging, biosensors | Linker length & flexibility (Gly‑Ser repeats vs. α‑helical), domain orientation |
 | **Affinity Tagging** | Short peptide that binds a resin or antibody | Rapid purification, immobilization | His‑tag, GST, MBP, FLAG, Strep‑II |
 | **Protease‑Cleavable Tags** | Tags containing a specific amino acid sequence recognized and cleaved by an added exogenous enzyme | Removing tags to yield near‑native proteins | TEV, PreScission, thrombin recognition sites |
-| **Self‑Cleaving Tags** | Autocatalytic domains that cleave spontaneously or upon induction (e.g., pH, thiols) without exogenous protease | Producing native‑length proteins; simplifies purification steps | Inteins (e.g., *Ssp* DnaB), N‑pro, 2A peptides |
+| **Self‑Cleaving Tags** | Autocatalytic domains (e.g., inteins) that cleave via nucleophilic attack by the N-extein side-chain or upon induction (e.g., pH, thiols) without exogenous protease | Producing native‑length proteins; simplifies purification steps | Inteins (e.g., *Ssp* DnaB), N‑pro, 2A peptides |
 | **PTM Engineering** | Introducing or removing phosphorylation, glycosylation, SUMOylation sites | Controlling activity, stability, localization | Adding consensus motifs, mutating serine/threonine/tyrosine, N‑glycosylation sequons (N‑X‑S/T) |
 | **PPI Modulation** | Short peptide motifs (SH3, PDZ, WW) or nanobodies | Rewiring signaling, synthetic scaffolds | Interface grafting, hotspot mutation, nanobody epitope mapping |
-| **Flexible Linker Insertion** | Gly‑Ser repeats or other flexible sequences | Reducing steric hindrance, allowing domain movement | Linker length, composition (Gly, Ser, Ala) |
-| **Unstructured Region Deletion** | Removing intrinsically disordered tails or loops | Improving solubility, reducing proteolysis | Identification of low‑complexity sequences, NMR/MD disorder predictions |
-| **Degron / Protein‑Degradation Tags** | Short sequences recognized by ubiquitin‑proteasome or autophagy | Controlling turnover, studying dynamics | PEST sequences, N‑end rule degrons, auxin‑inducible degron (AID) |
+| **Flexible Linker Insertion** | Gly‑Ser repeats or other flexible sequences (e.g., (Gly-Gly-Ser-Gly-Ser)n safer in mammalian cells to avoid O-glycosylation) | Reducing steric hindrance, allowing domain movement | Linker length, composition (Gly, Ser, Ala) |
+| **Unstructured Region Deletion** | Removing intrinsically disordered tails or loops | Improving solubility, reducing proteolysis | Identification of low‑complexity sequences via sequence-based disorder predictors (e.g., IUPred, MetaDisorder) |
+| **Degron / Protein‑Degradation Tags** | Short sequences recognized by ubiquitin‑proteasome or autophagy | Controlling turnover, studying dynamics | PEST sequences, N‑end rule degrons, auxin‑inducible degron (AID); note that AID is a *plant* degron; in non-plant cells an F-box protein (TIR1) must be co-expressed, otherwise the tag is inert. |
 | **Optogenetic Modules** | Light‑responsive domains (LOV, CRY2, PhyB) fused to a target | Spatiotemporal control of activity | Chromophore pocket mutations, photocycle kinetics, helix rotation |
-| **CRISPR‑Cas Fusion** | Cas9 or dCas9 (deactivated or dead Cas9) fused to effectors (activators, repressors, epigenetic modifiers) | Gene regulation, epigenome editing | Domain swapping, linker optimization, nuclear localization signals |
+| **CRISPR‑Cas Fusion** | Cas9 or dCas9 (deactivated Cas9) fused to effectors (activators, repressors, epigenetic modifiers) via flexible linkers | Gene regulation, epigenome editing | Linker optimization, nuclear localization signals (effectors appended without domain swapping that disrupts HNH/RuvC folds) |
 | **Nanobody / VHH Fusion** | Single‑domain antibody fused to enzyme or reporter | Targeted delivery, stabilization | Framework mutations, dimerization interfaces |
 | **Aptamer‑Based Tethering** | Nucleic‑acid aptamer that binds a protein to bring it into proximity | Conditional activation, proximity labeling | Aptamer selection (SELEX), binding affinity tuning |
-| **Synthetic Scaffolds (SpyTag/SpyCatcher)** | Covalent peptide‑protein chemistry | Modular assemblies, enzyme cascades | SpyTag/SpyCatcher pairing, spacer length |
+| **Synthetic Scaffolds (SpyTag/SpyCatcher)** | Isopeptide bond formed between Asp side-chain and Lys ε-NH₂ within the SpyCatcher domain | Modular assemblies, enzyme cascades | SpyTag/SpyCatcher pairing, spacer length |
 | **Protein‑DNA Fusion** | DNA‑binding domain fused to an enzyme | Locus‑specific regulation | DNA‑binding motif design, linker orientation |
 | **Molecular Glue / PROTACs** | Small molecule or peptide that links target to an E3 ligase | Targeted protein degradation | Ligand selection, linker length, binding affinity |
 | **Allosteric Modulator Domains** | Domain that binds a small molecule to control activity | Chemical control of function | Binding pocket design, conformational coupling |
 | **Synthetic Riboswitch‑Controlled Expression** | Riboswitch embedded in mRNA to modulate translation | Metabolic control, feedback loops | Aptamer‑to‑transformation, ligand binding site optimization |
-| **Humanization** | Swaps framework residues to the closest germ‑line set while preserving CDR backbone conformation, removing immunogenic patches without altering paratope geometry | Reducing immunogenicity of therapeutic antibodies, improving compatibility with human immune system | Framework residue selection, CDR backbone preservation, patch removal |
-| **Scaffold Repurposing** | Grafts catalytic or binding domains onto a stable, expressible protein skeleton, using rigid secondary‑structure elements as attachment points and requiring core optimisation to preserve the fold while introducing new activity | Creating engineered enzymes, chimeric receptors, synthetic scaffolds | Rigid attachment sites, domain orientation, scaffold stability |
+| **Humanization** | Grafts non-human CDRs onto a human framework; subsequently optimizes to closest germ-line identity while preserving CDR backbone conformation, removing immunogenic patches without altering paratope geometry | Reducing immunogenicity of therapeutic antibodies, improving compatibility with human immune system | Framework residue selection, CDR backbone preservation, patch removal |
+| **Scaffold Repurposing** | Grafts catalytic or binding domains onto a stable, expressible protein skeleton, using secondary‑structure elements with geometric compatibility (RMSD, loop length, orientation) as attachment points and requiring core optimisation to preserve the fold while introducing new activity | Creating engineered enzymes, chimeric receptors, synthetic scaffolds | Attachment sites by geometric compatibility, domain orientation, scaffold stability |
 | **Sub‑Cellular Targeting Motifs** | Appends short, evolutionarily honed peptide codes—NLS, MLS, myristoylation, palmitoylation, ER‑retention, PTS1, mitochondrial TOM/TIM signals—to steer nascent chains through membrane translocons or vesicular trafficking pathways | Targeting proteins to nucleus, mitochondria, plasma membrane, secretory pathway | Motif placement, context‑dependent processing, signal peptide design |
 | **Kinase‑Based Trafficking Tags** | Embeds phosphorylation‑dependent PDZ or 14‑3‑3 interaction motifs that couple protein movement to local kinase gradients, delivering cargo to presynaptic or postsynaptic densities | Synaptic protein targeting, signal‑dependent trafficking | Phosphorylation sites, interaction domain compatibility, spatial regulation |
-| **Ubiquitin Tagging for Localization** | Installs mono‑ubiquitin or K63 chains to direct localization/signaling while minimizing proteasomal degradation associated with K48 linkages, exploiting ubiquitin‑binding domain networks | Targeting proteins to specific cellular compartments, signaling hubs | Ubiquitin‑binding domain selection, linkage type, chain length |
+| **Ubiquitin Tagging for Localization** | Installs mono‑ubiquitin or K63 chains to direct localization/signaling (K63 less efficient than K48 at initiating proteasomal degradation but still processible) while exploiting ubiquitin‑binding domain networks | Targeting proteins to specific cellular compartments, signaling hubs | Ubiquitin‑binding domain selection, linkage type, chain length |
 | **Glycosylation as Trafficking Passport** | Positions N‑glycan sequons in surface loops to recruit calnexin/calreticulin quality‑control or Golgi‑lectin sorting receptors, influencing ER exit, apical vs. basolateral delivery, or lysosomal routing | Controlling protein trafficking, secretion, membrane localization | Sequon placement, loop accessibility, glycan processing pathways |
-| **Azobenzene Photocontrol** | Site‑specifically incorporates azobenzene unnatural amino acids whose trans–cis isomerization toggles the distance between two side-chain attachment points to induce conformational changes, conferring reversible light‑switchable activity | Light‑controlled enzyme activity, conformational switches | Incorporation site, isomerization kinetics, structural impact |
+| **Azobenzene Photocontrol** | Site‑specifically incorporates azobenzene unnatural amino acids whose trans–cis isomerization toggles the distance/orientation between attachment points on the azobenzene moiety linked to side chains, modulating effective geometry between hosting residues to induce conformational changes, conferring reversible light‑switchable activity | Light‑controlled enzyme activity, conformational switches | Incorporation site, isomerization kinetics, structural impact |
 | **Unnatural Amino Acids (UAAs) as Bio‑Orthogonal Handles** | Uses orthogonal tRNA/synthetase pairs to introduce p‑azido‑phenylalanine, alkynyl‑lysine, or other reactive UAA, enabling click chemistry, photocrosslinking, or post‑translational modifications impossible within the canonical set | Site‑specific labeling, cross‑linking, chemical biology probes | tRNA/tRNA‑synthetase specificity, metabolic stability, incorporation efficiency |
 
----
-
-## 2. Protein Classes – Designability vs. Expressibility
+## Protein Classes – Designability vs. Expressibility
 
 | Protein Class | Designability (Structural/Computational) | Expressibility/Foldability (Cellular Context) | Typical Success Rationale (Mechanistic Levers) | Representative Examples |
 |---------------|----------------------------------------|------------------------------------------------|----------------------------------------------|------------------------|
-| **GPCRs** | High – many crystal structures, AlphaFold predictions | Medium – need membrane environment, chaperones | Thermostabilizing point mutations, microswitch (DRY, NPxxY) engineering, ionic-lock-stabilising substitutions | β2‑adrenergic receptor thermostabilization; biased agonist design |
-| **Ion Channels** | High – pore architecture known | Medium – require lipid bilayers, proper gating | Selectivity filter size/charge, voltage‑sensor gating charges, pore helix dipoles | Voltage‑independent channels; fluorescent voltage sensors |
+| **GPCRs** | High – many crystal structures, AlphaFold predictions | Medium – need membrane environment, chaperones | Thermostabilizing point mutations, toggle-switch engineering (NPxxY forms the toggle-switch with Tyr-7.53), ionic-lock-stabilising substitutions | β2‑adrenergic receptor thermostabilization; biased agonist design |
+| **Ion Channels** | High – pore architecture known | Medium – require lipid bilayers, proper gating | Selectivity filter size/charge, S4 voltage-sensor gating Arg residues, pore helix dipoles | Voltage‑independent channels; fluorescent voltage sensors |
 | **Enzymes** | High – active‑site geometry often dictated by a few residues | Medium – some enzymes need cofactors or chaperones | Catalytic triad geometry, substrate‑anchoring subsites, transition‑state stabilization | High‑fidelity polymerase; proteases with novel cleavage sites |
-| **Antibodies / Nanobodies** | High – phage/yeast display libraries | Medium – expression of full IgG can be challenging | CDR length/composition, framework stability, Fc‑glycosylation | Bispecific antibodies; intracellular nanobodies |
+| **Antibodies / Nanobodies** | High – phage/yeast display libraries | Medium – expression of full IgG can be challenging | CDR-H3 conformation, framework stability, Fc‑glycosylation | Bispecific antibodies; intracellular nanobodies |
 | **Optogenetic Proteins** | High – modular domains | Medium – chromophore incorporation | Chromophore pocket mutations, photocycle kinetics, helix movements | Red‑shifted opsins; faster‑acting LOV domains |
 | **Receptor Tyrosine Kinases** | Medium – dimerization and autophosphorylation complex | Medium – require extracellular ligand binding | Domain swapping, interface grafting, synthetic ligand activation | EGFR chimeric receptors |
-| **Transcription Factors** | Medium – DNA‑binding specificity can be altered | Medium – expression stability variable | Base‑specific readout, DNA‑binding domain design, linker length | dCas9‑VPR activators; synthetic zinc‑finger TFs |
-| **Structural Proteins** | Low – repetitive, β‑rich scaffolds | Low – hard to express recombinantly | Core packing, repeat number control | Engineered collagen scaffolds |
-| **Membrane Transporters** | Medium – pore architecture known | Low – lipid‑dependent folding, assay difficulty | Substrate‑binding cavity mutagenesis, gating domain engineering | Aquaporin selectivity tuning |
-| **Viral Coat Proteins** | Medium – capsid symmetry known | Low – assembly fidelity critical | Surface loop modifications, core residue integrity | AAV capsid engineering; VLP display |
+| **Transcription Factors** | Medium – DNA‑binding specificity can be altered | Medium – expression stability variable | Base‑specific readout, DNA‑binding domain design (e.g., helix-turn-helix in some families), linker length | dCas9‑VPR activators; synthetic zinc‑finger TFs |
+| **Structural Proteins** | Low – repetitive, β‑rich scaffolds | Low – hard to express recombinantly | Core packing hydrophobic residues | Engineered collagen scaffolds |
+| **Membrane Transporters** | Medium – pore architecture known | Low – lipid‑dependent folding, assay difficulty | Substrate‑binding cavity mutagenesis, gating domain engineering (e.g., helical tilts) | Aquaporin selectivity tuning |
+| **Viral Coat Proteins** | Medium – capsid symmetry known | Low – assembly fidelity critical | Surface loop modifications while preserving quasi-equivalent contacts | AAV capsid engineering; VLP display |
 | **Complex Multi‑Domain Enzymes** | Low – inter‑domain interactions tight | Medium – modular assembly possible | Domain swapping, linker redesign, active‑site complementation | Engineered PKS for novel metabolites |
-| **Highly Glycosylated Proteins** | Low – glycoform control difficult | Low – folding depends on glycosylation | Glyco‑site engineering, cell‑line glycosyltransferase knockout | Glycosylation‑site modulation |
+| **Highly Glycosylated Proteins** | Low – glycoform control difficult | Low – folding depends on glycosylation | Sequon engineering (glycoform control requires cell-line engineering such as glyco-knockouts) | Glycosylation‑site modulation |
 | **Humanized Antibodies** | High – framework grafting is computationally tractable | Medium – expression of full IgG can be challenging | Framework residue selection, CDR backbone preservation, immunogenic patch removal | Therapeutic antibodies with reduced immunogenicity |
-| **Scaffold‑Based Enzymes** | High – repeat or domain scaffolds are designable | Medium – some scaffolds require chaperones | Rigid attachment sites, domain orientation, scaffold stability | DARPins, repeat proteins, synthetic scaffolds |
+| **Scaffold‑Based Enzymes** | High – repeat or domain scaffolds are designable | Medium – some scaffolds require chaperones | Attachment sites by minimal perturbation of catalytic Cα positions, domain orientation, scaffold stability | DARPins, repeat proteins, synthetic scaffolds |
 | **Azobenzene‑Controlled Proteins** | Medium – incorporation site selection | Medium – photo‑isomerization may affect folding | Site‑specific UAA incorporation, structural impact of isomerization | Light‑switchable enzymes, conformational switches |
 | **Ubiquitin‑Tagged Proteins** | Medium – degron design is tractable | Medium – need to avoid proteolysis | Ubiquitin‑binding domain selection, linkage type, chain length | Targeted localization to endosomes or DNA‑damage foci |
 
----
-
-## 3. Key Design Levers for Each Class
+## Key Design Levers for Each Class
 
 | Class | Primary Levers (Mechanistic) | Secondary Levers |
 |-------|------------------------------|------------------|
-| **GPCRs** | Microswitch motifs (DRY, NPxxY), ionic lock, ligand‑binding pocket shape | G‑protein coupling interface, β‑arrestin recruitment sites |
-| **Ion Channels** | Selectivity filter residues, voltage‑sensor gating charges, pore helix dipoles | Allosteric modulatory sites (e.g., calmodulin binding) |
+| **GPCRs** | Toggle-switch motifs (NPxxY), ionic lock, ligand‑binding pocket shape | G‑protein coupling interface, β‑arrestin recruitment sites |
+| **Ion Channels** | Selectivity filter residues, S4 voltage-sensor gating Arg residues, pore helix dipoles | Allosteric modulatory sites (e.g., calmodulin binding) |
 | **Enzymes** | Catalytic triad geometry, substrate‑anchoring subsites, electrostatic field, transition‑state stabilization | Loop flexibility, metal‑binding sites, cofactor interactions |
-| **Antibodies** | CDR H3 length/composition, framework mutations, FcγR binding motifs | Glycosylation sites, hinge flexibility |
-| **Optogenetic Proteins** | Chromophore pocket residues, Schiff‑base network, photocycle‑determining residues | Helix rotation, light‑absorption wavelength tuning |
+| **Antibodies** | CDR H3 conformation, framework mutations, FcγR binding motifs | Glycosylation sites, hinge flexibility |
+| **Optogenetic Proteins** | Chromophore pocket residues (Schiff-base network in retinal-binding rhodopsins), photocycle‑determining residues | Helix rotation, light‑absorption wavelength tuning |
 | **RTKs** | Dimerization arm rigidity, ligand‑binding domain modularity, kinase activation loop | Intracellular adaptor binding sites |
-| **Transcription Factors** | DNA‑binding helix‑turn‑helix motif, base‑specific hydrogen bonds, linker length | Recruitment of co‑activators/repressors |
-| **Structural Proteins** | Core packing hydrophobic residues, repeat unit geometry, β‑strand register | Surface charge distribution |
+| **Transcription Factors** | DNA‑binding helix‑turn‑helix motif (in HTH families), base‑specific hydrogen bonds, linker length | Recruitment of co‑activators/repressors |
+| **Structural Proteins** | Core packing hydrophobic residues, β‑strand register | Surface charge distribution |
 | **Transporters** | Pore lining residues, gating domain conformational changes, substrate‑binding cavity | Lipid‑protein interaction sites |
 | **Viral Coat Proteins** | Surface loop residues, inter‑subunit interface residues, capsid symmetry | Capsid maturation signals |
 | **Multi‑Domain Enzymes** | Domain interface complementarity, linker flexibility, active‑site alignment | Allosteric regulation by small molecules |
 | **Highly Glycosylated Proteins** | Glycosylation sequon placement, peptide backbone flexibility | Enzyme‑mediated glycan trimming sites |
 | **Humanized Antibodies** | Framework residue selection, CDR backbone preservation, immunogenic patch removal | CDR length optimization, affinity maturation |
-| **Scaffold‑Based Enzymes** | Rigid attachment sites, domain orientation, scaffold stability | Loop grafting, interface redesign |
+| **Scaffold‑Based Enzymes** | Attachment sites by minimal perturbation of catalytic Cα positions, domain orientation, scaffold stability | Loop grafting, interface redesign |
 | **Azobenzene‑Controlled Proteins** | Incorporation site, structural impact of isomerization | Photocycle kinetics, light‑absorption tuning |
 | **Ubiquitin‑Tagged Proteins** | Ubiquitin‑binding domain selection, linkage type, chain length | Degron placement, proteasome interaction motifs |
 
----
-
-## 4. Missing / Under‑Represented Protein Classes (Additions)
+## Missing / Under‑Represented Protein Classes (Additions)
 
 | Class | Why It Matters | Representative Design Strategies |
 |-------|----------------|-----------------------------------|
@@ -174,9 +166,7 @@ This might get a little sloppy.
 | **Protein‑Protein Interaction Domains (PDZ, SH3, WW)** | Small modular domains for peptide recognition | Loop grafting, interface redesign, combinatorial mutagenesis |
 | **Nuclear Receptors** | Ligand‑dependent conformational change, DNA‑binding domain | Ligand‑binding pocket redesign, DBD‑effector domain fusion, allosteric modulation |
 
----
-
-## 5. Core Engineering Methodologies (Mechanistic Focus)
+## Methodologies
 
 | Methodology | Mechanistic Core | Typical Use Cases |
 |-------------|------------------|-------------------|
@@ -185,9 +175,9 @@ This might get a little sloppy.
 | **Error‑Prone PCR** | Random mutagenesis across the entire gene | Diversifying libraries for directed evolution |
 | **DNA Shuffling / Family Shuffling** | Recombination of homologous sequences | Creating chimeras with improved properties |
 | **Structure‑Guided Recombination** | Crossover at structurally compatible positions | Domain swapping, scaffold optimization |
-| **Rosetta Design** | Energy‑based optimization of side‑chain rotamers & backbone | De novo protein design, interface redesign, enzyme active‑site engineering |
-| **AlphaFold‑Based Design** | Predicting protein folds to guide mutagenesis or scaffold selection | Identifying tolerant regions for mutation, scaffold engineering |
-| **ProteinMPNN / RFdiffusion** | Deep‑learning diffusion models for inverse folding & sequence generation | Generating novel backbones, conditional active‑site design |
+| **Rosetta Design** | Energy‑based optimization of side‑chain rotamers & backbone (including de-novo generation) | De novo protein design, interface redesign, enzyme active‑site engineering |
+| **AlphaFold‑Based Design** | Predicting protein structures to guide mutagenesis or scaffold selection | Identifying tolerant regions for mutation, scaffold engineering |
+| **ProteinMPNN / RFdiffusion** | ProteinMPNN for inverse folding & sequence generation from backbones; RFdiffusion for forward backbone generation | Generating novel backbones, conditional active‑site design |
 | **Molecular Dynamics (MD) with Enhanced Sampling** | Mapping conformational landscapes, identifying hinge residues | Allosteric site discovery, gating mechanism analysis |
 | **Co‑evolutionary Analysis (DCA / EVcouplings)** | Predicting residue‑residue contacts from multiple sequence alignments | Guiding mutagenesis to preserve network integrity |
 | **Genetic Code Expansion** | Incorporation of non‑canonical amino acids via orthogonal tRNA/tRNA synthetase pairs | Introducing bioorthogonal handles, photocrosslinkers |
@@ -198,12 +188,10 @@ This might get a little sloppy.
 | **Optogenetic Module Engineering** | Mutating chromophore pocket or helix rotation to tune light response | Spatiotemporal control of activity |
 | **Allosteric Modulator Design** | Creating pockets that bind small molecules to induce conformational change | Chemical control of enzyme or receptor activity |
 | **Scaffold‑Based Design (DARPins, Repeat Proteins)** | Using repeat units as modular binding surfaces | High‑affinity binders, synthetic receptors |
-| **Synthetic Scaffolds (SpyTag/SpyCatcher)** | Covalent peptide‑protein chemistry for modular assembly | Enzyme cascades, multivalent display |
+| **Synthetic Scaffolds (SpyTag/SpyCatcher)** | Isopeptide bond between Asp side-chain and Lys ε-NH₂ within SpyCatcher for modular assembly | Enzyme cascades, multivalent display |
 | **Riboswitch Engineering** | Designing ligand‑responsive RNA elements that control translation | Metabolic control, feedback regulation |
 
----
-
-## 6. Designability vs. Expressibility – Two‑Axis View
+## Designability vs. Expressibility – Two‑Axis View
 
 | Protein Class | Designability (Structural/Computational) | Expressibility/Foldability (Cellular Context) |
 |---------------|----------------------------------------|----------------------------------------------|
@@ -224,29 +212,28 @@ This might get a little sloppy.
 | **Azobenzene‑Controlled Proteins** | Medium – incorporation site selection | Medium – photo‑isomerization may affect folding |
 | **Ubiquitin‑Tagged Proteins** | Medium – degron design is tractable | Medium – need to avoid proteolysis |
 
----
-
-## 7. Other techniques to consider
+## Other techniques to consider
 
 | Technique | Core Insight | Practical Implementation |
 |-----------|--------------|--------------------------|
-| **Deep Mutational Scanning** | Generates quantitative, position‑specific enrichment landscapes for folding, binding, catalysis, and cellular fitness without prior structural knowledge. | Synthesize codon‑substituted libraries (including insertions/deletions), select under relevant conditions, NGS pre‑/post‑selection, compute enrichment scores. |
+| **Deep Mutational Scanning** | Generates quantitative, position‑specific enrichment landscapes for folding, binding, catalysis, and cellular fitness (structural knowledge helps rationalise results) | Synthesize codon‑substituted libraries (including insertions/deletions), select under relevant conditions, NGS pre‑/post‑selection, compute enrichment scores. |
 | **Ribosome Display & mRNA Display** | Enables selection from libraries limited only by synthetic DNA diversity, compatible with stringent or proteolytic conditions. | In‑vitro translation of ribosome‑arrested or puromycin‑tethered mRNA–protein fusions, affinity capture, RT‑PCR recovery, iterative rounds. |
-| **Thermodynamic Integration & Free‑Energy Perturbation** | Alchemical MD protocols that mutate ligand atoms into dummy or alternate atoms, integrating ∂H/∂λ to yield absolute or relative binding free energies within chemical accuracy. | Use enhanced‑sampling Hamiltonian replicas, accurate force fields, convergence diagnostics. |
+| **Thermodynamic Integration & Free‑Energy Perturbation** | Alchemical MD protocols that mutate ligand atoms into dummy or alternate atoms, integrating ∂H/∂λ to yield relative ΔΔG (absolute binding requires double-decoupling or funnel-metadynamics) | Use enhanced‑sampling Hamiltonian replicas, accurate force fields, convergence diagnostics. |
 | **Kinematic Closure (KIC)** | Solves protein loop closure analytically, enabling rapid enumeration of sterically allowed conformations that can be refined by rotamer repacking and energy minimization. | Apply to loop modeling in Rosetta or other modeling suites, integrate with MD for side‑chain optimization. |
-| **Native Chemical Ligation** | Chemoselectively condenses an unprotected synthetic peptide bearing a C‑terminal thioester with another peptide containing an N‑terminal cysteine to form a native amide bond, enabling total chemical synthesis of proteins with precise labels. Size limited to small-to-medium sized proteins (<200 aa), or larger targets via iterative ligations or post-folding fusions. | Synthesize peptide fragments, perform ligation under mildly acidic conditions, purify product, verify by MS. |
-| **Cystine‑Knot (Knottist) Engineering** | Cross‑braces a short β‑sheet or helical core with three disulfides that weave a topological knot, imparting extreme proteolytic, thermal, and chemical stability while allowing hypervariable loops for recognition. | Design cystine‑knots in silico, express in systems that support disulfide formation, test stability. |
-| **Mirror‑Image Phage Display** | Screen an L-peptide library against the synthetic D-enantiomer of the target; the corresponding D-peptide of the selected binder is then synthesized to recognize the native L-target. |
+| **Native Chemical Ligation** | Chemoselectively condenses an unprotected synthetic peptide bearing a C‑terminal thioester with another peptide containing an N‑terminal cysteine to form a native amide bond, enabling total chemical synthesis of proteins with precise labels (up to 300-400 aa via multiple ligations). | Synthesize peptide fragments, perform ligation under mildly acidic conditions, purify product, verify by MS. |
+| **Cystine‑Knot (Knottist) Engineering** | Cross‑braces a short β‑sheet or helical core with three disulfides in a topological knot (cystine III-VI passes through II-V), imparting extreme proteolytic, thermal, and chemical stability while allowing hypervariable loops for recognition. | Design cystine‑knots in silico, express in systems that support disulfide formation, test stability. |
+| **Mirror‑Image Phage Display** | Screen an L-peptide library against the synthetic D-enantiomer of the target (synthesised by solid-phase chemistry); the corresponding D-peptide of the selected binder is then synthesized to recognize the native L-target. | |
 | **Algorithmic T‑Cell Epitope Mapping** | Scans protein sequences for peptide epitopes whose length matches the anchor preferences for common MHC class II alleles, then redesigns surface residues to eliminate motifs while preserving structure and activity. | Use epitope prediction tools, apply conservative mutations, validate by immunogenicity assays. |
-| **Trinucleotide Mutagenesis** | Uses pre‑synthesized phosphoramidite trimers corresponding to desired codons to build combinatorial libraries that exclude stop codons and allow user‑defined amino‑acid ratios at each diversified position. | Design oligonucleotide pool, perform PCR, transform, screen. |
-| **Hydrocarbon Stapling** | Installs an all‑hydrocarbon cross‑link across two non‑natural α‑methyl,α‑alkenyl amino acids incorporated at positions separated by one helical turn or an integer multiple thereof of an α‑helix via ring‑closing metathesis, locking the helix in its bioactive conformation and conferring protease resistance and enhanced cell penetration. | Synthesize stapled peptide, characterize helicity (CD), test functional activity. |
-| **Hydrogen–Deuterium Exchange Mass Spectrometry (HDX‑MS)** | Monitors time‑dependent deuterium incorporation into backbone amides as a readout of solvent accessibility and hydrogen‑bond stability; peptic digestion and high‑resolution LC‑MS/MS localize exchanged sites, enabling time-resolved conformational dynamics, allosteric pathways, and binding interfaces. | Perform HDX experiment, analyze MS data, map to structure. |
-| **Deep‑Learning Hallucination & Inpainting** | Seeds a generative protein network with random noise or partial backbone coordinates, then iteratively optimizes a latent space under structural and functional constraints so that the network hallucinates complete protein backbones that cradle desired catalytic or binding motifs without relying on known folds. | Use models like ProteinMPNN, Diffusion‑based generators, enforce constraints, validate by synthesis. |
+| **Trinucleotide Mutagenesis** | Uses pre‑synthesized phosphoramidite trimers corresponding to desired codons to build combinatorial libraries that exclude stop codons and allow user‑defined amino‑acid ratios at each diversified position. | Design oligonucleotide pool, perform PCR, transform, screen. Trinucleotide mutagenesis (e.g., Sloning method) explicitly uses pre-synthesized trinucleotide phosphoramidites during automated solid-phase oligonucleotide synthesis, which is a standard phosphoramidite-based chemistry process. |
+| **Hydrogen–Deuterium Exchange Mass Spectrometry (HDX‑MS)** | Monitors time‑dependent deuterium incorporation into amide hydrogens as a readout of solvent accessibility and hydrogen‑bond stability; peptic digestion and high‑resolution LC‑MS/MS localize exchanged sites, enabling time-resolved conformational dynamics, allosteric pathways, and binding interfaces. | Perform HDX experiment, analyze MS data, map to structure. |
+| **Deep‑Learning Hallucination & Inpainting** | Seeds a generative protein network with random noise or partial backbone coordinates, then iteratively optimizes a latent space under structural and functional constraints so that the network hallucinates complete protein backbones that cradle desired catalytic or binding motifs without relying on known folds (although it can still converge to known folds). | Use models like ProteinMPNN, Diffusion‑based generators, enforce constraints, validate by synthesis. |
 | **Fragment‑Based Drug Discovery (FBDD) Applied to Protein Active‑Site Inhibition** | Identifies low‑molecular‑weight chemical fragments that bind subsites of the catalytic pocket with millimolar‑to‑micromolar affinity; structure‑guided linking or growing merges these fragments into larger ligands whose enthalpically favorable, vector‑directed interactions achieve nanomolar potency while maintaining ligand efficiency and selectivity. | Screen fragment library, co‑crystallize, design linkers, synthesize, assay. |
 
---
+excluded from the above table because it is not genetic:
 
-## 8. Summary Recommendations for Practitioners
+**Hydrocarbon stapling (chemical, not genetic)** – Two α‑methyl,α‑alkenyl non‑canonical amino acids (e.g., (S)-pentenyl‑alanine and (R)-pentenyl‑alanine) are incorporated into a solid‑phase peptide, then the peptide is treated with a ruthenium‑based Grubbs catalyst under dilute, anaerobic conditions to perform a **ring‑closing metathesis (RCM)**.  The resulting all‑hydrocarbon bridge locks the two residues in a defined distance, dramatically stabilising an α‑helix and making the peptide resistant to proteolysis.  Because the stapling step is chemical, it cannot be achieved directly in vivo; the stapled peptide must be synthesized, purified and then delivered (e.g., by cell‑penetrating delivery or microinjection).
+
+## Recommendations for Practitioners
 
 1. **Separate designability from expressibility** – a protein may be easy to redesign but hard to produce in a given host.
 2. **Leverage structural data** (X‑ray, cryo‑EM, AlphaFold) to identify *tolerant* regions for mutation and *critical* residues for active‑site redesign.
@@ -257,7 +244,224 @@ This might get a little sloppy.
 7. **Validate folding and function** with biophysical assays (CD, NMR, SAXS, MD) before moving to cellular or organismal contexts.
 8. **Iterate**: design → expression → characterization → feedback to model → redesign.
 
----
+# Common protein engineering design mistakes
+
+## Cysteine and Disulfide Management
+**Error**: Deploying cysteine residues without defined pairing geometry or redox control, leading to misoxidation, disulfide scrambling, and covalent aggregation.
+
+**Correction**: Position intentional disulfides only where structural context enforces correct pairing—typically with spacing appropriate for helical or β-hairpin geometry. For surface-exposed or unpaired cysteines, substitute with serine to preserve hydrogen-bonding capability, or with alanine/valine for buried positions where the thiol is not required. Note C-x₂-C is common in redox-active CXXC motifs where strain is functional.
+
+## Proline and Glycine Misplacement
+**Error**: Inserting proline within α-helical or β-strand segments, destabilizing backbone hydrogen‑bond networks. Overusing glycine in positions requiring conformational rigidity introduces uncontrolled entropy.
+
+**Correction**: Restrict proline to N-terminal caps, C-terminal caps, or tight turns where its fixed φ angle is compatible. Reserve glycine for flexible hinges, linkers, or turn regions; avoid consecutive glycine runs that create overly floppy segments.
+
+## Charged Residue Pitfalls
+**Error**: Mismatching salt-bridge geometry (e.g., Asp–Lys pairs with suboptimal reach) or creating charge-clash magnets (sequential Arg-Arg-Lys or Asp-Glu-Asp; note poly-basic patches common in nucleic-acid-binding domains, stabilised by counter-ions) that can promote electrostatic repulsion and protease sensitivity.
+
+**Correction**: Favor bidentate Glu–Arg or Asp–Arg pairs for robust salt bridges. Alternate charges (Arg-Glu-Arg-Glu) or insert neutral spacers (Gly/Ser/Thr) to avoid clustering. Account for local pKa shifts when using histidine as a pH sensor; for strong pH-independent charge, use Asp/Glu or Lys/Arg.
+
+## Post-Translational Modification Sequence Liability
+**Error**: Retaining deamidation-prone motifs (Asn-Gly, Asn-Ser) that form cyclic succinimide intermediates, leading to backbone cleavage. Introducing unintended N-glycosylation sequons (Asn-X-Ser/Thr where X ≠ Pro) in loops, causing aberrant glycosylation.
+
+**Correction**: Scan designs for NG/NS patterns and mutate Asn to Gln or Ala. If glycosylation is undesired, mutate sequons to Asn-X-Ala/Cys or rearrange loop length. Match the flanking sequence to the specific kinase consensus desired. Basic residues recruit PKA/PKC; Acidic residues recruit CK2; Proline recruits MAPK/CDK. To create sites for basophilic kinases (like PKA, PKC, CAMK) then use flank Ser/Thr/Tyr with basic residues and avoid embedding them in acidic blocks. If you flank with acidic residues, you target acidophilic kinases (like Casein Kinase II). If you flank with Proline, you target pro-directed kinases (like MAPK, CDK).
+
+## Oxidation and Chemical Degradation
+**Error**: Exposing methionine or tryptophan to solvent, rendering them prone to irreversible oxidation.
+
+**Correction**: Burial of Met/Trp is preferred; when surface exposure is unavoidable, substitute Met with leucine/isoleucine/norleucine, and Trp with phenylalanine to maintain hydrophobic packing while eliminating oxidation liability.
+
+("norleucine" is a non-canonical amino acid rarely used outside specialized chemical synthesis, so its mention as a Met replacement is technically correct but practically niche.)
+
+## Hydrophobicity Mismatch
+**Error**: Burying charged residues (Lys, Arg, Asp, Glu) in the core, destabilizing the fold. Conversely, leaving hydrophobic patches on the surface promotes aggregation.
+
+**Correction**: Keep charged residues solvent-exposed (buried Lys/Arg tolerated if paired, e.g., in salt bridges). For core positions, use Leu, Ile, Val, Ala, Phe. Solubilize engineered interfaces by replacing exposed hydrophobics with Arg or Glu to enhance electrostatic solvation rather than using polar uncharged residues alone.
+
+## Metal Coordination Failures
+**Error**: Recruiting histidine or cysteine for metal binding without proper spacing and geometry, resulting in weak or nonproductive chelation.
+
+**Correction**: Adopt established coordination loops with appropriate residue spacing. Validate geometry against known structural templates; generic poly-histidine tags should include intervening linkers to prevent metal clustering.
+
+## Secondary-Structure Propensity Violations
+**Error**: Placing β-branched residues (Val, Ile, Thr) in helical cores, causing steric clashes and backbone strain.
+
+**Correction**: Favor leucine or alanine in helical cores. For β-strand edges, note that isoleucine and valine are common, whereas threonine is less favorable due to side-chain hydrogen-bond competition.
+
+## Linker Design Artifacts
+**Error**: Using overly rigid linkers (Ala-Ala) that restrict domain movement, or over-relying on long flexible Gly4Ser repeats that risk O-glycan heterogeneity or proteolytic susceptibility in eukaryotic expression systems (risk mainly for serine-rich linkers with >3 Ser in a row).
+
+**Correction**: Match linker type to function: flexible loops require Gly-Ser repeats with modest length; rigid domain separation benefits from Pro/Glu/Ala-rich sequences. Standard (G4S)n linkers are generally robust against xylosylation unless an SG context creates a cryptic Ser-Gly-Gly site, but long unstructured serine-rich linkers in eukaryotes (CHO, HEK293) risk O-glycan heterogeneity. Avoid runs of identical residues that create repetitive motifs.
+
+## Aromatic Residue Misuse
+**Error**: Stacking aromatic residues (Phe-Phe-Trp-Trp) without interleaving charged/polar spacers, leading to π-stacking aggregation. Conversely, swapping aromatics without considering size, H-bonding, or redox potential disrupts packing.
+
+**Correction**: Interleave aromatic clusters with charged or polar residues (Glu/Arg/Gln) and cap with soluble tails. Select Phe for pure hydrophobic packing, Tyr for H-bonding capability, and Trp for specific spectroscopic or stacking geometry requirements.
+
+Aromatic stacking is sequence-dependent; Phe-Phe-Trp-Trp is common in antibody cores without aggregation.
+
+## Computational and Experimental Validation Gaps
+**Error**: Assuming rational design rules are absolute without structural validation.
+
+**Correction**: Employ computational modeling (Rosetta, FoldX) to preview clashes, calculate solvation energies, and validate motif geometry. Perform alanine scanning conservatively—use isosteric substitutions (Leu→Ile) rather than blanket Ala replacement to dissect contributions without obliterating structure. Optimize codon composition for the expression host to avoid rare-Arg codons that limit yield.
+
+## Protease and Immunogenic Sequence Liability
+**Error**: Inadvertently introducing known protease cleavage motifs or immunogenic epitopes.
+
+**Correction**: Scan final designs against protease specificity databases and epitope prediction tools. Avoid sequential recognition patterns and known antigenic combinations, especially in therapeutic candidates.
+
+## β-bulge Mis-labelling
+**Error**: Listing Gly-x-Trp-x-Phe as a standard β-bulge.
+
+**Correction**: Authentic bulges involve Gly/Pro/Asn at a single-residue insertion that shifts strand register, not a fixed W-F pattern. Apply established nomenclature: register shift by one residue with compensatory donor/acceptor geometry; design carefully to avoid strand register disruption.
+
+## Termini Traps
+**Error**: Placing Pro, Asp, or Glu at extreme N- or C-termini; Met-Gly or Asp-Pro at ends prone to cyclisation or cleavage.
+
+**Correction**: Keep Pro/Asp/Glu at least two residues inward; protect N-terminus with acetyl and C-terminus with amide if synthetic.
+
+**Met-Gly**: This triggers **Methionine Aminopeptidase (MAP)** to cleave the initiator Met, leaving Gly at the N-terminus (cleavage event, not cyclization). Met-Gly is cleaved by MAP, and Map cleavage is a hydrolytic event, not cyclization. There is no cyclization risk for Met-Gly.
+
+**Asp-Pro**: This peptide bond is **acid-labile** (cleaves during acidic elution or purification, but does not spontaneously cycle under physiological conditions like N-terminal Gln).
+
+**Cyclization**: The true cyclization risk is N-terminal **Gln** (fast) or **Glu** (slow) forming Pyroglutamate.
+
+The Asp-Pro peptide bond is acid-labile but does not spontaneously cyclize like N-terminal Gln/Glu.
+
+## His-tag Artefacts
+**Error**: Relying on C-terminal His6 for solubility; tag may destabilise fold or bind metals (His-tag primarily for purification, not solubility).
+
+**Correction**: Employ solubility partners (MBP, SUMO) or surface-charge engineering; position His-tag away from active site.
+
+# Redesigning an existing protein
+
+Apply these rules to reprogram activity, specificity, stability, or regulation while preserving the ancestral fold of an existing protein: metal-ligand editing, gate-keeper resizing, dwell-time tuning, electrostatic Velcro, hydrophobic ratchets, modular proofreading, local rigidification, and incremental side-chain swaps.
+
+## First-Shell Ligands Control Chemistry, Not the Global Fold
+- A pair of **Lewis‑basic** side‑chains (Asp, Glu, His, Cys, or a backbone carbonyl) spaced ≈ 4–5 Å provides the electron‑pair donors needed to chelate one or two divalent cations (e.g., Zn²⁺, Mg²⁺, Ca²⁺).  The metal ion itself is the Lewis acid, and the geometry of the basic ligands fixes it in place while leaving the surrounding scaffold essentially untouched.
+- Adding or deleting a single liganding atom (Asp→Asn removes a carboxylate; Ser→Cys introduces a thiol; Gly→Asp inserts a new carboxylate) typically lowers affinity but can change metal stoichiometry or geometry in engineered sites without perturbing the surrounding scaffold.
+- Because the rest of the domain is unchanged, the same fold can be tuned from fast-and-promiscuous to slow-and-stringent by altering only metal ligation.
+
+## A Single Steric Checkpoint Gates Substrate Scope
+- A bulky, often aromatic side chain that protrudes into the binding cavity acts as a size filter (many enzymes use multiple checkpoints such as oxyanion hole or second-shell H-bonds). Replacing it with alanine, glycine, or serine opens a cavity large enough to accept bulkier or chemically distinct substrates; restoring bulk reinstates stringency.
+- The gatekeeper does not need to contact the scissile bond; it only needs to block the entrance trajectory.
+
+## Selectivity Is a Kinetic Timer, Not an Equilibrium Constant
+- Stabilizing the “closed” conformation of a mobile loop or lid increases dwell time, giving more opportunities to reject incorrect substrates before chemistry occurs.
+- Inserting glycine or removing proline within hinges decreases the energy barrier between open and closed states, shortening dwell time and raising throughput at the cost of fidelity (Pro→Gly outcome system-dependent; can also increase dwell time by destabilising open state).
+- Pro→Gly or Gly→Pro mutations are therefore coarse switches for speed versus accuracy.
+
+## Electrostatic Velcro Tunes Residence Time Without Touching the Active Site
+- Clustering lysine or arginine on a surface ridge creates a positive patch that electrostatically traps a poly-anionic ligand, increasing processivity (effects screened in water to ~7 Å at 150 mM salt; additive within this range).
+- Neutralizing those residues (Lys→Gln, Arg→Ala) or adding same-charge repulsion converts a tight binder into a hit-and-release enzyme.
+- The effect is long-range (within ~10 Å) and additive; charge density rather than precise position matters.
+
+## Hydrophobic Ratchets Set Directional Preference
+- Leucine/isoleucine/valine ridges that interdigitate with a partner surface increase contact area (no strong evidence for strict directionality). Inserting glycine or small polar residues within these ridges introduces slip, allowing back-sliding or alternative trajectories.
+- Conversely, replacing glycine with branched aliphatics increases the energy cost of backward motion, biasing the reaction path.
+
+## Proofreading Modules Are Genetically and Kinetically Separable
+- A remote exo- or hydrolytic site can be silenced by a single carboxylate→amide mutation (Asp→Asn, Glu→Gln) that removes a metal ligand (may subtly perturb synthetic site via shared diffusible ligand such as nucleotide). The synthetic site largely remains intact because the two active sites communicate only through a shared diffusible ligand (usually a nucleotide or metal ion).
+- This uncoupling is general to any enzyme possessing an editing domain (synthetases, proteases, polymerases, transacylases).
+
+## Local Rigidification Beats Global Redesign for Thermostability
+- Introducing proline within surface loops or between secondary-structure elements (if φ/ψ compatible) reduces the conformational entropy of the unfolded state, raising the melting temperature without altering the active-site geometry.
+- Engineered salt bridges (Lys-Glu, Arg-Asp) at domain interfaces or at the N-cap of helices provide enthalpic stabilization with minimal structural risk.
+- Disulfide bonds can be installed between residues that are ≤6 Å apart in the native structure but distant in sequence; they rarely perturb folding if the χ1/χ2 angles are pre-compatible.
+
+## Sensing and Catalysis Can Be Genetically Uncoupled
+- Mutations in “trigger” or “switch” motifs that undergo order-to-disorder transitions can weaken substrate discrimination (specificity) without slowing chemistry, useful when intentional error incorporation is desired.
+- Conversely, tightening these motifs (e.g., replacing flexible linkers with short helices) creates ultra-high-specificity variants that still catalyze at wild-type rates.
+
+## Domain Modularity Permits Mix-and-Match Architecture
+- Because catalytic, lid, clamp, and editing domains are often connected by flexible tethers, they can be swapped, duplicated, or deleted to build new catalysts with altered processivity, substrate range, or error rates.
+- Peripheral insertions or deletions rarely perturb the core fold, providing a safe playground for targeting or stability modifications.
+
+## Side-Chain Chemistry Is a Tunable Continuum
+- Asp↔Glu, Asn↔Gln, Ser↔Thr, Lys↔Arg, Tyr↔Phe pairs offer steps in length, polarity, or H-bonding capacity (Asp→Glu can abolish H-bonding in constrained sites), allowing fine-gradient scans of function without structural shock.
+- Cysteine and histidine provide conditional control: cysteine can be oxidized to disulfide or labeled with maleimide probes; histidine can be protonated or metal-chelated to create pH- or redox-switchable gates.
+
+# Protein-Engineering Amino-Acid Motifs Cheat Sheet
+
+**Key Design Tools**: [Rosetta](https://www.rosettacommons.org/) (energy-based design), [FoldX](http://foldxsuite.crg.eu/) (stability predictions), [AlphaFold](https://alphafold.ebi.ac.uk/) & [ESMFold](https://esmatlas.com/) (structure prediction), [ProteinMPNN](https://github.com/dauppotlab/proteinmpnn) (sequence design from backbones), [PSIPRED](http://bioinf.cs.ucl.ac.uk/psipred/) (secondary structure prediction), [MetalPDB](https://metalpdb.crg.eu/) (metal-binding sites). Validate motifs with PDB searches (e.g., [RCSB PDB](https://www.rcsb.org/)) and deep mutational scanning.
+
+The rules below are heuristic guidelines requiring structural context, geometry validation (via MD/Rosetta), and experimental confirmation (e.g., CD, NMR). Propensities follow Chou-Fasman-style statistics but prioritize modern predictors like PSIPRED/AlphaFold.
+
+### Basic Amino-Acid Design Rules
+
+- **Hydrophobic core**: Leu, Ile, Val, Ala (FILVA), Phe, Trp, Met (aliphatic, often packs against aromatics), Tyr (amphipathic, common in cores with H-bonding hydroxyl).
+- **Helix capping** (Richardson & Richardson, 1988):
+  - *N-cap*: Asn, Ser, Thr, Asp – side-chain carbonyl oxygen acts as H-bond acceptor from exposed backbone N-H of residues n+2 or n+3 (e.g., PDB:1GCJ).
+  - *C-cap*: Gly (adopts left-handed alpha_L conformation to terminate helix and enable Schellman loop), Asn, Ser.
+- **β-sheet edges**: Polar residues (Asn, Ser, Thr) preferred at N-/C-terminal strand ends to reduce fraying; charged residues (Lys, Arg, Glu, Asp) used to prevent edge-to-edge aggregation via electrostatic repulsion; hydrophobic beta-branched residues (Ile, Val) better mid-strand.
+- **Turns/Loops**: Gly (flexibility), Pro (rigid kink), Asn/Asp/Ser (H-bonding).
+- **Salt bridges**: Asp/Glu ↔ Arg/Lys (i, i+4 or i, i+3 helical spacing preferred); buried bridges stronger but desolvation penalty must be compensated.
+- **Disulfides**: Cys-x(3–4)-Cys most common (e.g., immunoglobulin domains; spacing varies; oxidizing environment required (e.g., periplasm, eukaryotic ER).
+- **Metal chelation** (Martin, 1987; MetalPDB):
+  - *Zn²⁺*: C₂H₂ zinc finger with variable spacing, e.g., C-x(2-4)-C-x(12)-[H/x]-x(3-5)-H (tetrahedral; PDB:1ZAA); or Cys₄, Cys₃His.
+  - *Fe²⁺/Fe³⁺*: 2-His-1-carboxylate (2-His-1-Asp/Glu; octahedral; PDB:1AOR).
+  - *Cu²⁺*: His-x(3)-His (square planar; PDB:1RCY) or Met-rich axial sites.
+  - Geometry: ligands appropriately spaced; validate valence with MetalPDB.
+- **Cyclization**: β-hairpin stabilized by type I/II′ turns (e.g., D-Pro-Gly; PDB:1GB1); Trp-cage is an optimized 20-residue mini-protein fold in which a central Trp is caged by a single 3₁₀ turn, proline packing and a salt bridge, rather than a transplantable motif.
+- **Dimer interfaces**:
+  - *Leucine zipper*: Heptad repeats a-b-c-d-e-f-g with hydrophobic Leu/a at d-positions (parallel coiled-coil; e/g interchain salt bridges for specificity; PDB:1YSA).
+  - *Knob-into-hole*: Small side-chain (e.g., Val, Ala) knob fits into hole created by two large residues (reverse of large aromatic into pocket; e.g., PDB:1FBB).
+
+### Signature motifs and typical outcomes
+
+| Motif (Pattern) | Structural / Functional Pay-off | Typical Context / Example |
+|-----------------|------------------------------|---------------------------|
+| **G-x(4)-G-K-[T/S]** (P-loop/Walker A) | Phosphate-binding loop for ATP/GTP (Lys contacts β/γ-phosphates; T/S hydroxyl coordinates Mg²⁺) | Kinases, GTPases |
+| **Asn-X-Ser/Thr (X≠Pro,Asp)** | N-glycosylation sequon – targets oligosaccharyltransferase | Secreted/membrane proteins |
+| **Cys-x-x-Cys (CXXC)** | Thioredoxin-fold redox motif (requires pKa modulation) | Thioredoxin, PDI |
+| **C-x(2-4)-C-x(12)-H-x(3-5)-H (C₂H₂)** | Zn²⁺ tetrahedral coordination (classical zinc finger; spacing varies, e.g., C-x₄-C-x₁₂-H-x₃-H in Zif268) | Transcription factors |
+| **His-x(3)-His** | Cu²⁺ / Ni²⁺ binding, often square-planar | Cupredoxins, His-tags |
+| **a-b-c-d-e-f-g heptad: hydrophobic a & d** | Leucine zipper – parallel coiled-coil dimerisation (e/g charges give specificity) | bZIP TFs |
+| **Pro-x-x-Pro (PxxP)** | Poly-Pro II helix for SH3 recognition (orientation set by flanking basic residue) | Adaptor proteins |
+| **Trp-x(7)-Trp-x-Trp** | Aromatic cages (Trp, Phe, Tyr clusters) recognize methyl-Lys/Arg; spacing varies (check PDB for context) | Chromodomains, PHD fingers |
+| **Gly-x-Asn-Gly** | β-turn (Asn-Gly type I'); stabilises β-hairpins (preceding Gly not canonical part of turn) | β-hairpin loops |
+| **D/E-x-D/E-x-D/E-G-[x]-x-D/E/N-x-x-E/D (EF-hand)** | Ca²⁺-binding 12-residue loop (Gly-6 hinge; ligands at 1/3/5/7/9/12) | Calmodulin, C2 domains |
+| **Trp-x(2)-Phe-x(3)-Phe** | Aromatic stacking pocket for hydrophobic ligands | β-barrel hydrolases |
+| **G-x-x-x-G (GxxxG) with G at i, G at i+4** | TM helix dimerisation (small faces enable Cα-H···O bonds) | Glycophorin A |
+| **Gly-X-Y repeats (X/Y often Pro/Hyp)** | Triple-helix stability in collagen (Gly every 3rd residue essential for tight packing; Pro/Hyp in X/Y promote PPII conformation) | Collagen |
+
+All motifs require precise backbone geometry; sequence alone insufficient (use ProteinMPNN for inverse design).
+
+### Engineering Hot-Spots
+
+| Target | Recommended Moves | Why |
+|--------|-------------------|-----|
+| **β-hairpin capping** | Install Asn-Gly (type I') at turn (optionally with preceding Gly) | Asn side-chain staples strands via H-bonds; Gly enables φ/ψ flip (PDB:1GB1) |
+| **Helix N-cap** | Place Asn/Ser/Asp at N1 | Side-chain accepts H-bond from exposed backbone N-H of n+2/n+3, stabilises helix start (validate Rosetta ΔΔG) |
+| **Disulfide stitching** | Introduce Cys-x(3–4)-Cys in loop/adjacent strands (Cβ-Cβ geometry compatible; Cys-x(2)-Cys strained but functional in redox motifs) | Clips unfolded entropy |
+| **Metal-site swap** | Exchange ligands preserving field (e.g., Cys→His if tetrahedral; check MetalPDB) | Maintains valence/geometry; e.g., C₂H₂ → Cys₃His |
+| **Dimer interface** | Enlarge buried chains (Ile→Leu→Phe) or add knob (small side-chain into hole) | Shape complementarity + buried SASA (Rosetta interface score) |
+| **Electrostatic Velcro** | Cluster Lys/Arg on one face, Glu/Asp opposite (i, i+4 spacing) | Long-range zipping; cation-π with aromatics |
+| **Loop rigidification** | Gly→Pro (or N+1 Pro) if Ramachandran allows | Fixes φ (~-60°), cuts unfolded entropy (AlphaFold confidence check) |
+| **Alanine scan** | Bulky/polar → Ala (or isosteric: Leu→Ile, Asp→Asn) | Identifies linchpins; pair with FoldX ΔΔG |
+| **Oxidation shield** | Met→Leu/Ile or Met→Nle, Trp→Phe, unpaired Cys→Ser/Ala (surface) | Preserves volume/H-bonds, removes ROS liability |
+| **Glycosylation veto** | Asn-X-Ser/Thr → Gln-X-Ser/Thr or Asn-X-Ala (X≠Pro,Asp) | Blocks OST recognition (scan with NetNGlyc) |
+
+### One-Letter Code Mnemonics
+
+- **FILVA** – Pure hydrophobics (Phe,Ile,Leu,Val,Ala); extend to **FILMVWYAC** for cores with **Tyr** amphipathic, **Met** oxidation-sensitive, **Cys** conditional on disulfide formation.
+- **STNQ** – Polar uncharged (Ser,Thr,Asn,Gln) – surface H-bonds.
+- **DE** – Negative (Asp,Glu) – surface or Ca²⁺/Zn²⁺ coord.
+- **KRH** – Positive (Lys,Arg,His) – nucleic acid binding, pH sensors (His).
+- **GP** – Loop/turn toolkit (Gly=flex, Pro=rigid).
+
+### Quick Designer's Checklist
+
+- Core: Minimize buried DE/KRH unless paired (e.g., salt bridges); hydrophobics inside (ProteinMPNN packing score).
+- Termini: N-cap Asn/Ser/Asp; C-cap Gly/Asn/Ser; avoid terminal Pro/Asp/Glu.
+- Redox: Remove unpaired Cys→Ser/Ala (cytosol); check with PDB disulfides.
+- PTM liability: Scan Asn-X-Ser/Thr (NetNGlyc), Asn-Gly/NS (deamidation).
+- Protease: Avoid motifs (e.g., furin RXXR; PROSPER).
+- Metal: Match coord./spacing (MetalPDB); Rosetta relax.
+- Preview: Rosetta/FoldX/ProteinMPNN for ΔΔG/clashes/solvation.
+- Host: Codon-optimize (e.g., IDT tool); avoid rare AGA/AGG (E. coli).
+- Immuno: NetMHC/IEDB for epitopes (therapeutics).
+- Validate: Tm (DSC), oligomer (SEC-MALS), activity; deep scanning for landscapes.
 
 # Talks, videos, and transcripts
 
@@ -347,7 +551,7 @@ protein engineering papers mentioned in the IRC logs:
 * [Accurate prediction of protein structures and interactions using a 3-track network](https://www.biorxiv.org/content/10.1101/2021.06.14.448402v1)
 * [Evolving enzymatic electrochemistry with rare or unnatural amino acids](https://www.sciencedirect.com/science/article/pii/S2451910322001673)
 * [Directed evolution made easy](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2982887/pdf/nihms235064.pdf)
-* [Microfluidic Compartmentalized Directed Evolution](https://diyhpl.us/~bryan/papers2/bio/A%20system%20for%20the%20continuous%20directed%20evolution%20of%20biomolecules.pdf)  
+* [Microfluidic Compartmentalized Directed Evolution](https://diyhpl.us/~bryan/papers2/bio/A%20system%20for%20the%20continuous%20directed%20evolution%20of%20biomolecules.pdf)
 * [Protein Design by Directed Evolution](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC291858/)
 * [Unlocking de novo antibody design with generative artificial intelligence](https://www.biorxiv.org/content/10.1101/2023.01.08.523187v1)
 * [Protein design with infilling language models and reinforcement learning, for antibodies and beyond](https://github.com/LLNL/protein_tune_rl)
