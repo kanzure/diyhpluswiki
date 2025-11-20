@@ -1,0 +1,503 @@
+David Baker: Design of protein structures, functions and assemblies
+
+2013
+
+video: <https://www.youtube.com/watch?v=F7qjkQZMlIs>
+
+description: "I will describe  recent advances in computational protein design  which allow the generation of new protein structures  and functions.   I will describe the use of these methods  to design ultra-stable idealized proteins,  flu neutralizing proteins,  high affinity ligand binding proteins,  and self assembling protein nanomaterials.   I will discuss possible applications to therapeutics, vaccines and diagnostics.    I will also describe the contributions of the general public to these efforts through the distributed computing project  Rosetta@home and the online protein folding and design game FoldIt."
+
+AI summary: David Baker's lecture delineates a computational protein design paradigm leveraging the Rosetta software suite to generate de novo proteins with bespoke structures, binding affinities, enzymatic activities, and self-assembling nanomaterial properties, validated through high-fidelity structural matches via NMR and X-ray crystallography. Starting from energy-based sequence optimization on fixed backbones, followed by folding simulations to confirm global minima, designs are gene-synthesized, expressed in heterologous systems, and rigorously tested; successes include ideal topologies devoid of evolutionary compromises, miniprotein inhibitors of conserved hemagglutinin stem epitopes neutralizing diverse influenza strains by blocking pH-induced fusion, digoxin-binding pockets with reprogrammable steroid specificity, and symmetric assemblies like 24-subunit cubes, tetrahedra, and heteromultimeric cages exhibiting near-atomic design-model fidelity, underscoring the paradigm's generality for therapeutics, vaccines, and materials while highlighting ongoing challenges in success prediction via preorganization metrics and distributed computing via Rosetta@Home/Foldit, where citizen scientists have independently reinvented algorithms and enhanced Diels-Alderase activity 18-fold through loop insertions.
+
+# Introduction to Protein Design
+
+Hi, I'm David Baker and I'm a professor at the University of Washington and I'll be talking today about protein design. Please go ahead and submit questions as I'm speaking and I'll keep an eye out for them.
+
+The basic premise of the work I'm going to describe to you is described on this first slide. There are hundreds of thousands, if not millions, of proteins in nature and these proteins solve the challenges faced by biological evolution really exquisitely well.
+
+If you think about problems like capturing energy from sunlight, photosynthesis is really a miracle of evolution. Proteins mediate essentially all the important functions in our bodies. If you look at a naturally occurring enzyme, for example, for breaking down food, it works incredibly proficiently.
+
+Basically all the problems which were faced during biological evolution are solved incredibly well by naturally occurring proteins. However, we face problems now that were not faced during natural evolution.
+
+One could choose to wait a billion years for a set of proteins to evolve to deal with them. The new challenges we face are things like making new fuel molecules, dealing with carbon fixation, new health challenges that arise because we live longer now. We don't really want to wait a billion years to solve these problems.
+
+The basic challenge is can we design a whole new world of synthetic proteins that solve the problems we face today, as well as naturally occurring proteins solve the problems that were faced during natural evolution.
+
+# Basic Methods and Workflow
+
+The basic methods that we use are based on the principle that proteins fold to their lowest free energy states. If we want to design brand new proteins, we have to be able to calculate energies reasonably accurately and sample protein conformations sufficiently to find the global minimum.
+
+For example, if we want to make a protein that folds up to a protein that has a particular shape we need to find an amino acid sequence for which the lowest energy structure is the desired structure.
+
+If we want to design proteins with new functions we need to have hypotheses about the arrangement of atoms, the spatial arrangement that's necessary to achieve the desired function, for example, to catalyze a chemical reaction or to bind a small molecule.
+
+Finally, it's very important to experimentally test all designs because while we can calculate many, many things, our calculations aren't perfect, and it's only when we experimentally test things that we can tell whether our calculations were correct or not.
+
+The basic workflow for everything I'm going to tell you about is given here. We start with a computer calculation of an optimal sequence for a desired structure or function, and I'll outline how that works in just a moment.
+
+Since we've designed the protein, we know what its amino acid sequence is, and we can simply read the amino acid sequence off of the designed protein. We can then take that amino acid sequence and back translate it to a DNA sequence.
+
+At this point, up to this point, it's just been pure sort of computer fiction because these are virtual amino acid sequences that never existed anywhere. But the really neat thing is with advances in gene synthesis, DNA has become a commodity item.
+
+We can simply order genes from companies relatively cheaply that encode these brand new designed proteins. And currently we're ordering on the order of 100 brand new proteins that never existed a month in the lab and testing them.
+
+Once we have the genes, we put them into bacteria or yeast cells, make the proteins, and then see if the proteins do what they were intended to do.
+
+# Protein Design Process (Videos)
+
+This first animation, this is the protein design animation, which should start... Thank you. Thank you.
+
+What you saw on the video, the first video showed you an example of protein design where the backbone was kept fixed of the protein shown in ribbon and different combinations of amino acids were searched through searching for a combination which had the lowest energy in that structure.
+
+The second video showed you the process of checking to see whether a design had, whether a sequence that we designed actually folded up to the desired structure and it showed the process of predicting the structure of a protein.
+
+Let's see, video picture and slide. How do I get this? I don't know. Okay, good, good. Okay.
+
+I think what I do is go on now and describe what we used these protein design methods to do. I apologize for not having explained the videos before they played. I didn't realize I wouldn't be able to speak while they were running.
+
+# Design of New Protein Structures
+
+The first challenge I'm going to describe to you is the design of new protein structures. Naturally occurring proteins, as I described, evolved to carry out specific functions. Almost all proteins hence have non-ideal features, such as irregular loops or kinked helices, that result from selection for function.
+
+We were interested in the question of whether we could design brand new ideal proteins outside the constraints of natural evolution. We've developed a set of design principles for creating super-stable ideal structures. These proteins have great advantages as platforms for future design efforts, as I'll describe.
+
+We chose five ideal protein structure topologies. They're listed under the design column of this slide. These are topologies which are much simpler than any real protein structures that occur in nature.
+
+We used the calculations shown in the first video where different amino acid sequences were being sampled, defined amino acid sequences that are very low in energy in these structures.
+
+Then we took those amino acid sequences and we used the calculations shown in the second video where the chain was folding up to see what the lowest energy state for that design sequence was.
+
+The results are shown on the left. This is actually a calculation done using Rosetta@Home, which is a distributed computing project we run out of my lab. You can volunteer for it. You just go to Google search Rosetta@Home. Volunteers all around the world help us design proteins by providing spare cycles on their computers.
+
+Each red dot on this plot represents the work of a different individual volunteer's computer and what it represents is the endpoint of a protein folding calculation. On the y-axis is the energy of that calculated structure and on the x-axis is the distance from the structure we are trying to design that's the structure shown in the second column.
+
+What you can see for all five of these sequences is that the energy drops as the distance from the desired structure decreases. The lowest energy structures are very, very close to the desired target structure.
+
+This means that the sequence we've designed, at least on the computer, has a very, very strong tendency to fold up to the desired structure. There's no other possible structures which are lower in energy.
+
+When we find sequences that have this property, we then order genes that encode these sequences, because we believe, based on these calculations, they'll fold up to the desired structures. That's what we did for each of these five.
+
+The third column, under NMR, shows the structures of these proteins that were solved by NMR spectroscopy. The fourth and the fifth column just shows you blow-ups of different parts of these structures.
+
+You might be able to see that not only are the backbones of the model we were trying to make and the NMR structure nearly perfectly superimposable, but also many of the side chains are in exactly the right place.
+
+We've been able to design here completely new protein structures that fold up, there's amino acid sequence that fold up to exactly desired target structure.
+
+These proteins are exceptionally stable, and that's because they're really optimized for folding and for stability. At this point, they don't have any function. Of course, what we're doing now is start introducing the functionality into these proteins.
+
+We can verify that as we do this, we haven't disrupted the folding because we can run the calculation shown in the left most column that I already went through on the new sequences that are encoded functional versions of these and make sure that they still are predicted to fold up to the correct structure.
+
+# Design of Molecular Recognition: Protein-Protein Binders
+
+The next thing I'll talk about is the design of molecular recognition. Here the steps are to start with a model of the protein or small molecule you want to make a binding protein that binds to it.
+
+Computationally designed proteins are predicted to bind that target with high affinity and specificity. Then again make genes that encode the most promising designs, and then make the proteins or display them on the surface and assess binding by one of several experimental methods.
+
+I'll start by just talking about design of binding to protein targets. The basic idea is outlined here. The target protein is shown in the surface representation we start by docking disembodied amino acids, which are the things shown in sticks, onto the surface, and finding places where these amino acids fit really well.
+
+An analogy would be the surface you might think of as a climbing wall, and we start by trying to find handholds and footholds where you can grab onto the surface. These disembodied amino acids are like disembodied hands and feet.
+
+The next step, as you could imagine, is to connect the hands and feet with a body that holds them together, and that would be a protein scaffold, which could be one of the ideal ones which I just described, which holds these amino acids in exactly the right arrangement to provide high affinity binding.
+
+I'm going to illustrate this first with the influenza virus surface protein, which is the protein that's shown in gray on the left. There are a number of antibodies known that bind this, and they're shown in the ribbons that surround this.
+
+The problem with the flu as you know is that it is quite variable and so every year there's a new strain. There is one region on the virus though which doesn't change, the one that's down by where the yellow virus binds and so we sought to make a small protein that could bind to this very, very tightly with the goal of making something that would neutralize most flu viruses.
+
+A blow up of that site is shown in the left panel of this slide, that's this gray, you can see this gray cleft.
+
+We use the approach that I described where we dock disembodied amino acids into this cleft. That's shown on the right, different types of amino acids. The pink and purple things are where the protein backbone that this disembodied amino acid would have to be in order for the side chain to get into the cleft.
+
+The next step is to, as I said, find protein scaffolds which can hold these amino acids in place. A couple of such scaffolds are shown here. Here in this view, the surface of the virus is shown in the surface view.
+
+The side chains, these handhold and foothold, hands and feet, are these side chains that are docked up against the surface. In the ribbon, ribbony thing is a designed protein backbone that holds these in the right place.
+
+We carried out many design calculations, and we selected on the order of, I think, roughly 80 designs that looked promising. We made genes, and then we measured the proteins for binding to the virus. Two of them bound quite tightly. Those are shown here.
+
+In yellow is the viral surface, and in pink are the two designed proteins. They're called HB80 and HB36 here. You can see how the scaffolds that hold these amino acids in place are small helical bundles.
+
+You can see that the side chains are being held so they fit really perfectly into these pockets.
+
+Just because they bind the virus doesn't mean that they're binding in the correct manner. We solved crystal structures of these proteins bound to the virus and they are virtually identical to the design model.
+
+I think you can only see the one properly for the one on the left. That was the one that was called HB36 in the previous slide.
+
+The ribbon diagram on the left is the entire flu viral surface protein called the hemagglutinin. The red is the crystal structure of where in the experimentally determined structure where this binding protein was. The purple is where it was supposed to be according to the design model.
+
+You see a blow up in the inset where you can see that not only was the backbone in the right place, but the side chains are really fitting binding the virus in exactly the way they were supposed to according to the design model.
+
+These binding proteins bind quite tightly to quite a wide range of flu viral strains, almost all group one influenza viruses. This table in B gives a list of the different viruses that it binds to including the 1918 Spanish flu, that the epidemic, and a number of other pandemic flu strains.
+
+What this protein does is undergo a, it first attaches to the surface of your cell and then the flu virus gets taken up, and then the pH drops, and then that triggers a conformational change in this flu protein, and that's critical for the virus to enter your cells.
+
+These small proteins block this low pH conformational change. They actually protect against the virus in cell culture. If you add flu virus to cells in culture, it kills them. If you add these flu binding proteins, it neutralizes them.
+
+These have promise as anti-flu therapeutics. We're currently following up on this to see if they protect animals infected with the flu. There's always new flu strains, so having ways of blocking the flu is useful.
+
+The method, though, is really general. There wasn't anything specific about the flu. In principle, we should be able to design binders to any desired surface patch on a target of known structure. This could be a general route to new drugs.
+
+These small proteins could have advantages both over small molecules that they can bind more tightly and specifically, and so have less side effects. They're a lot easier to make than antibodies, which are also bind specifically and have high affinity. They're easier to make because they're much smaller proteins.
+
+# Design of Small Molecule Binders
+
+Now I'm going to talk about the design of proteins which bind not other proteins, but instead bind to small molecules. I'm going to illustrate the technique with this molecule that's shown here, digoxin, which is a small molecule that's used to treat certain types of heart conditions, but it can be given in too large a dose.
+
+There's a lot of interest in making proteins that would soak up excesses in case of an overdose. We designed a protein which has the cavity. It's just sort of shown on the right. The surface view is the design protein. You can see the small molecule fitting into the cavity.
+
+When we tested this design, again, we had to make a number of designs to find several that bound tightly. We found this protein does bind the small molecule quite tightly.
+
+You can see in the lower panel on the right, you can see the design binding site. You see the small molecule in purple. In green are the side chains from the design protein.
+
+You can see the hydrogen bonds that these side chains make with the small molecule and also how these side chains pack and form a cavity that's shaped complementary to the small molecule.
+
+We solved the crystal structure of this designed protein. Again, it's very similar bound to the small molecule. The binding mode is very similar to the design model. In red is the design model what we're trying to make. In blue is how it actually binds. You can see that they are very very close again.
+
+We've able to design again. This is another example where we can design molecular recognition with very high accuracy.
+
+I won't go through this slide in detail, but this compound belongs to a family of steroid compounds with fairly similar structures. By changing the details of the side chains around this site by making mutations, we can program or reprogram the specificity of binding of this design protein to different small molecules.
+
+Basically the way that these steroids differ from each other is by the presence or absence of the hydroxyl groups, which are indicated on the top right. By changing the side chains which interact with these hydroxyl groups, we can change the specificity.
+
+# Design of Protein-Based Nanomaterials
+
+I've talked about designing protein binding and designing small molecule binding. Now I'm going to talk about designing protein-based nanomaterials.
+
+There are a lot of reasons you might want to design protein nanomaterials. For example, for drug delivery, you can imagine synthetic cages that you can package small molecules in for vaccines, making synthetic particles that look like viruses, but display the epitopes you want a vaccine raised against.
+
+For patterning for microcircuitry, already there's a lot of different types of nanomaterials that could be very useful. One should also keep in mind that familiar materials like silk and wool are made out of proteins.
+
+If we could figure out how to design proteins that bind to each other in very precise ways, really could have a whole new class of materials for many different purposes.
+
+I've already talked about designing ideal globular protein building blocks. Now the challenge is how to put these building blocks together to make nanostructures.
+
+I don't have time to go through the method in detail, but suffice it to say that we start by picking up particular geometry, for example, in this case, a cubic geometry, and we arrange possible subunits of this nanostructure in the correct relative geometry to form a cube and sample the degrees of freedom of the cube which is basically you can imagine, for example, changing the length, changing the size of the cube.
+
+Then we use the protein design calculation I showed you to design an interface between these subunits so that they assemble and stick together in the right way.
+
+What you can see in the electron micrograph on the bottom left are images of this design cube where we've made the gene, put it into bacteria, made the protein. You can see that this protein self-assembles into a cubic structure as designed.
+
+We were able to solve the crystal structure of this design nanomaterial. Like the previous crystal structures I've shown you, it's virtually identical to the design model. You can't even really tell the difference. The design model, what we're trying to make, is in gray, and the crystal structure is in blue.
+
+This just shows you another view. The cube I just showed you is on the left. A cube has different symmetry axes, and this just shows views down the different symmetry axis of the design model and the crystal structure, which I showed you before. They're very similar.
+
+Here's another one which is tetrahedral. Again, the design is very similar to the crystal structure.
+
+We've now extended these methods to allow us to make nanomaterials composed of more than one component. This just shows how we do it. Again, we have to choose the symmetry. This one is kind of neat. This is two inverted tetrahedra, which you can see in the top left panel.
+
+Then we arrange subunits, the blue subunit and the green subunit are going to be the components of these two inverted tetrahedra. Then we slide them relative to each other, as shown in panel B, and rotate them until we find a way in which they really fit nicely together.
+
+Then we design the interface between them. That's shown in E, where we've done the design calculation to get a very complementary interface.
+
+Then we make the proteins. We can identify, using a native gel, those designs where we've made those cases where we make two proteins in the same cell and where these proteins are sticking together to form a high order assembly.
+
+Actually I go back. On the right you see what happens if you, what a chromatogram of the cell lysate looks like from these two proteins. These two proteins here are co-expressed. Co-express these are designed proteins. This is on a sizing column. They're co-purifying here, suggesting they're sticking together.
+
+This just shows sizing column data showing that they do stick together in solution.
+
+The really neat thing is when you look at electron micrographs of these purified assemblies, they look, it's a little hard to see here because it's small, but the shapes of these purified particles are very similar to the design models.
+
+We've been able to solve crystal structures of four of them. Again, these are very similar. So these are just two different views of four different designs.
+
+For example, on the top left, you have the design model, two different views down, different symmetry axes for this design, T33-15. The crystal structure is virtually identical to this.
+
+That's true for, for example, the one on the right, called T33-28. It's this kind of neat shape. Again, that's almost perfectly recapitulated in the crystal structure, which is shown underneath.
+
+We can make these two-component materials with very high accuracy. These are quite neat because you can imagine, it's very easy now to package small molecules, for example, inside them because these cages can't assemble until both components are present.
+
+We can also put different things on the outside, for example, if we want to try and make vaccines. These assemblies are closed, so they're closed cages. But we can use exactly the same methods now to make open two-dimensional and three-dimensional arrays.
+
+We have some nice examples now of open two-dimensional lattices. We're very excited about making a whole new class of materials using these methods.
+
+On this slide I just show a blow up of the side chains at the interfaces of one of these designs. Again, they're very close to where they were supposed to be.
+
+# Rosetta@Home and Foldit
+
+Now I'm going to end my talk by describing something a little different. But I thought that you might find it interesting.
+
+I described a project called Rosetta@Home where we send the computer program we've developed for these calculations called Rosetta out to volunteers all over the world who can enlist and they contribute spare time on their computers.
+
+That's, in fact, how most of the calculations I've told you about are being done. I encourage you to sign up for Rosetta@Home. You can also always see what we're doing because the screensaver that plays will show you the calculations we're trying to make.
+
+For example, for these symmetric assemblies, they're really pretty to watch.
+
+Rosetta@Home participants were looking at watching the screensavers. They started thinking that they might be able to do better. I got started getting messages from participants saying, well, can't you make some way for us to interact with, we can see what the computer is doing, and we think that it's not doing the right thing. Can't we? We'd like to be able to go in there and guide it.
+
+We developed an interactive game called Foldit, which is basically like Rosetta@Home, except that the game player can go in and move and sort override the computer by pushing and pulling the protein in different ways.
+
+The really neat thing over the past couple years is that game players, people in the general public, have made some really neat scientific advances, and I'll tell you briefly about them now.
+
+# Foldit Successes: Protein Structure Prediction
+
+The first one involves structure determination, and I'm not going to go through this slide in detail. Just suffice it to say that we've been developing methods. I didn't really have time to talk about, for solving protein structures more effectively, not only when you have no data, but when you have some data.
+
+For example, some x-ray crystallographic data, but that's not sufficient to solve the structure using conventional methods.
+
+People all around the world started sending us problems they were stuck on where they had crystallographic data but they couldn't solve the structure. Many many of them we were able to solve.
+
+We published a paper that's cited here, showing that we have this new method for solving hard problems. But we also got a data set that we weren't able to solve. In desperation, we set up for Foldit players to try and solve.
+
+This was a retroviral protease. It was quite an interesting protein. There had been a lot of work on it. It was posted as a Foldit puzzle.
+
+This is a little bit out of date. After we tried it out in the lab and we weren't able to solve it using our conventional methods, we gave it to Foldit players.
+
+This is what Foldit looks like. This was the protein. You have access to all of the standard Rosetta functionalities which are given non-technical names like wiggle and shake those are basically the two animations I showed you and you can move and pull on it.
+
+I encourage you to go to Foldit and you can try it out for yourself there's introductory levels to help you use it.
+
+What happened is shown here. To give away the punchline, the Foldit players were able to solve the structure. It's shown in blue here. It wasn't known before.
+
+Foldit players form teams. It's really cool here. In this case, the first player started with this. We had a rough model, which we knew wasn't right, red. We gave that to them. You can see it's quite different from the blue model.
+
+The first player, S.P. Vincent, produced the yellow model, which is quite a bit better than the starting red model. It's closer to the blue.
+
+Then passed it off to his teammate, Grabhorn, who made it still better, still closer to the blue. You can see it directly in the core of the protein. You now see some of these side chains coming closer and closer.
+
+Grabhorn passed it off to Mimi, who improved it still further. When we got the solution back from Mimi, we could look at the fit to the experimental data, which wasn't sufficient. You couldn't solve the structure using the data, but it was kind of like a fingerprint. You could tell if you had it right.
+
+What we could see is that Mimi's solution clearly fit the data much better than anything we'd seen before. When we sent it back to the experimentalists who were working on the problem they could see immediately it was the correct solution.
+
+Foldit players had solved the structure which had eluded structure determination for a long time.
+
+# Foldit Successes: Player Recipes
+
+The next example I want to give is we were very curious about how Foldit players were doing these amazing things. I emailed a bunch of really top Foldit players, asked them what they were doing. They wrote back very sophisticated things.
+
+I realized that wasn't going to be easy to find the common element of really successful strategies. Instead, we developed a method for Foldit players to encode their own algorithms in scripts called recipes.
+
+When we made this available to Foldit players, we found several years ago now that Foldit players developed a massive number of recipes. They're shown in this bar graph here shows for each week how many recipes were used.
+
+Each distinct shade along the bar represents a different recipe. The width of the recipe indicates how often it's used. If you're a sharing type of Foldit player, you make your recipes available to other people. Then lots of people use them.
+
+If you're more of a private person, you keep them to yourself, in which case, you're the only one who uses them, and you have a narrower bar.
+
+What we noticed over time was that there were two recipes that really started taking over the population. They're the ones shown in red and in green. These have quite nice names. This one's called Reds Ones Quake, and the green one's Blue Fuse.
+
+We were very curious about what they were. What we were really surprised at is that when we looked at what the players had come up with, it was astonishingly similar to something that we had developed over the same period of time, unpublished, and a scientist in my group had been developing it.
+
+It was really uncanny how similar it was. The Foldit players had basically discovered the same thing we had. But of course, they weren't professional biophysicists or computational biologists like we are, but they'd come up with the same thing.
+
+It turns out their algorithm, BlueFuse, is actually better in the context of the game than what we had developed. We're very excited now to follow the new algorithms that players are developing. We can see they can develop things which are at least as good as what we can here.
+
+# Foldit Successes: Enzyme Design Improvement
+
+The final example is a protein design example. I didn't talk about it, but we've used the methods I described to design new enzyme catalysts that catalyze reactions which aren't catalyzed by naturally occurring proteins.
+
+I told you at the beginning that one of the things proteins do is catalyze reactions, like breaking down food in your stomach. They do all sorts of amazing things. But there's some reactions that they don't catalyze.
+
+One of them is shown here. This is in the left panel. The two purple small molecules in this reaction are linked by two carbon-carbon bonds in something called a Diels-Alder reaction, which isn't catalyzed by naturally occurring enzymes.
+
+In brown, you see a designed enzyme that we use the methods I've described to design. This holds those two purple molecules in the right relative orientation for carbon-carbon bond formation to form.
+
+We made a number of different designs, and we found one that catalyzed the reaction. That's shown on the right. You see the amount of this product formed as a function of time.
+
+The good thing is that this reaction, there's no known enzyme that catalyzes this reaction. We've made something that clearly catalyzes it.
+
+Like most of the designed enzymes we've made, however, it's a poor enzyme. This time scale is hours, not seconds, as you would like it to be for a naturally occurring enzyme, for a good enzyme. Faster is better.
+
+We posed this as a challenge to Foldit players. Could they actually make it better?
+
+This shows the crystal structure of the design, which again, as in the other cases, is very similar to the design model. You can see it's in the ribbon here. The two small molecules are shown in the center.
+
+You can see one reason why this is not a very good enzyme is that the lower of the small molecules is really loose. It's not really held down very tightly by the enzyme. It's a very open active site.
+
+We wondered if there was some way of holding on these ligands better. This is what we asked the Foldit community to do.
+
+They came up with this radical solution by inserting this big, long loop in the middle of the protein. You can see it sort of comes over, and it holds these small molecules in place where they're supposed to be.
+
+This loop has, with this insertion, the protein has an 18-fold greater catalytic activity than the starting design, which is really quite impressive.
+
+We were very excited about this. The Foldit players had done something really remarkable. When we solved the crystal structure of this protein, it was even more amazing because the crystal structure is very similar to what they designed.
+
+This shows that non-scientists can not only help solve protein structures, but they can also design new proteins.
+
+If you go to Foldit and start playing, you will be able to help us with our design efforts. If we like your designs, we'll go and make them, and you will be an author on the papers that come out of them.
+
+We're really excited about getting more people involved in doing this kind of research. The types of Foldit problems that design problems now that you'll see if you go there are designing new types of symmetric assemblies, such as the ones that I described.
+
+I've been really fortunate to have many, many wonderful collaborators who are listed here who actually did the work. I didn't really do much of anything myself.
+
+# Q&A Session
+
+I think now at this point I will look at the questions that have been appearing and see what I can say about them.
+
+What do I do? You have to read them. Yeah okay. Alright so let's see how do I get, there's number 3 and number 4 how do I OK. Is there a? Maybe there is one before this? OK So OK So I see two questions which have numbers three and four.
+
+The first one is can we build these designs and evolve it to be delivered as an antibody. Well, what we are... Exactly. So these proteins that we're designing, could be delivered in just the same way that you would deliver an antibody.
+
+In fact, that's what we are working towards both with these anti-flu designs and we're also designing proteins to hit tumor cell targets and proteins involved in autoimmune responses.
+
+Once we've designed these proteins, verified that they bind their targets and shown that they have the correct in vitro cell culture properties, then the next steps are to do animal tests, the same kind of things you would do in developing an antibody as a therapeutic.
+
+The advantage of these molecules over antibodies is that they can be made at very high levels in E. coli. Some of them are small enough that they can be chemically synthesized, which takes a lot of the cost out of protein therapeutic manufacture.
+
+The next question is, do we have information on the potential toxicity of the design cages? Well, one obvious concern is that they may elicit an immune response.
+
+In work I didn't describe, we've developed methods for designing out T-cell epitopes to reduce the immunogenicity of the designs. We have some results not on these particular cages, but on other proteins suggesting we can successfully reduce the immunogenicity of design proteins.
+
+But I think each case, this will have to be checked carefully.
+
+Another question is, can you help design an inhibitor if we don't have the crystal structure but the active site is part of a known family? Well, let's see. Design is, if you have a structure of what you're trying to design a binder to, it's much better.
+
+If the protein is part of a known family, then you can build a model of the target protein and then using that model try and design an inhibitor. But the success rate will be lower.
+
+That's all the questions I have currently. I'll just wait a minute to see if there are any others.
+
+I got a couple more questions. Are there similar active site shapes with designed enzymes related to other approaches like catalytic antibodies? That's a good question.
+
+The catalytic antibodies are a little different in that, first of all, they weren't really designed by a computer. There was a selection that was used for the antibodies to bind transition state analogs. They were obtained by an approach more like natural evolution.
+
+The active site shapes tend to be different because in a catalytic antibody, they're made up of the active site loops, whereas in these designed enzymes they tend to be more pocket-like in naturally occurring enzymes.
+
+But as a whole, the approaches are somewhat complementary because we can start with using a calculation to get a design that has initial activity and then use evolutionary approaches, laboratory evolutionary approaches, to increase the activity.
+
+In fact, in every case we've designed an enzyme on a computer, it's been possible to evolve it to make it higher affinity, to make it more active by directed evolution.
+
+The design gives you the starting point.
+
+Next question is, can we use your approach to de novo design CDRs and build the antibody? The answer is yes, people are using Rosetta, the program I described, to design CDRs and build antibodies.
+
+In fact, most major pharma companies have licensed Rosetta from the University of Washington to do exactly that, to do many things but among them to design antibodies.
+
+Then how long does it take to solve the crystal structure of an enzyme? Well, that depends on the hard part is getting crystals. If you can get your enzyme to form crystals, then it's actually quite straightforward to solve the structure.
+
+The next question is, how does one design a T-cell epitope to reduce immunogenicity? There's large data sets for different MHC alleles. The peptide binding specificities are known experimentally.
+
+We use these databases during the design process to avoid peptide sequences which bind to MHC alleles. If a peptide sequence is known to bind or is close to similar to something that binds to a MHC, we disfavor it during the design.
+
+Conversely, if it's similar to or is identical to a peptide sequence that occurs in the human genome, we give it a bonus.
+
+I'm getting so many questions now, I think I'm going to have to pick and choose.
+
+Have we used our approach to successfully design protein-protein interaction disruption? Yes, we have. We have designed a number of proteins that will bind to their targets and block binding of the naturally occurring protein.
+
+This is something that is quite an advantage of a designed protein as opposed to a small molecule, it is hard to make small molecules that disrupt protein-protein interactions. But we can design proteins that disrupt protein-protein interactions.
+
+We have quite a few examples now of... And basically the trick is we just designed something that has higher affinity for the target than the naturally-occurring partner does so when we add this design protein it will displace a naturally occurring protein.
+
+Your successes are impressive, but the false positive rate is high. The false positive rate is very, very high. The real question is, can we distinguish the ones that are correct from the ones that are incorrect?
+
+Well, obviously, this is something that we're working on hard. The good thing is we're continually getting more data on this.
+
+One of the things that's particularly useful is the extent of pre-organization of the design site in the unbound state. A powerful metric is what we call essentially the Boltzmann weight of the design side chain, say in the active site of an enzyme or the active site of a designed small molecule binding site.
+
+If the side chains that compose the site are predicted to be really locked in place, there's a much higher probability that the design is successful.
+
+We would like to have 100% success with our designs. We're certainly getting a lot of data on how to do things incorrectly, because we have. But we're definitely observing trends.
+
+It's an interesting classification problem in itself, given that we have many, many different designs for a number of different problems. Now the challenge is to distinguish the things that work from the ones that don't.
+
+As I mentioned, the pre-organization of the binding site, the extent to which the protein really folds up to the design model seems to be among the best discriminators so far.
+
+What are the best simulators of protein folding? Well, if you want to predict protein structure, probably the best method to use is Rosetta, the program we've developed over the years for protein structure prediction.
+
+But if you want to actually simulate the folding process, then molecular dynamics is a better method. There are very impressive results from D. E. Shaw with specialized purpose computing doing very long time simulations.
+
+The real problem with molecular dynamics simulation is just that it takes a huge amount of computing time.
+
+If you increase throughput of construct generation screening, will you further ensure an even higher success rate? The answer is yes, because it's probabilistic. Unfortunately, this design process is one of probabilities.
+
+For any given problem, we have a certain chance of success. The more constructs we can make and screen, the better. As you know, the cost of gene synthesis keeps decreasing.
+
+Even if we didn't get any smarter and better, which hopefully we will, even if our methods didn't get better, our success rate would get higher as we could make more.
+
+Our real goal is to make the whole process much, to be able to automatically, to computationally discriminate the designs that work from those that don't. So we all don't even make genes for the ones that don't work.
+
+I don't know anything about mosaics, for the person who asked about that.
+
+Do I have an idea now on what surfaces or what situations we can't design for? Very charged surfaces are hard. A lot of affinity in molecular interactions comes from nonpolar interactions, and those are easy to design high affinity binders towards.
+
+Very charged surfaces are much more challenging because you have to get perfect complementarity of hydrogen bond donors and acceptors.
+
+Here's a question about flexibility. Many enzymes use flexibility to order transitions during the catalytic reaction. Have we included this?
+
+Well, with naturally occurring enzymes, which have really mastered the chemical transformation part of the problem, then the problem comes how you get the substrate in and the product out. Flexibility becomes very important.
+
+In our case, I think we do have flexibility, but it's a flexibility of the sort that's not really helping. I mentioned that a good discriminator of designs which are active from designs which aren't is how well locked in place the catalytic side chains are.
+
+Our problem right now is too much of the wrong kind of flexibility. After we can really pin down the side chains where they're supposed to be, we can start thinking about putting in the right kind of flexibility, sorts of things where loops moving out of the way to get a substrate released and so forth.
+
+We do see product release as being rate limiting in some of our designs. Even now, some flexibility in the right way could be better.
+
+There's a question about nucleic acid design using Rosetta. We have developed Rosetta to design nucleic acid structures and that work is now being continued by people who have been in my group and now left for example Phil Bradley and Jim Havranek at Fred Hutchinson and WashU working on protein-DNA interactions and Rhiju Das working on RNA structure modeling at Stanford.
+
+Do you have examples of designs that bind and release something? Well, we have our proteins that bind small molecules do release them. Then, of course, the enzymes bind substrates and then release products, which are transformed.
+
+There's a question about, I mentioned four-angstrom structures and fitted models to them showing RMSDs around 0.7 angstroms. That question, I'm not sure what it's referring to.
+
+For the work we've done on molecular replacement, we can start with quite poor models, say four-angstrom, five-angstrom resolution, and actually solve structures with them in some cases, using the improved molecular replacement methods.
+
+One thing I didn't talk about that very exciting now is cryo microscopy structure determination. We can use cryo density in just the same way to guide our structure prediction methods.
+
+We've developed some very exciting methods for taking low-resolution cryo-EM density and generating quite high-resolution models.
+
+Ashree, the question about membrane. Can we design membrane proteins? And what are the challenges?
+
+It's a very interesting question. I think that in many ways, it should be easier to design membrane proteins than soluble proteins. There's a lot more constraints.
+
+The problem really is in the experimental testing. That can't be underestimated, because you have to, just doing the computational design is one part, but then you have to be able to test.
+
+The problem with a membrane protein is that you make the protein in, say, a bacterium. You have to get it inserted into a membrane in a relatively pure form. Then the structural biology is much harder.
+
+I emphasized throughout my talk that crystal structures in comparisons of the structures to the designs is you really need that to know whether you're on the right track or not.
+
+It's harder to make the membrane proteins to get them in pure form, and it's harder to determine their structures. The problems with designing membrane proteins are almost entirely on the experimental side.
+
+Work I'm doing myself that I didn't talk about is designing long helical bundles, which look, I'm designing soluble versions of these, and I've been able to do this, make very stable things with very high accuracy.
+
+It would be quite easy to use these methods to design membrane proteins. Again, just the experimental characterization becomes much more difficult.
+
+Is there any hope that someday in the future we could computationally calculate the structure of a protein from a DNA sequence? Yes, I think there is.
+
+As I mentioned with D. E. Shaw, with very small peptides, has shown that with long-time molecular dynamic simulations, you can get quite accurate structures.
+
+There's a protein structure prediction experiment called CASP that runs every two years, where we and other people participate. You can see that the predicted structures can in some cases be quite accurate.
+
+It's low probability. But even now with Rosetta, for example, some fraction of the time, an ab initio predicted structure can be quite accurate. It's too unreliable to be very useful at this point.
+
+But the methods keep getting better and computers keep getting more powerful, so I think it's a possibility.
+
+There's a question about using small angle x-ray scattering for model validation. That's useful when the model has a quite non-spherical shape. I think it could be very useful.
+
+In fact it would be great to have collaborators in doing this because we're making now many things that are quite non-spherical. If you're interested, let me know.
+
+It could be quite useful for validating, sort of say, extended cylindrical structures, such as the ones I'm designing now.
+
+There's a question about designing a protein structure that had, designing an enzyme that converts a drug that might be toxic into its active form that would be like an enzyme that would convert a prodrug to its final active state and I think that that's certainly an exciting application for enzyme design.
+
+I think it's noon so I should probably wrap up now so thanks everybody for listening.
+
+# Quick notes
+
+- **Lowest Free Energy Folding Principle**: Designs enforce target structures as global energy minima via Rosetta's physics-based scoring, confirmed by Rosetta@Home folding funnels where energy plummets with RMSD to target.
+- **Disembodied Side-Chain Docking**: For binders, dock isolated side chains to targets (climbing wall analogy: hand/footholds), then scaffold with ideal backbones for rigid preorganization—key trick for high-affinity, specific interfaces validated crystallographically.
+- **Interface Design for Nanomaterials**: Symmetrize subunits (e.g., cubic, tetrahedral, di-tetrahedral), rigidly dock/rotate for complementarity, optimize interfaces; enables heteromultimers that assemble only co-present, ideal for conditional cages.
+- **Preorganization as Success Predictor**: Boltzmann-weighted side-chain conformational entropy in apo state discriminates winners; rigid binding sites correlate with function, addressing high false-positive rates (~high-throughput probabilistic screening).
+- **Hybrid Design-Evolution**: Computations yield functional starting points (e.g., novel Diels-Alderase), improvable via directed evolution or Foldit crowdsourcing (e.g., 18x k_cat boost via substrate-clamping loop).
+- **Experimental Closure**: Gene synthesis commoditization enables 100+ designs/month; structures (NMR/crystal/cryo-EM) as ultimate validators, with Foldit augmenting via human intuition for puzzles/optimizations.
+- **Generality**: From flu neutralizers (stem-binding blocks fusion), digoxin sponges, to epitope-displaying VLPs; pitfalls like charged surfaces or excess flexibility noted.
+- **Lowest Free Energy Folding Principle**: Designs enforce target structures as global energy minima via Rosetta's physics-based scoring, confirmed by Rosetta@Home folding funnels where energy plummets with RMSD to target.
+- **Disembodied Side-Chain Docking**: For binders, dock isolated side chains to targets (climbing wall analogy: hand/footholds), then scaffold with ideal backbones for rigid preorganization—key trick for high-affinity, specific interfaces validated crystallographically.
+- **Interface Design for Nanomaterials**: Symmetrize subunits (e.g., cubic, tetrahedral, di-tetrahedral), rigidly dock/rotate for complementarity, optimize interfaces; enables heteromultimers that assemble only co-present, ideal for conditional cages.
+- **Preorganization as Success Predictor**: Boltzmann-weighted side-chain conformational entropy in apo state discriminates winners; rigid binding sites correlate with function, addressing high false-positive rates (~high-throughput probabilistic screening).
+- **Hybrid Design-Evolution**: Computations yield functional starting points (e.g., novel Diels-Alderase), improvable via directed evolution or Foldit crowdsourcing (e.g., 18x k_cat boost via substrate-clamping loop).
+- **Experimental Closure**: Gene synthesis commoditization enables 100+ designs/month; structures (NMR/crystal/cryo-EM) as ultimate validators, with Foldit augmenting via human intuition for puzzles/optimizations.
+- **Generality**: From flu neutralizers (stem-binding blocks fusion), digoxin sponges, to epitope-displaying VLPs; pitfalls like charged surfaces or excess flexibility noted.
+
+# Possible transcription errors
+
+- "deoxygenin" → Corrected to "digoxin" (standard cardiac glycoside used in overdose antidote context).
+- "DL-Zalda" → Corrected to "Diels-Alder" (canonical pericyclic reaction absent in natural enzymes, common de novo target).
+- "yellow virus binds" → Likely "yellow [arrow or highlight] virus binds"; contextual guess for conserved HA stem site.
+- "Hb80 and Hb36" / "HB36" / "HB80" → Standardized to HB80/HB36 (published miniprotein names from Baker lab flu work).
+- "Reds Ones Quake" → Likely "Red's One's Quake" or "Redzone Quake"; Foldit recipe name, minor uncertainty on exact spelling.
+- "Nini" → Corrected to "Mimi" (Foldit player name in published retroviral protease paper).
+- "Grabhorn" → Likely "grabcorn" or similar; Foldit handle from paper.
+- "S.P. Vincent" → Foldit player from paper.
+- "T33-15" / "T33-28" → Published two-component nanoparticle names.
+- "CAASPP" → Corrected to "CASP" (Critical Assessment of Structure Prediction).
+- "David Schaub" → Corrected to "D. E. Shaw" (DESRES molecular dynamics pioneer).
+- "Jim Habernack" → Corrected to "Jim Havranek" (Rosetta developer).
+- "armisties" → Corrected to "RMSDs" (root-mean-square deviation).
+- "four-engstrom" → Standardized to "four-angstrom".
+- Repetitions (e.g., "having ways of blocking the flu is useful" x3) → Consolidated to single instance as speech artifacts.
+- Q&A names (e.g., "Ashree") → Retained as spoken; no further context.
+
+
