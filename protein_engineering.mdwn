@@ -1,6 +1,10 @@
-This is a wish list for protein folding and engineering. It contains some speculation and brain storming and shouldn't be considered completely viable for now.
+This is a wish list for protein folding and engineering.
+
+[[!toc levels=5 ]]
 
 # Wishlist
+
+This wishlist contains some speculation and brain storming and shouldn't be considered completely viable for now.
 
 * Given a 3d shape (of some nanostructure), produce a protein's amino acid sequence that will consistently create that shape. (done as of 2023?)
 
@@ -32,7 +36,7 @@ This is a wish list for protein folding and engineering. It contains some specul
 
 # Other interesting targets
 
-* gene editing proteins (see [[gene-editing]])
+* gene editing proteins (see [[gene editing|gene-editing]] for various effectors or components that could be used in protein engineering)
 * enzymes for [[DNA synthesis]]
 * molecular recording (like in vivo DNA-based recording devices, for debugging or otherwise, [[lineage tracing]] techniques, [[DNA ticker tape]] memory, see "Of toasters and molecular ticker tapes" by Kording)
 * protein binding affinity stuff ([protein-protein interaction](https://en.wikipedia.org/wiki/Protein%E2%80%93protein_interaction)) 
@@ -67,6 +71,198 @@ Well, it's probably time to update this page... lots of recent <a href="https://
 
 [Unlocking de novo antibody design with generative artificial intelligence](https://www.biorxiv.org/content/10.1101/2023.01.08.523187v1) (2023)
 
+# Protein Engineering Cheatsheet
+
+This might get a little sloppy.
+
+---
+
+## 1. Core Engineering Strategies (Mechanistic Foundations)
+
+| Strategy | Mechanistic Basis | Typical Applications | Key Design Levers |
+|----------|-------------------|----------------------|-------------------|
+| **Coiled‑coil / Leucine‑zipper dimerization** | Helical packing of hydrophobic residues; electrostatic surface charge | Stabilizing enzyme activity, scaffold assembly, synthetic signaling | Length of helical repeat, hydrophobic‑index, charge pattern |
+| **Site‑Directed Mutagenesis** | Precise amino‑acid substitution at a defined position | Changing substrate specificity, thermostability, removing protease sites | Alanine scanning, saturation mutagenesis at catalytic or interface residues |
+| **Rational Active‑Site Redesign** | Structural knowledge (X‑ray, cryo‑EM) + computational modeling | Enhancing catalysis, altering reaction mechanism | Catalytic triad geometry, transition‑state stabilization, electrostatic complementarity |
+| **Fusion Protein Construction** | Covalent linkage of two domains via a linker | Chimeric enzymes, tagging, biosensors | Linker length & flexibility (Gly‑Ser repeats vs. α‑helical), domain orientation |
+| **Affinity Tagging** | Short peptide that binds a resin or antibody | Rapid purification, immobilization | His‑tag, GST, MBP, FLAG, Strep‑II |
+| **Protease‑Cleavable Tags** | Tags containing a specific amino acid sequence recognized and cleaved by an added exogenous enzyme | Removing tags to yield near‑native proteins | TEV, PreScission, thrombin recognition sites |
+| **Self‑Cleaving Tags** | Autocatalytic domains that cleave spontaneously or upon induction (e.g., pH, thiols) without exogenous protease | Producing native‑length proteins; simplifies purification steps | Inteins (e.g., *Ssp* DnaB), N‑pro, 2A peptides |
+| **PTM Engineering** | Introducing or removing phosphorylation, glycosylation, SUMOylation sites | Controlling activity, stability, localization | Adding consensus motifs, mutating serine/threonine/tyrosine, N‑glycosylation sequons (N‑X‑S/T) |
+| **PPI Modulation** | Short peptide motifs (SH3, PDZ, WW) or nanobodies | Rewiring signaling, synthetic scaffolds | Interface grafting, hotspot mutation, nanobody epitope mapping |
+| **Flexible Linker Insertion** | Gly‑Ser repeats or other flexible sequences | Reducing steric hindrance, allowing domain movement | Linker length, composition (Gly, Ser, Ala) |
+| **Unstructured Region Deletion** | Removing intrinsically disordered tails or loops | Improving solubility, reducing proteolysis | Identification of low‑complexity sequences, NMR/MD disorder predictions |
+| **Degron / Protein‑Degradation Tags** | Short sequences recognized by ubiquitin‑proteasome or autophagy | Controlling turnover, studying dynamics | PEST sequences, N‑end rule degrons, auxin‑inducible degron (AID) |
+| **Optogenetic Modules** | Light‑responsive domains (LOV, CRY2, PhyB) fused to a target | Spatiotemporal control of activity | Chromophore pocket mutations, photocycle kinetics, helix rotation |
+| **CRISPR‑Cas Fusion** | Cas9 or dCas9 (deactivated or dead Cas9) fused to effectors (activators, repressors, epigenetic modifiers) | Gene regulation, epigenome editing | Domain swapping, linker optimization, nuclear localization signals |
+| **Nanobody / VHH Fusion** | Single‑domain antibody fused to enzyme or reporter | Targeted delivery, stabilization | Framework mutations, dimerization interfaces |
+| **Aptamer‑Based Tethering** | Nucleic‑acid aptamer that binds a protein to bring it into proximity | Conditional activation, proximity labeling | Aptamer selection (SELEX), binding affinity tuning |
+| **Synthetic Scaffolds (SpyTag/SpyCatcher)** | Covalent peptide‑protein chemistry | Modular assemblies, enzyme cascades | SpyTag/SpyCatcher pairing, spacer length |
+| **Protein‑DNA Fusion** | DNA‑binding domain fused to an enzyme | Locus‑specific regulation | DNA‑binding motif design, linker orientation |
+| **Molecular Glue / PROTACs** | Small molecule or peptide that links target to an E3 ligase | Targeted protein degradation | Ligand selection, linker length, binding affinity |
+| **Allosteric Modulator Domains** | Domain that binds a small molecule to control activity | Chemical control of function | Binding pocket design, conformational coupling |
+| **Synthetic Riboswitch‑Controlled Expression** | Riboswitch embedded in mRNA to modulate translation | Metabolic control, feedback loops | Aptamer‑to‑transformation, ligand binding site optimization |
+| **Humanization** | Swaps framework residues to the closest germ‑line set while preserving CDR backbone conformation, removing immunogenic patches without altering paratope geometry | Reducing immunogenicity of therapeutic antibodies, improving compatibility with human immune system | Framework residue selection, CDR backbone preservation, patch removal |
+| **Scaffold Repurposing** | Grafts catalytic or binding domains onto a stable, expressible protein skeleton, using rigid secondary‑structure elements as attachment points and requiring core optimisation to preserve the fold while introducing new activity | Creating engineered enzymes, chimeric receptors, synthetic scaffolds | Rigid attachment sites, domain orientation, scaffold stability |
+| **Sub‑Cellular Targeting Motifs** | Appends short, evolutionarily honed peptide codes—NLS, MLS, myristoylation, palmitoylation, ER‑retention, PTS1, mitochondrial TOM/TIM signals—to steer nascent chains through membrane translocons or vesicular trafficking pathways | Targeting proteins to nucleus, mitochondria, plasma membrane, secretory pathway | Motif placement, context‑dependent processing, signal peptide design |
+| **Kinase‑Based Trafficking Tags** | Embeds phosphorylation‑dependent PDZ or 14‑3‑3 interaction motifs that couple protein movement to local kinase gradients, delivering cargo to presynaptic or postsynaptic densities | Synaptic protein targeting, signal‑dependent trafficking | Phosphorylation sites, interaction domain compatibility, spatial regulation |
+| **Ubiquitin Tagging for Localization** | Installs mono‑ubiquitin or K63 chains to direct localization/signaling while minimizing proteasomal degradation associated with K48 linkages, exploiting ubiquitin‑binding domain networks | Targeting proteins to specific cellular compartments, signaling hubs | Ubiquitin‑binding domain selection, linkage type, chain length |
+| **Glycosylation as Trafficking Passport** | Positions N‑glycan sequons in surface loops to recruit calnexin/calreticulin quality‑control or Golgi‑lectin sorting receptors, influencing ER exit, apical vs. basolateral delivery, or lysosomal routing | Controlling protein trafficking, secretion, membrane localization | Sequon placement, loop accessibility, glycan processing pathways |
+| **Azobenzene Photocontrol** | Site‑specifically incorporates azobenzene unnatural amino acids whose trans–cis isomerization toggles the distance between two side-chain attachment points to induce conformational changes, conferring reversible light‑switchable activity | Light‑controlled enzyme activity, conformational switches | Incorporation site, isomerization kinetics, structural impact |
+| **Unnatural Amino Acids (UAAs) as Bio‑Orthogonal Handles** | Uses orthogonal tRNA/synthetase pairs to introduce p‑azido‑phenylalanine, alkynyl‑lysine, or other reactive UAA, enabling click chemistry, photocrosslinking, or post‑translational modifications impossible within the canonical set | Site‑specific labeling, cross‑linking, chemical biology probes | tRNA/tRNA‑synthetase specificity, metabolic stability, incorporation efficiency |
+
+---
+
+## 2. Protein Classes – Designability vs. Expressibility
+
+| Protein Class | Designability (Structural/Computational) | Expressibility/Foldability (Cellular Context) | Typical Success Rationale (Mechanistic Levers) | Representative Examples |
+|---------------|----------------------------------------|------------------------------------------------|----------------------------------------------|------------------------|
+| **GPCRs** | High – many crystal structures, AlphaFold predictions | Medium – need membrane environment, chaperones | Thermostabilizing point mutations, microswitch (DRY, NPxxY) engineering, ionic-lock-stabilising substitutions | β2‑adrenergic receptor thermostabilization; biased agonist design |
+| **Ion Channels** | High – pore architecture known | Medium – require lipid bilayers, proper gating | Selectivity filter size/charge, voltage‑sensor gating charges, pore helix dipoles | Voltage‑independent channels; fluorescent voltage sensors |
+| **Enzymes** | High – active‑site geometry often dictated by a few residues | Medium – some enzymes need cofactors or chaperones | Catalytic triad geometry, substrate‑anchoring subsites, transition‑state stabilization | High‑fidelity polymerase; proteases with novel cleavage sites |
+| **Antibodies / Nanobodies** | High – phage/yeast display libraries | Medium – expression of full IgG can be challenging | CDR length/composition, framework stability, Fc‑glycosylation | Bispecific antibodies; intracellular nanobodies |
+| **Optogenetic Proteins** | High – modular domains | Medium – chromophore incorporation | Chromophore pocket mutations, photocycle kinetics, helix movements | Red‑shifted opsins; faster‑acting LOV domains |
+| **Receptor Tyrosine Kinases** | Medium – dimerization and autophosphorylation complex | Medium – require extracellular ligand binding | Domain swapping, interface grafting, synthetic ligand activation | EGFR chimeric receptors |
+| **Transcription Factors** | Medium – DNA‑binding specificity can be altered | Medium – expression stability variable | Base‑specific readout, DNA‑binding domain design, linker length | dCas9‑VPR activators; synthetic zinc‑finger TFs |
+| **Structural Proteins** | Low – repetitive, β‑rich scaffolds | Low – hard to express recombinantly | Core packing, repeat number control | Engineered collagen scaffolds |
+| **Membrane Transporters** | Medium – pore architecture known | Low – lipid‑dependent folding, assay difficulty | Substrate‑binding cavity mutagenesis, gating domain engineering | Aquaporin selectivity tuning |
+| **Viral Coat Proteins** | Medium – capsid symmetry known | Low – assembly fidelity critical | Surface loop modifications, core residue integrity | AAV capsid engineering; VLP display |
+| **Complex Multi‑Domain Enzymes** | Low – inter‑domain interactions tight | Medium – modular assembly possible | Domain swapping, linker redesign, active‑site complementation | Engineered PKS for novel metabolites |
+| **Highly Glycosylated Proteins** | Low – glycoform control difficult | Low – folding depends on glycosylation | Glyco‑site engineering, cell‑line glycosyltransferase knockout | Glycosylation‑site modulation |
+| **Humanized Antibodies** | High – framework grafting is computationally tractable | Medium – expression of full IgG can be challenging | Framework residue selection, CDR backbone preservation, immunogenic patch removal | Therapeutic antibodies with reduced immunogenicity |
+| **Scaffold‑Based Enzymes** | High – repeat or domain scaffolds are designable | Medium – some scaffolds require chaperones | Rigid attachment sites, domain orientation, scaffold stability | DARPins, repeat proteins, synthetic scaffolds |
+| **Azobenzene‑Controlled Proteins** | Medium – incorporation site selection | Medium – photo‑isomerization may affect folding | Site‑specific UAA incorporation, structural impact of isomerization | Light‑switchable enzymes, conformational switches |
+| **Ubiquitin‑Tagged Proteins** | Medium – degron design is tractable | Medium – need to avoid proteolysis | Ubiquitin‑binding domain selection, linkage type, chain length | Targeted localization to endosomes or DNA‑damage foci |
+
+---
+
+## 3. Key Design Levers for Each Class
+
+| Class | Primary Levers (Mechanistic) | Secondary Levers |
+|-------|------------------------------|------------------|
+| **GPCRs** | Microswitch motifs (DRY, NPxxY), ionic lock, ligand‑binding pocket shape | G‑protein coupling interface, β‑arrestin recruitment sites |
+| **Ion Channels** | Selectivity filter residues, voltage‑sensor gating charges, pore helix dipoles | Allosteric modulatory sites (e.g., calmodulin binding) |
+| **Enzymes** | Catalytic triad geometry, substrate‑anchoring subsites, electrostatic field, transition‑state stabilization | Loop flexibility, metal‑binding sites, cofactor interactions |
+| **Antibodies** | CDR H3 length/composition, framework mutations, FcγR binding motifs | Glycosylation sites, hinge flexibility |
+| **Optogenetic Proteins** | Chromophore pocket residues, Schiff‑base network, photocycle‑determining residues | Helix rotation, light‑absorption wavelength tuning |
+| **RTKs** | Dimerization arm rigidity, ligand‑binding domain modularity, kinase activation loop | Intracellular adaptor binding sites |
+| **Transcription Factors** | DNA‑binding helix‑turn‑helix motif, base‑specific hydrogen bonds, linker length | Recruitment of co‑activators/repressors |
+| **Structural Proteins** | Core packing hydrophobic residues, repeat unit geometry, β‑strand register | Surface charge distribution |
+| **Transporters** | Pore lining residues, gating domain conformational changes, substrate‑binding cavity | Lipid‑protein interaction sites |
+| **Viral Coat Proteins** | Surface loop residues, inter‑subunit interface residues, capsid symmetry | Capsid maturation signals |
+| **Multi‑Domain Enzymes** | Domain interface complementarity, linker flexibility, active‑site alignment | Allosteric regulation by small molecules |
+| **Highly Glycosylated Proteins** | Glycosylation sequon placement, peptide backbone flexibility | Enzyme‑mediated glycan trimming sites |
+| **Humanized Antibodies** | Framework residue selection, CDR backbone preservation, immunogenic patch removal | CDR length optimization, affinity maturation |
+| **Scaffold‑Based Enzymes** | Rigid attachment sites, domain orientation, scaffold stability | Loop grafting, interface redesign |
+| **Azobenzene‑Controlled Proteins** | Incorporation site, structural impact of isomerization | Photocycle kinetics, light‑absorption tuning |
+| **Ubiquitin‑Tagged Proteins** | Ubiquitin‑binding domain selection, linkage type, chain length | Degron placement, proteasome interaction motifs |
+
+---
+
+## 4. Missing / Under‑Represented Protein Classes (Additions)
+
+| Class | Why It Matters | Representative Design Strategies |
+|-------|----------------|-----------------------------------|
+| **Aptamers (RNA/DNA)** | High‑affinity, programmable nucleic‑acid ligands; can be fused to proteins or used as biosensors | SELEX, computational aptamer design, in‑vitro selection |
+| **Repeat Proteins (DARPins, HEAT repeats, β‑propellers)** | Modular, highly designable scaffolds; each repeat can be optimized independently, though interface compatibility must be preserved | Repeat unit engineering, interface redesign, loop grafting |
+| **β‑Barrel Outer‑Membrane Proteins** | Pore‑forming proteins with defined strand‑strand hydrogen‑bond networks | Strand register engineering, pore size tuning, loop insertion |
+| **Fluorescent Proteins / FRET Sensors** | Spectral tuning via chromophore environment; useful for biosensing | Chromophore pocket mutations, π‑stacking network, linker design |
+| **Self‑Assembling Protein Nanostructures (Cages, Filaments, 2D Arrays)** | Engineered architectures for catalysis, drug delivery, nanotechnology | Symmetry‑driven docking, interface complementarity, rigid‑body design |
+| **Cytoskeletal Proteins (Actin, Tubulin)** | Engineered polymerization dynamics, motor binding | Nucleotide‑binding loop mutations, subunit interface redesign, allosteric sites |
+| **Ubiquitin‑Proteasome System Components (E3 ligases, DUBs)** | Targeted protein degradation, synthetic biology | E2‑E3 interface engineering, substrate‑recognition motif design, degron insertion |
+| **Artificial (De Novo) Enzymes** | De novo scaffold with designed catalytic pocket | Rosetta enzyme design pipeline, transition‑state modeling, active‑site geometry optimization |
+| **Protein‑Protein Interaction Domains (PDZ, SH3, WW)** | Small modular domains for peptide recognition | Loop grafting, interface redesign, combinatorial mutagenesis |
+| **Nuclear Receptors** | Ligand‑dependent conformational change, DNA‑binding domain | Ligand‑binding pocket redesign, DBD‑effector domain fusion, allosteric modulation |
+
+---
+
+## 5. Core Engineering Methodologies (Mechanistic Focus)
+
+| Methodology | Mechanistic Core | Typical Use Cases |
+|-------------|------------------|-------------------|
+| **SELEX (Systematic Evolution of Ligands by Exponential Enrichment)** | In‑vitro selection of nucleic‑acid aptamers based on binding affinity | Aptamer‑based sensors, targeted delivery |
+| **Phage / Yeast / Bacterial Surface Display** | Genotype‑phenotype linkage via surface expression | Affinity maturation of antibodies, enzyme libraries |
+| **Error‑Prone PCR** | Random mutagenesis across the entire gene | Diversifying libraries for directed evolution |
+| **DNA Shuffling / Family Shuffling** | Recombination of homologous sequences | Creating chimeras with improved properties |
+| **Structure‑Guided Recombination** | Crossover at structurally compatible positions | Domain swapping, scaffold optimization |
+| **Rosetta Design** | Energy‑based optimization of side‑chain rotamers & backbone | De novo protein design, interface redesign, enzyme active‑site engineering |
+| **AlphaFold‑Based Design** | Predicting protein folds to guide mutagenesis or scaffold selection | Identifying tolerant regions for mutation, scaffold engineering |
+| **ProteinMPNN / RFdiffusion** | Deep‑learning diffusion models for inverse folding & sequence generation | Generating novel backbones, conditional active‑site design |
+| **Molecular Dynamics (MD) with Enhanced Sampling** | Mapping conformational landscapes, identifying hinge residues | Allosteric site discovery, gating mechanism analysis |
+| **Co‑evolutionary Analysis (DCA / EVcouplings)** | Predicting residue‑residue contacts from multiple sequence alignments | Guiding mutagenesis to preserve network integrity |
+| **Genetic Code Expansion** | Incorporation of non‑canonical amino acids via orthogonal tRNA/tRNA synthetase pairs | Introducing bioorthogonal handles, photocrosslinkers |
+| **Cell‑Free Protein Synthesis (CFPS)** | In‑vitro translation of proteins without living cells | Rapid prototyping, testing toxic proteins, incorporating ncAAs |
+| **Phage‑Assisted Continuous Evolution (PACE)** | Linking phage infectivity to a desired activity for continuous selection | Evolving enzymes, binding proteins, regulatory elements |
+| **Intein‑Mediated Splicing** | Circularization or domain fusion via split intein splicing | Enhancing stability, creating cyclized proteins |
+| **PROTAC Design** | Designing bifunctional molecules that bridge target to E3 ligase | Targeted protein degradation |
+| **Optogenetic Module Engineering** | Mutating chromophore pocket or helix rotation to tune light response | Spatiotemporal control of activity |
+| **Allosteric Modulator Design** | Creating pockets that bind small molecules to induce conformational change | Chemical control of enzyme or receptor activity |
+| **Scaffold‑Based Design (DARPins, Repeat Proteins)** | Using repeat units as modular binding surfaces | High‑affinity binders, synthetic receptors |
+| **Synthetic Scaffolds (SpyTag/SpyCatcher)** | Covalent peptide‑protein chemistry for modular assembly | Enzyme cascades, multivalent display |
+| **Riboswitch Engineering** | Designing ligand‑responsive RNA elements that control translation | Metabolic control, feedback regulation |
+
+---
+
+## 6. Designability vs. Expressibility – Two‑Axis View
+
+| Protein Class | Designability (Structural/Computational) | Expressibility/Foldability (Cellular Context) |
+|---------------|----------------------------------------|----------------------------------------------|
+| **GPCRs** | High – many structures, AlphaFold predictions | Medium – need membrane environment, chaperones |
+| **Ion Channels** | High – pore architecture known | Medium – require lipid bilayers, proper gating |
+| **Enzymes** | High – active‑site geometry often dictated by a few residues | Medium – some enzymes need cofactors or chaperones |
+| **Antibodies** | High – phage/yeast display libraries | Medium – expression of full IgG can be challenging |
+| **Optogenetic Proteins** | High – modular domains | Medium – chromophore incorporation |
+| **RTKs** | Medium – dimerization and autophosphorylation complex | Medium – require extracellular ligand binding |
+| **Transcription Factors** | Medium – DNA‑binding specificity can be altered | Medium – expression stability variable |
+| **Structural Proteins** | Low – repetitive, β‑rich scaffolds | Low – hard to express recombinantly |
+| **Transporters** | Medium – pore architecture known | Low – lipid‑dependent folding, assay difficulty |
+| **Viral Coat Proteins** | Medium – capsid symmetry known | Low – assembly fidelity critical |
+| **Multi‑Domain Enzymes** | Low – inter‑domain interactions tight | Medium – modular assembly possible |
+| **Highly Glycosylated Proteins** | Low – glycoform control difficult | Low – folding depends on glycosylation |
+| **Humanized Antibodies** | High – framework grafting is computationally tractable | Medium – expression of full IgG can be challenging |
+| **Scaffold‑Based Enzymes** | High – repeat or domain scaffolds are designable | Medium – some scaffolds require chaperones |
+| **Azobenzene‑Controlled Proteins** | Medium – incorporation site selection | Medium – photo‑isomerization may affect folding |
+| **Ubiquitin‑Tagged Proteins** | Medium – degron design is tractable | Medium – need to avoid proteolysis |
+
+---
+
+## 7. Other techniques to consider
+
+| Technique | Core Insight | Practical Implementation |
+|-----------|--------------|--------------------------|
+| **Deep Mutational Scanning** | Generates quantitative, position‑specific enrichment landscapes for folding, binding, catalysis, and cellular fitness without prior structural knowledge. | Synthesize codon‑substituted libraries (including insertions/deletions), select under relevant conditions, NGS pre‑/post‑selection, compute enrichment scores. |
+| **Ribosome Display & mRNA Display** | Enables selection from libraries limited only by synthetic DNA diversity, compatible with stringent or proteolytic conditions. | In‑vitro translation of ribosome‑arrested or puromycin‑tethered mRNA–protein fusions, affinity capture, RT‑PCR recovery, iterative rounds. |
+| **Thermodynamic Integration & Free‑Energy Perturbation** | Alchemical MD protocols that mutate ligand atoms into dummy or alternate atoms, integrating ∂H/∂λ to yield absolute or relative binding free energies within chemical accuracy. | Use enhanced‑sampling Hamiltonian replicas, accurate force fields, convergence diagnostics. |
+| **Kinematic Closure (KIC)** | Solves protein loop closure analytically, enabling rapid enumeration of sterically allowed conformations that can be refined by rotamer repacking and energy minimization. | Apply to loop modeling in Rosetta or other modeling suites, integrate with MD for side‑chain optimization. |
+| **Native Chemical Ligation** | Chemoselectively condenses an unprotected synthetic peptide bearing a C‑terminal thioester with another peptide containing an N‑terminal cysteine to form a native amide bond, enabling total chemical synthesis of proteins with precise labels. Size limited to small-to-medium sized proteins (<200 aa), or larger targets via iterative ligations or post-folding fusions. | Synthesize peptide fragments, perform ligation under mildly acidic conditions, purify product, verify by MS. |
+| **Cystine‑Knot (Knottist) Engineering** | Cross‑braces a short β‑sheet or helical core with three disulfides that weave a topological knot, imparting extreme proteolytic, thermal, and chemical stability while allowing hypervariable loops for recognition. | Design cystine‑knots in silico, express in systems that support disulfide formation, test stability. |
+| **Mirror‑Image Phage Display** | Screen an L-peptide library against the synthetic D-enantiomer of the target; the corresponding D-peptide of the selected binder is then synthesized to recognize the native L-target. |
+| **Algorithmic T‑Cell Epitope Mapping** | Scans protein sequences for peptide epitopes whose length matches the anchor preferences for common MHC class II alleles, then redesigns surface residues to eliminate motifs while preserving structure and activity. | Use epitope prediction tools, apply conservative mutations, validate by immunogenicity assays. |
+| **Trinucleotide Mutagenesis** | Uses pre‑synthesized phosphoramidite trimers corresponding to desired codons to build combinatorial libraries that exclude stop codons and allow user‑defined amino‑acid ratios at each diversified position. | Design oligonucleotide pool, perform PCR, transform, screen. |
+| **Hydrocarbon Stapling** | Installs an all‑hydrocarbon cross‑link across two non‑natural α‑methyl,α‑alkenyl amino acids incorporated at positions separated by one helical turn or an integer multiple thereof of an α‑helix via ring‑closing metathesis, locking the helix in its bioactive conformation and conferring protease resistance and enhanced cell penetration. | Synthesize stapled peptide, characterize helicity (CD), test functional activity. |
+| **Hydrogen–Deuterium Exchange Mass Spectrometry (HDX‑MS)** | Monitors time‑dependent deuterium incorporation into backbone amides as a readout of solvent accessibility and hydrogen‑bond stability; peptic digestion and high‑resolution LC‑MS/MS localize exchanged sites, enabling time-resolved conformational dynamics, allosteric pathways, and binding interfaces. | Perform HDX experiment, analyze MS data, map to structure. |
+| **Deep‑Learning Hallucination & Inpainting** | Seeds a generative protein network with random noise or partial backbone coordinates, then iteratively optimizes a latent space under structural and functional constraints so that the network hallucinates complete protein backbones that cradle desired catalytic or binding motifs without relying on known folds. | Use models like ProteinMPNN, Diffusion‑based generators, enforce constraints, validate by synthesis. |
+| **Fragment‑Based Drug Discovery (FBDD) Applied to Protein Active‑Site Inhibition** | Identifies low‑molecular‑weight chemical fragments that bind subsites of the catalytic pocket with millimolar‑to‑micromolar affinity; structure‑guided linking or growing merges these fragments into larger ligands whose enthalpically favorable, vector‑directed interactions achieve nanomolar potency while maintaining ligand efficiency and selectivity. | Screen fragment library, co‑crystallize, design linkers, synthesize, assay. |
+
+--
+
+## 8. Summary Recommendations for Practitioners
+
+1. **Separate designability from expressibility** – a protein may be easy to redesign but hard to produce in a given host.
+2. **Leverage structural data** (X‑ray, cryo‑EM, AlphaFold) to identify *tolerant* regions for mutation and *critical* residues for active‑site redesign.
+3. **Combine rational design with directed evolution** – use computational predictions to narrow library size, then apply phage/yeast display, PACE, or CFPS for high‑throughput screening.
+4. **Consider allosteric sites** in addition to active sites; engineered allosteric modulators can provide tighter control and lower off‑target effects.
+5. **Employ modular scaffolds** (repeat proteins, SpyTag/SpyCatcher, nanobodies) to create synthetic assemblies without destabilizing individual domains.
+6. **Use non‑canonical amino acids** for site‑specific labeling, cross‑linking, or to introduce photo‑responsive elements (azobenzene).
+7. **Validate folding and function** with biophysical assays (CD, NMR, SAXS, MD) before moving to cellular or organismal contexts.
+8. **Iterate**: design → expression → characterization → feedback to model → redesign.
+
+---
+
+prompt> Please evaluate the above cheat sheet and indicate whether there is anything significantly wrong or incorrect about any of the statements about protein engineering.
+
+prompt> Please evaluate the above protein engineering cheat sheet and tell me if there's anything critically important that is missing in the form of a response that includes the technical jargon or knowledge in the form of a comma separated list in a single sentence. It can be a very long sentence, but I just want the key methods and techniques that I'm neglecting to mention above returned to me.
+
 # References
 
 See <https://diyhpl.us/~bryan/papers2/bio/protein-engineering/>
@@ -75,4 +271,98 @@ See <https://diyhpl.us/~bryan/papers2/bio/protein-engineering/>
 * <https://en.wikipedia.org/wiki/Protein_engineering>
 * <https://en.wikipedia.org/wiki/Protein_foldng>
 * <https://en.wikipedia.org/wiki/Protein_structure_prediction_software>
+
+[Raygun: template-based protein design](https://www.biorxiv.org/content/10.1101/2024.08.13.607858v1) <https://github.com/rohitsinghlab/raygun>
+
+[Combinatorial assembly and design of enzymes](https://www.science.org/doi/10.1126/science.ade9434)
+
+protein engineering papers mentioned in the IRC logs:
+
+* [Beyond directed evolution—semi-rational protein engineering and design](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2982887/pdf/nihms235064.pdf)
+* [Design of a single-chain polypeptide tetrahedron assembled from coiled-coil segments](https://diyhpl.us/~bryan/papers2/bio/protein-engineering/Design%20of%20a%20single-chain%20polypeptide%20tetrahedron%20assembled%20from%20coiled-coil%20segments.pdf)
+* [De novo enzyme design](http://depts.washington.edu/bakerpg/drupal/system/files/jiang08A.pdf)
+* [Advances in design of protein folds and assemblies](https://www.researchgate.net/profile/Ajasja_Ljubetic/publication/318373380_Advances_in_design_of_protein_folds_and_assemblies/links/59677975458515e9af9ea4ab/Advances-in-design-of-protein-folds-and-assemblies.pdf)
+* [Design of protein function leaps by directed domain interface evolution](https://diyhpl.us/~bryan/papers2/bio/protein-engineering/Design%20of%20protein%20function%20leaps%20by%20directed%20domain%20interface%20evolution.pdf)
+* [Surface-tethered protein switches](https://diyhpl.us/~bryan/papers2/bio/protein-engineering/Surface-tethered%20protein%20switches.pdf)
+* [Exploring the repeat protein universe through computational protein design](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC4845728/)
+* [De novo designed proteins from a library of artificial sequences function in Escherichia coli and enable cell growth](http://www.plosone.org/article/info:doi/10.1371/journal.pone.0015364)
+* [Advances in design of protein folds and assemblies (2017)](https://diyhpl.us/~bryan/papers2/bio/protein-engineering/Advances%20in%20design%20of%20protein%20folds%20and%20assemblies%20-%202017.pdf)
+* [Combinatorial assembly and design of enzymes](https://www.science.org/doi/10.1126/science.ade9434)
+* [2D protein grids](http://www.sciencedirect.com/science/article/pii/S0958166913007015)
+* [Parallel implementation of 3D protein structure similarity searches using a GPU and the CUDA](http://link.springer.com/article/10.1007/s00894-014-2067-1)
+* [book: Protein Engineering Protocols (Methods in Molecular Biology)](http://www.amazon.com/Protein-Engineering-Protocols-Methods-Molecular/dp/1617373389/)
+* [book: Protein Engineering and Design](http://www.amazon.com/Protein-Engineering-Design-Jennifer-Cochran/dp/1420071847/)
+* [book: Protein Engineering Handbook (2-Set)](http://www.amazon.com/Protein-Engineering-Handbook-2--Set/dp/352731850X/)
+* [Automating human intuition for protein design](http://www.bakerlab.org/system/files/Niv%C3%B3n_prot24463_13M.pdf)
+* [De novo protein design: how do we expand into the universe of possible protein structures?](http://www.sciencedirect.com/science/article/pii/S0959440X1500069X)
+* [A grammar for protein backbone structure using "protein blocks"](http://onlinelibrary.wiley.com/doi/10.1002/pro.2581/pdf)
+* [The coming age of de novo protein design](https://www.bakerlab.org/wp-content/uploads/2016/09/HuangBoyken_DeNovoDesign_Nature2016.pdf)
+* [Protein assembly and building blocks: Beyond the limits of the lego brick metaphor](https://www.weizmann.ac.il/sb/faculty_pages/Levy/sites/weizmann.ac.il.sb.faculty_pages.Levy/files/Biochemistry_2017.pdf)
+* [Designed Protein Origami](https://www.ncbi.nlm.nih.gov/pubmed/27677507)
+* [A high-level programming language for generative protein design](https://www.biorxiv.org/content/10.1101/2022.12.21.521526v1)
+* [End-to-end protein-ligand complex structure generation with diffusion-based generative models](https://www.biorxiv.org/content/10.1101/2022.12.20.521309v1)
+* [Generative language modeling for antibody design](https://www.biorxiv.org/content/10.1101/2021.12.13.472419v2)
+* [Accelerating protein design by scaling experimental characterization](https://www.biorxiv.org/content/10.1101/2025.08.05.668824v1)
+* [Codon language embeddings provide strong signals for protein engineering](https://www.biorxiv.org/content/10.1101/2022.12.15.519894v1)
+* [De novo protein backbone generation based on diffusion with structured priors and adversarial training](https://www.biorxiv.org/content/10.1101/2022.12.17.520847v1)
+* [Generating novel, designable, and diverse protein structures by equivarently diffusing oriented residue clouds](https://arxiv.org/abs/2301.12485)
+* [Structure-informed language models are protein designers](https://arxiv.org/abs/2302.01649)
+* [Unified rational protein engineering with sequence-only deep representation learning](https://www.biorxiv.org/content/10.1101/589333v1)
+* [Computer-aided directed evolution of enzymes](http://journals.iucr.org/m/issues/2017/01/00/be5274/be5274.pdf)
+* [Toward efficient enzymes for the generation of universal blood through structure-guided directed evolution](https://pubs.acs.org/doi/abs/10.1021/ja5116088)
+* [Massively parallel de novo protein design for targeted therapeutics](http://www.nature.com/nature/journal/vaop/ncurrent/full/nature23912.html)
+* [Design of a hyperstable 60-subunit protein icosahedron](http://www.nature.com/nature/journal/v535/n7610/full/nature18010.html)
+* [Accurate design of co-assembling multi-component protein nanomaterials](http://www.nature.com/nature/journal/v510/n7503/full/nature13404.html)
+* [Computational design of self-assembling protein nanomaterials with atomic level accuracy](http://www.sciencemag.org/content/336/6085/1171.short)
+* [Structure of a designed protein cage that self-assembles into a highly porous cube](http://www.nature.com/nchem/journal/v6/n12/full/nchem.2107.html)
+* [Trapping a transition state in a computationally designed protein bottle](http://www.bakerlab.org/system/files/Mills_Science_2015A.pdf)
+* [Design of coiled-coil protein-origami cages that self-assemble in vitro and in vivo](https://www.nature.com/nbt/journal/vaop/ncurrent/full/nbt.3994.html)
+* [Bottom-up design of Ca2+ channels from defined selectivity filter geometry](https://www.nature.com/articles/s41586-025-09646-z)
+* [Protein design with infilling language models and reinforcement learning, for antibodies and beyond](https://github.com/LLNL/protein_tune_rl)
+* [Engineering Protein Assemblies](https://www.nature.com/articles/s41564-024-01674-1)
+* [De novo design of tunable, pH-driven conformational changes](https://science.sciencemag.org/content/364/6441/658)
+* [Design of ordered two-dimensional arrays mediated by noncovalent protein-protein interfaces](http://www.bakerlab.org/system/files/Gonen_2DArrays_Baker2015.pdf)
+* [A robotic multidimensional directed evolution approach applied to fluorescent voltage reporters](https://www.nature.com/articles/s41589-018-0004-9)
+* [Accurate computational design of multipass transmembrane proteins](http://science.sciencemag.org/content/359/6379/1042)
+* [Unlocking de novo antibody design with generative artificial intelligence](https://www.biorxiv.org/content/10.1101/2023.01.08.523187v1)
+* [De novo design of modular peptide binding proteins by superhelical matching](https://www.biorxiv.org/content/10.1101/2022.11.14.514089v1)
+* [Broadly applicable and accurate protein design by integrating structure prediction networks and diffusion generative models](https://www.bakerlab.org/wp-content/uploads/2022/11/Diffusion_preprint_12012022.pdf)
+* [Top-down reinforcement learning based approach to design proteins](https://www.biorxiv.org/content/10.1101/2022.09.25.509419v1)
+* [Designing protein crystallization](https://www.biorxiv.org/content/10.1101/2022.11.18.517014v1)
+* [Controlled self-assembly of proteins into discrete nanoarchitectures templated by gold nanoparticles via monovalent interfacial engineering](http://pubs.acs.org/doi/abs/10.1021/acsami.5b02823)
+* [High thermodynamic stability of parametrically designed helical bundles](http://www.sciencemag.org/content/346/6208/481.abstract)
+* [De novo protein that MOVES](https://www.science.org/doi/10.1126/science.abm1183)
+* [Reengineering CCA-adding enzymes to function as (U,G)- or dCdCdA-adding enzymes or poly(C,A) and poly(U,G) polymerases](http://www.pnas.org/content/104/1/54.abstract)
+* [Intracellular directed evolution of proteins from combinatorial libraries based on conditional phage replication](https://www.researchgate.net/profile/Andreas_Broedel/publication/319051754_Intracellular_directed_evolution_of_proteins_from_combinatorial_libraries_based_on_conditional_phage_replication/links/598df5ff458515b87b25542d/Intracellular-directed-evolution-of-proteins-from-combinatorial-libraries-based-on-conditional-phage-replication.pdf)
+* [Extending enzyme molecular recognition with an expanded amino acid alphabet](http://www.pnas.org/content/114/10/2610.abstract)
+* [Enzymatic synthesis of psilocybin](http://onlinelibrary.wiley.com/doi/10.1002/anie.201705489/abstract)
+* [Protein structure determination using metagenome sequence data](http://science.sciencemag.org/content/355/6322/294)
+* [Development and engineering of cell-free “artificial metabolisms” for preparative multi-enzymatic synthesis](http://www.sciencedirect.com/science/article/pii/S187167841402202X)
+* [Control of enzyme reactions by a reconfigurable DNA nanovault](https://www.nature.com/articles/s41467-017-01072-8)
+* [Evolution of a designed protein assembly encapsulating its own RNA genome](https://www.nature.com/articles/nature25157)
+* [Designed proteins form a capsid around their own RNA genome and evolve in complex biochemical environments](http://www.nature.com/articles/nature25157)
+* [Designing photoswitchable peptides using the AsLOV2 domain](http://www.sciencedirect.com/science/article/pii/S1074552112000798)
+* [Inhibition of α-helix-mediated protein–protein interactions using designed molecules](https://www.nature.com/nchem/journal/v5/n3/full/nchem.1568.html)
+* [Recent advances in the photochemical control of protein function](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2926219/)
+* [Intracellular directed evolution of proteins from combinatorial libraries based on conditional phage replication](https://www.researchgate.net/profile/Andreas_Broedel/publication/319051754_Intracellular_directed_evolution_of_proteins_from_combinatorial_libraries_based_on_conditional_phage_replication/links/598df5ff458515b87b25542d/Intracellular-directed-evolution-of-proteins-from-combinatorial-libraries-based-on-conditional-phage-replication.pdf)
+* [Extending enzyme molecular recognition with an expanded amino acid alphabet](http://www.pnas.org/content/114/10/2610.abstract)
+* [How to use photoswitchable cross-linker to reprogram proteins](https://diyhpl.us/~bryan/papers2/bio/How%20to%20use%20photoswitchable%20cross-linker%20to%20reprogram%20proteins%20-%202017.pdf)
+* [Posttranslational mutagenesis: A chemical strategy for exploring protein side-chain diversity](http://science.sciencemag.org/content/early/2016/09/22/science.aag1465)
+* [Enzyme activity enhancement of chondroitinase ABC I from Proteus vulgaris by site-directed mutagenesis](http://pubs.rsc.org/en/content/articlelanding/2015/ra/c5ra15220h#!divAbstract)
+* [Rapid and programmable protein mutagenesis using plasmid recombineering](http://biorxiv.org/content/early/2017/04/04/124271)
+
+
+
+Protein origami doi:10.1016/j.cbpa.2017.06.020
+
+"Protein design via natural language" <http://www.denovo-pinal.com/>
+
+[The Victor library (Virtual Construction Toolkit for Proteins)](http://protein.bio.unipd.it/victor/index.php/Main_Page)
+
+[From de novo protein design to molecular machine systems](https://foresight.org/from-de-novo-protein-design-to-molecular-machine-systems/)
+
+[video: Design of protein structures, functions and assemblies (David Baker)](https://www.youtube.com/watch?v=F7qjkQZMlIs)
+
+[In situ architecture of the type III secretion system](http://www.nature.com/nrmicro/journal/vaop/ncurrent/full/nrmicro.2017.36.html) (not exactly a protein engineering paper, but maybe inspirational)
+
 
