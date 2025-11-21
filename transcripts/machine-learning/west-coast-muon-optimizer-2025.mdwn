@@ -1,0 +1,951 @@
+West Coast Machine Learning: Muon Optimizer
+
+<https://www.youtube.com/watch?v=2cwX8YfGZcQ>
+
+LLM summary: The talk walked through the foundations of optimisation for neural networks, starting with the Taylor expansion and Newton’s method for scalar and multivariate loss functions, then deriving the perceptron loss, its gradient, and the classic perceptron update rule. It highlighted the limitations of second‑order methods (rank‑deficient Hessians, ill‑conditioned curvature, and the prohibitive cost of storing a full Hessian for billions of parameters), and described how first‑order methods such as stochastic gradient descent, momentum, RMSProp and Adam implicitly normalise the gradient component‑wise using exponential moving averages of the first and second moments. The presentation then introduced the Muon optimizer, which replaces Adam’s element‑wise normalisation with a global normalisation of the momentum‑averaged gradient on the hypersphere. Muon constructs an orthogonalised gradient by applying a low‑rank Newton‑Schulz iteration to the momentum matrix, an efficient polynomial approximation of the singular‑value decomposition that forces all singular values to one. The algorithm also incorporates a fan‑in/fan‑out scaling factor derived from Tensor‑Programs theory to equalise learning dynamics across layers. Empirical results on nanoGPT, Kimi and Qwen showed roughly a two‑fold speed‑up over Adam, with modest communication overhead when the weight matrices are sharded across GPUs.
+
+LLM-assisted intuitions: A central insight is that the magnitude of the gradient is proportional to the data, so normalising the gradient directly combats the need for per‑parameter learning‑rate tuning and mitigates the effects of uneven data scaling. Momentum can be viewed as a low‑pass filter that smooths stochastic gradients, while Adam's per-parameter RMS scaling adapts step sizes to the variance of each coordinate. Muon extends this idea by rotating the gradient into the basis defined by the dominant input‑output directions (the left and right singular vectors) and then scaling all singular values to one, thereby equalising learning rates across the most expressive subspace of the weight matrix without expensive full‑matrix inverses. The Newton‑Schulz iteration provides a cheap way to approximate this orthogonalisation using a few odd‑order polynomial updates on the momentum matrix, avoiding the cubic cost of an exact SVD. Finally, fan‑in/fan‑out normalisation explains why layers with disparate input and output dimensions otherwise experience unequal gradient magnitudes, and the √(fan‑out/fan‑in) factor restores balanced dynamics, enabling a single global learning‑rate schedule to work across very deep, large‑scale models. Together these ideas explain why Muon achieves faster convergence than Adam while remaining computationally feasible for modern language‑model training.
+
+[[!toc levels=3]]
+
+# Introduction
+
+All right, so gradient descent and machine learning. I just did my standard sort of thing. This is LaTeX and PowerDot. Oh, I got the wrong date. Sorry. First bug is the date.
+
+Okay, so this is just a sort of a background on optimization, and I actually meant to do something a little bit different here. Let me go to my source, and what I really wanted to do was turn on the—I want to make this the presentation. So I'm going to toggle presentation mode on.
+
+So this is how much I did not have time. Okay, so now I'm going to recompile this. That's on me, Julius. I didn't say go for it until pretty late in the day today. I was also just surprised at the time. I wasn't watching the time today.
+
+What this does is just makes it kind of step so you don't get hit by a whole screen full of math right away. So let's see. Let's get out of here and open it up again. Although some of them might not. I also didn't have time to go through and make sure that I put in the pause thing.
+
+Okay, there's one. All right. So it'll help a little bit at the margins. Okay, let's maximize again. Do you see the screen okay? Got it.
+
+# Optimization Background: Taylor Expansion and Newton's Method
+
+This is just, you know, background. What is gradient descent? Well, so it comes from minimizing functions, right? So you have a function and it's differentiable. And so you can expand it in a Taylor expansion and you can truncate it to the second order approximation.
+
+And so if you just keep the second order terms of the Taylor expansion, then you've got a parabolic approximation. And that is what is minimized by Newton's method. And in the case of gradient descent, you can think of it as an approximation that does not know the second derivative. So it just has to work with the first derivative. But it specializes nicely from the Newton method.
+
+So \( f' \) is the first derivative. \( f'' \) is the second derivative. And so hopefully everybody's seen Taylor expansion. You know, it's a polynomial expansion. It's a polynomial approximation of a function at a point, \( x_0 \).
+
+And so if we're truncating the higher order terms, then we can just solve it, okay? We can jump to the bottom of the bowl. We approximated this thing as a parabola about some point \( x_0 \) which can be anywhere on the parabola and so what we do then is just jump to the bottom and the bottom is characterized by a zero gradient because there's only one point in a parabola that has a zero gradient and that's the minimum or the maximum and to see whether it's a minimum or maximum we look at the sign of the second derivative.
+
+And so that's hopefully just reminding you how we minimize functions that are continuous and differentiable and so you just write it down and solve and you get you know the jump you get the Newton step so the Newton step is minus the gradient divided by the Hessian or in the single variable case it's minus the derivative divided by the second derivative and so that's just a guiding intuition you know so setting the gradient to zero means you're going to step by this amount.
+
+So if you step by this amount, you will jump to the bottom of the bowl. That's the Newton step that takes you from wherever you are, \( x_0 \), anywhere on the parabola to the point at which the gradient is zero. And so that's your basic optimization background sort of thing.
+
+And that's all caveated on the parabolic approximation, right? You jump to the bottom if the parabolic approximation is appropriate well you jump to the bottom of the parabolic approximation whether it's a good approximation okay yeah we'll discover that right whether it's good or bad go there and see how it goes you know you just look at the error again the error may hopefully the error went down you're going in the gradient descent direction right but you might go too far.
+
+And so this normalization by the second derivative is just saying how far you should jump if it's a parabola. But if it's not a parabola, you may be jumping too far or not enough. And so that's where all the problems come from is in how far away this is from a parabola.
+
+But if it is a parabola, then you're going to be done in one Newton step, one step of Newton's method.
+
+Anything else about that?
+
+# Requirements for Newton's Method and Pitfalls
+
+So you saying not just a parabola but it perfect right It completely smooth There no discontinuities or anything with it Yeah we just need differentiability We need it to be smooth enough to have at least two derivatives. And because we use, yeah, so it's, and so it's got to be continuous and it's got to have a first derivative and it's got to have a second derivative.
+
+But of course, you know, you can jump around discontinuities. you can just say, well, let's move away from it and use that. But, you know, it could be completely invalid. It depends on what's going on.
+
+So, but yeah, if it's continuous and differentiable at least twice, then we can just keep doing this and hopefully converge to the answer.
+
+And one of the real pitfalls in this whole approach is if you have a broad flat minimum, if it's very flat, then the curvature goes to zero. And so the second derivative starts to go to zero. And that's very numerically unstable.
+
+So you're on this very, very flat valley floor. And this method is trying to jump you all the way across the valley to the minimum, wherever that is. But, you know, there's going to be a little error, you know. So if there's any error at all, then you can get flung far away from the valley. And that's notorious in like polynomial root finders. so they have all sorts of guards for this.
+
+When the second derivative gets too small, you can just add a little epsilon here, right? You can regularize it. So you sort of maximize how far you're willing to go. So if you add an epsilon in the denominator here, then the second derivative can vanish and you'll just go ticking along. You'll just fix the step size at one over epsilon and use the gradient to tell you which way to go.
+
+So that's the real pitfall in the Newton method. So the gradient descent is more robust. It doesn't have that problem.
+
+# Quadratic Convergence and Learning Rate Schedules
+
+But the other thing they always say about Newton's method is that close to the solution, it converges quadratically. And so from a numerical point of view, you can think of it as doubling the number of significant digits in your solution each iteration.
+
+So if you look at quadratic convergence it actually doubling the precision the number of digits of precision each step as you go into the solution the minimum.
+
+And all reasonably smooth functions are reasonably well approximated at the solution by a parabola because they all have vanishing higher order terms. You know, close to the solution for a smooth function, these higher order terms vanish. And so you're left with, you know, this becomes a really good approximation. So everything becomes approximately quadratic if it's reasonably smooth near the solution. And so this becomes a really good model as you converge.
+
+And so what's normally done is you just sort of reduce the learning rate. So you'll have like a large learning rate and you'll plateau at some sort of noise variance in the gradient. And then you start a schedule of reduced learning rates and you just kind of hone in that way.
+
+But another thing you could do is start bringing in second order estimates to start estimating curvature and normalized by that and really get that quadratic acceleration, that Newton acceleration in the convergence.
+
+But I don't think I've seen that really in machine learning. I've seen all kinds of learning rate schedules and such, but I haven't seen people really, at least in production, do an actual Newton step where they really try to estimate the curvature or the Hessian and step that way. But I have seen it in research. So I've seen some papers in that area, but they don't seem to be commonly used. And I was thinking Muon might be doing that, but that's not what they're doing. So we'll get to that.
+
+# Audience Discussion: Local Minima and Hessian Challenges
+
+Two things real quick. So first, just at the risk of stating the obvious, everything you've said is around the nearest minimum, but this is a local minimum, not guaranteed to be the global minimum. Right.
+
+And then if you think about it, you can see what is the dimensionality of a 7 billion parameter model? What is the dimensionality of the Hessian? And that's why people don't literally do Newton's method.
+
+Yeah, yeah. But you could still try to estimate curvature in the gradient direction. You know, if you had some kind of estimate of the. Sure, you could use it.
+
+Yes, and I don't know if it's mathematically rooted, but if you're going to get into it, some of this stuff like Nesterov and momentum has to do with, am I going a little above or a little below my gradient? And that's not mathematically calculated, but what I've seen a lot of people write, that's the intuition is that you're not necessarily getting an accurate second derivative, but at least you're getting a sign. You're going slightly above or slightly below that first derivative. Yeah, so a correction in that direction.
+
+# The Perceptron: History and Definition
+
+Um okay so um so then i decided we should all know the perceptron right and the fact that it does gradient descent and so that's an interesting derivation so um so this is all the way back to 1958 it's a single layer uh classifier um you can think of it as one neuron and so uh this is the computation so here's your input vector here's your weight vector there's only one and then you've got your bias and then you take the sign so that's your crude activation function and and that's your estimate so your states are only plus or minus one and so you either get plus one or minus one out of this okay.
+
+And so so in training you try to minimize the number of misclassifications. And so here's the loss. So the loss function is the maximum of zero and minus y, which is plus or minus one times, this is not a function evaluation, times this thing up here. So we stripped away the sign. So we're doing this pre-activation, right?
+
+Except that this max with zero gives you a kind of activation. you can actually formulate it as ReLU of minus margin, where margin is, you know, how much, how much it exceeds the threshold. And so when it's, when it's positive, when it's correct, then the margin is how correct it is, you could say. So, so ReLU of minus margin is, is an interpretation of this, you know, perceptron loss. And so your labels are just plus and minus one.
+
+So let that soak in a bit. So this is our loss function. Now we going to be able to differentiate it and do a gradient step. So we're way back in the 50s here.
+
+# Perceptron Loss and Gradient Derivation
+
+Okay, so this is our loss function. Now we can differentiate this, right? Because it's just the derivative is 0, 0 and for on this side of the threshold then we We can differentiate this with respect to W, and we'll just get X, right? Y is a fixed label, plus or minus 1. X is our input vector, and we differentiate this product, this dot product, with respect to W, and we're just going to get X. And the derivative with respect to the bias, the derivative of the bias is going to go to 0.
+
+So this is very easy to differentiate, and you can see what it's going to be. It's just going to be minus Y sub i, X sub i. And so let's, but if we are on this side, then we get zero. We have a little switch we have to do.
+
+Okay, so here again is the perceptron loss. And let's get the gradient. So like I said, minus y sub i, x sub i. if the label times the evaluation or the pre, I want to say the pre-signum activation is less than zero. So that's the misclassification. If it's classified correctly, the error is zero.
+
+Okay, so we've got a gradient and we can now step in that direction. And it's really simple. And I think it's really important to notice that the gradient is proportional to the data and it's proportional to the label. And usually, you know, the label, well, in my field, the label is data as well.
+
+So it's very important intuition to know that your gradient is proportional to data. That what the gradient is telling you to do is to go in the direction of the data, you know. Make your weights look like data. It's always adding data vectors into the weights.
+
+This is normally an error. So you're normally taking the data vector, multiplying it by an error. And so that gives you a scaling of how bad, how much you need to add that, and also gives you the right direction.
+
+And so that intuition has served me well just to think in terms of the gradient being proportional to data. And it leads you to all sorts of things like normalization. Like if you didn't normalize your data that well, well, you can normalize your gradient. And you see in both atom and muon, it's just about gradient normalization, which makes up for not having data normalization as nice as you would like it.
+
+So that's why I think Atom was a huge breakthrough because it solved the problem of inadequate data normalization by just normalizing the gradient. And Atom, as we'll see later, normalizes the gradient component-wise, whereas Muon normalizes it by just one norm. Normalizes the whole gradient by the norm of the gradient. So it's a simpler thing.
+
+# Stochastic Gradient Descent and Perceptron Update Rule
+
+All right, so applying stochastic gradient descent. I don't know where the stochastic really needs to be here, but that's what I read about it, so I'm going to keep that terminology going. You get the perceptron update rule. It's just gradient descent. I guess it's stochastic when your data is random, everything's random, and the whole system is kind of a stochastic thing. But you can delete the word stochastic, and I'm happy with it.
+
+All right, so here's the update. If you've got a, we've got our gradient and we choose step size eta and gradient descent is just like Newton's method where eta will stand in for the inverse Hessian. So if we had a, so we're in multi variables here. So the second derivative becomes a second derivative matrix, which is the Hessian. And so this would normally be, you know, the Hessian inverse for a Newton step, but we don't have that. We're not willing to compute it. We don't even want to have it because we can't invert it. And like Ted was saying, it's just huge. If we're doing a trillion parameters, then it's a trillion by a trillion matrix. And that's a lot of, 10 to the 18th elements. Even today, NVIDIA doesn't want you to try that. But with gradient descent, we will emerge victorious.
+
+Okay. So this is the gradient step. Okay. And so if it's misclassified, we don't take it because of the switching we have. then you just free run. So this is all when misclassified and correctly classified, you just leave it alone. So that's the switching action.
+
+All right, so this is just a rephrase of that. It's known that this, well, so this will give you the perceptron update rule when it's misclassified. You just said, yeah, this is just restating it. Add the inputs, scale by the label, which is plus or minus one. And I think of that actually as error. So if it's the error, the error would actually be two, right? Because if it should be minus one and it's two and it's plus one, then you're going to get a two. So you can absorb that into eta if you want to think about it that way.
+
+So the high-level intuition I came away with is that you just take your data vector, scale it by the error, which in this case we just use the label because that's proportional to the error, and just add it in for misclassified samples. So if it's classified correctly, the error is zero, and so that's equivalent to just skipping it because, you know, do the same thing.
+
+# Perceptron Convergence and Geometric Interpretation
+
+Here's a fun thing. This is guaranteed to converge when the data are linearly separable. So you can actually prove this, and Novikoff did it in 1962. And so that's really interesting to me because it's like a gradient descent with eta equals 1 or eta equals 1 half or whatever you want to. It's just some fixed, not proportional to the inverse covariance matrix. That's pretty good that that is guaranteed to converge, in the linearly separable case.
+
+And there's a geometric interpretation of that, which is that the updates push the decision boundary to correctly classify the data. So you can animate this, this would be a which is that the updates push the decision boundary which is that the updates push the decision boundary to correctly classify the data. So you can animate this. This would be a nice video using anim, is it? Yeah, 3blue1brown, oh, I don't know. You know those nice animations. That would be a very nice animation to have for this right here.
+
+# Historical Context: Perceptron Limitations and AI Winter
+
+Okay. Yes. So the historical note here is that the perceptron's limitations led to the AI winter. So I remember Marvin Minsky wrote something really negative about this stuff. And Bernie Olcott? Wait, no—Frank Rosenblatt at Cornell? Anyway, at Stanford was working in this area. And then people just basically decided it wasn't going to get very far. And they just dismissed it. It didn't have a future, right?
+
+And so but then later, people kept going, people persisted. And somebody had the brilliant idea of making the activations differentiable so that you could do back propagation through the whole stack. That is a bit of an unsung hero. I have not seen anyone get a Nobel Prize for that yet. It's a really big step forward, you know, to think about because, you know, the signum function is not differentiable. Just taking the sign, you know, just having a crude logistic function. But to make it soft like a tanh or, you know, all the others that we use. And ReLU's is beautiful. You know, it's either zero or one for the slope. And that's differentiable, and that allows you to backpropagate, and you can go all the way through the layers.
+
+That plus, you know, moving it to the GPU and being able to scale, that really launched the deep learning revolution.
+
+# Multivariate Newton's Method
+
+So next, let's go to Newton's method and how it connects to the perceptron. And then we'll go to Adam and Muon. and feel free to stop me or whatever.
+
+So here's to do Newton's method in multiple dimensions. We need the multivariate Taylor series expansion. So we need to be differentiable and we mapping from \( \mathbb{R}^n \) to \( \mathbb{R} \). So the previous version was just \( \mathbb{R}^1 \) to \( \mathbb{R}^1 \).
+
+And so now you have this this is what your Taylor expansion looks like And I didn even try to write it for the higher order terms because we going to throw them out anyway So you got your function and that's a scalar because that's going to be your loss function. But it's a scalar function of a vector in \( \mathbb{R}^n \).
+
+And then your gradient is here. And so that's going to be a vector now. And so you have a step size, which is a vector in this space. So your step size is a step vector. And so the dot product of that step size with the gradient is your, you know, first order expansion. You know, so the function plus that term is your first order model. That's your sort of hyperplane approximation to the function at the point X.
+
+And then if you're going to go quadratic, then you'll do you'll have this term. And that is, you know, you can think of that as a quadratic form. And so the Hessian here is the matrix of second derivatives. And then you evaluate it with the step twice. And so that's the quadratic form. There are a lot of names for this. So this can be positive definite. And then this becomes like a Riemannian metric. And so there are various ways to think about it. But it's just a vector Taylor expansion. And here it is.
+
+And so now we can solve this the same way. Set the gradient to zero and solve. And you get the generalization. You get Newton's method in higher dimensions.
+
+This is just a little side note that says you can express the Hessian as the Jacobian of the gradient. So the Jacobian operator takes the derivative. It's the matrix of derivatives. And so you get the matrix of derivatives of the gradient. That's the Hessian. And so sometimes you see it written like that. And so ultimately, though, it's just the matrix of second derivatives. And it's the Jacobian of the gradient. And so here's another way of writing it. And so this is just, you know, the notation that you see around.
+
+Okay, so in Newton's method, we approximate F by a paraboloid, not a parabola, but a paraboloid. And we jump to the bottom of it. So it's really analogous. It's the same thing.
+
+And so what we have before was this starting point minus derivative over second derivative at the starting point And that gives us a new point that hopefully the bottom of the bowl And instead we got this vector version where the second derivative is the pre-multiplication by the inverse Hessian, and the first derivative has become the gradient. But otherwise, it's the same sort of thing, and the same sort of issues pertain.
+
+Okay, so that's straightforward. So each Newton step we will minimize the local parabolic approximation.
+
+So here's a graphic for that. So we're at \( x_0 \) and so the linear approximation looks like this and then the red dashed line is the locally parabolic approximation. and so our Newton step takes us from this blue dot down to the red dot and we use the slope of this green dotted line which is the tangent slope here and then we also have the curvature there that we use to find this actual step.
+
+So the derivative evaluated at this point divided by the second derivative gives us the step. And we go there and that gives us \( x_1 \). And this is the bottom of this parabolic approximation, but it is not the optimum because the original function was not a parabola. And so this is what we do. We just keep fitting parabola and jumping to the bottom and then do that until we converge. Once it doesn't change anymore, we figure we're probably there.
+
+So that's your Newton method in 1D. And then the same sort of thing happens in 2D where we're on some surface and we compute a, we do a local second order Taylor expansion to make a local paraboloid. I don't know how you make that into an adjective, but a local paraboloid approximation. And then you jump to the bottom of that.
+
+Yeah. Paraboloid approximation. No IC at the end. That's the adjective operator is too unwieldy. And so-
+
+You're trying to make it too hard. Yeah, yeah. Some things are just, I don't know. I have to find out what Chad GPT wants to do with that. Make this an adjective, see what it says.
+
+And so then you just jump to the bottom of your paraboloid and that how you get around in higher dimensional Newton method So that one Newton step And it's also a gradient step because you went in the direction of the gradient, but when you multiply it by this matrix, this positive definite matrix, that does an operation on it that essentially orthogonalizes the components of the gradient.
+
+So you can think of that operation as normalizing curvatures in all the various directions. So if you go back to the one-dimensional case, what you really want to step is the gradient divided by the second derivative. So your ideal step size is 1 over the second derivative.
+
+Well, if you're trying to do a Newton step and you've got this gradient, how do you divide each component of the gradient by the second derivative? Well, you would need a diagonal matrix of second derivatives. And so if the Hessian is diagonal, that's what you'll get. So you see that the diagonal Hessian will do exactly what you want. But it will do more than that.
+
+So if your directions are not orthogonal, then you can also additionally orthogonalize. So in other words, an ellipse will be deformed into a circle. And a hyper ellipse will deform into a hypersphere. And so that means the directions are orthogonal and they don't interact. And so you can get all that from a nice Hessian matrix, a good approximation to it.
+
+# Hessian: Curvature Normalization and Orthogonalization
+
+(The inverse Hessian plays a key role in both normalizing curvature and orthogonalizing parameter directions for gradient steps. In the Taylor expansion, the Hessian's quadratic form captures second-order curvature, with its eigenvalues measuring curvature along the principal (orthogonalized) directions after diagonalization. In 2D, think of the Hessian as defining an ellipse: diagonalization rotates it to align major and minor axes with the coordinate axes, while scaling by the inverse eigenvalues normalizes those curvatures, turning the ellipse into a circle for isotropic steps. If the Hessian isn't diagonal—meaning the ellipse is rotated—simple per-component scaling fails, as gradient components along original axes mix curvatures (e.g., a 45-degree tilt treats x and y symmetrically, but you can't assign distinct eigenvalues naively). Orthogonalizing via the Hessian eigenvectors changes coordinates to these principal axes, ensuring steps respect true curvatures independently. In high dimensions, this prevents one large eigenvalue (bad curvature direction) from corrupting steps across all parameters; without it, off-diagonal terms couple everything, but orthogonalization isolates effects so only that direction suffers. It's fundamentally a basis change aligning gradient actions with the loss landscape's natural axes, combining rotation (via eigenvectors) and dilation normalization (via inverse eigenvalues).)
+
+I, Julie, so it's just the multiplying by the, I guess, inverse of the Hessian does the orthogonalization. Is that what you're saying?
+
+That's one of its roles. Maybe it's better to call it a normalization. So you're normalizing. Let me see. Let's go to that real quick. Let me just jump ahead to the, I want to go. We can wait. I don't want to get you out of order. I just, I can ask the question again later.
+
+I might not actually get to it. It might be down here. So here's the Hessian. I basically wanted to make a section on the Hessian curvature, gradient covariance, and Fisher information because they're all interrelated.
+
+And so I basically, I typed this in the chat GPT five and said, give me, give me a discussion. And this is the discussion it gave me. And I haven't really vetted it completely, but we can do it in real time here.
+
+So here's the definition of the Hessian. And so if you want the curvature, you take the quadratic form. So that's exactly what we need, right? because at least that's what's in the Taylor expansion second order term. And so here we go.
+
+The eigenvalues of the Hessian measure the curvature along the orthogonalized parameter direction. So that's the sense in which it's orthogonalizing. Okay. Okay. So, yeah. So if it's diagonal, then your eigenvalues are sitting on that diagonal. Those are the eigenvalues. and so there's your curvature and we just take the inverse of that to normalize our gradient step.
+
+Hey, Julius. Yeah. Can I interrupt? Sorry. Well, I already have interrupted.
+
+Well, I would love it if you would say this because I know you'll say it really well. Well, I just want to be careful with terminology. So if we stick to just two dimensions, which I can almost wrap my head around, okay, then the Hessian is going to be a two-by-two matrix, okay? and basically when I think of the the the terms basically what I think of is an an ellipse okay um general it's an ellipse right and that's when you get diagonal terms right so so when we diagonal eyes that matrix okay what that does is it rotates the ellipse so that its major and minor axes correspond to the X and the Y, the East, West, and the North, South structures.
+
+But it doesn't, that's a separate concept from if we scale it by the eigenvalues, then it turns it into a circle. So those are two potentially completely separate steps Yeah So when it diagonal you still have an ellipse in general It just that it aligned with the major axes So the off terms allow it to rotate so you can get an ellipse at any orientation.
+
+Right. There you go. So it's kind of this funny business of does it matter if the ellipse is oriented in a particular way or not? And so depending on the context, you will see sometimes people, they don't care its orientation, they just simply scale it by dividing by the eigenvalues.
+
+And then we'll get to Muon, and I'm still trying to wrap my head around exactly what's happening there. Well, we're stepping, the components of the gradient are along the coordinate axes. So if the ellipse is aligned, then dividing by the curvatures will be exactly right in both of the component directions. But if the ellipse is rotated, then the eigenvalues, you know, will be different. So what do you divide each component by exactly, right? Because, you know, let's say the ellipse is at 45 degrees, then by symmetry, it needs to be the same thing, you would think, right? Because they're sort of, the x and the y axes are sort of equally, you know, have an equal relationship with respect to that ellipse.
+
+So you don't really get, there's no way to divide one by one eigenvalue and the other by the other eigenvalue. So you need to, so I think that's why you need to go into the orthogonalized space and then normalize and come back if you want to work in that other space.
+
+So that's my intuition on if you if you get a diagonal hessian then then your gradients won't correctly lead you to the minimum but the amount that they will be wrong will be only a function of their own second and additional derivatives.
+
+If you have a diagonal oval, then the amount that they're wrong is gonna be dependent not only on their higher derivatives, but on every other direction's higher derivatives. And one intuition is if you have a hundred million dimensional problem and how much you off is dependent on everybody second derivatives then it is possible that one bad second derivative one large second derivative will screw up your gradient steps on all hundred million directions.
+
+If you orthogonalize it, then that one bad second derivative can only mess up its own and the other 99,999,000 will only be off by their smaller second derivatives.
+
+Yeah, yeah. So they all get jumbled together if it's not orthogonalized. And it's weird though because it's really kind of a rotation, right? Well what it is is a change of coordinates so that the axes of the ellipse are the axes along which the gradient components act.
+
+But it's weird to think of it as a rotation when you can't rotate really with a positive definite matrix, right? It's an orthogonal matrix that does rotations and positive definite matrices you think of is doing dilations, but they do it along these certain axes. So I don't know. I need to think about that some more.
+
+# Squared Perceptron Error: Connecting to Newton's Method
+
+Okay, so here we go. This is something interesting that I just came up with today. It's one of the reasons why I didn't have time to check anything. This is the squared perceptron error Because I wanted to connect the perceptron update to Newton method And so here the idea So you got a loss function that you define as one half the square of the pre function error, the same one that's differentiated and minimized in the perceptron update. So I'm trying to make it look like a more normal least squares problem.
+
+And so we'll define this as the error. It's the pre-activation or pre-sine function error. and there it is, \( e_i^2 \). And you need that because you want it to be differentiable.
+
+So the gradient is the same as before and you can write it as minus the error times the data. And now the Hessian is easy to calculate. You just take the gradient and take the Jacobian of that. And so y sub i, no dependence. And so you differentiate this thing to w and you're left with X X transpose. And here it is.
+
+So there's a, there's your nice, simple Hessian. And you can see that it's going to be positive, semi-definite for sure. And that means you're going in the right direction for your gradient descent. And of course, you'll add epsilon to this in practice to make sure that it's positive, definite before you try to inverse it. You know, that's the standard stuff.
+
+And so now you have your Newton step, which is the step size. The step in the parameters is minus the inverse Hessian times the gradient of the loss with respect to the parameters W. And so here it is written out. And here it is in the form of error divided by the norm squared of the data times the data. And this is just a projection operation. You know, you probably have seen this kind of thing before.
+
+So this normalization just comes up because your data vector is not normalized. But if you normalize it, it goes away. So the update projects the error E onto the normalized input direction X over X sub I norm.
+
+# Live Derivation Corrections: Rank-One Hessian Issue
+
+The norm‑squared of a vector x is xᵀx, so the transpose must be placed on the left‑hand side of the product; putting it on the right would give a matrix instead of the scalar we need. When we compute the Hessian of the squared error for a single training example, we obtain a rank‑one matrix—x xᵀ—which is not invertible, so a true Newton step cannot be taken. To obtain an invertible approximation we must aggregate over the whole batch: if X is the M‑by‑D data matrix, then XᵀX is a D‑by‑D matrix that averages the outer products of all samples and serves as an approximate Hessian. Because even this aggregated Hessian can be ill‑conditioned, we replace the full inverse with a trace approximation: we divide by the trace of XᵀX (which equals the sum of its eigenvalues, i.e., the squared norm of the inputs) rather than by the matrix itself. This yields an update that projects the error onto the normalized input direction, which is exactly the perceptron update for unit‑norm inputs. In other words, Newton's method on the squared‑error loss reduces to the perceptron rule when we use the trace‑scaled Hessian, and the expectation E XXT (the average outer product) provides a well‑behaved curvature estimate for the entire dataset.
+
+# Key Intuition: Gradients Proportional to Data and Weights as Data Accumulation
+
+Okay, so here's the step, all right? Delta W is the error times the data. And this is a very important intuition, I think, which is that your gradient is, the step in the weights is proportional to the error, but it's also proportional to the data. And so this is really giving you the intuition that gradient descent power is data power.
+
+So if you want the weights to correct in a certain direction, you need to have data pushing it there. And so this is all sorts of implications in terms of, you know, convergence rate and quality of convergence and just forcing us to really make sure that our data are complete and diverse and sort of normalized in the sense that you don't want too much representation in one area. You want sort of an equal distribution of data energy across all kinds of situations that you care about without over-representation and under-representation. There's this sort of equality that you need because that's going to show up in how much gradient descent happened on behalf of those shapes, so to speak. Everything shapes in the data, right? And so you want this, you want a balanced presentation of shapes so that you have a balanced influence on the weights in all possible cases without over representations.
+
+In the old system identification days, we used to to call it the property of being persistently exciting in any direction that you care about. And so we were often doing things in the frequency domain. And so we needed persistent excitation in all spectral regions. So that would mean we needed data that's more or less equally represented at all frequencies. And so there are all these hacks for achieving that. And one of them is called pre-emphasis. It's always used in speech and so you have a flattening of the spectrum basically.
+
+So you flatten the spectrum of your data set so that there is equal representation for all frequencies and then you train and you get a nice fit that is uniformly sensitive to the whole spectrum and then on the other side when you reconstruct, if you're going to reconstruct, if it's a classification problem you're done, if it's a reconstruction situation, then you can now undo that pre-emphasis.
+
+And so very often you have low energy at high frequencies in audio, but the ear knows how to dig them out And so your training works on the flattened spectrum You get a nice balanced model And then when you are reconstructing you undo the pre and move those high frequencies down low but the ear pulls them back up So there's a mismatch between perception and the gradient descent dynamics in that sense, or the energy sensitivities.
+
+So you have to, in a sense, take out all the scale factors that are perceptually induced in order to show something to the algorithm that that is balanced so that it can get a balanced fit and then when you evaluate it perceptually it sounds really good so you get a perceptually uniform fit in return for this flattening that's that's what pre-emphasis is for so this is i think where the core intuition comes from and that was that was spectral balancing of the data then.
+
+Right, exactly. Yeah. So you pre-filter the data to whiten it. And, and that also comes up in just purely squares. So when you're doing least squares and you want to show that it's optimal, you can prove that it's optimal for, for example, data in, in white noise. And then when you have non-white noise, then you can make it optimal by pre-filtering to essentially whiten the noise.
+
+So if you flatten the noise, then it'll turn, you know, an arbitrary distribution into a flat distribution if that's an invertible transformation. So you want to pre-whiten your error. You want to pre-filter your error to make it a white noise and then do your least squares. And then if you want to put back the filtering, you can and in a reconstruction you will.
+
+And so in that case then the white noise, the updates to the weight is driven by the data. If your data is white then it's kind of white updates into the weights. Right, yeah. And that's that's going to be numerically optimal. It means that all of your it means that your weights are being equally updated at all frequencies.
+
+So it means that the low frequencies are getting updated a certain amount each step, and the high frequencies are getting updated the same amount each step, because there's an equal representation on average across data samples. So the total data energy is the same in every frequency band and that allows you to converge.
+
+And I actually was watching a talk by the guy who did the movie gen stuff for Facebook. He gave a talk at Stanford and I was there and I think it was CS25 lecture. I think it's on YouTube. You can find it. And he was saying that they do a lot of normalization and it sounded like it was this idea that you that you want to analyze your data, cluster it, and normalize it. You don't want, you know, really heavily populated clusters and then have, you know, very thinly populated clusters. You want to try to get kind of an equal population across all clusters and then get a nice, well-generalized model from all that. And I don't know if that really connects, but it sounded like it did.
+
+# Audience Discussion: Diffusion, Data Flows, and Parameter Flows
+
+Could you tie that into like using diffusion for training that it is getting that that full spectrum image data? Yeah, I mean, it's going from white noise to the distribution you want. Right. That that makes sense. yeah that gets us into gradient flows and diffusion um yeah we can have a whole night on that connection gradient flows versus data flows right so this is parameter gradient flow and then diffusion is like data data parameter data distribution flow it's kind of They're sort of dual in some sense.
+
+Yeah, well, it kind of addresses, you know, your point of you get to train the model on not just your sample points, but lots of points throughout space, right? Because of the diffusion, you just keep adding the noise. And so I was just thinking, does that balance into your idea of training, you know, again, not just the data points, but more samples?
+
+Well, it makes... spectrum kind of. It makes sense to me that when you add noise in the diffusion step, in the diffusion progression, you're adding noise and then learning how to undo that noise. Yeah. That training is going to be uniformly, it going to have uniform energy across the spectrum because white noise Of images yeah yeah and anything you working with um yeah that uh that makes a lot of sense uh so you you you adding the white noise so you get this property for free that you have the the persistent excitation property um for your data and in this case the data is the noise you're trying to undo that so you're trying to learn how to cancel it.
+
+So it's uniformly distributed across the band. So you're going to get this property. Unlike when you're just working with data from the wild and you don't get that property with probability 1. So that's a real nice advantage of the diffusion formulation.
+
+Cool. Hey, Julius. Yeah. I'm trying to follow your conversation, and I think I maybe got lost a little bit.
+
+When we talk about the derivatives and the partial derivatives, originally you were talking about this function L is, well, it's a function of X or whatever. But the partial derivatives we're taking are actually with respect to the parameters. So we're taking the partial derivatives with respect to W, not with respect to X. Right.
+
+Yeah. So that's parameter gradient flow as opposed to data distribution gradient flow, score function flow. So, yeah, in some sense, that's the sense in which I feel like they're duels, right? So in one case, your flow is the gradient flow for the weights. That would be, you know, this. And then the other case, it's the gradient flow for the data. You're pushing the data distribution from, you know, Gaussian to what you want.
+
+Yeah, I feel like there's a whole talk on the duality of diffusion and stochastic gradient descent.
+
+# Clarification: Weight Space vs. Data Space
+
+In training a model we take Newton steps in weight space, not data space; the parameters we denote by x₀ actually represent the weight vector. Because the loss depends on the inner product of weights and inputs, differentiating with respect to the weights leaves the inputs, so the gradient is proportional to the data. Consequently each weight update is an accumulation of input vectors scaled by the prediction error— for a perceptron the error is either 0 or ±1, so the weight vector can be viewed as a sum of training examples weighted by their errors. The weight vector and input vector must lie in the same dimensional space so that their inner product is defined. In a simple linear predictor, such as learning a sinusoidal pattern, the optimal weight vector itself has the shape of the sine wave; repeated error‑driven updates cause the weight vector to converge toward that sinusoid, after which the error vanishes. When we move to multilayer networks the same intuition holds but gradients are propagated through intermediate weights, so each weight is updated by a gradient that depends on all later layers, not just the raw input. Nevertheless, the overall gradient can still be seen as a long vector in weight space. Data preprocessing—especially scaling or whitening—greatly improves convergence because it balances the magnitude of gradients across dimensions. In linear regression the least‑squares solution is the maximum‑likelihood estimate under the assumption of Gaussian noise; this property does not require the input data itself to be Gaussian, only that the residual errors be normally distributed. If the noise is not white, whitening can be applied. Even when the Gaussian assumption is violated, least‑squares remains the minimum‑variance unbiased estimator, though the nice theoretical guarantees are lost.
+
+# Wrap-Up and Preview of Next Topics
+
+We're wrapping up the perceptron and Newton methods for tonight. Next week, we'll cover Gauss-Newton and recursive least squares, followed by stochastic approximation using a diagonal Hessian approximation, which leads naturally to Adam and Muon optimizers. If time allows, we can discuss best practices across software environments, or dive into loss curvature, gradient covariance, and Fisher information—I have a clean derivation for the univariate Gaussian log-likelihood and Fisher information in simple cases like known mean with unknown variance, or both unknown, showing how it ties directly to maximum likelihood, Hessians, and curvature. That's it for now; the last slide compares the perceptron and Newton updates.
+
+# Perceptron vs. Newton Update: Normalization and Adaptive Steps
+
+Here's our perceptron update: the weight update is the error—plus or minus one—times the input pattern. The Newton step uses the same error but without the sigmoid, and if you normalize it, it becomes analogous to the perceptron update. Normalize the inputs so their norm squared is one, and the weight update matches the perceptron exactly: error times data. This holds near the decision boundary, where samples close to the hyperplane get the standard perceptron update; far away, the sigmoid alters it for badly misclassified points. For those, RMS-normalize the weights instead, and the update effectively doubles the usual perceptron step. Credit to Claude Sonnet for the conjecture: Newton with normalization is an adaptive perceptron, with step size eta between one and two based on confidence—if you're close to the hyperplane, you slow down; if far away and confident, you speed up. Beautiful insight—this feels like a scrap of AGI research worth trying.
+
+# Continuing from Last Week
+
+So this is an update on last week, which was August 28th. Now, I corrected the date to last week, so I'm one week behind there. So what we did was review minimization of functions. So you can think of it as a Taylor expansion. You truncate it to the second order case. You want to find the bottom, so you set the derivative to zero and then solve. And you can see you're going to get this step size from that.
+
+# Newton Step in One Dimension
+
+And so here is the answer. So this is your basic Newton step. And if it's a quadratic, then you go once and you're there. So it minimizes the parabola immediately. And so you can think of that as the gradient divided by the Hessian. But because we're in one dimension, it's the first derivative divided by the second derivative. And that is your step size from your initial point, x0, which can be anywhere on the parabola, and it'll calculate the h you need to jump to the bottom of the bowl.
+
+# Perceptron Architecture
+
+And so that's what it's all based on. I didn't have this last time, but I realized I should have. I should have had a figure of the perceptron. So I believe this is ChatGPT's TikZ figure for that, and I tweaked it a bit. So you have your input, and so we've collected that into a vector. So this is either your input or it's the embeddings. It's the features from the previous layer.
+
+And then you have your weights. These are your neuron weights. And we collect those into a vector w and we call it w hat because we're estimating those. Those are the estimates. Hats mean estimate. And then you have all these neurons feed into all these weights feed into a neuron.
+
+And so the output of the neuron is first an inner product of the weights with the input. And then we add a bias, which effectively allows us to set a threshold anywhere we want. And so this is just kind of a typical formulation where they have a bias input of one and then the bias you know can change that so you learn b to change one into whatever bias you actually want and so this is the computation going into this next stage and that's what we were calling the margin so the margin you can think of is well it's defined as how correct you are when you're correct.
+
+But otherwise it just pre-activates the pre dot product plus bias. And so then you go into your activation function which they didn't really think of it that way in the perceptron days. It was really just you know taking the sign. But, you know, maybe it's the same thing, but it is the same thing ultimately. And so this is the activation function. It's a step function.
+
+# Limitations of Perceptron for Backpropagation
+
+And so this is not ready for backpropagation, right? Because the derivative of this is zero everywhere except at zero where it's infinity, right? So this is a highly non-differentiable function. And when you do differentiate it, you get no information. So this is what held back machine learning for quite a long time, the perceptron.
+
+So somebody had to realize, and somebody did realize, that if you make this smooth like tanh, then you can differentiate it and then you can just keep going. You can do nested. And MLPs did come up before backpropagation. So the idea of stacking these things came very early. Just a few years after the perceptron, they started stacking them up.
+
+So the multi-layer perceptron was very early, 60s. And then the backpropagation was like a couple of decades later when they did, I think they went to soft activations before the idea of backpropagation, but I'm not 100% sure about that. Their history on that seems kind of murky. But in this case, we're just doing the perceptron and it's kind of a modern view of it.
+
+# Perceptron Output and Update Rule
+
+And this is the final output. It's plus or minus one. All these inputs are plus or minus one. And it's basically a classifier. And so if it's right, then we're happy and we don't change the weights. If it's wrong, then we change the weights by the perceptron update. And so we talked a lot about that last time.
+
+And here it is. So if it's wrong, then you take the output, which is plus or minus one, times the input vector, a vector of plus and minus one, and you add it. And you do the same thing for the bias. And you can just think of that as all being in the weight vector if you want.
+
+# History and Parameters of Perceptron
+
+And so I did a little more drilling on this. I wanted to get the times and stuff. So this is from 1958. It was motivated by a neurophysiological synaptic strengthening weakening rule. It wasn't thought of as optimization according to what I found.
+
+All right, but now, yes. Julius, was there a learning rate or strength? No, that's kind of interesting. Or you could say that it's one. I mean it depends on how you interpret it.
+
+So now we're going to interpret it as in a modern optimization. And then effectively there is a learning rate. And it depends on what norm you say you're minimizing whether the learning rate is one or one half or something else. Okay. But it's something fixed. And there's no schedule. You know, you just keep piling these things up.
+
+But, of course, you know, once it classifies everything, then it stops updating. Right. So that's your convergence. So if it finally converges and we have a guarantee that it will, if the data points are linearly separable, then it just stops. And you don't need a schedule. You don't need to fade out the learning rate.
+
+Okay. So now we have the – any questions about that? Because now we're going to interpret it. This is back in the 50s, the way to think about it, in the 60s. And so it's a simple little update motivated by actual neurons. You know, we're strengthening the neuron recognition of this data because it got it wrong. So this is for misclassification. So this pattern, we got it wrong. Let's update the weight so that it responds more strongly to that. And we also add into the bias. So that'll elevate the bias in the same direction. And that makes sense if you think of this as one big vector.
+
+# Biological Inspiration of Perceptron
+
+So Julius are you talking about it when you say neuron are you talking physical neuron? Yes actually yeah the ones the ones we got I got like three of them up here but that's you know that's about it but I mean those things I have in my head huh those things we still have more than the average LLM so far you know you know Sutskever probably has one that's bigger than a human head but we'll find out.
+
+Yeah. So, so it just strengthens the connection, you know, if the neurons, you know, neurons are very random and numerous when you're born. And then as the sensory impulses come in and useful things, useful circuits get found, then those, those neurons get strengthened. And the ones that ultimately are not used, they literally become dead neurons.
+
+And so you lose a lot of neurons as you grow up because they just never got used. You know, cortex gets recruited. You know, if you have a broken sensor, then it just doesn't get any cortex. And that why you know missing a sense from birth is you know really hard to do much about. You kind of want to cross it over into another sense you know from the other. So the visual cortex will reach out and take over the audio cortex and stuff like that.
+
+So it's an interesting development. And so this was directly inspired by biology. It's very interesting and ultimately very effective. And maybe why they think like us to the surprising degree that they do. In other words, when you talk to these LLMs, you think, wow, You know, that's a very similar brain in some way.
+
+When they start passing the Turing test, you start thinking, well, maybe that's how simple I am. You know, maybe I am just this big LLM thing, at least in the neocortex. We have this old brain as well, but in the limbic system, they don't, thank goodness they don't have a limbic system. I hope we never give them one. You know, I think most of us try to stay in our neocortex, and that's all they have. And so the world would be a better place if that happens, in my opinion.
+
+# Perceptron as Optimization Problem
+
+Okay, so we got to this update rule and interpreting now as an optimization. So you can rewrite the update rule as maximizing this. So it's a maximum of zero and minus the output times the preactivation margin component. So that you can also write as ReLU of minus margin. And here it is and so now you can differentiate it okay so this is now differentiable and and so then we can apply gradient descent and and that's what we talked about last time okay so we've got labels we've got data and we now take a gradient and the gradient is either you know the perceptron update update quantity you know the output plus or minus one times the input vector and negated because we want to go in the direction of the negative gradient.
+
+Well, this is the gradient, and then we will throw away that minus sign to make it the negative gradient. And if it's correctly classified, the gradient is zero because we're over here in the max function.
+
+# Gradient Descent Interpretation
+
+So now we just do the usual thing. The weight at time t plus one is the previous weight minus our learning interval, our learning rate, eta, times the gradient, which we just calculated. And so you write that in, and it only is active when misclassified. And you leave it alone when it's correct. Misclassified and you leave it alone when it's correct.
+
+So this is now our gradient descent. The minus sign is gone. We've got a learning rate now and you can see that we're going to have to set that to one to get the update rule from the perceptron.
+
+Okay so that falls out and there's a convergence theorem from 1962 but it requires linear separability and that's not always the case, which is why Marvin Minsky got on their case. You know, they came up with the paper introducing the XOR problem. You can't do XOR with this perceptron, just not general enough. And so, you know, there were other arguments as well, but that's one.
+
+And so the learning rate is typically one. No need for tuning because it's just going to converge to linear separation and stop. And if it can't, if it's not linearly separable, then it's just going to go forever. I don't actually know what happens. It probably gets into an orbit, probably oscillates. But it could, you know, you can also imagine it going to infinity because you're just adding stuff up.
+
+# Geometric Interpretation and XOR Problem
+
+So then we have a geometric interpretation. We mentioned this last time that you can think of it as pushing the decision boundary to correct classification in the space.
+
+And so I got interested. So this is what I, next we went straight to Newton's method, but I had to insert a quick slide on the XOR problem because I was curious about that. I wanted to know what is the minimum neural network for solving the XOR problem. And basically you need two layers or you need two units. You need a hidden layer.
+
+So that, so this is, this is the answer. And I don't see any reason we need to dwell on this, but, you know, if you're, if you're watching the recording, you can pause and you can also just, we can talk about it. But anyway, that's the bottom line. You just need this sort of two-level thing where you first, you have a layer that takes the sum minus a half and then the sum plus, or minus 1.5. Those implement OR and AND respectively. And then you need the next layer to compute the OR minus the AND minus 0.5, and that'll give you XOR.
+
+Okay? So there just no way to do that in one nonlinear operation You need two successive non operations which is very interesting.
+
+# Multivariate Taylor Series and Newton's Method
+
+Okay so this is what we did last time We went straight to multivariate Taylor series. So we're just generalizing that one-dimensional story where you have a scalar function of a vector. And so this is our input. Actually, now this should actually be w. I should have written this as w. This is general math, right? So it'd be better if I wrote this as W, because that's what we're really going to be doing. And F is going to be the loss function.
+
+So we want to, we've got some weight vector, and we want to add a step vector to minimize the loss. And so let's do a quadratic expansion of the loss in, you know, in dimensions. That's the weight space. And so that is a quadratic approximation. And then the step size will get us to the bottom of that bowl. And so that's what we're talking about.
+
+And so because we have this second order term here, we need the Hessian. So the first order approximation is just the loss function plus the step dotted with the gradient computed at where you are. So it's the local slope, but we also need the local curvature, I will say. And this is the curvature in the direction h. So the Hessian is the matrix of second derivatives. And so if you dot it on both sides with the step that you want to take, the quadratic form, then that gives you the curvature. And so here's the full matrix.
+
+All right. So and you can also write the Hessian as the Jacobian of the gradient. We talked about that.
+
+# Generalization of Newton's Method
+
+And so now we generalize Newton's method to this case. And so before we had that the step size was the derivative divided by the second derivative, but now it becomes the gradient pre-multiplied by the inverse Hessian, the inverse matrix of second derivatives. So it's exactly analogous, just generalized to n dimensions.
+
+And so that's Newton's method in any number of dimensions. And so we're minimizing in one step the local parabolic approximation to the loss function, the loss surface, the loss landscape, people like to say.
+
+# Properties of the Hessian
+
+So now this is new and it based on Ted remark We had some discussion about the decomposition the orthogonality the rotation all that good stuff So here just kind of a wrap up of the properties of the Hessian It's a matrix of second derivatives. And so it's going to be positive semi-definite, you know, in a paraboloid because there are no saddle points. Okay. There's no everything. The curvature is all pointing the same direction. That kind of thing.
+
+And so it's and we're going to approximate it as a sum of outer products of gradients. And that will guarantee that even in practice, it will be positive semidefinite. OK, and that has a really good advantage of not not letting you go on in the wrong direction. You don't want to flip the sign of the gradient and go the wrong way.
+
+OK, so any positive, any symmetric matrix has real eigenvalues. and a positive semi-definite matrix has them all zero or positive. And the eigenvectors are all orthogonal. And that's a really important, valuable thing. And we really needed that for our discussion because that's why you only get ellipsoids at some orientation.
+
+If they were not orthogonal eigenvectors, then you might have a distorted ellipse where the major and minor axis are not orthogonal, but they are. So we don't have to worry about that.
+
+And another property of this, because it's symmetric, is that it's SVD reduces. You don't even need an SVD. You can just do a similarity transformation. So you basically just have an orthogonal matrix, a diagonal matrix, and the same orthogonal matrix transpose, which is the same as its inverse. So that's the really simple form that you have.
+
+And so this Q matrix is your matrix of eigenvectors. They're all orthogonal. And we normally take unit norm. you can choose any norm. So you just have this orthonormal matrix and then this diagonal will contain all your eigenvalues which will be your curvatures along the coordinate axes.
+
+# Inverting the Hessian
+
+And so then H inverse is very simple. So when you invert this, remember that you string it around backwards and Qt inverse is just Q and Q inverse is Qt and so you get this. So inverting the matrix basically just means invert the diagonal all by itself. And so for that we need positive definite.
+
+And so if it's got a zero in the diagonal then you add epsilon. And that got a name it Levenberg you probably have heard of And so in practice we always add a little epsilon to the diagonal so that you can divide by zero accidentally and you can also think of it as going between Newton's step and gradient descent so it sort of reduces back to Newton's method with some arbitrary step size when you don't have an eigenvalue at that particular location it's It's basically a dimension that has no information. There's just no data coming in to tell you which way to go. And so you're just picking some arbitrary step size corresponding for the gradient.
+
+# Intuition for Newton Step
+
+All right, so this is now easy to intuit. So we have the Newton step can now be broken down into you take your gradient, you rotate it. An orthogonal matrix is a rigid rotation in Rn, and that's going to be this ellipsoidal thing. And so you've rotated it so that the major and minor ellipses of the ellipsoids, axes of the ellipsoids, are coordinate aligned.
+
+And now you can apply this diagonal matrix to normalize each curvature. So each coordinate gets divided by the curvature so that it becomes unit curvature. That makes it into a circle. So this aligns the ellipsoids to the coordinate. It rotates the ellipsoid to coordinate alignment. This normalizes the ellipsoid to make it a hypersphere. And then this just goes back to the coordinates we came from, right? because we're stepping in those coordinates.
+
+Another nice thing to do would be to constantly orthogonalize or let's say rotate your whole problem into, you know, the orthogonal space where the ellipsoids are aligned, but that's changing all the time. But it's an interesting direction to pursue, and I'm sure it's been pursued by now, I'm sure.
+
+All right, so then that's our step size, okay? So you got a gradient, you rotate it to align the axes of the ellipsoids, and then you normalize curvature, and then you come back to your space. there's your Newton step.
+
+# Visualization of Newton Step
+
+So it's carrying this out and I made a graphic I think it was ChatGPT-5 who wrote this. This is a TikZ figure and it's pretty nice. So here's your original hyper ellipsoid and your major and minor axis is not a coordinate line. So you go through the orthogonal matrix that rotates it so that let's say this is the so this is the gradient with respect to E1 coordinate let's say eigenvector one. So this is the major principal axis of the ellipsoid and we're just going to track that one.
+
+And so after rotation it shows up here on the first coordinate and then now we multiply by minus d inverse that's going to normalize it it's also going to flip the sign because the the step wants to be in the negative gradient direction so let's just stick that there then we can use h as our notation and the tilde denotes that we're in the rotated space so we have gradient tilde nabla tilde here and we have h tilde here because we're in the rotated coordinates but now this ellipse has been normalized to a hypersphere or a circle in this case.
+
+And so now we go back to the original space and we get our step size H. So the H in the E1 component is here. And so then you can look at that for every component. We could do it for the minor axis here and for all the axes you have. So that's the discussion that that was what Ted brought up that I thought would really be nice to illustrate.
+
+# Q&A: Newton Step Visualization
+
+Any questions or discussion about that? Cool. Well, so Roger, did you have a question?
+
+Q: Yes, I was on mute. I was just wondering from the visual notation on the top versus the equation in step two, is there an inversion? Is the minus sign reflected in the visualization? Just in the change of notation. So by labeling this as minus.
+
+A: Oh, okay. Over there. Yeah. And then there's a minus sign here too. So a little bit of sleight of hand there, but I just wanted to not introduce new notation. I'm just trying to stick with the symbols I have. Okay. Yeah. So yeah, it's a little bit of a fudge there just to keep it down to gradient and step size. Yeah. Okay. But yeah, you could argue that maybe this should be going over here, right? Why don I just point that way That would make it a little more intuitive Yeah I should do that Yeah I easily fix this in the TikZ by changing this arrowhead to a minus in this location So, yeah, and this should come out pointing that way. It's been reflected.
+
+Q: So, Julie, just a quick comment on this slide. So, what you're showing is the component of the gradient E1.
+
+A: Yeah.
+
+Q: Okay, and if you did this with all the individual components, what you could do so imagine the second component would be perpendicular to this one so be pointing kind of Northwest right. Right, so if you did all those individually, and then you you sort of restored your original gradient, you can imagine that. you could do the same thing all in one fell swoop. So let's say we had a purple vector pointing due north on the left in your diagram zero. Okay, so it's not E1 or E2, it's a little mix of them. And when you rotate it, right, it's still pointing, now it's kind of pointing northeast, right? You're going to do the shrinking, and it's still going to be on the perimeter of the circle. It'll have been shrunk simultaneously in the x and the y directions, but different amounts based on our d inverse. And then we're going to rotate it back, and you'll see once again it'll be pointing due north again. So you don't have to do this one coordinate at a time. Julius was just showing us one coordinate, because it's a little bit easier to think about a single coordinate because it's like a basis vector. But the reality is you can do all of the different coordinates simultaneously. So I thought I would just comment on that.
+
+A: Yeah, yeah, yeah. It's from ellipsoid to hypersphere. And but it does need to rotate because it's only got, you know, this diagonal to apply. Or, you know, if you don't rotate, of course, you can just just invert this giant matrix. Right. So so if you have the whole matrix in an inverse form, then you just multiply that, multiply the gradient by that matrix. but we normally don't have that. There is one case where you do though, the recursive Gauss-Newton method maintains a recursive update of H inverse or the approximation of it and that is what it keeps around And so it does multiply the gradient by the current estimated inverse Hessian That something that has influenced later algorithms as well I have a slide on that.
+
+Q: And the dimensions on the Hessian are the number of parameters squared, is that correct? Number of parameters by number of parameters, square matrix?
+
+A: Yes. It's big. Pretty unwieldy for deep learning. That's right. Yeah, the great thing about deep learning is that everything is scaled to such a size that you have to use the simplest algorithms. You know, it's the bitter lesson. The bitter lesson is actually a real boon to people who don't really want to have to, you know, think hard about, you know, exotic algorithms. You know, at scale, it just seems like the simplest stuff wins. But, you know, what's really hard work is testing them all out, doing all the ablation studies. I mean, it's enormous work, right? But it's more experimental science than theoretical science. Well, it's guided by theory, and that's why we want to understand it, right? Because our theoretical understandings will guide new studies. We'll try new things and maybe try the right things. There's so many things you could try, right?
+
+# Newton's Method on Squared Error Perceptron
+
+Okay, so then we had some graphics that we talked about. This is just visualizing the same stuff. And here's where we got wrapped around the axle. It was kind of fun. So we were doing a Newton step for the perceptron squared error. Okay. So our loss function we defined as the squared perceptron. So we've squared the margin here. And you put the one half in there just so that when you differentiate, it goes away.
+
+So here's now the gradient and it looks like, you know, the ordinary perceptron step, except that, you know, this is the error. So it would actually be zero or two as opposed to zero or one. So that's where you can then now say that the corresponding learning rate is one half to cancel that factor of two.
+
+And so, I'm sorry I mentioned Claude, it was actually ChatGPT that tried to invert this and I didn't catch it, but Roger caught it. And so the Hessian which is an exact calculation you differentiate the gradient with respect to W and you get X transpose and here it is.
+
+And so we just brainstormed it and decided, well, you know, we can't invert the Hessian, but let's just use its trace because the trace is the sum of the eigenvalues. and what you really want to do is just divide all the coordinates in the rotated space by the eigenvalue for each coordinate.
+
+And we only have one eigenvalue here. This is a rank one matrix. So the sum of eigenvalues is the eigenvalue, right? So that's really nice. And so it's elegant. And so we put that in there and lo and behold, we get the same answer that ChatGPT just kind of wrote down because that is what it becomes when it becomes full rank.
+
+So if you, you know, go on and if you add a bunch of these together, then it will become full rank and you can actually do this and then you get the same answer. But you have this different, you have to do something else when you're starting up and you don't have enough data or, and you have to define your loss differently. You can't be sample by sample the way the perceptron does it. It has to be, you know, defined over time as a sum of errors. So we'd have to add these up to get full rank.
+
+Okay, so there it is. The Newton's method on squared error gives a perceptron update for unit norm input. So if you take a unit norm input or normalize, you just do RMS norm first thing, then this goes away and you get your good old perceptron update and you use a mu of one half to really get it. So that's really fun.
+
+# Pseudo-Inverse for Rank-One Hessian
+
+Okay, so that was nice. And so then I went back to ChatGPT-5 and I said, all right, I just noticed we have a problem with this matrix. It's rank one and we can't invert it. What do we, how do we save this derivation? And it was good. You know, it just immediately knew what to do. It went to the Moore-Penrose pseudo inverse.
+
+And so you think of that as just, you know, inverting the part of the space that you can and leaving the rest of it alone. So this is the projection operator onto X of i. And so X transpose will take a dot product with whatever you give it, and that'll project it into, that's the projection coefficient, and then you multiply that by X itself, and that's your projection. This is the normalization needed in projection.
+
+And so this is the projection operator. It'll take any vector, you multiply it by any vector, x itself and that's your projection. This is the normalization needed in projection. And so this is the projection operator. It'll take any vector. You multiply by any vector and you get the component of that vector along x sub i.
+
+And the Moore-Penrose pseudoinverse is got this plus notation here. And so you've got the projection operator and you divide by the norm squared. I wonder if that's in there twice. I have to look at that again.
+
+So then here's the answer. The step in the weights is minus the pseudo inverse times the gradient. And that's very elegant, very, very reasonable looking. And so you write that down. And yeah, this is not here because that would give it again here. So yeah, I'm going to erase that in my next correction.
+
+And so then just to wrap it up, here's what I think. So these are the same equations as before. You've got your gradient, your Hessian, exact, your negative gradient. You want minus h inverse delta, but you can't invert this.
+
+So you just look at this for a moment and you realize, well, look, the step size has to be in the direction of the gradient the gradient because anything else is going to be annihilated because the Hessian is an unnormalized projection operation onto x sub i. So might as well just choose your step to be some alpha times x sub i.
+
+So you might as well just say some multiple of x will be our step and then let's see if we can solve for it. And so you plug that in and it's soluble and you get the same answer and to me that's the most direct way to see it and get the same answer. And you don't have to think about the pseudo inverse in some you know fancy textbook formulation it's just direct bottom-up derivation.
+
+Okay so then that's how far and so now we're done with last week and we're moving forward. So my next topic was Gauss-Newton and then stochastic approximation and then muon and I can turn the floor over to anyone else. So we're doing pretty well on time.
+
+# Gauss-Newton Method
+
+All right so Gauss Newton So here you have a least squares formulation once again So it very very common to do sum of squares in this sort of domain This is, again, my background is system identification. I would say I have a half a PhD in system identification, the other half being on filter design. I sort of pivoted away from this because it's very much online, real time, and I wanted to get into global optimal stuff. And so I studied this stuff really hard for about two years. And least squares was the king.
+
+So there's your loss function. It's the sum of squared errors over all time, finite time, over the whole data set. And now you take the gradient and you get this. And so the chain rule makes. So what's new here is that our gradient will be multiplied by the error because of the squaring. And you need that because now when you take the Hessian, by the chain rule, you'll get the gradient times its transpose. And the other term will be the error times the second derivative.
+
+And so we want to assume that the error is small so that we can get rid of this term. And that allows us to approximate the Hessian near the solution, let's say, with the sum of outer products of the gradient. it. Okay, so that's the basic idea behind Gauss-Newton.
+
+And then in practice, you just update this recursively. And it's very similar to Shampoo. If you look at this, I just linked the Shampoo paper right before today, because Roger and I were talking about it on Slack, and it's very similar.
+
+Okay, so Gauss-Newton, neglect second-order derivatives, approximate the Hessian as the sum of outer products. It will be positive semi-definite, but we always add an epsilon to make it positive definite, make sure that it's invertible.
+
+And you can't get into problem with saddle points or anything like that because this is, you know, a sum of outer products. It can only build a positive semi-definite matrix. And so adding epsilon normally brings in the name Levenberg-Marquardt. I've also seen it called damped least squares.
+
+And as I was saying before when your second derivative vanishes and you start relying on this it reduces the gradient descent with step size one over epsilon times whatever your outer step size is And so it looks similar to Shampoo And I think we'll probably be talking about that a little bit later.
+
+# Recursive Gauss-Newton
+
+Okay. So now here's the one that I was using all the time. It was definitely the front runner. It was like the main system identification algorithm in the 80s, let's say. It's the recursive Gauss-Newton least squares algorithm.
+
+So your parameter vector, in our case, the weight vector, gets updated by this, you know, running summary of the inverse Hessian times the gradient of the error, which is the error times the gradient. Well, it's the gradient of the error squared, which is, you know, which is this, right, as we talked about.
+
+And so there's this update rule. So you update it. You can think of the Hessian update as being like this. It's just like the momentum calculations. You can think of it as, you know, outer product momentum. And so you have a forgetting factor, lambda. It's often called, what are they called? Learning rates. Like an Adam optimizer, those two parameters you said, the beta and the alpha. That's what this is, right?
+
+And so you're scaling it by 0.95 or whatever and then adding in the new one. And sometimes you'll see one minus lambda sub n here, and that gives you a kind of normalization so that if it were constant, it would converge to the right thing.
+
+And so that's the Hessian update. And then the inverse Hessian requires a fast algorithm that works for rank one update. So this is a rank one update. And there's this thing called the Woodbury Matrix Identity that you can look up on Wikipedia or wherever to get the details of it.
+
+So there's a very efficient update to the inverse when your update is rank one. And so that's what everybody used. And it's still expensive at scale, but it does do a full Newton's method. And you don't ever invert the whole matrix. You're sort of going along, updating your inverse with rank one updates.
+
+Q: What's the dimensions on the R?
+
+A: R is parameter space by parameter space. So it weight length weight length So it your full covariance matrix Okay Yeah number of weights total
+
+So then the question becomes what can we do that in between You know, because this is something we talked about, that if you've got a billion parameters in your model, then your Hessian and your inverse Hessian have 10 to the 18 parameters. You don't even want to store that in memory anywhere, right? It's just too much. I mean, you could only store it. You only need half of it because it's symmetric. But still, it's really big.
+
+# Stochastic Approximation
+
+So what can we do in between Newton's method and gradient descent that does not square the number of parameters? And so that's the name of the game in a lot of these exotic methods that end up being simple at scale.
+
+So the stochastic approximation method is the one that existed in the 1980s for, you know, getting rid of the quadratic dependency. And in that one, you just approximate the Hessian by its diagonal. all. So you get rid of the rotation step and you just, it's like, it's like Ted was saying, you know, if you don't rotate, you just multiply by the matrix. It'll act on both of them. It'll act on all the coordinates together.
+
+So it'll be a kind of a compromise thing. If all, if, so then you have, then you have a more, a higher burden of data normalization. So if you've normalized your data such that all the dimensions are just spontaneously normalized, then this should work really well right so you know you don't have the ability anymore to to compensate for vastly different curvatures and in just one intuition for curvature is that you can think of this amount of information if you have no information the curvature is zero it's flat and you have no information and you can't invert the Hessian if you have a very high curvature then you get a lot of information from the lost landscape and you want to set a very small step size and go down into that narrow valley and then in the worst case is where you have a very narrow valley and a very broad valley on the next dimension because there's no step size that's good for both of them you know you're either going very very slow along the broad valley or you're stitching back and forth in the very sharp valley and you might even go flying out of it
+
+so it's very ill-conditioned and in a matrix numerical linear algebra that's a very precise term ill-conditioned is the ratio of the maximum eigenvalue over the minimum eigenvalue that's your condition number if I don't have that backwards and so you can see ill-conditioned is the ratio of the maximum eigenvalue over the minimum eigenvalue. That's your condition number, if I don't have that backwards.
+
+And so you can see that a well-normalized space will have a condition number of one. All the eigenvalues will just spontaneously be the same. And the curvature is the same. It's already a hypersphere, not a hyper-ellipsoid, especially not a long, skinny hyper-ellipsoid. And so you can do this in that case, and you're just looking for that common curvature. And to the extent that the curvatures are comparable, this approximation should work okay.
+
+Okay, so that's then the idea of the stochastic approximation. The covariance matrix is updated by, you know, forgetting the previous one a little bit and adding in the diagonal of the outer product of a gradient. And this should have a transpose on it. And this means pointwise multiplication. I guess pointwise multiplication doesn't need the transpose. Yeah.
+
+# Discussion: Normalization and Conditioning
+
+Q: So, Julius, at the risk of stating the obvious, we can normalize our inputs to a neural network. But once we have a deep neural network, then we no longer know whether intermediate values are all going to be well normalized. And so that poses a challenge.
+
+A: Absolutely. But we see in the history of deep learning, a lot of progress has been made by adding normalization that we have added, right? Like RMS norm was a big step forward, right? And I think you can interpret the skip connection along these lines. So the more normalization, normalization has really improved things. It has advanced the size that we can handle. And so maybe we can push it in this direction. Maybe there's a way to extend normalization to normalizing across dimensions of the curvature, across the dimensions of the model space in the eigenspace. That's and I'm sure people have worked on that. I'm sure there are papers out there. But, you know, it's multidimensional normalization, not just RMS norm, not just layer norm. So, yeah, but you're right. Unfortunately I could be wrong but I don think the normalization layers that we have help us with this problem I think mostly what they help with is just things like exploding vanishing numbers and gradients So we just keep our floating point numbers similar to the, you know, one-ish range when we normalize. and then the gradients will be some relationship to the magnitude of your inputs you know at that point when you when you normalize your inputs to your model and it doesn't matter whether it's a linear model neural network you know gradient boosting or whatever what you'll notice is the real pattern is you transform things so let's say you want them all to be roughly on the scale of one and so if you have age and you're like oh that's zero to 100 so super simple let's say divide by 100 okay what you have to do at the back end is you have to multiply by 100 in order to restore it okay so that's what we don't have in our normalization layers is we don't have sort of this restoration it's just this one-way normalization so that's why i'm thinking it doesn't really accomplish improving condition it just it just manages overall scale yeah It's one degree of freedom.
+
+Q: Ted, to your example, though, isn't the output in that case kind of, it's arbitrary. It's the input to the next layer. So you don't really need to invert that initial divide by 100.
+
+A: Good point. It'll go away. If you have a next layer, the RMS norm of the next layer is going to just take care of anything it wants. Yeah, until you get to maybe that final output projection. Yeah, the final out, you know, some linear connection at the end, yeah, can come out unnormalized. But then softmax is going to normalize. Right. Well, I'm not sure. Yeah, I haven't thought about this. Maybe the issue then is when you have your I don know what you want to call it your peers in your layer you want just like in your XOR very simple problem the magnitude of one of those is sort of bigger than the other and you kind of want that property and if you just took the output of every single neuron and squashed it to be unit normal then I think you have to be careful because then when you recombine those in the next layer I'm not sure if everything's still happy or if there's potentially problems Well, I'm pretty comfortable with one layer. And in that case, RMS norm takes care of one degree of freedom. But for the rest, you need to normalize the data, you know, specifically. And we talked about this last time. That's what preemphasis is for when the data are speech samples. And so it's all about knowing what your dimensions are and knowing how to precondition, how to preprocess your data so that it presents equal energy in every coordinate direction, which in the case we talked about were the frequency axes. And so that's the normalization on the data. So you can do it on the data side so you can provide it that way. Now, it's not going to help you in the second layer. So in the second layer, you know, if the first layer makes a mess out of it, then all bets are off, right? but at least for the first layer. Yeah, it kind of feels like you need the preconditioning for the second layer then. It's whatever the distribution is on the output of the first layer, you want to whiten that so the next layer sees energy across all neurons. Yeah, so there's a new invention waiting to happen. What do you do, you know? But, you know, if it's a well-formed first layer, than it should tee up something nice for the second layer. I don't know. I don't know if that works. I mean, I hope that works. I mean, it certainly works better than I expected. So maybe that's happening, but maybe we could do that. Maybe we can help it that way. Yeah, I think with some thought, you can figure out how to do it. What was the model called NGPT or whatever, but the one where everything was on the hypersphere, Everything, the weights and the outputs, I think were always, well no that still unit norm That not it still could be ill And the old persistent excitation intuition is it won't be ill-conditioned if you have persistent excitation in every dimension. So again, at the input to the first layer, as long as you have the same amount of energy at all frequencies, then you'll get that property that you want. And so then it becomes how to enforce that in the output for the next layer. But to solve that, you have to know what your dimensions are and where they are and try to normalize them. So as soon as you have interactions between the different dimensions, then you really can't easily normalize them. so so that may be a preview to what we're about to see with muon in terms of the rotation because because if you have if you have an ellipse that's on a diagonal well actually ellipse isn't so bad but if you have a non-linear your relationship between your two axes, then that ellipse is now let's say a horseshoe, and there's just no way to guarantee that things stay nicely conditioned if your data distribution looks like a horseshoe.
+
+Q: How about this? What is this?
+
+A: I was just gonna say, I was gonna suggest we come back to this because Ted, you might be right, Muon might be doing, addressing that issue. Yeah, I mean, not perfectly, but taking a step in that direction, yeah. Yeah, let's get to Muon and come back to this. But just the one thing I wanted to say though, is that extending this principle of persistent excitation from the first layer to subsequent layers, it is possible to throw a projection back. So for every layer, you can measure the orthogonality of the dimensions. And so you could then imagine optimizing your input data to give you equal variance on average in all dimensions across all layers. So you could then imagine optimizing your input data to give you equal variance on average in all dimensions across all layers. But only on average. Right. So if your data looks like a horseshoe, you can have variance one, but for any given data, it can be very ill conditioned. Right. If it's a super skinny horseshoe. Yes. But, you know, we can use momentum. So let's keep going.
+
+# Adam Optimizer
+
+And that's the next topic. So what a perfect segue. So the Adam optimizer. So extensively used. And it basically uses the average gradient instead of the instantaneous gradient is the average gradient. And that's what the momentum and it's an exponential moving average. So that's the nature of the averaging. And it's called momentum. And that's an intuitive. I think that's a good intuitive term for it.
+
+So if the gradient vanishes on a particular step, you're okay because you'll just effectively use the previous gradient. Okay, and in the case of Adam, you not only have momentum for the gradient, you also have it for the squared gradient. And you keep them both going. And so here they are.
+
+So the gradient average is, you know, EMA means exponential moving average. And you feed it the gradient. And here's the actual formula for it. So you've got a forgetting factor, beta, beta one, and then you have one minus that for the input scaling. And as I was saying, if the gradient goes constant, then this will be unbiased. It will go straight to, it'll converge. So when these are equal, you can see that you add up to just get the gradient. Okay, it settles down. I actually just think of it as a low pass filter that's got unity DC gain. We use these all the time in audio.
+
+And then the same thing for the squared gradient. And this is component-wise squared gradient that's being exponentially moving average. And so you can just call that the second moment, exponentially averaged second moment. And so that's essentially because the first thing to come along was the momentum for the gradient. gradient and then the second thing to come along was this exponential moving average of the second moments that then divided that normalized the gradient but that was Hinton and Hinton didn have the momentum on the gradient.
+
+But then the people who combined them together, that was Adam. So I have a little timeline on that. I thought it was interesting that it came in three steps.
+
+And so then this is your update. So your weight is updated by the gradient divided by an epsilon in case of zero plus the square root of the element by element squared gradient. So this is an update for the i-th element of the weight at time t. So this is only one weight at a time because this normalization is different for every weight component.
+
+So each weight component is individually normalized so that the gradient is that component of the gradient divided by the, you can think of as the RMS level of that gradient. So RMS normalized gradient components with divide by zero protection. So that's Adam, and we're using it all day. We all use it, right? It's everywhere.
+
+So alpha is your learning rate. Everybody's played with that. And epsilon guards against divide by zero. And this dividing out by, where's the division by, I don't see that. That's something that at startup, you actually can divide by this because if you don't have in the first several steps, you don't want to you have a bias. In other words, let's say it's low pass or low pass filter lag, right? Yeah, it's the low pass filter live. It's the rise time of the low pass filter.
+
+So you're dividing out the rise time envelope of the low pass hold. And that's really valuable for, it gives you an unbiased estimate for every step without having that transient in there. And then, and if you want AMSGrad, then you just make this little change here where you replace this with, with this. And it just has a little more memory. So you take the max of, you know, the second, second moment for the current time and the previous time. And it's like giving you a little more memory, a little more history.
+
+# History of Optimizers
+
+And here a history diagram that GPT did for me So we started with stochastic gradient descent That very very old And then momentum was added to that in 1964 by Polyak And then RMSProp was independently added to stochastic gradient descent by Hinton in 2012, so much later.
+
+And then finally Kingma and Ba combined the momentum and RMSProp were combined. And also the bias correction came in then. And that was three years after RMSProp, which was only the RMS scaling of the gradient. And then here's AMSGrad a bit later. So that's a little bit of history.
+
+# Intuition for Adam (Attendee Explanation)
+
+And so here's kind of a wrap up on muon. um so before we go to muon yeah like do people have a good intuition for adam i feel like i feel like i have a slightly better intuition based on your explanation julius but i don't know if it'll be helpful to give kind of a geometric interpretation to it sure yeah well you're um you're normalizing the gradient element wise to the average, to have a unit norm on average.
+
+Yeah, so basically what I'm thinking is if you've ever seen this skinny valley kind of depicted, I could probably do a Google search and find one. But if you took a piece of paper and you folded it to a very sharp V, okay, then all the gradients at any point other than on the actual valley floor at the fold, all the gradients point directly towards the fold.
+
+But if your V is tilted slightly, okay, then when you're on the valley floor, there is definitely a downhill direction. But the problem with vanilla SGD is that all the gradients are basically pointing perpendicular, more or less, to the actual downhill direction of the valley floor. They're always pointing down the steep sides towards the valley.
+
+And so if you've seen the diagrams, then SGD, vanilla SGD will zigzag from one side to the other unless you happen to nail the learning rate just right so that you get lucky enough to be really at the bottom But anywhere other than the bottom, the gradients are pointing perpendicular.
+
+So the cool thing is when you add momentum, if you imagine zigzagging, you've got one that's going a little bit forward, but mostly to the left. And the next one's going a little bit forward, but mostly to the right. you combine those they tend to cancel out and so what you get left with is just the forwards nice okay um correct that that's just the momentum isn't it that's just the momentum okay so the momentum gets you going in the right direction but the problem with just getting you in the right direction is it still doesn't fix the learning rate so if your gradients are pointing towards the valley floor, and if your valley is steep enough, then let's say the magnitude in the down towards the floor is a thousand, and the magnitude of the slope going down the bottom of the valley is a one, you'll get these thousands and negative thousands to cancel each other out when you use momentum, but you're still only moving one at a time along the valley floor. And what you'd like to do is to to be able to move a little bit faster okay so i think the geometric intuition i have is that when you then square the um the the gradient components okay and so on the valley floor direction you have one one one one one one one one one okay but in the side direction you have positive thousand negative thousand positive thousand negative thousand the variance is very very large in that direction.
+
+And so what that can then tell you is that the curvature in that direction is way higher, whereas the curvature in the floor is way lower. And since we're dividing by that, that's what then allows you to scale to make the steep curvature of the valley suddenly look a lot flatter so that you're now resembling more our our circular bowl.
+
+Yeah okay.
+
+Q: Ted, I'm wondering is the intuition that the squared term is basically telling me that my step size is too large in that direction, that I'm overshooting the optimum?
+
+A: Well, a very clean way to think of it is it normalizes the gradient in each component so that the learning rate is the same component. Yeah, it normalizes the gradient so that it's even reasonable to have one learning array. You know, if you didn't normalize it, you would argue that, well, you know, I need separate learning rates in every dimension. And that's what the Hessian gives you, is it gives you those different step sizes in every dimension. So this is a very nice, simple way to do it, component by component. It's essentially like the stochastic approximation method, but it's using the square root. So it's off by a square. So if you didn't take the square root, this is normalizing it to one. So this is RMS. If you just left it alone as a square, then that would be the stochastic approximation. Yeah, and I don't know how much value there is to using the square root of the squares versus if you just used the average of the absolute values or something like that. Right, right. But so what it's going to do is it's going to take those high curvature areas and it's going to divide by a bigger number. Now, theoretically, that doesn't do anything to speed you up in the valley floor direction. But if it lowers it so that it's sort of one in every direction, then obviously you're still going to do your global learning rate search. And you're going to find, you know, a certain number. So if you didn't have this, then you would have to use a very tiny learning rate potentially in order to not diverge in the steep direction. But this allows you to use a larger learning rate sort of everywhere. For the learning rate in the like in the in the sort of like geometric mental model here is the learning rate if I there a there a valley floor and that where I kind of want to be but the rate at which I traveling down that floor is effectively the learning rate here Or what what yeah what the the step size It the step size so you want to be taking big steps but if your steps are just going from one end of the valley sorry one steep side of the valley to the other steep side of the valley and back and forth these giant steps are not actually progressing you sort of in the in in the downhill direction that the valley is pointing oh because you're kind of stepping in uh onto this like slope kind of side thing and just going back and forth in in that way kind of because when you when you have a sharp v i don't know if you can see my my hands but but the gradient is pointing downhill towards the valley what you the direction you want to ultimately be moving is down the valley floor and that's roughly perpendicular to the gradient. Okay, okay, got it. So momentum will help you out, but it still doesn't help with your conditioning. If you then divide the valley by a large number, now all of a sudden you get something that's more like a circular flat bowl. In this case, it's still a valley, but now you can use a similar learning rate in both directions. Yeah, yeah. Now the thing that I don't remember is does Adam break down, I think Adam breaks down as soon as your valley is no longer coordinate aligned, if it's diagonal. Okay. And then the next hairier thing is if your valley is no longer straight like a piece of paper folded, but it's curved. Okay. But I think with Adam, as soon as your valley is at a 45 degree angle, you're a little bit up the creek. Which it's always going to be at an angle. That's the problem, is that the odds of it being super close to aligned are not great. And so thus, everyone's searching for the next best thing. And then, Julius, I think you were going to then transition to Muon. So because the scale of the dimensions is different, can be different, when I have a small gradient means it's not very steep that could either be that I'm in a high curvature area at the bottom or I in a low curvature area and I have a long ways to go right so the step size is is difficult in that context and Adam it does it looks like Adam is using an enormous norm of of the loss but it not actually a second order it not measuring curvature right it's it's using gradients from separate we'll call it mini batches because that's what we normally do. It's using the distribution of gradients from the mini-batches to try to guess at the curvature. Okay? If you get... Oh, so it's kind of sampling the gradient at every point? At each time step, at each batch optimizer step. And if you're getting very consistent gradients, that's good news. But if you're getting very inconsistent gradients, that would imply that you might have high curvature in that dimension. Yeah, what I have here on mine is the exponential moving average in Adam can cause it to forget rare but highly informative gradients too quickly. Is that kind of the problem we're discussing there? We're not talking about the problem. We're actually talking about what Adam is good at first. Yeah. So even simpler than the valley problem, let's say you just have a flat surface, but It's tilted so that it's a thousand, you know, whatever the units are in the X direction, but only one unit in the Y direction. Right? You really just want to be taking bigger steps in the Y direction and smaller steps in the X direction. And Adam's good at that, right? And Adam will do that for you. Yeah, yeah. And then atom will also work a little bit in valleys because the square means it doesn't have to be flat. The square will always be a positive number. And so if you have alternating positive and negative numbers, then it still also works. Gotcha. So that the goal is to use that over time that EMA in each component direction to guesstimate the curvature but the curvature it guesstimating is a diagonal hessian because it's only doing each coordinate independently yeah yeah and that's i believe where muon can can be stronger and so that's where that the uh you were saying the rotation becomes a problem then because it's doing them independently. Yeah. Gotcha. Yep.
+
+# Properties of Adam Relative to Hessian
+
+All right. I'd only have a couple more slides. Should I go through them? Yeah. Sorry for the interruption. Oh, no, no, that's great. That's real content. Can you see my presentation again? We can. Yep.
+
+Okay. And by the way, I found another thing that I wanted to show you. This is a diagram from a thesis that I like. It's a thesis by Max Kamenetsky. I think he was Woodrow's last student. And he has some really great discussion of all these algorithms and in the geometry of dealing with the curvature and writes it all up really well. So anyway, that's a nice resource.
+
+Q: Can you post a link to that?
+
+A: Actually, it's a PDF. I'll see if I can find the link and then post that.
+
+# Introduction to Muon
+
+Okay. Where is my, oh, I know what I have to, I think I have to go to another screen. Okay. So here we are. Muon. Another thing, I think you probably covered this, but if it just so happens that your Hessian is aligned, you know, so that it's eigenvectors, If the eigenvectors of the Hessian are on the coordinate axes, then basically Adam is normalizing the same way a Newton step would do, except for the square root. You would not have the square root.
+
+So it is a little bit different that way. But as Ted was saying, qualitatively, you're doing the right thing. And if you're not doing least squares, then maybe that is right. You know, so you have control over what you're doing by what norm you're really minimizing. And so L1 norm is different from L2 norm and so on. So there's a story there.
+
+So, you know, so in other words, the Adam optimization is ideal the more your natural covariance eigenvectors are already orthogonal along gradient component. So if your gradient components are independent, if they're orthogonal statistically, then you get a really great result, right? And it's okay if they're correlated as long as they're comparable. So you can have circular correlations and that's fine. You just don't want to have one gradient component corresponding correlated with another gradient component that's very differently scaled.
+
+And so one thing I always do is I think really hard about my normalizations. I want everything to be unit variance and everywhere you look, it's just everything's unit variance and everything's decorrelated. I even work hard to decorrelate my parameters so that I don't have correlated inputs. But as Ted was saying, you don't have control over the subsequent layers, but at least going in, you can have control.
+
+Then there's the history. Here's Muon. And so, yeah, we haven't talked about Muon. Okay. So the key innovation of momentum, according to this summary, this is I think this is an AI summary. Yes. Normally I add that. I would say, you know, ChatGPT-5 plus editing.
+
+So, you know, that's an editorial mistake here. I definitely got this from ChatGPT-5 and of course I check things when I have time when I have to.
+
+So the key innovation is to normalize the average gradient to the hypersphere. So here it is and what's the difference from Adam? This is no longer component wise. This is the whole gradient. So we have we're going to have some way to estimate the norm of the whole gradient and as we talked about last week that's expensive. It's an operation that goes across all the weights.
+
+So if you have your what is it called weight slicing, partitioning across GPUs, then now you've got the problem of having to combine the outputs of multiple GPUs to get those weights and form this aggregate norm that you can now feed in and normalize with. But apparently they work all that out and it's better at scale. That's the bottom line according to my research, which is very preliminary.
+
+So you've got the same kind of momentum on the gradient. They do away with that one minus beta scaling So there no concern about the early bias I guess because at scale you got so much data that not an issue That the rise time of the low filter is negligible compared to everything else.
+
+And now you update your weights like this. It looks just like Adam, except that we have the norm of the gradient instead of a component-wise RM second moment square root. And so we have unit norm updates. We have no bias correction. We have no adaptive per parameter rate estimates. It's global normalization instead of element-wise normalization.
+
+You only have to track momentum, not second moments, but you have to compute the norm of the gradient. That's even worse. The second moments were just element-wise by element-wise, and those partitioned nicely. And so the word is that it wins at scale, And that's just, that's what somebody, that's what people are reporting.
+
+So the design philosophy is it's stochastic gradient descent with momentum plus normalization of the overall gradient. So it's the gradient being projected to the hypersphere or scaled to the hypersphere as opposed to normalized component by component.
+
+Okay. And so you just think of it a little bit differently. and it's particularly effective for LLMs and large-scale training where the unit norm property ensures stability across different parameter groups, such as embedding, attention, and feedforward layers. So that's the word on this. I have no direct experience here.
+
+# Discussion: Muon Practicalities
+
+The typical parameters here are beta 0.95 for the gradient momentum and uh i do want to raise the point on on muon in that uh uh maybe it works at a certain level of scale but my understanding with muon was that um once you go kind of above the like 1b range you get a lot of um i think it was that your loss curve can start spiking a lot which was one of the reasons why they used Muon Clip instead of Muon Raw with Kimi, if I recall correctly. Does that track anybody or? Yep, correct. And I think that partly just a phenomenon that LLMs have as part of the way we currently build them They have extremely large activations which are necessary You can't just squash those. Interesting.
+
+Q: So one thing Julius that maybe didn't come up in the summary is that muon actually is designed only for specific parameters in the parameter space so it is not used for all layers so things like the embedding it's not used for that you would use atom for those independent ones it's only going to be used for the ones where you're doing a dense network. Also, does everybody...
+
+A: Go ahead. Well, also, if you go back to the previous slide, I'm not sure how it got to that equation normalized update. Yeah, I'm not sure if that equation's correct. Yeah, I'm feeling the same way. So I think if we go back to the... Eventually, we can come back to the paper. and see what the update is. Yeah, and we talked about this a little bit before. I did look at the paper. I did look at the update, and this is oversimplified. It's kind of okay in spirit, but yeah, it's oversimplified. There might be some norm where that makes sense, but I'm having a hard time. It's not a norm that I would know.
+
+A: I just posted an image in the chat that's from the Muon article. Does that look like it is? Yeah, I was trying to find the other. Yeah, that is the one. Yeah, yeah. Yeah, well, you need Newton-Schulz, right? And Newton-Schulz, that Newton-Schulz V is an approximation of U, V, T, where U and V are from SVD. So just like before where you had the Hessian decomposed into a product of three matrices You can think of this as doing the singular value decomposition And so the scaling, the normalization to the hypersphere happens after it's been rotated, not in its raw form. form right and i think that's pretty important yep yep because then it addresses um the delta y the output uh the impact on the output and they talk about that as normalizing so it's kind of all of in the s um sgd uh no sorry svd um you have kind of input direction output directions and a scaling in the middle is that rotate first scale and then rotate again and they keep the rotations but not the scaling which is essentially you could think of it as per dimension inverse of the the uh this what is it the sigma what's on the the s is sigma is that right sigma or svd yeah yeah so it's like you invert the the sigma that's the scaling per per dimension Yeah. So if we reduce this to just two dimensions and you have an oval, an ellipse, that's diagonal. You can scale the x and the y directions and it'll still be a diagonal ellipse. It'll never turn into a circle. If you rotate it to coordinate a line and then you scale it and then rotate it back, then you can get a true circle. Right.
+
+# Intermission
+
+I've finished gathering the muon material—my notes and the AI-generated summary are ready—so we can move straight to the paper and dive into the equations. If time permits, we could also watch the 15‑minute muon segment from Bernstein's 47‑minute talk for additional background. No time for that today.
+
+In week two we discussed Muon’s handling of fan‑in and fan‑out for each node, which builds on the maximal‑update ideas from the Tensor Programs papers. Unlike the original work, Muon incorporates this mechanism directly and makes it independent of the chosen update rule. It also requires dense vectors, so it isn’t applied to embedding or unembedding matrices even though those are two‑dimensional. The broader goal is to redesign optimization using layer‑specific norms. Looking ahead to next week we need concrete ideas to combine these concepts; Julius and Ted may attend, though their availability is uncertain. We noted that AI agents can be helpful but may steer us down divergent paths—a phenomenon we call “jagged intelligence,” where a tool is highly effective in some areas and weak in others. This raises the question of how AI impacts PhD research and whether it truly speeds up work for software engineers.
+
+Welcome everyone. Tonight we're going to hopefully finish up our discussion on Muon, and it sounds like it's going to be kind of a tag team here with Julius and Ted and myself covering different parts of it. Hopefully very interactive. Ted and Julius, if you guys want to keep your video open, that'd be cool.
+
+# Origins of Muon
+
+Muon momentum orthogonalized by Newton-Schulz is the paper. It was a little bit hard for me to kind of find the roots of this. It seems like probably if you look at the dates, Keller Jordan implemented this first, and he's got his GitHub here that talks about it, described it in a post. And I think Jeremy Bernstein actually described it subsequently and derived it in a context that seems to be Jeremy's background, which is using norms as a way to define the optimization.
+
+So these are the two guys, Keller and Jeremy. The simple distillation of Muon, again, what we said before we started recording is it seems to me it's easy to describe what it does and then a little bit difficult to describe, at least for me, to figure out why it is a good thing and also like what's its foundation, what's its roots.
+
+# Muon Algorithm
+
+This little table describes the algorithm. Basically, they're going through and looping in this optimization loop.
+
+The first step is to compute, do a forward pass, and then backwards pass to compute the gradient of the loss function. So that all this step three does compute the gradient with respect to the parameters.
+
+Step four is just a simple momentum based on that gradient. The momentum kind of sounds like it does something, but if you looked at the transfer function of an exponential moving average versus a digital low-pass filter, and they're basically the same. So we can really, in our context, think of this step four as a low-pass filter on the gradient with respect to the parameters.
+
+And then the magic Muon that makes it different is this step, this Newton-Schulz of the momentum. That then creates this O. I don't think O matters. And here then you use that OT as your essentially preconditioned gradient, and you're just doing a stochastic gradient descent in step six, and just loop.
+
+So it's really that easy. It's really gradient descent with momentum and a preconditioner on the gradient.
+
+Ted or Julius, any comments there?
+
+I imagine that O stands for orthogonalized gradient.
+
+Perfect. Yep. And I think of it as a normalized gradient. So it's been normalized in multiple directions the same way that, you know, RMSprop or Adam normalizes it component-wise. So instead of normalizing it component-wise, it normalizes in as many directions as it can normalize in, which is the minimum of the input size and the output size.
+
+# Preconditioning in First-Order Optimizers
+
+If gradient descent is just the update to the weights is some weight times the gradient of the loss with respect to the weights.
+
+The preconditioning of a first order gradient looks something like this where you update the weights based on the gradient but you precondition it. And I don't know actually what preconditioners should be a function of. In this case, I just said it's a preconditioner of the gradient.
+
+And if Gemini was correct when I described this function, he said, yeah, actually that summarizes a lot of first order optimization steps where Adagrad uses the sum of the squares of all past gradients. RMSprop uses a moving average of the square of the recent gradients. And Adam does the first moment and the second moment. So it averages both the gradient and the squares together.
+
+And I think what's happening in Muon is they talked about constraining it to kind of the geometry of the actual neural network, and what this equates to is if you can assume for a moment that so that the change in the one they also talk about constraining it in the output space rather than just in the weight space so if you have the change in y is going to be the change in w times the x and if you do a SVD decomposition of that, which actually this would be a great time if you had Ted, if you could share that slide on the SVD. If you happen to have that handy.
+
+# SVD Interpretation of Linear Transformations (Ted)
+
+For this diagram if you think about a matrix A as doing a linear transformation, so you can interpret matrices multiple ways. Okay one of the ways you interpret them is when you multiply you're doing a linear transformation so the idea is that if you started with it here if you just sort of see a circle representing you know different possible unit vectors in your in your starting space then the singular value decomposition U sigma V right what that does is it multiplies it by V it multiplies it by sigma it multiplies it by U and U and V are orthogonal matrices so what they do is they just do rotations they don't change scale um and they just do rotation so if these orange vectors represent the eigenvalues of your of your system then the V rotates them to orient them to be aligned with your your principal axes the way we think of them then this Sigma matrix is a diagonal matrix. So it scales independently along the coordinates. And then finally, the U matrix rotates it back to the proper orientation.
+
+So what we're doing in the orthogonalization is we're actually skipping this middle step. So what that means is that if you had a circle to begin with, then they're just simply going to get rotated and they're not going to get scaled. And the effect that has is that any eigenvalues that are greater than one are basically all getting squashed down to one. Vice versa, it also brings the ones that are less than one up to one, right? Yeah. And in that case, then, what he calls the operator norm of that becomes just one, I believe.
+
+# Constraining in Output Space
+
+I've seen it described Muon is constraining it in this output space. So basically what they're doing is if you take this delta W, they're changing it to be from the SVD decomposition just to a UT representation. That should have been the gradient. Well, delta W is a function of the gradient. Yeah, it's going to be a function of the gradient.
+
+Um, so what I, the way I rationalize this in my head is that, um, if I was doing a, uh, if I didn't have this pre-scaling or pre-conditioning, um, then I would think of all of the elements of, uh, the, the gradient, um, which is going to be, I guess, the same dimension as the weight matrix. all of those can have a different learning rate. Like if you were using this for Adam, the preconditioning for Adam changes every single parameter in that weight matrix can be scaled. So however many degrees of freedom that you get out of that.
+
+In the case of Muon, they're basically saying the only things I'm going to scale is in the sigma because I changed sigma, which is the eigenvectors of this gradient. And I'm going to get rid of, I'm going to make them all at once. So essentially, I can think of scaling up or scaling down just those parameters along that diagonal. Instead of all of the parameters, just the ones along the diagonal.
+
+So it says, I'm going to retain the directional information from the gradient, but I'm not going to allow any, or excuse me, I'm going to retain all the direction, but I'm going to make all of the scaling equivalent, all of them one, essentially. This is replacing sigma with the I matrix. And so that a reduction in the dimensions that I preconditioning I kind of preconditioning in the output space and then rolling it back into the weight space.
+
+And I don't know if the math is right or not. I worked this out with Gemini, but you basically think of it as when I did it on an element by element basis, it also showed up like this. it's basically going to be like one over the sigma values on all of the columns vertically. And I think that's what this is saying.
+
+So that's my intuition about it. And this comment here, I think that what that's doing is it's biasing. So if you start with a weight matrix that has a transformation that doesn't change the size so the eigenvalues are all one. I think this transformation keeps things so that the weight matrices does a directional transformation but doesn't change the magnitude.
+
+And what is S? Oh, it was just the USV decomposition. So these are the sigma values. So S is sigma. Yeah, yeah. So it's basically when I'm going from here to here, each of the diagonal elements are multiplied by one over that, right? Because they all end up with one. So you have S squared inside and you have square root. Right. Okay. So that's one over S.
+
+Like I said, I'm not sure this equation is right, but conceptually the idea is we're not adjusting all parameters. We're only adjusting parameters that are aligned with the eigenvectors, and we're just changing the scale of the eigenvectors. Well, it's the singular vectors on one side. um we don't have orthogonality we don't have eigenvectors we don't we have singular vectors we have singular values i'm just throwing out a little terminology here because you know somebody might care you know yeah no i and i the math i i not i not sure about like i said i not sure about the math the conceptual yeah i was picking up on is essentially you pre this would have been the gradient I listed it. It would have been the gradient that I'm decomposing U sigma V and then I'm transforming that to where it's the equivalent of the identity matrix so you get just UV and that what what is the preconditioning that takes me from here to here that's why i was trying to figure out newton schultz it's that new well newton schultz does that yes yes exactly and and so that's why that's what this guy's doing right yes newton schultz is transforming the gradient So it's transforming the gradient into this orthogonalized gradient.
+
+# Gradient Descent Visualization in Valleys (Ted)
+
+Here's a diagram showing gradient descent. And if you have a valley, or in this case, it's kind of an elongated bowl, so it's not an extremely bad valley, okay? But purposefully, this is not circular, okay?
+
+So what happens is the more elongated your valley is, the more the gradient at any point except directly along this valley floor major axis, the more the gradients point just perpendicular to that valley floor. So what you do is you get this zigzag effect when you're doing gradient descent.
+
+Now the nice thing is that momentum, if you just sort of average out these back and forth, what you're hoping is that that's going to take you sort of more in a straight line let's call it east okay but I think you still have this problem that if these lines in this direction are very large then you can I not sure which problem we want solving.
+
+So there two problems you can have. So one is that you average them out but then you still have a very small step in the east direction. You can imagine that you're just moving north. If this were steeper, you're moving north, south, and then you're averaging the north and the south, and they're canceling, which is nice, but you're still moving east in a very small step. So that's one problem that we have. The other problem we have is that what we really want is the second derivative. OK, we want the Hessian because this might not actually be a straight valley, but the valley floor might actually have a curve to it.
+
+I'm not quite sure which of these Muon is. I believe Muon is a first order method with this preconditioning. It doesn't deal with the second order.
+
+# Empirical Performance and Convergence
+
+Based on Muon paper, are there anything mentioned about the convergence rate of MUON compared to, let's say, stochastic gradient descent or Adam or any other optimization algorithms?
+
+Empirically the people doing nanoGPT world records and the people who did um um shoot was it was it Kimi or Qwen that used muon who's Qwen right no i think it was Kimi.
+
+Both the nanoGPT and the Kimi people found that Muon converged considerably faster than Adam. Like twice as quick.
+
+There is a slight increase in overhead because you do this calculation on your rectangular weight matrices. And for really large models those weight matrices may be sharded across multiple GPUs so there's a small amount of communication that you need to perform in order to do this SVD decomposition approximation you know so to do the Newton-Schulz, you need the whole rectangular weight matrix. And if you've sharded it across eight GPUs, you kind of need a bunch of communication in order to do Newton-Schultz, each of those steps.
+
+But what they do is they do an assumption, which is not 100% true, but it's a simplifying assumption. so for the purpose of the way the math works it's as if you were assuming that this rectangular matrix is independent of every other weight in your model so so if you're looking at say the weights that calculate the Q's the queries in a in an attention layer you just do Newton Schulz on this one little Q weight matrix and you ignore every other layer and every other everything else when you do this.
+
+At first I was mistaken about this and then somebody corrected me. So the communication is really not that bad. And if you're doing a small model and it fits on one GPU, then it's really quite cheap to do the Newton-Schulz step three times, five times, whatever they were doing.
+
+# Relation to SVD and Data Compression
+
+Since the SVD does data compression by finding those orthogonal dimensions, does it make sense to say that this technique basically finds the most important elements in the weights and then apply Newton-Schulz to them?
+
+It's actually the inverse. It's the inverse of that is that one of the points that they make is, so the Newton Schulz is a quick way to approximate an SVD decomposition. And the eigenvalues that come out of that, they normalize it. So they not actually what they say is that if you do just a gradient descent it tends to focus on the largest gradients but ignores the smaller gradients. And this by essentially normalizing that getting rid of that is it sigma Is that what the center one is Yes. Sigma or S.
+
+Essentially getting rid of sigma and converting that to essentially I. It makes all of the dimensions equally important in the update. Yes. So what we're trying to do, rather than focus on the important ones, is actually promote as many directions as possible to be equally important.
+
+So we would like to be doing gradient descent across many of our dimensions all at once and get them. Again, assuming that you had, I don't have a visualization for a multi-dimensional bowl, okay, but if you have a hundred dimensional bowl, you don't want to do coordinate descent, where you only improve in one direction, and then you only improve in the second, and you have to do 99 of these one at a times. What you really want is to be improving as many of the directions simultaneously so that when you've taken K steps, you've made a lot of progress in many, many of your dimensions.
+
+And so in the worst case scenario where you have really skinny valley in lots of different directions, the worst case scenario is exactly what you said, the most important direction with the largest eigenvalue. That's the one that improves a lot in your first few steps. Then when that one's kind of near optimum and it has small gradients, then that allows the second direction to be the biggest eigenvalue and it improves and so on and so forth. And so that would be the worst case scenario that it takes a very long time to converge.
+
+And so this preconditioning, ideally what you want is you want every direction to have roughly equal eigenvalues. And so then the analogy people give is a circular bowl, and on a circular bowl, vanilla gradient descent goes straight to the bottom. It doesn't wiggle around at all.
+
+# Orthogonality in High Dimensions
+
+In high dimensional space randomly initialized weights vectors are almost orthogonal. So wouldn't this abundance of orthogonal directions reduce the risk of extreme directional shifts?
+
+It a really good question and there probably some very deep answer. But the fact that the columns in your weight vectors start out randomly initialized and close to orthogonal, that's not going to be true once you start applying gradient descent because the data is not random the data has very specific properties and it's going to be pushing things in an organized fashion into the directions that ultimately you know sort of represent yeah like in a CNN you know if the first layer is doing vertical lines and horizontal lines right there's no longer random it's and so so yes the very very first few steps you're right you you probably get good progress because of those properties, but it's no longer guaranteed later on.
+
+Also, you can be the reason of this artistic in every model learning clause we see. Also, you can have orthogonal weights and the gradients are independent. They can point anywhere, and they're a function of the loss function in the data. So as Ted was saying, it's very data dependent.
+
+# Newton-Schulz Mechanics
+
+And also another point I wanted to make is that there's no actual singular value decomposition that is performed. It's just implicit. We look at it just to understand what the Newton-Schulz iteration is doing and what it means. But it's really just, you know, taking the gradient matrix times itself, you know, transposed to get a small, you know, sort of sum of outer products. You can think of it as some kind of L2 norm kind of thing for the gradient matrix. And then it just takes, evaluates the polynomial. It just iterates the third order polynomial, fifth order polynomial. It's like a Taylor expansion of the sine function. And that has the effect of pushing the small eigenvalues up to one. And the maximum eigenvalue is already less than one, because it divided by the Frobenius norm going into that.
+
+So it's all implicit, this SVD point of view. What really going on is just you know a polynomial evaluation of the gradient matrix times itself transposed and then the square root of that and that is the actual preconditioning. It's just this nonlinear evaluation that pushes the small eigenvalues up towards one to equalize them so that the learning rate means the same thing in all of these fundamental directions, which are, you know, determined by the smaller dimension of your projection matrix.
+
+Julius, I defer to you for your depth of understanding, but for me, more simplistically, my understanding was if you iterated Newton-Schulz infinitely many times, you would ultimately get the SVD decomposition without the sigma in the middle. And so that's a way for us to understand what's happening.
+
+Exactly. It's a way to understand it. Right. So when you evaluate this polynomial, when all of the singular values reach one, then the sigma has become the identity. Yeah. And the other thing is also it's only it's only approximating the SVD for values in a limited range, like between negative one and one. Yeah. Because that third order, that fifth order polynomial is only valid in that range. And you're probably going to go over the figure in Bernstein that makes that really clear. It's a really nice figure. Just imagine the sine function raised to a very high power, then it'll turn. Eventually it becomes square. Yeah. Sine wave becomes square wave if the peak is one. And so that's it. And so you just use an interior region of that where you're only looking at one part of that. And so it gives you the signum function in the limit.
+
+# Polynomial Approximations in Newton-Schulz
+
+This seems to be kind of the magic um uh that you know that he put into the Muon right it's how to combine this as an optimization, an efficient way to compute in something close to the UV component.
+
+This is the one that came out of the Bernstein paper, converting the sine wave. Yes, that's it. Square wave. And they actually, when I was reading about it, they actually ended up using parameters. They tweaked, they kind of started with this, but then they said, let's just do an odd polynomial, and we'll pick the coefficients. And that's why there's hard-coded coefficients in the algorithm.
+
+I think if you look back in even in the paper, these hard coded coefficients were empirically tested to provide a steep of a learning or steep of a transition for the smaller eigenvalues. eigenvalues. So this is the eigenvalues that are coming before running it through the polynomial. And the output is the eigenvalue after you've run it through three iterations of a fifth order function, I think it is, something like that.
+
+And in fact, they even optimized it more. I did this calculation, it had this little explosion, so I'm not sure if it's quite right. But they said where they actually don't use Newton-Schulz, they use different eigenvalue or different polynomial coefficients for the different iterations and squeezed a little bit more of performance out of it.
+
+But, and then there's also, I think he derives, why is it that essentially this polynomial of the SVD decomposition ends up being equivalent to the U and V with the polynomial of just the diagonals elements of the Sigma. So that's kind of why you can run this odd polynomial on these matrices. And it ends up essentially just running this function on the sigmas. And if all of those converge close enough to one, then you've essentially computed UV, UVT, without ever actually computing it. You've just done it in a forward pass.
+
+# Historical Context and Related Work
+
+That I think was all of my takeaways. The paper showed an improvement of this is training tokens, validation loss, so it's quite a bit better than, let's see, Adam is way up here. Another one they talked about is SOAP which is did I save that piece of paper Equivalent I didn grab it. Soap apparently is equivalent. In the video, they talk about it as SOAP is equivalent to Muon, but if you take away the moving average. So it's a different way, essentially, of calculating the UV.
+
+And if you dig a little bit further into it, there's actually references clear back to this idea of using UVT for the gradient descent, the steepest gradient descent. Bernstein talks about this paper, I believe. And is this the one? Hold on. I might have dropped the one I was looking for. Ah, here we go. So spectral gradient descent is the concept. And this goes back a long way. So spectral gradient descent is using the UVT as the preconditioning of the gradient. And this apparently goes a long ways back, but it's kind of like what's trying to figure out what's the efficient ways of computing that preconditioning. And what Keller did was, in his paper, was essentially figure out, hey, we can do it with this Newton Schulz. And I think that's a good transition there.
+
+You can super fast calculate the SVD. what what he did which is really awesome is he figured out he can do a fast approximation over only a small subset of the number line and since we're we have normalization layers all over the place in our LLMs the reality is most of our numbers are in this very constrained portion of the number line. So it's brilliant because if you can get the SVD approximation for this part, then 99.9% of the time you're getting the right thing.
+
+Using that piecewise like that was part of it. It turns out there another paper that precedes it that presented the idea of doing it more of a piecewise decomposition of it. So he didn come up with that but he used it to grade it. And the other thing that he threw in is the mu p, is it, where he's scaling it by the in and out parameter size or hidden. Yeah. And I can talk about that a little bit at the end but okay but so um um it's not that it like the spectral thing if you had to actually do that and you were doing on the order of a n cubed cost svd for every step it would work but the cost of that yep svd would dwarf the benefit of faster conversions yep yep.
+
+So the math was right. It's just it was too expensive. Yep. It's been right for a while. Yeah. We knew what to do. We just didn't know how to do it efficiently. And he came up with a combination of existing techniques, basically, that worked well.
+
+# Julius's Implementation and Vector Case
+
+Julius. You dived in and actually did it.
+
+Yeah, I implemented it. Well, I downloaded the code. I mean, they give you the code and then I compared it to Cass Newton.
+
+Ted how much time do you want me to make sure to leave you for Bernstein roughly we have half an hour left I haven't prepped anything so I mean even five minutes I just wanted to talk about the fan in fan out thing and I can explain the motivation for the fan in fan out thing and then we do have if you want Julius if we have time we do have the Bernstein video that I can play too I think that's about 15.
+
+Okay. Well, I won't try to fill up extra time, but I'll try to make sure I don't go more than 20 minutes or something like that.
+
+If your gradient is a vector, then Muon reduces to this global normalization. You're just dividing. So first of all, this is the gradient as before. We're running it through a low-pass filter to get the momentum. It's just a low-pass gradient. And it's a vector. And then you just divide it by its norm. And you'll add an epsilon to make sure you never divide by zero. and that's your global normalization.
+
+And you can think of it in the SVD point of view. There's only one vector. And so that's capital V. And sigma is whatever sigma is. But it's going to be this, right? So sigma one, there's only going to be one, will be this. And we divide by it and we've normalized it. So we've normalized the first singular value, the only singular value to one. and then we have a learning rate.
+
+And so my fundamental intuition on this is that what Muon is doing is making this same thing happen in more dimensions and more directions. And what directions are those? Well, it's the directions of the eigenexpansion of the input or the output, whatever is smaller. And we'll get to that when Ted talks about fan in and fan out. But it basically wants to work with the small side of that, and that's how many directions you get to individually normalize and so that's what happens. You get a gradient component in each of those directions, you normalize to one and now you have a learning rate that is calibrated properly for all of those directions not just the maximum direction or some middle direction where you get a lot of stitching back and forth in the maximum as Ted was talking about in that diagram.
+
+So that seems to be, you know, what's great about it.
+
+And so here are some of the, these are factoids: unit norm as opposed to Adam, which does this on a component wise basis. It does that for every component there's no bias correction we noted last time and it's global instead of element wise there's no there's no second moment momentum so there's no squared gradient components like in Adam and so the the observation is that it wins at scale. So, nanoGPT, and especially for very large language models and such, you only do it for parts of them, like the QKV matrices and the linear up projections and down projections in a large language model, not the embeddings.
+
+# Newton-Schulz Iteration Details (Julius)
+
+So Claude somehow missed Newton-Schulz here. So I went back to the paper and actually read it. And so here's the same thing. So this is the, they call it the momentum, I guess, but think of it as a gradient. So you have your loss function is the function of the weights, the previous time step, take the gradient, and then throw that into a low pass, and you've got your momentum, but it's just an average gradient. And then you give that to Newton-Schulz, and you get out this orthogonalized thing. and that's what we saw before.
+
+So Roger showed these equations. They're just gradient descent with an adjustment on the gradient, the momentum, the average gradient. And so what Newton-Schulz approximates is this, okay? So you've got your gradient matrix and then you form that times its transpose to get a matrix that is the small size. So if your input is smaller than your output, so it's an up projection then it's the input that's going to be the small size and so that's going to be the size of this whole thing and then you're going to try to form some approximation to the square root of it over one over the square root of it in some in some sense and and that will serve to normalize the singular vectors I'm sorry the singular values to one in in m directions where you know, this is an M by N matrix.
+
+So, so M is the smaller number. If it's the other way around, if it a down projection you transpose it And so you always work with the small side here so that this almost certainly has full rank because you know you you dotting out the the long direction and getting you know the smaller m by m instead of the larger n by n and and so you're trying to normalize like that and so here's what it does this is Newton Schultz you you start with the gradient matrix divided by its Frobenius norm, and then you iterate what, to me, looks very close to the fifth order Taylor expansion of sine. And you saw that graph, right? So it kind of looked like a sine wave, right? But it's really anything. I mean, it could just be any function, which when iterated will converge to a square wave. And that's a wide class of functions. You know, it could be sine, It could even be linear, right?
+
+So you just, but you have some coefficient, and now they've been optimized. We don't know what it is, right? So it's just some empirically optimized set of coefficients, and it's a third-order polynomial. I factored out this common term because you would implement it that way. But it's basically, you know, it's AX plus BX cubed plus CX to the fifth, because this is going to be quartic, and you're going to do one more. So this is a fifth order odd polynomial. Has to be odd because you don't want to flip the sign of the singular values.
+
+And so there it is. And so you iterate this. And so that normalizes the singular values for you. The singular values approach one because they're normalized to be less than one. And so anything less than one will approach one as you raise it to higher and higher powers if it's, you know, if it's on that function. Yeah, I guess it has to be a function that's above linear so that it pushes it up instead of it'll also go to zero. Right. If it's below.
+
+So so that's that's Newton Schultz. And then we do the singular value decomposition just to understand it. And these are the the carefully, you know, ablated or hyperparameter search coefficients.
+
+And so this just reminds you that if you just set m equals 1, then this reduces to RMS norm of the gradient matrix, which is what Claude highlighted. And similarly, if you set n equal to 1, you'll get the same result, but it'll actually happen in the code by just transposing the matrix. So you don even need the pseudo.
+
+This is something we talked about last time that you still get this from the pseudo point of view.
+
+And so then in the general case where you have n by m then you have the momentum matrix. You can just imagine, we never do this explicitly, but you just imagine the singular value decomposition where u is m by m orthogonal, sigma is a diagonal matrix with the singular values on it. And V is the big one. That's the n by n orthogonal matrix. And so therefore, m times m transpose looks like this. So you just write it out. And because V is orthogonal, that goes to I, and you get sigma squared. And so there that is.
+
+So you get this representation of, you know, M M transpose here. And so that means that if you're going to now try to form, you know, that to the minus one half power, you can see that you're just going to get one over sigma from that, right? And so one over sigma from that is going to cancel the sigma in M and you're going to be left with U V T.
+
+So you're getting rid of, you're normalizing the singular values to one. And so that means that your gradient matrix is what I would say bi-orthogonal. It's not orthogonal. This is not an orthogonal matrix unless V equals U. If those are equal, then yes, it's orthogonal. But this is not orthogonal. You can call it bi-orthogonal. I've seen that in the literature. But these are, you know, this is an orthogonal matrix.
+
+So the input, you know sort of listens in these directions you could say and then the magnification that's normally there is now canceled out and so you don't do that and then the output acts in these directions so I think if this is you know so the gradient listens in these directions and then it outputs in these directions and it does not magnify or shrink to the extent that sigma has been canceled.
+
+And that means then that the learning rate is the same magnitude relative to the norm of the sort of action vectors. And so it's the great equalizer among all these various fundamental directions in the gradient space. And that means you can use just one learning rate. And it normalizes learning rate across all those directions.
+
+So that seems to be the way That my best intuition as to how it works and why it works and why you want to do it.
+
+# Comparison to Second-Order Methods (Recursive Gauss-Newton, MORGAN)
+
+And so I noticed that you know I also talked about just sort of in the background section how it compares to the recursive Gauss-Newton step. So a Newton step almost looks the same. The only difference really is that this minus one half is now minus one. So I was thinking, well, maybe what it's really trying to do is approximate a Newton step. And that spawned, you know, a bunch of coding with ChatGPT and Claude. And so it would be a different, it wouldn't be a normalization to one, it would be an inversion. And so you would still have the singular values there, but they would be inverted. But you would get a Newton step out of that.
+
+So the extent to which the loss landscape is locally quadratic, this will give you unequal steps. And you don't even need another learning rate in this case. So you set your learning rate to one and let this give you a customized learning rate in all the various directions, all the different valley floors in all directions. And it'll normalize them to a hyperspherical step, right? And you'll be done in one iteration.
+
+So I was inspired to try this. And that's why I downloaded the muon code and implemented recursive Gauss-Newton. And I call it momentum orthogonalization by recursive Gauss-Newton or MORGAN.
+
+So I tried the MORGAN method. And I might as well just show you the result right now. So this is my result. So blue here is Adam. And Adam just takes off. It just shoots out of the gate with really good performance. And then Muon starts out kind of slow, and then it really takes off, and then it gets a little unstable. It kind of wobbles around. I guess I have a toy problem here. This is just matrix factorization. It's factoring effectively a Cholesky decomposition. It's a positive definite matrix that's been constructed to be kind of a worst case.
+
+you know, we talked about how these ellipsoids can be at any angle. And so, so I, I basically started with ellipsoids that were aligned with coordinate axes and then I rotated them 45 degrees. So it's a diabolical worst case kind of orientation where you get sort of maximum crosstalk between the coordinate axes. And also have control over the condition number. And I think this is like a condition number of 5000 or something like that. And that's the ratio of the maximum eigenvalue over the minimum eigenvalue. and so that means you know that your learning rate is sort of maximally skewed as to what you really want and so muon would try to set them all to one it's got a you know a dynamic range of 5,000 that it has to compensate for so it's just sort of this really bad ellipsoidal surface but it's still quadratic right so it's a it's just got to be properly tuned so if I did find the curvatures if I got a good estimate of the Hessian then then MORGAN is just going to go kaboom right to the bottom but it didn't and so I think that's just because the sum of outer products or the gradient is just no good as an estimate of the hessian and I probably had normalization problems you know I really didn't spend much time on this this was really just telling you know Claude and GPT what to do and and letting them work hard on it for a while and this is the best they could come up with in the time that I gave of them.
+
+But I still think it's kind of interesting. But I sort of came away thinking maybe the Hessian is not a good idea. Maybe you don't really want to think in terms of curvature normalization at all. Maybe you really do just want to normalize the gradient magnitude.
+
+That seems to be Hinton's intuition for years now, right? And if I could get one question for Geoffrey Hinton, it would be, why is it really fundamental that we want to normalize the gradient magnitude to one and not normalize the loss landscape? Why do we not want to approach a Newton step? Why do we not want to push gradient descent into Newton descent? Because it's clear that we're not pushing to do that, right? It's clear that all we're trying to do is normalize the gradient so that the learning rate means the same thing in every fundamental direction you know specifically the singular vector direction it the singular vector for the input and then the singular vector for the output so you listen in one direction you magnify by one because that that means your learning rate will set you know the magnitude and then you and you go out in the output direction and so that's um that's interesting to me.
+
+When you used your outer product did you do a moving average over that or just the instantaneous batch outer product?
+
+I have momentum on the gradient, and then I do a sum of momentum outer products. So it's like the sum of M M transpose, you could say, and an exponential moving average on that. So it's an exponential moving average of the product of M times M transpose, where M is the momentum gradient.
+
+Okay, but you did keep that moving average separate from the momentum over time. Yeah, so two separate moving averages. The recursive Gauss-Newton does that. It forms its own. It is an expression for momentum, really, of the estimate. And so the update to the inverse Hessian is a momentum kind of thing. It's got a lambda parameter that's exactly the same low-pass filter parameter.
+
+So I thought I was going to be the next big optimization hero by bringing in. No, I didn't really seriously think that. But it seemed like it ought to be tried, and I'm sure it has been. But I wanted to try it because I haven't seen it anywhere. And it just seemed like that's what Muon was trying to do. But now I'm not sure. I'm not sure that it isn't, but I'm not sure. Let's just say that. Muon is not second order. So they might do some things that kind of look like Hessian, but it's not trying to be a second order.
+
+# Second-Order Methods and Loss Landscape Non-Convexity
+
+Using these second order functions. If for the Newtonian approximation to work, doesn't it assume like convexity? Is that right? It forms a hyperparaboloid approximation to the loss landscape. Right and so this is a this is the plot that we have on our meetup homepage which is a two random directions. And I think it was a ChatGPT two or something like that loss landscape. And that doesn't look convex at all to me.
+
+You can imagine being at some, being up in the Hills up there where you might, you know, pitch camp. and do a local paraboloid approximation there, you're just going to go jumping off. You're just going to jump over to the next tent. You know, you're not going to go anywhere. Or something completely random.
+
+So, yeah, that was the question I came up with as well is, you know, are we really – I always thought that, like, the second order was the optimal, right? That's, like, where – that's what you want to do. But these first orders are working better, and the thing that I kind of latched on to is we're not dealing with a convex structure at all unless I'm thinking about it wrong. I'm not thinking in high dimensions. So it's no wonder.
+
+I think second order is okay as long as you have some momentum. With no momentum, you risk just getting stuck in a local minimum. But it's still fine as long as you have momentum. Interesting. It may be. I just, I don't understand. Second order works. it makes more of assumption about that shape that convex shape and it doesn't look convex to me so that that's why i was just it doesn't have to be convex it's just um if you were to look at the outer portion of of that loss landscape right there was there was sort of this steep hill and then there's kind of this jaggy stuff and then there's that that really deep bowl in the center right but if you were on one of those outer hills basically what what a first order approximation approximation is doing is assuming that that slope is is flat and the slope might have some slight curvature either way positive or negative and if so the newton step will approximate that curvature with the paraboloid and do a better job than a linear approximation.
+
+It's just like, you know, remember first year calculus when you- I think I get the concept. I just still struggle with the assumption that it going to be parabolic It not clear to me parabolic is anywhere close to what I would expect.
+
+But when they talk about the integrals right, you have the trapezoid rule where you basically divide it into chunks. And for each chunk, if you take the points and just draw a straight line between the two, okay? If you instead did a parabola between the two, you'll get a better approximation. It doesn't mean that the actual curve has to be convex. The actual curve can be jaggy, but you just want the parabola to do a slightly better fit than a line. And then if your first term is zero, then it can degenerate into a line.
+
+Yeah. But the momentum effectively smooths all those jaggies away. So for enough momentum, they just melt away into the overall trend of the slope. And it's going to really work when you do that. If you have enough momentum, it's going to work.
+
+# Fan-In/Fan-Out Scaling (Bernstein, Ted)
+
+In this formula, okay, what we see is that instead of just simply doing a Newton-Schulz, they have this fan out divided by fan in, and then they take the square root of it, times that. And so I'm not good enough with the math to be able to give you the proper derivation, but I wanted to just give the intuition as to why this matters.
+
+Greg Yang did a series of papers. These are pretty old. You can see this one. This is the fourth paper in the series, and it was from 2022, so three years ago. By the way, if you guys know Ed Hu, he's Mr. LoRA.
+
+And basically, they looked at different properties of how learning works. And at this time, there was a bunch of research into this neural tangent kernel where there's this like linear approximation and this discussion about infinite width networks. but what it boils down to is here I have this neural network so this is like imagine sort of like a an auto encoder for MNIST or something like that and so you have 784 inputs and then you've got a few layers where it bottlenecks down to only 30 neurons and then it goes back up to 784.
+
+Okay, when we talk about a learning rate, we were applying the same learning rate to every single one of the layers. All right, now because I'm not super good at the math, I'm going to do something that's much simpler that's not quite the right math. But imagine that your weight matrices in this second layer, it has a fan in of 784 and in a fan out of 30. So imagine that you have a 784 by 30 matrix And then because i like things simple imagine this weight matrix has all ones in it okay we could do the proper math if they gaussian and but just imagine it has all ones okay and then imagine you have normalization so that your inputs are all ones and i'm not talking about vectors i'm just doing scalars at this point okay.
+
+Okay, so you have all 1s on your inputs, and you have all 1s in your weight matrix. Then basically every one of these 30 outputs is going to be 1 times 1 plus 1 times 1 plus 1 times 1, right? But they're all going to be like 784.
+
+On the flip side, if you're down here where the fan in is 30 and the fan out is 784, if you again assume that you have all ones in your weight matrix and you have all ones on your inputs, then what's going to happen is you're going to have 784 outputs and they're all going to be 30.
+
+Now look at it in the reverse when we're doing back propagation. When we do back propagation on this particular layer, we have 30 gradients coming in for each particular weight in here. And so you're going to have a relatively small sum of these gradients if these are all the partial derivatives pushing you. Okay, whereas over here in this layer, you're going to have 784 gradients. Again, I'm going super fast, but assume that these gradients are all approximately equal in magnitude. So we're going to have a much larger gradient here.
+
+So on this side, we have an output that's 784, but a big output, but we have a small gradient of 30. And here we have the reverse, where we have a small output of 30, but a big gradient coming in of 784.
+
+If you have a constant learning rate across this neural network, you're going to have very different learning properties on these two layers purely by virtue of their fan in and their fan out.
+
+Okay So again without going to the complex math of exactly what adjustments you should make what the research in the Tensor Programs papers said is that there is this phenomenon that all other things being equal you get different amounts of learning in your layers just simply based on their fan in and fan out that's a function of using the same global learning rate you know one E minus three across all the layers.
+
+So when we go back to Bernstein, basically what they're saying is that we're going to not only take into account the shape of this surface and whatnot, but we're also going to take into account that there are these properties where if you normalize everything to be ones, you're not going to get equal size gradients at all of your layers.
+
+Okay, and again, I'm not doing the math exactly right. I'm just super quick just giving you the intuition. And so this is the formula they came up with, which is we do the square root of this ratio of in to out, and that will then get us more equal size steps across all of our layers.
+
+So if you're interested more, you can take a look at, like I said, this Tensor Programs 4 paper, which I think was really great research. Unfortunately, it's not the easiest thing to implement. And so I think ultimately that's one of the reasons why it didn't get wider adoption. Apparently people do use it, but they just don't talk about it too much. You don't necessarily see it as like, check this box in PyTorch and whatever, whatever. But I've heard that there are people, Greg went to work for Microsoft, so I think some of the Microsoft models use this maximal update technology in it and whatnot. But not everybody.
+
+You can you can talk about the shape of the gradients in different directions, but what you're not necessarily then talking about is just the magnitude of your cumulative summed partial derivatives coming at you. And so this adjusts for the fact that if you're fan in and fan out, one of them is larger or small, then that affects the magnitude of the gradients that you're receiving even after you've normalized things all over the place yeah so another normalization so again i haven't proved the formula i've just tried to give a basic intuition as to why fan in and fan out would impact the magnitude of of your accumulated gradients even in a in a highly normalized system.
+
+The tricky part is showing that you want a square root of that yeah that's what i'm saying i haven't i haven't demonstrated the formula and and and the math in this in this paper is is really gnarly but hopefully i've at least justified the intuition that a a a node with high fan and low fan out and a node with low fan and high fan out are going to have different magnitudes of gradients flowing into them.
+
+I can give you a signal processing intuition that if you assume that all these gradients coming in are uncorrelated, so they're like random vectors, then they add on a power basis. And so if you're trying to normalize gradient energy, then you would get that square root. You would get the fan out correction and you would get the square root.
+
+If people are interested there's this other great thing that they did in the fifth paper which is they said that um if you apply these adjustments then what happens is the learning rate the optimal learning rate is roughly the same whatever your size model. And so if you're trying to train a very expensive hundreds of billions of parameter model, you can actually try to find the ideal rate on something small like a 5 billion parameter model. And that same learning rate will work well on your giant one.
+
+Muon won't necessarily i don't think give you that that constant optimal learning rate i thought they talked about that yeah oh maybe maybe they think that it does but they did and i think it's because exactly that square root fan in fan out thing yeah yeah no that that's that's designed to equalize the dynamics across the layers but if you just do something like change the number of layers without changing anything else then you're gonna have new learning dynamics as you go from 36 to 48 layers and so you you you're not necessarily gonna have the same optimal learning rate anymore.
+
+So that's where in the original Tensor Programs 5 paper, they were saying that you can't just say, I will double my model dimension, I will double the number of layers, I will whatever and that the learning dynamics will be exactly the same It like no they might change But if you do the math that they were talking about then it would tell you that if you want to double the number of layers then the model dimension has to go up by two or by square root of two or by whatever like but it would tell you exactly the right if you blow increase one thing here's how much you have to increase everything else in order to have the learning dynamics be exactly identical and so that's how you size your 5b model is by by making sure you're you're matching learning dynamics so maybe so maybe the muon does do that but i'll be a little surprised because it was it was kind of i didn't i don't recall them talking about that i just thought i saw somewhere where they talked about it being you can use learning rate same learning rate for different size models but yeah okay.
+
+# Closing and Next Steps
+
+That's it. Goodbye.
+
+----
+
+# possible transcription errors
+
+- **Technical terms**: "w hat" -> ŵ (hat for estimate). "Pre dot product" -> pre-activation (w·x + b). "Non operations" -> nonlinear operations. "RMS prop" -> RMSProp. "AMS grad" -> AMSGrad. "Newton-Schulz" or "Newton-Schultz" -> likely Newton-Schulz iteration (for SVD approximation). "Shampoo" -> Shampoo optimizer. "Levenberg" -> Levenberg (full: Levenberg-Marquardt).
+- **Equations/derivations**: Some slides referenced but not verbatim (e.g., pseudo-inverse, Gauss-Newton updates). Visual fixes noted (e.g., arrow directions in Newton viz).
+- **History details**: Perceptron 1958 (Rosenblatt). Convergence 1962 (Novikoff?). MLP 1960s. Backprop rediscovery ~1986. Polyak momentum 1964. RMSProp 2012 (Tieleman/Hinton notes). Adam 2014 (Kingma/Ba).
+- **Thesis**: "Max Kamenetsky" -> likely Maximilian Kamenetsky (PhD on optimizers?). "Woodrow" -> possibly Woodrow Hoburg or similar advisor.
+- **Other**: "Bitter lesson" -> Rich Sutton's Bitter Lesson. "Tensor Programs 4/5" -> Yang's series on weight parameterization. Potential mishears: "jagged intelligence".
+
+- **Names and Historical Figures**: Corrected "Novikov" to "Novikoff" (standard for the 1962 perceptron convergence proof). "Bernie Woodrow" likely a mishearing; context suggests Frank Rosenblatt (perceptron inventor) or perhaps Bernard Widrow (LMS/ADALINE).
+
+- **Technical Terms**: "Fischer information" → "Fisher information". "Gaussian-Leaf squares" likely "Gauss-Newton least squares" or "recursive least squares".
+
+- **Uncertainties**:
+  - "CS25 lecture" on MovieGen likely "CS224W" or similar Stanford course; "movie gen stuff for Facebook" → Meta's MovieGen (video generation).
+
+- **Names/Entities**: "Mjuan" → Muon; "Newton Schultz/Schiltz" → Newton-Schulz; "Keller Jordan" → likely "Keller Jordan" (GitHub/post author, confirm spelling); "Kimi or Qwen" → Qwen (transcript waffles, context: Qwen used Muon); "nano gpt" → nanoGPT; "SOAP" → likely "Sophia" or "SOAP" optimizer (equivalent sans momentum); "Gemini/ChatGPT/GPT-5" → Gemini/ChatGPT/GPT-4o (slang); "Cass Newton" → unclear, possibly "Gauss-Newton"; "mu p" → μ_p (Muon parameter scaling); "Ed Hu" → Ed Hu (LoRA); "Greg Yang" → Greg Yang.
+
+- **Technical Terms**: "OT" → Oᵀ (orthogonalized transpose); "USV" → U Σ Vᵀ (SVD); "S" → Σ (singular values); "UVT" → U Vᵀ; "bi-orthogonal" → standard term for U Vᵀ; "Frobenius norm" consistent; "condition number" clear.
+
+# Intuitions
+
+- **Core Intuition**: Muon transforms gradient descent into isotropic updates by projecting momentum gradients onto bi-orthogonal bases (UV from SVD), normalizing singular values to 1 via Newton-Schulz, ensuring a uniform learning rate across min(input_dim, output_dim) principal directions—avoiding zigzag in elongated valleys and coordinate descent in high dimensions, unlike Adam's per-parameter normalization.
+
+- **Mechanistic Insight**: Newton-Schulz iteratively applies an empirically optimized odd-order polynomial (e.g., 3rd/5th degree, coefficients like aX + bX³ + cX⁵) to the normalized Gram matrix (M Mᵀ / ||M||_F), approximating Σ^{-1/2} for small singular values (<1 post-Frobenius norm), converging singular values to identity without explicit SVD (O(m³) cheap for small m = min dims); infinite iterations yield exact UVᵀ, but 3–5 suffice due to LLM normalizations confining values to [-1,1].
+
+- **Trick**: Work on smaller Gram matrix (transpose if needed to ensure full rank), apply per-layer independently (e.g., QKV projections only, ignore embeddings), add √(fan_out/fan_in) scaling for layer-agnostic dynamics (from uncorrelated gradient power addition), and use momentum solely on raw gradients (low-pass β ≈ 0.999).
+
+
+

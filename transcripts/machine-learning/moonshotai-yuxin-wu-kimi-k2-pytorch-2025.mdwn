@@ -1,0 +1,241 @@
+Kimi K2 and Our Contributions to Open Source
+
+Yuxin Wu, Muonshot AI
+
+date: 2025-11-03
+
+<https://www.youtube.com/watch?v=QLDpiOOyyrE>
+
+description: We'll first introduce Kimi K2, our open-weight 1T parameter foundation model with strong agentic capabilities. We'll talk about how we support the open source community, as well as discuss several key technologies that we have or plan to open source.
+
+LLM summary: Yuxin Wu introduces Muonshot AI's Kimi K2, a 1T-parameter Mixture-of-Experts (MOE) model activating ~32B parameters per token, with a 256K context window and pre-training on 15T tokens, excelling in chat, coding, creative writing, and agentic tool use after post-training; it topped LM Arena upon July release and powers production agents at firms like Chamas and Vercel. Key contributions include the Muon optimizer—approximating SVD via ~15 Newton-Schulz matmuls on full gradient matrices for 20-50% token efficiency gains over AdamW at scale (first demonstrated on 16B MOE, then 1T K2), with 3% overhead mitigated by sharding and comms overlap in fine-grained MOEs (384 experts); stability via query/key weight clipping to curb attention logit spikes, yielding smooth loss curves; Checkpoint Engine for efficient (~20s), non-intrusive RL weight syncing across 256 GPUs via pipelined bandwidth utilization and fault-tolerant restarts; vLLM's decode context parallelism sharding single-KV-head caches (e.g., MLA/MQA) along sequence length for 8x+ KV reduction and 2-3x throughput in high-batch RL rollouts using online softmax-like comms; plus Muoncake (disaggregated prefill/decode serving) and Flash Linear Attention kernels.
+
+[[!toc levels=3 ]]
+
+# Introduction to Kimi K2
+
+Good afternoon. Thanks everyone for coming. My name is Yuxin Wu. I'm a co-founder of Muonshot AI, and today I'm going to introduce Kimi K2. So we'll talk about this model, what it is, what it can do, and I will focus on a few important technical contributions behind this model that we have made to the research community and PyTorch community this year that covers some of our innovations in training, in our RL system, and in inference.
+
+# Model Specifications
+
+So Kimi K2 is a trillion-parameter MOE model. So for every token, it activates only about 32 billion parameters. So it is not only a very big open model, it's also the sparsest model. It has a context window of 256K, which is sufficient for most of your tasks, and it's pre-trained on 15 trillion tokens.
+
+<https://moonshotai.github.io/Kimi-K2/>
+
+<https://huggingface.co/moonshotai/Kimi-K2-Instruct-0905>
+
+Kimi K2 technical report <https://arxiv.org/abs/2507.20534>
+
+<https://www.kimi.com/en/>
+
+<https://www.moonshot.ai/>
+
+<https://x.com/Kimi_Moonshot>
+
+# Post-Training Capabilities and Release
+
+In post-training, we supply it with very strong capabilities in both general day-to-day chat, as well as coding and agentic tool call capabilities. We released the model in July this year, and in September, we made a small update. At the time of release in July, it was the best open source model according to LM Arena (<https://lmarena.ai/>).
+
+# Strengths and Examples
+
+And people have found it shines in different directions in general. Like it's strong knowledge and it's strong creative styles. And writing is very good as well. It also has pretty good coding capabilities. It can write, for instance, some HTML web pages. So here are some examples of some pretty impressive web demos that people have built with this model.
+
+# Agent Capabilities
+
+This year is also a big theme. It's agent, which is also a direction that we care a lot about. So during training, we supply the model with a large variety of different tools. We learn how to use them. And when people are building their own agents, they can also provide a pretty good description of their tools and the model will know the best time to call them.
+
+# Industry Adoption
+
+So we started to see many companies building agents start to use this model. For example, on the left, we have Chamas in a recent podcast saying that they have redirected a lot of workloads to Kimi K2. And on the right is a CEO of Vercel, who in a recent post saying that they're also building their internal agents with K2 because it's more efficient and more accurate.
+
+# Community Contributions Overview
+
+So behind all this work in the model, we like to contribute to the community, and in the past we have published several models and some interesting open source projects as well. So today I'm going to talk about a few innovations behind K2.
+
+# Muon Optimizer: Core Idea
+
+So first one I'm going to introduce is the Muon optimizer. So it's a new optimizer invented at the end of last year by Keller et al. in his personal blog post. So the key idea behind this optimizer is to use also normal updates. So the rough idea behind that is that when you get a gradient matrix, you will do an SVD decomposition of it in order to get an orthogonalized component from this matrix. And well, in practice, we actually won't do the SVD decomposition because it's too expensive. And there is a way to approximate that by something called a Newton-Schulz iteration. And it is essentially just a large number of matmuls. So to get good results, typically it takes about 15 matmuls using this gradient matrix, as well as its transpose and some other small computation in between. So the bulk of the computation is just a bunch of matmuls using the matrix.
+
+<https://kellerjordan.github.io/posts/muon/>
+
+<https://x.com/kellerjordan0/status/1842300916864844014>
+
+<https://github.com/kyegomez/MuonClip>
+
+<https://github.com/MoonshotAI/Moonlight>
+
+<https://github.com/NVIDIA/Megatron-LM/blob/dev/megatron/core/optimizer/muon.py>
+
+<https://github.com/microsoft/dion>
+
+<https://huggingface.co/Motif-Technologies/optimizer>
+
+# Muon Optimizer: Key Differences from Adam
+
+So a very fundamental difference between this optimizer and some other optimizers that we've been using in the past, such as Adam, is that when using Muon, you really need a full gradient matrix. So all the updates between different elements in a matrix is no longer independent. You can't just do an element-wise update and get your parameter to the next step. You really need a whole matrix, and this is believed to be one of the most important reasons why Muon can work so well.
+
+# Scaling Muon to Large Models
+
+So in February this year we are the first to scale up Muon to a large language model. We train 16 billion parameter MOE models and published it in February. Why is this so important? Because there are actually so many optimizers getting invented every year. But you probably have not heard many of them, because when you really care about performance and seriously training a model with a lot of resources put into it, you will have the best setting, the best baselines, the best hyperparameters. And oftentimes, Adam still works the best. So that's why it's so important to have strong baselines and train it on a large scale. With a small scale, you might be able to tune a lot of parameters to show that some optimizers work better than the other. But in a large scale, what truly wins, it will shine. So we are the first to show that Muon really works well in the large scale.
+
+# Improvements and Efficiency Gains
+
+In this work, we propose some improved recipe, including how to do weight decay and how to correctly control the magnitude of updating every step. And we show that it's a really token efficient model, which means that a token efficient optimizer, which means that if you use the same model, train with the same data for the same number of steps, it just gives you a better result in the end. And we showed that it's like 20% to 50% more token efficient than the Adam baseline, which we don't even, and in this work, we don't even tune the hyperparameters when training with Muon. And together, we also put up an open source reference implementation for this work.
+
+# Kimi K2 Training with Muon
+
+And in July, we released Kimi K2, which is a trillion parameter model, also trained with the Muon optimizer. So if anything, this should be a really convincing argument that Adam is no longer the go-to option for training large language models, and Muon really works pretty well.
+
+# Stability Issues During Scale-Up
+
+And during this process, we also addressed some other instability issues that we found during the scale up, and we will get to that in a minute as well.
+
+# Muon Adoption and Overhead
+
+And we have seen growing adoption of the Muon Optimizer in the community. In August it officially added to PyTorch. And some of our team members helped with that a little bit as well. And we have seen more and more research papers studying the behavior of Muon. And some other popular open source models start to adopt Muon as well. So you might ask if it works so well, what are the costs? What is the overhead of Muon? And I want to briefly go through that a little bit.
+
+# Muon Computation and Sharding
+
+So the computation of Muon, like I just said, is just a sequence of matmuls. And a key insight in that is that the computation can be sharded. You only have so many parameters. So as you scale up with more GPUs, you will make sure that every GPU is only responsible for computing the updates for a small subset of your parameters. And that's important.
+
+# Complexity in MOE Models
+
+Another concern that people might have is that matmul is cubic in complexity. If you scale up, would that be a problem? Well, it could be if you are training a very large, dense models where parameter matrix are super big. But today, we see a clear trend towards a mixture of experts models, especially fine-grained MOE models. For example, in K2, there are 384 experts in total, which means every single expert is not going to be that large. So as you scale up, your parameter matrix is not necessarily going to be insanely big. So the cubic complexity is not a problem. In reality, it's more like quadratic.
+
+# Communication Challenges and Solutions
+
+Another concern that takes some effort to address is communication. Remember, what's so special about Muon is that it needs a full gradient matrix in order to compute an update. But in reality, your gradient is probably sharded across your GPUs. So you need some way to get them into the same place. The exact solution will depend on your system, depends on how you shard your gradients and parameters. For example, here I put a few links of different implementations in different systems. Megatron-LM is having an implementation in their dev branch. And if you use DTensor, there are also some great implementations trying to minimize the communication cost. Of course, you also want to overlap your communication with the computation so that when you are computing the updates for one parameter, you'll be gathering the gradient matrix for the next parameter.
+
+# Muon Overhead in Practice
+
+So putting this all together, it does take some engineering effort to address, but people are working to make that easier. And if things are done right, it shouldn't be a big overhead, especially when you scale up. You often have a pretty large global batch size, like a million or several million tokens in every step, which means your optimizer is not going to be called very frequently. So the overhead won't be a significant deal breaker. Like in our training, it takes about 3% overhead to go from Adam to Muon, but the benefit would outweigh that.
+
+# Attention Logit Spikes and Fix
+
+Another issue that we see during the scale up is stability. We observe something called attention logit spikes. So we will plot the attention logit during training. It will have some spikes in between. And this is not a new phenomenon. People have been studying this for several years, and it's believed to be correlated to your model's stabilities or healthiness. It's not a new phenomenon, but we seem to find that it's correlated more with Muon. There are some theoretical hypotheses on why they may be correlated. But we employ a pretty straightforward fix to the problem. Logit, attention logit, is computed by a dot product of your queries and keys. So what we did is just if logit becomes too large, we just clip the weights of the queries and keys. And that will stabilize logit and also makes the training fairly stable.
+
+# Training Loss Curve
+
+So here I'm showing the training loss curve of Kimi K2 from the very beginning to the very end of 15 trillion tokens. There's no downsampling happening here. So every loss point is plotted. It's remarkably stable, there are no spikes and it just a big beautiful curve.
+
+# Checkpoint Engine: Overview
+
+So this is about Muon we believe it a great optimizer for scaling up. Another interesting project I want to talk about is Checkpoint Engine. It is a system middleware in our reinforcement learning infrastructure. So we try to solve the problem of parameter update. So in RL, when you train your model, you have to, at the same time, run inference with the latest weights of the model. And that means you have to copy the weights from your training system to your inference system. And this is the non-trivial task, because both of the systems are often highly optimized. They may have different sharding strategies. They might have their own memory management strategies. So it's not a simple task of memcopy (memcpy), and it's tricky to do it efficiently.
+
+# Checkpoint Engine: Integration and Efficiency
+
+So we open sourced this project, Checkpoint Engine. And a cool thing about it is that it's very easy to integrate. You just import and run it from either your training code or your RL controller. You can just say, hey, I just finished training one iteration. Here are the latest weights. Please send them to the inference workers. And then it will talk to the inference workers. And another cool thing is that the implementation is non-intrusive to vLLM. So this means you don't have to change any of the vLLM source code. This is implemented using a mechanism called worker extension, which is an extension point provided by vLLM to allow you to inject custom code during inference. So this is where the parameter update happens. There is also an SGLang integration that's a work in progress as well.
+
+# Checkpoint Engine Performance
+
+So Checkpoint Engine is pretty efficient in terms of update the weights. Even for a giant model like K2 with a trillion parameters, it takes only about 20 seconds to update a copy of the weights across 256 GPUs running inference. And that's sufficient for pretty much all the RL workload that we care about.
+
+# Checkpoint Engine Optimizations
+
+So the key idea to optimize the performance there is to first of all of course utilizing all the available bandwidth that you have. InfiniBand or NVLink or whatever. And we also heavily use pipelining. So we pipeline the different copy stages of different parameters.
+
+# Checkpoint Engine: Fault Tolerance
+
+Another benefit that comes out of Checkpoint Engine is fault tolerance. So when you run large-scale RL jobs, some of your inference workers may die. And when they restart, they need some way to get the latest weights. It'll be expensive to constantly save and reload the weights from disk. So Checkpoint Engine happened to solve that nicely as well. Because whenever an inference worker restarts, you can just tell the Checkpoint Engine, hey, I'm a newbie, I just come. I don't have the weights, can you send me the latest weights? so you can get the weights from the checkpoint engine pretty efficiently. It also further allows you to dynamically add more inference workers to the system if you need.
+
+<https://github.com/MoonshotAI/checkpoint-engine>
+
+# Decode Context Parallel: Problem and Solution
+
+Another contribution that we made this year is something called decode context parallel. This is a feature that we added to vLLM this year. So the problem we try to solve is that if you run inference using vLLM with a model like Kimi K2 or DeepSeek, you will find that your KV cache is duplicated across all your tensor parallel workers. Why does that happen? Because for these models that uses multi-head latent attention or other models that use multi-query attention, they only have one KV head in inference. So normally when you use tensor parallel, you can split among your heads to reduce the storage burden of KV cache. But here the models only have one head, and during inference, every worker will have to access the KV cache of that single head. So we adopt a different strategy. We shard the KV cache in the sequence length dimension. And that's similar to context parallel that people use in training. So we call it decode context parallel.
+
+<https://docs.vllm.ai/en/latest/serving/context_parallel_deployment.html#decode-context-parallel>
+
+# Decode Context Parallel: Mechanics
+
+So during decoding every worker will only store a subset of the context. And when computing the attention a token will first only attend to the local subset of the history context. And then they have to do some communication to get an accurate global attention results. And this can be done fairly efficiently using something similar to the online softmax trick. So there is only very tiny communication volume in this process.
+
+# Decode Context Parallel: Benefits
+
+The benefit of that is that you can greatly reduce the KV cache size really by eight times or even more. and this will give you a larger batch size to use in inference, which gives you two to three times more throughput. And this is very important in scenarios where you just want to optimize throughput, such as in reinforcement learning, where latency may not matter and you just have to have very high throughput in the rollout. This feature has been upstreamed already and it's also very easy to use. You can just add a parameter in your command line when serving a model.
+
+# Other Contributions
+
+<https://github.com/kvcache-ai/Mooncake>
+
+There are some other projects that we heavily contributed as well, although not directly related to K2. Muoncake is a project that we created. It's a system behind our production inference. So it's built upon the idea of disaggregated serving, which means you'll use different set of machines for prefill and decode tasks. And this year, we've seen a lot of other inference systems, such as NVIDIA's Dynamo, start to adopt this paradigm as well. So we were one of the first to pioneer this idea and actually implement and deploy it on a very large scale production system. And this work is now maintained by a group of researchers and community together with us. And this work also won a Best Paper Award this year.
+
+<https://github.com/fla-org/flash-linear-attention>
+
+Flash Linear Attention. So linear attention is a variant of attention mechanism that people believe might become an alternative to softmax attention. It has great potential. Flash Linear Attention is a library that includes a lot of variants, implement a lot of high-performance kernels for different linear attention models. Very popular library among researchers of linear attention. We are also very interested in this direction, and a few of the main contributors of this library are from our company as well.
+
+# Conclusion
+
+and yeah so and as a spoiler in the coming weeks we're also going to release some of our recent innovations in the space of linear attention as well so great that concludes my talk we talked about a few interesting technical details behind Kimi K2 and if you want to learn more about our work here are some ways to find us. And thanks.
+
+# Q&A: Muon Memory Efficiency
+
+Hello. Thanks for the presentation. Quick question on Muon Optimizer. So is it more memory efficient also as compared to AdamW? Like during training, does it take less memory?
+
+Yeah, the question is, is the Muon Optimizer more memory efficient than AdamW? Yes, because in AdamW, you have to save more optimizer states, including a momentum buffer for both your first order and second order gradients. But in Muon, you only save one extra of the states. So it is also more memory efficient as well.
+
+# Q&A: Loss Curve Spikes
+
+Hi. So just regarding the loss curve that you showed, just regarding the loss curve, I saw that it didn't have any spikes. Is it that you didn't get any spikes in 15T tokens of training? Or is it filtered out?
+
+For clarity of the curve, the curve started a little bit after the first iteration. So initially, the loss is higher, like you normally see in a random initialized model. But that part is not shown because it'll be an outlier that makes the figure look a little bit unclear, yeah.
+
+Sorry, I mean like training spikes. So when you train LLM, you usually get spikes because of a bad batch of data or because the learning rate might be higher a bit. So is it like that you didn't get any long spikes during the training? The losses are definitely higher but it decreasing. So there are no spikes in the beginning.
+
+# Q&A: Identifying Scalable Optimizers
+
+You talked about the challenge of taking small scale research on optimizers and seeing that it doesn't always perform when you scale it up. Did you have an insight that Muon would scale well, Or did you just try to scale up many of the recent optimizer research and Muon is the only one that worked well or the one that worked the best?
+
+Yeah, that's a very important question. How do we identify things that have potential to scale up? I think it's a combination of many different perspectives. Like, first of all, you have to be able to quickly try out new ideas on a small scale. That means your infrastructure and code base have to be ready for that. So when we see Muon, we think it's a very elegant approach just from the theoretical perspective. So we like to show it. And we are able to quickly take it from the original implementation and quickly put it into our code base and try it. And that's very important. So we quickly see that it seems to have some benefits on small-scale experiments. But of course, we know that's not necessarily an indicator of its success. So we will have a scaling ladder where we will gradually increase the size of a model and verify that it works well in every scale and eventually to the larger scale.
+
+# Q&A: Scaling and Debugging Process
+
+What was your process like for scaling from billions to trillions of parameters in the pre-training regime, where your debug cycles are very long and training over trillions of tokens?
+
+Sorry, I cannot hear very well. One more time.
+
+What was your debug cycle like, or your process, from scaling to billions to trillions of parameters, especially when your process, like the pre-training process, involves training over trillions of tokens, which takes quite a long time?
+
+The question is, what is the debugging process? Yeah, like how would you validate a particular architecture, or how would you validate that it scales well? I see.
+
+I think this will be similar to the previous question. It's not about debugging when things go wrong. It's more about validating things before you start the training. So it's about having very good baselines at various different scales. So when you have an idea, you try to validate at different scale. Make sure it always works. And that will give you confidence to really put it into your large scale run.
+
+That's the end. That's a wrap. Thank you.
+
+# Intuition
+
+- **Muon Optimizer**: Core intuition is orthogonalizing gradient matrices via cheap SVD approximation (Newton-Schulz iterations: ~15 matmuls on gradient and transpose) for coupled, matrix-level updates vs. Adam's element-wise ops; shines at scale due to full-matrix dependency capturing second-order info efficiently; trick: shard per-parameter-group matmuls and all-reduce gradients with compute-comm overlap; memory win (1 state vs. AdamW's 2+); 20-50% token efficiency on untuned baselines; ideal for fine-grained MOEs (small per-expert matrices keep cubic cost quadratic-like).
+
+- **Stability Fix**: Insight: Attention logit spikes (Q·K dots) correlate with Muon (hypothesized from coupled updates); trick: clip Q/K weights pre-dot for bounded logits, enabling spike-free training over 15T tokens.
+
+- **Checkpoint Engine**: Mechanistic trick: Non-intrusive vLLM worker extensions + pipelined InfiniBand/NVLink copies for ~20s 1T-param syncs across 256 GPUs; bonus fault tolerance via on-demand pulls, dynamic scaling.
+
+- **Decode Context Parallel**: For single-KV-head models (MLA/MQA), shard KV cache by sequence length (à la training context parallelism); local attention + minimal global comms via online softmax approximation; insight: unlocks 8x+ KV savings, 2-3x throughput for batch-heavy RL despite tiny comm overhead.
+
+- **Scaling Philosophy**: "Scaling ladder" validates ideas across sizes pre-full run; strong baselines/hyperparams expose true winners (Muon > Adam at large scale).
+
+
+2D weight updates in transformers have huge condition numbers (few dominant directions). Orthogonalization redistributes energy to low‑magnitude “rare” directions, improving effective rank and stabilizing learning.
+
+Orthogonalization is the conversion of a set of update vectors (such as gradient matrices) into a mutually perpendicular basis thereby preserving their span but redistributing their magnitude across all directions so that each component is orthogonal to the others. Orthogonalization replaces a set of vectors with a new set that spans exactly the same sub‑space but whose members are mutually perpendicular; the individual vectors change, but the *space* they describe does not.
+
+Making the columns orthogonal forces each column to be independent of the others. That certainly changes the individual column vectors (they are rotated and possibly scaled), but because the rotation is confined to the original sub‑space, no information is lost and only the geometry inside that sub‑space is altered.
+
+The Newton-Shulz iteration iteratively projects the update matrix onto the Stiefel manifold (the set of semi‑orthogonal matrices).
+
+Muon replaces the SGD‑Nesterov momentum matrix Δ with its nearest semi‑orthogonal matrix U via a low‑cost Newton‑Schulz (NS) iteration.
+
+Also: bfloat16 stability. Unlike coupled Newton or SVD‑based methods, the NS iteration remains numerically stable in BF16, enabling efficient GPU execution without a precision fallback.
+
+
+## Transcription Difficulties and Uncertainties
+
+- "Newton-Schrott's": Clearly "Newton-Schulz" iteration (standard SVD approx method).
+- "matmos": Repeatedly "matmuls" (matrix multiplications).
+- "DeepSeq": Best guess "DeepSeek" (popular MOE model with similar KV-head traits).
+- "multi-head latent attention": "Multi-Head Latent Attention" (MLA), standard in recent MOEs.
+- "multi-quari attentions": "Multi-query attention" (MQA).
+- "It REMA or NVLink": Likely "InfiniBand or NVLink" (high-bandwidth interconnects).
+- "Muoncake":  ?.
+- "preview and decode": Clearly "prefill and decode" (standard LLM inference phases).
+- Minor: "logic" → "logit"; "ways" → "weights"; "rowout" → "rollout"; "Tera tokens" → "T tokens" (trillion). Overall transcript clean; chunking seams invisible.
