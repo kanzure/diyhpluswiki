@@ -971,6 +971,29 @@ FOXP2 deficiencies are associated with speech disorders, motor learning difficie
 
 Genetic and molecular basis of developmental language disorder ([ref](https://pmc.ncbi.nlm.nih.gov/articles/PMC9139417/?utm_source=chatgpt.com))
 
+
+
+the section on "neural basis of sound production in non-human primates" is very interesting: <https://pmc.ncbi.nlm.nih.gov/articles/PMC3047712/> "Jürgens (2009) proposed two separate pathways involved in the control of vocalizations: The first runs from the anterior cingulate cortex via the midbrain periaqueductal gray (PAG) into the reticular formation of pons and medulla oblongata and from there to the phonatory motoneurons. The midbrain PAG serves as a collector or relay station for the descending vocalization-controlling pathways, integrating incoming information and triggering specific innate vocal patterns. Electrical stimulation of this area elicits vocalizations in several species. The second vocalization control pathway runs from the motor cortex via the reticular formation to the phonatory motoneurons. Reduced dopamine release in the striatum is positively correlated with speed and accuracy of phonological processing (Tettamanti et al. 2005), parts of the striatum are involved in lexical-semantic control (Crinion et al. 2006), and, depending on the subregions involved, patients with Huntington's disease have difficulties in the recovery of lexical information and the application of combinatorial rules (Teichmann et al. 2008)."
+
+[Foxp2 levels mediates sex differences in ultrasonic vocalization by rat pups](https://pmc.ncbi.nlm.nih.gov/articles/PMC3727442/) - "We observed that isolated male rat pups emitted substantially more USV calls and these were characterized by a significantly lower frequency and amplitude compared with female rat pups. Moreover, the dam was more likely to first retrieve male pups back to the nest, then females. The amount of Foxp2 protein was significantly higher in multiple regions of the developing male brain compared with females and a reduction of brain Foxp2 by siRNA eliminated the sex differences in USVs and altered the order of pup retrieval. Our results implicate Foxp2 as a component of the neurobiological basis of sex differences in vocal communication in mammals. We extended these observations to humans, a species reported to have gender differences in language acquisition, and found the amount of FOXP2 protein in the left hemisphere cortex of 4-year-old boys was significantly lower than in age-matched girls."
+
+
+foxp2 gain of function mutation proposals:
+
+* Helix‑3 basic substitution: add an extra positively charged side chain to the DNA‑recognition helix of the forkhead domain, increasing electrostatic contacts with the phosphate backbone and raising sequence‑specific DNA‑binding affinity. Try to strengthen transcriptional repression of FOXP2 targets.
+* Wing‑tip Arg insertion: add a basic residue at the tip of the minor‑groove wing, creating a new hydrogen‑bond network. Try to increase binding occupancy or motif selectivity.
+* Leucine‑zipper hydrophobic upgrade: replace a core leucine in the coiled‑coil heptad with bulkier isoleucine, expanding the buried hydrophobic core and lowering the dimerization free energy requirement. stabilize foxp2-foxp2 dimers and cooperative DNA binding.
+* Inter‑chain salt‑bridge: increase dimer stability.
+* C‑terminal nuclear‑localization signal (PKKKRKV): fused to the end of the forkhead domain to get more efficient nuclear import.
+* remove or weaken a degron
+* consider something something dCas9‑based transcriptional effectors, activators, repressors, and Cas9 fusion for foxp2
+
+
+Mice that are homozygous or heterozygous for [deletion of Dlx5/6 in GABAergic neurons](https://pmc.ncbi.nlm.nih.gov/articles/pmc8557472/) show increased vocalizations and increased socialization, along with a [33% improvement in life expectancy](https://pmc.ncbi.nlm.nih.gov/articles/PMC6756896/). Also this is associated with some nearby human-accelerated regions (HARs).
+
+
+There are many other FOX variants to consider targeting or enhancing the effects of: foxp1, foxp2, FoxO6, foxp3, foxp4, foxc, foxg, etc.
+
 ## Reading ability
 
 [rs11208009](https://pmc.ncbi.nlm.nih.gov/articles/PMC9436320/) for single word reading accuracy and word reading ability. Might be related to DOCK7 regulation in brain. You need efficient temporo-parietal and occipito-temporal circuitry for rapid word recognition. The superior temporal or temporo-parietal system and occipito-temporal "visual word form" system are core to fluent word reading.
@@ -994,6 +1017,7 @@ anatomy: arcuate fasciculus anatomy predicts phonological skill and reading skil
 dyslexia candidate genes (DYX1C1, DCDC2, KIAA0319, ROBO1) repeatedly linked to auditory/temporal-processing pathways that forecast reading achievement ([ref](https://www.frontiersin.org/journals/neuroscience/articles/10.3389/fnins.2022.981801/full)).
 
 (Impairment only): mutations in ATP2C2 and CMIP have been associated with nonword repetition and phonological short-term memory, which are skills that are tightly linked to acquiring morphosyntax because you need to hold and manipulate morphologically inflected forms. However this is primarily an impairment and not related to normal range of variation in healthy population.
+
 
 <a name="hippocampus" />
 ## Hippocampus
@@ -1981,7 +2005,8 @@ intracortical injection or infusion for the purposes of dendritic branching, den
 * direct [hippocampal lactate infusion](https://pmc.ncbi.nlm.nih.gov/articles/PMC11048250/?utm_source=chatgpt.com) enhanced spatial memory and increased plasticity markers (e.g., Arc/Arg3.1); a large body of work shows astrocyte-to-neuron lactate transport is required for LTP and long-term memory. ([ref](https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0028427&utm_source=chatgpt.com))
 * hippocampal pyruvate infusions
 * temporary NgR1 antagonism to increase synaptic plasticity (transgenic NgR1 downregulation or knockout seems to reduce short-term object recognition). Various studies have used NgR1(310)ecto-Fc infused intracerebroventricularly. Or administration of NEP1-40 (NgR1 antagonist peptide) and fasudil (ROCK inhibitor).
-
+* maybe: intraparenchymal injection of foxp2 protein to increase language acquisition rate in children (or normalize [foxp2 expression level sex differences in adolescent language acquisition](https://pmc.ncbi.nlm.nih.gov/articles/PMC3727442/))?
+* TODO: what about direct injection of amphetamine, nictoine, L-DOPA, glutamate, or other neurotransmitters? what would be the best targeted locations for this?
 
 ## More intelligence related TODOs
 
@@ -2553,6 +2578,10 @@ CBP2/TAFI (carboxypeptidase B2) SNP -438A/A (rs2146881) from <a href="https://ww
 IL6R (rs2228145/Asp358Ala): [reduced IL-6 signaling associates with longer parental lifespan](https://www.nature.com/articles/s41598-019-55109-7?utm_source=chatgpt.com) (anti-inflammatory angle)
 
 thymus rejuvenation: in old age, or senescent thymus, consider [upregulating FOXN1](https://pmc.ncbi.nlm.nih.gov/articles/PMC3978836/?utm_source=chatgpt.com) (thymic epithelial transcription factor).
+
+Mice that are homozygous or heterozygous for [deletion of Dlx5/6 in GABAergic neurons show 33% improvement in life expectancy](https://pmc.ncbi.nlm.nih.gov/articles/PMC6756896/). This reduction also improves socialiation and vocalizations (see the language/speech section of this doc).
+
+anti-dementia? Pathological HK1 (Hexokinase 1) aggregation or seeding is the abnormal self‑assembly of HK1 into stable, amyloid‑like oligomers or fibrils that can nucleate further misfolding of native HK1 molecules, propagating protein‑misfolding cascades implicated in neurodegenerative or metabolic disorders. A mutation in Hexokinase 1 (HK1) might be able to phenocopy the action of ezetimibe by preventing pathological HK1 aggregation seeding yet preserving catalytic glucose phosphorylation, providing some neuroprotection against dementia-like proteinopathy and amyloid burden.
 
 TODO: incorporate GWAS longevity associations ([2019 study](https://www.nature.com/articles/s41467-019-11558-2))
 
