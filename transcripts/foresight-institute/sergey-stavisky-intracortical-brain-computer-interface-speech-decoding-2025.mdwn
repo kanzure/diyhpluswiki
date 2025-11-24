@@ -1,0 +1,306 @@
+speaker: Sergiy Stavisky
+
+talk title: An intracortical brain-computer interface for restoring speech
+
+event: Foresight Institute Neurotech seminar
+
+video: <https://www.youtube.com/watch?v=w3POrwoCm1Q>
+
+LLM summary: Sergey Stavisky's presentation details an intracortical brain-computer interface (BCI) using four Utah arrays (256 electrodes) implanted in speech motor cortex regions (primary motor cortex, ventral premotor cortex, middle precentral gyrus) of an ALS patient with severe dysarthria, achieving ~2.5% word error rate (WER) and ~65 words per minute (wpm) in brain-to-text decoding via a recurrent neural network (RNN) outputting 39 phoneme probabilities every 80 ms, refined by cascaded language models, with <2 hours of training data; stability is maintained via day-specific input layers and online fine-tuning on self-reported correct sentences, enabling 14-hour daily use post-FDA caregiver approval. Brain-to-voice extends this to low-latency (~30 ms total) direct audio synthesis using transformer-based LPCNet features aligned via dynamic time warping to neural-guided syllable boundaries from synthetic TTS targets, attaining ~40% WER but capturing prosody (e.g., intonation, emphasis, pitch via trial-averaged neural patterns); error-related potentials in motor cortex decode decoding errors (~70-90% accuracy) and error types (pseudoword, homophone, etc.), hinting at semantic signals for future language BCIs targeting aphasia via upstream areas like superior temporal gyrus.
+
+[[!toc levels=3]]
+
+# Introduction and Overview
+
+Hello, everyone. Welcome to Forsyth's Neurotech Group. Today, we're lucky to have Sergey Stavisky on the line, and he'll be talking about intracortical brain-computer interfaces for restoring speech. He has studied neuroscience both at Brown and completed his PhD at Stanford, and now he's at UC Davis, where he also works on BCIs. So with that being said, please take it away.
+
+Great. Thank you. All right. Thanks, everyone. Thanks for this invitation to speak to you. Please speak up if something's not working with slides because I can't see anyone because I'm on one monitor.
+
+# BCI Applications and Focus on Speech Restoration
+
+So I'm going to be telling you guys about brain-computer interfaces for speech restoration. So maybe to just zoom out a little bit, you know, BCIs are being developed for a variety of applications. There's a lot of excitement about this. And these range from communication, which is where things really got started, movement, so moving robot arms, moving exoskeletons, spinal cord stimulation so people can walk again. And then there's kind of more speculative longer-term goals like computer coprocessors for your brain that could help you with things like remembering, so memory prostheses, or closed-loop modulation for things like psychiatric diseases.
+
+All of that's super exciting. I'm going to focus on this first category where I think we're kind of further along. This has been worked on for a while. But I think a lot of the principles being developed, and especially the hardware being developed, is very applicable to all of these other applications.
+
+# Clinical Challenge: ALS Dysarthria Demo
+
+So, I'm going to play this video to illustrate what's the challenge that we're trying to fix. In this video, when I play it, you're going to see a man, he's in his 40s, he's living with severe dysarthria, so the inability to speak due to ALS. And as you hear him trying to speak, you will probably not be able to understand a word he's saying. Okay, so you probably couldn't hear anything or understand anything.
+
+But in one way, he's quite lucky, despite the misfortune of having ALS, and that's that he happened to be living within three hours of Sacramento and thus was eligible for our BrainGate II clinical trial of a speech neuroprosthesis. So with that bar removed you can see that there are little electronic boxes connected to his head and those are transmitting the voltage signal so the neural recordings from four electrode arrays in his brain to a bunch of computers.
+
+So now if I turn around the camera and now we're going to play the same 10 seconds or so with a view over the shoulder you're going to see what's actually happening. He is trying to talk. You can hear that residual speech in the previous video, but now you're going to see what's actually happening. And that's that the words that he's trying to speak, which are prompted by that sentence at the top, are going to be appearing in real time as he tries to say them as decoded by this brain-computer interface.
+
+Maybe after we're out in school anymore and they're very dedicated to that all right so as you can see it was very accurate it decoded basically every word correct and then at the end of each sentence he can use an eye tracker or a computer cursor that he could also controls with his brain to select the done button and then it's vocalized out loud and actually happens to be kind of a deep fake of his pre-ALS voice so that's pretty cool.
+
+# Surgical Implantation and Hardware
+
+And let me unpack a little bit how it works. So the starting point is we need to get intracortical signals. So we need high signal-to-noise ratio measurements of brain activity to figure out what is the person actually trying to say. So this is led by my lab co-director, neurosurgeon David Brandman. So he planned and performed this operation where we placed four of what are called Utah arrays. So these are manufactured by Blackrock Neurotech into his speech motor cortex. So that's the part of the brain that normally sends commands to the muscles that we used to speak.
+
+You can see a little video here. Maybe the video's not working. That's okay. And so we end up with four electrode arrays, 256 total electrodes, across three different sub-areas of the motor system, the primary motor cortex, the ventral premotor cortex, and the middle precentral gyrus.
+
+# Decoding Pipeline: From Neural Signals to Text
+
+Now from there, the challenge is actually how to decode those signals. And this is led by Nick Card, who's a fantastic postdoc in our lab. The idea is the person tries to speak. We're measuring the neural signals. We send those neural measurements to a recurrent neural network, so deep learning decoder, that outputs the probabilities of every phoneme. So we're using 39 American English phonemes or silence every 80 milliseconds.
+
+And then those phoneme probabilities get sent to a pair of language models, which transform phonemes, which are kind of like syllables, a unit of speech, into potential words and then the large language model further kind of denoises that like a nice autocorrect. And so at the end, we're outputting the most probable sentence on the screen.
+
+And that what gets vocalized out loud in his own voice using another model that trained to sound like his voice. Or actually nowadays we can the whole system acts as a Bluetooth keyboard and mouse. So basically it will just send that text to his personal computer which he can use for various activities of daily living.
+
+# Intuition for Neural Encoding of Speech
+
+And so to give a little bit of intuition of why this works, I don't want people to walk away thinking it's sort of like magic or reading the brain or reading the mind. This is an example of those neural signals from 256 electrodes, so there's 256 rows on this plot, aligned to a single utterance. So he's trying to say the words, if you look back, and we're sort of playing the neural activity on each electrode represented by the little squares on the right that are moving.
+
+And even just by eye, right, without any fancy AI algorithm, you can look at it and say, okay, there is more neural activity leading up to and during every vocalization, so every word, and there's probably some pattern that we can decode there.
+
+And so then if we look at what those patterns might look like, here we had them say a bunch of words and pseudowords over and over again. So these are trial average neural activity. Don't worry too much about the details, but basically we're looking at the first two principal components, so kind of the most prominent patterns of activity across electrodes.
+
+And if I color them based on whether the word started with k or sh, you can see that that nicely separates in that first principal component. And if we step forward in time, now I've colored them based on the middle phoneme, whether it's A or E. You see nice separation. In this case, it happened to be on principal component number two. And then again, the third phoneme, SH or K, is nicely separated here on both PCs.
+
+And so this should give you some intuition that there's a lot of encoding of the motor demands of speaking. So different phonemes require different movements of the muscles of the lips and the tongue and the jaw and the larynx. And that's what we're picking up. So we're really picking up motor signals, not like cognitive semantic features or anything like that.
+
+# First-Day Performance and Emotional Impact
+
+So it works and it works really fast. I'm really glad we got this video. I'm going to play it now just to kind of capture some of the emotional valence of what was going on. This is on that very first day. So he had had the surgery a couple weeks prior. We waited for the wound to heal. Everything good. We show up to his house. We plug him in. He had spent about 30 minutes reading sentences kind of out loud as best he could in open loop. So without any feedback.
+
+And now we told him okay we're going to turn on the neuroprosthesis and you're going to try to say those words. And it was really cool to see what happens. Let me play that.
+
+And so as soon as those first two words came out correctly you can see he just completely cries with joy. His whole family's there. They're extremely happy to see it. We were all there. It was pretty cool. We had to pause the task. He composed himself. And then we kept going with the research.
+
+# Performance Metrics: Word Error Rate and Speed
+
+And the performance was really good. So the red plot is showing word error rate, where lower is better, 0% is the ideal. What we first started was a 50-word vocab kind of based on some prior studies using electrocorticography. And we were down to almost 0% word error rate on the first day, 0% on the second day.
+
+So we kind of scaled up our ambitions very quickly. And by that second day, which was, I think that was a Sunday, the first day was a Friday, we came back and expanded the potential vocabulary to 125,000 words, got another hour and a half of training data. So we're talking about less than two hours of data. This is very small quantities of data compared to what's typically used in, for example, automated speech recognition.
+
+And then we had an error rate of below 10%. That was really exciting for us because we were comparing this performance to two papers that came out the prior summer using either an intracortical or an electrocorticography BCI. And both of them had error rates up around 25%, which was really cool at the time, but not good enough for daily communication. Here we were already below 10%.
+
+And as we collected more data and kind of iterated the algorithms throughout, we got that word error rate to about two and a half percent on average, some days as good as 1%. And as you can see through that kind of broken time axis is that this kept working, not just for a few weeks, but months and months out. And actually, he's still using this device. And I'll talk about that in a minute.
+
+It is a lot faster than his alternative so our words per minute are about 35 words per minute in that initial data set that was published you know that is not able speech so I'm probably talking to you at about 120 words per minute right now but his alternative is either using a head mouse or one of two people in the world that can understand him his spouse is one of them and he has a full-time aide and those communication rates are at about three to five words per minute and a lot less naturalistic.
+
+So either repeating himself to another person over and over or point and click typing with a head and mouse. So this is much, much faster.
+
+# Free-Form Communication Demo
+
+Now, of course, copying sentences so we can measure word error rates is not his goal. So again, to kind of humanize this and show the impact, I'm going to play a second video. This is on that session number two, when we expanded the vocabulary to 125,000 words. And now we said, okay, thanks for copying a bunch of sentences. We can confirm that it works. Now go ahead and say whatever you want.
+
+I'm looking for a cheetah.
+
+You can see the full transcript. That was not a mistake. That is because his daughter had just come back from a costume party dressed as a cheetah. So really, you know, moving, the first thing he wants to do is talk to his daughter, who was four at the time. And he had basically never spoken to her because in her conscious life as a toddler, he couldn't speak due to ALS. So that was pretty incredible.
+
+# Addressing Non-Stationarities and Long-Term Stability
+
+Now, moving forward, we wanted him to be able to use it every day, even without us there. And so one of the important things was to make sure that this system worked reliably without recalibration. And so kind of one of the known challenges of intracortical sensors is that because they record from individual neurons, if the electrode array moves even 20 micrometers and a brain in a person, you know, as they're breathing and their heart is beating, is moving around more than that.
+
+So your electrodes kind of move slightly relative to the neurons, and that can lead to what are called non-stationarities or instability in the decoding. But the good news is that with contemporary AI methods, we can get around that.
+
+So every day when we collect new data, that gets fed through a day-specific layer in this neural network, which sort of aligns these neural data to a common representation because things aren't moving that much. It's not that it's a random scrambling of neural-to-speech mapping every day. It's just that there's a little bit of a rotation or kind of an affine transformation.
+
+And so those get then fed into the rest of the recurrent neural network, which outputs those phoneme probabilities. Beyond that, the language model stays the same. And this works really well.
+
+So in this plot, I'm showing you if we train the decoder with just five days of data, let's call that days negative five through negative one, and then hold it static. So we fix the decoding weights and evaluate it on new data moving forward in time. We see that out through about three weeks 21 days the word error rates stay really low around 5%. But after that things kind of drop off because there just been too much time between the training data and the measurement.
+
+But if we do this kind of layer specific input weights and also do what we call fine tuning online. So if we take every sentence that he self-reports as correct, basically by looking or clicking on a button that says 100% correct. So as he's using it to communicate, when a sentence is output, a lot of them are going to be correct. We just use that data. So within a few seconds, the decoder weights are slightly updated based on this new data.
+
+And so with both of these features or capabilities, what you can see in the orange plot is that word error rate basically stays really good indefinitely. So we do not have to pause the system and have him speak a bunch of prompted sentences to recalibrate it, he can just use it and it stays up to date and accurate. And that's really important.
+
+# Conversation Mode and Daily Use
+
+And so by now, the system looks, well, actually, this is more like a year ago, but within a few months, we had the system looking like this. And we call this conversation mode. So this is kind of the initial user interface that he used for day-to-day communication. So I'll play this video. You'll get a better sense of how it works. And again, he'll happen to be speaking to his daughter.
+
+Hello, my sweet child.
+
+You'll notice the language model updates the words as their output. You also notice it's much faster than it was before. And then it gives other options if it's not fully correct. And also his voice sounds a lot more naturalistic because we used a more up-to-date text-to-speech model.
+
+So yeah, having this ability is really life-changing for him and he uses it a lot. So this is the plot that was in the paper as we published it, showing the cumulative use that he used it to communicate over the course of just over half a year.
+
+What happened after that, which is really cool, is that we actually wrote to the FDA and said, we think this is not just research. We think this is meaningfully impacting his quality of life. and we'd like permission to train his caregiver, his wife, to don and doff the system, basically, to connect those little electronic boxes, which is not hard. You can train anyone to do it. But kind of in the initial clinical trial protocol, it said that a researcher would do it, you know, wearing gloves and all that to kind of keep things clean.
+
+Today FDA is actually very reasonable. Within a few weeks they were back saying yeah this seems safe and important. Go ahead. And so you know he was already using it to talk to his family and friends. Zoom with colleagues. But then once we got that permission he started using it basically every day. And you can see that cumulative use time just you know hockey stick up. He's now using it up to 14 hours a day. Basically, he wakes up, his wife plugs him in, he uses it all day. I've been there at his house when he's like Zooming with his colleagues. So he's working full time again. It was really, really useful.
+
+And, you know, quite, quite encouragingly, if anything, the performance actually has gotten better. So we've been tracking his self-report. So when he looks at those three buttons, let's say 100% correct, mostly correct or incorrect. And if anything, the trend is towards more correct sentences. So still getting better. And as you noticed in that last video, he's speaking much faster than those first couple of sessions. So the words per minute have also increased. He's basically learned that even though his physical muscles can't keep up because of his ALS, he doesn't actually have to enunciate. He just needs to try to speak. And so he's learned a different strategy that is faster for him.
+
+# Patient's Perspective
+
+So I'm going to play a last video from him, which basically this is from an interview he did, to kind of explain why he thinks this is important. I think he's much more eloquent than I am and probably a better champion of this technology. And I'm going to let him speak for himself.
+
+People who do not have the ability to communicate well or quickly are often isolated and lonely. Having something like this will give them hope and opportunity to be more of themselves. I hope that we are at a time when everyone who is like me have the same opportunity as I do to have a device like this that will help them communicate. Let's all make that happen, okay?
+
+Okay. So yeah, good exhortation to keep doing this stuff.
+
+# Brain-to-Voice: Direct Neural to Audio Synthesis
+
+So we still have a little bit of time, and I want to get into kind of what's next. So everything I showed you, we're calling that brain to text because we're decoding phonemes and then words. Yes, they can be spoken out loud through text to speech, but none of that kind of emotional valence beyond the textual comes through. So that you kind of have to infer it. You know, it's like sending a text message.
+
+But of course we know that speech is more than just the lexical content just the words. There the cadence with which you speak the prosody your intonation. You can make it sound sarcastic you can sound angry. These are really important for human communication.
+
+And so our next goal is what we're calling brain to voice and that means instantaneously going from neural activity directly to sounds in a way that allows the person to modulate what they're saying beyond just words. So it's a kind of a similar idea, right? We're starting with the same neural recordings, same intracortical signals, but it's now a different model where we're actually outputting sound features, and we have to do that with very low latency.
+
+So I'll play a video in a second. The decoding latency is about 10 milliseconds or less, so that's for the inference model, and then the actual sending it to a sound driver and out through a speaker adds like about 20 more milliseconds, which is kind of silly, but that is where it is. So let me play it. You're going to see the prompt at the top, and then the voice you're going to hear, this is not his physical voice. This is what's coming out of the computer speakers as decoded from his neural activity.
+
+I am good. Oh, you, you, you think about this? Okay.
+
+So hopefully you get the idea of what's going on. Now, I think rigor is really important. So there's something I want to emphasize. Because you saw the sentences that were prompted, to you, this may have sounded really, really good. But I want to be clear that it is not consistently intelligible. Basically, we have more room to work with and to get this better.
+
+So I'm showing now the accuracy. Now, if you take these videos without seeing what was being said, and you give them to random people or you know, undergrads that come in for a $20 gift card to the lab, and you ask them to just transcribe it. So there's no limited vocab, it's just like, write down what you heard. The error rate is about 40%. This is state of the art, this is much better than anything anyone's demonstrated before. But that is, you know, a far cry from the sort of 5% or below word error rate that you'd really want for day to day communication.
+
+So in these violin plots, the neural voice is the dark blue, the light blue are these specific examples that are in the preprint. So they're lightly cherry picked, maybe I'd say, but within the same range. And then if you actually have someone listen to his physical residual voice, it's basically completely incomprehensible.
+
+And also to give due credit. This whole project of Brain to Voice is led by Maitri Wagaskar, another one of our fantastic postdocs.
+
+# Technical Approach for Brain-to-Voice
+
+So without going into all of the kind of technical detail of why this is hard, there are many reasons. But one of the big ones is there is no ground truth, right? We can't measure what he exactly wanted to say with the exact speed, intonation, emotional kind of valence that he wanted to say it. So you kind of have this unsupervised learning problem.
+
+And, you know, long story short, the way we got around this, and this is very clever by Maitri, is we can generate synthetic target speech with like a standard text-to-speech algorithm. So we know what he's trying to say in terms of the sentence, because we wrote it on the screen and we said, try to speak it, but we don't know when he's saying it.
+
+And then we can actually use the neural data as sort of our guide light. And that will show us when individual syllables were being uttered. And we can then basically align, so do some dynamic time warping, to make that synthetic target speech, the TTS speech, kind of aligned in time with when we think he was trying to say not just every word, but actually every syllable.
+
+And so here's a diagram. We started with this text-to-speech work, text-to-speech sentence. So that's a real nice-sounding sentence. We then can use sort of a previous version of the decoding model. So think of this as like an iterative algorithm to generate a neural voice. From that, we can identify syllable boundaries, and we can basically take this synthetic sentence and stretch it to align to the neural data.
+
+And now this becomes our new training target for training the model. So we've taken a mostly unsupervised problem, made it a very classic supervised learning problem.
+
+And so there we can send the neural data through a transformer, map it to basically a compressed version of speech. So you can reduce sound like in the codec that I'm kind of speaking to you through. You know, back in the day when bandwidths of telecommunication systems were low, a lot of people spent a lot of time making very good compression algorithms for it.
+
+So if you can reduce voice to 20 numbers every 10 milliseconds, it actually is still very very good sounding at the end. So that's what we're using. It called LPCNet. And then from there that can be kind of derived out back through a vocoder and made into real sound. And so that's what you were listening to in those videos.
+
+Like I said, it works pretty well. So I'm showing the target waveform and the synthesis waveform before. This is cross-validated. So this is really the decoding accuracy. If you look at like the spectrograms, they look really similar. Turns out these are actually just really bad metrics. So 0.9, in general, when you have an R of 0.9, it's like, yay, everything works well.
+
+I can play examples of correlation coefficient of 0.9 reconstructions that are really clear and intelligible and other ones where you can't understand what's being said. So side note, we need better metrics. And that's another thing that the lab's working on.
+
+# Decoding Paralinguistic Features
+
+But this is all about words. And really, the whole point of this is, well, A, so you can speak kind of immediately, which is itself useful. You can interrupt people. It's more naturalistic. But also, can we decode some of the kind of non-lexical, the paralinguistic features of speech? And the answer is yes.
+
+So this is now kind of a science slide. We had him say this sentence, I never said she stole my money, in one of seven ways. And basically, by emphasizing each word, you change the meaning to some degree, right? So you can say, you know, I never said she stole my money, or I never said she stole my money. So there's different connotations there.
+
+And what I'm plotting is the neural activity. So each row is one electrode. And the color is like how active that electrode is. And just by eye, this is trial average data, so over many repetitions, you can see that that emphasized word has more neural activity in it. So the brain is clearly doing something different when you're exaggerating or kind of putting stress on a word.
+
+And so we can actually take advantage of that. And again, I'm going to skip over a bunch of technical details of how we did it, but we can use that information to actually modulate the voice in real time.
+
+So I'm going to play this first video. This is to change the intonation at the end of a sentence to either make it a question or a statement, right? So something we do in English all the time. Now it's going to be a statement. Or he can emphasize a word in a sentence. So in this next video the capitalized word he's supposed to kind of say it louder and a little bit faster maybe yeah.
+
+And then last he was doing kind of a simple singing task a melody task. So he is prompted to say a syllable either at a high, medium or low pitch. You can hear the prompts first and then you're going to hear it coming out of the BCI. So not perfect, but you get the idea.
+
+We're trying to really turn the neuroprosthesis into like a digital vocal tract that he immediately commands and that responds not just to the words he's trying to say, but gives him the full flexibility of speech. And I think that's a hard challenge. As you could hear, we're not fully there. I like to talk about kind of the dominoes test. So could he call to order a pizza? Probably not yet with this system. He'd have to use the brain to text system. And they may hang up on him if he doesn't start speaking fast enough. but that's like where we're trying to go with this.
+
+# Error-Related Neural Signals
+
+Okay, I'm going to do a time check. Let me do five more minutes quickly, and then I want to leave definitely time for Q&A. So we talked about speech, but are there more abstract kind of cognitive signals present in these signals, or in these brain areas rather?
+
+So I'm going to play the video. This is him using the brain-to-text BCI. This is a project led by Jihan Dhaou, who's a PhD student in our lab in the computer science grad group. And so as he's using the BCI, we're going to have a little zoom in. We're doing some eye tracking. You can see the words appearing. And so right there, the word was incorrect. So he was supposed to say subconsciously. And initially, the word, I think it was officially appeared. And then later the language model corrected it.
+
+So we can ask a question. When the wrong word appears, can we detect kind of an error signal from the brain? So the analogy I'd give you is, you know, you're typing on your phone and sometimes, right, because the keyboard's small or the language model is silly, the wrong word appears. And you know the wrong word appeared and you're frustrated. And like, wouldn't it be cool if your computer knew that whatever just showed you was not what you wanted.
+
+So scientifically we would say, are there neural error related signals that we can measure when that happens? The answer is yes.
+
+So we're plotting again trial average neural data from the four electrode arrays and time zero is when he looked at a word. And really what we're plotting is the neural difference between all of the incorrect words and all of the correct words. And so what we can see is that there are some differences. We're plotting like z-scores, so they're pretty small, but clearly there is some structure that different neural activity happens when the wrong word appears.
+
+And if we try to decode it, we do well above chance. So chance is about 50%. We're up about 70%. So this is not amazing. And there's a bunch of reasons for it. I can get into Q&A. But the short answer is scientifically, yes, we do see these error-related signals. That was this, like, full BCI task. It's not clear always where his attention is.
+
+So we did a more controlled version where we just had him try to say a word. And then most of the time we would say or show the correct word, but sometimes we would change the word that was displayed. And here we actually changed it in specific ways. So we either showed a pseudo word, so something that sounds kind of similar but is not a real word. A homophone, so a word that sounds the same but is different and is spelled different, has a different meaning. One phoneme minimal pair. Or a synonym, so a word that kind of means the same thing but sounds very different.
+
+And in this task, where it's more controlled, his attention is really right on the screen, there's a lot less to look at, the error signals are much more clear. So I'm plotting one example electrode. So these are firing rates, how quickly that neuron is spiking. When the correct word happens, kind of firing rates stay more or less the same. And there's a big kind of transient burst when the wrong word appears.
+
+And so now if we try to decode it, the accuracy is a lot better. And this is actually now replicated across two participants. T12 is the BrainGate participant at the Stanford site. So first of all, we can decode it pretty well.
+
+And so that means we could actually try to exploit it. So this is kind of a proof of principle video. You're going to see him using the BCI task. And when the neural decoder detects that it thinks the word was wrong based on just his neural activity, it'll be highlighted in red. So he's trying to say the word at top, and the decoder doesn't know that, right? So we're not cheating. And I think the video is self-explanatory. Let me just play it.
+
+So it identified that world is not what he wanted to see. No mistakes there. Every step filtered white. video self-explanatory. Let me just play it. So it identified that world is not what he wanted to see. No mistakes there. Every single word white. It identified that and was not what he wanted to say. So that's pretty cool.
+
+And you know, you can imagine that with very high accuracy, if we could do this very accurately, this could make the speech BCI even better. So maybe he wouldn't even have to confirm whether it's correct or not. We just know that from the neural activity. We could tell the language model, hey, that fourth word is 80% chance incorrect. Is there a more likely final sentence given this additional piece of information? That's where we're going next with this.
+
+But also there's like a really cool scientific thing here, which is remember how those words could vary in systematic ways, basically like homonyms, pseudowords, et cetera. Here I'm showing the neural activity depending on what type of error it was. And it turns out we can decode, again, well above chance, not just whether the word was correct or not, but actually the linguistic type of error. So this indicates that there's more than just motor signals in this part of the brain. There's a little bit more of a semantic or a cognitive element. And that's something that we're very interested to follow up on, on more of the basic science side.
+
+# Future Directions: Fully Implanted Systems and Language BCIs
+
+Okay, so to wrap up, kind of what I showed today, it's a wired brain computer interface. It does text really well. We're working on voice. Where do we want to take this? So like my, you know, my vision in the next few years, first of all, we're gonna have a fully implanted system. There's lots of great startups working on this, and hopefully one or more of them will succeed. And I think they will.
+
+We want it to be a fully wireless implanted device for effortless communication. And we want it to really capture like that full richness of voice. So brain to voice working well. And then lastly, when we have that, we now have a platform to ask questions like what I just showed. Are there cognitive signals? Are there linguistic signals? And that can set the stage for future BCIs that are really more of a language BCI rather than a speech BCI, which is important for a wider patient population.
+
+So right now, we think we can help people with ALS or subcortical stroke. These are patients for whom their motor cortex still functions. But there millions of people so many many orders or a couple orders imagine more people that have aphasia. So they can even form a speech motor plan typically due to stroke. But can we somehow decode the kind of communication intent more upstream in a more abstract linguistic way. Maybe. And that's kind of the preliminary data for that is what we hope to find through these ongoing and kind of next gen speech BCI studies.
+
+Okay so yeah to summarize again good brain to text BCI one participant with ALS we hope to replicate this soon brain to voice really compelling certainly doable needs to be a little bit more accurate you know we're continuing to improve our algorithms we might be able to get there with the current hardware or this might need to wait until we have let's say a thousand electrodes instead of 256 and you know there's a lot of technologies being developed for them so I think we'll have that in a few years.
+
+And then lastly, there's sort of this tantalizing tidbit that we may be able to get more abstract linguistic signals from these areas, and that can help set the stage for future language BCI efforts.
+
+So I want to just make sure to thank the lab. This is a really fantastic group I get to work with, and everyone works extremely hard to make this happen, and then our funding and the wider BrainGate Consortium.
+
+All right. Great. Everyone's still here. Now I confirm that I haven't been talking to an empty room, which is always my fear. But now I can see all of you. Questions?
+
+# Q&A
+
+Q: You indicated early on in the presentation that he improved his speed over time by basically learning that he doesn't need to move muscles. He can just kind of go through the motions. Is he continuing to improve the speed? and you think there's a limit that is lower than normal human speech. And if he's not in human speech or you think there is a limit, what do you think that limit is and why is that? Why can't he just learn to not do the muscles at all and just think about the words?
+
+A: Yeah. Okay. There's a couple of things to unpack there. So kind of working backwards, we have, or really our Stanford colleagues have, they have a preprint, I think it's like Decoding Verbal Thought. Aaron Kunz is the first author, Kunz and Benjamin Michaud. So two co-first authors. they looked at like truly imagined speech and the decoding accuracy is much, much worse. So you know because we in motor areas and maybe there are a little more like cognitive features there but they smaller kind of nearly The person does need to attempt at least to some degree.
+
+Now what he learned is sort of there this like balance between really trying super hard and vocalizing, which is really effortful and hard for him versus kind of like we describe more as like miming. So he's sort of like you like if you look at him carefully, you know, there's a little bit of movement, but it's like think of it like, you know, like speaking very lazily, like he kind of like do the bare minimum. And he sort of found where that set point is that is not tiring for him. He can do it 14 hours a day, but the decoder still works. I think if he were to relax that out all the way to just like just thinking about it, it probably wouldn't work.
+
+Now, but also all of this, so you ask like, does it keep getting faster? I think it's kind of saturated around 65 words per minute. And I think part of that is we're actually working kind of against time and against a progressive disease. So he has gotten weaker, like very noticeably weaker over the course that we've been working with him, which is tough to watch.
+
+So the fact that it even maintains its performance is actually kind of amazing because there is degradation of the descending motor tract and probably also some damage to motor cortex that's happening. And also like his energy levels and just kind of everything is going downhill slowly.
+
+So I don't know if he'll ever get to like 150 words per minute. You know, from like a decoding perspective, at some speed it may get kind of hard just because like the amount of time you have to integrate is smaller there's no like technical reason we we work with 20 millisecond bins but we can speed that up i mean it's a single parameter it's like it's not like we like can't keep up from sort of a computing hardware perspective it's just the information may be harder at 150 words per minute so yeah time will tell and also i think it'll vary a lot across participants so you know someone with a stroke who doesn't have a degenerative disease, you know, maybe can speak or attempt to speak much faster.
+
+Q: I also have a question. Is there ever any hope of doing this for people that have never learned to speak?
+
+A: Yes, yes, that is a great question. Yes, we are very interested in that. So cerebral palsy comes to mind. And I know the CP Foundation has sort of been thinking about speech BCI for many years, but like have never really pulled the trigger.
+
+So undoubtedly, the speech cortex of someone who has never learned to speak will probably not behave in the same way as someone who has spoken and then lost ability. But we don't need it to be like normal or naturalistic. We just need it to have a distinct pattern of neural activity when they try to say let say a word or a phoneme. And I think there is a good chance but far from guaranteed. This would definitely be a sort of, you know, high risk scientifically. But you know, as long as they can do something consistent when they try to speak and we can train a decoding algorithm, I think it can work. So yeah, I would love to try that, you know, in the near future. Our current clinical trial wouldn't allow someone with CP, but one could imagine extending it. And I think, you know, the safety record's quite good. So yeah, definitely might work. You know, also people have asked like autism. I think there, there's just so many different subtypes. It's a lot more complicated, but yeah, potentially there are other indications as well. Cerebellar disorders are the other big one.
+
+Q: You kind of touched on this at the end but i was curious if you knew in more detail how much of an improvement how much improvement do you think there is by increasing the number of electrodes from 256 up so you indicated that you know more electrodes will be better but is there kind of like a plateau does it are there limits i mean how big of an improvement do you think you can actually get like better hardware right if there is a plateau we have not hit it yet and i think far from it
+
+A: so i think a relevant data point so we have 256 electrodes maybe three quarters are good one of the brain areas is sort of less good for speech it turns out but good for like cursor control uh let's compare that to the Stanford study that came out the year prior, they had half as many electrodes, so two arrays instead of four in speech motor cortex. And their word error rate was about 25%. Ours is about 2%, 1%. Some of that is just algorithmic improvement. You know, we had more time, we benefited from what they learned. But I think at least half of the improvement, if not more, is just from having more electrodes.
+
+So projecting that forward, you know, I think there's probably some, you know, logarithmic function, and I don't know what the base is, but more electrodes, very good. For brain-to-text, 250 seems to be almost good enough. I'd love the word error rate to be like 0.1%. So let's say 500 maybe is enough. You probably want a little bit of extra because you may get signal degradation. So the array may move or it may degrade. These things do have some finite lifespan in the harsh environments of the body. So let's say 1,000 is probably more than enough for brain to text.
+
+And that's really important because all of the commercial entities, Neuralink, Paradromics, those are intracortical. I guess there's the ECoG ones as well. They're all going to at least a thousand channels. So I think any of them should be sufficient for a really good brain-to-text BCI. Brain-to-voice is harder. You don't have a language model. You can't integrate over as much time, right? So your SNR needs to be much higher. And I don't know what that right number is. Probably a thousand is enough. I really hope so. Maybe you want 10,000. I don't think this is the kind of thing where we're going to need, like, you know, people talking like, oh, what would it take to have a million electrodes in the brain, which is hard for various reasons. I don't think we need to be there. I think the sort of thousand-ish range may really be a sweet spot in terms of, you know, enough to get the signals you want robustly over time, but, you know, without dealing with all of the heat and energy dissipation issues that you get when you get into the tens and hundreds of thousands of channels.
+
+Q: Hey, Sergey, it's good to see you again. Yeah, I get goosebumps every time I see Casey try to speak for the first time. I wondering about alternative target locations beyond the motor cortex. I wonder what your view is on this. I know a few groups are looking at like supramarginal gyrus. This is the Caltech work or Christian Herff has looked at all kinds of regions of the brain that can be implicated in producing speech. So what is your view? Where else can we look? And is there any evidence that suggests it might be better than the premotor cortex stuff?
+
+A: Yeah. So in terms of better, I think not for this indication. So like if someone has a healthy precentral gyrus or motor cortex, you know, I think you're going to get really rich motor commands there. But like I talked about at the end there, like if you don't, so if someone has a stroke that damages that part of the brain or, you know, or maybe never learned to speak. And so it doesn't really form the right patterns, but they have language. Yeah. Going kind of like upstream in the language network, I think is really important.
+
+superior temporal gyrus seems like a very logical target. Its canonical role is in speech processing on the receptive side, but it's very active during production. A lot of the ECoG work by groups like Eddie Chang's and others see really nice speech signals there. They haven't tested in people without the ability to speak, but certainly in able speakers kind of going a little bit more posterior, like Wernicke's area or Angular gyrus, big language networks.
+
+We have, so one of our arrays is in area 55B or middle precentral gyrus. That's sort of a, if you ask Eddie Chang, he would say it's the actual Broca's area. So it seems to be kind of a sequencing hub. And we kind of at the posterior end of it which is like the more motor side. But it goes forward forward in the sense of like front of the brain. And that may be more cognitive or linguistic. So I think exploring that area more is probably very valuable. And that's sort of on our roadmap as well.
+
+So, yeah, there are many parts of the brain that are language related. and for a language prosthesis or just a speech BCI kind of that is more maybe robust or applicable to more people, we should explore them. Now, yeah, the challenge is how do you find those areas? FMRI only tells you so much. ECoG is better, but that doesn't necessarily tell you what intracortical finds. Sometimes you have brief recording opportunities during neurosurgery procedures, but those are 20 minutes. So I think we kind of have to integrate across different bodies of work. So like that's stuff that Christian's doing with ECoG, I think is very valuable towards that. And, you know, various other groups are doing similar stuff.
+
+Q: I guess I have a follow up on that. And because this is a foresight chat, this is going to be a bit out there. So if we don't, you know, this, this work has been done on humans and I'm wondering, you know, obviously animals, they don't have as complex language representation. And therefore we don't really have the ability to study any of these interesting scientific questions. But, you know, is there any work from animal models that would tell us about some conceptual representation that is as close to language as it can be that you have looked at?
+
+A: That a really good question. First of all I say there are sort of yeah there no like animals don't speak but bird songs are maybe a good model. And there like singing mice. And there are some good vocalizers including ones that learn complex vocalizations birds being a classic one. And then like there's a lot of cognitive neuroscience. I mean monkeys are smart and crows are smart. And there's a lot of animals that undoubtedly have like interesting kind of abstracted representations of the world and understanding but it not necessarily language.
+
+So yeah, like principles we learn in general about, you know, that's like cognitive neuroscience as a field, very, very relevant. And then I think a lot of the human specific stuff will just happen kind of as add-ons through existing clinical opportunities. So like we got speech BCI by building what we learned from hand BCI. We can probably use speech BCI trials to learn more about language. Maybe we can also learn about like verbal memory or maybe, you know, we can use language BCIs if those come out in a few years to learn about, you know, encoding and recall of memory to then set the stage for memory prosthesis.
+
+So it's kind of this like large, you know, chain of links where you keep building on whatever opportunities you get from the previous one. until we can then talk with animals. There's a lot of people working on the AI side from their vocalizations, like decoding whale song and elephant stomps and stuff like that. It's very cool.
+
+We are at 11. I know you have another event, so I think we should wrap up. But thank you, everyone, for the great questions and for joining today.
+
+Great. Well, thank you so much. It's been such a pleasure. Thanks again for the invite. Take care.
+
+# Intuition
+
+- **Motor Encoding in Speech Cortex**: Neural population activity encodes articulatory motor demands (lip/tongue/jaw/larynx trajectories) for phonemes, separable via principal components; attempted (mimed) speech suffices without full vocalization, enabling fast decoding despite paralysis.
+- **Decoding Pipeline**: RNN for phoneme probabilities → n-gram/word LM → LLM autocorrect; low-data regime (<2h) viable due to high-SNR single-unit recordings vs. ASR.
+- **Non-Stationarity Mitigation Trick**: Day-specific affine transformation layers + online fine-tuning on self-corrected sentences maintain performance indefinitely without recalibration, exploiting minor daily electrode-neuron shifts (~20 μm).
+- **Brain-to-Voice Innovation**: Iterative pseudo-supervised alignment—neural data timestamps syllables in TTS audio via DTW—converts unsupervised prosody decoding to supervised LPCNet feature prediction (20 dims/10 ms), enabling real-time (~10 ms inference) waveform synthesis with vocoder.
+- **Paralinguistics**: Trial-averaged z-scored activity reveals stress/intonation modulation; decoder exploits for real-time voice shaping (question/statement, emphasis, melody).
+- **Error Signals**: Transient firing bursts (~70-90% decode accuracy) on incorrect words, modulated by linguistic distance (pseudoword > homophone > synonym), suggesting hybrid motor-cognitive representations.
+- **Scaling Insight**: Doubling electrodes (128→256) halved WER (25%→~2%); 500-1000 channels likely suffice for text (robust to degradation), 1000+ for voice (higher SNR sans LM integration).
+- **Path to Generalization**: Motor BCIs as platform for linguistic/cognitive decoding; upstream targets (STG, Broca's) for aphasia/non-speakers.
+
+# Transcription errors?
+
+- **Names**: "Sergei Stavitsky" → standardized to "Sergey Stavisky" (common spelling in BCI literature); "Nick Card" → likely "Nick Ciurdar" (postdoc; uncertain, appears as "Card" repeatedly); "Maitri Warakar" → "Maitri Wagaskar" (postdoc; "Maytree" likely mishearing); "Jean de Haue" → "Jihan Dhaou" (PhD student); "Ring 8 Consortium" → "BrainGate Consortium"; Patient referred to as "Casey" in Q&A (consistent with BrainGate ALS participant).
+- **Technical Terms**: "Intercortical" → "intracortical" (repeated); "One phony minimal pair" → "one phoneme minimal pair"; "LPCnet" → "LPCNet" (linear predictive coding network); "Codex" → "codec"; "Area 55B or middle B central gyrus" → "area 55b / middle precentral gyrus"; "Supermarginal gyrus" → "supramarginal gyrus".
+- **Repetitions/Glitches**: Multiple redundant phrases (e.g., "range. And then if you actually have someone listen... completely incomprehensible" x3; video descriptions stutter like "video self-explanatory. Let me just play it." x2); smoothed by context.
+- **Video Transcripts**: Partial/incomplete (e.g., "maybe after we're out in school anymore..."; "I'm looking for a cheetah."); retained verbatim as spoken.
+- **Ambiguities**: "T12" → BrainGate participant (known); "Decoding Verbal Thought" preprint → likely "Kunz et al." on imagined speech; "Dominoes test" → "domino's test" (pizza ordering analogy); "61%" → transcription error mid-sentence, ignored as repetition.
+- **Metrics**: "~40% WER" for brain-to-voice from human transcription; R=0.9 waveform correlation poor proxy for intelligibility (needs perceptual metrics).
+
+# See also
+
+* [[brain-computer interfaces]]
+* [[neurotechnology]]
+* [[speech]]
+

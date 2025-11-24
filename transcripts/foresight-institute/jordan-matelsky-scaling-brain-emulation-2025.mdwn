@@ -1,0 +1,113 @@
+
+speaker: Jordan Matelsky
+
+talk title: The path to scaling brain emulation
+
+event: Foresight Institute Neurotechnology Workshop 2025
+
+video: <https://www.youtube.com/watch?v=kiHgvibn-xw&list=PLH78wfbGI1x0bxPV95uWxH-8G3DmLDBeX&index=13&pp=iAQB>
+
+<https://jordan.matelsky.com/>
+
+paper: [State of brain emulation report 2025](https://arxiv.org/abs/2510.15745)
+
+LLM summary: Jordan presents a roadmap for scaling brain recording to [[whole-brain emulation|brain emulation]] via structural [[imaging|brain imaging]], which is advancing rapidly toward human-brain-scale resolution within decades, far outpacing functional recording methods like electrophysiology (centuries away) or optical recording (40-50 years). He formalizes the core bottleneck as the missing structure-to-function mapping: a function that translates synaptic molecular annotations into precise transfer functions (e.g., evoked potentials), narrowing compatible dynamical behaviors but requiring empirical calibration. Perturbations are advocated to enable causal inference by orthogonalizing redundant correlations, dramatically reducing data needs—as simulated in C. elegans connectome prediction, where brief perturbed recordings rival unperturbed long-term data. Q&A emphasizes molecular necessity for plasticity rules, incremental utility of antibody labeling despite artifacts, and broad inclusion of glia, perineuronal nets, RNA messaging, and gene regulation in holistic molecular ensembles.
+
+[[!toc levels=3]]
+
+# Introduction and Speaker Setup
+
+All right, hi. I am Jordan, and I am at the University of Pennsylvania with Konrad Kording. So my charge is to give a slightly inflammatory talk, only moderately inflammatory, and say things that are annoying but also useful and true. And so if the words "brain emulation" feel annoying to you, you could replace them with "forward prediction." Yeah, exactly. We all have to take the annoying but true class.
+
+# Scaling of Recording Technologies
+
+But OK, let me start with some true things that aren't annoying. And in particular, I want to talk about scaling. So here, I'm showing some of the recording technologies that we now increasingly use, like electrophysiology, and now the new emerging optical recording. And these technologies are growing extraordinarily quickly. So this is really exciting.
+
+The other good news is that the brain is not growing extraordinarily quickly. So the number of neurons that we're going to have to record from at maximum is staying roughly the same. Unfortunately, it's okay. Theoretically, these lines will intersect with 80 to 100 billion neurons at some point.
+
+# Timelines for Direct Recording
+
+But as it turns out, the doubling times of these systems are actually rather long. And if we were to wait for electrophysiology, I mean, people will debate these exact numbers, and I'm happy to talk about the precision of these numbers, but you could expect on the order of centuries for electrophysiology to record from every neuron in humans. Optical recording, better, a doubling time of maybe two to three years, but we would still expect probably 40 to 50 years. So that's a more accessible timeline, but certainly not the timelines that we'd like.
+
+# Trajectory of Structural Imaging
+
+On the other hand, structural imaging is also scaling very, very quickly. We're seeing many orders of magnitude in just the past few years. This figure is, with apologies, just electron microscopy, but of course expansion microscopy is exploding that in E11. I'm wearing my E11 socks. I don't have any electron microscopy socks. Hell yeah.
+
+And so there's this trajectory where we're imaging things that are roughly the size of a human brain in order a handful of decades, maybe even shorter. And so the thing that I'd like to propose here is that maybe we need to be talking about the trajectory to understanding recording of neurons and function through structure.
+
+# The Structure-to-Function Problem
+
+That brings us to this problem of structure to function. Here is the formalization of the structure to function problem, which is one of the things that I think is holding back a lot of the work that should be happening in this space but cannot yet happen.
+
+Here I'm showing increasing amounts of molecular annotations of a synapse although you could stand in any old chunk of a membrane here. And as I increase the amount of molecular annotations that I have, I can increase the ability to cluster similar functional systems together. So this is good, and we can start to do this now.
+
+But I want to remind you that as we increase the amount of information that we have about the molecules that are present at a synaptic site, for example, the compatible potentials, in other words, the sorts of things...
+
+Can I stand on that side? Yeah, you can. All right, let me try that so I'm not standing in front of my labels.
+
+As the number of molecular annotations goes up, the total compatible potentials with that system, given all of our observables, goes down. And ideally you'd like to be in a case where you know exactly the potentials that are coming out of a system if you know all the molecules that are in it or some adequate set of molecules that are in it. But of course we don't have that function. This is not... We don't know the function that takes you from the molecular annotations to the evoked potential.
+
+So while it is true that you could be narrowing down the sets of potentials that you can encode for, we don't have that structure-to-function map.
+
+# Proposal: Structure-to-Function Mapping Function
+
+OK, well, from a few seconds ago, you may remember me saying we don't have this function that maps structure to function. And this is the critical thing that I'm proposing that needs to happen next. We need a function that takes in molecular annotations and tells you how those individual molecules impact the transfer function of the neural system. This is critical, and as far as I can tell, it's missing. But I think everybody in the room wants this to exist.
+
+# Role of Perturbations in Causal Inference
+
+I have to go back over here. OK, I also want to talk in my remaining maybe negative 10 seconds about the role of perturbation. So as we're recording from neurons, we can start building really, really good correlative maps. But every time you have coincidences in the nervous system, and this happens an awful lot because nervous systems are redundant, you lose all of your ability to do causal modeling. And perturbations solve this problem for you.
+
+So the way that you perturb a system is you push it out of the manifold that that system lives in naturally, and then you watch how it comes back into the manifold. And this orthogonalizes the correlations between neurons that were otherwise coincidences and gives you access to much higher information density for a much lower cost.
+
+# Simulation of Perturbations in C. elegans
+
+So here is a plot that we put together a few years ago that shows a simulation of C. elegans. Plenty of caveats. This could be off by an order of magnitude in either direction. But you can see that the way to read this is that if I want to record and get low prediction error on predicting the adjacency matrix of a connectome, then I need to either record the yellow line, I could record for millions of data points for days and days, or I could record from just a few seconds, but with tons of perturbations and I can get similar prediction error for much less work.
+
+# Closing Remarks
+
+So in closing, I want to encourage everybody to be thinking about these problems. How could you be using perturbations to reduce your data cost? And in particular, how can we think about this calibration problem to get from structure to function.
+
+And I'll close by saying that this is a project that I am super committed to. And if you'd like, I'm happy to chat privately afterward about a team that I'm putting together and starting to think about fundraising to solve this problem at a molecular level. Thank you.
+
+# Q&A: Connectivity Matrix and Plasticity Rules
+
+**Q:** There's like one thing getting the JCP matrix, but how do I think about getting like plasticity rules? Would you want to do molecular approaches, or would you want to do perturbation approaches?
+
+**A:** Yeah, I mean, the question is too hard for me. But I mean, it's too hard for me today. But I think the answer, I mean, the real answer to that question is where do you think plasticity rules lie? Where do you think learning happens? Is that implemented in spikes, or is that implemented in molecules? I am of the very slightly dogmatic, but also slightly confirmed opinion that this has to be implemented in molecules somewhere. This is not just a function of the dynamics of the system. So my opinion is if you're not annotating molecules, you have no hope. I don't know that it's sufficient, but it's certainly necessary.
+
+# Q&A: Sufficiency of Antibody Labeling
+
+**Alan:** Yeah, you sort of answered my question. It was very similar. But broadly, I think the question is, do you think antibody labeling is ever going to be enough? Or do you use information and possible relations? And so what is the technology that you wish existed to solve this problem that does not?
+
+**A:** Yeah I mean so on the one hand the technology maybe doesn't quite exist I mean certainly any time you put pigments into a cell you are changing the cell. And my ideal would be that you can magically read these things out without putting new molecules into neurons, which is, of course, just maybe that's true. If somebody knows how to do that, please let me know.
+
+But I think that what I would hope for in the near term is that we can start to accumulate enough data to start fleshing out this problem. Because right now, we have no information about this function. We have correlative information about this function, but that's not quite the same. I think even today with antibody staining, even really clunky older technologies, you can start to flesh this problem out. And I would like to see how close we can get before we start needing to invest heavily in new technologies. But I'd like to see that too.
+
+# Q&A: Non-Neuronal Physiological Phenomena
+
+**Q:** Last question. So I was wondering about the effects of physiological phenomena that we don't typically associate with neuronal activity, like glia and neurovascular coupling, perineuronal nets, things like that, and how much you think that influences, and even long-term genomic changes, gene regulation changes, how much do you think that's going to influence your models, and how far are you into trying to figure out how to take that stuff into account?
+
+**A:** Yeah, I mean, like, it's a great question. And like, I will, I'll make it slightly worse by sharing my favorite example of that, which is there was this paper, I think now six or seven years ago, that points to neurons, like, writing down notes on RNA, and then like putting it in a vesicle, and like, giving it to their neighbors. And like, oh, no, like, that's really hard. Like, yeah, and it's like, you know, this is great. It, like, makes perfect sense that cells do this. But, I mean, this was in mammalian tissue, right? And it's like, okay, if we didn't have any, you know, we were, like, really struggling with, you know, predicting, like, forward prediction of action potentials. And, like, now we're throwing in something. The RNA is, like, Turing complete, right? Like, I mean, they could be saying anything in those messages, right? That's really freaking me out.
+
+I think that, like, this is a really strong argument for not putting our a priori constraints on this problem. We shouldn't be thinking about neurons as a system that manipulates membrane potentials and that's it. That's simply not the case and we know that if that's all there was, our models would do way better. So I think that the answer is that we should be doing this sort of molecular staining and we should be thinking about cells as ensembles of molecules, but that includes also we should be staining things in glia and we should be staining things in the periphery and intracellular space around synapses, and that makes the problem way, way, way harder, but also conveniently probably is going to solve the problem better than us ignoring those things. Thank you so much.
+
+# Intuition
+
+- **Scaling Hypothesis**: Functional recording scales too slowly; pivot to structural imaging (e.g., expansion microscopy) for faster whole-brain trajectory, then infer function.
+- **Structure-to-Function Formalization**: Molecular annotations reduce the space of compatible synaptic potentials/transfer functions; critical missing piece is the explicit mapping function from molecules to dynamics.
+- **Perturbation Trick for Causality**: Push systems off-manifold and observe recovery to disentangle correlative coincidences from causal structure, yielding high-info-density data (e.g., C. elegans sim: perturbations cut data needs by orders of magnitude for connectome adjacency prediction).
+- **Molecular Necessity**: Plasticity/learning resides in molecular states, not just spikes; annotate everything (synapses, glia, extracellular, RNA vesicles) without a priori neuronal bias.
+- **Practical Roadmap**: Start with clunky antibody data for correlative maps, accumulate toward causal calibration; perturbations minimize recording cost.
+
+# Transcription errors?
+
+- "Conrad Cording" → Corrected to "Konrad Kording" (known neuroscientist collaborator at UPenn).
+- "JCP matrix" → Likely "connectivity matrix" or "Jacobian/CP matrix"; context matches "adjacency matrix of a connectome" from talk body—probably speech-to-text error for "connectivity" or neuroscience-specific "J" (coupling) matrix.
+- "compatible potentials" → Best guess: "possible potentials" or "computational potentials"; refers to dynamical outputs (e.g., synaptic conductances/evoked potentials) compatible with observed molecules—potentially "combinatorial potentials."
+- "E11 socks" / "exploding that in E11" → Uncertain; possibly "EM11^[" (electron microscopy conference?), "Ex11" (expansion microscopy variant), or event/acronym (e.g., "ELMI 2023" misheard); context ties to expansion microscopy post-EM figure.
+- "plasticity roll away" → Clearly "plasticity rules lie."
+- "supertype constraints" → Corrected to "a priori constraints" based on context (avoiding narrow assumptions on neuronal computation).
+- Repetitive phrasing in final Q&A answer (e.g., "we should be thinking about cells as ensembles of molecules, but that includes also we should be staining things in glia" repeated) → Likely transcription artifact from overlapping speech/chunk merge; preserved word-for-word but smoothed lightly for readability.
+- Minor: "points to neurons" → Likely "showed neurons"; "pigments" → Probably "antibodies/pigments" in labeling context. Overall transcript clean, but chunked processing may have caused minor overlaps (e.g., time range 590-600s).
+
+

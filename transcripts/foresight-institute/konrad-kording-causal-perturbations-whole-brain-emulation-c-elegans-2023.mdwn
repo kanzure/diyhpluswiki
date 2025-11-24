@@ -1,0 +1,335 @@
+
+talk title: Causal perturbations to whole brain emulation of C. elegans
+
+date: 2023-09-05
+
+event: Foresight Institute Neurotechnology seminar group
+
+video: <https://www.youtube.com/watch?v=r3UMIyhzew0>
+
+LLM summary: Konrad Kording presents a roadmap for [[whole-brain simulation|brain emulation]] starting with *C. elegans*, emphasizing the critical distinction between correlational neuroscience data and causal mechanisms needed for predictive simulations that generalize to novel perturbations and behaviors. Motivated by early experiences with Hubel-Wiesel experiments and persistent challenges in modeling cat [[visual cortex]], he argues that current techniques fail due to confounding correlations in large neural systems, as demonstrated by simple dynamical models where correlation matrices diverge sharply from causal matrices beyond ~100 neurons. For *C. elegans*, with its 302 conserved neurons, full connectome, and capacity for simultaneous whole-brain recording and optogenetic perturbation via light-sheet microscopy, he proposes aligning multi-animal datasets with computer vision, then fitting nonlinear dynamical models (e.g., ~10^3–10^4 parameters per neuron capturing pairwise interactions and neuromodulation) to predict activity from past states and stimuli, requiring ~2 years of continuous large-scale random subset stimulations for sufficient statistical power under realistic covariance assumptions. Scaling to larger brains demands molecularly annotated connectomes to infer synaptic/channel/intracellular functions from structure and composition, calibrated causally in *C. elegans* before extrapolating via "stamping out" isolated elements, dismissing pure electrophysiology as unscalable amid infinite synaptic variability and individuality.
+
+[[!toc levels=3]]
+
+# Video description
+
+Being able to simulate a nervous system is clearly one of the salient goals of systems [[neuroscience]]. Being able to do so we need two things: a parts list and a functional description of the neurons. We need to know all the neurons and need to know how they (nonlinearly) influence one another. And yet, we have so far always tried a very indirect approach: observe activities of neurons, and from that data estimate the influences. However, from a causal inference perspective it is clear that this problem is generally ill-posed. In my talk I will sketch what exactly it will take to simulate a complete nervous system: the nervous system of C. elegans. I view this as a crucial and necessary step towards [[simulating larger nervous systems|brain emulation]].
+
+Konrad Kording is the Nathan Mossell University Penn Integrates Knowledge  (PIK) Professor of bioengineering and neuroscience at the University of Pennsylvania and a co-director of the CIFAR Learning in Machines & Brains program. He is interested in understanding the brain as a computational device and how to mine neural data for causal relations. He uses data analysis methods, including machine learning and Bayesian models, to ask fundamental questions about the brain, behavior, and disease. He is also an advocate and contributor to open science and scientific rigor.
+
+About [[foresight institute]]: The Foresight Institute is a research organization and non-profit that supports the beneficial development of high-impact technologies. Since our founding in 1986 on a vision of guiding powerful technologies, we have continued to evolve into a many-armed organization that focuses on several fields of science and technology that are too ambitious for legacy institutions to support. From [[molecular nanotechnology]], to [[brain-computer interfaces|brain computer interfaces]], [[space exploration]], cryptocommerce, and [[AI|artificial intelligence]], Foresight gathers leading minds to advance research and accelerate progress toward flourishing futures.
+
+# Welcome and Introduction
+
+Hi everyone, welcome to Foresight's Neurotech group. I'm so delighted to have Konrad Kording here today with us. It's been a while since we've been chasing you, trying to get you to join our group for a seminar, and I'm so happy it's finally happening. We met at a workshop not too long ago, and I've been a really big fan of your work for quite some time. You've had wonderful collaborators that have also presented here, including [[Ed Boyden|boyden lab]] and so forth. And we're really excited for your talk. You're also working on a pretty—I think, yeah—an area that is of great interest for many people in this group. And today you'll be talking on causal perturbations to [[whole-brain emulate|brain emulation]] *C. elegans* in particular, which has definitely come up in almost, I would say, on many of our seminars and at our workshop this year; it was a very big topic. So really excited to have you on. Thank you so much for joining. The stage will be yours. I'm going to share much more info about you in the chat, and then I'm going to start collecting questions for the Q&A afterwards, which I hope will be quite out there. Okay. Thanks so much for joining, Konrad. The stage is yours.
+
+# Personal Motivation and Background
+
+Wonderful. I'm so excited to be telling you about our thoughts on *C. elegans*. I will be sharing the slides, of course, afterwards, and I'll be delighted to discuss more afterwards.
+
+In a way, this is a deeply personal project for me, and that's why I want to start a little bit on how we got there to this project and why I think it's so important. There you see us, *C. elegans*. A lot of you will probably not be all that excited about *C. elegans*, and I hope that after the talk, it will be a little bit different.
+
+So let me talk about how I got into neuroscience. So I was a PhD student in Zurich. I had read a few neuroscience papers, but I remember a moment that really made a big difference for me, which is I've seen the original Hubel and Wiesel-type experiments. So in the lab, we had Kevan Martin, who was one of these old-school people in electrophysiology. All the old vision experiments were on cats.
+
+Cats are pretty amazing animals, but in case—they have relatively simple, well-developed brains. And so I remember these experiments. So think about it. These are like three-day experiments. They don't want to waste any animals that they don't need to waste. They put the animal into that setup. They have a wire that goes into the brain, into the cell, or very close to the cell. So every time the cell spikes, you hear a little click to it. And then the cat is in front of a screen. And then they have these projection devices. The way it effectively looks, they go like with something that moves like this. And they do this and nothing happens. And then you start hearing it. And then they figure out what the receptive field is of the cell.
+
+Now, that felt like a deep insight into how brains work. Like we have a cell there, one cell only. And for that cell, we see what we do on the outside, how that changes what the cell does. And that immediately got me thinking about, okay, how could I simulate a cat in the simulation? And what is missing for that? And how can I get there? And it seemed very obvious.
+
+Now, in fact, I wanted to do experiments. I just wasn't very good at doing the experiments. So instead, I became a data person, made sense of big data sets, collaborated with lots of people. I now also read the CIFAR LMB group, which is arguably the strongest machine learning group on this planet. So most of my research was more on the tech side of how we make sense of such data sets. But still, like, how do we get from where we are here to a simulation?
+
+# Defining a Successful Brain Simulation
+
+So a successful simulation—what do I mean with that? If I could correctly simulate that cat, I should be able to, for every neuron on that, right, tell you how active it is at every possible time. But it also should be able to replicate all the behaviors of a cat. I wanted to chase a mouse if the mouse runs. I wanted to go for the other gendered cat if the opportunity arises. I wanted to be grooming itself and do all the things that cats do. And we have a lot of experience with cats. So we want to be able to predict all the behaviors. Importantly, we want to be able to predict behaviors that we've never seen before. We also want to predict activities that we've never seen before. And we want to be able to predict what happens if we do a perturbation or what happens if we show something different to the animal or if we go into the brain and stimulate it electrically or something.
+
+In all of those cases, we want out-of-domain generalization. We want to train it on some data and then we want to be able to predict new things. In the same way, not like if you could simulate Konrad, it's not enough if just in all situations that Konrad has encountered in the past you correctly simulate Konrad. It means that simulated Konrad, to be acceptable as a simulation to me, must now also do all the things as Konrad would do if it would come into a new situation. And that leads us down a path of causality, as we'll see in a second.
+
+Now, the goal is to simulate it. We want to extract. And so my goal during my PhD some 20 years ago was already to lead to a simulation. And that was a simple simulation. I said, we know what's on screen in front of the cat. Can we use that to predict what every single neuron will be doing? And I came up with that idea that what we should extract are the things that kind of are not changing over time. It turns out that it's basically the same criterion that we use to train transformers today. Got great predictive models. I was able to predict a lot of the properties that neurons are doing. But of course, I don't know the causal reality.
+
+# Correlation vs. Causation in Neuroscience
+
+And let me break down what I mean with that. What I did is I model a function of what I show on screen for the cat to what's happening in the neuron inside. How do I know how the brain actually does it? I have no idea. No, it could be that that visual stimulus goes to one intermediate layer that we know to exist there, the lateral geniculate nucleus, and from there, feed-forward way implements the functions that we have. It could also be that it goes all the way to the front of the cat's brain where stuff happens, and then it percolates all the way back there, which is, then we have the reflecting activity there. Do we know which one of it is? No. Do we have big disagreements in [[computational neuroscience] on how these most simple pieces in the early primary visual cortex work? Yes, we do. Do we have any data that really can speak to that? Largely none.
+
+That—why is that the case? We only have the correlations. We know what happens here at this cell based on what we give as stimulus. We don't know how this cell influences that other cell. But for our simulations, we are forced to say this is how the components in our system influence one another. So fundamentally to this day in neuroscience, we are at that place where we get the correlations of what happened inside and we don't get the mechanisms. And therefore we don't know what the computational primitives are or how the functions are implemented or even how they are learned. We can't know that because all we do is we get how cells relate to the outside, not what cells actually do.
+
+And I've been struggling with this problem. The problem was obvious late in my PhD thesis, and I've been trying to go at it from many different angles, like better machine learning, better predictive models, better data sources, all kinds of things. And I never quite got there. And here's a paper that was together with Eric Jonas five years ago that really brought that together where we said, okay, look, imagine you had something like a microprocessor. Would us as neuroscientists be able to understand how it works? And we showed how all the techniques that are popular in neuroscience would absolutely not get us there.
+
+So with this introduction, you can see why am I so interested in that? Because the approaches that I've been following so far, which were all the state-of-the-art approaches in neuroscience, basically let me know where.
+
+# Why Causality Matters: Definitions and Examples
+
+So let's briefly look at causality, why it's so problematic, and then we'll take that to *C. elegans* on how we can do that.
+
+Definition of causality, standard counterfactual definition: that A causes B if events causation exists if and only if we had changed A to A\*, the probability of B would have been different.
+
+And for example, take my coffee machine. I have a problem with coffee machines. You heat up the boiler. It makes gauge go to the right. You make the gauge go to the right by going in with the screwdriver and rotating it. The temperature doesn't actually increase in the thing. So correlation—normally they're 100% correlated, but absolutely correlation is not causation there.
+
+Now, why is correlation-causality hard? We're interested in the effect of A on B, but unfortunately there's this whole rest of the world that affects both A and B. And let's be clear why this is such a problem in the brain. In any brain, even *C. elegans*, if I have two neurons, there's going to be like 30 neurons in *C. elegans* or 10,000 neurons in human brains that affect both neurons. And therefore I cannot know if they are correlated. Is that because one influences the other or because of what all the other neurons are doing?
+
+# Intuition: Dynamical Systems and Scale
+
+Let's get an intuition for how problematic that is. This is the simplest, most trivial dynamical system that can replicate basically anything: \( x_{t+1} = \sigma(A x_t + \epsilon) \), where \( A \) is the causal matrix, \( \sigma \) some nonlinearity, \( \epsilon \) Gaussian noise. I set it so that the largest singular value is 0.99. I initialize it to zero, and then I simulate it. It's a very standard thing. I should say there is a fun tutorial at Neuromatch.io.
+
+And in a small system, correlation and causation are almost the same. And that's why we all have this gut feeling that correlation and causation are almost the same. And neuroscience is totally built on that. Basically, people record correlations and somehow they believe that magically, like an understanding of how pieces interact will come out of that. In the small systems that you and me can simulate in our heads, yeah, correlation and causation are very similar.
+
+As soon as you go to large systems constructed in exactly the same way, same dynamical system, same everything, correlations are absolutely, by a large margin, unrelated to causation. And you can look at the similarity as you make the system larger. So by the time we're even at the size of a little *C. elegans* at 302 neurons, causation and correlation basically are unrelated with one another. That's why we can't get working simulations by just recording from it.
+
+# Data Requirements for Causal Inference
+
+Now you could say, what if we could record all neurons at the same time? We can, we understand the variance and assume the whole system is linear because that's the easiest domain. If it's nonlinear, things just get worse. You can then calculate the expected variance of that estimator and the true norm is going to be related to square root of \( p \), square root of \( N \). \( p \) is the number of parameters, \( N \) is the number of recordings that you have. \( \hat{\beta} \) is the estimate of the causal effect \( \beta \) is the actual causal effect. And then you have this \( C \) term that you have in the beginning, which basically just measures how correlated things are. If things are correlated, you need more data, all other things being equal.
+
+The important thing is if you take just a simple cortical neuron from a human brain, back-of-the-envelope, all the factors that you have here, the strong correlations in it, you can find out that even if you could record from all the neurons in my brain from the time I'm born until I die, you will not have enough data to figure out how my brain actually works at any given point of time. Because they are all correlated and correlations means that there are some dimensions about which we can know very little.
+
+So bigger animals are probably impossible. If you're interested in more details, A, I'd be very happy to talk about it and B, there's a bunch of talks of mine that try and back-of-the-envelope that.
+
+# Why *C. elegans*?
+
+Big brains are probably impossible, so let's see if we can do *C. elegans*. And right all the way at the end, I'll come back to how we can actually probably do bigger brains as well.
+
+*C. elegans*, why is *C. elegans* exciting? It does a lot of the things that more higher-level animals do. It fights competitors, escapes danger, avoids bad chemicals, forages for food. It mates, adapts to the mechanical environment. A lot of the things that we do, it's a pretty rich system.
+
+We know the whole connectome, so we know how every neuron is connected with everyone else. This is something we have, and that's something we have also potentially for higher animals. It's just that it's absolutely not enough to simulate it. To start with, we don't know even the sign of an interaction. And of the interactions that we have, of which we might be able to guess the sign, they unfold on different timescales with different nonlinearities, with different properties. So there's a lot missing.
+
+But what's so cool about *C. elegans*? The first thing is we can record all neurons at the same time. We can also stimulate all neurons whenever we want. And we can use light-sheet. And Leifer has been pioneering that light-sheet, no-sculpted-light approaches to basically stimulate any subset of them.
+
+Also, if you meet two *C. elegans*, they have the exact same number of cells. And not only that, but we can figure out which cell in one animal is which cell in the other cell. And so therefore, we can uniquely collate data across individuals. If you had fish or something, every fish is different. Take mouse. Every mouse is like very different. The same neuron doesn't exist across mice.
+
+The cool thing about *C. elegans* is there's 302 neurons. Each of them has a name, and each of them exists in all of them. And the connections between them are relatively conserved. So the other thing is a cortical neuron in your brain has 10,000 inputs. A cerebellar neuron has 100,000. These neurons only on average have like other 30 or so. So it's a much, much easier.
+
+It turns out that you need an amount of information per neuron to identify the IO function that grows linearly with the number of inputs that you have. So if you have 30 instead of 10,000 you need factor 300 less data. Couple that with the fact that you can pool across animals and you can do a lot of things that you couldn't do. Also it's slower. And you of course have complete IO access that you most certainly don't have on a brain like mine.
+
+# Proposed Approach for *C. elegans* Simulation
+
+So what's the idea? You do imaging and stimulation. We will then basically get all that. We will use computer vision to align them all with one another. We have a wonderful team doing that. And then that gives us basically the traces, neuron by time. And there's going to be stimulation and the stimulation sketched here in blue. And the stimulation effect, the post-stimulation thing in the network sketched in red.
+
+What you can see is if you stimulate some neurons, you will basically see a reflection of that stimulation, of course, also in the other neurons. And by going through a lot of different small combinations, you can then do proper modeling.
+
+The modeling there is the idea that we take the output of every neuron, we call that \( y \), and we fit that as a function. We can minimize the mean squared error, where we then say we want to understand what every neuron does based on the past activity of all neurons and the past stimulation of all neurons. And then we can test if it works at predicting new behaviors and at predicting what happens if we do new stimulation that is not part of our data set.
+
+Now, to be clear, it will always be non-overlapping pieces. We will train on some data set, and then we will test if we are correct on another one. That means we will train on some behaviors in all the neuron stimulations, test it on a new behavior, train on a bunch of stimulations, test on new stimulations, train on activities across a certain domain of stimuli, test it on another one. And so it always needs to be properly cross-validated.
+
+# Modeling Complexity and Power Calculations
+
+In our simulation, the difficulty is no one can tell us how complicated *C. elegans* neurons are. And you'll be like, okay, then why *C. elegans*? Because no one can for sure tell us anything about the complexity of cortical neurons. There's some scientists who say, basically, all this nonlinear stuff in the dendrites of neurons is just to make them in effect be as linear as possible. And others say that a neuron is best modeled by a 10-layer neural network with all kinds of crazy nonlinear things happening in between. We don't know where we are on this axis.
+
+Our power calculations there are based on assuming that we need a rather large number of free parameters because we need to allow nonlinearities between them. And in this simulation you can see on the x axis how many perturbations we use. On the y-axis in color coded here is the amount of data that you have ranging from basically about a minute and somehow it looks like—hold on, and it could be that the color bar is there and I just don't see it because all your photos are over it. Or it could be, but in any case, it basically ranges from something equivalent to a few minutes in purple to basically a year or two worth of stimulation effort in yellow.
+
+What you can see is more stimulation patterns helps us better identify those systems as you should. Why do we need stimulation? The stimulation basically makes the activity of the neurons less correlated. If the neural activities are very correlated, there's lots of dimensions about which we will be able to know almost nothing. So it massively helps to be able to stimulate more. Stimulating through more different patterns also helps more than stimulating a smaller number of different patterns.
+
+We can estimate the statistical power. We basically assume that we need roughly order two-neuron interactions, order 10,000 parameters. There might be an order of magnitude more or an order of magnitude less, but roughly. Our calculations assume that we stimulate random subsets of neurons per worm, roughly white stimulus to stimulation. So we assume that the covariance matrix doesn't have a condition number of larger than 10 in this case. We assume that, and we know that from previous experiments.
+
+If we want to know how strongly two neurons are interacting with one another, then we can stimulate. It takes us maybe a minute to do that. If we therefore then need 1 million minutes, according to our calculation, which is two years 24-7, it's something that one can totally do. You can run multiple setups in parallel. They aren't cheap, but they're the best we have at the moment. Then those two years can become even shorter. So it's in the realm of absolutely doable things.
+
+# Data Strategy and Hypothesis-Driven Research
+
+It's not in the realm of what scientists usually do, because as a scientist, what I'd be expected to do is take a hypothesis and test that hypothesis. But I don't want a hypothesis. I think hypothesis-driven research isn't even overly valuable here because the space of what even 302 neurons can do together is just very large. And I don't have a strong hypothesis space in that area.
+
+But for a simulation, you want to maximize the amount of data you can get, produce the best possible simulation here. Data strategy is known that you basically just fit something that fits activities based on the past. You have some prior knowledge, namely which connections exist in the connectome.
+
+Quick reminder for people on *C. elegans*, there's a lot of neuromodulators with which cells can communicate even if they don't have a synapse. So the fact that we know which neurons have a connection between them as synapse doesn't mean that we know who actually speaks with them. There's a whole bunch of parallel channels that the structural connectome doesn't give away. But the structural connectome will be very useful at giving prior notch, like which synapses are close to one another. They're more likely to interact nonlinearly. Which things exist as neuromodulators, they will be likely to change the efficacy of other synapses.
+
+# Scaling Up to Larger Brains
+
+Let me briefly zoom out as I'm coming to the end of my talk. Do we really care about *C. elegans*? I think that's the big question. I don't think a lot of people—there exist people who are really excited about *C. elegans*. For me, *C. elegans* is just the place where we can learn how to properly reverse engineer another system, how to produce causal data. But probably there's reasons to care about it by itself. There's probably things related to health and longevity that relate to *C. elegans*. But let's talk about scaling up.
+
+Now, the gold standard, what everyone talks about is electrophysiology or optical physiology as the gold standard of figuring out how neurons interact with one another. Why is that the case? There's a history for that, which is for 100 years, that's what we've been doing. And I remember how cool it is they put in an electrode and you can hear what a neuron is doing. It feels like we'd be missing a lot if we didn't have that. But at the same time, it's a technique that fundamentally doesn't scale.
+
+Now, let's see if we can do the same thing differently. Hold on, first I am currently building a team around that. So what do we need? We need a perturbation pipeline. Not like we need basically microscopes where we perturb subsets of neurons and record everything. What we decided that we also need, because that's the path to scale up, is annotated connectomes. So I don't just want to see a *C. elegans*. I want to see a *C. elegans* with all the synapses and I want to know which molecules are there. Because my hypothesis is that if you show me not just the synapse, which is what connectomes do, but also all the molecules that are there. They will probably give away what that thing does as a computational element.
+
+So if we could have connectomes, but they were annotated where we would know which molecules are where, then we could find out how causality works by just looking at the individual synapses. The cool thing is that can be a much better signal-to-noise ratio, because now we are looking at these individual things. We can see all the molecules. And then, of course, we need data approaches, and of course, we need all the knowledge from *C. elegans*.
+
+So briefly, the key to scale up for me is molecular annotated connectomes. We want to know, basically, to have the 3D images, but in every synapse, we want all that information, how it interacts with the rest. Now, this needs to be calibrated. Now, we need the combination of causal nodes, what happens with ethers, with causal nodes of what happens at the molecules in between. But we need a system where we can establish that. *C. elegans* is clearly the place where we can establish that, where we can know causally how every neuron influences every other one, and we can see where the molecules are.
+
+Once we get that calibrated in one system, it's relatively easy to then scale up. We can isolate individual synapses in higher animals, see what the causal effects are locally, put that all together again. So in any case. The approach there is then we want to predict the causal function of synapses based on molecules and structure. And to calibrate that, we will need *C. elegans*.
+
+# Take-Home Messages
+
+Take-home message. I don't think we can go to a simulation without really getting at causality first. I do believe that *C. elegans* offers us the way of scaling up causality from the tiny one-on-one space where we're mostly sitting now to like the big, how is every neuron's output a nonlinear function of all the inputs it receives? I'm sure we can go there.
+
+I don't think we can get to causality without large-scale stimulation at the moment because we can't without that calibrate what individual synapses do. And we can go to large-scale stimulation if we can pool. That's the magical thing about *C. elegans*. They're all identical or by and large identical. Therefore, we can pool, can do lots of experiments and assume that it's just noise that varies between them.
+
+And then we can scale up to bigger animals using molecular annotated connectomes and hopefully before AGI happens because whoever knows what's happening then. And of course, all the ideas come out of my broader lab and the many collaborators that we have around that. We're collaborating with Ed Boyden. We're collaborating with Corey Goodman and Miriam Goodman and many other—Andrew Leifer, many other innovators at the *C. elegans*, the stimulation, the microscopy field, because I view causal neuroscience to get at actually working simulation as the key next step for neuroscience altogether.
+
+And with that, thanks for your attention.
+
+# Q&A: Scaling to Larger Animals
+
+Wonderful. I love that you took it all the way out there at the end. Really exciting. Thank you so, so much. We're already getting a few clapping hands. That was really exciting and quite the whirlwind for such little time. So I'm hoping we can dig into some of that more during the Q&A. We already have a few questions stacked in the comment section.
+
+Is it okay if I just ask people to unmute or do you want a little break? Yeah. Okay, cool. Then Logan, you're first. Feel free to unmute. And for everyone else, feel free to just raise hand at this point or feel free to continue dropping your questions in the chat if you also want other people to chime in on it.
+
+**Logan:** Yeah, I definitely think you got to some of my question towards the end, but I think there's still parts of it that are worth considering. So I guess in terms of scaling up larger animals, mammals, and the flies, if you were able to do this molecularly annotated connectome, I guess I'm wondering whether you think it would be possible to largely exclude electrophysiology once you have established a good way of predicting at the neuron level how neurons will behave electrophysiologically. But if not, why not? And then what would you suggest doing for larger animals? Because you can see in my question, I say you'd have ion channel expression or modulator receptor expression, morphology, connectivity, neurotransmitter type for each synapse and the initial synaptic weight. And then you would maybe have a few other bells and whistles like arc-transmitting RNAs between cells and so on and so forth. It morphology changes over time having a good model that but and then you have a load of electrophysiological data from individual studies of smaller scale systems so that you could create really good models for how neurons work in general given all of that other information but then from there you would just go with the static molecularly annotated connectomes and try and do a simulation from there and then maybe tweak it a little bit. And so in your opinion, do you really need to electrophysiologically measure every cell at that stage for those larger animals? Or do you think there's a way to reduce the function to an individual model neurons and then sort of build them up into the larger connectomes or the larger simulations?
+
+**Konrad Kording:** Yeah, well, you opened up a lot of questions here. So let me first start with the big scale framing. There's no way that we can do electrophysiology successfully there. It's literally, if I could record from every single neuron, the entire lifetime of the animal, I couldn't figure that. So that's the first thing.
+
+The second one is, what are the pieces that make neurons interesting? And I should say, people in my lab work on simulating neurons and fitting them to things. As you pointed out, there's two main, arguably three main pieces to that. The first thing is, what does every synapse do? The second one, what do the active channels in the cell do? And then the third one, which is molecular intracellular cascades. So those are the three that we'd like to identify.
+
+And let's maybe sketch how I'd be doing that. Let's take the synapses, no? So in principle, if I wanted to scale up synapses, what I do is I find a way of basically stamping out a synapse out of a cell. And then identify that individual cell and see all the molecules that are there. Like basically IO function of the synapse, very carefully mapped along with all the molecules that are there. For scale up, you'd want to have a way of stamping them out. It's not because you need so much calibration data. There's probably a very large number of different synapses. You need to make sure that you're not missing some molecules that you need.
+
+Now, there could be synapses that have the same molecules if you say use 100 molecules or something. There could be some that look identical structure-wise, that look identical with respect to the 100 molecules that you have, and that yet do something significantly different. So you do need a large-scale calibration exercise as well, where you take lots of synapses and you characterize them.
+
+So I think that's how it goes for the synapses. Then the second thing is, what about the dendritic properties? Like we have basically all those active channels that are there. I think you'd want to do something rather similar, where you take pieces of dendrite that you somehow stamp out of the 3D matrix that you have and identify what the electrophysiological properties are. And then for the intracellular molecular cascades, you'd probably want to follow a somewhat similar aspect as well.
+
+Why not electrophysiology? Because kind of electrophysiology simply scales very badly. Like you can get only so much information out of it per time unit per electrode. And as soon as you allow the system to be bigger, you see the superposition of all those things, which will lead you to an inverse problem that will universally be ill-posed.
+
+Keep in mind that there exist no two identical synapses probably in an entire brain. Like every synapse has, as far as we know, multiple degrees of—a whole bunch of degrees of freedom, which isn't just the strength, but like the strength at multiple different time scales and how strongly it interacts with all the neuromodulators that change the synapse. So it has every synapse is this function in this weird high dimensional space.
+
+If I wanted to simulate a higher level animal like a mouse, I'd need to know which synapse is which type. And we don't even have any convincing evidence that there exists, say, a finite alphabet of these. It can really live in a medium dimensional, what do I know, 10 dimensional space. It's probably indexed by molecular concentrations there. But if we don't see them, finding them out through electrophysiology is very difficult. But because every mouse is different, you'd need to do that individually on each piece. Whereas if you want to scale and you can somehow stamp out little pieces in that case you can calibrate what the molecules do. And once you know what the molecules do you can hopefully put it into a simulation that works.
+
+**Logan:** Okay. Yeah. That's actually similar to what I was thinking. I think we might be on the same page there. I do, if it's all right, I do have one follow-up question. So you've talked about these very high dimensional spaces for predicting behavior of an individual animal. I'm curious if brains change over time, animals, there's differences between animals. What level of variance do you think is acceptable to have a simulation of you, but not you at the exact time and, or maybe a different human based on, I guess I'm just thinking in terms of the dynamical system of the brain is very good at self-correcting. And so if you start with something that's maybe a little ways off from it, because there's some rough inconsistencies, will it eventually settle back down to a state where there's something that can predict behavior like a human, but maybe not exactly what you would do in that situation. Does that make sense?
+
+**Konrad Kording:** Yeah, absolutely. No, you can say in a way, LLMs already succeeding at what we are talking about. Talk like humans in most situations, you need to be careful to get it to make a difference. So in that sense, yes. But let's view it from the other direction as well.
+
+Now, we live in this world full of rather arbitrary things. Now, Konrad has blue hair. It could be green or red, but it happens to be blue. So you can say that as you go through your life, you pick up a certain amount of information from the environment. By the time you're your age, it's probably petabytes worth of data. And there's lots of different ways of developing it. You can say, maybe we pick up a few bits per second, which multiplied with the number of seconds of life that you have so far. That's a lot of bits that you have.
+
+You can alternatively say, okay, imagine that this kind of unique information in synapses, maybe one bit per synapse or something. There's a lot of ways of back-of-the-envelope calculating the amount of information that you carry about the world. As soon as you start being below a certain data limit, it's impossible that all that information is there. And you can say, none of your simulation can be correct unless it also knows that Konrad's hair is blue, along with another million things.
+
+You probably are alarmed at the meetings organized by the Foresight Foundation. There's so much information that is there. So that means that there's a certain minimal amount of unique information that you need to get. And there's no doubt that if we would start cutting people into thin slices or something, we would lose information. But we probably can't lose so much information that we cut away the things that make them uniquely them.
+
+So therefore, scale-up will, without a doubt, basically require relatively high-precision reconstruction of the relevant variables. I can't give you a concrete, straight-faced answer of how many orders of magnitude. Is there an order of magnitude of arbitrariness and therefore a 90% loss rate is totally fine? Possibly. Is it two orders of magnitude? Possibly not. Is it three orders of magnitude? Very likely not. Is it five orders of magnitude? Definitely not. Because then we couldn't even start like your life experiences that we can like elicit by asking you lots of questions.
+
+But it's a space in which we are relatively unclear. And I get it. Like it's self-correcting. And like I can hit my head, like probably lose a little bit of information. I will probably still answer most questions very similar. So clearly it's self-correcting, but it can't be infinitely self-correcting because then you couldn't store any information about the world.
+
+# Q&A: Neuron Types and Clustering
+
+Awesome. We have so many more trickling in. First, Michael Andruk, who I think has bumped up two questions already.
+
+**Michael Andruk:** Yeah, this was about, are there a limited number of neuron types? If you're not recording in real time, if you don't need to record a bunch of neurons all in real time, can you just do neuron typing kind of stuff with this work? And then, so you could record a neuron, if there's a limited number of neuron types, I guess that's also a big question. And then if there are, then could you just record them separately and then color in the connectome later?
+
+**Konrad Kording:** So I don't, so the question is always, like neuron types is a super popular trope within neuroscience. Let me try and poke holes into that.
+
+The first thing is just a pure developmental argument. You have 10 to the 10 neurons. These neurons store the information that you get from your environment. If there were types and there was nothing else, where would the storage be? It's a little bit unclear. I'm not doubting that there are types in principle. There are some neurons, but it's kind of steel man the types argument.
+
+There's neurons that have glutamate and there's neurons that don't. There's clearly a division of the world of neurons into those that do and those that don't have glutamate. And the same thing for a lot of other neuromodulators. So at some level, there's no doubt that primary visual cortex is a thing. And therefore, being a primary visual cortex neuron is a thing. And therefore, there's clear types. The question is how far that goes down. There can't be a "Konrad has blue hair" neuron type because kind of that Konrad has blue hair neuron type that's perfectly arbitrary and you'd need an exponential number of these neurons and it would be unclear how you could even evolve it.
+
+In practice, all neurons undergo learning. If you talk about primary visual cortex neurons like simple and complex cells, what did we learn about them the last 10 years? That cartoon model of they exist as the type of complex cell was wrong. We've seen that for decades where basically it turns out that there's not just simple and complex cells, but a whole continuum between them and beyond the sides of it. But also it's not just that they are different in position, but some of them also care a little about color and they care a little about behavior and they care about all kinds of other things. So I don't think it can be that there's just cell types that's the only things that we need to know.
+
+The second one is, look, if you're a data scientist, and I just teach a data science course, in fact, I taught this morning, and what do you do? Will you tell them like, hey, if you have a data set, think about like clustering things. And of course, the neuroscientists are at that level, and you put like data in, and you're going to get clusters out, like the nature of the world. Everything exists in clusters, but a cluster can't be reduced to the cluster identity. If I tell you there's a cluster of things in the world that's called words, it doesn't mean that all words are the same thing. They're like fundamentally different. And if I replace everything with just identify this as a word, you can't like talk anymore. We're missing a lot.
+
+So that's one of them. So through learning, lots of things change, but also through developmental programs, like different, and we just had this a lot. So that's one of them. So through learning, lots of things change, but also through developmental programs. And we just had this fun study where we looked at neurons. Now neurons are born and there's an ancestry tree of neurons. So you can say all the neurons, ultimately there's a precursor that ultimately makes all the neurons. And I know I'm slightly simplifying things, but there's this thing, you can say, we know that, say, in *C. elegans*, there's sub-neuron types. But it turns out that if I tell you who your brother is, you're still better at predicting than if I just tell you, and you and your brother are both of type of interneuron with the following neuromodulators and so forth, it's kind of extra things that come from your ancestry.
+
+So in that sense, my gut feeling is that there exist aspects of neuron type that are real, but it's suddenly not going to be the case that neurons are reducible to their neuron type.
+
+**Michael Andruk:** Did this answer all your questions or did you want to follow up?
+
+**Konrad Kording:** I think that's good for now.
+
+# Q&A: FlyWire Project
+
+**Michael Andruk:** I'm happy to do the next question too. Okay, cool. Yeah, go for it if you want to. Okay, yeah. What did you think of the FlyWire project as you're anticipating the *C. elegans* project. What do you think of the FlyWire and the work to get that done? And also maybe just what are your expectations for like how far that's going to go to producing a sort of emulated fruit fly? Someone going to do that? Can you do that with that data set?
+
+**Konrad Kording:** Yeah, like first, I'm a huge fan of the FlyWire project. I can't wait. So my lab is very excited about digging in. We have a whole bunch of questions we want to ask about fly neurons.
+
+I think the path from a connectome to a simulation is very long. We had the connectome of *C. elegans* for 20 years or so, and we can't simulate it. Why not? Because a neuron's output is a nonlinear, interesting function of its input, and lots of inputs are not even visible on the connectome. A lot of neurons basically just dump neuromodulators into extracellular space where everyone listens to them, but you can't see them.
+
+So I don't think that the FlyWire project at all will lead to a simulation. Let me immediately disagree with myself. Viren Jain has really been heroic at asking if anything can be predicted based on the connectome in the fly and more than nothing can be predicted. And I don't want to make these extremist arguments. Like, of course, there's aspects you can predict on it. It's just not anywhere close to the whole thing.
+
+Sure, you can like, there's no doubt that, no, look at the connectome of me. There's some cells in my spinal cord that go to my muscle neurons and right back. It's a reflex loop. We understand mechanically why it's good. It's great. It stabilizes my body in a world full of perturbations. It's a great thing. And I can basically see that whole reflex loop by just looking at a connectome. So I don't want to drive any of these extremist arguments that we can't predict anything.
+
+But the idea, the other extreme is that we can build fly simulations based on the connectome, I've seen absolutely no evidence for that. And we shouldn't expect that. The neurons produce interesting dynamics, like a system that just is connected like that wouldn't do that. There's significantly much more individual to individual differences in the fly than it is in *C. elegans*. So pooling would be much, much harder. But there exist some neurons that are very reliable across flies.
+
+So yeah, I'm a huge fan. It's just whatever neuroscientists have ever learned, people will at first claim that that will lead to a simulation of it. And of course, I'm aware that makes it likely that all the things that I'm telling you is equally problematic. But this time exactly.
+
+But the good thing is, for *C. elegans*, we can be very clear about what the failure modes are. Like failure mode one, everything we do is predicated on the assumption that we can view it as neurons that have outputs and inputs. If that isn't an abstraction that is afforded by reality, maybe because neurons have hundreds of outputs because every place where there's, they could in principle be electrical coupling, then like we will basically, we're guaranteed to fail.
+
+It's predicated on the assumption that basically models we can come up with that have order 1,000 to 10,000 parameters can meaningfully model neurons. For all we know there could be quantum gravity in microtubules or something and then this is a completely non-thing. It could be that we don't get the signal-to-noise that we expect.
+
+But the nice thing about the *C. elegans* project, it's relatively clear to write down the assumptions. And it's also clear, actually, for the FlyWire project. You can say, if the majority of the influence of a synapse can be described by the connectome, then yes, you'll be able to produce a simulation for that. It's just that's a very strong assumption. But yeah, I'm a huge fan. These guys are like brothers in spirit in a way.
+
+**Michael Andruk:** One quick follow-up is you mentioned the number of parameters per neuron. Is that the rough order magnitude, 10,000 parameters per neuron in *C. elegans* that you're expecting?
+
+**Konrad Kording:** That's what I'm expecting. Let me maybe highlight where that's coming from. A neuron in *C. elegans* has like order 30, 50 inputs. But it also has all the inputs from neurons that we don't see, which are the neuromodulator interactions. It's known that neuromodulators have strong influences on synaptic efficacies.
+
+So you can say, I need to understand like order 100 neurons. But I also need to now allow 100 neurons to interface with 100 neurons and like bilinear models allow every pair to interact. Feels like a fast order approach to that. In reality, I think that allows too many there and too little in other places where you can say there should be nonlinearities related to like local pieces of the dendrite. We had the question earlier about channel densities and so forth. They will be sitting somewhere in there.
+
+But out of that calculation comes that we'll probably need 1,000 to significantly more than 1,000 interaction terms. It's clear it can't be less than 302 in a way. It seems unlikely that it would require the parity function. Computer scientists like to have these worst-case scenarios where you can prove that basically you need an exponential amount of data. If we're in that world, then we can't ever understand another system. But it seems very unlikely that the neuron would implement the parity function or something like that.
+
+# Q&A: Publications and Quantum Gravity Remark
+
+All right, we have two more to go. And then I have one final closer question. We try to make it all on time. Regina you first. If you can unmute I also happy to ask your question if you prefer. Maybe I just go for it.
+
+**Regina:** Is your method that you just discussed today been published so interested others can try it?
+
+**Konrad Kording:** Yeah, so we have one big white paper where we get a lot of people that share that dream together and we wrote a white paper that is shared as a preprint somewhere. I'll find it for you in just one second.
+
+**Host:** Yeah, I already took a peek and it's pretty extensive. Really interesting. That's a fun, big vision paper that both highlights why and how and so forth. Awesome. He just shared it in the chat. Thank you so much, Konrad. It's really worth reading.
+
+Hold on. Let me briefly answer Robert Panch, who finds it puzzling when I say, for all we know, quantum gravity. I don't personally believe in this quantum gravity thing. And I absolutely believe that me as a physicist, we have reasons to not like those models. It's just, I like to leave uncertainty about the assumptions that I make in this case. And if I estimate how many parameters there are, there exist levels at which it's hard for me to be sure in my calculations, know what happens in a neuron. The nonlinearities that actually exist, if very complex nonlinearities exist, they could be complex branching, molecular cascades happening within a cell.
+
+**Host:** Yeah, I think that's also how I took your point on that matter. So yes, Rob, but I'm sorry, I was being facetious when I said it. I wasn't promoting at all that quantum gravity is the right way of thinking about it. And I do believe, and I have done a lot of papers where a back-of-the-envelope calculations helps effects. And I think as physicists, we can say a lot about it. Sorry. Yeah, I think, yeah, that's how it came across, at least to me.
+
+# Q&A: Genetics, Mutations, and Single-Cell Simulations
+
+Okay, Nicholas, you're up.
+
+**Nicholas:** Great. Thanks so much. And I've got two quick questions. First, I'll just say, I'm not explaining if it's nice to see you again. I think we met once when I was at Genentech Research Campus. I worked out there with Karl Deisseroth doing head-fixed mouse behavior, sort of systems neuroscience, two-photon and calcium imaging and things like that. Since then I've transitioned to doing single cell genomes, transcriptomes, proteins, much simpler world, I might say.
+
+My first question is for this, the *elegans* stuff, how much do you think it's going to be interesting or important to leverage genetics, mutations? That's obviously an enormous source of rich variability. Just some sort of comment on that, if you think that's an important part of this or not.
+
+**Konrad Kording:** Genetics differences make a big difference. And that's why I'd want to avoid them for the first piece. And let me maybe highlight what I mean with it. Like, I would want us to take animals that are all identical gene-wise because I would be perfectly fine with a simulation of George the *C. elegans*. It doesn't need to be one that ultimately deals with all possible *C. elegans*. Why? Because I still consider doing one of them be a highly challenging task. And so that's the first thing.
+
+Now, what would we expect? If we look at a naturally existing variety of different worms, there will be differences. *C. elegans* adapts to its ecological niche like all other biological beings. So in a sense you expect that aspects of the nervous system change as you evolve in a given environment. That means that computation would be different. That would mean that if we had both of them in our data set, we couldn't pool. We wouldn't want to pool. We would say, okay, these are the differences and those are the genes that go with the differences. And as biologists, we might be interested to ask which pathway then ultimately makes for those differences to help.
+
+But no and you cannot say can I predict what the *C. elegans* does based on its genome? Maybe but for that I would need to have a large enough data set where I know what the genome is and what the behaviors that comes out of that so for that I would probably need what do I know like 10 to the 8 10 to the 15 like different ones this is something that at the moment why it's biological, very interesting, we probably couldn't get it.
+
+Now, I think there's also the question to which level are our differences due to genetic differences between you and me and all of us in there. But this is something that I view as like the second level question, where it's once we have a simulation, now let's see how these different things couple into that.
+
+**Nicholas:** That maybe a good segue into my second question. Keep it brief because I just want to have my final question. Yeah I am thinking much more these days about simulations of individual cells not just the whole one. I used to be doing the mice. Now I'm back. Just can you simulate a single cell? Put in the genome, the proteins, get some emergent behavior like divisions. I'm just curious in the 30 seconds, if you have any comments or thoughts on that simulation problem, as opposed to this whole animal simulation. And if you think, is that going to be even a stepping stone? Any thoughts or comments on that?
+
+**Konrad Kording:** For me, we'd appreciate it. I think it's super useful and we should think about what one can do there. Totally.
+
+**Nicholas:** Yeah. Maybe follow up some other time. Good to see you again.
+
+# Closing: How to Get Involved
+
+**Host:** Yeah, if you're free to follow up. My last question is, and always has been, that if people in this room and listening to it on YouTube afterwards are excited about this work, what can they specifically do to help you and your team along in the next few steps. So it's a shameless plug moment of anything that you want and seek in terms of collaborative funding or hiring and so forth.
+
+**Konrad Kording:** Oh, wonderful. No, so the first thing is I want to invite everyone to read our big white paper about that, where we got the people who were thinking about how to simulate the *C. elegans* for a long time, got their ideas together to try and hash out what is necessary.
+
+The second one is I am very active at the moment bringing together team and funding and all that for that. I believe it is a necessary next project for neuroscience. So people that know the right funders or who might have funds themselves, I would love to talk. It's not that it's an area where there's only one group that can be active. I think there's a lot of complementary activities that we can have, but I think what they all have in common is we need large data sets to be able to calibrate those things.
+
+And the same thing, Robert just contributed wonderful success stories, protein folding, human language, or something like that. Why did we make so much progress? We had these massive, awesome data sets. And I think what we need for nervous systems is we need massive, awesome data sets of causal influences of how things influence one another.
+
+And I want to encourage everyone to contact me on any channel. My email is easy to find. I'm active on Twitter as KordingLab. And I just joined your Discord as well so that people can find me more easily.
+
+**Host:** Wonderful. Thank you so much. Yeah, you definitely raised some really interesting questions. Thank you so much for joining. This was really exciting. Thanks for everyone for asking such great questions. And I hope to see you very soon for the next one.
+
+
+# Intuitions
+
+- **Causality Requires Intervention**: Counterfactual definition (Pearl-style: do(A) changes P(B)); correlations confound via shared upstream drivers (e.g., coffee gauge vs. boiler temp; brain-wide common inputs).
+- **Scale Breaks Correlation=Causation**: In linear dynamical systems \( x_{t+1} = A x_t + \epsilon \), Pearson corr(A) ≈ A only for tiny N; by N=302, unrelated (largest eigenvalue <1 ensures stability; see Neuromatch tutorial).
+- **Inference Variance Scales as √(p/N) × cond(Σ)**: For causal matrix estimation \( \hat{\beta} \), needs >> parameters/samples; human cortex impossible even with lifetime all-neuron recording due to collinearity.
+- **Perturb to Decorrelate**: Random subset optostim reduces covariance condition number <10, enabling ~1M min (~2 yr 24/7) data for O(10k params/neuron) via bilinear terms for ~100 inputs + unseen neuromodulators.
+- **Poolable Identical Subjects**: *C. elegans*' 302 named, conserved neurons allow cross-animal averaging as noise, slashing per-subject data needs vs. variable mice/flies.
+- **Molecular Annotation for Scale**: Synapses as computons indexed by ~100 molecules (channels, receptors, transmitters); calibrate IO funcs in *C. elegans*, predict in flies/mammals via EM+proteomics, bypassing whole-brain ephys inverse problems.
+- **Out-of-Domain Generalization Test**: Train on behaviors/stims, test novel; failure modes explicit (e.g., assumes discrete neuron IO abstraction, no quantum weirdness).
+- **Anti-Hypothesis Maximization**: Massive blind perturbations > targeted tests; priors from connectome (gaps: gap junctions, volume neuromods).
+- **Individuality Limits**: Simulations need petabyte-scale unique info (life history → synapses); self-correction finite, demands high-res reconstruction (e.g., <2–3 log10 loss).
+
+# Transcription errors?
+
+- Speaker name consistently "Conrad Codding" in raw → corrected to "Konrad Kording" based on context (CIFAR LMB, Ed Boyden collab, known neuro-AI researcher).
+- "C. elegance/Sea Elegance/CLI" → "*C. elegans*" throughout (standard nomenclature).
+- "Yubel and Beesel" → "Hubel and Wiesel" (classic V1 experiments).
+- "Kevin Martin" → "Kevan Martin" (Zurich electrophysiologist).
+- "CIFAR LMB group" → "CIFAR Learning in Machines & Brains (LMB)".
+- "Comuneo Neuromatch.io" → "Neuromatch.io" (online comp neuro academy with dynamical systems tuts).
+- "Light sheet, no sculpt-set light" → "light-sheet, no-sculpted-light" (likely Andrew Leifer's opto methods).
+- "Ed Boyden... Corey Bachman" → "Ed Boyden... Corey Goodman" (probable; C. elegans researchers).
+- "Andrew Life" → "Andrew Leifer".
+- "eFIRS/EFIS/EFIRS" → "electrophysiology".
+- "Sweeney Turaga" → "Viren Jain" (context: FlyWire connectome prediction; both involved, but Jain more directly heroic in EM analysis).
+- "CodingLab" Twitter → "@kordinglab".
+- Repetitions/stutters (e.g., "What I'd be expected to do is take a hypothesis..."): smoothed for readability while preserving word-for-word intent.
+- Mathematical notation: Inferred equations (e.g., dynamical system) from description; no LaTeX used.
+- Q&A names: "Logan", "Michael Andrek/Andruk", "Regina", "Robert Ponch/Panch", "Nicholas" → kept as spoken; "Karl Sabota" → "Karl Deisseroth" (two-photon pioneer).
+- Minor audio artifacts: Filler overlaps ("hold on"), unclear color bars/slides → contextualized without addition.
+
+# See also
+
+* [[kording lab]]
+* [[brain emulation]]
+* [[connectomics]]
+* [[brain imaging]]
+* [[neuroscience]]
+

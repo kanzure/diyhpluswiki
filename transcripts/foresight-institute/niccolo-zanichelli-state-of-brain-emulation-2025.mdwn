@@ -1,0 +1,146 @@
+Niccolo Zanichelli
+
+talk title: The State of Brain Emulation 2025
+
+event: Foresight Vision Weekend 2025 puerto rico
+
+video: <https://www.youtube.com/watch?v=DHnFHzixTkA>
+
+paper: [State of brain emulation report 2025](https://arxiv.org/abs/2510.15745)
+
+LLM summary: Nicola Zanichelli presents an overview of [[brain emulation]] research across *C. elegans*, *Drosophila*, larval zebrafish, mice, and humans, emphasizing that while whole-brain functional recording via optical methods (calcium or voltage imaging) is feasible for smaller organisms, larger mammalian brains necessitate reliance on structural connectomics due to physical limits like light scattering. Progress in connectomics includes full *Drosophila* EM reconstructions, imaged larval zebrafish brains awaiting proofreading, scaled mouse EM volumes, and initial human cubic-millimeter maps, with expansion microscopy advancing toward self-proofreading via [[protein barcoding]] and X-ray enabling synapse-level imaging. Computational modeling leverages functional data for small brains (e.g., *C. elegans* partial emulations) but requires structure-to-function assumptions for larger ones; human-scale emulation demands industrial-scale infrastructure akin to AI scaling laws, hinging on resolving structure-function correlations.
+
+[[!toc levels=3 ]]
+
+# Introduction
+
+Hi everyone, my name is Nicola Zanichelli and I'm here to present a glimpse of our report on the state of brain emulation research, in collaboration with Max Jones and Isaac Freeman.
+
+Our report focuses on five key species: *C. elegans*, *Drosophila* (the fruit fly), the larval stage of zebrafish, mice, and humans.
+
+This is not exhaustive—there are other important models—but these five dominate current research.
+
+# Behavioral Sophistication Across Species
+
+For context, these five species span many orders of magnitude in both neuron count and brain size, leading to different levels of behavioral sophistication: from simple movements in *C. elegans* to elaborate courtship in the fly (the video is not working), to prey capture in larval zebrafish, maze solving in mice, and of course much more in humans.
+
+# Requirements for Emulation
+
+Now, emulation requires matching not just behavior but internal dynamics as well, typically at least at the level of neural activity.
+
+Neural activity can be recorded in various ways, but optical methods today are the most scalable, be they based on calcium or voltage indicators.
+
+And for general context, calcium imaging currently enjoys the widest coverage but generally struggles to capture individual action potentials, while voltage imaging can capture individual spikes but struggles due to the risk of photobleaching when it comes to recording session length, limited to a few minutes only.
+
+# Recording in C. elegans
+
+Okay, so in *C. elegans* we can record most of the neurons in the *C. elegans* nervous system, and the focus is increasingly on understanding signal propagation through optogenetic perturbations.
+
+# Recording in Larval Zebrafish
+
+In larval zebrafish, the cuticle—which is the exoskeleton—and the tracheal system, which oxygenates the brain, complicate things.
+
+Multiphoton imaging systems can bypass the cuticle but imaging activity in deeper parts of the brain is still made challenging by the scattering caused by the tracheal system.
+
+In larval zebrafish, we can record about 70% of the neurons using calcium imaging for up to a few hours, while voltage imaging can capture about 25% of neurons at [unclear: "one red earth"] but only for a few minutes.
+
+# Whole-Brain Recording Feasibility
+
+In general, whole-brain recording is already feasible or could in principle be feasible for *C. elegans*, *Drosophila*, and larval zebrafish.
+
+Larger mammalian brains, however, face fundamental physical constraints that make whole-brain recording unlikely with current technology, meaning that barring completely new technologies, prospective mouse and human emulations will likely have to rely primarily on structural data.
+
+# Connectomics Progress
+
+So let's briefly review the state of connectomics.
+
+In *C. elegans*, we are now at the stage of mapping multiple individuals to understand connectome development over time.
+
+In *Drosophila*, we recently reconstructed a whole brain from electron microscopy data, and expansion microscopy is getting closer to EM-like resolution using 3D to 40x expansion.
+
+In larval zebrafish, two whole brains have been imaged. One of the two datasets, the [unclear: "Bench"] even includes in vivo functional data from the same individual, but no brain has yet been reconstructed as both datasets still require proofreading.
+
+In mice, a cubic millimeter of brain tissue has been imaged using electron microscopy, and there are plans to scale that to 10 cubic millimeters over the next five years.
+
+In parallel, expansion microscopy is getting closer to self-proofreading technology through protein barcoding—see in particular [unclear: "E11B's"] work—and to molecular annotation through iterative immunostaining.
+
+In parallel still, X-ray imaging has recently achieved the imaging of individual synapses through [unclear: "radiation resins"].
+
+Finally, in humans, a single cubic millimeter has recently been mapped using electron microscopy.
+
+# Advances in Structural Imaging Approaches
+
+In general, all major approaches are making progress.
+
+EM remains the standard for ultrastructure but faces challenges in terms of scalability and proofreading requirements.
+
+Expansion microscopy is currently the most scalable and cost-effective solution and offers a promising path to self-proofreading technology and molecular annotation.
+
+X-ray is the least mature of the three, but it is also developing rapidly.
+
+# Computational Modeling
+
+A brief note about computational modeling.
+
+In the past two years, we've seen significant progress in some organisms where functional data is available by combining differentiable models with auto-differentiable modeling frameworks with large-scale functional datasets.
+
+One example is *C. elegans*, where we recently saw the [unclear: "BAAI"] worm emulation of about 130 neurons of the 300 total.
+
+For larger organisms where functional data is not available to the same extent, we have seen significant progress by relying primarily on structure.
+
+However, it's worth noting that going from an EM connectome to a functional simulation requires making significant assumptions. Shu et al.'s work is worth highlighting and was present in the earlier presentation from Michael as well.
+
+# Path Forward for Emulation
+
+In general, we are getting closer to emulations for *C. elegans*, *Drosophila*, larval zebrafish, and soon larval zebrafish, but mice and especially humans will require a different approach.
+
+Humans in particular, due to the sheer size of the human brain, will likely require an industrial approach characterized by large-scale facilities and unprecedented systems integration from microscopy to modeling on data centers and sample processing facilities and such.
+
+And our view is that the capital required will only materialize if the field undergoes a process similar to the process that characterized AI following the discovery of scaling laws, where increased investment directly correlated with measurably improved model performance.
+
+And for this to happen, structure-to-function—which at the moment we see as the main bottleneck for successful human emulation—needs to be solved.
+
+There is recent progress; Hölder et al.'s paper correlating synapse structure to function is worth highlighting, but not anywhere near as much as we need.
+
+# Acknowledgments
+
+And finally, a big thank you to the Fieldcrest Foundation and to Foresight and all of our collaborators that made this possible.
+
+Thank you. Thank you so much.
+
+# Q&A
+
+Does anyone have any questions?
+
+**Q:** In going from scanning a small brain like in a fruit fly up to a human, is the problem the number of neurons and things you have to scan or does it become a depth problem in getting in and seeing far into the brain?
+
+**A:** So the question is about what exactly the problem is by going from *Drosophila* to humans when it comes to successfully emulating a brain.
+
+I think the point to make here is that getting functional data in vivo helps a lot when it comes to building a model, be it in terms of validation, but even just for model fitting.
+
+Small brains can be recorded pretty much in full, which means that you can get data about every single neuron. In theory, we are not yet capable of it, but at least in principle, we could be getting data about the activity of each and every neuron.
+
+For the brain, scattering—so the depth at the moment—makes it limited to about 1.5 millimeters, which is nowhere near enough to actually get activity information about the whole brain, which means that we inevitably have to solve structure-to-function if we want to someday emulate the human brain.
+
+# Intuitions
+
+- **Functional vs. Structural Data Tradeoff**: Whole-brain emulation prioritizes matching neural dynamics; optical functional recording scales to small brains (*C. elegans*, flies, zebrafish larvae) but hits depth limits (~1.5 mm due to scattering) in mammals, forcing structure-based emulation reliant on connectomics.
+- **Optical Imaging Modalities**: Calcium imaging offers broad coverage/long sessions but misses single spikes; voltage imaging captures spikes but is limited by photobleaching—key for choosing methods based on resolution vs. duration needs.
+- **Connectomics Scaling Strategies**: EM gold standard for ultrastructure but proofreading/scalability bottlenecks; expansion microscopy (30-40x) enables cost-effective, potentially self-proofreading (protein barcoding) paths with molecular annotations; X-ray emerging for synapse imaging via novel resins.
+- **Modeling Paradigms**: Differentiable models + large functional datasets enable fitting/emulation in small brains (e.g., 130/302 *C. elegans* neurons); structure-only needs assumptions (e.g., Shu et al.), with structure-function links (Hölder et al.) as critical bottleneck.
+- **Path to Human Emulation**: Industrial analogy to AI scaling—needs measurable structure-to-function progress to attract capital for massive facilities integrating imaging, processing, and simulation.
+- **Trick for Small Brains**: Optogenetics + full recording for signal propagation; in vivo functional data co-registration (e.g., zebrafish) accelerates model validation/fitting.
+
+# Transcription Difficulties
+
+- "one red earth" (larval zebrafish voltage imaging): Likely "100 Hz," "1 kHz," "one readout," or "30 Hz"—context suggests frame rate or sampling rate.
+- "Bench" (zebrafish dataset): Probably "Bench" as a name (e.g., "Bench lab") or "which even"; perhaps "which" or "BenchMark."
+- "E11B's work": Unclear lab/project; possibly "ELFB," "J11B," or "Boyden's" (expansion microscopy leader); context is protein barcoding in expansion microscopy.
+- "radiation resins" (X-ray): Likely "radiopaque resins" or "radiation-hardened resins"—fits synapse imaging via X-ray.
+- "BAAI worm": Probably "OpenWorm," "B-Worm," or "BAC worm"; no clear match—perhaps "BRAIN" or "BAAI" (Beijing Academy of AI?) emulation project.
+- "Fieldcrest Foundation": Possibly "Fleischmann," "Filcrest," or "Fielcrest"; confirmed as sponsor alongside Foresight Institute.
+- Minor: "3D to 40x" → "3D, 40x"; "larvae zebrafish" → standardized to "larval zebrafish"; "Hölder" assumed from context (common in neuroscience). Speech-to-text struggled with technical terms, species names, and rates.
+
+
+
+

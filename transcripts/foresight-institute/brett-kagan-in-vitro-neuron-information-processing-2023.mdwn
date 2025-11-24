@@ -1,0 +1,337 @@
+talk title: Brain cells in an in vitro dish as an information processing device
+
+speaker: Brett Kagan, Cortical Labs
+
+date: 2023-07-20
+
+event: Foresight Institute Neurotechnology seminar group
+
+video: <https://www.youtube.com/watch?v=Zw51KQed23s&list=PLH78wfbGI1x1wSyHwDn4TK0vTzM-_rMbx&index=23>
+
+paper: [In vitro neurons learn and exhibit sentience when embodied in a simulated game-world](https://pmc.ncbi.nlm.nih.gov/articles/PMC9747182/) (2022)
+
+LLM summary: Brett Kagan of Cortical Labs presented their work on synthetic biological intelligence (SBI), demonstrating lab-grown cortical neurons—derived from human iPSCs or mouse cells, plated on multi-electrode arrays (MEAs)—learning to play Pong via closed-loop topographic stimulation embodying the free energy principle, achieving significant hit-rate improvements over controls and outperforming deep reinforcement learning algorithms in sample efficiency despite coarser inputs. These monolayer networks (~800,000 neurons, akin to a bumblebee brain) exhibit task-dependent functional connectivity reorganization and proximity to criticality during gameplay, enabling nuanced drug screening (e.g., carbamazepine restoring learning in NGN2 epileptic models) and disease modeling with functional readouts beyond proxy markers. Comparisons highlight biology's advantages in low-power, adaptive generalization; future directions include scalable CL1 hardware for community access, organoid extensions for 3D complexity, and applications in biotech, neuroscience, and hybrid bio-robotic control systems.
+
+[[!toc levels=3]]
+
+# Video description
+
+Dr Brett J. Kagan is the Chief Scientific Officer at Cortical Labs. Cortical Labs is a multidisciplinary deep-tech startup looking at integrating hardware, software, and synthetic biology approaches to explore how to harness intelligence from neurons on a chip. Dr Kagan has a PhD in neuroscience focusing on stem cell therapy along and completed post-doctoral work in bioinformatics and regenerative medicine. Recent work includes developing the first real-time closed-loop demonstration of [[in-vitro intelligence|biocomputing]] in a simplified pong-game environment, along with working to better test and understand these systems, including exploring ethical approaches to the development and use of these systems.
+
+# Introduction and Welcome
+
+**Alison:**
+Hi everyone, welcome to Foresight Neurotechnology Group. Really, really excited to have Brett Kagan here today from Cortical Labs. I came across your work relatively recently on my own after a lot of people were like, what the hell, how could you have possibly missed this? But really, really, really exciting stuff, including I'm thinking some of the experiments that you may be sharing about what you can already do with a game of Pong and lab-grown neurons, and then also what potential ethical side implications it has. I know that you've also published a really interesting paper on that at Cortical Labs. So really, really excited to have you here. And I think it's been long overdue. As many people in this group are very, very excited to have you on for a long, long time. And so I'm really happy that I went into someone from your team recently and was able to make it happen. So thanks a lot for coming and the stage is yours.
+
+**Brett Kagan:**
+Thanks. Thanks so much, Alison. And yeah, pleasure to be invited. Great to be here.
+
+# Cortical Labs Overview and Speaker Background
+
+So yeah, I'm going to share with you guys a little bit of the work that we've been doing in Cortical Labs. Cortical Labs is a Melbourne-based startup that is looking at how can we culture intelligence? In other words, how can we use brain cells in a dish as a type of information processing device?
+
+And so, yeah, I'm Brett. I've got a background in [[neuroscience]] and [[stem cell therapy|cell therapy]], a bit of regenerative medicine, [[bioinformatics]], quite a raw generalist, I would say. But then we also have an amazing team that we work together to get this work done.
+
+# Motivation: The Brain as the Ultimate Learning System
+
+And so what exactly is it that we're looking at? We can look at the brain, and I think it's not too big a claim to say that the brain is really, at the end of the day, the most advanced learning system possible. As amazing as something like ChatGPT or Stable Diffusion is at doing what it does, they're not generalized intelligence. They can operate in a very narrow parameter of task. And of course, at the end of the day, a lot of what we see in, say, machine learning, in any case, has been inspired by the brain and what people are trying to model how the brain works.
+
+We sort of raised the question, why would you model what you can harness? We know that these biological neurons display an innate learning ability, and you see that across all scales, from flies to dogs to humans. They all use biological neurons as this basis. And when they form parts of the brains they can do a number of different tasks and they do so with incredibly low power consumption and can maintain that function even when they suffer sometimes catastrophic damage which is very exciting to see as a viable system we could harness.
+
+# Integrating Disciplines for Biological Neural Systems
+
+And so how would we get there though obviously this is not exactly a trivial process and it requires you to bring together a lot of different expertise and fields if you really want to get out there and harness brain cells at their sort of substrate fundamentals. And so what we aimed to do was combine advances in hardware, software, neurocomputational understandings, and synthetic biology, and try to bring all of those together.
+
+So what we can do is we can have improved hardware and software to allow for a real-time closed loop implementation. And this is something we call an embodied network. We can have more detailed theories of how neural systems actually optimize their behavior for intelligence. And one of the theories we tested was actually called the free energy principle. And then synthetic biology techniques can also be used to actually generate the cells in a scalable and ethical way to develop specific cell types such as cortical neural networks.
+
+# Embodied Neural Networks and Closed-Loop Feedback
+
+So I'll just touch on some of those terms incredibly quickly especially with the time so an embodied neural network is essentially something that we have in a closed loop feedback what closed loop means is that it's you have to stimulate a sensation into let's say this network of biological neurons in a dish you have to measure the response, and then you have to provide future sensory feedback on how that response is impacted in the world by altering the future sensation.
+
+Now, this should ideally be high resolution, real-time, and physiologically relevant. And then by doing so, essentially what you create is this barrier between the internal and the external system, or what we would often call a body, in terms that there is a divide between the inside and outside. So it's not some sort of sense that there's some sort of consciousness or anything else like that going on here. It's simply a way to statistically say that there is a barrier between the internal and external world in terms of the information flow. That's what we call embodiment.
+
+And we know that this is incredibly important. You know, studies looking at it where they disrupt the closed loop system, let's say in animals, by putting a VR system on them like Attinger did in 2017. And disconnecting the movement from the feedback shows really stark disruptions to the animals. And so we can imagine also for ourselves, we didn't receive feedback about how our actions changed our place in the world and the world around it. It would be very hard for us to exist in that way.
+
+# Learning Theory: Free Energy Principle and Pong Task
+
+However even if we can interact with a group of neurons in a dish how would we actually convince them to do anything useful. There is no predisposition for us. We're interested in the question of can we get them to play a simple game of Pong? You know, spoiler alert, these are actual neurons moving that paddle on the right side. But how and why would they do that?
+
+We needed a theory to actually drive that learning. And so we proposed this using this principle. We didn't propose the principle of the free energy principle. Far more clever people led by Karl Friston over in UCL, as well as many collaborators around the world, have developed this theory. We'd called the free energy principle.
+
+And essentially what it proposed was that a neural system would try to predict its environment and align a perception with an observed outcome. Now, if this was true, essentially, and what the system was trying to do is measure a difference between an internal and external world to minimize what's called the free energy or the information entropy, also referred to as surprise. If we gave the neural system a non-predictable random stimulation as an outcome of it missing the ball, something we didn't want, but is otherwise perhaps arbitrary to the neural system, they might find that aversive and avoid doing things that led to that. And adversely, predictable stimulation might be considered reinforcing because it's something that's easier to align into the internal models.
+
+And so we thought if we did this, perhaps the neurons would change their activity and actually get better at playing the game of Pong as an outcome of them trying to minimize their free energy.
+
+# Cell Culturing Methods and Validation
+
+So we then also finally cultured cells. I'm not going to go into this in a huge amount of detail, but in short, we took human iPSC cells and we could turn them into cortical neurons using different methods. The initial work I'll show you uses Jules Smertz and later work uses a lentivirus-based NGN2 work. Or we could also grow them from mice as a comparison, and we did that because we needed a ground truth of these are 100% biological cortical neurons that no one can dispute, and also just to show that it was a generalizable effect across multiple cell types.
+
+And then we plated them onto something called a multi-electrode array. I'll show you what that is in a second. And then you can see here, for those of you familiar with immunohistochemistry, immunocytochemistry, I should say, we were able to stain them for markers of neurons such as NeuN. This green here shows cells that are neurons. The red shows the axons the purple or pink depending on screen contrast shows the dendrites.
+
+And then over here we can look at different markers to see how many of those neurons are actually cortical and a large proportion of the cortical or supporting. So green's here showing cortical cells, red is showing the supporting glia, and then the pink, of which there is none, would have shown us the dividing cells, but we didn't have the dividing cells. And that's what we want because we want a nice stable culture that we can culture long term on the chip such as what you've got here so these are cultures that have survived for more than six months they form these dense interconnected networks and below it is a multi-electrode array I was telling you about this is essentially a type of chip that is able to record electrical information from the cells, as well as stimulate in a few points electrical information back to the cells.
+
+# Spontaneous Activity in Cultures
+
+And so this electrical information in and out forms a bridge, a shared language between the silicon and the biology through which we communicate. And what's really interesting about biological neurons is that they actually will go on to develop their own spontaneous activity, even if you just leave them alone. They just will fire us little pulses as they communicate amongst themselves doing whatever neurons do.
+
+And you can see here, the yellow basically shows the frequency of those stimulations over time for different cell types. And although different cell types all show different time courses, you can see here, this is day 18 before we get nice activity for mouse cells. It's day 88 for human cells with this method and day 34 for this method. They all do develop quite nicely active networks.
+
+And so that means really what we've got here with this approach is that we can develop neural cells in multiple ways to have quite an ethic, and especially with the human cell source method, we can do it in an ethical and sustainable way. And I'll touch on that a bit at the end about why that is.
+
+# Integrated Setup: Pong Embodiment
+
+And so we can bring all of these different features together into an integrated setup. And so what does that look like? Essentially, we can grow neurons on top of this chip. And then we can map out an otherwise arbitrary manner relative to the structure of the neurons, a sensory region and motor regions, which down here you can see with counterbalance to make sure that they're not too affected by bias. That they're not too affected by bias. They stimulated one side and it fires on one side. It's not affected by that. And of course, we tested and validated that.
+
+And then what we can do is when we stimulate it, record the information, change the position of the paddle and how the ball is moving, if it's hit, if it's missed, and it's feedback. And we do that in real time to create this embodiment in this simulated environment for these little dishes of about 800,000 neurons. These are the eight electrical stimulation points.
+
+And what we do essentially, much like the way our eyes work, we put in stimulation in a way that it represents the position of the balls relative to the paddle in something called a topographic stimulation. And then we can also do a rate coding element to this as well, so that the closer it gets, the faster the stimulation occurs, which is something you can see over here. If you're very familiar looking at these things called raster plots. If not, don't worry about it.
+
+Perhaps a bit more of a friendly descriptor of how this works as its visualizer, where it'll flip around in a second, but each little tile here is an electrode readout, and this is the sensory region that I was telling you about. And you can see here, these are all neurons firing. It is at two times speed, but down here then are the motor regions. And we're simply recording and reading out what's going on to let it move the paddle. There's no complicated machine learning in this version. It's merely will the neurons change their activity in response to their stimulation and feedback and will they learn?
+
+# Experimental Results: Learning in Pong
+
+And so just because of the sake of time, and I know it was a few minutes late, I'm going to go a little quickly over some of these results and just really focus on the key thing. And the key thing is we ran a bunch of different control methods. Control was testing whether our system alone would lead to learning just in media. In silico is with a computational model of this that just drove the paddle with random noise learn. REST was actual biological neurons, but receiving no information. And as the name suggests, it started out literally as a time when the neurons could rest and cool down because the system did generate heat.
+
+And then we had our mouse cortical cells and our human cortical cells. And if unlike me, you don't glare at heat maps for a significant amount of time, they can be hard to read. But if you just compare the sort of top right hand which is later minutes and more hits per se the control versus the mouse and the human cells you can see that there a far lighter colors in the top right side which corresponds to higher chance of more hits happening later. So you can even just see from here like quite a nice trend, sort of mirroring learning occurring in now cells that are actually playing the game versus cells that are resting and versus other control types.
+
+If you prefer box plots, you can see a box plot here showing essentially the same data where essentially there is no change over time in the first five minutes to the last 15 minutes of any of the control groups and significant changes in both the mouse and human cells. So especially the human cells showed the greatest improvement to where they were hitting the ball about a bit more than they were missing it.
+
+Now, if that doesn't sound incredibly impressive and you think you can beat it, I would certainly hope you could because we're talking about here, as I mentioned, 800,000 cells in a dish receiving incredibly coarse frequency. But if you put that in context, 800,000 cells is about a bumblebee, even though this is a simpler system because they're only flat, it's a monolayer, so it's a flat bumblebee. And if you saw a bumblebee hitting a ball slightly more often than it missed, I think you'd be fairly impressed with the bumblebee. Maybe your bar to be impressed is higher, but it's still early work, so we'll continue to improve.
+
+But what's really nice as well is that this result was replicated over a number of different metrics. So previously I was just showing you the hit-to-miss ratio. This here is looking at the number of long rallies greater than three in any given time period. And that shows pretty much the same result, same trend. Or you can look at the number of times it initially misses the ball. So an ace taking the term from tennis here. So it doesn't even hit the ball once. That decreases in the exact same trend as what we observed. And so it's fairly, I think, supportive and robust. And we've cut this analysis in many different ways. and the results come out the same, you know, with some nuances, of course, as you investigated, but it's not like this. There's only one way to cut the data either.
+
+# Functional Connectivity Changes During Learning
+
+And on top of that, what gives me personally a lot of confidence is that when we look at the functional connectivity, this is an example of just one culture. You can actually see there's like very stark differences in how the cultures and the activity is being organized during gameplay versus rest. And again, in so many different ways and levels. And that gives me a lot of confidence because if they weren't doing some sort of learning, why you would see this sort of reorganization is part to explain.
+
+So you can see here for example when they playing the game this shows the functional connectivity And you can see that it reorganized very distinctly sort of across these two regions left to right regions, perhaps there were more cells on this side than the other side. But nonetheless, this is how they've organized. And the same culture, when you don't stimulate it and you leave it at rest, reorganizes itself like this, much less synchrony between them and connectivity between them. And this is just one quick visual example, I think, too, that we could show you for that, but there are so many more.
+
+# Synthetic Biological Intelligence
+
+And so really, we're able to conclude here and say that we really do believe that this is a system that we can use to embody these neurons in a virtual world, to get a natural intelligence. And we called it synthetic biological intelligence. I've seen some people using the terms and some people using the terms biointelligence. It has a distinct relationship with organoid intelligence in that I think organoid intelligence is an extension of this work moving to organoids specifically.
+
+But essentially what it is, is the chance to bring together a synthetic biological cell source that then can be used in such a way to display intelligence. And they show that in this very, very basic way by learning to move the paddle to hit the ball more often than they miss it over time, along with all those network-wide coordination effects.
+
+# Comparison to Deep Reinforcement Learning: Sample Efficiency
+
+Of course we did this in people's first response at least those in the machine learning community was okay well and good but how does it compare to reinforcement learning reinforcement learning can do this already and it can get better over time than these cells there's nothing that biology can offer that machine learning can't do and that's not a hyperbole literally people have said this to us and we looked at it and went but it doesn't feel right does it because we as biological creatures can do a lot more than what some machine learning can do and we can do it quicker and with less power so maybe there is something that the biology can still offer even something that is optimized something like the game of Pong is optimized for machine learning to learn maybe there's still something that cells can offer us and so we set out to test it and we started off providing an image essentially into three different deep reinforcement learning algorithms.
+
+And we said, what would happen if what we did was we capped the amount of data you gave the deep learning algorithm to the same amount that the neurons responded? If we wanted to look at something called sample efficiency how much data required to learn and get to a given level of performance. And what we found here was in orange is our humans blue is our mouse and these three are different deep reinforcement learning algorithms. And what we found was even when you feed far more information into the reinforcement learning algorithm, the biological neurons actually learned quicker and used fewer samples even though their information was more coarse of course.
+
+Some people came back and said to us but of course they're going to learn quicker if the information is more coarse there's something called the curse of dimensionality it means that your system that has more parameters takes longer to converge in a solution so you have to give the reinforcement learning algorithm simpler information and long story short we did that and they did even worse relative to the biology.
+
+And then people said, oh, no, but really it's just sort of two types of information that you're providing yourselves, the ball position, and that's it, basically the ball position and the X and Y axis. And we said, okay, fine. So we did that as well. And the reinforcement learning algorithms did even worse relative to the biology. And then we went through and there was a bunch of other ways that people asked us to redo the analysis, and we did that, and it comes out the same way pretty much every time.
+
+Biology is a very sample efficient learning substrate and so it was exciting to us to sort of say hey look this does seem like a viable platform it seems to have a lot of use cases it's not meant to replace reinforcement learning what reinforcement learning does well but perhaps there are some things that machine learning can't yet do well such as learning things with high sample efficiency that the biology can do it could be useful for in the future and so we really saw us as a platform technology.
+
+# Future Applications: Drug Discovery and Disease Modeling
+
+And while some things are, of course, further away than others, such as robotics and generalized intelligence, if that's the goal we can reach, other things such as for biotechnology and research, perhaps even healthcare for limited applications, are more accessible to us. And that's quite an exciting thing to be able to pursue.
+
+And so there were a number of different future directions that we can and are pursuing right now. The ones that I'm going to predominantly focus on today, though, are the ones where we've generated a little bit of data for, just to sort of raise how these applications could come about.
+
+So, for drug discovery disease modeling, many of you here may be aware that we can currently use an induced pluripotent cell source to take patient-specific material, such as blood or skin cell, grow them into stem cells and turn those into a tissue type, which we can measure for a drug response or for disease modeling. But despite these amazing breakthroughs, there still persists high failure rates. And that highlights the need for a more robust translational strategy. And I don't think anyone is really on the other side of this. I think everyone understands that we need to build better ways to test and model cells.
+
+The problem is it's currently done. Proxy markers are the best people can use for function for neurons. And I say that because the purpose and function of a neuron is not simply to have activity or not have activity. It's actually to process and do something with that information. And for that, you need to have these sort of closed-loop, information-rich environments.
+
+And so we think synthetic biological intelligence does provide that interactive environment and it could enable us to test these drug responses and disease models in a more nuanced way than what has currently been able. And what's really exciting I think about this as well is that even a small improvement over the current practices could offer a big benefit at the moment for novel drugs the success rate sits somewhere around one percent if you look at things that are already sort of proven out to some extent that raises up to about six to eight percent but it's still low so if we could let's say for the novel drugs we could move and just increase predictivity of a successful clinical trial by one percent that doubles the existing outcome at the end and not only is that good because it means we're able to you know save money on clinical trials it actually changes the profit ratio for pharmaceutical companies and so hopefully could lead to more investment in this space and better searches for drugs to help people because at the moment it's not a very attractive proposition investigating most diseases in the central nervous system because of how hard it is to get a successful product at the end and that's just the way it works so it could have a really big flow-on effect beyond just this you know the simple obvious effect that we could imagine if you improved it by one percent you double the number of successful trials there's flowing effects of that.
+
+# Epilepsy Disease Model and Anti-Seizure Medications
+
+So to begin with we started out and we took some cells, some NGN2 neurons, and this is a type of neuron that is nearly purely glutamatergic. That a type of excitatory neuron. And so we took them and people use them to model epilepsy in a dish because essentially they all excitatory all the time a little like something observed in some epilepsy cases. And we grew them on these multi-electrode arrays.
+
+And what we tried was to see how did they learn and how did they learn if we applied different antiepileptics or what's commonly now called anti-seizure medication at different doses. And what we found was you can see here this is that raster plot again I told you about here each dot just to remind you is cells or a group of cells firing and you can see that this is what the epileptic cultures look like all firing all the time here's what it looks like if we put anti-seizure medication on and that's something a bit closer to normal of what we see.
+
+And then what we found is that we could try different types of drugs to get a different response. We found carbamazepine was the most robust inhibitor to get a physiological effect to reduce activity. And this followed a dose response curve. And what's interesting here also is it followed a dose response curve peaking at a certain level, of course, in terms of restoring learning.
+
+And so this kind of gave us this very preliminary evidence to sort of say, hey, not only can we get learning in healthy neurons, we can restore learning in a disease model of neurons. And so that was sort of a super exciting finding for us. And there's a lot of nuance here that we still need to unpack, but that's for another talk.
+
+# Investigating Neuronal Function: Criticality
+
+We can also do things like just how do we understand how the neurons function better? And so we can investigate that as well, because it gives us this ability to start to investigate stuff like learning and information processing with a very high degree of control that's currently missing, whether we do it, say, in humans or animals. And neuroscience research in of itself is a significant area of human endeavor. And so being able to offer improvements here is also incredibly exciting to be incredibly valuable. And it could also beyond, as I just mentioned before, aid our understanding of how we work. It could also be helpful to help improve stuff like machine learning or neuromorphic computing that is inspired by neuroscience. And so these are some really exciting opportunities.
+
+And there's a lot we could talk about here, but I'm just going to pick one, which is something called criticality. Now, in a critical state, essentially, sorry, halfway through, I need a coffee break. Criticality is basically a population activity is coordinated between two states. So you can imagine if someone sleeping their brain is following a very rhythmic pattern of activity. Activity of one neuron is very predictive of activity of another neuron.
+
+At the other end of the spectrum, you can imagine that if someone is having, let's say epilepsy is an example, epileptic seizure, neurons are firing almost randomly and just coordinated. One neuron firing says nothing about another. So weakly and strongly coordinated. In between that as a spectrum and in the middle is a critical point where it goes from order to disorder.
+
+And what's been proposed is that criticality will actually act as a useful metric to maximize information transmission and capacity. And because of that, it's been robustly linked to a number of different cognitive behaviors in recent years, including in response to drugs. And one of the studies I thought was quite fun was in scores of fluid intelligence.
+
+However, because of this controversy, we thought it was something we wanted to investigate because it seems to be involved in so many different features. Maybe by trying to pull it apart, if it appears in our system, we can actually better understand what causes this metric to arise.
+
+And again, not to go into a huge amount of depth in this, but we looked at sort of the gold standard metrics for criticality and looked for concordance across all these different metrics. And what we found across all the metrics was that the systems were closer to these critical states when they were playing the game than when they were at rest. And so we can see here that the information input alone seemed to lead to closer to critical states.
+
+And that was a hugely exciting finding for us, given the role it's been found to occur in both humans and animals. But beyond that, it did also seem to have a moderate, albeit highly statistically significant correlation with performance and actually score in a way that we interpreted as, you know, sort of say it was necessary but not sufficient. So just because something was close to criticality didn't mean it would learn. But if it was far from criticality, it did seem to mean that it wouldn't learn.
+
+And so, for us, we did interpret this, that criticality was an incredibly fundamental base of what would occur to a neural system when it receives structured information. And again, there's a lot of links touching down as sort of the physical processes of information that we think this ties in with I not saying to go into this talk but it does sort of consolidate a lot of the theories and understandings of how criticality might arise, I think. Other people, of course, have talked about this as well, but I think this is sort of strong evidence to support that viewpoint.
+
+And what was also interesting was the fact that it was so fundamental that we could actually predict whether a neuron was playing a game or at rest with a 92% success rate just through looking at the network-wide coordination alone, which I think was really impactful.
+
+# Co-Development of Theories and Tools
+
+Now, of course, this is just one example. And really, the goal that we're interested in is this co-development of theories and tools. So criticality literature, we developed a tool that we can use to assess it. We could refine that tool to ask more nuanced questions about it, take the data, refine and repeat that. And for cognitive neuroscience, although this looks like a very standard thing, anyone familiar with the science would say, sure, this is how all science works. But for computational neuroscience, this is actually starting, that's been quite a barrier for testing. There's been limited ability often to test the nuances of the theories that have been proposed in computational neuroscience. And so I think it's a very valuable opportunity.
+
+# Organoid Intelligence and Multi-Organoid Connectivity
+
+One of the final things I'll just touch on is the idea of expanding this research into [[organoids]]. I mentioned organoid intelligence before. This is some work that's, there was a paper that we came out this year, laid out of Johns Hopkins by Laodice Minova and Thomas Hartung that we're involved with as well. And it's basically growing these more complicated 3D cultures. And the proposal is it could lead one day to more complicated and competent intelligences, which we call organoid intelligence because it's using these three-dimensional neural clusters that people call brain organoids.
+
+We were interested in investigating the connectivity of these organoids when you put multiple of them in a dish next to each other. You can see here these were three organoids. They actually all looked roughly like this one on the right, but this is their patterns of activity. One challenge of organoids is activity isn't always where the cells seem to be. There's a lot of challenges.
+
+But we could see here that what was really interesting is when we started to look, this as a sort of one key takeaway, when we started to look at how do these organoids arrange themselves, the functional connectivity and the clustering was not only different spatially, as you would perhaps expect, but it was different in time. So the different timescale led to a different type of clustering and information processing activity. Well, we're inferring information processing activity. There's still more work to do that.
+
+# Ethical Considerations
+
+Finally, the thing I'll also touch on and just flag that we're working, because a lot of people ask us about it, is the key ethical considerations. And we broke these down into sort of three key areas. There's ethical considerations around potential applications, around how you get the biological cells and a potential moral status of the device itself.
+
+So we're working with a number of independent bioethicists on this issue. And just looking at time, I believe it was meant to go slow. It might be running a bit over time. So I won't dive into these in any details. But if you have questions about this, I'd be really happy to chat about it in more details.
+
+# Improving Accessibility: CL1 System
+
+The final thing I'm going to touch on is really what us as a company now is focusing on, and that is improving the accessibility of this technology, which really has become our core focus now. And that's because we see this field really as mirroring the nascent computing industry field.
+
+So you start out in the 60s and 70s, and you had stuff like the IBM S360. It took up a room and required a team of technicians and PhD graduates to operate. And that's where we are now, sitting here doing our best with our big incubators and big labs and complicated work to keep things running in the last.
+
+The big breakthrough with computing, I don't think anyone would dispute, was really the invention of the personal computer such as the Apple II, where suddenly anybody could get one of these devices and begin to iterate and explore with it. And develop new applications and build the community. And then 30 plus years on, we now have phones that can do, have more computing power than we used to land people on the moon.
+
+That's where we want to go. We're trying to build out a system that we'll call the Cortical Labs 1 system or the CL1 system. And we're going to hopefully be able to provide that to people in a way that is very affordable so they can actually start to build and iterate. And the ingenuity of the community will far exceed what any one company or group of researchers can do. And if that's the case, 30 years on, what might be possible? I suspect we can even tell at this point Although I shared some ideas I think there going to be even more exciting ones that I never even think of.
+
+And so this is an example we gone ahead and we sort of built it This is an early prototype of the cortical lab system running cells in this perfusion circuit that keeps them alive, basically as a life support system for extended periods of time. And because of that, we can have them play in the game for extended periods of time and learning. In this case, we were doing tests up to 18 hours a day, but we have done longer for up to about a month. And we're doing more of that work right now as we speak.
+
+But there is a next version now that we've sort of worked out some of the issues, which is currently being in production. And we're hoping to have our first prototypes by next month. So this is a cortical lab system. And it'll be able to do stuff like control the temperature, control the gas mixtures, control the rate of flow. And then it will just kind of flick through these, basically have cells that you can embed inside the system. So if anyone does cell biology, you can be able to change the waste in the media very easily. It should only have to happen about once every month, once every two weeks, and it'll have a removable MEA reader in it, which means it can be quite cheap to purchase the box. And then you can purchase some separate readers, and that should make it very affordable because that along with this sort of chip are the most expensive parts.
+
+And then if we can make it affordable enough, that means that any lab could have one of these sort of server racks sitting in there, which will just provide people with an enormous capability to investigate these questions. And to aid with that, we're going to be providing people with cloud-native web-first development tools so they can easily build up the environments like the Pong environment. Imposed for us where it took 18 months of hardcore development. They can now do it in just a few days or hours even, depending on their familiarity with these languages. Or we can work with them to help them if they have no familiarity, of course.
+
+# Conclusion and Acknowledgements
+
+And so sort of to wrap up, there's this question of where does this leave us? Because there's obviously still uncertainty in many directions. And although I think we've made some exciting steps forward, there's still many challenges that we need if we want this technology to reach its full potential.
+
+But some people do look at it and say, look, it does feel a bit more like science fiction. But I think that science fiction ends and science begins once we start working on the problem in a rigorous way. And what our goal is, is not just to have us be able to work on the problem, but have a community-wide effort who can work on the problem And I believe if we do that we actually be able to maximize the probability for a successful outcome And what could occur in the future I think is incredibly exciting as a new paradigm to provide us a new tool to solve some of the problems currently facing us.
+
+And as part of that community-wide effort, of course, I have complete thanks and gratitude towards the Cortical Labs team, which has actually grown. There's a few names that joined the last week or two that I have to add on to here. but it's an amazing team of people to work with as well as our external collaborators the key ones who I've listed here who we work most closely with but there's a lot of others of course who provide support that we're grateful to be able to work with and so if there's any questions I'd be really happy to to answer any or have any further discussions and thank you again for your time today.
+
+**Alison:**
+Yeah wow thanks a lot this was a time to digest and really really really excited stuff I have a lot of questions, but maybe before I hit the road running, I want to give the space to Logan and then Tomo for asking their questions. If you want to kick us off, Logan.
+
+# Q&A: Alternative Biological Substrates (Logan)
+
+**Logan:**
+Sure. Thank you. I've been following Cortical Labs for a while and I've been very impressed with the work that you guys are doing. It's very, very interesting and exciting. And yeah, I remember when the Neuron publication came out recently, semi-recently, and it was very cool to read through that.
+
+So one thing that I'm wondering is about sort of the idea of using other types of biological systems besides neurons to do similar things in terms of computation. And something in particular that I was curious about was if you like heard anything about or read anything about anyone trying to leverage the computation of biofilms bacterial biofilms in a way that might be might have some drawbacks relative to neurons but also some advantages so I can imagine that it might be more scalable and more easily maintained and so on and so forth but it also might be a little slower in terms of computation learning and so on and so forth One could envision perhaps having bacteria that are connected in a sort of pseudoneural network by the biofilm structure, and then perhaps being able to communicate electrically, but more likely through chemical quorum sensing or through transfer of plasmids by bacterial conjugation.
+
+And I guess I'm just curious, you'll see that in the question on the chat. I just curious if you know of anyone like I said who working on something like that And what your just general perspective on that in terms of benefits and drawbacks relative to what Cortical Labs is doing.
+
+**Brett Kagan:**
+Yeah, absolutely. I don't know anyone working with bacteria. There are people doing slime molds. The closest name that jumps to, and I can't remember the lab that just published some work looking at slime molds. So, but I'm sure if you have to Google, it'll pop up. I'm just blanking on it right now. But I know like people like Mike Levin's group are doing some really cool work looking at different substrates and bioelectricity communications through that.
+
+I would probably push back or suggest an examination of some of the assumptions that these systems might be slower or not slower. I think that some of these things don't always work the way that we want them to. I think a custom designed setup could work quite swiftly. I also push back. Sometimes people focus a lot on speed, not so much in your example, but when people talk about silicon, the fact that silicon like electricity in copper or whatever moves quicker than neurons but it's not always about sometimes you know there's this saying you know like less haste more speed but it's kind of like the idea that like sometimes just moving and getting things done quicker isn't always the way to get it done more efficiently so i i'm afraid i don't know anyone doing that research there are people like i said mike levine's lab is some great work that's l-e-v-i-n he's doing some really cool work I suspect you would find interesting but also yeah I would say that it's really we need to be careful with some of the assumptions we make about how these systems work or could work moving forward.
+
+With the person who's working on slime molds is that Adam last name is Adam Adamatzky unconventional computing lab I don't know. Yeah I think that sounds right I think that's okay yeah yeah I've been following his work as well very all very interesting stuff so yeah thank you thank you i was just curious about because i can imagine this kind of logic might work in a variety of biological systems and yeah there's there's a lot of and that's also why i try to take a broader term and call it synthetic biological intelligence opposed to neural computation or something i'm also some computing people get upset if you say the brain does computation so do some biologists naming things as a minefield sure but yeah we really should be exploring all of these options and also maybe how they can interact.
+
+But it's just so much there, you know, you need to pick an area and say, look, this is where we're going to camp out for a while and map out of it. And that's what we're doing with the predominantly cortical cells.
+
+**Logan:**
+That's awesome. Okay. Well, thank you very much.
+
+**Alison:**
+There, you know, you need to pick an area and say, like, this is where we're going to camp out for a while and map out of it. And that's what we're doing with the predominantly cortical cells. That's awesome. Okay, well, thank you very much. I'll let us move on to the next questions now. Yeah, just on the Mike Levin bit, I just posted his TEDx presentation here in the chat for those of you who don't know about it yet. But I think that many people here are somewhat familiar with his work. Also has very interesting implications for regeneration and longevity, potentially but yeah.
+
+# Q&A: Robotics Applications (Alison)
+
+I am super curious to ask you i've been working on this piece on like biological robotics and i know that at least in one of your previous presentations i think one of your teammates also mentioned potential implications for robotics right and you can already see that and you've also alluded to it a little bit but you said it's a little bit further down the road so i'm super curious you know like obviously mike levin's work with on xenobots it's like relatively like robotics at least applicable but i'm super curious you know if and when you already think about potential like real robotic implications for um cortical labs yeah it has the virtual and so forth yeah yeah.
+
+**Brett Kagan:**
+And i mean i think that the xenobot works really cool i don't know as somebody as someone with like chronic pain i i often feel like i could do away with most of the body but i like my brain and how that works so i'd be all right with that i need to go to to to too biological but you know there's a lot of merits to exploring all of these options don't get me wrong i think for us robotics really would come out as the control system for robotics if you look at you know this is example i often use as a reason we have the little rendered robotic dog there is the example at the end if you if you sort of think about what's the best aid you can give to someone who's visually impaired quite often it's a guide dog not a guide robot not a guide [[machine learning]] algorithm, but a guide dog.
+
+And that's because, as I said, machine learning requires huge amounts of data to learn to do anything and to adapt to new situations that typically can't. It fails if you change the environment the machine learning system learned to. Dogs, however, can aid people at a variety of circumstances using biological intelligence.
+
+So let's say that we could take the reliability of the robotic dog and machine-wise, stuff like Boston Dynamics build or many of the clones that now exist, they work really well in terms of moving around an environment They could use some help in terms of navigating novel environments independently They actually not able to do that in really any sense any practical sense So what if we could take the advantages of the biology the advantages of the robotics and bring them together, right?
+
+We already have this ground truth that biology can navigate a novel environment. We all do it. Dogs do it. It's simply a matter of how do we implement it in a robotic system. And so it is further off, don't get me wrong. But I think, well, I don't even think, like it is possible because we've seen it done. How is a big question, but it's possible. So we should start to investigate how to get there.
+
+**Alison:**
+Very cool. Okay, wonderful. We have Tomo also with another question here.
+
+# Q&A: Distilling Biological Networks (Tomo)
+
+**Tomo:**
+Yeah, I guess my main question would be, once the behavior is learned or a certain training is done and the outputs are stabilized in the cell cultures, can you train the neural nets on a population of the cells, like in their input and output, and see if you can do maybe better than the silico training on just like ball position and such? And the main idea is, you know, you're not going to capture the full capability of the culture, but one thing might be, you know, fear of not being able to replicate the same computations computations if you lose the current cell culture, for example, and basically preserving some of the more advanced computations that it's doing? Do you think it's possible?
+
+**Brett Kagan:**
+Yeah. So I'll give two different angles of an answer on this. One is, yes, I think it's possible. I think it's difficult. The complexity, and I think especially like a lot of machine learning people who haven't looked at biological cultures, often when we bring machine learning people and we show them the cultures they they have like a shift in their thinking about this because when you see the connectivity occurring in biological cultures you realize it far exceeds what you can have through any really any neural network like artificial neural network i should say in just in terms of the number of nodes and connections that are there it's far more complicated so look do i think it's possible to do that yes do i think it's efficient to do that Probably not.
+
+We can't really model a single neuron at the moment very well without huge computational power, let alone networks of them. It wouldn't be efficient. So I think the flip side, despite it being possible, that I would say is that you mentioned the fear of losing that culture or losing the replicability I think that that is something that rather than fearing it we accept as a feature of this type of system If there something you need to learn and stabilize so it does the same thing every time, don't use biology.
+
+If something can be automated that well, we don't even want to use humans for it, right? We tend to want to automate anything that can be done in that highly replicable manner. That's what automation is. And it's great. Silicon works amazing. Yes, as a large power consumption, but we can solve that in other ways by renewables and better, et cetera, et cetera, hope discussion.
+
+So instead what I would say is what I think we should be looking for is like, where is it that we want a system that maybe doesn't need to retain that exact problem, that exact weightings and solution, but instead can have an approximate, act as a, yeah, like a generalized, I don't know how to describe it, as a generalized intelligence for solving the tasks. So yeah, I would just sort of suggest a different way to look at it and how the technology could be used although i definitely think it is in theory possible to do what you're suggesting.
+
+**Tomo:**
+Okay okay now i still have one or two more questions depending on how fast we go through them.
+
+# Q&A: Roadmap and Milestones (Alison)
+
+First one being that you already alluded to like what we could be striving for if we were looking at a pretty ambitious path for the next 10 years do you have any like internal roadmap or something that you could wave to us kind of almost like as a carrot of, you know, if you think that your progress will continue roughly, like what are a few of the kind of like milestones that you think you'll be hitting in the next like few years or something?
+
+**Brett Kagan:**
+Yeah. I mean, some of this, obviously I'm not going to talk about right now for IP reasons, but really, like for, as I said in the talk, like one of the big things for us is improving accessibility for people and improving the way we can interact with it. Just making easier tools is really important.
+
+Predicting the future of this is also really difficult because so far we could make really rapid progress in advancing because there's decades of research and all the individual pieces we use to fit together into the puzzle now other people are starting to join this this work and start to investigate it in very serious well-funded ways does that mean that there will be a linear progression because although maybe we start to, you know, plot out the usefulness of previous work, more resources come in and people can continue to make progress.
+
+Does that mean that there'll be an exponential improvement as we, you know, as a community start to you know iterate off each other This is what my personal belief could happen is but it could also be that there a drop off in the improvement because we use up the existing research and allows us to make the early advancements and then we hit some barriers along the way. We don't know until we explore it.
+
+I think what's exciting for us though is some of the initial work, such as the cognitive or pseudo-cognitive drug testing can help people immediately. As is, even though our current system, we're under no delusions and we're not going to pretend to anyone that this system is a perfect system. It's still a basic prototype. But even this basic prototype has huge capability to improve how we understand how drugs and disease models progress. And we've now developed enough data. I wasn't able to share all of it with you, but we've now developed enough data to support that.
+
+So I think the next few years, what we'll really see is it coming out predominantly in drug discovery and disease modeling before then being applied to some very simple, basic real world applications. And then what goes beyond that? Let's see how the community works together. I think it's a really exciting area.
+
+# Q&A: How to Help Cortical Labs (Alison)
+
+**Alison:**
+Cool. Final question. I know we're on time, but how can people in this group best help you?
+
+**Brett Kagan:**
+Pardon me? I missed that.
+
+**Alison:**
+How can people in this group best help you?
+
+**Brett Kagan:**
+It's like a shameless plug moment. where it's amazing if you're like hiring, if you're whatever. We are hiring, especially anyone with programming skills, you know, especially low latency, sort of C, real-time C, JavaScript. If you're in that sort of area, please feel free to reach out to me. I can put you with my email back here. We're also, you know, of course, biology as well. We often have opportunities arise, especially in the future.
+
+The other thing though, is if you're a researcher, a collaborator, you're interested in this area, like we love to work and collaborate. people. We're hoping once that new CL1 unit I was showing you is ready, we're going to be able to try and make it available to people as possible for some beta testing. We are going to have to be selective with who we select for beta testing because we've had a lot of interest. But then not long after that, we hope to be able to provide it to people in a really affordable way because our business model really isn't about making too much money off the... We're in a weird space because for us, it's not about trying to cut a piece of a pie. It's about trying to make a big pie.
+
+So our business model really is like as many people using this as possible. And then when we build applications, we can all benefit. So we'll see how that works. It's not a traditional business model, but it's one we feel good about trying to pursue. So reach out if you're interested to work with us.
+
+
+# Intuitions
+
+- **Harness vs. Model**: Direct use of biological neurons leverages their proven generalized intelligence, low power (~watts for bumblebee-scale), damage resilience, and innate plasticity across species, bypassing silicon's data hunger.
+- **Embodiment via Closed-Loop**: High-resolution, real-time sensory-motor feedback creates an informational boundary (body-world divide), essential for learning as shown by VR disruption studies (Attinger 2017); implemented via topographic rate-coded MEA stimulation mimicking retinotopy.
+- **Free Energy Principle (Friston)**: Neurons minimize surprise (prediction error) by aligning internal models to sensory outcomes—random "miss" stimulation aversive, predictable "hit" reinforcing—driving unsupervised Pong mastery without explicit rewards.
+- **Sample Efficiency Edge**: Biology converges faster on sparse, coarse data vs. DRL (e.g., PPO, A2C, DQN), robust to dimensionality curse or input simplification, suggesting superior generalization for data-scarce regimes.
+- **Criticality as Fundamental**: Structured input shifts networks toward order-disorder phase transition, maximizing info capacity/transmission; necessary (not sufficient) for performance, predictable (92% accuracy) via network metrics.
+- **Platform Tech Tricks**: Balanced sensory/motor electrode mapping counters spatial bias; removable MEAs enable affordable scaling; cloud-native tools democratize environments (Pong in days vs. 18 months).
+- **Translational Pivot**: Functional assays (learning restoration) outperform proxy markers for CNS drug discovery, potentially doubling novel drug success (1%→2%) via nuanced, patient-iPSC-derived models.
+
+# Transcription errors?
+
+- "Fossides and Neurotechnology Group": Likely "Fosides" or event-specific name (possibly "Foundations of Neurotechnology" or similar); unclear.
+- "Jules Smertz": Uncertain; best guess is a transcription error for a cortical differentiation protocol (e.g., "Jaiswal-Smrz" or "Schwartz" method); contextually precedes NGN2 lentiviral.
+- "NG2 work": Likely "NGN2" (Neurogenin-2) throughout, standard for glutamatergic cortical neurons.
+- "Laodice Minova": Likely "Liaode Novakova" or similar; paper is Smirnova et al. (2023) on organoid intelligence intelligence (Johns Hopkins, Hartung lab).
+- "Attinger 2017": Likely "Attinger et al. (2017)" on VR/feedback disruption in rodents.
+- Repetitions (e.g., "was not only different spatially..."): Chunk overlaps; cleaned.
+- "Codipol Labs": Consistent error for "Cortical Labs".
+- "I'm Brad": Clearly "Brett" (speaker identity).
+- "REST": Acronym for "no stimulation/rest" control.
+- Minor: "tongue"→Pong; "me after"→my own; "an ethic"→ethical; "in media"→in medium; "learn"→control; "surprise zone"→surprise; "Nuon"→NeuN; "binding cells"→dividing; "counterbalance"→counterbalanced; "imposed"→which; "laid out of John Hopkins"→led out of Johns Hopkins.
+- Q&A overlaps/repetitions cleaned; some chat references omitted as non-spoken.
+
+# See also
+
+* [[biocomputing]]
+* [[organoids]]
+* [[physical learning systems]]
+* [[neuroscience]]
+* [[computational neuroscience]]
+* [[intelligence]]
+

@@ -1,0 +1,405 @@
+talk title: Brain wiring through the genomic bottleneck
+
+speaker: Anythony (Tony) Zador
+
+date: 2024-01-22
+
+event: Foresight Institute Neurotechnology seminar group
+
+video: <https://www.youtube.com/watch?v=OR4xUjB21GE&list=PLH78wfbGI1x1wSyHwDn4TK0vTzM-_rMbx&index=19>
+
+paper: [Encoding innate ability through a genomic bottleneck](https://www.biorxiv.org/content/10.1101/2021.03.16.435261v2) (2022)
+
+LLM summary: Anthony Zador presents technologies from his lab at Cold Spring Harbor Laboratory to map neural circuits by [[converting connectomics into high-throughput DNA sequencing problems via stochastic labeling of neurons with unique DNA/RNA barcodes|mapseq]] delivered by engineered viruses (e.g., Sindbis), which are trafficked to axons/dendrites using RNA-binding synaptic proteins. Motivated by the genomic bottleneck—where the ~1 Gbit human genome cannot explicitly specify the ~1 Pbit connectome, necessitating compact wiring rules—he demonstrates [[MAPseq|mapseq]] for bulk projection mapping (revealing non-independent local motifs in mouse V1 but largely independent long-range cortical projections, with cubelets connecting to ~70% of targets probabilistically) and [[BARseq|barseq]] for in situ multiplexed readout of barcodes, genes (~150/neuron), and projections at single-cell/axonal resolution. These enable scalable, cost-effective (~$2k/brain) circuit dissection, with future integration of in vivo activity and applications to compress wiring priors for biologically plausible neural networks.
+
+[[!toc levels=3]]
+
+# Video description
+
+Animals are born with highly structured brain connectivity, which equips them with the ability to function well soon after birth with little or no experience. Because the wiring diagram is far too complex to be specified explicitly in the genome, it must be compressed through a “genomic bottleneck”. I will discuss theoretical and experimental results regarding the nature of the rules governing the genomic bottleneck and how high-throughput molecular connectomics based on new sequencing technologies can help uncover these rules.
+
+Anthony M. Zador  is the Alle Davis Harris Professor of Biology and former Chair of Neuroscience at Cold Spring Harbor Laboratory.  He is a co-founder, in 2004, of the Computational and Systems Neuroscience (COSYNE) conference, and of the NAISYS (Neuroscience to Artificially Intelligent Systems) meeting about the intersection of neuroscience and artificial intelligence.
+
+Anthony Zador received a B.A. at the UC, Berkeley and MD/PhD from Yale University, working with Christof Koch at Caltech on focusing on machine learning and computational neuroscience. He carried out postdoctoral research in experimental neuroscience at the Salk Institute with Chuck Stevens before assuming a faculty position at Cold Spring Harbor Laboratory in 1999.
+Work in the lab is divided into 3 main areas. First, the lab focuses on the neural circuits underlying auditory decisions. Second, the lab develops  new technologies for converting the connectome into a form suitable for DNA sequencing. Finally, the lab applies insights from neuroscience to generate better AI algorithms.
+
+About foresight institute: The [[Foresight Institute]] is a research organization and non-profit that supports the beneficial development of high-impact technologies. Since our founding in 1986 on a vision of guiding powerful technologies, we have continued to evolve into a many-armed organization that focuses on several fields of science and technology that are too ambitious for legacy institutions to support. From [[molecular nanotechnology]], to [[brain-computer interfaces|brain computer interfaces]], [[space exploration]], [[cryptocommerce|cryptocurrency]], and [[AI|artificial intelligence]], Foresight gathers leading minds to advance research and accelerate progress toward flourishing futures.
+
+# Welcome and Introduction
+
+Welcome to Foresight NeuroTech Group. I'm really happy to have really the first one of our Turn24 seminar series. We use the legend of Anthony Zador. Thank you so much for joining us. You'll be discussing brain wiring through the genomic bottleneck.
+
+I'll be sharing a lot more about you here in the chat. I'll be sharing more about future seminars upcoming in the series in the chat because we're already in Q3 at this point. And yeah, thanks everyone for joining again. Thank you so much, Anthony, for joining me to present. And if you have any questions, if you don't already drop them in the chat, I will send them to Anthony in the Q&A. And you can also raise your hand if you want to ask the question directly. Thanks, everyone, for joining. Thank you, Anthony.
+
+# Speaker Introduction and Talk Overview
+
+Great. Thank you. Let's see. Normally, if I'm giving a real talk... Hold on. I'm just trying to position this window here. Can you guys all see what I'm... You have to share. Yes. I'm arranging my windows here.
+
+Normally, I invite interruptions, and I'm happy to have interruption questions during the talk. This makes it a lot more fun if it's interactive. I don't really know what your etiquette here is, but do feel free to interrupt with questions. I'll be trying to look at the chat as well, though that's a little bit harder.
+
+Anyway, so my name is Tony Zador, and I'm going to be talking about some technology that my lab has been developing for the last 10 years, a little more than that now. And our basic goal is to develop technologies for understanding brain wiring by converting the problem of brain wiring into a problem of high-throughput DNA sequencing.
+
+And I'm going to also be talking about basically why we developed this technology, given that my background was originally in machine learning and then in neurophysiology.
+
+Okay, so this actually is a summary of the talk. Basically, what we like to do is take brains, endow individual neurons with specific DNA barcodes, grind up the brain in various ways, and then reconstruct the circuit from those barcoded neurons. But I'll provide a little bit more meat to that in the coming few slides.
+
+# Innate Behaviors and the Genome
+
+But I'm going to start just by pointing out something that we as neuroscientists often take for granted but is less obvious for communities that are further away from neuroscience, in particular for machine learning communities. And that is that a great deal of animal behavior and, I dare say, human behavior is innate.
+
+So here's some examples of that. Termites build mounds. This thing in the upper left is that big termite mound. It's innate in the sense that if you start from a single termite egg for the queen, she'll generate a whole nest of termites that will eventually build a mound like this.
+
+In the bottom left, animals, some kind of a goat-like species competing in mating season. Spiders hunt and know how to build webs and know how to hunt immediately after birth without instruction, without learning. A colt can walk at birth.
+
+What all this goes to say is that although in machine learning, as the field itself is called learning, is based on the idea of learning, nonetheless learning in some sense is overrated. And a lot of what we do, what all animals do, is innate, encoded in the genome.
+
+And here are some great examples of that that I really enjoy looking at those. If you have a chance, I recommend looking up a video of Justin Beaver, the rescue beaver. And he was rescued soon after birth and adopted into a home. And he fairly quickly adopted the behaviors that are natural to his species that involved, if you see on the right, trying to gnaw down the wood that built the house to build the dam. He did find a lacrosse stick, and eventually he took all these things and tried to put them in the bathtub to build a dam. That was not learned from his parents. There were no other beavers around.
+
+This has been studied in detail in the lab of Hopi Hoekstra at Harvard, who studies two different species of mouse, Peromyscus, one of which builds a long tunnel, a steep tunnel like the one on the left, and the other of which builds a short little stubby tunnel.
+
+And what's interesting is that these two species are close enough that they can not only interbreed, but they can be cross-fostered. And the key fact is that if you take the mouse from one species and have it raised by foster parents from the other species, they will build the tunnel that their biological parents built, not the ones of their foster parents.
+
+So somehow built in the genome is knowledge or somehow the motivation or desire to build the one type of tunnel rather than the other.
+
+# The Genomic Bottleneck
+
+So where do these behaviors come from? They come from our DNA. So we all start from a single fertilized egg that contains the DNA from both parents. And somehow from that egg, the entire body and eventually the entire brain with all its circuitry is encoded.
+
+You can ask a question, how complicated is that brain generating program? You can actually get an estimate of that by quantifying it. And one way to think about the complexity of the final brain is what in neural networks we'd call a weight matrix, which can be represented as a list of connections among the neurons in the nervous system.
+
+And you can do a little bit of math and conclude that the complexity of a random matrix when expressed in bits is proportional basically to the size of the weight matrix. You can get a little bit more precise on that, get a somewhat better bound.
+
+If you have a sparse matrix, which is the kind of matrices that you find in the nervous system, because most neurons make only a small subset of possible connections, most of the information that it takes to wire up a biological brain goes into specifying which are the partners, which are the subset of neurons out of the entire brain that a given neuron is going to connect to.
+
+And so you get this formula here, which is that the complexity in bits is approximately equal to the number of synapses times the log of the number of neurons.
+
+So let's apply that to a couple of examples. The C. elegans, a well-studied species with 302 neurons and 7,000 synapses. And it has about, if you run through that equation, you see that it takes about 60,000 bits to wire up its brain.
+
+So, is 60,000 bits a lot or a little? The C. elegans genome has about 100 million bits. So, there's really no problem there. Every connection in C. elegans could in principle be explicitly specified in the genome. Now that's not exactly what happens although it indicates that the wiring diagram of C. elegans tends to be highly stereotyped, but there's really no mismatch here between the size of the genome and the size, the complexity of the connectome.
+
+We're in a very different situation when it comes to mammals, and in particular, the human brain. So, the human genome is somewhat larger. It has about 10 to the 9 bits, but the human connectome is far more complex, where if we take that estimate from before, it would take about 10 to the 15 bits to list all the connections in a human brain.
+
+So there's this tremendous mismatch between the number of bits available in the genome and the number of bits it would take to completely specify a brain connection by connection. So what is going on there? There seems to be some kind of what we call a genomic bottleneck that takes a much smaller genome to the much larger connectome.
+
+# Wiring Rules Over Explicit Specification
+
+Is there really a mystery there? In large strokes, we know the answer. There's no fundamental mystery. The answer is that what's specified in the genome is not simply a list of connections, but rather a set of rules for wiring up the brain.
+
+And we can illustrate that by thinking about the difference between a random network, such as the one on the left, and the highly structured network shown on the right. So the one on the left, you can see that each neuron, just like the one on the right, has four connections. But in this particular case, the four partners are assigned randomly. So you can see each one of these neurons has four lines coming up, but they're chosen randomly out of all the 35 possible partners.
+
+Here on the right, it's highly structured. So on the left, in order to reproduce that particular network, you would have to actually list all the connections in that matrix. Whereas the one on the right, you could specify with far more ease simply by saying, connect to your four nearest neighbors.
+
+So that is one of the main considerations that got us thinking about what are the rules that are used to wire up a cortex. And basically, just to put this in a larger context, the way we think about it is, I guess I'm just summarizing here, that we have a genome and that the genome contains a set of rules rather than a list.
+
+# Technologies for Sequencing-Based Connectomics
+
+I'm going to describe now some of the technologies that my lab has been developing for actually converting this problem of brain wiring to a problem of DNA sequencing.
+
+So what is challenging about the problem of measuring circuitry? It's illustrated here. This is a picture of a bunch of neurons in the cortex. Each one of these is the neurons. And the problem, of course, is that the axons are all tangled together. We'd like to be able to trace each one of these axons to all possible partners.
+
+But the only technology available right now for doing that completely and perfectly is electron microscopy, which, although it's been improving, remains low throughput and expensive and requires very expensive equipment.
+
+# Inspiration from Brainbow
+
+The inspiration for our approach actually came from the work of Jean Livet, Jeff Stainier, and Jeff Lichtman. And it was a paper they published 15 years ago now called Brainbow.
+
+And there they used a very clever genetic trick to label each neuron with a unique color. And the way they got the unique color is actually through a combination of, they expressed a combination of genetically encoded fluorophores, and they, through clever genetic recombination tricks, they were able to develop a palette of about 200 different colors.
+
+So that was brilliant. And it really impressed me, especially because the technology back 15 years ago for doing that was absolutely cutting edge.
+
+The problem with it, the reason that, although it makes beautiful pictures and has had applications, it really hasn't completely taken off, is that you can't really easily resolve, in fact, not just easily, you can't resolve 200 colors. So even though in principle, there are 200 colors expressed, in practice using microscopy, you can only resolve maybe three, four, five, or maybe possibly six colors.
+
+And the reason is that the fluorophores that are expressed have very wide spectra. And so you just can't distinguish different combinations beyond the few.
+
+# Digital Brainbow: DNA Barcodes
+
+So our solution to that is to replace colors with numbers, digital Brainbows. And instead of using colors, use arbitrary DNA sequences. So the idea is to have each neuron express a unique sequence of DNA, genetic barcode.
+
+Now, barcoding of various sorts these days has become increasingly common, but at the time that we undertook this, it was actually pretty challenging to think about how we were going to do that, and I'm going to describe some of those challenges.
+
+So the advantage, of course, is that the theoretical diversity here is basically infinite because the diversity scales exponentially with the length of the sequence. With one nucleotide you get a potential diversity of four because there are four nucleotides A, T, G, C; with two is four squared. And by the time you get up to 10, you get a potential diversity of 10 to the 6. And by the time you get to 30, which is how many we have in our barcode, we have a diversity of 10 to the 18.
+
+So if you take, if you were to label, let's say, 10 to the 7 neurons, which is about how many there are in the mouse cortex, if you had a diversity of 10 to the 9 barcodes, that would be sufficient to label all the neurons with very little chance that two neurons would randomly have the same barcode.
+
+# Technical Challenge: Barcode Delivery to Axons
+
+So that was the core idea, but there were some technological challenges ahead of us, and those were really addressed by a student, Ian Peikon, for his PhD thesis.
+
+And so the core question that we had to address was, how do we get the barcodes from the soma, which is where we're going to express them, to the axons and dendrites, which is where we needed them?
+
+And the idea that Ian had was that he would express the barcodes as RNA and then drag the barcodes out to the axon terminals. And so what he did was he engineered a protein, a modified synaptic protein, and that's shown here on the right. And that protein had an RNA binding domain.
+
+And the RNA that we engineered had a specific hairpin called a boxB that bound tightly to the NS3N domain that we put on the protein. And so we now have a system from this where we have proteins that traffic out to the synaptic terminals and drag the RNA barcodes out with them.
+
+# Viral Delivery of Barcodes
+
+So that also leaves the question of how we get these barcodes into the neurons. The way we chose to do it is we engineered a pool of viruses where each virus expresses a unique barcode. Each little virion expresses its own little unique barcode.
+
+And the reason that's relatively straightforward to do is that we can generate viruses in the lab from a plasmid. So that converts the problem of barcoding viruses into a problem of barcoding plasmids, which is pretty straightforward.
+
+So basically, we have a pool of plasmids, we barcode them, then we convert the plasmids into viruses, we make the viruses, we inject them into the brain, wait two days, and then we now have barcoded neurons.
+
+I should say that, although by far the most common virus that people use in neuroscience these days is AAV or adeno-associated virus. For these experiments, we used a different virus called Sindbis, which has the advantage that it expresses at very high levels and is very easy to engineer. And also it doesn't typically require a high multiplicity of infection, MOI, the way that AAV does.
+
+# First Experiments: V1 Projections
+
+Okay. I'm going to tell you about some of the first experiments that we did at the very first, one of the first applications of this a few years back. And that was in combination, in collaboration with Tom Mercer Fogel's lab. And this is work of a graduate student in the lab, Eustis Kemptchel, who now has his own lab using some of these techniques at Johns Hopkins.
+
+And so the basic approach, so we were interested in this experiment in the projection of neurons in the primary visual cortex of the mouse to neighboring areas. And so this big center patch here is V1 and there are six higher order visual areas to which these neurons project. And the question we were interested in were the patterns of projections of individual neurons at high throughput.
+
+And we injected a pool of viruses to a particular location in V1. And then what we did was we dissected out the higher order visual areas, which shown by intuitive names like P, LM, AL, RL, LA, LL, MNLI.
+
+And the question is, does a given neuron project to one of these only, to multiple ones? Is it random or what?
+
+In order to answer that, we injected the virus, waited two days, and dissected these areas out, and then collected the material from each one of these into tubes. And then we looked at what the sequences were in each one of these tubes.
+
+So if in a given tube of, let's say, we have barcode 388, we know that neuron 388 projected to RL. Do we see 388 anywhere else? Actually, I don't. Yeah, but here we see that neuron 007, the secret agent neuron, projected to both LI and LM. And these numbers here show the number of times we see a unique copy of that barcode. And that's important because that tells us something about the strength of the connection.
+
+# Addressing Technical Concerns
+
+At this point, people usually raise their hands or at least thinking about all sorts of technical concerns. The first one is multiple barcodes per neuron. And although we try to avoid, it's not actually the worst problem in the world. Because if we have multiple barcodes for a given neuron, then typically we see, that just means that we see that neuron twice in these experiments.
+
+In later experiments, we actually have a way when we do spatial transcriptomics, we can actually see those barcodes in the given neuron. But with the bulk sequencing approach that we're using here, even then we just see the same neuron twice.
+
+On the other hand, if we have insufficient barcode diversity, then that's terrible because it means that we will merge the projection patterns of two neurons into one. That's why we're very careful not to, we're very careful to have sufficient barcode diversity so that the chances that the same barcode will infect two different neurons by chance are extremely low.
+
+The sensitivity of this approach turns out to be as high or higher than most conventional approaches, and that's simply a reflection of the fact that DNA sequencing is highly sensitive and, in fact, based on single neurons.
+
+Now, one question that often comes up is basically the fibers of passage problem. So we have barcodes that are inside of axons, but we can't ensure that a barcode, just because it's in an area, is actually making a synaptic connection with any of the targets.
+
+And that's a true fact, but it's also a fact that's true of many, arguably, most sequencing techniques, including conventional GFP tracing, as is found in the Allen Institute. I'm happy to return to these technical concerns and discuss them in more detail during the questions.
+
+# Q&A: Viral Production Challenges
+
+We have a question from Logan. I'm happy to take a question now.
+
+Yeah, hi. I was just wondering about the viruses used and mentioned AAV, in which case it makes sense that the plasmid barcoding would work, since you could have a plasmid pool of random plasmids and they're transfected directly to produce the AAV. But I was wondering about viruses like adenovirus that require upscaling, so iterative growth stages, and it's just bias.
+
+That's a great question. So the answer is that basically we have to be very careful when producing the viral library to not allow the pool to pass through a bottleneck, a barcode bottleneck.
+
+So for reasons that we don't yet fully understand, for years we've been trying to get this to work with AAV, and it doesn't work with AAV, regardless of any problems having to do with barcode diversity. The barcode system, when expressed with AAV, simply doesn't drag RNA out to the synaptic terminal. We could talk about my speculation about why that is, but AAV seems to be a non-starter.
+
+Where this is a real problem is with rabies virus. And it's actually, we now have several projects. I'm collaborating with several labs that are using, that are barcoding rabies virus. And indeed because of in fact I think the severity of that upscaling as you call it is very great with rabies. That been a real challenge.
+
+And so basically the answer is go back to the virology, figure out why the efficiency of going from plasmid to virus isn't higher and try to make it higher. Or just brute force it and make huge batches and plate them out. So that has been our approach.
+
+So we are now, in collaboration with these other labs, beginning to see barcoded rabies. In fact, my postdoc, Zayim, has a paper that, I can't remember if it's out yet, but it's on bioRxiv showing some efforts along these lines.
+
+Very interesting. Thank you.
+
+# Resuming V1 Projection Results
+
+I should say that we have a [[MAPseq|mapseq]] core facility at Cold Spring Harbor. We've used it on lots of brain areas and lots of species, and we're always excited to go into new brain areas and new species.
+
+So returning to the thread, you might remember a few slides back, we had just injected barcodes into the visual cortex. And we, you were all in suspense to hear what we found.
+
+And so here's what we found. So here's an example of the kinds of data that we get. Each row here is the projection pattern of an individual neuron. In this case from a single sample we had 533 neurons and each neuron projected to its own set of targets.
+
+You see that for example a lot of them projected to LM. This one here I not sure if you can see my cursor but you can see there one that projected to LI and LM and, for example, didn't project to RL.
+
+And here we have the, this is quite the raw data, but this is the result of an experiment. And here are examples of what these projection patterns mean. The injection size is here, this neuron projected to these three areas, this middle neuron projected to these two, and this top one projected to the two in the upper left.
+
+# Analysis: Projection Motifs
+
+So how do we analyze this? There are lots of things you can do with these data, but one question that we found particularly interesting was the extent to which these neurons projected in a structured way or randomly.
+
+So the null hypothesis here is that you would be able to predict the projection pattern of a given neuron by knowing to a pair of targets, by knowing its projection to the average projection of neurons in that area to those two targets A and B individually.
+
+So for example, if the projection probability of neurons in the source was 0.5 to target A and 0.5 to target B, you'd expect on average that you'd get one neuron that projects to both, one neuron that projects to each that projects to one and then one neuron that projected to neither. That's the null hypothesis here.
+
+Alternatively, you could get that same overall projection probability of 0.5 by, in an extreme situation where each neuron projected either to both or to neither, but no neuron projected to just one.
+
+And so we can systematically go through and ask for, asked whether projection patterns are over or underrepresented or whether they can be described by this null hypothesis.
+
+And what we found was that certain projection patterns were greatly overrepresented. In fact, my red oval, LM-AL, overrepresented projection pattern. But you can see that a significant subset were overrepresented, a handful were underrepresented. And that's summarized here. We find these motifs.
+
+And so that led to the working hypothesis in the lab that the projection patterns in the lab are structured in this way. Okay so projections are not independent. So that was the state of affairs circa 2018.
+
+# Whole Cortex Mapping
+
+We now moved forward a couple of years. Actually I guess this is an outdated slide. I thought I had updated it, but I should say 2024. It's even moved even forward in the calendar.
+
+And so in this experiment, what we did was we mapped all of cortex. This is work of a postdoc, Longwen Huang. And we mapped all of cortex in, or at least half of cortex in the mouse, in a single experiment.
+
+And the way he did that was he made 600 independent injections into one hemisphere, waited two days for the barcode to be dragged out, and then cut the cortex, sliced it, and then collected about 300 voxels, or we call them cubelets, and analyzed the projections from each cubelet to every other cubelet, and registered them to the Allen Atlas, as you can see here.
+
+And that led to a data set here that has about 200,000 individual neurons. And for each neuron, we have its projection pattern to all the other targets that we selected. And you can see here that we selected two just as an example, but we sitting on the disk, we have the projection patterns of all 200,000.
+
+# Key Findings from Cortex Mapping
+
+And so out of the many things that we could ask about that, there were a couple of interesting statistics that really stood out for us.
+
+One that came up as a surprise to me was that a typical cortical cubelet at a resolution of about a millimeter, as shown here, projected not to one or two or even a handful of other targets, but to 70% of all possible targets. I was surprised at the extent to which the cortex is much closer to being all-to-all than I would have thought.
+
+On the other hand, how to reconcile that with what you typically see when you inject GFP into a particular brain area. And the way to reconcile that is to, turns out that although a given cubelet projects to 70%, maybe more, that's just the lower bound of all possible targets, the majority of the projections are to a small handful of targets. 20% of the targets account for 85% of the projections.
+
+But returning to the question of motif. And the key fact in terms of motif is that for long-range projections, contrary to our expectations, we could actually explain the all-to-all connectivity with the null model.
+
+So this is actually at odds with what we expected from the analysis of the local connections within the visual cortex. And so it turns out that only less than a percent of all connections were overrepresented in terms of brain areas. The vast majority could be explained by the simplest model, which is that if I tell you the projection of cubelet 23, the probability that cubelet 23 projects to cubelets 45 and 46, then the chance that a given neuron projects to both of those is given by the independent probability of projecting to one.
+
+So to step back a little bit, what that says is that the rules for wiring the cortex are actually surprisingly simple. All I have to do, at least in describing cortical connections, is tell you the probability that a given neuron projects to areas A and B, and I can tell you the probability that a given neuron projects to both.
+
+# Implications for Brain Wiring and Genomic Bottleneck
+
+And that's summarized here. I was going to talk about some neural network modeling we did, but I'm actually just without going into details about that, I'm going to just say a few words about what this means in terms of what it takes to wire up a brain.
+
+I mentioned before, I motivated this by talking about the genomic bottleneck. And a lot of the work in the lab now has been pursuing this idea of the genomic bottleneck, the idea of compressing a wiring diagram as a regularizer for neural networks.
+
+And one kind of way of compressing this network is these networks is by using a sort of probabilistic wiring diagram where you generate networks, you draw networks from a random distribution, and the rules for that are based on cell type.
+
+And we built artificial agents here and I don't have time to tell you about this I think what interesting to think about from a biological perspective is that we are usually in biologists or describe the tension between genes and environment in terms of final outcomes.
+
+And so here's an example of identical twins who have the same genes, but led very different lives and has. But the woman on the right, who was a sunbather and a smoker, has very different skin from the woman on the left, who was neither a sunbather nor a smoker. So this is clear evidence for environment in producing outcomes, at least in terms of skin looks like.
+
+But here's another example. This is a fascinating book written by a woman whose identical twin ended up with schizophrenia. And I think one possibility for what the developmental identical twins have about 50% concordance with schizophrenia so if one identical twin has schizophrenia there's 50% chance the twin will and one possibility is that differences since they have the same genes is not due to environment but rather to a third factor which is just up towards the dice when the brains were being wired.
+
+And that's illustrated here that there's a third factor in thinking about the development of neural circuits, which is chance one.
+
+# Future Technologies: BARseq and In-Situ Sequencing
+
+So I'm just going to say a couple minutes about some further technology here. So to summarize what I said before, innate behavior is propagated across generations via genomic bottleneck.
+
+I guess I'm running out of time here. Is that right? So I'm going to very quickly just say that we've developed a technology for [[in-situ sequencing|in situ sequencing]], which produces a much higher resolution and it's basically what yeah but I want to at least I want to leave time for questions so I'm going to very quickly run through this one then go back so in-situ sequencing so all of the what I've talked about so far is [[MAPseq|mapseq]] which is limited by the crude spatial resolution we have to do dissection and also we can't learn much more about the cells other than their barcode and in particular we can't learn about their morphology or their cell type determined by gene expression.
+
+And also I'm a physiologist at heart and I would like to be able to relate all the things you learn about neurons to their neural activity.
+
+We developed a next generation tool called BARseq. And basically the way that works is by imaging. And what we do is we use Illumina sequencing technology except we do it in situ.
+
+So basically, here's an example of a bunch of barcoded neurons. And at each cycle, what we do is we figure out what the next nucleotide of the barcode that we're sequencing is. So here are four possible colors associated with the four nucleotides, A, T, G, C.
+
+Here are two neurons that you see in the first cycle. That neuron's barcode on the upper left is an A, then a G, then a C. And so by successive rounds of imaging, we can actually figure out the barcode expressed by that neuron.
+
+And we've now scaled that up considerably and applied it to genes. So here's the paper that my postdoc, Shaoyin, led the work on. It's actually just accepted for publication, but it's currently available on bioRxiv.
+
+And so we can now go through an entire brain in less than a week or about $2,000 and get over a million neurons and 150 genes per neuron. We can also apply this to barcodes.
+
+And I'll also say that we've extended this to axonal resolution. This is some work that is done by a postdoc, Li Yuan, in the lab. And you can see that here there are about the projection patterns of a hundred neurons out of a few thousand that we labeled and for each of those neurons we can see where it projects so it's basically it allows us to look at the projections of lots of neurons all at once at sort of axonal resolution.
+
+And the last slide is that we can combine this with activity and in vivo imaging.
+
+# Thanks and Closing
+
+And right through that last part, I just wanted to thank the people who actually did the work here in particular, Eustis, Ian, this Kaspar, Ian Peikon, Longwen Huang, Dian Chen, Ching Zhang, who runs the facility, and my funders.
+
+And sorry for not leaving more time for questions, but stop here.
+
+# Post-Talk Discussion and Q&A
+
+Awesome. That was wonderful. I'm sure we have the video questions to go up now. I tried to find the paper that you just referenced. I hope I posted the correct one. I think so. But if not, then please correct me.
+
+Okay we have a bunch of questions already. Are you okay with us just jumping in? Yes.
+
+So that paper that you posted is the last paper that I showed with the axons. I can show you the one with, I'll find the one with genes and post that one as well. That would be great.
+
+Okay, good. Okay, super. We have first one up, Nicola, if you want to unmute.
+
+Sure. Awesome talk. Thanks a lot. I have a question, but I just wanted to mention before that, are you familiar with the Nanostring CosMx technology for spatial.
+
+I'm sorry, with the what? Nanostring, they have a tool. It's called CosMx and it does spatial transcriptomics. It could be useful.
+
+There are, at this point, at least a half dozen or a dozen different technologies for doing spatial transcriptomics. And it's an incredibly active field. And I think there are advantages and disadvantages to each one of them.
+
+We developed ours because none of the existing technology actually was suitable for sequencing barcodes at high throughput and high resolution. And then later we realized that it was actually generally useful and effective for sequencing, for multiplexing gene sequencing.
+
+So I would say that right now, one of the leaders there is MERFISH, but that's, I think, in part because it was early to the market and there was a commercial. But we could talk offline about the relative advantages and disadvantages in terms of cost, throughput, sensitivity, error rate, all those questions.
+
+Yeah. So my question is, when you made the observation about the dense connectivity in the brain, that doesn't sound extremely surprising to me because Braitenberg has published that years ago. But I was wondering if you have some observations about bifurcation.
+
+So the surprising thing, the surprising observation was that for local connections, what we found was that bifurcations were often over or underrepresented, just as we found in area V1. But for long-range projections, the null model essentially could explain all the data.
+
+And there are a couple of possibilities biologically for why that would be the case. One possibility is that it's innate, that for whatever reason, local projections are more finely specified in the genome and that the genome doesn't bother to specify long-range projections at the higher resolution.
+
+I think what's more likely is that the null model of random bifurcation, the null model holds for all projections, but then use-dependent correlations either promote or discourage certain pairs of connections from being formed.
+
+And one piece of evidence for that is that one highly overrepresented set of bifurcations are to ipsilateral and contralateral homotopic targets. And those you might expect that those the activity in fact it's known that the activity of homotopic areas are correlated whatever the processes are that stabilize connections to one side might tend to stabilize the connection to the other.
+
+I guess my model is that the brain starts off with knowing approximately what probability a given area should send to any other target area. And then over the course of development, those are somewhat refined.
+
+Any follow-up? Okay, cool.
+
+Next one, we have Logan again.
+
+Yeah, something I've been thinking about that was inspired by your work is the idea of trying to turn connectomics not just projectomics but connectomics into a completely into a sequencing problem and to still include morphology as part of that. And I've seen some papers I think DNA sequencing or DNA imaging actually.
+
+And I was inspired by some of these different areas. And I've been throwing around in my mind this idea that I think is very technically challenging, but might be cool, of embedding the tissue in a structured DNA gel where you can know where you'd have to be able to reconstruct the gel after it had been disassembled so that once you sequence it, you can base the reconstruction on, okay, where is this axon overlapping and so on and so forth.
+
+But if you could have some kind of a lipid-based, a lipid-responsive, lipid-activated DNA editor, then maybe there'd be some kind of proximity-induced activation of this DNA editor to change the DNA or part of the DNA gel at that location.
+
+And I'm just wondering if you've ever thought of anything vaguely resembling that or if you've ever tried anything along those lines or what.
+
+I'm not sure I fully understand what you're proposing. It sounds really interesting and somewhat ambitious. But I'd be happy to discuss it more. It sounds really interesting.
+
+One thing that we have thought about doing is figuring out how to feed little bits of tissue with barcodes and then have the barcode extend within processes post-mortem. And we made some progress on that, and it's been backburnered. And happy to tell you offline about some of those ideas. I'd be interested in hearing more about what you're discussing you want to drop me an email.
+
+Sure sure I can definitely do that. Are you on LinkedIn as well? I think you can if you Google me there aren't that many Anthony Zadors.
+
+Okay, yeah. Zador at CSHL. I'll just put it in the chat for anyone who wants to. Thank you. I also dropped a link to a bio earlier in there that also, I think, has your list.
+
+Yeah, I am on LinkedIn, but I don't really check it very often. Sure, sure. That's fine. That's fine. And I just figured it might be an easier way. But if it's not, then I'll just email. All right. Wonderful.
+
+So if anyone else has another question, please feel free to interrupt me. Or if you, Anthony, really want to get another point across. Otherwise, I think like a few bits that people are usually interested in in faucet salons is just if you think about your work on the long term, I know that I guess Logan has already offered a pretty ambitious version. You also alluded to a few implications that it has on the long term, especially I think I guess we have some more about the ML aspects as well. And some of the work that you at least really mentioned, like neural network modeling and artificial agents. Could you make a few, I guess, more suggestive speculations about where this work could be going in the next five years or something?
+
+Yeah, on the experimental side, what we're super excited about is combining the... I split it to this slide so quickly. I doubt anyone saw what I was doing. But what we're really excited about doing is combining the in-situ sequencing, which allows us to figure out the projections and gene expression with in vivo measures of activity.
+
+And so the idea would be, the idea is, in fact, we're making progress on this, to be able to record from a bunch of neurons in vivo let say in visual cortex and monitor their response properties and then be able to say ah this particular neuron which we recorded in vivo and responded when the animal was poking out its tongue, this is a neuron that projects to the tongue area, right? And it expresses the following genes.
+
+And so that combination of that way of getting a richer picture of each cell, we think, is what's needed to, and on high throughput, on principle, we can, currently we're doing hundreds of cells per animal, and we hope to be able to scale it up to thousands of cells per animal, maybe tens of thousands.
+
+So basically, you get the circuit diagram along with the activity of each neuron.
+
+So that's one big direction. And on the theory side, what the high throughput techniques they're giving us are constraints on the kinds of wiring rules that are at play either during development or in the adult animal. And that sort of gives us hints about what it takes to build a brain.
+
+So the core idea of the genomic bottleneck is that the rules for wiring up a brain are simple, a relatively small number of parameters. And if we can figure out what those parameters are, like not necessarily the values of them, but what the degrees of freedom are, then we can potentially use those as constraints for building artificial neural networks that behave more effectively.
+
+I love it. I think we have to leave it at that because you said you have a hard stop. I do want to leave it at that. Yeah, thanks so much. This has been great. Thank you so much. This was absolutely fantastic. Thanks everyone for your great questions. And I hope it wasn't the last time that we have from you. Thanks for your wonderful work. Thanks everyone. See you soon.
+
+# Intuitions
+
+- **Genomic Bottleneck Intuition**: Biological connectomes vastly exceed genomic information capacity (e.g., 10^15 bits for human vs. 10^9 in genome), implying algorithmic compression via probabilistic wiring rules (e.g., per-area projection probabilities suffice for most long-range cortical links, with sparsity from uneven strengths: 20% targets capture 85% projections).
+
+- **Digital Barcoding Over Analog Colors**: Brainbow's ~100-200 color palette fails optical resolution due to spectral overlap; DNA barcodes (30-mers: 4^30 ~10^18 diversity) leverage sequencing's single-molecule sensitivity/digital precision, enabling unique labeling of 10^7+ neurons with negligible collisions.
+
+- **Axonal Trafficking Trick**: Express barcodes as RNA with boxB hairpins bound by NS3N-fused synaptic proteins for active drag to terminals, enabling post-dissection sequencing to reveal projections (solved soma-to-process transport challenge).
+
+- **Viral Library Generation**: Plasmid-pool barcoding → virus production avoids bottlenecks; Sindbis preferred over AAV (lacks RNA export) or rabies (amplification biases); high MOI avoidance ensures sparse labeling.
+
+- **MAPseq Mechanics**: Inject barcode library → dissect target regions → sequence → co-occurrences infer single-neuron projections (handles multi-barcode neurons as replicates; sensitivity > GFP tracing; fibers-of-passage caveat shared with optics).
+
+- **Motif Detection**: Test independence null (P(A∩B) = P(A)P(B)) on barcode co-projections; local V1 bifurcations overrepresented (structured rules), but long-range cortical ~independent (simple probabilistic model explains dense "all-to-all-ish" connectivity).
+
+- **BARseq Insight**: In situ Illumina-style sequencing (cyclic nucleotide imaging) scales to 10^6 neurons + 150 genes/brain, combining transcriptomics, connectomics, morphology at subcellular resolution; axonal BARseq visualizes multi-neuron projections simultaneously.
+
+- **Developmental Triad**: Genes + environment + chance (stochastic wiring) explain variability (e.g., 50% MZ twin schizophrenia concordance); wiring priors as NN regularizers for efficient, brain-like models.
+
+# Transcription errors?
+
+- "Foresight NeuroTech Group": Likely "Frostig NeuroTech Group" (Valentino Braitenberg/Foresight reference? Or event host; uncertain without context).
+- "Turn24 seminar series": Possibly "Turn 24" or "Turing24"; best guess is event-specific series name.
+- "Jean-Louis Vey, Jeff Staines": Corrected to "Jean Livet, Jeff Stainier" based on Brainbow authorship (Livet, Stainier, Lichtman); "Staines" confidently "Stainier".
+- "Ustis Kempchel / Eustis Kemptchel / Eustace": Likely "Eustis Kemptchel" or "Augustas Kemptchel"; Zador lab collaborator on V1 MAPseq—upon recall, probably "Travis Kemp" or similar; uncertain, suggest "E. Kemptchel".
+- "Shingus": Clearly "Sindbis" virus.
+- "Tom Mercer's Fogel's lab": "Tom Mrsic-Flogel".
+- Visual area names: "P-M-A-L-R-L-A-L-L-M-N-L-I" → "P, LM, AL, RL, LA, LL, MNL, LI" (standard mouse visual areas: LM=posteromedial, AL=anterolateral, etc.).
+- "LM-AO": Likely "LM-AL" (overrepresented motif).
+- "MAP seek / MAP C": "MAPseq" (Multiplexed Analysis of Projections by Sequencing).
+- "BARSEEC": "BARseq".
+- "Shaoyin": Likely "Xiaoyin" (common in lab; Zador postdoc on STARmap/BARseq).
+- "Zayim": Likely "Zeynep" or lab postdoc on rabies; bioRxiv paper uncertain.
+- "this capsule, Ian Taikan": Likely "Kaspar, Ian Pekkonen" → "Ian Peikon".
+- "Dian Chan": Likely "Dian Chen".
+- "Ching Zhang": Likely "Qing Zhang" (CSHL facility head).
+- "Justin Beaver": Intentional pun on rescued beaver mimicking species behaviors (viral video).
+- "lacrosse dish": "lacrosse stick".
+- "faucet salons": Likely "Foresight salons" or host event name.
+- Visual cues (e.g., "my red oval", cursor): Retained as descriptive.
+- Technical terms confidently corrected via domain knowledge (e.g., "NS3N" for RNA-binding domain, "boxB" hairpin, "MOI", "MERFISH", "CosMx").
+
+# See also
+
+* [[connectomics]]
+* [[mapseq]]
+* [[brain uploading]]
+* [[brain imaging]]
+* [[neuroscience]]
+* [[zador lab]]
+
