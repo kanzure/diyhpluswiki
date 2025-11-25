@@ -1,0 +1,234 @@
+Sean Wrona on keyboard geometry and how to type very, very fast.
+
+date: 2022-05-23
+
+video: <https://www.youtube.com/watch?v=TSftAHT_2uA>
+
+<https://seanwrona.com/>
+
+LLM summary: This presentation empirically analyzes TypeRacer logs from 13 top typists to quantify QWERTY key latencies, revealing that spacebar speed dominates due to frequency, followed by right-hand lowercase letters (e.g., N, O, U, H) benefiting from low digraph conflicts and fewer keys per hand, while left-hand keys like R, T, D suffer high interference near the E; it critiques home-row anchoring as geometrically suboptimal given top-row letter preponderance (e.g., 50% of top-10 ETAOINSHRD), advocating probabilistic hand positioning biased toward high-frequency/low-conflict keys like centering left middle on E, right index on N (enforcing right-thumb spacing), and index avoidance of F/J—termed the "Arsenio method"—to enable anticipatory "play for position" akin to Tetris previewing, balancing speed-accuracy via burst on fast digraphs and caution on slow bottom-row edges (Z/X).
+
+[[!toc levels=3]]
+
+# Video description
+
+"Finally, without further ado, I launch my first instructional typing series. In this episode, I discuss the nitty-gritty of my typing style, my statistical research on how I determined the fastest letters and words, what the fastest and slowest keys and regions of the keyboard are, some overlooked theoretical underpinnings on the geometry of the computer keyboard, and my explanation for why there are better optimizations for typing on QWERTY than the home row method. I also briefly discuss this year's Intersteno contest, the revival of the Ultimate Typing Championship, the New York Times article that featured me, my auto racing statistical research, announce the re-launch of my Maladroit Millennial series, and show video clips from VHS tapes featuring me from the '80s, '90s, and 2000s. All that and I still kept it to 25 minutes."
+
+# Introduction to Typing Strategy Research
+
+I promised this video over a year ago and I know a lot of people have been waiting, but I've been doing a lot of other things and I will talk about those later. Many people have asked me over the past decade plus for typing tips and for quite some time I didn't know what to tell them. Now I know some stuff and I want to finally discuss the fruits of my research on typing strategy in a YouTube video.
+
+The first thing I'm going to discuss here is what I think is one of the most important facets of typing and one that I think is generally overlooked, which is understanding the geometry of the keyboard and where to best place your hands. Spoiler alert, it's not in the home row.
+
+I'm only going to be providing advice for QWERTY users because I have not used any other layouts myself and I couldn't speak authoritatively on them, although some of the advice I provide here may be somewhat applicable to other layouts. Besides, there's a Dvorak competitive typist who has a way bigger channel than mine and he would clearly be the best suited to teach people how to type Dvorak.
+
+# Speaker's Early Typing Background
+
+No, this is Sean. I taught myself how to type when I was three or four years old and I don't remember how I learned. I taught myself seemingly on instinct while using CPT Personal Touch Typing, the obscure program that my parents had that actually predated Mavis Beacon, but I could never recall the thought process of how I developed my typing strategy to share with other people.
+
+It just wasn't something that I ever considered important as a kid and something I never thought about. It was just one of many things I was doing back then. As you can tell from my last video, nobody cared about typing in the 90s as competitive typing essentially did not exist, and honestly more people noticed my rapid arithmetic skills.
+
+# Early Typing Advice and Lack of Theory
+
+When I launched seanwrona.com in 2011, I included a summary of typing advice that I regurgitated at will when people asked me for tips, but I didn't really know what I was talking about. The ability to type and the ability to teach others how to type aren't necessarily correlated, just like how the best writers aren't necessarily the best English teachers or whatever.
+
+This was just something I had happened to become good at even though I never had any theoretical underpinnings and had never done any research on it. So while I think a lot of my historical advice was okay, I knew I could do better.
+
+# Influence of Michael DeRoche
+
+One of the biggest influences on my book was the now-offline Michael DeRoche. He was maybe the first online typist of this generation who was trying to turn the development of typing strategy into a science.
+
+In the very early years of the TypeRacer Discord, DeRoche and some other people would list which fingers they used to type each letter of a word for a seemingly unending string of words for hours on end. DeRoche is a skilled pianist, so like Frank McGurk and Margaret Owen before him, he came up with the idea to use piano notation where each hand's index finger is marked as one and each hand pinky is marked as four.
+
+I had no interest in this at that time and quite frankly my eyes glazed over whenever they were doing it. I was faster than all those people despite having no strategy whatsoever and competitive typing was already something I was growing tired of at that point. I was actually kind of eager to be surpassed, because I thought it might relieve me of some of my burdens, especially a lot of the attention I didn't like. So who cares about this, was my initial attitude.
+
+# TypeRacer Logs Analysis
+
+In addition to this, DeRoche was for a while the head of TypeRacer's moderation team, which means he was one of only a few people at that time who had access to everyone's TypeRacer logs. These logs list the number of milliseconds it takes for every user to type every character in every TypeRacer race since late 2011, and DeRoche saw great potential in this to try to recreate past races in order to understand other typist styles. Who was fast, who was slow, which typists were faster or slower on particular kinds of words or letter patterns, whether there was a trade-off between speed and accuracy, and so on.
+
+Although I wasn't interested in most of the things he was doing, he did wear me down and I eventually decided to conduct my own analyses in the same vein shortly thereafter once I decided I was going to write a book. While Michael went through the logs haphazardly looking at each race at a time, I decided to conduct a more rigorous analysis because I wanted to find out what the fastest and slowest keys on the keyboard were, what the fastest and slowest words were, and so on.
+
+People had already speculated about all these things before, but mostly certain typists had a feel for them and nobody had ever really tried to collect data on any of this. I used the TypeRacer logs of 13 of the most prominent TypeRacer qwerty users in this analysis as of December 2019. I never added any of the people who really broke out later like Josh and Bailey and I seem to have lost access to the TypeRacer logs so I probably never will and that's okay. I've been in a lot of physical pain lately.
+
+For each typist I included only their fastest race for each quote they typed. I know many people race select and skip out of their slower races so that might skew some of these statistics on the fastest characters or words. So I figured just considering the absolute fastest races would be the best way to get an accurate profile of each typist's style. People generally will never quit their fastest races on a quote.
+
+Essentially, I subtracted the difference in milliseconds between each typist's average on all characters about the number of milliseconds it took that typist to type a particular character, or the average number of milliseconds it took each typist to type all the characters in a word. I knew in my head that the home row method was wrong, but I didn't quite know what was right. I figured I needed to do this in order to provide good advice for the last two chapters of my book.
+
+# Fastest and Slowest Keys Overview
+
+Averaging the results of each of these 13 typists, this slide contains a list of all the keys on the QWERTY keyboard that were frequently enough used from fastest to slowest sorted by the average number of milliseconds per keystroke.
+
+You don't need to memorize this list or anything since each typist has a different style and nobody has the exact same speed ranking across all these characters by any means. What is most important is to use this data to understand what makes a key fast and what makes a key slow.
+
+A lot of experienced typists already have a good feel for this, but I do think building a theoretical knowledge for what makes a key fast is an important aspect of typing that nobody talks about, possibly one of the most important aspects.
+
+# Spacebar: The Fastest and Most Critical Key
+
+The spacebar is for most typists the fastest key on the keyboard. It is also the most frequently used and the most important, but it's not something most typists tend to think a lot about. Typing drills always focus on practicing letters or maybe practicing punctuation later, but if you're going to practice any specific key, it will always be most important to get your spacing speed up because the spacebar occurs more frequently than any letter.
+
+Typists who aren't fast spacers will usually have to compensate in some other way, usually by developing extremely good accuracy, and I've noticed there does tend to be a trade-off between spacing and accuracy. One of the most frequent errors for the fastest typists is pressing the spacebar either one character too early or too late, and that might also be true for slower typists as well.
+
+The typists who tend to do the best seem to be those who find the best balance between speed and accuracy. In the years I was dominating, there were both other typists who were faster in peak speed and typists who were more accurate, but nobody found the happy medium like I did, which is why I dominated for years.
+
+Mastering your spacing is, I think, one of the best ways to develop this balance, and it is something people should really practice.
+
+# General Patterns in Key Speeds
+
+After the spacebar, you will note that the fastest keys tend to be lowercase letters as you would expect, followed by high-frequency punctuation marks, numbers, capital letters, and low-frequency punctuation marks. You can probably pretty easily guess in general which keys would appear in certain tiers on this list, but I want to go into a little more detail.
+
+Generally speaking, the fastest lowercase letters are those using the right hand. Many people would assume that's because most of the people in my survey were right-handed, and as I recall that was true, but I don't think that's actually the reason.
+
+# Core Factors for Key Speed: Frequency, Conflicts, and Digraphs
+
+The two things that make a key fast in general are the frequency of its use and how many keys are in conflict with it. A lot of people think that the primary motion in typing is the individual keystroke, but that is not the case. The placement of your hand should not remain precisely fixed in the same way when you are typing the same letter, because you need to twist your hand in a slightly different manner to type the same letter depending on the letters immediately before and after.
+
+The key motion in typing is the digraph or two keystroke. August Dvorak noted this in his book *Typewriting Behavior*. While I'm not a big fan of his layout, his book was very impressive.
+
+The best strategy in typing is making sure you are always in the best position to type the next keystroke as fast as possible while sacrificing as little time as possible on the current keystroke. Think of it like a game of Tetris. The game will tell you the next piece you will receive and the best Tetris players know how to prepare the board in advance to place the next piece while simultaneously playing the current piece. This, in my opinion, is also the best strategy for typing.
+
+Dvorak himself called this a play for position, which I find insufferably pretentious, but it does summarize this theory well. Typists place their fingers in slightly different motions when typing an E, depending on whether it is followed by an S, R, D, or some other letter. The typist needs to form a different angle to type all of these different digraphs. Hence, the E is ideally typed differently every single time depending on the context of the letters of the word that come before and after it.
+
+One of the things that made me so good for so long was training myself to accidentally do this when most people were sticking to the home row method, a method I think is mistaken.
+
+The most frequently used keys would in general be the fastest keys simply because those are the keys that typists have easily had the most practice on and typists do improve in practice. However, this is complicated by the next factor. Keys that have many conflicts with other letters that are conventionally typed by the same finger end up being slower than keys that have virtually no conflicts.
+
+# Right-Hand Key Analysis
+
+If you look at the fastest letters on the QWERTY keyboard, N, O, U, and H are all near the top, while the most frequent letters like E, T, and R are frequently slower. Why is that?
+
+It's because the five other keys that are conventionally typed with the right index finger, the Y, H, N, U, and J, almost never appear immediately before or after the N in words. The only exception is U, which does occur frequently with the N in "un" words, but there are no other conflicts with that finger whatsoever.
+
+Since the N is also substantially more frequently used than all the other keys using that finger, I believe you should center your right index finger on the N at all times, even though the home row method says you should center it on the J instead. If you have to type the U immediately before or after the N, you should use your middle finger for that.
+
+Because all the characters using the right index finger interact with each other so rarely, naturally the U is also fast. The O is fast because it only shares the same column with the L, but much to my surprise, the L is curiously slow, and I don't have a good explanation for that.
+
+As you can see, the right-hand keys are simply faster because there are simply fewer letter keys on that side of the keyboard and therefore substantially fewer conflicts. Additionally, most of the higher probability letters are also on the left-hand side of the keyboard, which means you have even more conflicts on the left-hand side than you would if the keys were more randomly distributed.
+
+In my opinion, it doesn't matter whether a typist is right-handed or not. The right-hand side of the keyboard is faster.
+
+# Left-Hand Key Analysis
+
+As for the keys on the left-hand side of the keyboard, the A is the fastest because while it is only the third most frequently used letter behind the E and the T, the A happens to be surrounded by the Q and the Z, which are generally regarded as the two least frequently used letters in the English language. It has virtually no conflicts with other letters as a result, which makes it almost as fast as the N.
+
+Even though one might think the left index finger is overloaded because it has to type six keys by default, the G came out as the second fastest letter on the left hand side of the keyboard because it is surrounded by a lot of letters, F, V, B, and T that almost never occur immediately before or after the G in words.
+
+The E is still fast, just due to its frequency alone, as is the S, but the very frequent R, T, and D take significant hits because the R occurs very close to either the T or the D in many, many words, and those fingers are all near each other. Worst of all, those letters all probably interact with the E more frequently than any other vowel, and the E is right near them as well. This slows down all these keys significantly, so you really need to work up a strategy for this section of the keyboard to adjust for this, which is probably QWERTY's biggest weakness.
+
+# Slowest Keys and Workarounds
+
+As you can see, the absolute slowest letters tend to be those letters that appear on the outer edges of the keyboard, particularly the first half of the bottom row. Not only are two of the least frequently used keys located there, the Z and X, which is the absolute slowest key for most typists, but almost all the keys in that region are typed by fingers that usually have a more important and more frequently used letter to type at the same vicinity in the word.
+
+One way to work around this is to do what Alpha Panda did and use your left thumb to type some of these keys. He taught himself to type the X using his left thumb and was substantially faster than anyone else on it as a result. Aside from that, you just have to bite the bullet and type those keys more slowly.
+
+Again, I'm not saying the specific keys you will be fast and slow on will directly match this list. Everybody has differences and sometimes significant ones. However, you should try to familiarize yourself to this list to some degree to help build an instinct regarding which keys are fast and which keys are slow in general because in my opinion the best way to balance between speed and accuracy is to make sure you type every key or digraph at the best possible balance between speed and accuracy.
+
+This means you don't want to type certain slower keys faster than you should because that might induce an error. But for the faster keys you should probably try to burst a little more. I don't really think in this way for specific keys but I definitely do when it comes to the fastest words.
+
+# Critique of the Home Row Method
+
+Now that I've provided this information about which keys are fast and which keys are slow I want to discuss why the conventional home row method misunderstands the geometry of the keyboard and is not the best possible optimization for typing the QWERTY keyboard.
+
+The home row method assumes the typist should center their fingers around the center row under the implicit assumption that that will minimize the amount of time it takes to get to all the other keys. However, this is clearly incorrect.
+
+The 10 most frequent letters in the English language are in order E-T-A-O-I-N-S-H-R-D. Five of these letters appear on the top row, four in the center row, and only the N appears on the bottom row. The top two rows are used way more often in QWERTY typing than the bottom row is, and the top row particularly is the most used.
+
+Centering your fingers on the home row only minimizes the amount of time it takes to get to all the other letters if the probability of typing each region of the keyboard is the same across all regions, but that is not the case. Since the vast majority of typing is done on the top two rows, a clever typist will realize that the hand should be placed in a higher position on average than the standard home row position. Ideally, some fingers should be placed on the top row and other fingers should be placed on the center row. The bottom row should only focus on the letter N.
+
+Furthermore, I believe it is beneficial to center your fingers around the fastest keys as much as possible also. Since you should type fast portions of text more quickly and slow portions of text more slowly, I think it is beneficial to gear your typing strategy into this way of thinking.
+
+Placing your fingers closer to the fastest keys will enable you to burst on those keys better than a motion from the center row to a top row position would. Slow keys are going to be slow regardless, so you should put more emphasis on being accurate on the slower keys and focus on maximizing speed on the faster keys, which I think helps balance speed and accuracy.
+
+It is absolutely asinine to me that almost all American keyboards to this day are imprinted with bumps, which are technically called homing bars, on the F and J, as if those characters happen to have primal importance. I happen to know that what we now call the home row of the QWERTY keyboard was directly taken from the first half of the alphabet. It literally contains seven consecutive consonants in order, D, F, G, H, J, K, L. Yet people seem to think these keys were placed there by a decree of God or something.
+
+From my research Christopher Latham Sholes and James Densmore the co-inventors of QWERTY clearly put most of their emphasis on the top row so you should as well. Don't believe the home row hype and never waste the power of your index fingers by sitting them on the F and J by default.
+
+# Keyboard Speed Map and Hand Anatomy
+
+I color the spacebar and the 26 lowercase letter keys on this keyboard map so that the nine fastest keys were displayed in red, the nine middle keys in light blue, and the nine slowest keys in dark blue. Since there is still a general correlation between frequency and letter speed, this chart also paints a very similar picture.
+
+Four of the nine fastest keys are located on the top row, three are located on the center row, and only the N is located on the bottom row, while five of the absolute slowest keys dominate the bottom row. Since the top row is the most frequently used and the fastest, and the bottom row is the least frequently used and the slowest, this also supports the idea that an average typist would benefit by placing several fingers in the top row by default to minimize the time to get to top row keys that are both fast and frequently used.
+
+Additionally, I believe home row does not properly reflect the anatomy of the human hand. People's fingers are not the same lengths, and each typist's index, middle, and ring fingers will be longer than their pinkies, sometimes substantially longer.
+
+I believe forcing your fingers on the home row when they don't need to be there, for instance, to type such unimportant letters as the F and J, also creates friction because your fingers will feel better if they are allowed to stretch. I think that as much as possible you should be using your index, middle, and ring fingers on the top row, and there's absolutely no reason to force them down onto the home row when so many of the keys there aren't that important.
+
+This isn't to say you can't be fast on the home row. Taryn and Kathy have certainly been able to do it. But I do think the typing style I advocate is a more natural style that will feel better for your hands.
+
+# Optimized Default Hand Positions
+
+Essentially, I accidentally trained myself to optimize the QWERTY keyboard in a Dvorak-like way, but typing in this way can actually be better than Dvorak because Dvorak erroneously assumes that all typing should be done on the home row when the pinky feels more comfortable there than the longer fingers do. I think the fact that Dvorak incorrectly assumed that home row was correct is one of the main reasons why QWERTY still thrives as the industry standard.
+
+Home row is correct about the A and the S. Your left pinky should nearly always be on the A and your left ring finger should nearly always be on the S since the other keys using those fingers are far too rarely used. I occasionally also type the S with my left pinky if there isn't an A in the word, but that's an advanced trick that might not work as well for you as it does for me.
+
+However, I disagree about everything else. The E is the most frequently used letter, and it appears in the top row in the middle position. This is where your left middle finger should be focused at essentially all times. It's a place where the finger wants to be while placing it on the D creates more friction and it's frequently used and it's fast.
+
+Similarly you should also place your right middle and ring fingers on the I and O because they occur much more often than the other keys in those columns and again those are places where those fingers want to be.
+
+I already mentioned that you should center your right index finger on the N because it is the fastest key and one of the most frequently used and it's a key that has almost no conflicts with any of the other keys using the index finger as well. But there's an additional side benefit to note. If you center your right index finger on N instead of J, even though that can be an awkward pivot to somebody who doesn't want to shift their right hand on such an odd angle, that essentially forces your right thumb on the spacebar by default, which minimizes your spacing time.
+
+Additionally, since almost all the letters that end words are typed using the left hand, or can be, you should always use the right thumb to press the spacebar, and this position makes spacing even faster than home row does, which as I mentioned is also extremely important, if any of this is really important, which I definitely admit it kind of isn't.
+
+What to do with your left index finger is a tough call. Not only are the R and T very frequently used, both are on the top row and both are best optimized for being typed by the left index finger. There are going to be conflicts here. I think typists should usually type the D with the left index finger also, because typing it with the left middle finger instead will cause you to take too much of a hit on your E speed, and since the E is the most frequently used letter, you can't have that.
+
+I choose to center on the R most often because it is on the top row and centrally located around all the other keys which it frequently interacts with, but that could just be personal choice.
+
+I know the H occurs quite often as well, particularly in shorter words, and I can see the argument that maybe it might be better to center your right index finger around the H instead of the N, especially if you find typing on the bottom row by default to be weird, and I can understand if you do.
+
+Having said that, never center your index fingers around the F and J. Never ever ever. Those fingers are too important and those letters are not.
+
+Personally I go further and don't think I really center my fingers anywhere per se as I am more focused on moving my fingers in advance so that they are best placed to type the next word than creating some kind of default position. But if you want a default position, this is what I recommend and it's way better than home row.
+
+If you want a mnemonic, I call it the Arsenio method. Think of the comedian and talk show host Arsenio Hall.
+
+# Teaser for Future Typing Videos
+
+I think that about covers our lesson for today. I will discuss the fastest and slowest words and how to condition yourself to type different kinds of words in a later episode, but it might be a month or two for now, since there are a number of things I want to cover first.
+
+# Intersteno Typing Contest Update
+
+I entered the Intersteno typing contest one last time this year, kind of at the last minute. I thought I might have the opportunity to win because they now allow the typing of Japanese text using English language keyboards, and I did in fact post the highest Japanese score in Intersteno history this year because of that.
+
+I wanted to enter this year because entering this contest I had won a total of 19 typing contests and I wanted this to be my last contest. I'm sure I'll record myself typing bits and pieces here and there in the future for videos, but I don't want to compete anymore.
+
+Because the Japanese typists no longer had such an advantage, I thought I stood a good chance of winning both the mother tongue and multilingual championships. If I won one of them, I would win a 20th championship. If I won both, it would be 21. I figured those were two good numbers to end on, while winning only 19 championships feels dirty somehow when you're that close to 20.
+
+As it turned out, I did win the Mother Tongue Championship for the 8th time, 9th if you exclude the time I was disqualified for this YouTube video, but I ended up losing the overall contest because my error rate was too high for Czech, which caused my score to be disallowed, even though my practice score immediately before it would have been enough to win. That was mildly annoying but I let it go.
+
+It was good to see Andrea get a big international victory for the first time besides his earlier 10 Fast Fingers records and barely contested Typing Zone championships. I still remain the only person to win Multilingual and Mother Tongue in the same year although Andrea will probably do that next year. And Takayuki Nakayama's four Multilingual championship wins look like a record that will stand for some time if I don't enter again, and I really don't think I'm going to.
+
+I've moved on. Even though there's going to be a new Ultimate Typing Championship this year, I don't think I'm going to enter that either. For one thing, it's on a Saturday, and lately my job has had me working on every single Saturday. I could take it off, but I think the odds of me placing in the top two at this point would be very likely remote, as I would expect the finalists to be Shaq versus Josh or Bailey at this point, so the odds of me cashing it all seem somewhat unlikely.
+
+I thought about commentating also, but even though I expressed interest several times, they haven't really asked me about that, and I seem to be losing my voice somewhat, as you can kind of tell. I think I'm going to sit this one out. I know my time has passed and it's better to go out a hero than an old wash-up.
+
+# Recent Media and Loss of Typing Interest
+
+Last month I was featured in a New York Times article by Kenneth Sturtz with a handful of other typists. That was interesting. There are potentially some other interviews in the works as well.
+
+But even though I know I promised this video for over a year, I've been struggling hard to keep myself interested in typing even though I know it's the main thing many of you are interested in. It took work to motivate myself to complete this even though I knew I could and I've been occupied in a number of different directions.
+
+# Personal Life Updates
+
+For one thing I've been continuing to work on an auto racing statistics model for my next book where I plan to rank all the open wheel drivers since World War II. I'm probably about 80% finished but it will still probably take a couple more weeks.
+
+I'm having to take on more housework as my mom is getting sicker. I myself have been having increasing physical health issues even since I released the ARFID video. I've just flat out lost my interest in typing, but I do still have an interest in creating video content.
+
+I don't think I'm going to do another Typey Awards because that was so hard to organize and a lot of the people I had on my original panel have basically since dropped off the typing scene.
+
+# Intuitions
+
+- **Probabilistic Geometry Over Uniform Access**: Hand resting positions must weight key frequencies and row usage (top row ~50% of common letters), not minimize uniform distances; elevate average hand position to top/center rows.
+- **Digraph-Driven Motion as Primary Unit**: Typing optimizes transitions via "play for position"—preload finger angles for upcoming keystroke (Tetris analogy), twisting per context (e.g., E before S/R/D), not static per-key strikes.
+- **Speed Determinants**: Frequency × practice + inverse conflicts (same-finger digraph rarity); right hand inherently faster (fewer keys, balanced load); exemplify N (high freq, zero conflicts except rare UN).
+- **Spacebar Primacy**: Fastest/most-used; right-thumb default via N-centering; trade-off with accuracy (early/late errors common); drill explicitly.
+- **Speed-Accuracy Equilibrium**: Burst fast keys/digraphs, deliberate on slow (e.g., bottom-row); instinct from data familiarization.
+- **Home Row Fallacy**: Ignores skew (only 1/10 top letters bottom-row), anatomy (longer index/middle/ring suit top-row), history (QWERTY's alphabetic home row arbitrary); reject F/J bumps/index homing.
+- **Arsenio Method Defaults**: Left: pinky-A, ring-S, middle-E, index-R/T/D; Right: index-N, middle-I, ring-O, thumb-space; dynamic overrides for preview.
+- **Trick: Left Thumb for X/Z**: Bypass pinky overload (Alpha Panda style).
+- **Data Rigor**: Fastest-race-only logs normalize selection bias; relative latencies vs. personal average.
+
+# Transcription errors?
+
+- "Frank McGurin": Likely "Frank McGurk" (historical typing champion/pianist analogy), but minor variants exist (e.g., McCourt?); low confidence, retained phonetic base.
+- "Melodrite Millennial" / "Maladrite Millennial" / "Maladrite": Highly uncertain series name; possible "melodramatic millennial," "milladrite millennial," or "my millennial [life]" videos (personal 90s/00s footage); speech-to-text artifact from "millennial" + proper noun.
+
+
