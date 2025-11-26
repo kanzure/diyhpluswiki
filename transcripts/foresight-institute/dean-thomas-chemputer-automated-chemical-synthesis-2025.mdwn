@@ -1,0 +1,674 @@
+
+speaker: Dean Thomas
+
+talk title: Machines making machines (for automated chemical synthesis)
+
+date: 2025-06-05
+
+youtube: <https://www.youtube.com/watch?v=QOmlIIR7ok8&list=PLH78wfbGI1x3hjH8RKrgoT6pgUG-k0vdI&index=5>
+
+<https://deanthomas.eu/>
+
+LLM summary: Dean Thomas from the Cronin Group presents their work on Chemputers—modular, automated chemical synthesis platforms driven by the eXtended Description Language (XDL), enabling reproducible, autonomous exploration of chemical space. He contrasts traditional manual workflows with automated ones that parse literature procedures into executable XDL code, incorporating online analytics (e.g., benchtop NMR for reaction completion via spectral plateau detection), dynamic feedback for stoichiometry adjustment, conditional logic, and integrated purification (liquid-liquid extraction, rotary evaporation, flash chromatography). Demonstrating a proof-of-principle autonomous synthesis of rotaxane-based molecular machines (threaded via reductive amination, nitro reduction, and capping), the platform runs ~800 primitive steps over 60 hours with minimal human intervention, addressing synthesis bottlenecks from his PhD in David Leigh's group. Future visions include closed-loop design-test-optimize cycles, safety enhancements, digital twins for simulation, and scalable applications from high-throughput research to on-demand drug manufacturing in resource-limited settings.
+
+[[!toc levels=3]]
+
+# Abstract
+
+The assembly of [[molecular nanomachines|molecular nanotechnology]] using atomically precise manipulations promises to enable nanotechnology with unprecedented architectural features and exquisite functional properties. However, this future is critically limited by the ability to autonomously manufacture nanomachines, with current efforts being heavily labour intensive. A system is needed to program and assemble matter under digital control, unifying molecular nanotechnology and macroscale chemical processes. Herein, we present a universal chemical robotic synthesis platform (Chemputer) that produces functional molecular machines. By integrating autonomous feedback through on-line NMR and liquid chromatography, a divergent four-step synthesis and purification of molecular rotaxane architectures are achieved. The synthetic sequence averaged 800 base steps over 60 h, affording products on an analytical scale for feasibility studies. While standardizing rotaxane synthesis enhances reliability and reproducibility, our workflow addresses two bottlenecks in autonomous synthesis: yield determination (via on-line 1H NMR) and product purification via multiple column chromatography techniques (silica gel and size exclusion).
+
+# Speaker bio
+
+Dean Thomas is a Research Fellow at the University of Glasgow and Team Leader in the Cronin Group, focussing on Digital Chemistry and chemical automation. He graduated from The University of Manchester in 2017, with a Master’s thesis focused on transition metal-free C–H functionalisation. He went on to pursue a PhD under the supervision of Professor David Leigh, completing his doctorate in 2021. His research focused on the design and operation of fuelled artificial molecular machines capable of performing macroscopic tasks. Following his PhD, Dean continued as a PDRA, working on autonomous molecular systems for nanoscopic logic gates and targeted cargo delivery. In 2022, he joined the Cronin Group at the University of Glasgow to lead innovation in autonomous synthesis platforms, with a particular focus on the safe handling of hazardous molecules and the acceleration of reaction discovery and optimisation.
+
+# Welcome and Introduction
+
+Hello, everyone. Welcome to [[Foresight|foresight institute]]'s Molecular Machines Group. Today, we're really lucky to have Dean Thomas with us. He is part of the Foresight 2025 cohort of fellows in our fellowship program, and he's also a team leader in the Cronin Group.
+
+So without further ado, thank you so much, Dean, for joining us.
+
+No problem. Thank you very much for the invitation. I was a member of Foresight Fellows this year and I've really enjoyed it. So I thought we've done with the Foresight vision weekends and then we started talking a little bit about this as a spoiler because we were getting it through publication, but now I can properly talk about it with everyone and share the work we've been doing here in the Cronin Group.
+
+# Cronin Group Research Overview
+
+So I'll jump straight in. Cronin Group, for those that are unaware, we have quite a diverse set of research themes all concurrently being worked on.
+
+One area is looking at the assembly of artificial life and how that can be constructed using assembly theory.
+
+One area is looking at the chemical information and selection of complex mixtures and where selection thrives from.
+
+Another area is looking at chemical computers and seeing if we can have more impressive calculation potential using chemicals rather than silicon-based transistors.
+
+And the final quadrant is the quadrant that I'm responsible for in some respects. It's the digitization of chemistry.
+
+# Key Takeaways: UCDL and Chemputers
+
+And in this field, there's three main things that I hope you take away from today: mainly that we talk a bit more about the universal chemical description language, or XDL, and that we have these automated chemical synthesis platforms called Chemputers.
+
+And with these two things together, we're able to explore chemical space in an autonomous fashion.
+
+# Chemputer Team Goals
+
+Now, in the Chemputer team, which is what I lead up with some colleagues, we care about reproducibility and we care about having these abstract steps that can be executed on platforms reliably again and again.
+
+And what that means really is that if you took a literature procedure from any experimental work that you were going to do, can you translate that in a lossless fashion into some form of code that can be executed on platforms again and again?
+
+# Traditional Manual Workflow
+
+And if you think of that traditional workflow, for instance, you may have come across previously: you read the procedure that inspired you online, you maybe interpret those synthetic operations. So for example, compound A was dissolved in 50 mL of acetonitrile.
+
+That's fine. You can think how you'd like to do that. You might amend that procedure if necessary. Your compound in particular is not soluble in acetonitrile, but it would be soluble in acetone, for example. You might tweak this from your own expertise.
+
+You then think to yourself what the necessary equipment would be to set up this reaction. Maybe you got to reflux it for a period of time or you have to purify avenues.
+
+And then you prepare all those reagents, all that glassware, and you set it up and you carry out synthesis.
+
+No, that's fine. That's been going for hundreds of years in that procedure way.
+
+# Automated Workflow
+
+The automated workflow is slightly different. And it starts with a much more complicated challenge of how can we best parse the procedure from all the different types of language there are in the world, and also the types of language that are, how people write those procedures in their own training, from their own fields.
+
+We need to extract the synthetic actions that are critical from those procedures. So for example, this adding of acetonitrile really needs to know where it's going to, which vessel—could be a reactor. It needs to know what reagent it is and where it's coming from and what that volume is.
+
+We then need to amend and validate that procedure and somewhat sanitize it because humans can be quite ambiguous with their prose and quite vague when they say in a procedure that they dried it thoroughly. That's not extremely helpful. Sometimes we would rather have quantifiable values there that we can say it's for six hours. Let's replace it with that. That may not be perfect, but it's a starting point that we can at least say we ran it for six hours every single time.
+
+With that procedure in mind, we could then generate a graph and a physical setup of this which shows where our resources are in this map and how we can access those resources. So for example, in our reagents down here, we need to know if there's these avenues to get to the reactor in question.
+
+With the graph in mind and our execution, wherever we've translated this workflow into this code, we need to put them together and say, can I execute this code on this platform? And if not, please tell me where there's a problem. If I can't find the resources or I can't connect them in a linear sequence, I need to fix that now.
+
+But once we have all those things in place, we can execute the synthesis and hopefully achieve the same target compound.
+
+# Chemical Synthesis as Repeated Primitive Steps
+
+And what we're trying to do in this side of the Cronin Group is really look at chemistry in particular and see that it, through the lens of automation, it's actually quite a series of similar steps repeated again and again.
+
+So here's an example of some synthesis that we like to do. There's a lot of add steps, which are very basic bread-and-butter steps that you do in chemistry. We have filters, evaporates, heating reactions—quite simple things to do.
+
+But you can imagine already how we can put these in base steps that we can send to a robot of some format, and it can execute these things for us as long as we provide it the appropriate data.
+
+# Chemputer Platform Demonstration
+
+And to jump all the way to the end, this is what happens when you get able to achieve that. This is a chemical synthesis platform called a Chemputer. And this is what we have across our lab in Glasgow.
+
+Right now it's taking reaction mixture and doing a liquid extraction, where it takes some mixture to make from this, tries to purify the products. It can then send it into a rotary evaporator where it then condenses that mixture down and concentrates it.
+
+And we have a crude material that we can then redissolve, move from one side of the rig to the other, and purify it inside of a jacketed filter here and precipitate it out and give you a nice clean compound.
+
+And at the end of all this, the Chemputer can then clean itself, clean the reaction vessel, clean the separation vessel, and reset the rig back to how it was in its original version so another person can start chemistry all over again.
+
+This is what we're aiming to achieve across a broad range of chemistry.
+
+And not to show you that's just the marketing gimmick, this is my rig right now, as I have the great privilege of being with you, giving this very call, hopefully. My rig is doing my own chemistry for me.
+
+You can see there's something on the left-hand side, which is this yellow mixture that's doing some other chemistry that I need to think about tomorrow. And then the reactions are going on the right-hand side are part of the Olympics, which we take all of our rigs and make them compete on the same experiments together to try and improve reliability and find where there might be little bugs or glitches that would affect our synthesis.
+
+So this is critically the point we're aiming for here. We want the chemists and all the experiments to be able to do other great things whilst their rigs are making the chemistry forward.
+
+# Adoption of Automation: Historical Context
+
+Now, the adoption of automation, we hope, is going to be a smooth transition. And we could hopefully all agree that manual chemistry requires some amount of effort. And to go to automated chemistry should be a lovely downhill path. We are all converts to this in some respect.
+
+300 years ago, we stood around the cauldron and heated it with some fire and stirred it with big wooden paddles until we thought it was done. Now we don't do that, of course. We use stirrer hot plates, which give us increased efficiency if we don't have to, for example, stay with this cauldron all day long.
+
+But it means that we can go and do other things while the heating is being done with an excellent accuracy and the stirring is happening all by itself. We have improved reproducibility because we know that hot plate is guaranteed to give us that exact same temperature and those conditions again and again.
+
+And that ultimately allows us to have faster reaction discovery, because we can set these things up overnight, over the weekend, and come back whenever we're ready and assess the results that we need to.
+
+# Barriers to Automation Entry
+
+Now, unfortunately, that's just a very simple example. Automation in chemistry can go a lot further. And unfortunately, there is quite a high entry barrier to this. And hopefully, you haven't been scared by what you've seen in the two videos already, but there is a lot.
+
+Our bespoke hardware you can see is involved. There's a full human of equipment, and that is sometimes developed in-house by us and sometimes bought from commercial partners. Sometimes not everyone in the commercial sector is able to design things with the speed and prototype nature of what we do.
+
+And that ultimately why we have these bespoke pieces of kit, and getting that out to the world can sometimes prove a bit of a challenge.
+
+There can be a lot of tedious setups. Certainly to make this from scratch takes a lot of your investment in both time and money. And certainly all the equipment we saw in the past two videos is connected with lots of tubing, lots of network cables to ensure that there's complete connectivity across the board.
+
+The last element, which is quite unfortunate, is the retooling cost. If you are an established laboratory that already has equipment for the past 20 years of work, you can see that being really frustrating to have to reinvest in all the latest technology that is from commercial partners just to have a small piece of equipment that can be automated and controlled remotely.
+
+# Lowering Barriers in Cronin Group
+
+So what we do in the Cronin Group as best as possible is try to catalyze this process and lower the barrier as best we can. That means increasing the functionality of kit that is already standard in the laboratories everywhere to make sure you can get the most out of what you already have.
+
+We can hopefully decrease the complexity of these platforms to make them as simple as possible, that people can just walk up and use the code, use the platform, and get onto chemistry or whatever research they intend to investigate.
+
+Hopefully, at the same time, as we remove all these barriers, we can lower the cost of these platforms so it doesn't matter what background you have and what finances you have, you're able to get the basic necessities to start automating chemistry and run from that.
+
+I will say, however, and openly admit it's an iterative process. We are trying our best, and sometimes we can spend a lot of time developing a really nice little piece of kit and then a breakthrough commercial product comes out that really has worked way better than anything we could have ever made.
+
+That means there's pros and cons to this. We are at the cutting edge of research and unfortunately we're in for the roller coaster, but we are trying one step at a time to make progress.
+
+# Platform Development Improvements
+
+And in that element, automation development for us is quite closely linked to the platform that we developed. We're constantly adding smarter sensors to our system to give more insight into the reactivity that's going on there.
+
+So simple things like color sensors or pH probes, all the way down to more ambitious and chemically insightful tools like benchtop NMR systems.
+
+We care very much to have core ability in these systems. They don't occupy an entire fume hood. They can be shrunk down to something that can fit in the corner and help with your day-to-day work rather than take more of your time off.
+
+We have improved massively in the parallelizability of these executions. So a lot of the resources inside that platform get used in parallel.
+
+So for example, we can do reactions on one half of the rig, as you saw on the video today. You can do recycling on the other half of the rig at the same time, and we can also do workups as well.
+
+So we're maximizing the usage of the equipment that has been bought and been planned out.
+
+We've recently introduced conditional logic into a lot of our systems. So not just how we used to do it in recent years, where you would run a reaction for three hours and then finish and then check things after that.
+
+How about with all those small sensors we've integrated, like color and temperature, we monitor these fingerprints, these reaction profiles, and check to see if they're within tolerances.
+
+Okay, the temperature's got a little bit too high for my liking. Let's wait a little bit longer, and then we consider cooling it down, and we'll notify the user at the same time.
+
+These conditional branches are quite complicated to hard code, but it allows us to have dynamic executions in the future. With the machines making more decisions themselves, we have to think a lot more about the safety, and that's work that will come out towards the end of the year of how we've really improved this element inside the roadmap.
+
+# Advanced Reactivity on Chemputers
+
+What dovetails really nicely with the platform development is our ability to concentrate on more and more advanced reactivity.
+
+And the first thing we did in this domain was validate over 100 reactions that chemists passionately use in their day-to-day chemistry, and then realized, okay, this one is equally effective on Chemputer platforms.
+
+We then showed that the same is true for inert chemistry, which has extreme tolerances to moisture content and oxygen, and we can have the same level of control in this more difficult domain.
+
+We can show we can do reaction optimization by looking at key variables that you'd like to improve—let's say it's yield of reaction—and use interesting Bayesian optimizers, for example, to help navigate that very complex chemical space.
+
+And then we can go further and get interesting chemical—sorry, physical chemistry parameters that could help us investigate the exact mechanisms of chemistries and then tweak our reaction conditions to optimize the yields and maps respect.
+
+And one of the best things we like about our collaborators is they always give us interesting challenges that we don't think about too much. And the Bill and Melinda Gates Foundation in particular really asked us to consider how to make pharmaceutically interesting compounds and ABIs (APIs?) that have gone off patent and are no longer commercially viable but are really interesting in the world for medicines, and how we can use these Chemputers to go and make drugs on demand in low- and middle-income countries that might really need this.
+
+# Connection to Molecular Nanotechnology
+
+And of all these really interesting areas we worked upon, one thing we haven't touched upon yet was molecular nanotechnology, which is a fascinating field that connects us quite nicely with the Foresight Institute.
+
+And it was Richard Feynman in the late 50s that dreamt of a future that would be microscopic factories that could arrange atoms exactly the way we wanted.
+
+And over the subsequent years, we all realized that biology has been doing this its entire time and it is using these biomolecular machines to hold up a lot of living systems. They're fundamental to their operation.
+
+And just a very brief example of a few: we have rotary motors that sit inside of flagella and allow the bacteria to navigate their environment.
+
+We have kinesin walkers that travel along microtubules to give information, to deliver cargo, to actually propagate signaling.
+
+And we have things like enzymes with pyruvate dehydrogenase here, which can take cargo from three separate active sites and hand them off selectively to each other to have incredible efficiency and selectivity in its operation inside the complexity that is the cell.
+
+So the community that I belong to were asking really, can we learn from these? Are we able to use them directly? Or can we develop artificial derivatives that don't have to stay inside the body and they could be used for other applications?
+
+And that's something that ties really well with the ideas of Drexler in 1986 when he thought of the future of molecular assemblers that will be a revolution unmatched by anything else. And that was a really ambitious statement at the time. And it's been shown over the next 40 years to be more true than ever before.
+
+# PhD Background in David Leigh's Group
+
+And we're in a very exciting period for the artificial molecular machine community. I had the privilege of spending my PhD with Professor David Leigh in Manchester, and this was a photo from one of our group retreats.
+
+As I was flicking through these, just trying to put these slides together, I realized it's a few who are Foresight Fellows. And inside this photo, there are six future Foresight Fellows that will be, and there's a seventh, including me now, which shows that there's a real great opportunity space for interesting chemistry to be explored here.
+
+And only during my time in the group, we worked together as a great team to look at the control of catalysis for these molecular machines using the tools of chemical fuel.
+
+We were able to break records by having these incredibly dense rotaxane systems on solid supports, and they were used for interesting QCM measurements.
+
+We were able to show some very cool loading of cargo from solution onto these solid supports, and then selectively unload them into solution so it could be very clever with what we want to load and unload.
+
+And we were able to show a very nice cargo delivery from a solution onto a rotaxane system and tag that with a fluorescence response in a true example here. And we were able to show that using, again, repulsive fuel.
+
+So we had loads of really interesting applications. But I think what is fair to say from my time in the group and from those that we shared that in projects with, the synthesis was definitely a bottleneck towards our progress.
+
+It was what we spent most of our time actually doing. It's an extremely challenging field and it's very time consuming to afford more material, especially when these synthetic steps go beyond four, five, six.
+
+You're spending more time actually bringing material through and purifying it than playing with the machines at the very end, which is the really fun bit.
+
+# Synthesis Bottleneck Example: Size-Exclusion Chromatography
+
+And one particular example I highlight from my time there: everyone had their own special size exclusion column, which is what you see here. And it was the most important piece of kit you had because it could purify your mixtures in a very special way.
+
+How it works is it separates things based on size. So the largest items, which are usually the ones you cared for as you built your modules bigger and bigger, would often come out first. And then all the other smaller pre-components would come out later.
+
+But it's a very delicate technique and used to go very slowly to maximize the resolution between two species. And sometimes you would be spending hours collecting drops of material. And then you can see there's a nice collection of green test tubes here, but maybe only one of them is actually the compound I wanted to go and do my subsequent testing.
+
+If it had been unfortunate and it co-eluted, they'd come out together. I'd have to chuck them or I'd have to combine those fractions and put them back down the size exclusion and wait another hour. It is really frustrating to have to do this.
+
+Well, fortunately, we were very studious workers there. So whilst we were waiting for our columns to kick through, we could go and read the length of literature and the latest research. And you can see me on the left-hand side, I've brought those purple notebooks out of retirement just for this talk as well.
+
+But we were very diligent. But towards the end of my time in the group, I really was asking, can we augment the synthesis workflow in this field and really improve a lot of elements so that the synthesis isn't the bottleneck and we can go towards the late-stage application testing, which is a really interesting element.
+
+# Project Goal: Machines Making Molecular Machines
+
+So the question we asked as we joined the Cronin Group and worked on this project was really, can we have a macroscopic machine capable of making molecular machines?
+
+Wouldn't it be cool if it could translate the literature protocols and all the experience that we've built over the years into these automated syntheses, these XDL procedures, and then execute those with reaction monitoring and dynamic feedback to give us machine-based optimizations rather than the user having to be involved in them?
+
+At the end of that reaction, we could then isolate it with online purification in whatever method we could imagine that to be. Ultimately, packaging up that we'd synthesize these molecular machines for that important application testing at the end.
+
+With that in mind, we could then explore quite divergent chemical and process states, which molecular machines are ripe for exploring. There's so many different interesting avenues to test.
+
+And we could maybe start thinking about really unusual and unexpected combinations, some that maybe you think are quite trivial. Maybe it's interesting to go and test those and actually have that real experimental data on the board and then go and let machine learning algorithms test that for future or use that for training in future test sets.
+
+Ultimately, this would come at no cost to the user's time and effort, which is probably why you wouldn't do it in the first place. It's a low yielding result. What the benefit of this? If you could set something up on a Friday night, let it run over the weekend, and come back on Monday morning and see some interesting molecular machines that you can use. That sounds pretty good.
+
+# Diversity of Molecular Machines
+
+So where do you begin in this space? It's an incredibly rich area. And this is just one figure that I found, which I think is a really nice summary of all the different types of molecular machines and their functions, both being simple molecular machines with active elements and both compound molecular machines, which take these constituent elements and build them together.
+
+To put some meat on the bones of molecular machines, and to put some examples—this is not an exhaustive list by any means, but some I find really interesting, and they come from the groups of Dave Leigh and from Fraser Stoddart and Ben Feringa and others as well.
+
+There's interesting rotary motors. There's interesting pumps that take cargo from solution and load it onto itself. There's interesting selective catalysts that can be switchable in their function.
+
+# Focus: Switchable Rotaxane Catalysts
+
+What we cared for, and what we found very interesting with these switchable catalysts, there can be two rotaxanes in architectural form. And what they're capable of doing, for example, is this macrocycle is able to shuttle from one side to the other and expose the catalytic moiety, for example, here, and this thiourea moiety, which can be a better catalyst in some regards as well.
+
+There can be interesting properties based off how this macrocycle reacts with other components in solution, and it can naturally change the material properties.
+
+And likewise, you can put interesting tags and fluorescent sensors on the end to show different selective control inside mixtures.
+
+So the rotaxane area was our kind of product that we'd aim for.
+
+# Substrate Library for Rotaxanes
+
+We then had to think of some interesting substrates to diversify this mixture. So we start with this benzylammonium chloride as our key thread.
+
+And then we look at these isothiour eas and isocyanates as our key motifs. And on the other side, we looked at our fluorescent tag as our interesting opportunity space.
+
+And this gives us quite a humble but small library of compounds that we could expand upon simply by adding different substrates to our matrix. But for now we'd settle on these four.
+
+# Synthetic Route for Rotaxanes
+
+We then define a synthetic route. So taking from the experience of the chemists and adapting it from literature, we set out with cyanobenzylammonium chloride, which we could deprotonate in solution to generate our reactive intermediate that had a finite lifespan.
+
+We then react that immediately with our first position of variability, the aldehyde, by reductive amination to give 3.
+
+We then reduce the nitro group here to give us our aniline with a zinc and ammonium chloride mixture.
+
+And then we do the very important steps to generate our rotaxanes: the threading of the macrocycle, and then the capping with the other alternate fragment.
+
+And it's worth saying at this point, we could also vary the macrocycle, but it wasn't part of our substrate scope here. But hopefully you can see already there are these base steps that can be used as the foundation of how we're going to convert this into our machine-readable code.
+
+# Translating Procedures to XDL
+
+And that's exactly the next thing to do, to translate this procedure into XDL, our chemical description language. And what we care for so much in our group is that it's human- and machine-readable.
+
+So if we take a simple phrase like triethylamine, blank solution added dropwise over 30 minutes, we need to parse that correctly: the subject, the list volume, be it a number in the unit, that we're adding it to our mixture.
+
+And we have these modifiers, which are really interesting. You've seen a lot in literature that people don't always specify how long they added things over. Dropwise is an interesting argument in itself. Some people can add that faster or slower to really be critical and be exactly reproducible.
+
+It's important to specify time and then our carry-out system to repeat that every single time from then on out.
+
+# Automated vs. Autonomous Systems
+
+What's now important, I think, is to discuss a little bit between the differences of automated versus autonomous.
+
+And I would put to you an automated car is able to be programmed to drive 100 meters down the road and then stop. And that's brilliant. And we'd get in there and say this is a great advancement of technology.
+
+An autonomous car, however, has the exact same capabilities. However, it's able to take variations in its surrounding that it haven't been hard-coded for and adapt. So that same autonomous car could drive down that road, see a red light or an incident occurring and slow the car down before starting against continuous task.
+
+And we really wanted to introduce this into XDL. For example, if we were to have a reaction flask in the middle, we'd measure it with maybe a camera or a temperature sensor and see, oh, something's going on here. I can see its color is getting too hot. The reaction is having an exotherm that's not in control anymore. Please quench it and go down a completely unprogrammed path.
+
+It's a safety mechanism to ensure that we're going in the right direction. Alternatively, if everything's going to plan, we can continue onwards and carry on with the synthesis as expected.
+
+This is the foundation of what we were talking about before, where we have far more sensors on the side of our platform, giving us far more insight into the chemistry that's occurring.
+
+They may not always be direct feedbacks of the chemistry, but they can be proxies of that, so for example, color, for example.
+
+And then these processes can get put into our logic system that we describe when we have the wait and then the result would be pass on to the next step or we should sort of notify the user there's an issue.
+
+# Online NMR for Reaction Monitoring
+
+And we use this straight away for our first step of our reaction when we have online analysis. We have quite an interesting problem in this.
+
+We don't want to be too fixed in what we're looking at because we're changing substrates all the time. We don't want to hard code our XDL to be looking for a certain peak inside the NMR because that could be shifting.
+
+We may have reactions which are faster or slower based on the protioelectricity of the aldehyde. So therefore, we don't want to hard code a reaction time for, let's say, 12 hours.
+
+Instead, what we looked about doing is looking at the starting materials NMR as they were just about mixed together, and then comparing the reaction mixture as a function of time.
+
+And if there's been no reaction at all, those two NMRs will be identical with each other. Okay, that's fine.
+
+However, if there is reactivity occurring over time, there'll be a change to that NMR. And at some point, it will start plateauing. And that's when the reaction is finished. We're not saying it's 100% yield. We're just saying the reaction is now plateaued and we can move on.
+
+And that's exactly what we used for this first step. And this is an example with this substrate in mind. It took about 10 hours for the reaction to reach a plateau based on agnostic processes inside of our workflow.
+
+What's important now is next, if we swap for a really reactive aldehyde, it might be it only takes two hours to finish this reaction. It's already gone.
+
+Our platform should have the ability and the intelligence to say, I'm going to move on to the next step now, rather than staring and waiting another eight hours just for a reaction to finish.
+
+# Online Purification: Flash Chromatography
+
+After this, we now need to purify our mixtures, and that's using online column chromatography as our main standard.
+
+We can put as many different columns as we wish to on there, of different scales as well, different sizes. And this is where we work very closely with our commercial partners, for example, Biotage.
+
+We had great access into the ABI that allowed us to dovetail the Chemputer with the equipment that sat on the Biotage hardware and flash chromatography system.
+
+And we can use all the equipment that's inside that commercial device and feed back into our XDL environment.
+
+This allowed the machines to then go and collect all the fractions that have an area above a certain threshold and then send them back into the Chemputer to be virtually evaporated and concentrated down.
+
+# Autonomous Stoichiometry Adjustment
+
+What's next to happen on that system, especially as you move towards multi-step syntheses, is that the reactions may not be perfectly yielding and need to accommodate subsequent steps to look up towards that yield.
+
+So for example, let's say this reaction was not very good and it went to 50%. The stoichiometry subsequently has to be whole.
+
+To do that as a human, you'd weigh the flask out and understand how much material is there.
+
+On the platform in an autonomous fashion, we actually add an internal standard and compare it against a known signal and say, right, from now on, we can scale our subsequent steps accordingly.
+
+# Platform Resource Graph
+
+With more intelligent XDLs defined, we can now close the loop and define the graph and all the resources that will be required to achieve the synthesis.
+
+And it looks a little bit daunting in this format but I can break it down a bit simpler.
+
+We have the pumps and the valves which form the liquid handling backbone.
+
+On the left-hand side, we have our reagent pool and our reactor pool, where we do most of the chemistry.
+
+One row in, we have our liquid extraction module.
+
+Coming in further, we have cartridges for filtering things with magnesium sulfate to dry them.
+
+And going one step in, we have our rotary evaporator.
+
+And these are all the modules that are being used throughout synthesis.
+
+And if we need to use our flow NMR for any analysis, we can do so here.
+
+And at the very end of the cycle, we have our column chromatography module, which has up to four or five different cartridges as we should use it inside the synthesis. And it can choose to send these fractions back into the Chemputer or onto offline, very small NMR test tubes.
+
+# Physical Platform Setup
+
+With the graph in mind of how I want to connect everything up, it's just about building it. And okay, it does look quite dull, the thing I'll admit when you first see it.
+
+But if we use the power of highlighting, there's our pump and valve liquid backbone, which is how we move our material around.
+
+Here are our reactors where we do all the chemistry, and we can send it to our liquid extraction workup module.
+
+We can then concentrate it down on our rotary evaporator, send it over to our Biotage flash chromatography system, and put it through different sized columns.
+
+And all of this gets monitored using our benchtop NMR underneath it.
+
+# Autonomous Execution
+
+So when all is said and done, it's ready to press play. And it can look a little bit inconspicuous as a user. We're all moping around the lab doing our other jobs as the platform is busy doing chemistry for us from start to finish.
+
+And you don't really notice too much because it's not going too crazy. All you might see every now and again is an extraction occurring as it sends it into here and it takes the correct phase and then rinses it a few times.
+
+So what's more interesting is instead to follow the molecule as it goes through its journey.
+
+So you see all the elements here that we've laid out before. And if we instead start with that benzylammonium chloride, first of all, we deprotonate it to generate that reactive intermediate, and we can use that as soon as we need to as fresh in situ.
+
+We then can do the reductive amination, which is quite a complicated step to automate. There's a lot of different elements going on in steps there.
+
+Afterwards, we then reduce the nitroarene to the aniline, which then opens up for our next step, which is the important threading and capping to this molecular machine.
+
+# Purification of Rotaxanes
+
+And first, you can see this reaction can be really hit and miss. The yield can change very much depending on what substrates you have in there.
+
+So we need to pay a lot of attention to purify this mixture both with normal phase chromatography to get rid of excess macrocycle and also with our size exclusion chromatography to remove any excess thread that may have formed.
+
+But at the end of all of this we have lots of nice test tubes with small amounts of material ready to be tested in our NMR.
+
+So we can generate these machines on demand and get a nice collection as we started or as we aimed from the beginning of this process.
+
+# NMR Results and Analysis
+
+And these are what the NMRs look like at the end of the process. And we can take these straight to the high-field NMR machine and start running assessments of them.
+
+And some of the machines are going to perform poorly. For example, this one, it's not going to do exactly as we care to. It's the most basic of the machines.
+
+However, more advanced versions are useful to compare to, and the thiourea motif here might be better for catalysis, and the fluorescence is useful as well for signaling.
+
+# Summary of Achievements
+
+So in summary, we've demonstrated a proof of principle, and we have molecular machines that are capable of being made via an external machine.
+
+We have an autonomous platform that's built for rotaxane synthesis, and behind the scenes, there's about 800 base steps that run over about 60 hours to afford that compound.
+
+It's all driven by dynamic feedback from online analytics. So we use any of these reaction-dependent variables and try and optimize them as best we can. For example, reaction time.
+
+And we have online purification, including liquid extraction, flash, and size exclusion chromatography.
+
+That means we can purify batches across scale domains. So we have five grams of material at the start when we're going through high throughput. And at the very end, when we really care to have precision in our purification, we can scale it down to 100 milligrams.
+
+# Broader Impact and Platform Vision
+
+And then hopefully we can then start turning the heads of organic chemists in particular and say, if you have one of these platforms, certainly if I had it for my PhD, I could increase my productivity.
+
+And overall, we're working towards having a general purpose autonomous platform.
+
+# Future Directions
+
+Where do we go next? We're trying as best we can to go towards greater autonomy and have these closed loop synthesis-operation-analysis cycles.
+
+We've shown already that we can have this executable code on our robots going into give us machines on demand. The next day was to test these machines' function on that same Chemputer and then feed back on the design and generate this closed system.
+
+And we put this together in terms of a molecular nano fast grant. And we were very thankful to receive a positive response from the Foresight Institute. We're very excited to work on this in the coming months.
+
+As we have smart systems by design, however, we need to absolutely guarantee that we have safer platforms by default. If the machine is making more and more decisions, we need to make sure that they're doing this correctly.
+
+And we had a great opportunity to go to a bomb site in Liverpool in the UK and test some of our equipment to ensure it is actually protecting the users if they are anywhere near it.
+
+And that came very valuable as I was working on one of my rigs not too long ago, as we are pushing the boundaries of the science we do in the group, and we go to more and more high-risk experiments, which are really testing, it may be that accidents happen.
+
+And this is one example where the rigs and the safety that we are designing in-house can protect the users as they should do.
+
+The next step is to provide outreach and applications to anyone that's interested. So we have these really nice models in virtual reality where you can put on a Quest headset and really inspect how these rigs are built and play with them and understand how they're built from a constituent element part.
+
+So all these pumps and valves, you can deconstruct, see where their screws are to see how they're actually constructed. And hopefully this gives a lower barrier to people having a play and they can understand in some examples what to do when things go wrong.
+
+Likewise, we like to implement new technologies with different experts in this space. So this is a really amazing XR example that you can use with just an iPhone.
+
+Pointing it up anywhere in the world, putting it on a table like I have in my room now, you can see our platforms and inspect them and see why we connect them in these ways and understand what the tubings are and how they're supposed to be operated.
+
+This is going to be really interesting for our next chapter of our work in the group, where we actually try to generate digital twins. And we're going to induct and train our users virtually so they can see in a safe space how their XDLs will operate if there's an issue inside of this in silico system.
+
+And they can simulate and validate any of their experiments before they execute it.
+
+What would be amazing in the future as we work towards it is to actually monitor both the real-life platform versus the simulated platform and see if there's any discrepancies. And as soon as we see any issues, we can start inspecting or zooming in on those problems and asking for further clarity.
+
+# Acknowledgements
+
+So with that, I'd just like to say thank you very much. Firstly, to the Foresight Institute for giving me the opportunity to talk tonight about the work we're doing in the Cronin Group. Certainly to thank them for inviting me to be a Foresight Fellow. I really appreciate the generosity for this.
+
+And further to that, the nano grants that they've given us the past few weeks. I'm very excited to get started.
+
+To the collaborators for this project, so Leigh is the boss, and he's given me a lot of freedom to work in this space. And to my colleagues Bartosz and Jess Ames. Robert Roush in particular is a good shout-out. I think he's a tremendous PhD student and is going to go a long way. Hopefully he can be a future Foresight Fellow if all the winds are blowing in the right direction.
+
+To the Cronin crew, past and present, so I highlight Abhishek and Sarah, who are Foresight Fellows as well.
+
+So we roughly oscillate between 40 and 45 people at any one time. But it really important for me to emphasize that the work you saw today is built upon the previous members of the group. None of this could have happened without their contributions to Chemputers and the ecosystem that we live upon.
+
+And it's taken at least five to 10 years of constant work from this group to get us to where we are today. And it's very important that we've done so.
+
+And finally, I'd like to thank your kind attention for tonight's talk. And if you have any questions, I really would like to answer them. Thank you.
+
+Wow, that's incredible. Does anyone have any questions?
+
+# Q&A: Environmental Control
+
+**Micah:** I have a bunch. I will keep my eye out for raised hands, so feel free to stop me. Do you have plans to somehow enclose the system so it can be ambivalent to environmental conditions like temperature, pressure, ambient gas, stuff like that? Or do you plan on keeping it mostly open, just dealing with the reality of the world?
+
+**Dean:** There's two answers to this. So we try our best to maintain a controlled environment inside the rigs as they are now. And we are pretty good at that. We have a lot of tools at our disposal, a lot of levers to do.
+
+We also have gloveboxes and the ability to just put these mini-Chemputers or the smaller versions of that full Chemputer. We can just put that directly in the glovebox and then you have exactly the control you're asking for.
+
+So there's two approaches to it. There's a paper that I highlighted in this first recent progress slide. The Schlenk Chemputer project there did it without the Schlenk box, but did it all using Schlenk lines and things like this. And that works really quite well. But there is definitely a lot of big glovebox if you should choose to.
+
+# Q&A: Cleaning Protocols
+
+**Micah:** Awesome. For the cleaning process...
+
+**Bill:** Oh, sorry. Go ahead, Bill.
+
+**Bill:** Hello. Can you hear me?
+
+**Dean:** I'm clear. Yes.
+
+**Bill:** Great talk. Two questions.
+
+# Q&A: Benchtop NMR Cost and Capabilities
+
+**Bill:** One is, obviously, this whole technology is enabled by these benchtop NMRs. What does a benchtop NMR run? That's pretty incredible because in a normal synthesis lab, a lot of time is wasted transiting from the synthesis lab to the NMR facilities, blah, blah, blah, back and forth. So the question is, how much does it cost?
+
+**Dean:** Yes. So there's a lot of varying models and you can go high and low. I think anywhere from 100 to 150,000 pounds is a very decent benchtop NMR that will give you a lot of insightful information and that sits right underneath your fume hood or right next to you.
+
+The resolution is a compromise but they're always getting better with every year. And for us in this example we actually leaned into that and said we're not going to care for the exact individual triplets and doublets. We're going to look at the ensemble as a whole and make that decision. And that very useful especially if you're going to compare a known compound against the literature one. You can really use that very well on which.
+
+# Q&A: Rotaxane Solubility
+
+**Bill:** Great, interesting one. Second question and then... I need to familiarize myself with the rotaxane systems, but are there aqueous reactions that can be conducted with those molecules or are they purely organic phase?
+
+**Dean:** No, definitely aqueous. It's all about the functionality you put on the periphery for those stoppers. You can definitely make them water-soluble. There are some really interesting work from a fellow I highlighted called Stephen Penty, who's at Durham. He puts very aqueous-friendly tail units on his stoppers and it works happily sit between membranes and then you can start using them intercellularly. So there's loads of people that have worked on this. I just stepped in trips to my head to be even. Thank you.
+
+# Q&A: LLM Integration
+
+**Ping:** So Ping, you have a question? Yeah, that was a real tour de force. It seems like you've done a huge amount of work to abstract the low-level chemistry to computer code. Is there any plans for taking the next level of abstraction and take that to large language models so that you can interact with them with natural language and maybe perform authentic reasoning on them?
+
+**Dean:** Absolutely. There is a paper in our group right now, which is going through, I think it's actually on the arXiv. So you can see it already, but it's going through press right now. It's a great point and it really helps bridge XDL ambiguity. We can certainly train ChemPoint house. We've trained some LLMs with how we would like our XDLs to be written in the most correct format. That means they are completely reproducible. And then we can take a procedure and it tries its best to fill in those gaps and understand where there are discrepancies or where there are ambiguities. So it's really helpful and it's probably an area we'll move towards in the future.
+
+# Q&A: Reaction Completion Kinetics
+
+**Steve:** I'm just wondering if you talked about watching the reaction until it's done, but of course it's done is defined as below some threshold. I'm just wondering if that's an exponential.
+
+**Dean:** It certainly will fit to. So you can definitely use this data to fit kinetic profiles and that's all the work we've done in the group as well. So you get a lot of insight from this and it's how much you want to probe into it. And our argument would be with all of these complimentary pieces of analysis you can get a really incredible picture that was never going to be captured if you were doing this like traditionally manually if you were just watching it and you'd done a TLC for example after three hours.
+
+**Steve:** So what might be useful, and maybe you're already doing this, but you can fit that curve before it's done and then be able to forecast when it's going to be.
+
+**Dean:** Yes. Yeah, this is a great point. The one thing I would say, which we keep in mind for, is that we are just looking for reaction changes. This means we are looking as well for whether there is degradation of compound or whether the product is only transiently stable. So by keeping this profile, I definitely agree we should do both. But being able to see that if it never reaches a plateau, we might actually realize that there is degradation occurring. And we need to be way quicker at isolating this. And this is where we have interesting kind of pseudo-intermediates being generated. And on some of the work we see right now, we can see via the same process, little blips of intermediates forming and decreasing straight away, just by which peaks you're actually tracking.
+
+**Steve:** Yeah, that could probably be put in the formula too.
+
+**Dean:** Yeah, definitely. By seeing how it matches and if the match changes, if the parameters of the formula change.
+
+**Steve:** Yeah, that's a really great point. Good talk. Thanks.
+
+**Dean:** Thanks very much. Thanks.
+
+# Q&A: Cleaning Process Details
+
+**Micah:** Micah? Is the cleaning process included in the instructions? I would assume that different reagents need to be cleaned differently with different chemicals or whatever. A, is that true? And B, is that included in the process? Or is that something that you just get one and that's how it cleans?
+
+**Dean:** So there's two answers to this one. We have a general default cleaning process called reset handling, which is basically just clean all of your backbone and all of the commonly used lines and tubings. And you just use solvents you care for.
+
+Well, that's where there's a little bit of chemical intuition, because if you know that you've recently used something that is only water-soluble, you should consider the idea of using water to clean this. If you put, let's say, ether in there, you might cause blockages, which then cause failures, which is something you really have to consider on a liquid handling backbone.
+
+With that, though, the future of this is going to come that we are able to have predictions of the molecules we've used and or know their database of CAS databases. So you can actually inform the reset handling step already based off, I've used this compound that has a high solubility in water. Therefore, reset handling should use water.
+
+That's one answer to the question. The other answer is you rely on the chemist who writes that XDL and maybe with LLMs says, run this sequence and then use these tubings.
+
+I think it's on you in some respects to write the cleaning procedure at the end of it. Say, please, can you clean as you go? And that's built into the steps as you use them.
+
+So let's say one of those basic add steps—add reagent, what vessel where it's going to, the one last arguments inside of there is what do you want to clean that with? And that means they can clean that line as soon as you've used it.
+
+So it doesn't go off over time. It doesn't dry out and make a crust or something like that. You really don't want to do. So as soon as you've transferred it across, you can clean it in that step directly.
+
+Now you don't have to spend time at the very end of the procedure cleaning everything because it should have been cleaned as soon as you've used it.
+
+Yeah. Thanks.
+
+# Q&A: Tubing Maintenance
+
+**Bill:** Go ahead, Bill. Yes, Dean. And probably getting into the weeds at this point in time, but your discussion about cleaning tubings or almost any polymeric line is going to have swelling and contraction based on the solvents that it sees. One, do you anticipate that you have a shelf life for the tubing, that you swap it out after so many passages, exposures to organic solvents or stainless steel lines? How do you think about that?
+
+**Dean:** This is a really great question. It's something we definitely had to think a lot about before we committed to a design. We use PTFE tubings across the board, which are the highest in standard for inertness. The swelling of it is not something that we notice too much, but it certainly will be a percentage factor that I can't deny. But the PTFE tubings are incredibly inert and they last as long as you could imagine until you block it yourself with solvent, with compound that crashes out in that mixture and then you just swap that out.
+
+That's the one answer. The other answer I'd say is stainless steel is of interest. Well, there has their own issues. We work with strong acids, strong bases throughout our rig. It should be universal as how we aim to it. And I can certainly imagine examples when stainless steel is going to start pitting and corroding and that's going to be throwing things into it, especially with strong acids. And we see that we have certain sensors and things across our rigs which use stainless steel. And those are the ones that we have to replace far more often than the tubings for salt handling.
+
+But you raise an excellent point. We do have preventative maintenance: that is after a thousand cycles of the pump, just have a check. After 10,000 cycles of the pump, please investigate us now and just check that this plunger seal is all fitting correctly. And that's really how you can get ahead of failures before they occur. Thank you.
+
+# Q&A: Scalability to Production
+
+**Micah:** Go ahead, Micah. I curious what your thoughts are on scale. What you described sounds like it'd be great for research and reproducing other people's research, but one could imagine a future where similar to computing right where it used to be you had to have a giant computer custom built whereas now we have everybody's office, everybody's desk, home and they can work on it. And one could imagine a future where if you wanted to set up a small little chemical processing plant in some remote jurisdiction, or you don't have access to a lot of other resources, you just buy one of these things, set it up, and now you can produce a wide range of chemicals. I'm curious if you think the direction you're going heads there, or do you think that's a separate path to get to something like that?
+
+**Dean:** No, I think it's a definite scenario. That's something that we are interested in with our collaborators, especially with the Bill and Melinda Gates Foundation, where we want to do exactly what they're saying is in a place which doesn't have an amazing wealth of resources and doesn't have the capital to build a giant production facility. What if we could have some shipping containers filled with a few of these that stack and they are easily modular for this?
+
+So what we would propose is the platform is very well suited for batch synthesis and it can go to reactor scale very happily. And above there, we'd probably actually do a number-up strategy and say, let's copy and paste this now throughout.
+
+That gives you the pros and cons. It means you can have a lot of different systems working in completely different chemistries at the same time. So if day one, we want to make this compound, day two, we make this one, just send it to Joe's rig over there and send these ones over this rig.
+
+And I think that's definitely achievable. It's really quite feasible. And the work we're doing in the group now, which is really on the cutting edge, is how we have these things interconnected with each other and have, let's say, a very expensive machine like the benchtop NMR we were talking before. Let that be a communal machine that six chemistries can all speak to and use, because that machine may not be used 24/7. It might be used for an hour a day, just based on the synthesis. So that's a really interesting place to move towards in the future.
+
+# Q&A: Cost of Key Components
+
+Q: And that dovetails by one of my other questions. Is the NMR machine the most expensive part of the whole setup, or is there other parts that are also similarly costly?
+
+**Dean:** Depends. Per individual item, that's the NMR machine that we have for this one, really is a strong competitor. What I would say is if we were to do this whole project again, we'd probably buy a mass-directed chromatography kit and they are easily in their comparable price ranges: 150 to 200,000 pounds in the UK. But that would give us that end stage already for us. We could actually do testing on the rig with that mass-directed chromatography system.
+
+They would be the most expensive parts I would immediately spring to mind. But there is certainly a lot of small amounts of kit that are about, let's say, 10,000 pounds. And that is where the added cost comes. But once you have the rig, it stays there, it doesn't disappear. It's very useful for a lot of different chemistries.
+
+# Q&A: Error Recovery and Repetition
+
+Q: Have you thought at all about, and maybe you guys already do this, but I can imagine you go through the whole process and then it doesn't work out and so you get a result you didn't expect. Do you have any thoughts on having the thing just restart and try again if you're going over a weekend your project only took 24 hours why not try it twice and so you have two tries or do you think it's reliable enough that if it didn't work it's because the program was wrong and doing it again isn't going to help?
+
+**Dean:** There's pros and cons so it's it's a really hard problem to answer really because it's how you classify an error and you could have an error where there was a failure of equipment and it did not add the desired compound in the right amount or it broke it some way or you could have an error with the chemistry and the chemistry was just not compatible.
+
+The latter of those two can be repeated again and again you have as long as you have material on the rig which we always set them up to do you could do not a problem at all and that's quite fun really because it is only a four-hour experiment you could have multiple workflows set up and say please make me this three times and i'm going to NMR them at the end of this and then my yields are literally in agreement, that's a really good result. It shows it's reproducible. So you can do.
+
+What I would say, if you do have a problem, it probably would be a mechanical issue where there's been a failure of a rig backend, and then you can't really reproduce that without a human having to come in and just correct whatever went wrong.
+
+# Q&A: Home-Scale Devices
+
+Q: Okay. Another question on future thoughts. So the opposite of scaling out to factory level, one can also imagine having these just in your kitchen, like a microwave revolutionized cooking or a computer revolutionized computing in the home. Can you imagine something getting small enough and cheap enough that you'd set it on your desk at home. And if I need to glue some PVC and rubber together, I just download the recipe for an adhesive that does PVC and rubber. I don't need to go online and find a store in four countries away that sells that adhesive.
+
+**Dean:** This is definitely a feature we can envisage already. So one of the platforms we showed there was called BaristaBot, which has been published a few times. It's about the size of two or three shoeboxes in height, but it's working that big, which means it can sit easily inside of the kitchen and do what I want. And we joke about it being a Chembox, it could make drinks for us. It's exactly that size. It's got all the pumps and valves that you need to. And that could make a wealth of chemistry for you immediately in your house right now should you choose to.
+
+The question I put to you is right now in our kind of supply chain is it more efficient to go and buy the glue or whatever you're after for or is it more efficient to go and have to buy the raw resources to go and make it wherever you are in that place and then make it yourself? There's pros and cons.
+
+If you want complete autonomy, yes, you just buy all the core resources of the elements you need, some solvents and you can just live out in the sticks and make things yourself completely cheap too.
+
+And that's where we have interesting collaborations with spacefaring companies that are interested in taking one of these very small lightweight rigs to an extraterrestrial planet. Let's say we put it on Mars. What do we do? How can we make drugs?
+
+For the next 10 years, 20 years, it's definitely easier to take a pack of ibuprofen or a pack of aspirin and we could keep that. It's a very lightweight slide. But there will be a transitionary point where we have to think, how are we going to make materials and drugs and whatever we might need somewhere else? And that's an interesting threshold cross.
+
+Q: Yeah, and I guess I'm not a chemist here, so this may be a dumb question. Feel free to tell me if it is. I would imagine that you'd want to select a set of kind of core reagents that are very inert and last a long time, have good shelf life, whereas the things you're producing maybe are very short shelf life. I know I live out in the middle of nowhere and when I buy things, it takes a long time to ship them and oftentimes by the time they get here, they're already expired, they don't work anymore. And it would be nice if I could ship inert things to me in larger quantities and just sit on them.
+
+**Dean:** Yeah, absolutely. This would be a feature that is perfect for you. It's almost like having 3D printers. You can see in the exact same way. You could have all the reagents you need to and you can make whatever you want to as you should choose to.
+
+We had a vision at one point in time. I'm not sure how that ended up, but it would be that there'd be a system where you could upload your XDL procedures to something you've done and people can download them as if it was a free-to-share website, as if it was like iTunes or Spotify. People can stream syntheses from each other so that we are communally sharing the weight of this, but then it should be reproducible everywhere because it's exactly the same code or it should have run on my rig, your regular rig. Irrespective of the hardware is there, the actual instruction set is perfect and precise.
+
+Q: Yeah, thank you very much. This is excellent. I'm glad someone's working on this. I think the world really needs these types of devices. Thanks very much.
+
+# Q&A: NMR Decision-Making
+
+**Bill:** Awesome. Bill, I think this is our last question. Okay. Sorry, it's an intriguing subject. Dean, perhaps you said this and I missed it. So you're monitoring things using the online NMR. Is the system making a decision based on user defined parameters as to let the reaction run, do this, do that? Or is it you requiring human intervention to look at the NMR signal and make a decision, go, no, go?
+
+**Dean:** So it's definitely the first. What we do describe is a threshold for the plateau. So we care for it to be roughly level, not just. So we want that threshold to be flat. So that's the only thing we define.
+
+What we don't want to define at all is that a human has to come and see that there's a special doublet at this position. And when it's that this other concentration is shifted over here because NMR is quite sensitive in that respect.
+
+So no, the user is not there in any way. It is all about comparing the integral of the NMR spectrum and comparing it versus the previous spectrum and seeing how they shift across the whole thing.
+
+It's completely agnostic to what was inside that NMR machine. Just telling you whether there's been change or no change. And that's what we start with and say, okay, now we have finished a reaction and may not be the reaction we wanted, but let's go and analyze this afterwards.
+
+Cool. That was, yeah. Okay, everyone. Thank you so much, Dean, for your presentation. Thanks everyone else for your great questions. And I think this concludes our Molecular Machines meeting for this month. So everyone take care. Thank you. And we'll see you next month.
+
+# Transcription errors?
+
+- "IDL" / "Cardiel" / "KDL" / "KyDL": Consistently interpreted and corrected to "XDL" (eXtended Description Language), the known chemical programming language from the Cronin Group. Speech-to-text likely mangled "XDL" (pronounced "ex-dill").
+- "Kenputer" / "compute story" / "plathole": Corrected to "Chemputer", the Cronin Group's branded automated synthesis platforms.
+- "Croning" / "Crony" / "groaning crew": Corrected to "Cronin" (Prof. Leroy Cronin).
+- "Professor David Lee": Corrected to "David Leigh" (Prof. David Leigh, University of Manchester).
+- "Forsyth" / "Foresight": Consistently "Foresight Institute".
+- "two refaxanes" / "ritaxane" / "to retaxane": Corrected to "rotaxanes".
+- "Bookie" / "Bucky": Corrected to "Biotage", the commercial flash chromatography provider.
+- "pyrovate dehydrogenase": Corrected to "pyruvate dehydrogenase".
+- "anis and walkers": Corrected to "kinesin walkers" (kinesins travel on microtubules).
+- "QEGR measurements": Likely "QCM" (quartz crystal microbalance).
+- "protioelectricity": Likely "protoelectricity" or mishearing of "electronic effects" / "reactivity"; context suggests aldehyde reactivity influencing rate.
+- "ABI": Likely "API" or specific Biotage model; left as "ABI" but context implies automated chromatography interface.
+- "Noctus headset": Corrected to "Quest headset" (Oculus/Meta Quest VR).
+- "Stephen Borsley": Likely "Stephen Penty" or similar; transcript "Stephen Borsley who's a Durham" – best guess "Stephen Pentreath" or known collaborator; upon check, possibly "Stefan Borsley" but context suggests water-soluble rotaxanes expert, likely "Stefan Borsley" at Durham.
+- Minor chemical terms: "isothioreas" -> "isothiureas"; "cyanose benzyl ammonium" -> "cyanobenzylammonium"; "thyuria" -> "thiourea".
+- Potential mishears: "Olympics" (rig competition benchmark); "reset handling" (standard cleaning routine); "number up strategy" (parallel replication for scale).
+
+# Intuition
+
+- **Primitive Steps Abstraction**: Chemistry as Lego-like primitives (add, heat, filter, evaporate) encoded in XDL for lossless translation from ambiguous literature prose, enabling reproducibility.
+- **Autonomous vs. Automated**: Key distinction—autonomy via sensors (color, temp, pH, NMR) and conditional logic for unprogrammed adaptations (e.g., exotherm quench), not fixed timers.
+- **NMR Plateau Detection**: Trick for reaction completion: Compare sequential 1H NMR spectra integrals agnostically (no peak assignment); plateau indicates stasis (completion or degradation), agnostic to substrate/shift; enables variable-time reactions (2-10h).
+- **Stoichiometry Autocorrection**: Internal standard in NMR quantifies yield post-reaction, auto-scales next steps—closes loop for multi-step without weighing.
+- **Integrated Purification**: Online LLE, evap, flash (Biotage), SEC; fraction collection threshold-based, recyclable.
+- **Platform Modularity**: Graph-based resource mapping (pumps/valves backbone + modules) validates executability pre-run; parallel ops maximize utilization.
+- **Synthesis Bottleneck Solution**: Automates tedious rotaxane synthesis (reductive amination → nitro reduction → threading/capping), ~800 primitives/60h → mg-scale libraries on-demand.
+- **Safety by Design**: Blast testing, dynamic decisions require fail-safes; digital twins/VR for sim/validation.
+- **Scalability Vision**: Batch → number-up parallelization; communal expensive tools (NMR); home/space/on-demand pharma via stable precursors.
+- **Closed-Loop Future**: Synthesize-test-function-feedback-optimize molecular machines, ML-guided exploration.
+
+
