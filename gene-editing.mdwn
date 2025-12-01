@@ -1,3 +1,5 @@
+[[!toc]]
+
 # Various DNA editing and genome editing techniques
 
 * restriction nucleases
@@ -382,9 +384,89 @@ fusion protein of nanopore + polymerase?
 
 ligand-linked peptide inhibitor, with azobenzene, to inhibit an active domain inside of a nanopore?
 
+# Terminology in genetic engineering
+
+**hypomorph**: a mutant allele that produces a partially reduced level of gene activity or protein function relative to the normal wild‑type allele.
+
+**hyperomorph**: a mutant allele that confers an enhanced or constitutively active level of gene expression or protein function compared with the normal wild‑type allele.
+
+**gain-of-function**: a mutation that endows a gene or its protein product with increased, novel, or constitutive activity relative to the normal wild‑type allele.
+
+**loss-of-function**: a mutant allele that diminishes or eliminates gene activity or protein function compared with the normal wild‑type allele.
+
+**deleterious SNP**: a single‑nucleotide polymorphism that reduces or disrupts normal gene or protein function, resulting in a harmful phenotypic effect.
+
+**knockout**: a genetic strategy that completely abolishes the activity of a specific gene, typically by deleting or disrupting its coding sequence.  
+
+**conditional knockout**: a genetically engineered approach that inactivates a target gene only in defined tissues or at particular developmental stages, usually via inducible site‑specific recombination.
+
+**knock‑in**: a precise genetic engineering strategy that inserts a defined sequence (e.g., a point mutation, epitope tag, or reporter) into the endogenous locus without disrupting overall gene structure.
+
+**conditional knock‑in**: a knock‑in allele that can be activated or altered only in selected tissues or at chosen developmental times, typically by Cre‑mediated recombination of a “floxed” stop cassette or mutation.
+
+**knockdown**: a technique that diminishes the expression level of a gene, often through RNA interference or antisense methods, without entirely eliminating its function.
+
+**over‑expression**: introduction of an exogenous DNA construct (often under a strong, heterologous promoter) that drives ectopic or supraphysiological levels of the gene product throughout the organism or in a defined tissue.
+
+**inducible expression (Tet‑On/Tet‑Off)**: a transgenic system in which gene expression is turned on (Tet‑On) or off (Tet‑Off) by administration or withdrawal of doxycycline, allowing temporal control of a gain‑of‑function allele.
+
+**neomorphic**: a mutant allele that gives the gene product a new activity or property that is not exhibited by the wild‑type protein (e.g., a novel binding specificity).
+
+**antimorph**: a mutant allele that antagonizes the wild‑type allele’s function, usually by forming non‑functional complexes; it is often synonymous with a dominant‑negative effect.
+
+**dominant‑negative**: a mutant allele that encodes a protein capable of interfering with the activity of the wild‑type protein (or its partners), thereby suppressing normal function even in the presence of a functional copy.
+
+**null allele**: a mutation that eliminates all detectable activity of the gene product (e.g., a premature stop codon or large deletion) and is functionally equivalent to a complete loss‑of‑function but may retain transcription of a non‑coding transcript.
+
+**humanized allele**: an allele in which the coding sequence (or regulatory region) is replaced with the orthologous human sequence, allowing functional studies of human‑specific variants in an in‑vivo context.
+
+**Cre‑dependent (lox‑STOP‑lox) allele**: a cassette inserted upstream of a gene of interest that blocks transcription until Cre recombinase excises the flanked STOP sequence, enabling spatially restricted activation of the downstream gene.
+
+**CRISPR activation (CRISPRa) / repression (CRISPRi) allele**: a dCas9‑based system in which a catalytically dead Cas9 fused to transcriptional activators or repressors is guided to a promoter region to up‑ or down‑regulate endogenous gene expression without altering the DNA sequence.
+
+**zinc‑finger activation allele**: a programmable zinc‑finger protein engineered with a transcriptional activation domain (e.g., VP64, VPR) that binds a native promoter region to up‑regulate endogenous gene expression without altering the DNA sequence. See also CRISPRa.
+
+**CRISPR‑CORRECT**: a genome‑editing method to create predictable zygosity. ([ref](https://www.nature.com/articles/nature17664))
+
+**splice-modulating base-editing allele (CRISPR-SKIP / SPLICER)**: a precise genome-editing strategy in which base editors (without creating double-strand breaks) are targeted to splice donor or acceptor motifs to force predictable exon skipping or inclusion at the endogenous locus, effectively creating hypomorph, null, or isoform-specific alleles by rewiring splicing rather than disrupting the entire coding region (e.g., CRISPR-SKIP in Gapinske et al., 2018; SPLICER platform for optimized splice-site editing, 2024).
+
+**cis-regulatory motif-edited allele (prime editing of TF binding sites)**: an allele generated by base or prime editing of a specific transcription factor recognition motif (such as a CArG box) within an endogenous promoter or enhancer, allowing tissue-specific up- or down-regulation of gene expression by changing only one or a few bases in non-coding DNA while leaving the coding sequence intact (e.g., Gao et al., 2021 editing a single CArG motif in the *Tspan2* promoter to abolish smooth-muscle expression).
+
+**enhancer-targeted CRISPRi/CRISPRa allele**: a configuration in which a catalytically dead Cas9 fused to repressor (KRAB, KRAB–MeCP2) or activator (VP64, p300, VPR) domains is stably expressed, and guide RNAs are designed to bind distal enhancers—rather than the core promoter—so that the element’s activity and its long-range control of one or more genes can be selectively repressed or boosted in a cell-type-specific or inducible manner (e.g., Fulco et al., 2016 tiling non-coding regions; Li et al., 2020 enCRISPRi/enCRISPRa in vivo).
+
+**dCas9-KRAB-MeCP2 epigenetic repression allele**: a specialized CRISPRi configuration in which dCas9 is fused to both KRAB and MeCP2 to recruit heterochromatin and DNA-methylation machinery, producing stronger and more durable silencing of endogenous promoters or enhancers than KRAB alone, effectively modeling a stable loss-of-function or hypomorphic regulatory state without altering the underlying DNA sequence (e.g., Duke et al., 2020).
+
+**synthetic intron-enhanced allele**: an engineered allele in which one or more well-designed introns are inserted into a transgene or endogenous locus to increase transcription, improve mRNA processing, and/or reduce epigenetic silencing, leveraging intron-mediated enhancement to achieve higher and more stable expression while preserving the native protein sequence (e.g., engineered introns in Cas9 expression cassettes as in Arana et al., 2025, and broader intron-mediated enhancement work summarized by Rose and colleagues).
+
+**refactored regulatory locus / synthetic locus allele**: a heavily redesigned version of an endogenous genomic region in which large stretches of native non-coding DNA (transposons, repetitive elements, non-essential introns, and idiosyncratic regulatory clutter) are deleted, compacted, or replaced with standardized, well-characterized regulatory parts, yielding a “clean” locus that maintains near-wild-type gene expression and organismal fitness while being easier to analyze and re-engineer (e.g., Sc2.0 synthetic yeast chromosomes where retrotransposons and many introns were removed or rewritten with minimal impact on growth and global transcription).
+
+**CRISPR saturation mutagenesis library (non-coding tile library)**: a densely spaced library of CRISPR guides (using nuclease, CRISPRi, or CRISPRa) that target essentially every position across a promoter, enhancer, or larger non-coding region, generating a spectrum of regulatory alleles whose functional impact on gene expression or fitness is read out in bulk or single-cell assays, thereby mapping which bases and sub-elements are necessary, sufficient, or redundant for regulatory activity (e.g., non-coding tiling screens around oncogenes and ENCODE-scale maps like those summarized by Yao et al., 2024).
+
+**MPRA-validated regulatory variant library**: a collection of synthetic promoter or enhancer variants cloned into barcoded reporter constructs and assayed in parallel (massively parallel reporter assays, MPRAs), producing a quantitative landscape of sequence→activity relationships that can be linked back to specific endogenous elements, enabling the design of neomorphic, hypomorphic, or hypermorphic regulatory alleles with partially predictable expression outputs (e.g., large MPRA studies and reviews such as Moeckel et al., 2024 that benchmark enhancer and promoter sequence–function maps).
+
+**PASTE-integrated knock-in allele**: a large-cargo knock-in allele created by PASTE (Programmable Addition via Site-specific Targeting Elements), in which a Cas9 nickase–reverse transcriptase–integrase fusion installs a targeting element and a serine integrase then docks DNA fragments up to tens of kilobases at the edited locus without relying on HDR. ([ref](https://pmc.ncbi.nlm.nih.gov/articles/PMC10257351/))
+
+**CRISPR-associated transposase (CAST) insertion allele**: an allele generated by RNA-guided transposase systems (for example Cas12k–Tn7 complexes) that integrate multi-kilobase donor cassettes at defined genomic sites in a DSB-free, HDR-independent manner, expanding targeted knock-in to difficult-to-edit cells and in vivo contexts. ([ref](https://pmc.ncbi.nlm.nih.gov/articles/PMC6659118/))
+
+**CRISPRoff/CRISPRon epigenetic memory allele**: an allele whose expression state is durably silenced or activated by dCas9 fusions that write or erase DNA methylation and repressive histone marks at promoters or enhancers, producing long-lived, mitotically heritable regulatory loss- or gain-of-function without changing the underlying DNA sequence. ([ref](https://www.sciencedirect.com/science/article/pii/S0092867421003536))
+
+**optogenetic control allele**: an engineered allele in which the protein of interest or a synthetic transcription factor is fused to light-responsive domains (such as CRY2/CIB1, LOV2, or iLID), so that illumination with specific wavelengths produces precise, reversible activation, clustering, or relocalization of the gene product in vivo. ([ref](https://pmc.ncbi.nlm.nih.gov/articles/PMC5877946/?utm_source=chatgpt.com))
+
+**CRISPR-based gene drive allele**: a cassette that encodes both Cas9 (or another nuclease) and its guide RNA within a locus such that, during meiosis, the drive copies itself onto the homologous chromosome via HDR, biasing inheritance and enabling population-level spread of loss- or gain-of-function traits (e.g., vector control in mosquitoes). ([ref](https://pmc.ncbi.nlm.nih.gov/articles/PMC10742955/?utm_source=chatgpt.com))
+
+**CRISPR lineage-recorder / evolving barcode allele**: a synthetic genomic cassette containing arrays of CRISPR target sites that are progressively edited during development or over time, accumulating unique mutation patterns that serve as heritable barcodes for high-resolution lineage tracing and fate-mapping when read out by sequencing. See [[lineage tracing]].
+
+**Cas13-mediated RNA knockdown allele**: a configuration expressing an RNA-targeting Cas13 effector and guide RNAs so that specific transcripts, including alternatively spliced isoforms, are degraded without altering the genomic DNA, providing a programmable, often more specific alternative to RNAi-based knockdown. ([ref](https://pmc.ncbi.nlm.nih.gov/articles/PMC11110701/?utm_source=chatgpt.com))
+
+**Cas13-based RNA base-editing allele** (REPAIR/RESCUE and derivatives): an allele configured to express catalytically dead Cas13 fused to ADAR-family deaminases, together with appropriate guide RNAs, to install programmable A→I or C→U edits in target RNAs, enabling transient rescue or mimicry of coding mutations at the transcript level without permanent genomic change. ([ref](https://pmc.ncbi.nlm.nih.gov/articles/PMC5793859/))
+
+
+TODO: splicing variants, introns, exons, regulatory casette stuff using recombinases and Cre/Flp, enhancers, cell-specific enhancers, floxed alleles, synthetic introns, synthetic exons, Sc2.0 synthetic yeast genome project, synthetic human genome project (HGP-write and also Sc2.0's human consortium from tom ellis), [inducibe degradation tags](https://www.nature.com/articles/s41467-020-19532-z), ...
+
 # TODO
 
 * better description of Cre recombinase systems for combinatorial coding
+* incorporate glung's feedback
 
 # logs
 
