@@ -1,0 +1,129 @@
+Neuralink update
+
+date: 2025-12-03
+
+video: <https://www.youtube.com/watch?v=QJdgHXyJh7M>
+
+previously: [[August 2020 neuralink update|transcripts/2020-08-28-neuralink]]
+
+LLM-generated summary: Neuralink's presentation chronicles the company's origins in 2016 amid nascent AI and autonomy landscapes, evolving from rudimentary prototypes to a fully implantable, wireless brain-computer interface (BCI) called Telepathy, now deployed in 13 quadriplegic or ALS patients enabling thought-based control of cursors, games, robotic arms, and voice synthesis with ~8 hours daily usage; core technology spans a precision robot for inserting 1,024-channel flexible threads (8 electrodes/thread × 128 threads) into vasculature-avoiding brain depths via diffraction-limited optics and OCT imaging, a coin-sized SoC implant performing on-chip spike detection/compression (200 Mb/s raw to 20 kb/s BLE) with inductive recharging, and ML decoders mapping spiking rate changes to intents amid neural non-stationarity; scaling targets 10,000+ waitlisters via faster (<1-hour) robotic surgeries, deeper insertions for peripheral vision/more DoF, higher channel counts, and robust semi/unsupervised recalibration, en route to whole-brain read/write for sensory restoration, psychiatric treatments, and human augmentation, underpinned by in-house MEMS fabrication, testing (1,000+ units for 0.1% failure stats), and vertical integration.
+
+[[!toc levels=3]]
+
+# Founding Story of Neuralink
+
+I'm going to start by telling you a little bit about the founding story of the company. So for that, we're going to take a time machine back to 2016. This is just to kind of contextualize the world at that time. No ChatGPT, pre-transformer, and self-driving was barely working. And Elon had this tweet about Neuralink back in 2016 and then started tapping into experts working in this field to potentially start a company. And at the time, I was doing my PhD working on this thing called Neural Dust and met Elon in October of 2016. And then a few months later, we had a company with a few other people to build the world's first mass-manufacturable high-bandwidth BCI. And I really like showing that photo on the lower right corner. That's what the office looked like. My first day at work was going to, I think, OfficeMax or something to buy a chair. So we really started out with nothing, a bunch of ideas, and I'm gonna walk you through our journey after that.
+
+# What is a Brain-Computer Interface (BCI)?
+
+So before I do that, what is BCI? It stands for [[Brain-Computer Interface|brain computer interfaces]]. It's basically a set of technology that allows you to read and write to and from the brain and with the hopes of potentially initially helping millions of people with paralysis so people have mind-body connections that are severed.
+
+# Early Development: Hardware and Robotics
+
+So the first four years of the company was really focused on building the foundational technology. Building a wireless fully implantable system is really, really hard and making it small is really, really hard. So we started out with building what's on the top row. These are wired implants with USB-C connectors coming off of it. They were really a platform to build towards a wireless implant that you see down there. Also from day one, we had a very big thesis that in order for us to have a scalable deployment of our system, we need to build robots. So we started out by building this robot on the upper left corner that was put together by a bunch of eBay parts. There's only one. Obviously that's not gonna work so we then found ways to productionize it to a point where it looks like that right now that's used in humans.
+
+So as I mentioned the first four years really focus around building the hardware down to a level where we can test in various different animal models.
+
+# Key Milestones and First Product: Telepathy
+
+And then back in 2021, we had this demo with one of our monkeys, Pager, where he was playing a game, Pong, with his mind. And then since then, it was really intense three years of testing, building, testing again, iterating, and then getting approval for launching clinical trials in 2024.
+
+So our first product is called Telepathy and it basically allows people with spinal cord injury or ALS or people that are quadriplegic, which means they're paralyzed from neck down, be able to control digital devices like computers or phones or whatever just by thinking. And it's making real impact in people's lives.
+
+# Patient Impacts and Demonstrations
+
+And in this particular case, this is one of our participants. We call him P1 because he was first participant playing Civilization VI. And he mentioned that the day after he got Telepathy, he was playing Civilization for nine hours straight.
+
+It also can extend beyond just digital control to robotic arm. So this is one of our participants drawing this amazing thing with a robot arm after getting trained to use it for about an hour.
+
+Telepathy also works for people with neurodegenerative conditions such as ALS, similar to what Stephen Hawking had. And this is one of our late-stage ALS participants with three kids. So he can only move his eyes, so he interacts with the world previously with an eye gaze system that doesn't work outdoors. Neuralink doesn't have that problem, so this is him being able to go outside with his family, play games, and then also have their kids actually hear dad's voice for the first time.
+
+So as of September, we have, we're currently changing lives of 12 people in the world. As of last week, that number is 13. And the interesting number that I'll just quote in this is that on average, people are using Neuralink about eight hours a day.
+
+# Scaling Challenges and Future Indications
+
+Okay, so what's next? One is scaling. So this number, 10,000, I look at this every day. This is how many people we have on the waiting list for Telepathy. 12 or 13 is really great but that's significantly less than 10,000. So there's a lot of challenges as you can imagine in scaling both the device manufacturing, deployment, and patient service.
+
+So there's a lot of challenges associated with that. The second set of challenges really involve around expanding our indications. So as of right now, we're focusing on movement, being able to use Control Computer Cursor and Robot Arm, like you said, but they also don't have tactile sensation back, so being able to feel again. We're also launching a program to enable someone who lost their voice talk again, hear again, and see again with blindsight.
+
+# Vision: Whole Brain Interface
+
+And this is all ultimately towards what we call building a whole brain interface, which basically means reading and writing from any part of the brain. As you can imagine, there's huge clinical implications to this, not only addressing some of the things that I mentioned, but even some of the really deep psychiatric or neurological disorders, anything that you can really think of, those are all spikes in your brain. And in not so distant future, we believe that there's actually potential to augment human capabilities. And really, at the end of the day, we're building set of tools to really try to understand our three-pronged universe that we call brain.
+
+So that's a brief snapshot of what Neuralink is about and why we exist as a company. If our vision excites you and you like to help shape it, I'm gonna talk about some of the engineering challenges and just know that as I'm talking about every single layer of our tech stack, we really need everyone in that skill set and then there's tons and tons of work to do and we're also a very small company. We're just over 300 people. So as an intern and as a full-time, you get a massive scope and you can also talk to those guys to actually talk about whether I'm lying or their experience reflects this.
+
+# High-Level Engineering Stack: Bridging Biology and Computation
+
+Okay. So what are we dealing with here? So on one side you have a biological neural net and on the other side you have a computer. So how do you get the intent from biological computer to artificial computer or actual computer? This is how. At the highest level you have neurons that spike, we're measuring spiking rates. We look at the change in the spiking rate through our devices, and then there's an ML model that then converts it to cursor movement.
+
+There are three major components: There's a surgery and robot to actually deliver this implant, the implant itself, and the neural decoding. So I'm going to talk about each and every one of these.
+
+# Surgical Implantation Process
+
+So starting with the user experience, this is a clip that I'm going to play that talks about how someone gets a Neuralink. A couple different steps, but first we have a surgeon, human neurosurgeon, which hopefully the robot will do this portion of it as well. But at the moment, we have a human neurosurgeon that exposes the brain, so they drill a 25-millimeter hole in the skull and then expose the brain. And then the robot has this tiny needle. It's about the size of red blood cells, so really, really tiny, thinner than a human hair, inside this cannula. And this cannula is actuated by precision motors on the robot to engage with this thread loop to grasp it and then you insert it into the brain 128 times. There's a total of eight electrodes per thread so total of 1,000 channels and this is done while avoiding vasculature and then once all the threads are inserted, implant basically replaces this hole, and then you put the skin flap over, everything is invisible, and you become a cyborg.
+
+# Challenges in Brain Insertion and Robot Design
+
+So what makes this challenging? So this video is a video of a real brain, and two things that you will notice. One, it moves a lot, and it's also highly vascularized. And if you poke a brain, it feels like tofu or like Jell-O. So now the question is, okay, how do you insert safely into this moving, vascularized, you know, soft thing?
+
+So we built this robot to deal with these challenges. The robot has a bunch of custom mechanical, electrical, optical subsystems, essentially enabling you to have motion perception, and kind of the brain behind how you insert these things. And all of these parts that are color coded, we design every single piece of it. I'm not gonna spend time going over all of these, but just a couple of things that I want to highlight.
+
+The optics problem is really, really interesting. It's a diffraction-limited optics, so there's not a single camera that can give you all of the depth of field resolution that you want. So we have essentially six microscopes and optical coherence tomography that's looking into this 25-millimeter hole that we created, and the movements of the brain and tracking all that stuff. So super interesting sort of challenges here.
+
+# Robot Improvements: Speed, Reliability, and Depth
+
+So what are the improvements that we need to make? Speed and reliability. So I'll play this clip. The clip on the left is our current version of the robot that's been used for 13 humans with Neuralink. And by the time this is inserting one thread, the version on the right, which is this new robot that we call R10, has inserted it more than 10 times.
+
+So why is speed important? We want to keep the surgery time super, super short. At the moment, the end-to-end, we call parking lot to parking lot, is four to five hours for the surgery. And the robot portion of it is about an hour, just over an hour. And our long-term vision is to make this kind of like a LASIK surgery, and potentially you can get it during a lunch break. So you need to do this under one hour. Maybe you can do it awake. And there's a huge amount of challenges and benefit of having it be a shorter surgery. And then there's also, at the moment, we send a bunch of our engineers to go out to the surgery and look at every move that it makes. We don't want that. We want to make sure that it becomes kind of a one-click surgery, super reliable, boring surgery. We like boring surgeries. So huge amount of challenges, as you can imagine, not just on the hardware, but on the software side.
+
+So the other improvements is improving insertion depth. So at the moment, we only insert four millimeters from the surface of the brain to record all of our neural activities. But being able to insert deeper means you get access to more neurons. And then there are also different parts of the brain that you get access to by inserting deeper. And particularly for visual prosthesis, if you insert deeper, you get peripheral vision. That's sometimes or most likely more useful than actually the foveal vision that has a very narrow field of view. So as you can imagine huge challenges optical mechanical software co the imaging that you do pre to the robot very very interesting sort of challenges here.
+
+# Implant Design and Signals
+
+Okay, now switching gears to the devices. This is what the device looks like when you blow it up. Like I said, it's about a quarter, like the size of a US quarter, 25 millimeter in diameter. And then it has this flexible, really tiny, you know, thousand electrode wires that we call threads. This is really the only part that goes into the brain. The rest of the body is the thing that's replacing the skull, as you saw in the animation. And those threads are manufactured using MEMS process in our own clean room in Fremont. We also design our own low power analog circuits, custom chips. This is kind of a misnomer. It's not really a chip, it's really an SoC. There's a lot of digital processing that happens.
+
+And then just to kind of highlight what kind of signals we're dealing with, typically the signals you record from these electrodes are anywhere between 10 microvolts in amplitude to millivolts. So, and then you're generating about 200 megabits per second. And if you think about it in modern electronics, that's actually not that much data, but you know, we're trying to send these off through Bluetooth which has about 200 kilobits per second of bandwidth available. So now you have to deal with okay how do you go from 200 megabits to 200 kilobits? So there's a bunch of compression and on-chip to chip spike detection that happens on this SoC where it basically goes through this analog chain of amplifying filtering and then you know a digital finite state machine that looks for the spiking. You bin them into these 15 millisecond bins that gets sent off through BLE. And then you look at the change in the spiking rate. And there you go.
+
+We also build our own design and then assemble our own PCBA. That's kind of the core of where the chip gets assembled on. And there's a bunch of sensors. There's additional processing that happens to enable this. And there's also, so there's a battery inside the implant that on a single charge lasts 10 hours, but you need to recharge it. So it's done inductively. There's a bunch of really innovative crazy stuff that happened on the engineering side to make sure that you don't heat the tissue while you're charging the implant. But yeah, the charger hardware, this is all built by us. There's two components. There's a charger base with the battery and all the electronics. There's a charging coil that you kind of hover over the implant. Most of our patients actually have it built as part of their hat. So they put on a hat and they charge. And our eventual goal is to embed it into a charging pillow so you charge while you're sleeping.
+
+# Implant Scaling Challenges
+
+OK, so what are some of the challenges or things to improve on on the implant? The main technical metrics that matters is a channel count. So being able to, so we have 1,000 channels right now. Having more channels means more neurons you're recording from, which means more information. For the case of robot, like the movement program, that means more higher degrees of freedom. For vision, that means more pixels, so more the better. And everything that you saw in that tech stack, there's a huge amount of challenges when you're increasing channels. How do you hermetically pass even more wires through this plastic enclosure? How do you keep the power consumption low? How do you compress even more data that you're collecting now? Maybe you need to increase radio bandwidth, so then how do you build a custom radio? How do you then also package and system integrate? The list goes on and on. So you can imagine there's a huge amount of challenges across the board that we need to solve.
+
+# Testing Regimens
+
+This is also true on the robot side, but there's enormous amount of testing that we do. For us, before we did our first implant, we made over 1,000 implants. And the reason for it is pretty simple. If you want to understand 0.1% failure mode of something, you need to build at least 1,000 of them and then test 1,000 of them. So there's tons and tons of testing that we need to do. That's a picture of our custom hardware in the loop tester. And then that Cerberac, that's not an ordinary Cerberac. It contains basically rows and rows of implants in this brain in a vat that's accelerated in terms of temperature to increase aging. So tons and tons of testing.
+
+# Neural Decoding and Telepathy App
+
+Okay, so the final piece, the neural decoding. Okay, so how does the user actually use this to convert to something useful for them? So users in this case are human participants can connect to the device through computer or phone that's running this custom Neuralink app that we call the Telepathy app. It has a couple different components. There's mainly three steps you have to go through. One, you pair the device, similar to how you would pair any Bluetooth device. And then once you do that, you go through body mapping process, which is imagine moving your hand, arm, whatever different parts, like squeeze your hand and then we look at the neural patterns just to see whether we put the electrodes in the right areas. We have a pretty good sense of where we're putting it in the first place. And then once you do that, there's a calibration phase. So basically using one of the motions that we were able to get from body mapping, you convert that to cursor movement. And then you iteratively refine this. So similar to how any ML system has a training phase and an inference phase, there's ways to do that. And there's a huge amount of challenge. It takes about, for someone who's never had Neuralink implant to being able to use a computer, it takes anywhere between 15 to 20 minutes. And then there's also obviously a huge amount of, I guess, control interface for OS integration that we built on top. You can upgrade firmware, you can name your implant, you have all the whatever wonderful features you have access to on your computer. So we built all this on top of it as well. Work of one guy, this entire thing.
+
+# Decoding Improvements: Robustness and Non-Stationarity
+
+OK, so what are some of the areas of improvements on the BCI decoding side? One is robustness. So this shows you basically the plus signs are where we want the decoding target in sort of this vector, sort of circular vector space. And the point clouds represent the model output. So what you're seeing is after the initial calibration, you have nice clustering of these point clouds in the desired separable space. But over time, it drifts. Like, a few days later, it could look like that.
+
+OK, what is happening? So there's this thing called neural non-stationarity, where neurons are changing all the time, depending on the context, you might be recording from a different neuron. So you need to deal with basically having to recalibrate the model. Recalibrating kind of sucks. So how do you deal with that? Can you maybe enable, can you maybe delete recalibration at all? What are some of the challenges there? There are a lot of ML techniques that we're looking at, some that are semi-supervised, unsupervised ways to refine the model as a user goes, and not have to sit in front of a computer, calibration, 10, 15 minutes. For some people, they actually enjoy it. It's somewhat meditative to them. But that doesn't seem like a great experience if you have to calibrate your mouse every day. So there's a huge set of challenges there on the ML side.
+
+# Application Productionization and Vertical Integration
+
+And again, this is just a mosaic of different applications that people are using it for. Some playing Halo, some are using Robot Arm to feed themselves for the first time, some are playing CAD programs, some are using it for their job, art. These are all the things that we use computers for, right? And phones for and other devices for. Now we have to basically productionize all of these different applications to build on top. So there's tons and tons of work on this.
+
+One of the things that we're really proud of and will continue to invest tons and tons of money towards is vertically integrating. So pretty much all the things that you saw, we build them in-house, including, again, having our own clean room. And I mean, we have like our own construction team to build custom buildings for ourselves. That's actually in Austin. It looks much nicer now, but that's where we're building our headquarters.
+
+# Call to Action
+
+So yeah, that's my pitch. So if you are interested in applying, you should apply. And you don't have to be a brain surgeon to work at Neuralink. We have a brain surgeon over there, though. Thank you.
+
+# Intuitions
+
+- **Spiking Rate Decoding**: Intent extraction via changes in neuron firing rates (10 μV–mV amplitudes), binned in 15 ms windows post-analog amplification/filtering and FSM-based spike detection, compressed for BLE transmission—key trick: on-implant processing minimizes data rate from 200 Mb/s to ~20 kb/s.
+- **Robotic Insertion Challenges**: Brain as pulsatile, vascularized Jell-O requires sub-RBC needle (thinner than hair), vasculature avoidance via 6-microscope/OCT imaging in 25 mm craniotomy; insight: diffraction-limited optics necessitate multi-view depth fusion for micron-precision motion compensation.
+- **Scaling Imperative**: Channel count as primary metric (1k → more for DoF/pixels); challenges cascade across hermetic feedthroughs, power budgeting, custom radios, and packaging—trick: 1,000-unit testing for 0.1% failure quantification using accelerated "brain-in-vat" (Cerberac) rigs.
+- **Neural Non-Stationarity**: Neuron identity/context drift mandates recalibration; intuition: pursue unsupervised/semi-supervised ML adaptation to eliminate daily 15–20 min sessions, enabling seamless cursor/robotics produtionization.
+- **Vertical Integration**: In-house cleanroom MEMS threads, SoC/PCBA, chargers, robots, and apps (Telepathy: pair → body-map → calibrate) minimizes latency/risk; future: <1 hr "LASIK-like" awake surgeries via R10 robot (10x speed).
+- **Inductive Charging Safety**: Custom low-heat protocols for 10-hr battery life, hat/pillow form factors.
+
+# Transcription errors?
+
+- "Cerberac": Highly uncertain—phonetic match unclear; possible "CerebraC", "Cervac", "ser vat rack", or "Cerebrax" (custom cerebrum-like accelerated aging tester with implants in brain tissue vat); context suggests hardware rack for reliability testing.
+
