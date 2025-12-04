@@ -34,8 +34,6 @@ As the "guardian of the genome", p53 is missing in many cancers, and has been in
 
 p53 is highly relevant in [[longevity]], see the longevity section later on this page.
 
-Other anti-cancer pathways should be up-regulated and enhanced.
-
 # Lower cardiovascular disease and lower coronary disease
 
 milano allele: "Apolipoprotein A-1 Milano (also ETC-216, now MDCO-216) (ApoA-1 milano) is a naturally occurring mutated variant of the apolipoprotein A1 protein found in human HDL, the lipoprotein particle that carries cholesterol from tissues to the liver and is associated with protection against cardiovascular disease. ApoA1 Milano was first identified by Dr. Cesare Sirtori in Milan, who also demonstrated that its presence significantly reduced cardiovascular disease, even though it caused a reduction in HDL levels and an increase in triglyceride levels."
@@ -178,6 +176,8 @@ See also [[diabetes]].
 * TODO: DRACO for cellular apoptosis instead of leaking interferon everywhere for an immune response. Immediately kills any cell that a virus infects.
 
 * TODO: improved anti-cancer apoptosis stuff
+
+* TODO: consider the other major anti-cancer pathways (besides p53, DNA damage repair, senolytics) and consider additional changes to prevent cancer. Other anti-cancer pathways should be upregulated and enhanced.
 
 * TODO: downloadable immunity via germline-delivered genetic program to accept lysosome or exosomes carrying antibody fragment plasmids, incorporate into B cells or immune system to generate antibodies based on the given antibody fragment. Use infrastructure outside the human body to develop these antibody fragment plasmids, or find someone who has antibodies for a specific target, then deliver to germline modified humans.
 
@@ -358,6 +358,10 @@ spiciness - TRPV1
 signal - GNAT3, TRPM5, PLCB2
 
 bitterness - T2R - TAS2R4, TAS2R5, TAS2R16, TAS2R8, TAS2R38, TAS2R48 see also <a href="https://www.biorxiv.org/content/early/2018/04/06/296269">ref</a>
+
+bitterness - T2R38 - people possessing two copies of the PAV polymorphism report PTC to be more bitter than TAS2R38 heterozygotes. The PAV polymorphism is A49P, V262A, and I296V. [PAV-TAS2R38 expression amount](https://pmc.ncbi.nlm.nih.gov/articles/PMC3778862) correlates with individual differences in bitter sensory perception.
+
+gustin (a trophic factor for taste bud development) and rs2274333 influence taste perception of 6-n-propylthiouracil (PROP) and fungiform papillae (FP) density.
 
 Taste is GPCRs (G-protein coupled receptors) and some ion channels. Taste perception goes from receptors -> cranial nerves VII, IX, X -> solitary nucleus -> thalamus -> gustatory cortex. Actually that might be wrong, see <https://gnusha.org/logs/2025-10-02.log> for more details. For hedonic reward from taste: parabrachial nucleus interneurons need to be modified for hedonic reward association against endocrine-linked nutrient sensors on those neurons. Positive hedonic gustatory value is encoded here by "high gamma phase locking" with ~something in VPMpc/BLA that starts a timing window initialized by orofacial sensorimotor pattern generator, anyway they watch for an expected spike and if it's late a FoxP2+ GABAergic interneuron in VPMpc is already depolarized or something. Maybe better to modify VPMpc interneurons to couple spike decision with internal nutritional deficiency status sensing?
 
@@ -657,6 +661,8 @@ melanosome transfer disorder, creating localized spots of depigmentation - <a hr
 "Variations in the KITL gene have been positively associated with about 20% of melanin concentration differences between African and non-African populations. One of the alleles of the gene has an 80% occurrence rate in Eurasian populations. The ASIP gene has a 75–80% variation rate among Eurasian populations compared to 20–25% in African populations. Variations in the SLC24A5 gene account for 20–25% of the variation between dark and light skinned populations of Africa, and appear to have arisen as recently as within the last 10,000 years. The Ala111Thr or rs1426654 polymorphism in the coding region of the SLC24A5 gene reaches fixation in Europe, but is found across the globe, particularly among populations in Northern Africa, the Horn of Africa, West Asia, Central Asia and South Asia. Whilst not all of these genes directly affect melanin production, most of them code for proteins that may play a significant role in melanogenesis and control melanin concentration. Some of these genes are found to be more prevalent in certain population than others."
 
 "the SLC24A5 gene account for 20–25% of the variation between dark and light skinned populations of Africa"
+
+SLC24A5 rs1426654 is an allele for lighter skin. Mutations in the SLC24A5 gene can also cause Oculocutaneous Albinism type 6 (OCA6), a condition characterized by very pale skin, light hair, and vision impairments (don't express it in the ocular system). Maybe rs1426654 can be gene edited in dermis via electroporation?
 
 "The characteristic of fair skin, red hair, and freckling is associated with high amount of pheomelanin, little amounts of eumelanin. This phenotype is caused by a loss-of-function mutation in the melanocortin 1 receptor (MC1R) gene. However, variations in the MC1R gene sequence only have considerable influence on pigmentation in populations where red hair and extremely fair skin is prevalent. The gene variation’s primary effect is to promote eumelanin synthesis at the expense of pheomelanin synthesis, although this contributes to very little variation in skin reflectance between different ethnic groups. Melanocytes from light skin cells cocultured with keratinocytes give rise to a distribution pattern characteristic of light skin."
 
@@ -2184,12 +2190,17 @@ Here are some astrocyte-specific modifications that might be beneficial:
 
 * optimize glutamate uptake dynamics. Targets for this in astrocytes would include EAAT2/GLT-1 (Slc1a2) and EAAT1/GLAST (Slc1a3). GLT-1 overexpression in astrocytes. Increase glutamate transporter expression. Or modestly treat kinetic properties of the glutamate transporter.
 * enhance potassium buffering. Overexpression of Kir4.1 (KCNJ10) in astrocytes. Increase membrane expression. Modify gating kinetic. Enhance trafficking.
-* astrocyte-specific MCT1 overexpression (as mentioned elsewhere on this page). Lactate export can be targeted by targeting MCT1 (SLC16A1) and MCT4 (SLC16A3). Shift LDH-A to favor lactate. GLUT1 for glucose uptake at astrocyte endfeet. Mild tweaks of trafficking signals to bias them into perisynaptic processes. (Astrocyte-derived lactate is linked to memory formation; more efficient lactate supply could support energetically expensive phases of LTP.)
+* astrocyte-specific MCT1 overexpression (as mentioned elsewhere on this page). Lactate export can be targeted by targeting MCT1 (SLC16A1) for lactate uptake and MCT4 (SLC16A3) for lactate export from glycolytic tissues (fast-twitch muscles, astrocytes). MCT4 is upregulated by hypoxia (HIF-1a). Shift LDH-A to favor lactate. GLUT1 for glucose uptake at astrocyte endfeet. Mild tweaks of trafficking signals to bias them into perisynaptic processes. (Astrocyte-derived lactate is linked to memory formation; more efficient lactate supply could support energetically expensive phases of LTP.)
+* Basigin (BSG / CD147) and EMB (GP70) are chaperone proteins required for proper functioning of MCT1, MCT3, and MCT4.
 * improve mitochondria or PGC-1α associated mitochondrial biogenesis in astrocytes
 * increase astrocyte neurotrophic factor support by placing cDNA for BDNF, GDNF, thrombospondins (TSP1/2), hevin (SPARCL1) under an astrocyte-specific promoter. Some mutational work could be done to alter receptor specificity or increase protein stability in extracellular space. There are also astrocyte-expressed synapse maturation factors (Hevin (SPARCL1), SPARC, glypican-4, glypican-6) that could be overexpressed, or otherwise modified for altered binding properties to synaptic partners (e.g., neurexin/neuroligin bridging by hevin).
 * improve handling of oxidative stress in astrocytes to protect synapses from ROS, via overexpression or more of several antioxidant enzymes (SOD2 (mitochondrial superoxide dismutase), catalase, mitochondrial catalase, glutathione-related enzymes (GCLC, GCLM, GPx, etc.)).
 * enhance regulation of extracellular adenosine via overexpression of CD39 (ENTPD1), CD73 (NT5E), or ENT1/2 (equilibrative nucleoside transporters). Increase their catalytic efficiency or surface localization. These changes alter the time course of adenosine buildup and clearance.
 * enhance targeting of aquaporin-4 (AQP4) to the astrocytic endfeet (perivascular localization), such as via α-syntrophin interaction stabilization. The goal is to prevent depolarization of the aquaporin-4 channels and make clearance more efficient per hour of sleep. It is not clear to me whether a benefit would exist regardless of the outcome of the general theory of sleep related glymphatic clearance system.
+
+
+* TODO: maybe target SLC16A7 (MCT2) - a high efficiency lactose transporter found in neurons and liver.
+* TODO: explore gain of function enhancement of lactate dehydrogenase (maybe there's a 2x efficiency gain available here?)
 
 ### Inspired by oxygen supplementation therapy
 
@@ -3217,6 +3228,9 @@ PEPCK-C overexpression: In muscle, this allows greatly improved metabolism and e
 * creatine metabolism?
 * muscle recruitment stuff
 * genomically encoded [[exercise mimetics]]
+
+
+target gain-of-function or overexpression of MCT4 (SLC16A3) for lactate export from glycolytic tissues (fast-twitch muscles). [In some cancers, SLC16A3 is upregulated](https://www.tandfonline.com/doi/full/10.2147/IJGM.S337615) possibly helping cancerous cells to export lactate.
 
 # Sports-related enhancements
 
