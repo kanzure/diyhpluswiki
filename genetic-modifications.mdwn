@@ -2629,7 +2629,6 @@ maybe:
 
 Maybe also mutations in:
 
-* OBFC1 (telomere maintenance), rs77987791 rs77987791 rs7925084
 * GSK3B (healthy aging index)
 * NOTCH1 (diastolic blood pressure)
 * TP53 (serum HDL)
@@ -2639,8 +2638,6 @@ Maybe also mutations in:
 ... see "[Candidate gene resequencing to identify rare, pedigree-specific variants influencing healthy aging phenotypes in the long life family study](http://digitalcommons.wustl.edu/cgi/viewcontent.cgi?article=5821&context=open_access_pubs)".
 
 According to <a href="https://academic.oup.com/mbe/article/35/8/1990/5000154">ref</a> (table 2), maybe mutations in: AKAP9, ATG7, C1QTNF2, C9orf96/STKLD1, DSC2, EFEMP2, FCGBP, FGA, GP5, HEMK1, IQCK, KIAA1614, KLKB1, MNT, MYO16, MYOF, PLTP, PRL, RAD51AP1, RXFP4, STK31, SUPV3L1, WDR87, ZNF233.
-
-* DCAF4 -- avoid rs2535913; keep G because A is associated with lower leukocyte telomere lengths.
 
 * rs2069837 (IL6) and rs2440012 (ANKRD20A9P) and others from "<a href="https://www.nature.com/articles/srep21243">Novel loci and pathways significantly associated with longevity</a>"
 
@@ -2761,12 +2758,31 @@ telomeres:
 * [Telomerase (TERT) overexpression](https://pubmed.ncbi.nlm.nih.gov/19013273/?utm_source=chatgpt.com): delayed aging and increased longevity without extra cancer in treated cohorts (AAV gene therapy of wildtype mice in this study) [PubMed](https://pubmed.ncbi.nlm.nih.gov/23066506/?utm_source=chatgpt.com)
 * TODO: here is a [ref](https://elifesciences.org/articles/39856?utm_source=chatgpt.com) for telomerase/telomere GWAS.
 * TERT overexpression in cancer-resistant mice (extra tumor suppressors) delays aging and extends lifespan ([ref](https://www.cell.com/fulltext/s0092-8674%2808%2901191-4))
+* mTERT overexpression
 * idea: a mutation increasing TERT's stability by disrupting ubiquitin-mediated degradation signals would prolong telomerase half-life, ensuring sustained telomere maintenance during organismal aging without risking oncogenic overactivity.
 * idea: engineer a variant in TERT's RNA-binding motif to improve affinity for TERC, boost holoenzyme assembly and activity.
 * idea: a mutation altering TERT's nuclear import signals to enhance localization efficiency might increase telomerase availability at chromosome ends.
+* other gain-of-function for TERT... also try to stabilize telomere lengths instead of endless runaway extension?
+* if you have very long telomeres, then invest in additional anti-cancer pathway enhancement
+* background: [Two faces of p53: aging and tumor suppression](https://pmc.ncbi.nlm.nih.gov/articles/PMC2190721/)
+* background: [DNA damage responses and p53 in the aging process](https://ashpublications.org/blood/article/131/5/488/104405/DNA-damage-responses-and-p53-in-the-aging-process)
+  * "While DDR prevents tumorigenesis, its constitutive activation, such as that in hyperactive p53 mutants, accelerates the aging process. The continuous activation of DDR arises by genetic mutations that augment DDR and can also result from DNA lesions that are not repaired and thus persist. For instance, critically shortened and thus unprotected telomeres are recognized as DNA DSBs. Indeed, the inability of telomerase to maintain the telomere length causes premature aging through activating the DDR and p53. Mice that are lacking the catalytic subunit or the RNA component of telomerase have shorter lifespans with early onset of aging phenotypes, even though in mice these phenotypes require several generations of defective telomere extension to arrive at critical telomere shortening, which precipitates the progeroid pathologies. Premature replicative senescence also shortens lifespan in Ku80−/−-mutant mice that lack functional NHEJ. Intriguingly, the accelerated aging phenotypes of both animal models can be alleviated by the loss of p53, again underlining the pivotal role of p53 in DDR-mediated premature aging."
+* "Short telomeres generate chronic, non-repairable DDR signalling that keeps p53 transcriptionally active indefinitely."
+* DCAF4 -- avoid rs2535913; keep G because A is associated with lower leukocyte telomere lengths.
+* OBFC1 (STN1) (telomere maintenance), rs77987791 rs7925084 -- "OBFC1, also known as STN1, is a critical component of the CST (CTC1-STN1-TEN1) complex that plays an essential role in regulating telomere maintenance. The CST complex functions primarily as a terminator of telomerase action, helping to limit excessive telomere elongation by competing with telomerase for access to the telomeric 3' overhang. OBFC1/STN1 specifically facilitates the recruitment of DNA polymerase α-primase to telomeres, which is necessary for C-strand fill-in synthesis following telomerase-mediated G-strand extension. This fill-in synthesis converts the extended single-stranded overhang into double-stranded telomeric DNA, completing the telomere replication process. Both excessively short and excessively long telomeres can cause problems. Short telomere syndromes, collectively known as telomeropathies, include conditions like dyskeratosis congenita, idiopathic pulmonary fibrosis, aplastic anemia, and liver cirrhosis, which result from critically short telomeres causing cellular senescence and stem cell exhaustion in high-turnover tissues. However, abnormally long telomeres also carry risks, particularly an increased susceptibility to certain cancers including melanoma, glioma, and lung cancer, because extended telomeres allow cells to continue dividing beyond normal limits, potentially accumulating mutations and evading the tumor-suppressive mechanism that telomere shortening provides." however, you can upregulate other anti-cancer pathways if you allow for longer telomeres. OBFC1 is a component of the CST (CTC1-STN1-TEN1) complex involved in telomere maintenance and DNA replication. The protein contains an N-terminal OB (oligonucleotide/oligosaccharide-binding) fold domain that facilitates single-stranded DNA binding, followed by a winged helix-turn-helix domain in its C-terminal region; structurally, it adopts a compact globular architecture that enables it to interact with both CTC1 and TEN1 partners while engaging telomeric DNA."
 * TODO: process more [telomerase-related longevity interventions from the hplusroadmap logs](http://gnusha.org/logs/telomerase.log)
 
 
+During aging and runaway aging, the genome loses copies of ribosomal RNA (rRNA) because of excision, DNA damage repair, etc. rRNA is apparently stored on 13p12, 14p12, 15p12, 21p12, 22p12. There are several hundred copies in a healthy non-aged adult genome. One obvious thing to do would be to add extra copies of rRNA genes throughout the genome in different locations, and ensure that if needed they can be used (not under heterochromatin silencing or the silencing can be turned off when the cell needs these other rRNA copies).
+
+Other things get lost from the genome and could be given more redundancy or more consideration:
+
+* mitochondrial DNA (mtDNA): Large-scale deletions in the circular mtDNA genome accumulate in post-mitotic tissues like muscle and brain, impairing electron transport chain function and increasing reactive oxygen species production, which exacerbates aging phenotypes. To fix, consider adding more mtDNA or more copies of mitochondrial genes, and consider better mtDNA DNA damage repair mechanisms or other gain-of-function related to DNA damage repair.
+* segmental duplications (low-copy repeats): These near-identical genomic blocks (~5% of the human genome) undergo unequal recombination, resulting in net copy number loss over time, which disrupts gene dosage balance and increases susceptibility to age-related genomic instability and neurological decline. (<a href="https://www.cell.com/trends/genetics/abstract/S0168-9525(23)00034-3">ref</a>, [ref](https://pmc.ncbi.nlm.nih.gov/articles/PMC2920180/)) To fix, consider optimizing recombination mechanisms in vitro and adding back in the modified enzymes.
+* long and short tandem repeats (STRs) in regulatory regions: Contractions or deletions in these microsatellites (2–6 bp motifs) occur via replication slippage, reducing enhancer/promoter activity and gene expression variability, thereby promoting age-related diseases. ([ref](https://pmc.ncbi.nlm.nih.gov/articles/PMC9612635/), [ref](https://pmc.ncbi.nlm.nih.gov/articles/PMC10680900/), [ref](https://pmc.ncbi.nlm.nih.gov/articles/PMC8256013/), [ref](https://pmc.ncbi.nlm.nih.gov/articles/PMC11709393/)) To fix, consider optimization of replication enzymes in vitro to reduce incidents of slippage.
+* copy number variations that get changed due to error-prone non-allelic homologous recombination, or other reasons.
+* copies of ribosomal rRNA
+* telomere length
 
 
 ## Brain / hypothalamus (neuron-focused)
@@ -3655,6 +3671,8 @@ Just saying "regeneration" is kind of ridiculous, it's like saying "let's add hi
   * Titin (TTN) modification of PEVK or kinase domains to increase strain sensing.
   * PGC-1α4 overexpression in muscle to promote hypertrophy over oxidative phenotype.
   * Tbx5 is a forelimb-specific regulatory element or cell enhancer (targeter)
+
+* better wound healing
 
 * supernumerary or extra cranial nerve roots or other spinal nerve fibers, with the expectation that they might be repurposed in the future for brain-computer interfaces or for reinnervation of muscles. Could be convenient to have some spare nerve fibers around that are already correctly wired into the brain. Might also help with surgical repair of brachial plexus injuries or other nerve fiber dissection injuries. With spare nerve fibers, the surgeon would have sufficient material to patch you back together. Are there any nerve fiber targeted genetic changes that could assist with PEG+chitin nerve fiber repair and healing?
 
