@@ -1828,7 +1828,7 @@ from "<a href="https://www.nature.com/articles/s41380-017-0001-5">A combined ana
 * 0.71 IQ point explanation power: NEGR1 intron rs34305371 (chr1:72.73Mb). [NEGR1 is a neuronal cell-adhesion molecule](https://www.frontiersin.org/journals/molecular-neuroscience/articles/10.3389/fnmol.2015.00089/full?utm_source=chatgpt.com) in the IgLON family and NEGR2 promotes neurite outgrowth, connectivity, and synaptogenesis in models (FGFR2-linked signaling, ADAM10-regulated shedding).
 * 0.5 IQ point explanation power: IP6K1 intronic rs7618501 (chr3:49.77Mb). [IP6K1](https://molecularbrain.biomedcentral.com/articles/10.1186/s13041-020-00615-3?utm_source=chatgpt.com) makes inositol pyrophosphates (like 5-IP7) that influence synaptic vesicle release and neuronal signaling. IP6K1 affects presynaptic function and neuronal migration in models.
 * 0.5 IQ point explanation power: intergenic allele (nearest SUMO2P2 pseudogene) rs11793831 (chr9:23.36Mb). might be related to SUMO/ubiquitin pathways.
-* 0.4 IQ point explanation power: ATXN2L intronic allele rs8049439 (chr16:28.84Mb). ATXN2L (ataxin-2-like) is a stress-granule and RNA-metabolism protein related to [ATXN2](https://www.nature.com/articles/s41419-024-06812-5?utm_source=chatgpt.com). ATXN2/ATXN2L influence RNA handling and neuronal stress responses. General theme here is post-transcriptional/RNA-granule control in neurons.
+* 0.4 IQ point explanation power: ATXN2L intronic allele rs8049439-C (chr16:28.84Mb). ATXN2L (ataxin-2-like) is a stress-granule and RNA-metabolism protein related to [ATXN2](https://www.nature.com/articles/s41419-024-06812-5?utm_source=chatgpt.com). ATXN2/ATXN2L influence RNA handling and neuronal stress responses. General theme here is post-transcriptional/RNA-granule control in neurons.
 * 0.4 IQ point explanation power: STAU1 intergenic allele rs2426132 (chr20:47.72Mb). [STAU1](https://pmc.ncbi.nlm.nih.gov/articles/PMC2293094/?utm_source=chatgpt.com) encodes an RNA-binding protein that mediates dendritic mRNA transport and local translation, important for long-term synaptic plasticity.
 * oligodendrocyte differentiation is involved in intelligence differences via structure and maintenance of [white matter](https://www.nature.com/articles/mp201266) in the brain.
 
@@ -1865,6 +1865,14 @@ NOTCH2NL overexpression: [Human-specific notch2nl genes expand cortical neurogen
 ----
 
 * TODO: "<a href="https://www.nature.com/articles/s41588-018-0152-6">Genome-wide association meta-analysis in 269,867 individuals identifies new genetic and functional links to intelligence</a>" (2018) (<a href="https://www.biorxiv.org/content/early/2017/09/06/184853">biorxiv</a>)
+  * CADM2 rs74599180-C, rs74599180-C, rs74599180-G -- CADM2 mutations are associated with information processing speed, number of sexual partners, age at first sexual intercourse; rs17518584 associated with DSST performance (p = 0.013), and also with language/semantic categorization, executive function, overall cognition, also with Stroop word color; see also [ref](https://pmc.ncbi.nlm.nih.gov/articles/PMC4879186/) for more CADM2 variants. There are more than 20 CADM2 mutations that have been associated with intelligence.
+    * CADM2 encodes a neural cell-adhesion molecule involved in neuron cell-cell adhesion, glutamate signaling, GABA transport.
+  * TTLL7 rs41293013-C, TMOD2 rs17610835-G, GLDN rs112714914-G, KMT2D rs55776396-C, SREK1IP1 rs80170948-G, TRAIP rs2271960-C, TRAIP rs2271961-C, TRAIP rs7648987-G, ATXN2L rs8049439-C (already mentioned elsewhere on this page), ATXN2L rs72793812-G, ATXN2L rs62036622-G, ATXN2L rs4451951-C, ATXN2L rs8062405-G, SH2B1 rs8055982-C, SH2B1 rs11864107-C, SH2B1 rs8061590-C, SH2B1 rs7198606-G, SH2B1 rs9972768-C, ATP2A1 rs8061590-G, SLC39A1 rs3791187-C,  ... it's a long list.
+  * FOXO3 rs2802290-G, rs2802292-G, rs2490272-C, rs2764265-C, more...
+  * FGF8 rs749694-G, rs10883688-C, rs7077446-G, rs10786648-C
+  * TET2 rs55838312, rs2647257, rs12645144, rs2454206, rs11726786, rs13109676, rs13123752, rs7670522, rs2726519, rs2726518, rs2133086, rs7678440, rs2726459, rs7683416, rs2726458, rs2647246, rs2647248, rs10010325, rs1391438, rs11735256, rs6839705, rs1015521, rs6533182, rs2726492, rs2647256, rs992493, more..
+  * RBFOX1 16,144 SNPs associated with intelligence; DCC has 5,431, etc...
+  * kinesin motor protein KIF16B is associated with intelligence, as are scaffolds RIMS2 and SHANK3. these are good engineering targets to consider.
 * TODO: "<a href="https://www.nature.com/articles/s41380-018-0040-6">Biological annotation of genetic loci associated with intelligence in a meta-analysis of 87,740 individuals</a>" (2018)
 * TODO: "<a href="https://www.nature.com/articles/s41380-018-0205-3">Identification of novel loci associated with infant cognitive ability</a>"
 
@@ -2252,7 +2260,7 @@ Pair behavioral training with brief LC (locus coeruleus) or VTA optogenetic acti
 
 NR2B / GRIN2B (GluN2B; NMDAR subunit): Raise synaptic abundance/surface residency (e.g., boost forward transport or recycling), modestly bias open probability/deactivation toward longer currents, or preserve PDZ-anchoring to keep NR2B at spines.
 
-KIF17 (kinesin-2 motor for NR2B cargo): Increase motor-cargo interaction or expression to elevate NR2B delivery; consider domain designs that favor spine-targeted drop-off. Maybe a dimerization design to transport more NR2B cargo to synapses? Amplify its ability to traffic NMDA receptor subunits, particularly NR2B/GRIN2B, to dendritic spines and synapses, thereby enhancing synaptic plasticity and cognitive performance. One strong concept is to increase KIF17-cargo coupling by engineering or stabilizing its interaction with NR2B-containing vesicles through optimized tail or adaptor domains, ensuring more efficient receptor delivery to the postsynaptic membrane. Another is to boost motor processivity or run length by modifying its motor domain or coiled-coil regions, allowing KIF17 to transport cargo more persistently along microtubules. Enhanced spine-targeting motifs could improve the precision of cargo delivery to active synapses. Various kinesin motors have been improved in the literature too: [ref](https://pmc.ncbi.nlm.nih.gov/articles/PMC9871336/?utm_source=chatgpt.com), [processivity run length](https://pubmed.ncbi.nlm.nih.gov/11086010/), [dimerization](https://pmc.ncbi.nlm.nih.gov/articles/PMC3992690/?utm_source=chatgpt.com), increase processivity by [shortening long neck linkers](https://pmc.ncbi.nlm.nih.gov/articles/PMC2882250/?utm_source=chatgpt.com), etc. Exploit subunit composition (head identity) because KIF3B is the more processive head. Increase [landing rate](https://www.nature.com/articles/s41594-025-01630-5).
+KIF17 (kinesin-2 motor for NR2B cargo): Increase motor-cargo interaction or expression to elevate NR2B delivery; consider domain designs that favor spine-targeted drop-off. Maybe a dimerization design to transport more NR2B cargo to synapses? Amplify its ability to traffic NMDA receptor subunits, particularly NR2B/GRIN2B, to dendritic spines and synapses, thereby enhancing synaptic plasticity and cognitive performance. One strong concept is to increase KIF17-cargo coupling by engineering or stabilizing its interaction with NR2B-containing vesicles through optimized tail or adaptor domains, ensuring more efficient receptor delivery to the postsynaptic membrane. Another is to boost motor processivity or run length by modifying its motor domain or coiled-coil regions, allowing KIF17 to transport cargo more persistently along microtubules. Enhanced spine-targeting motifs could improve the precision of cargo delivery to active synapses. Various kinesin motors have been improved in the literature too: [ref](https://pmc.ncbi.nlm.nih.gov/articles/PMC9871336/?utm_source=chatgpt.com), [processivity run length](https://pubmed.ncbi.nlm.nih.gov/11086010/), [dimerization](https://pmc.ncbi.nlm.nih.gov/articles/PMC3992690/?utm_source=chatgpt.com), increase processivity by [shortening long neck linkers](https://pmc.ncbi.nlm.nih.gov/articles/PMC2882250/?utm_source=chatgpt.com), etc. Exploit subunit composition (head identity) because KIF3B is the more processive head. Increase [landing rate](https://www.nature.com/articles/s41594-025-01630-5). KIF16B is another target to optimize for receptor trafficking, implicated in intelligence GWAS.
 
 SNX27 (endosomal recycling adaptor with PDZ domain): discussed below.
 
@@ -3069,7 +3077,7 @@ TODO: increase predisposition to twinning or maternal-utero compatibility with p
 
 ## Puberty and sexual characteristics
 
-* age at first sexual intercourse: mutations near or related to ESR1, CADM2
+* age at first sexual intercourse: mutations near or related to ESR1, CADM2 (CADM2 polymorphisms are also associated with information processing speed)
 
 * number of sexual partners: mutations near or related to CADM2
 
@@ -3652,6 +3660,18 @@ Just saying "regeneration" is kind of ridiculous, it's like saying "let's add hi
 * anti-sunburn, sunburn protection- see SOD pathway upregulation. additional radiation damage resistance, radiation damage repair, DNA damage repair pathway upregulate, ... Um, increase skin melanin content to protect against sunburns duh.
 
 * reduce human skin attractiveness to mosquitos, possibly related to carboxylic acid secretions. Why can't we secrete nicer smelling odors or perfumes anyway.
+
+* metabolic pathway optimization:
+  * [optimized glycolysis](https://pmc.ncbi.nlm.nih.gov/articles/PMC6062487/) and [ref](https://pmc.ncbi.nlm.nih.gov/articles/PMC4825824/?utm_source=chatgpt.com), [ref](https://link.springer.com/article/10.1186/s12934-023-02090-6)
+  * [lipid and fatty acid metabolism](https://pmc.ncbi.nlm.nih.gov/articles/PMC6555965/)
+  * [mevalonate pathway](https://pmc.ncbi.nlm.nih.gov/articles/PMC9579336/)
+  * [Targeting the electron transport system for enhanced longevity](https://www.mdpi.com/2218-273X/15/5/614)
+  * [acetyl-CoA flux optimization](https://pmc.ncbi.nlm.nih.gov/articles/PMC7240943)
+  * [gluconeogenesis](https://www.jci.org/articles/view/188363)
+  * [glutathione metabolism](https://www.sciencedirect.com/science/article/pii/S2667370325000578)
+  * [reactive oxygen species (ROS) detoxification](https://link.springer.com/article/10.1007/s00204-024-03696-4), [ref](https://pmc.ncbi.nlm.nih.gov/articles/PMC10921454)
+  * [mitochondrial metabolism optimization](https://www.sciencedirect.com/science/article/pii/S2319417022000749)
+  * modeling: [protein cost of metabolic flux](https://arxiv.org/abs/1604.00167), [energy-based bond graph analysis of biomolecular pathways](https://arxiv.org/abs/1611.02332)
 
 * TODO: incorporate things about neochromosomes and human artificial chromosomes (HACs) from the IRC logs. sc2.0 had a neochromosome to store all their tRNA synthetases. you can knock out an essential gene on a natural chromosome and put it on the artificial one so the neochromosome doesn't get lost over time.
 
