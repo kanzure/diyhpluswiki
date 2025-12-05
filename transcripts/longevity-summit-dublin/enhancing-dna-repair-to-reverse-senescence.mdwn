@@ -1,0 +1,245 @@
+talk title: Enhancing DNA repair to reverse senescence
+
+speaker: Morten Scheibye-Knudsen
+
+video: <https://www.youtube.com/watch?v=vS3RL5QV-UA>
+
+event: Longevity Summit Dublin 2024
+
+LLM-generated summary: Morten Scheibye-Knudsen presents a comprehensive overview of his lab's work at the University of Copenhagen on aging phenotypes, premature aging syndromes, and DNA repair interventions. Key highlights include phenome-wide association studies identifying aging traits and clustering premature aging diseases; discovery and mechanistic elucidation of DCAF17 mutations in Woodhouse-Sakati syndrome, linking it to THRAP3 stabilization, R-loop resolution, and ubiquitin-mediated degradation; hormetic drug screening yielding Drug F, a non-genotoxic DNA repair stimulator that reverses senescence markers, extends lifespan in repair-deficient models, and preserves motor function; a nuclear morphology-based AI senescence predictor validated across tissues, cell lines, and human biopsies for risk stratification (e.g., breast cancer) and hypoxia studies; and a pilot RCT demonstrating nicotinamide riboside (NR) reduces IL-8, neutrophil recruitment, senescence, and inflammation in COPD patients via NAD replenishment and PARP1 modulation. Interventions like ketones alleviate transcription stalling at secondary DNA structures in Cockayne syndrome models, emphasizing DNA repair's central role in aging.
+
+[[!toc levels=3]]
+
+# Introduction and Lab Overview
+
+All right, thank you so much, Aubrey. Thank you for the invitation. It's really a great pleasure to be here today.
+
+So I run a lab at the University of Copenhagen. I'm also the CSO of the Health and Longevity Clinic, just as a disclaimer, and I do a couple of other things. So I'm going to focus on my work at Copenhagen today, particularly on DNA repair that I'm very happy that Bjorn introduced so well.
+
+So in general, my lab tries to understand the phenotypical changes that occur with aging, what are the underlying mechanistic reasons for the development of pigmentation changes in the skin and graying of hair, wrinkles, and eventually death.
+
+# Phenotypic Characterization of Aging
+
+And so this is a more sort of comprehensive phenotypical characterization of an aging population. We downloaded PubMed and then tried to identify features that are associated with aging.
+
+So this is the most prevalent feature is graying of hair. 99% of everybody will develop graying of hair. And I think the ones that do not have graying of hair are the ones that are completely bald. But there's, of course, other things. Cancer is highly prevalent. This is 40% of everybody will develop some type of cancer. Between 10% and 20% will develop dementia. So these are, of course, much more serious things than graying of hair.
+
+We are also looking at phenotypes in a different way, and I'm not going to talk so much about this study, but here Michael Beniston is here, so he can tell you he's sitting down there. He has also undergone some changes since this picture was taken when he started his PhD. His hair is a little bit larger. But you can find him and talk to him later.
+
+Basically, he does text mining. We have mined 30 million pathological texts and identified patterns of aging in this text, including a drug that might impact senescence and lifespan in model organisms.
+
+# Premature Aging Diseases and Phenome Clustering
+
+Okay, but when we have a quantified version of aging, we can also do quantified versions of premature aging diseases. So, for example, this is dyskeratosis congenita, which is a disease where you have issues with telomerase, a gene that elongates your telomeres. And these patients develop skin pigmentation changes, changes in their nails. They develop leukoplakia, which is some mucosal accumulations of leukocytes. They also eventually develop pancytopenia, so they die of bone marrow failure, basically. But other than that, they don't have that many aging features, actually.
+
+So there are differences in the different diseases with different features. I've worked quite a bit in Cockayne syndrome that I'll talk a little bit more about.
+
+But when we have this quantified version of a disease, we can look for correlations between diseases. We can cluster them, seeing whether the phenotypes overlap. If we have a basic understanding of the mechanisms of the different diseases, we can assign phenotypes to different... So, or correlate phenotypes that will likely probably come from the same process.
+
+So, I mean, we have clusters here. We have sun sensitivity, cancer, skin pigmentation changes. So, they're probably associated. Here's the cluster. I think it's a neurodegenerative cluster. And so each the color of the pixels here are the prevalence of that feature and that disease, and each column is then a disease. So we can also see which diseases occur with each other.
+
+We can also use this aging phenome to see if we can identify new diseases. And so this is some unpublished work that hopefully will soon be submitted. This has been a really large effort in the lab.
+
+# Discovery of Woodhouse-Sakati Syndrome as a Premature Aging Disease
+
+And basically what we did, we took the aging phenome, so the characterization of aging that we previously described, and then we went to a database called OMIM, which is a database of monogenic diseases or diseases where there's a database of genetic diseases.
+
+And we can then see how many shared features are there with normal human aging, and if there are any strange diseases that are outliers. So Woodhouse-Sakati syndrome came out as an outlier in this regard.
+
+And so what is Woodhouse-Sakati syndrome is an autosomal recessive disease. There are very few patients. They have these features here. So this individual here is a girl. She's actually 17 years old. So clearly it looks like it's a progeroid phenotype.
+
+And so if we cluster it with other premature aging diseases, we can see that it associates quite strongly with these diseases that we know are very sort of the quintessential premature aging disorders.
+
+We also then try to quantify in a better way if the disease is a premature aging disease by doing age prediction based on the facial photographs. And here they also seem to be aging faster. They age about 30% faster than the average population.
+
+And we were then very lucky to actually identify the first family in northern Europe with this disease. And we could take samples from the patients and find that these patients have accelerated aging when you do the blood-based aging AI clock that is now in Deep Longevity.
+
+# Mechanistic Studies on DCAF17 in Woodhouse-Sakati Syndrome
+
+So we generated various things. I'm going to give you a small snapshot. So one thing we did was we shot these cells with lasers, and we can see that the gene that's mutated in Woodhouse-Sakati syndrome gets recruited to the site of the laser damage. That indicates it could be a DNA repair protein.
+
+And we did mass spec. Actually, we did many different types of mass spec because it's been extremely challenging to identify what this actually does. One thing that it seems to always interact with is the DDB1-DDA1 complex, which is involved in E3 ubiquitin ligase. So it adds ubiquitin to different substrates.
+
+And we can identify single amino acids when we mutate arginines across the protein. We can identify a single conserved amino acid that's important for this interaction.
+
+We also generate a knockout mouse, and the knockout mouse is sterile, which the human patients are also sterile. We see a reduction in cell proliferation in the testis and much more apoptosis. This corresponds with a large increase in inflammation and the mice are more frail if you use the clinical frailty index and they are shorter lived.
+
+So to identify the target we did this BioID approach where you have a ubiquitin or biotin ligase that's attached to a substrate and then we can identify it will add biotin to proteins around it, but then you can do a biotin pull down and do mass spec.
+
+And we identified THRAP3 as a potential target that comes down here. And we confirmed that interaction. And it's not interacting in the mutated DCAF17 form.
+
+So THRAP3 is known to be actually excluded from DNA damage site. So when you damage the DNA, THRAP3 is removed. And you can maybe see that there is a line here that corresponds with the DNA damaged stripe. And that line is actually much more pronounced when you knock down DCAF17.
+
+So DCAF17 seems to be somehow involved in stability of THRAP3. And indeed, in the mice testes, we see much less THRAP3.
+
+And so what does THRAP3 do? So it's been reported to actually be involved in R-loop formation. So this is resolution of RNA-DNA hybrids. And we see more R-loops in the DCAF17 knockdown cells. This corresponds also with more RPA, which is a single-stranded binding protein.
+
+And when we do DRIP-seq, we see not only sort of higher peaks around R loops, but the variation is extremely high. So the regulation of R loops seems to be very off in these cells.
+
+If you inhibit transcription, you get less recruitment, which also corresponds with reduction in R loop formation, presumably. And if you inhibit the MRN complex, you also see more recruitment. And that's potentially because you may get more R-loops in this way.
+
+If you inhibit RPA, you also get more recruitment.
+
+So this is just a snapshot. It's been a lot of work. But this is sort of the ongoing model that DCAF17 protects THRAP3 from ubiquitin-mediated degradation. And if you don't have DCAF17, you get degradation and you get premature aging.
+
+# Interventions in Accelerated Aging: PARP Inhibitors, NAD, and Ketones
+
+OK, so previously, I've worked on sort of other aspects premature aging. One thing that we know occurs in accelerated aging disorders is that you have a problem with repairing DNA which leads to a hyperactivation of DNA damage response.
+
+And so you can use, and this enzyme catabolizes NAD, so it eats up NAD to create these polymers. And then that leads to secondary effects on metabolism. So you can go in and use PARP inhibitors and extend the lifespan of some of these premature aging worms. And you can also give NR to mice and then you normalize the transcriptome. You can also give ketones to increase acetyl-CoA levels. And I'm going to talk a little bit more about ketones.
+
+So we've also done this that Ocampo talked about yesterday, that we have some we developed some tracking algorithms for fruit flies so we can test many different interventions. This we also have in mice. And we actually, I think this is exciting. We can also do it in humans.
+
+So we can do motor function analyses quite easily now just based on simple video. And Michael Petersen, the guy that spearheaded this, he has a company now that is doing this. And so if you guys are interested in motor function investigations, I would highly suggest that you would check out this company.
+
+So we tested a number of metabolites to see if we could affect accelerated aging, and then looked at various outcomes. And so these flies may be a model for the Cockayne syndrome that Bjorn also introduced earlier.
+
+And if you give them ketones you see somewhat of a rescue of lifespan effects. Again this is just a snapshot of the project here.
+
+But we also did it in mice. So the CSB mice have more inflammation. And if you give ketones, you actually rescue this inflammation.
+
+If you knock out Indy, which is a transporter for citrate that can also influence acyl-CoA, you kind of exacerbate the phenotype.
+
+And so how does this work? So one thing that we observe is that when you are missing Indy, so if you have less citrate, if you have less DNA repair, you get stalling of transcription at secondary DNA structures.
+
+And you can get a ketogenic diet, and then that transcriptional stalling is alleviated.
+
+And so this is sort of the overall model that we think is involved. So secondary DNA structures can activate PARP1, and then that can lead to loss of acetylation of histones. And you can use ketones to increase CoA and then loosen up the chromatin structure, facilitating transcriptional read through of these areas.
+
+And then that will reduce or dampen the DNA damage response and probably alleviate some of these features accelerated aging.
+
+# Drug Screen for Hormetic DNA Repair Stimulators
+
+So DNA repair is important in aging. I think Bjorn would agree with this. And I hope you all, if you're taking home anything from this talk, then just take home this message, OK?
+
+So in this project that I'm about to introduce to you is a project where we tried to see if we could find drugs to stimulate DNA repair in much the same way as Bjorn did. And we went a little bit of a different route.
+
+So we went with the route of Nietzsche, what does not kill me makes me stronger, which is basically describing an adaptive response. And we know this in the aging field as a hormetic response. You can induce an adaptive response, and then the organisms become stronger.
+
+So in this project that we've done in collaboration with the great Dr. Zhavoronkov in Insilico Medicine, we have looked for drugs that could elicit this response.
+
+So we trained an algorithm on a large number of data sets that where cells were exposed to DNA damaging agents. And then we identified molecules that would elicit this response, but without eliciting DNA damage.
+
+So we can identify compounds that make cells. So each dot here is cells that have been treated with a molecule. And then over time, and then we hit them with an X-ray hammer. The cells die over time. Some of them have been treated with some molecules. Some of the molecules make the cells completely resistant to this very significant amount of ionizing radiation.
+
+And so we also screened for DNA damaging drugs. We needed drugs that did not induce DNA damage. This is a high throughput comet assay. This was done in collaboration with Amel Technologies in DC, where we can identify drugs that then would not induce DNA damage.
+
+So we want drugs that don't damage the cells, but fool the cells into believing there is damage.
+
+We found one drug, Drug F, which was our lead compound that actually reduces the amount of DNA damage in senescence and also reduce markers of cellular senescence. So this is beta-gal, and increases lamin B1 levels and also allows cells to live longer in culture.
+
+And we used our system to see how does this molecule affect fruit flies. So these are the tracking, the paths of how fruit flies walk. So when you're a young fruit fly, you walk quite a bit. When you're older, you walk much less unless you're on Drug F.
+
+So Drug F allows you to maintain your motor function with age. This is quantified here. And it also reduces DNA damage. This is in primary neurons, in mouse neurons.
+
+So we have tested it in premature aging cell lines. So this is Xeroderma pigmentosum, Cockayne syndrome, Hutchinson-Gilford progeria syndrome, and Werner syndrome. There are more DNA damage in those diseases, and Drug F reduces the level of DNA damage.
+
+It also extends the lifespan of flies, and particularly also of DNA repair deficient flies.
+
+We have identified the target I cannot disclose that here using DART assay and confirmed that using also genetic assays including identifying some partners.
+
+The interesting, or I think one of the more fascinating things that we see is that the drug is actually able to allow cells to go back, senescent cells go back in culture. So the drug reduces persistent DNA damage lesions. They're less damaged. The cells go back into culture for a few more rounds of growth.
+
+And this reduction in senescence can also be quantified using a senescence predictor. I'm going to talk about it in a little bit. And this is transient. So if you remove the drug again, the cells become senescent.
+
+We have identified lead compounds. and these go to the brain, and they're not toxic. So we're now doing studies in mice to see if we can rescue features so there will be an update at some point.
+
+# Nuclear Morphology-Based Senescence Predictor
+
+All right. Some of the things that we're measuring in the mice and that we're measuring in clinical trials is to look at tissues also.
+
+So as I mentioned before, we can use a senescent predictor to predict or use nuclear morphology to predict senescence.
+
+So in this project, we trained an algorithm to identify nuclei and then to be able to identify if the nuclei represent the senescent cell or not. And it's highly accurate. Correlates quite well with known markers of senescence. And even when we do various normalizations, it's still accurate.
+
+We can go into mice. Or in cell lines, we see more senescence in the premature aging cell lines. In astrocytes that are radiated, in neurons that are radiated, it also works in the liver.
+
+And we see various morphological changes. We see more replicative senescence in the liver and ionizing radiation-induced senescence.
+
+And so we can go into humans and then identify from a skin biopsy, for example, and identify nuclei that could be senescent and then correlate that with health outcomes.
+
+And what's actually surprising is for example, that we thought that the people that had more senescent would be more sick. It actually turned out to be a little bit opposite. The ones that have very little senescence have a much greater increase for developing cancer.
+
+So neoplasm was highly, significantly associated with too little senescence. In essence, senescence is also a barrier for unlimited cell growth.
+
+We've now gone in and looked at more than 4,000 breast biopsies from women, where we can use the algorithm to actually risk stratify women. And this is very important, because in the US, more than a million biopsies are taken every year. 80%, 90% of those biopsies are benign.
+
+And now this is an algorithm that can risk stratify these women. And this is coming out in a large journal, hopefully in a few weeks.
+
+# Applications: Hypoxia and COPD Clinical Trial
+
+OK, so we also use this in various settings, this predictor. We've done a study on hypoxia, where we looked for whether or not hypoxia could impact health.
+
+This is a PhD student, Emmanuel Tekle, who has had a very tough PhD during his PhD. A war broke out. I didn't hear from him for six months. And suddenly he called. He was at the border with Eritrea and had been seeing horrible things. Anyway, he's still there and pursuing his PhD. So this is very impressive.
+
+What we can see here is that the higher elevation is associated with lower disease burden. He went and did blood samples from various sites around the Tigray region of Ethiopia. There are lowland, highland dwellers and lowland dwellers, and they're quite socioeconomically quite even.
+
+And then we look for, for example, for senescence. So we can use our senescence predictor on blood smears and see that you have less ionizing radiation. So DNA damage senescence decreases with elevation, it appears. But relative senescence actually has the opposite trend.
+
+And maybe this has something to do with if you have less damage you have more growth I would suspect and then you get closer to relative senescence. So in that sense, maybe it makes sense.
+
+Another thing where we've implemented it is in a clinical trial where we wanted to target COPD. And why are we testing this? Why is COPD interesting? It's a leading cause of death. And we know that it's caused by smoking in the majority of the cases, and smoking induces DNA damage, activates PARP1, leads to loss of NAD due to this poly ADP ribose polymer formation.
+
+So we thought maybe we could use NR to treat these COPD patients. So we did a quite good trial design, I think. and double-blinded placebo-controlled RCT. We did two grams of NR or placebo for six weeks, so it's a little bit short. I actually would have liked to have it a little bit longer, but this is a sort of pilot study.
+
+What we see is that patients with COPD tend to have lower NAD levels in their blood, and actually the NAD levels in the blood corresponds or correlates with the lung function. So if you have lower lung function, you tend to have less NAD.
+
+Our primary outcome measure was IL-8, and that was met in the study. So NR significantly reduced IL-8, we can see the ones with most IL-8 was also the ones that had the largest effect. And the reduction in IL-8 correlated also with less recruitment of neutrophils, which are an inflammatory cell line that's important in the disease progression.
+
+We used our senescence predictor and find that it appears that NR reduces cell senescence in the COPD in the patients, COPD lung, in the lung of the COPD patients.
+
+And we can see the COPD patients also have accelerated aging using DNA methylation assays. We see a trend for all of these different clocks, but none of it actually reached significance. we do see a significant correlation with IL and with predicted senescence but that didn't meet significant criteria.
+
+We also looked at inflammation in the epithelium and see that NR reduces inflammation and upregulates actually DNA replication or DNA metabolic processes.
+
+So NR reduces airway senescence and inflammation in COPD patients.
+
+# Conclusion
+
+So to sum it up, DNA repair is important in aging. As Bjorn mentioned, we could target DNA damage or the consequence of DNA damage either pharmacologically or metabolically, and we can impact biomarkers of aging and disease with interventions.
+
+And so in the end, I just want to highlight that we are organizing this meeting that was mentioned before, and I encourage you all to join. The XPRIZE is coming to the meeting with the Healthspan Team Summit there. And if you want to win $100 million, you should participate.
+
+And this is my lab, my funding collaborators, and I'll take any questions. Thank you so much.
+
+# Q&A
+
+Thank you, Roger. Yeah, and yes, please do go to Copenhagen for the conference that Morten and Alex are hosting for the 11th time. Not least because I will be there giving you an update on the RMR experiment that you heard about from Caitlin yesterday. But questions for Morten. What do we have? Are we good?
+
+**Q:** Thank you, Jan. Your senescence predictor, do you have sensitivity specificity data? Can you test it on lots of kinds of senescence on independent data sets and all kinds of cells or cell lines?
+
+**A:** Yeah. That's the, I mean, so we have an AUC of 0.99. It's quite... But it suffers from the same issue that I think most senescence markers suffer from, that you don't really know the true ground state.
+
+So if you for example if we use it in tissues where we can do spatial senescence prediction and so forth you still don't know what is the real number of senescent cells. Because we have to threshold it. We can see relative differences. We can correlate it with previous expected levels of senescence. but no one, to my knowledge, knows actually how many senescent cells are in a tissue.
+
+And it's the same with this, but it's very easy to use. You can use it on anything where you can visualize nuclei. So we've done it in, we have, I lost count about how many collaborations we have, but there's a lot of people that are using it, and if you want to use it, we can definitely talk.
+
+**Q:** I think, oh, here's one more. Yes, thank you very much. So with regard to all of the demonstrations of reversal of senescence and models that had accelerated aging, could you comment on whether any of those interventions would translate into animals or even, say, humans who exhibit normal, non-accelerated aging? And if you think so, what gives you a basis for thinking that a particular intervention would work with normal aging entities?
+
+**A:** Yeah, so we know that many of the types of damage accumulate with age, as Bjorn also pointed out. We also know that if you're exposed to damage, if you get chemotherapy, you age faster. We can see that this drug we have used, we've also given to normal flies. And they have also a lifespan extension.
+
+I think there's very good evidence about DNA damage implication and aging. It's been very, very challenging to show that if you stimulate DNA repair, you get a lifespan extension. I mean, we know SIRT6, but if you talk about DNA repair field, SIRT6 is very rarely mentioned as a sort of key DNA repair factor. But there are certain ways that maybe you can do it. So I think that evidence is there.
+
+All right. Thank you very much.
+
+# Insights
+
+- **Aging Phenome Clustering**: Quantifying aging via PubMed mining and OMIM enables outlier detection (e.g., Woodhouse-Sakati syndrome) and mechanistic grouping of progeroid diseases by shared phenotypes like sun sensitivity or neurodegeneration.
+- **DCAF17-THRAP3 Axis**: DCAF17 (via DDB1-DDA1 E3 ligase) stabilizes THRAP3 to resolve R-loops (RNA-DNA hybrids); mutations lead to THRAP3 degradation, RPA accumulation, DRIP-seq dysregulation, transcription stalling, inflammation, sterility, and frailty—validating via laser damage recruitment, BioID-MS, knockout mice.
+- **Hormesis for DNA Repair**: Train AI on DNA damage transcriptomes to find non-genotoxic mimetics (Drug F) that induce adaptive resistance (e.g., to IR via comet assay); target deconvolved via DART/Genetics; transiently reverses senescence (β-gal↓, lamin B1↑, proliferation↑) in XP/CS/HGPS/Werner lines and wild-type.
+- **Ketogenic Rescue in CS**: DNA repair deficiency → citrate/acetyl-CoA↓ (Indy KO exacerbates) → histone hypoacetylation → transcription stalling at secondary structures/PARP1 activation; ketones boost CoA, chromatin opening, read-through, inflammation↓.
+- **Nuclear Senescence Predictor**: AI on nuclear morphology (AUC 0.99) outperforms markers for relative senescence detection across radiated cells/tissues/biopsies; counterintuitively, low senescence predicts neoplasm risk (barrier to oncogenesis); stratifies 4k+ breast biopsies (benign vs. malignant).
+- **Metabolic Interventions**: PARP1 hyperactivation in repair defects/NAD depletion (NR rescues); COPD RCT (2g NR/6wk): IL-8/neutrophil↓, senescence/inflammation↓, DNA metabolism↑; hypoxia elevates relative senescence but lowers damage-driven senescence.
+- **High-Throughput Tricks**: Video tracking for fly/mouse/human motor function; AI clocks (facial/blood/DNAm) for progeria quantification.
+
+# Transcription errors?
+
+- **Disease names in premature aging cell lines**: Transcribed as "taxis, clangentasia, hongicose, boogeria"—corrected to Xeroderma pigmentosum, Cockayne syndrome, Hutchinson-Gilford progeria syndrome, Werner syndrome based on context (common repair-deficient progeroids tested with Drug F); high uncertainty on exact matches, as "clangentasia" may be Cockayne ataxia variant, "hongicose/boogeria" progeria/Werner-like.
+- **Names**: "Michael Benestro" → Michael Beniston (text mining collaborator); "Emmanuel Teclo" → Emmanuel Tekle (PhD student); "Michael Peters" → Michael Petersen (motor tracking); "Ocampo" → likely Antonio Ocampo (fly tracking reference); "Amelia Technologies" → Amel Technologies (comet assay collab); "Shavronkov" → Alex Zhavoronkov (Insilico).
+- **THRAP3 spellings**: Varies as "THRAP3", "TRIP3", "TRIAT3"—standardized to THRAP3 (Thyroid Hormone Receptor Associated Protein 3); confirmed R-loop role.
+- **Woodhouse-Sakati variants**: "Woodard", "Woodhouse-Sacata"—corrected to Woodhouse-Sakati syndrome (DCAF17/RNF113A).
+- **Technical terms**: "Decaf-17" → DCAF17; "Indy" → INDY (Drosophila citrate transporter); "DRIP-seq" clear; "BioID" clear; "DART assay" → likely Drug Affinity Responsive Target Stability.
+
+# See also
+
+* [[longevity]]
