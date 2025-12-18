@@ -1,4 +1,4 @@
-[[!toc]]
+[[!toc levels=6]]
 
 # Various DNA editing and genome editing techniques
 
@@ -466,7 +466,24 @@ TODO: splicing variants, introns, exons, regulatory casette stuff using recombin
 # TODO
 
 * better description of Cre recombinase systems for combinatorial coding
-* incorporate glung's feedback
+
+## feedback TODO
+
+incorporate the following feedback into this page:
+
+"There are superior alternative PAM variants. PAMless editors have unacceptable genome-wide off-targets from a human clinical perspective. MQKFRAER and VRQR are able to target NGC and NGA PAMs respectively with offtarget reductions that are acceptable at a human clinical level by the FDA. One of the best labs for this has been the Kleinstiver lab who I don’t see a mention of, and their variants are really the internal standard in major gene editing companies. I guess there’s xCas9 from the Liu lab for PAMless which the page is missing, but that one really doesn’t work well."
+
+"Base editors often have spurious deamination in a guide-independent manner. C to T editors tend to have this as a problem when utilizing an APOBEC deaminase. Dieter Lam et al. evolved their ABE editor into a CBE editor which only performs work when bound with cas9, and has much slower kinematics which reduces off-targets genome-wide to undetectable levels when dosage is calibrated well."
+
+"I would say Bridge editing from the Hsu lab is extremely promising, but you have that listed already."
+
+"RNA editing and cpf1 are largely a disappointing field- the discoverer of cpf1, Bernd Zetsche abandoned cpf1 entirely due to its abysmal baseline activity. One RNA editing team found that the effects are so transient that there isn’t any sort of lasting effect without a more serious transgene insertion (which would be obviated by direct nuclease or insertion editing of the actual problem anyway)."
+
+"For epigenetic editors, you’re missing a couple variant editors. KRAB alone typically isn’t durable repression at most sites- methylation is required quite often in most actively dividing cells, and even then it’s not guaranteed. I was pretty surprised the list didn’t have a dedicated mention for CRISPRoff by name, which uses the DNMT3A/3L or DNMT1 methyltransferases that lock in durability of repression. There is also that one very large HTS paper that found ZNF10 and other truncated miniaturized effector domains which is the current state of the art. I also didn’t see any reference to CRISPRa or the VPR tripartite activator. MeCP2, HDAC, LSD1, are also such variants for example that I didn’t see mentioned after an initial parsing, but you did include p300 and TET1. There’s a whole class of editors with various epigenetic effector fusions, as the pathway is quite complex. I think there should be literature included to explain the differences between distal enhancers vs proximal promoters, up vs downstream of gene editing. There was also no mention of CTCF sites which I know Moonwalk is working on."
+
+"There’s also TREX2 which inhibits nuclease editing, as well as prime editing. But flattening editing rates is actually useful if trying to only get on-target editing while reducing off-target. Peak flattening can lower off-targets to undetectable with still enough potency to achieve a precise on-target edit. Cas9-TREX2 fusions have been used to this end."
+
+"currently for bulk ex vivo, pam specific variants are qc’d to show negligible off targets in millions of cells then just put into people like that rather than selecting away bad mutants."
 
 # logs
 
