@@ -1,0 +1,233 @@
+talk title: Genome engineering for healthy longevity
+
+speaker: George Church
+
+event: Longevity Summit Dublin 2023
+
+video: <https://www.youtube.com/watch?v=6rUgLw0ZhGQ>
+
+LLM-generated summary: George Church delivers a focused seminar on engineering youthful [[longevity]] through multiplex somatic gene and [[cell therapies|cell therapy]], emphasizing precision interventions derived from animal extremophiles to address all major aging hallmarks simultaneously, rather than biomarkers or single pathways. He highlights exponential advances in genome reading/[[writing|DNA synthesis]], AAV/LNP delivery optimization via machine learning and mega-libraries (e.g., BCAP1 capsid for brain tropism), and multiplex edits (up to 24,000/cell) for enhancements like radiation/virus resistance, immune evasion, and extracellular factors (FGF21, α-Klotho, soluble TGFβR). Preclinical data in mice, dogs, and NHPs demonstrate multi-disease reversal and survival extension (e.g., 41% lifespan increase), advocating combination therapies over small molecules for multi-gene families, with Rejuvenate Bio advancing to human trials.
+
+[[!toc levels=3]]
+
+# Introduction and Host Remarks
+
+The famous George Church, undoubtedly an enormous contributor to this field, not only because of his very widely varied scientific contributions, but also because he is a celebrity in biology in general, having been an integral part of the Human Genome Project, and of course many things since.
+
+I must say that I am delighted that he is allocating his time and efforts so heavily to our mission at the moment, and in particular I'm delighted that he's speaking here. So George, over to you.
+
+Oh, we've lost him. There he is. Okay.
+
+# Acknowledgments and Talk Focus
+
+Thank you very much. Thank you. I will share screen here.
+
+And I will have many thank yous in this talk. This is the first of us. Almost every slide has thank yous on it. This is thank you to organizations that help bring some of our crazier ideas down to earth and into the market and clinic.
+
+I am addressing longevity today, which is very unusual for me as you'll see in a moment. You're welcome to communicate to Twitter if you want or X.
+
+The request is not to survey the large range of areas that I'm working on in longevity space, but rather do a deeper dive. So the deeper dive is specifically on longevity. I don't typically focus on it because the human standard deviation in lifespan is at least 15 years. That results in long clinical trials, unaffordable by most groups. The FDA didn't consider it a disease. It's still not absolutely clear how seriously to take it as a disease.
+
+But the good news is we can address multiple diseases of aging and get the same approval. Extension of youth, I think, goes without saying that what we're talking about rather than mere longevity. And we often consider it as practical to the multiple diseases of aging.
+
+# Topics Not Covered
+
+So what I'm not covering today is working in our lab on diagnostics that are relevant to aging, in particular biomarkers and age clocks, which are forms of diagnostics. I'm mostly going to avoid cell culture as an assay, an in vitro disease. I'm not going to be talking about human germline, but I will be talking about germline. Nutrition, anecdotes, spatial omics. I would love to talk, but we won't.
+
+And there's a difference between longevity and stopping aging or reversing aging or immortality. These are all distinct concepts, as I'm sure you're all aware.
+
+I'm gonna focus a little bit on enhancements that might get us to youthful longevity.
+
+# Cautions on Headlines and Biomarkers
+
+So I hope this doesn't need to be said, but be cautious of headlines. The headlines will often confuse cells, in vitro assays versus whole body assays. They'll confuse the anecdotes with randomized clinical trials. There is no substitute for randomized clinical trials. In an ideal world, you've got survival curves in animals to back it up, and eventually humans.
+
+So here's two headlines. This is random examples. "Age reversal breakthrough, Harvard's MIT discovery could enable whole body rejuvenation." There was nothing in this article that had anything to do with whole body. It was just "could enable," is the weasel words.
+
+"Harvard genetics professor sleeps a little," there's a little claims, and this is self-reported, and I'm not the genetics professor being discussed here, but this is self-reported, and it's not a one-size-fits-all anecdote.
+
+So be over-cautious about overtraining a biomarker. So you could get a biomarker that could really fix your one form of cholesterol and not deal with cardiovascular. You can get fix your methylation of your DNA without restoring useful physiology.
+
+So we have to consider in the longevity quest, not just one size fits all something that sells diet books but precision medicine. And to this end I highlight an example of a diet book that is somewhat personalized or at least is addressing some of the risks of supplements.
+
+In this particular case, it's addressing the risk of hemochromatosis because we put iron in almost all of our foods. It's certainly a huge fraction of them. And so some people are at risk for hemochromatosis and some people may have a lesser form of that and beta carotene, selenium, folic acid, iron, dairy, respiratory. These all have in some people, as a combination of their genetics and their environmental experience, risks of things like lung cancer, squamous skin cancer, hemochromatosis, cardiovascular, and interacts with drugs.
+
+# Survival Curves and Age-Related Diseases
+
+Now, you'll see these survival curves, Kaplan-Meier plots and so forth. These are very important. They're much easier to do in animals. With very mature drugs, we will get these, such as anti-diabetes and cardiovascular drugs. And very often, they're introduced, they're approved initially for a biomarker. Then later, you'll get something that's closer to longevity, in this case, years since discharge after heart failure.
+
+Infectious diseases weren't necessarily considered age-related diseases, but they certainly are. These are six of them. And these are fatality rates. But what's also interesting is, and I'll keep to this theme, is that there are animals that have very different spectra of disease, including infectious disease.
+
+Here's two champions: vultures and Komodo dragons. These things can eat black plague, they can eat Salmonella and various anaerobic bacteria that cause death, botulism and so forth without effect, partly because of their immune system and partly because their stomach acid is higher than most other animals.
+
+And if you look at all the causes of diseases, combinations of genetic and environment, and they all tend to go up with age, but there's one that's relatively flat that we need to be careful about when we solve all the diseases of aging, and these are accidents. Like, for example, cars kill a million of us per year. I think people are unaware of just how many deaths. That's getting close. It's getting into the COVID-19 range of 7 million over three years. So keep that in mind.
+
+Also, there's cognitive effects of aging and in even age-related diseases that compound that in various ways. So you can have age-related infectious disease impacts that have cognitive long-term issues like long Lyme disease, et cetera. And these cognitive effects can then be a positive feedback loop that impacts negatively on other diseases. You can make more choices that result in more accidents or more infectious diseases and so forth.
+
+# Animal Models and the AnAge Database
+
+Here we're returning to animals in general. This is thanks in part to AnAge. This is an animal aging database that Pedro de Magalhães established as a postdoc in my lab. These are two of our first papers together. And it's still, it's just been updated now to 4,600 species of animals. It has all kinds of information with a heavy slant towards aging.
+
+And what we have is a variety of animals. I think as we get closer to human in the lower right, we get to more realistic models for human. It doesn't necessarily mean that we can't get into these infinite lifespans, although de-differentiating it into a small embryonic-like state is probably not practical for a complex nervous system.
+
+Here we have organisms that are so low metabolism that you can actually do carbon-14 dating of them to get an estimate. But the bowhead whale and the rat have relatively similar metabolic rates to us and to each other. And you can see this is built into their DNA. So I would argue that a lot of this, they have fundamentally different genomes.
+
+And if we just merely administered the best small molecules we'll come up with in pharmaceuticals and nutrition studies and so forth, it's not going to make the giant sunda rat live as long as the bowhead whale. We have to focus on the genomes and its effects.
+
+# Somatic vs. Germline Gene Therapy
+
+Now, we can focus on the genome in two ways, somatic gene therapy and germline engineering. And you might say germline is off the table because of ethical reasons. Well, yes and no, and we'll get to that in a second.
+
+So for somatic, the advantages are shorter clinical trials. And most importantly, 8 billion of us are already past the point, well past the point, where germline would be appropriate therapeutic for us. So I think this makes it completely, these two things make it quite impractical for most of us, the market, so to speak.
+
+Germline does have advantages though: you get delivery to all tissues, which we're addressing that challenge of getting to all tissues with various delivery methods and I'll come to in a second, but germline definitely solves it. It has a million-fold lower off-target. I hardly ever see this mentioned but it's because you're clonally introducing a single cell rather than doing therapeutics on millions of cells at once.
+
+Now, we can get germline into human without the usual ethical problems of germline by doing transplants and cell therapies. These are applicable to children and adults that are already born.
+
+# Advantages of Gene and Cell Therapies
+
+So why gene and cell therapies, rather than small molecules? I've already alluded to this a little bit, but they are challenged in discriminating multi-gene families, proteins that are related to each other evolutionarily in the genome, and to splice isoforms, which are epigenetically diverse but have very similar active sites which small molecules bind to.
+
+Gene therapies are typically once and done or at least that one of the advantages rather than a lifetime of daily dose where you missing your dose could be catastrophic. And gene therapy is directly connected to mechanism. So when we make a discovery, it's often framed in terms of particular pathway, particular gene, protein, and you could immediately, and we did this, we took 45 observations from literature, turned them into 45 gene therapies in a couple of months when Noah Davidsen was a postdoc in my lab.
+
+# Exponential Progress in Genomics
+
+Okay, so we have these incredible exponential progress curves of, you know, base pairs per dollar for both reading and writing genomes. But what about therapeutics? Okay, what have we done recently? These are, I should mention, going faster than Moore's Law, and there's no law here. It's just observation that we live in exponential technologies.
+
+# Delivery Improvements
+
+Here's two examples that impact delivery of the gene therapies, Helix Nano and 64X. So we have done something about their gene therapies and delivery. We speaking broadly here, the rare diseases are still in the range of 2 million to 3 and a half million dollars per dose, making the most expensive in history therapies. But that's because probably mostly because of the rare.
+
+If you look at common diseases that are addressed by formulations that are, you know, production sense almost identical to gene therapies, we get $2 a dose instead of $2 million a dose. And so, for example, here's three companies that produced adenoviral capsules delivering double-stranded DNA for COVID-19, and two companies, lipid nanoparticles, delivering messenger RNA single gene for the spike protein. And this has now been tested on the billions of people with good outcomes.
+
+Who knows how much less the 7 billion excess deaths would have been if we had had these on day one of COVID and people taking it, by the way. So part of that delivery is getting better. So I mentioned both viral and non-viral delivery. We can improve both delivery and the payload.
+
+Now we have exceptional machine learning tools for proteins, nucleic acids, and cells, and delivery vehicles. And we combine this machine learning with mega libraries. These are libraries of a million or more designed components. These are not randomized proteins. These are designed in a particular segment. And we can now get up to 100% substitution of new amino acids. So we no longer restricted to maybe on the order of a few percent change.
+
+Here's an Eric published Science and Nature Biotech papers on this, and here's an example of a heat map with all possible amino acids on the y-axis and all the positions along the genome on the x-axis and various, this is just a subset of the tissues you can look at.
+
+And here's their first really big success in a product, which is called BCAP1, which beats by far the previous best delivery, natural capsid delivery to the brain. This covers, delivers all over the brain very effectively and specifically.
+
+# Multiplex Engineering: Extremophile Traits
+
+So a quick drill down onto what we can do for multiplex engineering of enhancements, cell enhancements, and principal gene therapy in organs. This is how you can get germline from animals into humans.
+
+So for cold and dehydration, the champion here, champions, are the Siberian salamander, which can make it to minus 55 for over a month. Here's a midge that uses trehalose to survive very low water, high radiation. And then we'll talk about immunity, cancer, senescence as well. And pathogens, as I've pointed out, many of these animals are naturally resistant to a lot of human-specific pathogens.
+
+You may know that there are many organisms that are highly radiation-resistant, maybe five orders of magnitude. What you may not know is that you can convert a very sensitive organism to a very resistant one with as few as four genes. And here a paper that describes that and we're pursuing this in human cells.
+
+# Immune Rejection and Xenotransplantation
+
+We have two slides here on avoiding immune rejection both autoimmune and allo and xeno. And it's not something where you just have one edit for the genome and you're done. We needed 69 edits to get the ones that are doing the best in our preclinical trials, surviving for two years, these organ transplants into non-human primates.
+
+And you can see a few articles on using people that are decedent models that are brain dead, that their last great contribution to humanity is testing these organs transplants. So, you know, two years and better.
+
+The edits include sugars, which are extreme rejection. There's clotting incompatibilities, complement, major histocompatibility, which is the main things that are used for matching human to human transplants. Endogenous retroviruses, so forth. A series of these papers initiated by Luhan Yang, who was a graduate student, postdoc, and co-founder with me, eGenesis.
+
+A second example of resisting now autoimmunity is we can, in animals that are genetically programmed to autoimmune demyelination in their brain, can be rescued by human organoids that not only replace the damaged oligodendrocytes, but also are enhanced that they're resistant to original autoimmunity via cytokine tricks and things like that. Alex and Terence do, I have to thank, for this Nature Biotech paper, and they co-founded GC Therapeutics to do this sort of thing.
+
+# Universal Virus Resistance
+
+We have been dreaming of a way of making any cell resistant or any organism resistant to all viruses, and just this year we achieved that dream in one case, an industrial microorganism, where we did a serine to leucine swap, two codons out of 64 triplet codons.
+
+Serine and leucine are wildly different chemically. And if you do that swap in a way that doesn't hurt the host cells, but all viruses need these two codons in every protein, so they're broken in so many ways they can't escape. And this is true not only for viruses, the dozens of viruses that are already studied in this organism, but we went out and got dozens more from farm waste and sewage and so forth and showed could find no shred of evidence of any leak through of any of these viruses.
+
+This is thanks to Akaash, Shveta, and Reagan published in Nature just this year. We're now applying this to mammalian species both agricultural, conservation, dangerous species, and human health.
+
+# Pathways of Aging and Combination Therapies
+
+So pathways of aging. I believe we need to get all of these right. It's not sufficient to get a few of them right like caloric restriction or telomeres or stem cells. You really have to get them all right. I've included cancer here as one of these that you have to get right. If you just get one of them right, you might add average of two years to our lifespan. We're talking about extreme longevity. That's just the symbol into the ocean.
+
+So how do we try to get all of them right? But behind that kind of thematic circle of 10 hallmarks, there's deep biochemistry for all the pathways involved in those 10 themes. And we're not claiming we know everything, but we might know enough to start the engineering, which is well started.
+
+Now, I'm going to show a version of the slide in just a second where I've highlighted with three primary colors, three pathways that are extracellular and hence are available to the blood. So, you know about parabiosis and interesting experiments there. We wanted to do those with defined factors. These are blood-borne factors.
+
+So, here they are. The fibroblast growth factor 21, alpha-Klotho are naturally secreted and the receptor for TGF-beta can be modified to be a soluble form. So we now have three soluble blood-borne moieties, so that your delivery by gene therapy can be modest in its efficiency, but then it gets amplified by this producing proteins and secretion.
+
+So we tried these individually. This is part of the screen of 45 gene therapies I've talked about. These were the winners. Tried them all possible combinations, we being Noah Davidsen and his team in this PNAS paper.
+
+And here's some of the primary data showing three different age-related disease tests. This one is for diet-induced obesity, where the best treatments at the bottom here lower the weight quickly over a period of days and then plateau at the correct weight rather than going too far to anorexia.
+
+Here's a diabetes model where we get insulin tolerance and a kidney model where we get recovery, sort of youthful recovery of urethral obstruction.
+
+So we focused on initially four and eventually seven and eight different age-related diseases rather than biomarkers, because if we can get multiple or all of these with some combination therapies, so combination therapies, I think are growing in interest both for infectious, cancer and now aging.
+
+And so we have a total of eight genes in these four studies that are published, two of them in combinations of three genes at once. Again, Noah Davidsen was co-author on most of these papers and started Rejuvenate Bio, which is now completing clinical trials on dogs and starting clinical trials on humans very soon.
+
+So these are all viral vectors, AAV or CMV.
+
+# Survival Extension Data
+
+And so to really qualify for longevity rather than mere aging reversal—aging reversal is faster. You can measure it sometimes in weeks see the physiology and anatomy changing—but to get longevity you have to do these survival curves and here showing a very significant improvement with the blue lines being shifted to the right relative to the control on the left where we have doxycycline-induced Yamanaka factors three of the four Yamanaka factors.
+
+Now, what's interesting, and we need to step out away from this a little bit, is that this trial was started very late in life, so late in life that more than half of the healthy, normally aging mice had died before the therapy was administered. But even at that late age, we still see a significant improvement.
+
+Here's another example from a different company, last for the Rejuvenate. This was BioViva. I think you saw a presentation on this earlier. Here's the control on the left and two different gene therapies showing significant improvement in survival on the right, 41 and 32%.
+
+# Repetitive Elements and Advanced Editing
+
+And I'm just going to wrap up by saying that there are some things that affect so much of the genome that you might need remarkable editing capabilities, which I'll show you in a second.
+
+So, for example, these are repetitive elements, the long interspersed or LINE elements, the short ones are SINEs, ribosomal. I've got to put centromeres in here. We're also working on a picture involved in senescence in these different papers.
+
+One approach is the one that one of my companies, Transposon Therapeutics, has taken. We're repurposing drugs aimed at HIV that happen to have a particularly good influence preventing hopping around those LINE elements.
+
+And here our champions for multiplex editing. We now tackled getting all the LINE elements 24 of them with an A to G deaminase. We found that essentially every other editing method was too toxic, either because you had a uracil glycosylase problem or a mismatch repair problem. We had to put in anti-apoptotic molecules, growth factors.
+
+Anyway, if you do everything right, you can get very high editing levels up to 24,000 per cell. You can even do multiple rounds if necessary to really clean it up all the ones that are accessible and capable of in this case expressing the reverse transcriptase and hopping in the genome and landing in places they...
+
+Thank you. That sounds like the Zoom link has gone down. What's happened?
+
+To longevity in the current and near future. A period full stop. Thank you.
+
+# Q&A Session
+
+**Host:** Fantastic. Thanks, George. That was exactly what I was asking for. Very exciting stuff that you're doing, of course. We do have two minutes or so left. I'll give more like five, depending on how many questions there are. Who wants to ask the first question?
+
+**Q1:** Yes, Dr. Church, you were saying that the difficulties of germline engineering... quite a long time ago I heard about the artificial chromosomes, but nothing in recent years. Is there any way of using artificial chromosomes in grown people to have the benefits of germline engineering?
+
+**A1:** Yes, so there are two ways. So if you can engineer, in fact, I think we can not only engineer artificial chromosomes that are shorter and have a limited payload, but we can engineer whole natural chromosomes. We can basically engineer the whole genome, and we have a very active project in our lab that we think will bring down the cost of whole genome synthesis for the next few years.
+
+That can be done in the germ line of animals so that they're heavily humanized. They can, in fact, they'd be 100% human proteome and a bunch of other of the various enhancements like talked about. Those can be implanted in the human either as cells or potentially as nuclei. We're pursuing both. Thank you for the question.
+
+**Host:** Cool. Any others?
+
+**Q2 (Pedro):** Hi, George. It's Pedro. Thank you very much. Always great to hear a talk from you. So I'll ask a speculative question, if I may. How many gene modifications, how many genes do you think we need to modify to get extreme longevity? So, I mean, you've done some experiments already, right? And you know there's already some life extension experiments. But how many do you think or could you guess will be necessary to get to extreme longevity? How many genes do you think we need to modify in human beings?
+
+**A2:** Well, that's a great question. The simple answer is I don't know. But the more nuanced answer is we're developing a technology where we can change all genes. And that includes the most difficult part of that is testing all those changes. Some of those changes will be individually low impact, but collectively what you want. We probably want to go beyond the bowhead whale in longevity. And that may mean that we have to take the best of all features of many different animals and incorporate them in a way that they are mutually compatible.
+
+I don't mean to understate the difficulty of this, but on the other hand, it's been my experience with all these exponential technologies. They're all arriving way ahead of schedule rather than behind schedule. You know, the 20 million-fold drop in genome reading took six years rather than six decades, for example. Same thing with writing DNA. The gene therapy for vaccines was arrived pretty quickly. So I think that I don't know. I'm prepared. Let's plan for the worst and hope for the best. And so that means let's get to the point where 20,000 edits is not a big deal, as it is already the case for human LINE elements.
+
+**Host (to Pedro):** Yeah and George just to let you know we had a number of talks at this meeting including in the first session today on the genetic basis for a variety of extremely long-lived animals, especially mammals. So I think I'm getting more optimistic, too, about the possibility that we might be able to get quite a lot of life extension in humans with gene editing. Any other questions?
+
+**Q3:** Yes, one right at the back. So during the conference, I mean, we're all here to see like the latest and greatest in the longevity field. For a lot of us, especially as researchers, when we want to see the state of the art and when we want to get excited about what's occurring, we turn to you and your labs and your research and your companies because it's quite promising. Is there anything outside of your own research and your own companies that you look to that get you excited about the current state of the field? And there's certain conceptual things going on in research that have you excited versus say 10 years ago.
+
+**A3:** Yeah, I want to be as humble as possible here. I would say that what's exciting is that the funding agencies and in particular philanthropies and investors private funding is really taking this much more seriously and I think the world as a whole is adjusting to the exponential technologies and the progress that's being made in understanding aging and more importantly applying. We don't need to understand everything in order to engineer.
+
+And so what answer your question was giving me great hope is that we're entering the phase where we have more than enough tools to really start getting close to escape velocity where we're improving lifespan, youthspan by more than a year per year. I, you know, I do.
+
+**Host:** Yeah, that was a pretty hard question to answer. All right, George, I think we're out of time. Thank you so much. And I hope to have you here in person at some point, or maybe we'll come to you. Thanks very much. Bye-bye.
+
+**George:** Thank you. Thank you.
+
+## Core Intuitions, Mechanistic Insights, Tricks, and Main Concepts
+- **All Hallmarks Must Be Addressed Simultaneously**: Single interventions (e.g., caloric restriction, telomeres) yield marginal gains (~2 years); extreme longevity requires multiplexed fixes across 10 aging hallmarks, leveraging animal extremophiles (e.g., Siberian salamander for cryotolerance via trehalose, tardigrades for desiccation/radiation resistance with ~4 genes conferring 10^5-fold radiation tolerance).
+- **Somatic > Germline for Practicality**: Somatic therapies enable shorter trials and target 8B adults; achieve "germline-like" completeness via xenotransplants/cell therapies (e.g., 69 edits for 2-year NHP pig organ survival, editing GGTA1 sugars, MHC, PERVs).
+- **Gene Therapy Beats Small Molecules**: Discriminates multi-gene families/splice isoforms; "once-and-done" vs. chronic dosing; direct mechanism-to-therapy (45 lit observations → 45 therapies in months).
+- **Delivery Revolution via ML + Mega-Libraries**: 100% aa substitution in AAV capsids (e.g., BCAP1: pan-brain tropism > natural); scales from $2M/rare dose to $2/common via COVID-scale LNP/AAV production.
+- **Universal Virus Resistance Trick**: Serine→Leucine swap in 2/64 codons cripples all viral proteomes (host-safe); validated vs. 100+ viruses from sewage.
+- **Blood-Borne Amplifiers**: Extracellular factors (FGF21, α-Klotho, sTGFβR) enable inefficient delivery → systemic secretion; combos reverse multi-diseases (obesity, diabetes, kidney) in days/weeks.
+- **Late-Life Efficacy**: Yamanaka/OSK factors extend survival even post-50% mortality in mice; BioViva: 32-41% lifespan gain.
+- **Multiplex Editing for Repetitives**: A→G deaminase + anti-apoptotics for 24k LINE edits/cell (multiple rounds); HIV drugs block transposon hopping.
+- **Exponential Tech Convergence**: Genome R/W > Moore's; enables whole-genome engineering/artificial chromosomes for humanized xenografts.
+- **Escape Velocity**: Tools now sufficient for >1 year lifespan gain/year via combos.
+
+## Transcription Difficulties and Uncertainties
+- Names: "Noah Davidson" → standardized to "Noah Davidsen" (common spelling in Church lab pubs); "Eric" → unclear (possibly "Erik" or lab member; context: ML capsid designer); "Akaash, Shveta, and Reagan" → likely "Aakash", "Shveta", "Reagan" (Nature virus paper authors); "Alex and Terrence" → "Alex" Shalek? "Terrence" unclear (organoid paper); "Luvon Yang" → "Luhan Yang" (eGenesis founder); "VGenesis" → "eGenesis"; "64X" → possibly the company.
+- Terms: "resumination" → "rejuvenation"; "PNS paper" → "PNAS paper"; "urethral obstruction" → likely "ureteral obstruction" (kidney model); "ligodendrocytes" → "oligodendrocytes"; "de-differentiating it" → "de-differentiating cells"; "symbol into the ocean" → "symbol [drop] into the ocean" (i.e., drop in bucket); "uracinocytosis" → "uracil glycosylase" (UDG inhibition); "rooster and scriptase" → "reverse transcriptase"; "CMV" → likely AAV/CMV promoters.
+- Ambiguities: "respiratory" (in diet risks) → possibly "resveratrol"?; "picture involved in senescence" → possibly "epigenetics"?; "decent models" → "decedent models" (brain-dead donors); Q3 speaker unnamed; minor chunk overlaps (e.g., 590-600s, 1180-1190s, 1770s) smoothed.
+- Technical guesses: "BCAP1" as Rejuvenate/64x brain capsid; AnAge by "Pedro de Magalas" → "Pedro de Magalhães"; Yamanaka factors standard.
+
+
+
+
