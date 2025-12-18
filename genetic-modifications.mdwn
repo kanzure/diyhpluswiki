@@ -4105,6 +4105,9 @@ Just saying "regeneration" is kind of ridiculous, it's like saying "let's add hi
 
 * TODO: incorporate various weird ideas from <https://gnusha.org/logs/2025-11-18.log> like: 1) "Instead of presenting literal random peptides via MHC, cells present a compressed description of their internal state. T-cells would then fuzzy match these protein barcodes for an overall cell state degradation score to decision the cell. It’s like giving the immune system a diagnostic checksum for each cell's gene expression or metabolic state or other internal state." 2) "cryptography for secure cell-cell communication". and: "Application: Prevent metastatic mimicry. Cancer cells cannot replicate the precise signaling cryptographic key of authentic tissue. ... right, I guess you would want to send the whole genome or transcriptional state of the cell with each message so that your neighbor cells can verify your messages?" 4) "for intracellular barcode based memory systems, you could do intravenous delivery of small molecule timestamp peptides or oligonucleotides with a known sequence, have them get incorporated into growing barcode memory systems, and then you have a systemic timestamp or clock mechanism... kinda."
 
+* TODO: DNA damage repair: improve mismatch repair; improve homologous recombination; upregulate DNA repair enzymes; improve DNA damage radiation resistance; re-engineer the whole human genome and central dogma of molecular biology to use checksums and error correction codes so that DNA mutation errors can be correctly fixed.
+
+
 ### Neuronal enhancements for brain-computer interface
 
 TODO: larger neurons on surface of brain for interface with brain-computer interfaces? are there any other genetic changes to facilitate interfacing with long-term electrode implants? or the vascular electrode (stentrode?) scheme? optogenetic control of neurons proximal to the surface of the neocortex or other brain cortex surfaces? what about inside grooves, gyri or sulcri? Optogenetics seems like one area to consider for brain-computer interfacing at least in the "write" direction. There are many [[optogenetics]] systems available for germline and in vivo stimulaton of freely moving/behaving animals with implants. Minimize astrocyte reactivity via reduction of glial fibrillary acidic protein expression for long term electrode compatibility. Coat brain implant electrodes with AAV for localized delivery and expression of anti-inflammatory factors, modulation of inflammatory response or pro-inflammatory cytokines, reduce microglial activation around implants. Integrin overexpression to enhance cell adhesion to electrode surfaces. ECM modifiers like fibronectin expression. Red-shifted opsins like ChrimsonR or Jaws for deeper tissue penetration in optogenetics, or two-photon responsive opsins. Are there any free-range animal BCI research projects using genetically encoded voltage indicators to transmit information to the BCI? Or fluorescent calcium indicators? or is it only via chronic window imaging? Ion channel overexpression and other electrophysiology shaping. Would larger dendiritc arbors be helpful? For stentrodes or vascular interface is there anything available to improve interfacing? Upconversion nanoparticles for even more distant neural stimulation via optogenetics. For long-term chronic implants consider LOX (lysyl oxidase) knockdown to reduce collagen crosslinking. BCI could deliver AAV with gene therapy for anti-apoptotic factors, neurotrophic support.  Sonogenetic interfacial improvement via mechanosensitive ion channels. Check out magnetogenetics to see if magnetic field responsive ion channels are working or not (maybe something from birds). Neurons can report on their own activity via activity-dependent fluorophores or the oscillatory waves system.
@@ -4133,10 +4136,6 @@ And how would you learn which cells respond to which combinations of bits? How w
 
 possibly the cells could self-report via protein recording device that they make internally and export, or it's on a cilia on the external surface of the cell membrane and then detaches and is recoverable in the bloodstream. You could use connectome-seq style [[mapseq]] techniques to get a rough approximation of their location in the global graph of cell-cell adjoinancy matrix if not their exact location at least. You could then cartographically pinpoint some of the more popular or easily-identifiable nodes in the graph to track them to their exact location in the mammalian body, and use that to approximate the physical targeting of nearby adjacent cells.
 
-### More DNA damage repair via DNA error correction codes etc
-
-
-TODO: DNA damage repair: improve mismatch repair; improve homologous recombination; upregulate DNA repair enzymes; improve DNA damage radiation resistance; re-engineer the whole human genome and central dogma of molecular biology to use checksums and error correction codes so that DNA mutation errors can be correctly fixed.
 
 # Genomic Integrity and Error Correction Architectures
 
@@ -4146,13 +4145,14 @@ The schemes below may be used separately or in combination.
 
 ---
 
-## 1. Bootstrapping & Genome Synthesis
+## Bootstrapping & Genome Synthesis
 *Build an initial high-fidelity genome using imperfect tools.*
 
-<a href="../users/muaddib/iterative_enzyme_decoding.png"><img height="600px" src="../users/muaddib/iterative_enzyme_decoding.png"></a>
+<a href="../users/muaddib/iterative_enzyme_decoding.png"><img height="400px" src="../users/muaddib/iterative_enzyme_decoding.png"></a>
 
 ### Iterative In Vitro Enzyme Decoding
 A scheme to bootstrap high-fidelity DNA from cheap, error-prone synthesis (e.g., high-throughput synthesis with 10% error rates).
+
 *   Treat DNA as a "memory tape" for a biological Turing machine to compile redundant "source code" DNA into clean "binary" DNA. Trades chemical precision (which is hard/expensive to scale) for enzymatic computation (which allows logic-based verification of the product).
 
 *   Use a library of zinc-finger recombinases (or Cas9/TALENs) engineered to recognize "encoded" DNA segments containing data + error-correction redundancy.
@@ -4163,10 +4163,11 @@ A scheme to bootstrap high-fidelity DNA from cheap, error-prone synthesis (e.g.,
     2.  Apply Enzyme A: It binds to an encoded block, verifies the logic/checksum, and catalytically converts it to a "decoded" sequence (potentially excising itself or "NOP" spacer nucleotides used to handle frameshifts).
     3.  Iterate: Repeated rounds of enzymatic processing progressively "clean" the dirty input tape into a perfect output sequence.
 
+---
 
-<a href="../users/muaddib/genomic_error_correction_strategies.png"><img height="600px" src="../users/muaddib/genomic_error_correction_strategies.png"></a>
+*Architectural Topologies for Genomic Error Correction.*
 
-**Architectural Topologies for Genomic Error Correction.**
+<a href="../users/muaddib/genomic_error_correction_strategies.png"><img height="400px" src="../users/muaddib/genomic_error_correction_strategies.png"></a>
 
 **(A) Mesh/Consensus:** Somatic cells (execution nodes) exchange sequence samples via exosomes to establish a local truth consensus; outliers trigger self-apoptosis logic based on majority vote.
 
@@ -4176,6 +4177,7 @@ A scheme to bootstrap high-fidelity DNA from cheap, error-prone synthesis (e.g.,
 
 **(D) External/Restoration:** Corrected sequence data is pushed from an exogenous trusted source (via viral vector/nanomachine) to reset genomic fidelity.
 
+---
 
 ### Mesh Consensus (Peer-to-Peer Validation)
 *The Distributed Systems Approach: Tissue as a [Byzantine Fault Tolerant](https://en.wikipedia.org/wiki/Byzantine_fault) (BFT) network.*
