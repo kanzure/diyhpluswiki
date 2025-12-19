@@ -1,0 +1,181 @@
+talk title: State of quantum computing
+
+video: <https://www.youtube.com/watch?v=MKLHjaj2Boo>
+
+follow-up video: <https://www.youtube.com/watch?v=ZIOhF9Ne8KI>
+
+event: Quantum Bitcoin Summit <https://pbquantum.com/>
+
+LLM-generated summary: Sho Sugiura, CEO and co-founder of Blocq—a quantum software startup—delivers an overview of quantum computing's current status, highlighting superposition and interference as foundational to its exponential parallelism, enabling processing of myriad states simultaneously before collapsing to a single result. He delineates universal gate-based and measurement-based quantum computers (mathematically equivalent) from non-universal quantum annealing, underscoring hardware challenges like decoherence, gate fidelities (currently ~99-99.9%, needing 10^{-10} to 10^{-20}), connectivity, and scalability. Reviewing architectures—superconducting (fast but connectivity-limited), neutral atom (scalable, with QuEra achieving 10,000 qubits and early error correction), trapped ion (highly stable but 1D-scaling constrained), and photonic (scalability-strong but error-prone)—he emphasizes error correction progress via surface codes (hundreds-to-thousands physical qubits per logical) and efficient qLDPC codes (10-100 physical per logical). The NISQ era's failure to yield practical applications shifted focus to fault-tolerant quantum computing (FTQC), with IBM's roadmap targeting scaled FTQC by 2030 via incremental logical qubit milestones; recent milestones include Google's Willow (one logical qubit from 100 physical) and Microsoft's Majorana (one low-error physical topological qubit). DARPA benchmarks position ECDSA decryption as the nearest FTQC application (~10^3 logical qubits), far easier than RSA due to shorter key lengths under quantum brute-force (Shor's algorithm), urging vigilance amid steady progress.
+
+[[!toc levels=3]]
+
+# Video description
+
+At Presidio Bitcoin's Quantum Bitcoin Summit Sho Sugiura, physicist and CEO of Blocq, delivered a walkthrough of the current quantum computing landscape from error rates and hardware architectures to credible roadmaps for cryptographically-relevant quantum computer (CRQCs).
+
+He emphasizes that while we’re not at a breaking point yet, the underlying stack, from middleware to SDKs to photonic scaling, is maturing fast and Bitcoin's ECDSA is one of the lowest-hanging cryptographic targets for a quantum attacker.
+
+# Introduction
+
+Hello everyone. So yeah, thank you. Thank you for inviting me for giving me this opportunity to talk.
+
+So I'm Shosuke Yura, the CEO, co-founder and CEO at Blocq. We are a quantum software company. Do you hear me? Okay.
+
+And let me introduce myself a little bit. So I'm the CEO at Blocq, but Blocq is kind of a new startup. Like we founded it last year and before starting I was a physicist—a quantum computing physicist—and I got research awards like from the Japan Physical Society to the Emperor of Japan. So if you yeah, if you have any questions about quantum computing yeah please ask me I can answer any questions.
+
+# Overview of the Talk
+
+So let me start my presentation. My talk: so today's talk I don't go into too much detail about technologies but I just try to give overview of the quantum technological current status of quantum technology quantum computing technology.
+
+# Why Quantum Computing is Powerful
+
+And first of all why quantum computing is so strong. Maybe you know you know about this but superposition is the key so quantum bit or qubit is a basic unit of quantum computer and quantum bits can represent can possess many states at the same time so they can do a calculation uh they power like we have when we have 10 qubits we can have quantum qubits pose hundreds of thousands different states and they can calculate thousands they can process thousands states at the same time so that's the power of quantum computing.
+
+But at the end of the day we need to see the result and interference performs the critical role to get the result so we do parallel computation and by using interference we get one we boil it down to one important result that is the basic philosophy or mechanism of quantum computing.
+
+# Types of Quantum Computers
+
+And quantum computing has roughly speaking three different types so gate-based quantum computer and measurement-based quantum computer and quantum annealing.
+
+And gate-based and measurement-based quantum computers are the mathematically equivalent. Of course the hardware are very different but mathematically equivalent and they are universal which means any quantum computing calculation can be performed by these universal quantum computers.
+
+And quantum annealing is a device specialized for optimization, which is not universal. And it was popular, but it's not very popular anymore, and I think the many streams are these two types. And gate-based is the most popular one. IBM and Google and some other quantum startups are working on.
+
+But the difference is kind of tiny. So we have circuit, but essentially operations are done by quantum gate operation or measurement. That's the only difference. And measurement-based quantum computation, photonic platform, photonic quantum computing companies are working on measurement-based. And other architecture like superconducting, ion-trap neutral atom, they are working on gate-based quantum computer.
+
+# Challenges in Building Quantum Computers
+
+But building quantum computer is hard. There are many challenges. Especially decoherence and gate errors are the biggest bottleneck for us.
+
+First of all, as I said earlier, qubits can possess superposition. We can process many states at the same time. But this superposition is fragile against noise. It's extremely fragile, sensitive to environmental noise, and it will break the calculation. Then we can't do calculation anymore.
+
+Currently, gate error is quite good, like 99% to 99.9%. So we only have one error in 1,000 times of operations. But it's still not enough. We need error rate like 10 to minus 10, 20. So it should be extremely good.
+
+To achieve that, error correction is essential. So error correction is the technology our community has been working on since 2020, so for five years. But error correction is hard because making one error-corrected logical qubit consumes 100 to 1000 of physical qubit. This distinction is extremely important.
+
+So naively error correction is very simple. You know it just like a majority vote. Suppose we want to encode one logical qubit then we can just make 10 physical qubits encoded in which one is encoded. So we just have 10 ones. Then if you see one is flipped to zero, but you can do a majority vote and correct the error.
+
+So this type of majority vote is essential idea of error correction, but it requires a lot of physical qubit to make up one logical qubit. So this is a distinction.
+
+And there are some more hardware limitations, like superconducting qubit, qubit connectivity is a problem, like only qubits in superconducting qubits, in superconducting architecture, only nearest neighbor qubits can interconnect each other. So the connectivity can be very complicated.
+
+And also there are a lot of infrastructure problems like refrigerator or laser or how to scale up these problems. Of course, we need the challenges. But these three are other major challenges, in my opinion.
+
+# Quantum Hardware Architectures
+
+So let me talk about the tech stack. So, by the way, I need to check the time. Yeah, okay, sure.
+
+So let me talk about the technological stack. So quantum computer, roughly speaking, we have three layers of technological stack. So software and middleware and hardware. So let me start with hardware.
+
+There are so many different types of quantum computing hardware that is one reason it's confusing to understand but essentially as long as we can control states precisely using quantum mechanics we can make a quantum computer so in a sense superconducting, neutral atom, trapped ion, photonic as a silicon, as a qubit can be worked as a, can work as a quantum computer.
+
+That's why there are so many different types, but these four are, in my opinion, the most popular or most promising candidates.
+
+And superconducting qubits is the most popular one like IBM and Google working on. The advantage is speed but there is a problem about the stability and scalability and connectivity so they have logical qubit but in interaction between two logical qubit hasn't been established because superconducting qubit is installed on 2D surface so the interconnection is like very limited.
+
+And neutral atom and trapped ion are similar structure. They essentially they control, they trap the atom or ion by laser. So it's called laser tweezer, optical tweezer, and they can move around these atoms. So this atom or ion is used as a qubit, and then manipulate these states by shining laser on it.
+
+So this is very different technology for superconducting qubit, but as you can imagine, it has a very flexible structure. So speed is very slow, but stability is good, and scalability is also good for neutral atoms.
+
+So actually, two years ago, neutral atom architecture, a company called QuEra, realized first error correction. And they already have 10,000 physical qubits in their quantum hardware. So in a sense, this is a rising star in quantum hardware.
+
+And trapped ion is extremely stable. It's more stable than neutral atom. But scaling is a problem because this is packed into one-dimensional chain. So it's very hard to scale up. But once they solve this scalability problem, this is also very promising architecture too.
+
+And these two are using atom and ion, which is the most stable material in the world. But superconducting is more like a fabrication. They are making a material to make it work.
+
+And photonic is a little bit different. They have very different strategy. They don't have any problem in scalability, but current stage, their error rate is pretty high as an other architecture and basic error correction has been done in these three architecture but it hasn't been achieved for photonic but they have totally different structure once they overcome this stability problem making a million of qubit is easy for a photonic device they have they can try to catch up or overtake all these architecture afterwards that's their strategy.
+
+# Error Correction
+
+And let me talk about the error correction part so surface code is by far the most important one so so they're all the companies are working on surface code and Google has demonstrated their first like error correction demonstration on real chip on surface code but the problem is they consume a lot of qubit physical qubits to make up one logical qubit. Essentially, hundreds to thousands physical qubits is required to make one logical qubit. So that is a big overhead.
+
+But recently, people are most popular error correction code is called qLDPC code. Then they can make one logical qubit from 10 to 100 physical qubits. That is way efficient. So many companies are working on this architecture right now. So seeing the progress of qLDPC code is also important to assess progress of quantum computing.
+
+# Software Stack
+
+And the software stack, there are many SDKs, and you can start making quantum algorithms from today, I think. So Qiskit, Cirq, tket, PennyLane, they're developed by IBM, Google, Microsoft, and so on. So many tech companies are working on this type of quantum computing recently. So they have very easy to use SDK. So you can play around and you can use a simulator to see their performance.
+
+# From NISQ to FTQC
+
+So let me move on to application. So let me talk about noisy intermediate scale quantum computer. It's called NISQ in short. It was actually a kind of nightmare for the quantum computing community.
+
+So it was a quantum computer or it is a quantum computer without error correction. And people expected we have good application using NISQ device like quantum chemistry or combination optimization program or machine learning.
+
+But it turns out that noise is so large that we cannot do any meaningful calculation. So essentially this project kind of failed. So quantum computing communities shift our focus to error correction so in a sense it was a dark era of quantum computer but we do have a clear now we do have a clear roadmap towards error corrected device which is called fault-tolerant quantum computer FTQC.
+
+So this is a roadmap from IBM you can check out I can talk about tell you about different companies roadmap but IBM has the roadmap towards 2030. So in 2029, they announced that they are making free fault-tolerant quantum computer FTQC and they scale it in 2030. That is their roadmap.
+
+And before that, they are making a component one by one, like they started to develop qLDPC code and they make one logical qubit and they scale up. That is their roadmap. So, of course, there's a lot of things to do, but we have some sort of clear step towards FTQC.
+
+And Google already made one logical qubit last year by Google, and some other quantum hardware companies have a slightly faster roadmap, too.
+
+# Recent Developments: Willow and Majorana Chips
+
+And so, you might think, you know, 2030 is like far away and you know last year or this year we had a buzz about Google's Willow chip and also Microsoft's Majorana chip so let me comment about it briefly.
+
+Actually Willow is a groundbreaking uh innovation in our community so essentially what but but this is not like we don't need to worry about it right now because this is a Willow chip only has 100 physical qubits. And what they performed was one logical qubit operation and successful error correction. So they have one logical qubit right now.
+
+But they haven't succeeded to connect two logical qubits and this requires lots of complicated wiring so this hasn't been established yet. Some other platforms like neutral atom and ion trap have already realized that kind of interconnection between logical qubits, but it's still very small.
+
+So in a sense, we have logical qubit, but even though we have 100 physical qubits, we don't need to worry about it because we only have a few logical qubits for now. But scaling up this logical qubit will lead to the real quantum application.
+
+And when it comes to Microsoft Majorana 1 chip, well, this is scientifically innovative. But they just made one single physical qubit. But this topological qubit can have extremely high, a low error rate, like 10 to minus 10, 20. So logical error correction might not be needed, but they just made one qubit and they haven't performed any operation. So in a sense, it's very primitive.
+
+So yeah, good to see the progress and we should observe the progress, but I would say it's very primitive. How is the connectivity between these two? They just made one physical qubit, and people were arguing about even the existing of qubit itself. So making the operation on qubit hasn't been established yet. So I think, in my opinion, these two are very different.
+
+# Quantum Applications
+
+And the last part, this is about the application. So this is, we edited a little bit to show the better visibility, but this is from DARPA's results. So DARPA's quantum benchmarking initiative, it's like a government program, and each point represents a different application.
+
+And horizontal axis is number of logical qubits required, and vertical axis is number of operations required. So we are currently around here, so there's, I would say, no application for FTQC.
+
+And you can see different applications and chemistry and magnetic simulation, they are like quantum analog simulations. They have many applications but look at these two points. These diamonds are decryption.
+
+So RSA and ECDSA are not like very difficult problem and especially for ECDSA it around 10 to it's like thousands. So once we have thousands logical qubits with enough error rates, like 10 to 15 to 20, then the decryption will quantum computer will hack the ECDSA.
+
+So as you can see, there are many applications, but actually ECDSA is one of the easiest applications for quantum computer. So actually this split between RSA and ECC as I would say ECC is kind of overlooked in the community but recently people realized that this is way easier this is because the bit because of the bit length you know RSA has 2048 bit while ECDSA has 256 bit for the same security from the classical attack vector but quantum computer is doing more like a brute force then you know number of combinations are way smaller in ECDSA so it can fit into smaller quantum computer. That's why it's easier than RSA.
+
+# Conclusion
+
+So that's the current situation in my understanding. So that's it.
+
+So final takeaway is kind of abstract but as you can see quantum computing is real but there are so many things to do so you don't need to worry too much about it. But at the same time probably it's not a good idea to ignore it.
+
+So because we have, you know, from outside, you might think it's like a hype cycle or like going up and down, but actually inside the community, technological stacks are gradually developing. And once we reach to the threshold, we have real quantum application.
+
+And looking at the timeline, probably five years, next five years, we quantum computing hardware companies will set up more concrete roadmap towards FTQC. So that is best help to assess progress of quantum computing.
+
+OK, that's it. Thank you very much. Thank you.
+
+# Q&A
+
+I think we might, if there's a super pressing question, see that hand, Max. What is it? What's up?
+
+**Q:** Thank you. So you talked about how we're going to break ECDSA. RSA has more bits, so it's going to take more time to break it. As you think about post-quantum cryptography, do you think it's always going to be an arms race where we just get more and more bits with new forms of cryptography? Or do you think there's going to be fundamentally new breakthroughs in cryptography or completely new approaches that are the long-term solution?
+
+**A:** From the viewpoint of quantum computing, it's fundamentally different. So ECDSA and RSA use essentially the same problem of period finding. So we use the same algorithm, but it's bound up against quantum computers. But other PQCs use fundamentally different mathematical problems, and there's no known quantum algorithm that effectively solves the problem. So it's fundamentally different.
+
+Thank you. I'll say if there's other questions, hold them for now. We're about to enter into a Q&A, and there will be also time for those questions then. Well, let's give it up for Shosuke one more time. Thank you.
+
+# Insights
+
+- **Superposition and Interference as Quantum Powerhouse**: Core intuition is that qubits enable exponential parallelism via superposition (2^n states for n qubits), but interference is pivotal for constructively amplifying the desired outcome and destructively canceling others, distilling vast computation to a single measurable result.
+- **Universal vs. Specialized Models**: Gate-based (e.g., IBM/Google superconducting) and measurement-based (e.g., photonic) are mathematically equivalent and universal (Turing-complete for quantum); quantum annealing (e.g., D-Wave) is optimization-only, now sidelined.
+- **Error Correction Overhead**: Logical qubits demand 100-1000+ physical qubits in surface codes (nearest-neighbor 2D lattice with majority-vote repetition); qLDPC codes trick reduces to 10-100 via sparse parity checks, enabling efficient scaling—key metric for FTQC progress.
+- **Hardware Trade-offs**: Superconducting: fast gates but 2D connectivity/scalability limits; neutral atom (QuEra): optical tweezers for reconfigurable arrays, 10k qubits, early logical interconnects; trapped ion: atomic stability but 1D chains; photonic: inherent scalability (fiber optics) but high gate errors until fusion-based measurement succeeds.
+- **NISQ Failure → FTQC Roadmap**: NISQ (50-1000 noisy qubits) promised chemistry/optimization/ML but noise overwhelmed utility; pivot to FTQC via modular milestones (1 logical → scaled arrays), e.g., IBM's 2029 FTQC target.
+- **Recent Milestones Contextualized**: Google Willow: surface-code logical qubit from 105 physical, but no multi-logical gates; Microsoft Majorana: topological anyons for intrinsic error resistance (no correction needed), but single-qubit demo only.
+- **Application Benchmarks**: DARPA plot (logical qubits × T-gates) shows ECDSA (Shor's on 256-bit curves: ~10^3 qubits) far easier than RSA-2048 (~10^6+ qubits) due to quantum brute-force scaling with bit length, not classical security equivalence—prioritize PQC migration.
+
+# Transcription errors?
+
+- **Awards**: "research our like japan japan physical society to university and they're like the he's the emperor of japan" → Interpreted as awards from Japan Physical Society and Emperor of Japan (e.g., via Imperial commendation); phrasing garbled.
+- **SDKs**: "Kisuke, Sark, Ticket, Pennyway" → Corrected to Qiskit (IBM), Cirq (Google), tket (Quantinuum/Cambridge Quantum), PennyLane (Xanadu); "Sark" likely Cirq, "Ticket" tket, "Pennyway" PennyLane.
+- **Company**: "Kuerra" → QuEra (neutral atom leader).
+- **Chips**: "wheel chip" / "Willow chip" → Google Willow; "mayana chip" / "myonon 1 chip" → Microsoft Majorana (topological qubits).
+- **Error Codes**: "QLDCP" / "QLDG" → qLDPC (quantum low-density parity-check codes).
+- **Minor Terms**: "free Fortran quantum computer" → Fault-tolerant (FTQC); "combination optimization" → Combinatorial optimization; "PQCs" in Q&A → Post-quantum cryptography..
+
+
+
