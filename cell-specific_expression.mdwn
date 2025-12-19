@@ -21,38 +21,38 @@ Use [[gene editing|gene-editing]] technology to make a (re)programmable system f
 * **What:** Read endogenous miRNA patterns with **miR-OFF** (detarget a transgene where a miRNA is high) and **miR-ON** (activate where it’s high), then drive a CRISPR layer.
 * **How to wire:**
 
-  * Put **miRNA target sites** (e.g., miR-122 for liver, miR-142-3p for hematopoietic) in the 3′UTR of (i) your payload, (ii) **anti-CRISPR** proteins (Acr), or (iii) dCas9/base editor halves to implement **AND/NOT** gates. This is small-payload friendly (fits in AAV). [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC4873559/?utm_source=chatgpt.com), [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S1525001616304014?utm_source=chatgpt.com)
-* **Why good:** Extremely portable, widely used in vivo (AAV, mRNA). **Cas9-ON via miRNA-repressed Acr** is a great general switch (low background, strong selectivity). [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC6648350/?utm_source=chatgpt.com)
+  * Put **miRNA target sites** (e.g., miR-122 for liver, miR-142-3p for hematopoietic) in the 3′UTR of (i) your payload, (ii) **anti-CRISPR** proteins (Acr), or (iii) dCas9/base editor halves to implement **AND/NOT** gates. This is small-payload friendly (fits in AAV). [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC4873559/), [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S1525001616304014)
+* **Why good:** Extremely portable, widely used in vivo (AAV, mRNA). **Cas9-ON via miRNA-repressed Acr** is a great general switch (low background, strong selectivity). [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC6648350/)
 
 **2) gRNA-programmable promoters → deep/wide logic without new proteins**
 
-* **What:** Use **CRISPRa/CRISPRi-responsive synthetic promoters/operators** (promoters studded with gRNA target sites) controlled by dCas9-VPR/SAM or KRAB. You can stack many orthogonal promoters and gRNAs to implement multi-input logic with just a handful of proteins. [Nature](https://www.nature.com/articles/s41467-022-33287-9?utm_source=chatgpt.com)
-* **Why good:** Very **reprogrammable** (swap gRNAs, not proteins), scalable to multi-layer logic; validated in mammalian cells and safe-harbor landing pads (see below). [Nature](https://www.nature.com/articles/s41467-022-33287-9?utm_source=chatgpt.com)
-* **Related:** A general blueprint for **multi-input CRISPRa promoters** (deep/wide circuits) was formalized, showing systematic design for **AND-like** and multi-branch networks (while that study optimized prokaryotic/cell-free parts, the architecture is directly portable). [PNAS](https://www.pnas.org/doi/10.1073/pnas.2220358120?utm_source=chatgpt.com)
+* **What:** Use **CRISPRa/CRISPRi-responsive synthetic promoters/operators** (promoters studded with gRNA target sites) controlled by dCas9-VPR/SAM or KRAB. You can stack many orthogonal promoters and gRNAs to implement multi-input logic with just a handful of proteins. [Nature](https://www.nature.com/articles/s41467-022-33287-9)
+* **Why good:** Very **reprogrammable** (swap gRNAs, not proteins), scalable to multi-layer logic; validated in mammalian cells and safe-harbor landing pads (see below). [Nature](https://www.nature.com/articles/s41467-022-33287-9)
+* **Related:** A general blueprint for **multi-input CRISPRa promoters** (deep/wide circuits) was formalized, showing systematic design for **AND-like** and multi-branch networks (while that study optimized prokaryotic/cell-free parts, the architecture is directly portable). [PNAS](https://www.pnas.org/doi/10.1073/pnas.2220358120)
 
 **3) Synthetic TF toolkits (ZF-based) for orthogonal, druggable control**
 
-* **What:** Libraries like **COMET** (44 activators, 12 repressors, **83 cognate promoters**) and **synZiFTRs** (compact, human-derived, drug-controllable zinc-finger TFs). They give you many **orthogonal inputs** you can map to sensors. [Nature](https://www.nature.com/articles/s41467-019-14147-5?utm_source=chatgpt.com), [Science](https://www.science.org/doi/10.1126/science.ade0156?utm_source=chatgpt.com)
-* **Why good:** Mature, well-characterized parts; easy to compose **Boolean logic** and titratable outputs; synZiFTRs are designed with **clinical practicality** in mind (compact, humanized, small-molecule control). [Science](https://www.science.org/doi/10.1126/science.ade0156?utm_source=chatgpt.com)
+* **What:** Libraries like **COMET** (44 activators, 12 repressors, **83 cognate promoters**) and **synZiFTRs** (compact, human-derived, drug-controllable zinc-finger TFs). They give you many **orthogonal inputs** you can map to sensors. [Nature](https://www.nature.com/articles/s41467-019-14147-5), [Science](https://www.science.org/doi/10.1126/science.ade0156)
+* **Why good:** Mature, well-characterized parts; easy to compose **Boolean logic** and titratable outputs; synZiFTRs are designed with **clinical practicality** in mind (compact, humanized, small-molecule control). [Science](https://www.science.org/doi/10.1126/science.ade0156)
 
 **4) RNA-only, highly multiplexable logic with endoRNase switches (PERSIST)**
 
-* **What:** **PERSIST** uses **CRISPR endoRNases** (e.g., Csy4, CasE/Cas6) as RNA-level ON/OFF switches; nine orthogonal enzymes support all 16 two-input Boolean functions; circuits resist epigenetic silencing and are good for **mRNA delivery**. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC9095627/?utm_source=chatgpt.com), [PubMed](https://pubmed.ncbi.nlm.nih.gov/35562172/?utm_source=chatgpt.com)
-* **Why good:** Great for **layering** many inputs (miRNAs, endogenous RNAs, inducible RNAs) before a CRISPRa/TF stage. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC9095627/?utm_source=chatgpt.com)
+* **What:** **PERSIST** uses **CRISPR endoRNases** (e.g., Csy4, CasE/Cas6) as RNA-level ON/OFF switches; nine orthogonal enzymes support all 16 two-input Boolean functions; circuits resist epigenetic silencing and are good for **mRNA delivery**. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC9095627/), [PubMed](https://pubmed.ncbi.nlm.nih.gov/35562172/)
+* **Why good:** Great for **layering** many inputs (miRNAs, endogenous RNAs, inducible RNAs) before a CRISPRa/TF stage. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC9095627/)
 
 **5) Extracellular marker + intracellular state AND-gates (synNotch + CRISPR/TF)**
 
-* **What:** **synNotch** receptors convert a **surface antigen** cue into a user-defined transcriptional output (e.g., gRNA, TF, recombinase). Combine with miRNA logic to get **(antigen) AND (miRNA profile)** targeting. [Oxford Academic](https://academic.oup.com/nar/article/45/13/e118/3813634?utm_source=chatgpt.com)
-* **Why good:** Adds an **environmental/cell-cell interaction** input; widely used in engineered T cells and generalizable. [Oxford Academic](https://academic.oup.com/nar/article/45/13/e118/3813634?utm_source=chatgpt.com)
+* **What:** **synNotch** receptors convert a **surface antigen** cue into a user-defined transcriptional output (e.g., gRNA, TF, recombinase). Combine with miRNA logic to get **(antigen) AND (miRNA profile)** targeting. [Oxford Academic](https://academic.oup.com/nar/article/45/13/e118/3813634)
+* **Why good:** Adds an **environmental/cell-cell interaction** input; widely used in engineered T cells and generalizable. [Oxford Academic](https://academic.oup.com/nar/article/45/13/e118/3813634)
 
 **6) Memory & intersectional targeting with recombinases**
 
-* **What:** Use **Cre/Flp/Dre/Bxb1/φC31** to “write” the result of a sensor computation (e.g., flip a STOP, install a payload). Modern sets like **BLADE** provide clean, composable recombinase logic gates. [Courses at UW](https://courses.cs.washington.edu/courses/cse599x/10sp/RNAi_circuits.pdf?utm_source=chatgpt.com)
-* **Why good:** **Stable memory** of transient cues; works beautifully with enhancers/promoters and safe-harbor **landing pads** (Bxb1, etc.). [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC10661055/?utm_source=chatgpt.com)
+* **What:** Use **Cre/Flp/Dre/Bxb1/φC31** to “write” the result of a sensor computation (e.g., flip a STOP, install a payload). Modern sets like **BLADE** provide clean, composable recombinase logic gates. [Courses at UW](https://courses.cs.washington.edu/courses/cse599x/10sp/RNAi_circuits.pdf)
+* **Why good:** **Stable memory** of transient cues; works beautifully with enhancers/promoters and safe-harbor **landing pads** (Bxb1, etc.). [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC10661055/)
 
 **7) Split effectors as AND-gates**
 
-* **What:** Express **split-Cas9/base editors/dCas9** halves under different sensors; reconstitution (inteins, rapamycin dimerizers, light, etc.) gives a powerful **AND gate** with low leak. [Oxford Academic](https://academic.oup.com/nar/article/43/13/6450/2414291?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC4503468/?utm_source=chatgpt.com), [Nature](https://www.nature.com/articles/s41467-023-41331-5?utm_source=chatgpt.com)
+* **What:** Express **split-Cas9/base editors/dCas9** halves under different sensors; reconstitution (inteins, rapamycin dimerizers, light, etc.) gives a powerful **AND gate** with low leak. [Oxford Academic](https://academic.oup.com/nar/article/43/13/6450/2414291), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC4503468/), [Nature](https://www.nature.com/articles/s41467-023-41331-5)
 
 ---
 
@@ -63,36 +63,36 @@ Use [[gene editing|gene-editing]] technology to make a (re)programmable system f
 * Inputs: 2–5 **miRNAs** (identity markers) + 1 **drug** (clinician control).
 * Logic layer: **miRNA-repressed Acr** (NOT), **miRNA-gated dCas9** halves (AND).
 * Core: **CRISPRa responsive promoters** (2–6 orthogonal promoters) driving payload(s).
-* Output: Editor/effector under a final **gRNA-programmable promoter**. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC6648350/?utm_source=chatgpt.com), [Nature](https://www.nature.com/articles/s41467-022-33287-9?utm_source=chatgpt.com)
+* Output: Editor/effector under a final **gRNA-programmable promoter**. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC6648350/), [Nature](https://www.nature.com/articles/s41467-022-33287-9)
 
 **B) Antigen × state intersection**
 
-* synNotch (antigen) → expresses **gRNA A**; **miR logic** licenses **dCas9-VPR**; final CRISPRa promoter needs **gRNA A & B** (k-of-n logic). Add **PERSIST** RNAs to expand inputs without new proteins. [Oxford Academic](https://academic.oup.com/nar/article/45/13/e118/3813634?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC9095627/?utm_source=chatgpt.com)
+* synNotch (antigen) → expresses **gRNA A**; **miR logic** licenses **dCas9-VPR**; final CRISPRa promoter needs **gRNA A & B** (k-of-n logic). Add **PERSIST** RNAs to expand inputs without new proteins. [Oxford Academic](https://academic.oup.com/nar/article/45/13/e118/3813634), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC9095627/)
 
 **C) “Sense → Decide → Write” with memory**
 
-* Sensors (miRNA, synNotch, PERSIST) → recombinase (**Bxb1/Cre**) flips in/out a **payload cassette** at a **landing pad**; optional **CRISPRoff/on** locks the state epigenetically. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC10661055/?utm_source=chatgpt.com), [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0092867421003536?utm_source=chatgpt.com)
+* Sensors (miRNA, synNotch, PERSIST) → recombinase (**Bxb1/Cre**) flips in/out a **payload cassette** at a **landing pad**; optional **CRISPRoff/on** locks the state epigenetically. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC10661055/), [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0092867421003536)
 
 ---
 
 # Where enhancers/promoters come from (and how to target cell types)
 
-* **Enhancer discovery & delivery:** **PESCA** (parallel enhancer single-cell assay), **AAV-STARR-seq**, **scMPRA** and new **enhancer-AAV toolboxes** give vetted, neuron and brain-region selective enhancers that you can pair with the logic above. [bioRxiv](https://www.biorxiv.org/content/10.1101/570895v1.full.pdf?utm_source=chatgpt.com), [ResearchGate](https://www.researchgate.net/publication/370262377_An_unbiased_AAV-STARR-seq_screen_revealing_the_enhancer_activity_map_of_genomic_regions_in_the_mouse_brain_in_vivo?utm_source=chatgpt.com), [Cell](https://www.cell.com/neuron/abstract/S0896-6273%2825%2900349-6?utm_source=chatgpt.com), [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S2589004220300729?utm_source=chatgpt.com)
-* **Synthetic promoter libraries:** Designed, **short** synthetic promoters (<250 bp) tuned to stimuli provide compact, modular readouts that scale in mammalian cells. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC11604768/?utm_source=chatgpt.com)
+* **Enhancer discovery & delivery:** **PESCA** (parallel enhancer single-cell assay), **AAV-STARR-seq**, **scMPRA** and new **enhancer-AAV toolboxes** give vetted, neuron and brain-region selective enhancers that you can pair with the logic above. [bioRxiv](https://www.biorxiv.org/content/10.1101/570895v1.full.pdf), [ResearchGate](https://www.researchgate.net/publication/370262377_An_unbiased_AAV-STARR-seq_screen_revealing_the_enhancer_activity_map_of_genomic_regions_in_the_mouse_brain_in_vivo), [Cell](https://www.cell.com/neuron/abstract/S0896-6273%2825%2900349-6), [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S2589004220300729)
+* **Synthetic promoter libraries:** Designed, **short** synthetic promoters (<250 bp) tuned to stimuli provide compact, modular readouts that scale in mammalian cells. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC11604768/)
 
 ---
 
 # Emerging or reprogrammable techniques
 
-* **Bridge RNA–guided recombinases (IS110)** — **RNA-programmable recombination** (insertions, inversions, excisions) with a **single protein + RNA**, potentially a compact way to “write” enhancer/promoter states downstream of sensors. [Nature](https://www.nature.com/articles/s41586-024-07552-4?utm_source=chatgpt.com), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC10849738/?utm_source=chatgpt.com)
-* **RNA-sensing guide RNAs** — gRNAs that **activate only upon detecting specific RNAs** (e.g., dual-toehold or miRNA-sensing sgRNAs) offer direct **RNA→CRISPR** wiring to expand input channels without new proteins. [eLife](https://elifesciences.org/articles/87722?utm_source=chatgpt.com), [Nature](https://www.nature.com/articles/s42003-024-06988-8?utm_source=chatgpt.com)
-* **Programmable, humanized synTFs** — **synZiFTRs** for small molecule in-human reprogramming; [Science](https://www.science.org/doi/10.1126/science.ade0156?utm_source=chatgpt.com)
+* **Bridge RNA–guided recombinases (IS110)** — **RNA-programmable recombination** (insertions, inversions, excisions) with a **single protein + RNA**, potentially a compact way to “write” enhancer/promoter states downstream of sensors. [Nature](https://www.nature.com/articles/s41586-024-07552-4), [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC10849738/)
+* **RNA-sensing guide RNAs** — gRNAs that **activate only upon detecting specific RNAs** (e.g., dual-toehold or miRNA-sensing sgRNAs) offer direct **RNA→CRISPR** wiring to expand input channels without new proteins. [eLife](https://elifesciences.org/articles/87722), [Nature](https://www.nature.com/articles/s42003-024-06988-8)
+* **Programmable, humanized synTFs** — **synZiFTRs** for small molecule in-human reprogramming; [Science](https://www.science.org/doi/10.1126/science.ade0156)
 
 ---
 
 # Stable and predictable integration
 
-Use **landing pads** (e.g., **Bxb1** at AAVS1/ROSA26) to drop in circuits once, then swap modules via **RMCE**. This tames position effects, supports large libraries, and keeps expression stable over time — ideal for iterating sensor combinations. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC10661055/?utm_source=chatgpt.com), [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S2667237522001825?utm_source=chatgpt.com)
+Use **landing pads** (e.g., **Bxb1** at AAVS1/ROSA26) to drop in circuits once, then swap modules via **RMCE**. This tames position effects, supports large libraries, and keeps expression stable over time — ideal for iterating sensor combinations. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC10661055/), [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S2667237522001825)
 
 ---
 
@@ -100,61 +100,61 @@ Use **landing pads** (e.g., **Bxb1** at AAVS1/ROSA26) to drop in circuits once, 
 
 **miRNA sensors & CRISPR control**
 
-* Cell-type-specific CRISPR with **miR-Cas9 switches**. [Oxford Academic](https://academic.oup.com/nar/article/45/13/e118/3813634?utm_source=chatgpt.com)
-* **Cas9-ON** via **miRNA-repressed anti-CRISPR** (in vivo, multi-ortholog). [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC6648350/?utm_source=chatgpt.com)
+* Cell-type-specific CRISPR with **miR-Cas9 switches**. [Oxford Academic](https://academic.oup.com/nar/article/45/13/e118/3813634)
+* **Cas9-ON** via **miRNA-repressed anti-CRISPR** (in vivo, multi-ortholog). [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC6648350/)
 
 **CRISPRa/CRISPRi-responsive promoters in mammalian cells**
 
-* **CRISPR-based synthetic transcription platform** with orthogonal operator/promoter libraries (predictable tuning, stable chromosomal expression). [Nature](https://www.nature.com/articles/s41467-022-33287-9?utm_source=chatgpt.com)
+* **CRISPR-based synthetic transcription platform** with orthogonal operator/promoter libraries (predictable tuning, stable chromosomal expression). [Nature](https://www.nature.com/articles/s41467-022-33287-9)
 
 **Synthetic TF toolkits (large orthogonal palettes)**
 
-* **COMET** (44 activators, 12 repressors, 83 promoters; Boolean logic). [Nature](https://www.nature.com/articles/s41467-019-14147-5?utm_source=chatgpt.com)
-* **synZiFTRs** (compact, human-derived, drug-regulated). [Science](https://www.science.org/doi/10.1126/science.ade0156?utm_source=chatgpt.com)
+* **COMET** (44 activators, 12 repressors, 83 promoters; Boolean logic). [Nature](https://www.nature.com/articles/s41467-019-14147-5)
+* **synZiFTRs** (compact, human-derived, drug-regulated). [Science](https://www.science.org/doi/10.1126/science.ade0156)
 
 **RNA-only logic (composability & anti-silencing)**
 
-* **PERSIST** — 9 orthogonal endoRNases; full 2-input Boolean set; long-term stability. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC9095627/?utm_source=chatgpt.com)
+* **PERSIST** — 9 orthogonal endoRNases; full 2-input Boolean set; long-term stability. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC9095627/)
 
 **Extracellular antigen sensing**
 
-* **synNotch** for combinatorial antigen recognition; wire to CRISPR/TF layers. [Oxford Academic](https://academic.oup.com/nar/article/45/13/e118/3813634?utm_source=chatgpt.com)
+* **synNotch** for combinatorial antigen recognition; wire to CRISPR/TF layers. [Oxford Academic](https://academic.oup.com/nar/article/45/13/e118/3813634)
 
 **Enhancer discovery & cell-type AAVs**
 
-* **PESCA** (parallel enhancer single-cell assay). [bioRxiv](https://www.biorxiv.org/content/10.1101/570895v1.full.pdf?utm_source=chatgpt.com)
-* **Enhancer-AAV toolboxes** for cortical/neuronal subtypes. [Cell](https://www.cell.com/neuron/abstract/S0896-6273%2825%2900349-6?utm_source=chatgpt.com), [bioRxiv](https://www.biorxiv.org/content/10.1101/2024.06.10.597244v3.full.pdf?utm_source=chatgpt.com)
-* **AAV-STARR-seq in brain** (thousands of enhancer candidates). [ResearchGate](https://www.researchgate.net/publication/370262377_An_unbiased_AAV-STARR-seq_screen_revealing_the_enhancer_activity_map_of_genomic_regions_in_the_mouse_brain_in_vivo?utm_source=chatgpt.com)
-* **scMPRA** for cell-type-specific cis-activity. [bioRxiv](https://www.biorxiv.org/content/10.1101/2021.11.11.468308v2?utm_source=chatgpt.com)
+* **PESCA** (parallel enhancer single-cell assay). [bioRxiv](https://www.biorxiv.org/content/10.1101/570895v1.full.pdf)
+* **Enhancer-AAV toolboxes** for cortical/neuronal subtypes. [Cell](https://www.cell.com/neuron/abstract/S0896-6273%2825%2900349-6), [bioRxiv](https://www.biorxiv.org/content/10.1101/2024.06.10.597244v3.full.pdf)
+* **AAV-STARR-seq in brain** (thousands of enhancer candidates). [ResearchGate](https://www.researchgate.net/publication/370262377_An_unbiased_AAV-STARR-seq_screen_revealing_the_enhancer_activity_map_of_genomic_regions_in_the_mouse_brain_in_vivo)
+* **scMPRA** for cell-type-specific cis-activity. [bioRxiv](https://www.biorxiv.org/content/10.1101/2021.11.11.468308v2)
 
 **Split-Cas and inducible editors (compact AND-gates)**
 
-* **Split dCas9** logic (3-input AND; Suntag integration). [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC5063958/?utm_source=chatgpt.com)
-* **Rapamycin/light-inducible split-Cas9/base editors**. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC4503468/?utm_source=chatgpt.com), [Science](https://www.science.org/doi/10.1126/sciadv.abb1777?utm_source=chatgpt.com), [Nature](https://www.nature.com/articles/s41467-023-41331-5?utm_source=chatgpt.com)
+* **Split dCas9** logic (3-input AND; Suntag integration). [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC5063958/)
+* **Rapamycin/light-inducible split-Cas9/base editors**. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC4503468/), [Science](https://www.science.org/doi/10.1126/sciadv.abb1777), [Nature](https://www.nature.com/articles/s41467-023-41331-5)
 
 **Landing pads & RMCE**
 
-* **Bxb1/φC31** landing pads for reproducible expression and library scale-up. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC10661055/?utm_source=chatgpt.com), [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S2667237522001825?utm_source=chatgpt.com)
+* **Bxb1/φC31** landing pads for reproducible expression and library scale-up. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC10661055/), [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S2667237522001825)
 
 **NEW mechanisms (compact & programmable)**
 
-* **Bridge RNA–guided recombination (IS110)** — RNA-programmed genome rearrangements. [Nature](https://www.nature.com/articles/s41586-024-07552-4?utm_source=chatgpt.com)
+* **Bridge RNA–guided recombination (IS110)** — RNA-programmed genome rearrangements. [Nature](https://www.nature.com/articles/s41586-024-07552-4)
 
 ---
 
 # Practical build tips
 
-* Start with identity sensors like miRNA MREs to gate Acr (for OFF where you don’t want editing) and/or **dCas9 halves** (for AND where you do). This is for multi-input logic in vivo. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC6648350/?utm_source=chatgpt.com)
-* **Do logic with gRNAs, not proteins.** Use **CRISPRa/CRISPRi-responsive promoters/operators** to combine many inputs; adding a new input is just a new gRNA/operator. [Nature](https://www.nature.com/articles/s41467-022-33287-9?utm_source=chatgpt.com)
-* **Keep circuits portable**: Prefer **RNA-level gates (PERSIST)** and **ZF TFs** (COMET/synZiFTRs) when payload budget or anti-silencing matters; both scale well. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC9095627/?utm_source=chatgpt.com), [Nature](https://www.nature.com/articles/s41467-019-14147-5?utm_source=chatgpt.com)
-* **Stabilize with landing pads** (Bxb1), then **swap modules** by RMCE for rapid rewiring. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC10661055/?utm_source=chatgpt.com)
-* **Find strong, specific enhancers** for hard cell types (brain): use **PESCA/AAV-STARR-seq/scMPRA** hits and layer logic on top (miRNA/synNotch) for extra precision. [bioRxiv](https://www.biorxiv.org/content/10.1101/570895v1.full.pdf?utm_source=chatgpt.com), [ResearchGate](https://www.researchgate.net/publication/370262377_An_unbiased_AAV-STARR-seq_screen_revealing_the_enhancer_activity_map_of_genomic_regions_in_the_mouse_brain_in_vivo?utm_source=chatgpt.com)
+* Start with identity sensors like miRNA MREs to gate Acr (for OFF where you don’t want editing) and/or **dCas9 halves** (for AND where you do). This is for multi-input logic in vivo. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC6648350/)
+* **Do logic with gRNAs, not proteins.** Use **CRISPRa/CRISPRi-responsive promoters/operators** to combine many inputs; adding a new input is just a new gRNA/operator. [Nature](https://www.nature.com/articles/s41467-022-33287-9)
+* **Keep circuits portable**: Prefer **RNA-level gates (PERSIST)** and **ZF TFs** (COMET/synZiFTRs) when payload budget or anti-silencing matters; both scale well. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC9095627/), [Nature](https://www.nature.com/articles/s41467-019-14147-5)
+* **Stabilize with landing pads** (Bxb1), then **swap modules** by RMCE for rapid rewiring. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC10661055/)
+* **Find strong, specific enhancers** for hard cell types (brain): use **PESCA/AAV-STARR-seq/scMPRA** hits and layer logic on top (miRNA/synNotch) for extra precision. [bioRxiv](https://www.biorxiv.org/content/10.1101/570895v1.full.pdf), [ResearchGate](https://www.researchgate.net/publication/370262377_An_unbiased_AAV-STARR-seq_screen_revealing_the_enhancer_activity_map_of_genomic_regions_in_the_mouse_brain_in_vivo)
 
 ---
 
 For highly reprogrammable, multi-sensor, cell-specific expression, the most buildable stack today is:
 
-miRNA & extracellular sensors (synNotch) → RNA/TF logic (PERSIST, COMET/synZiFTR, CRISPRa/i-responsive promoters) → optional memory (recombinases, CRISPRoff) → payload, delivered via AAV/mRNA and stabilized with **Bxb1 landing pads**. This stack is modular, scalable (add inputs as gRNAs), and supported by well-used papers and toolkits. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC6648350/?utm_source=chatgpt.com), [Nature](https://www.nature.com/articles/s41467-022-33287-9?utm_source=chatgpt.com)
+miRNA & extracellular sensors (synNotch) → RNA/TF logic (PERSIST, COMET/synZiFTR, CRISPRa/i-responsive promoters) → optional memory (recombinases, CRISPRoff) → payload, delivered via AAV/mRNA and stabilized with **Bxb1 landing pads**. This stack is modular, scalable (add inputs as gRNAs), and supported by well-used papers and toolkits. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC6648350/), [Nature](https://www.nature.com/articles/s41467-022-33287-9)
 
 
 ---
