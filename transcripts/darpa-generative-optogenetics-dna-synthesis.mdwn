@@ -1,0 +1,240 @@
+title: Generative Opotogenetics and enabling full control of biological systems via scalable massless information transfer across biological boundaries
+
+speaker: Matthew J. Pava
+
+video: <https://www.youtube.com/watch?v=-7fnGVtXatQ>
+
+date: 2025-12-19
+
+LLM-generated summary: DARPA's Generative Optogenetics (GO) program aims to engineer a novel protein complex termed the nucleic acid compiler (NAC) that enables template-independent, light-programmable de novo synthesis of DNA or RNA sequences within living cells using endogenous nucleotide monomers, thereby achieving massless, photonic transfer of genetic information that integrates seamlessly into the central dogma. RO1 mandates development of the NAC to address three core challenges—optogenetic signal transduction into molecular motion, nucleotide-specific polymerization with processive stability, and multi-domain integration for synchronized population-level control—leveraging advances in optogenetics, polymerase structure-function, and generative protein design models, while eschewing bioprospecting or novel optics. Optional RO2 focuses on error mitigation strategies, such as mismatch detection in palindromes or duplexes, toggling modes, or modular add-ons, without exploratory foundational work. The 42-month program proceeds in two phases with progressive milestones targeting 3-6 kb sequences at high fidelity and rates, sequential programming (<1 hour turnaround), supported by commercialization/policy working groups, community workshops, and CUI protections for NAC sequences, promising spatial/temporal precision and matter-free dissemination for biomanufacturing, agriculture, medicine, and space applications, contrasting inefficient extrinsic oligonucleotide assembly.
+
+[[!toc levels=3]]
+
+# Introduction and Welcome
+
+Hello, and welcome to the Generative Optogenetics Program Briefing. My name is Matthew Pava, and I'm a Program Manager in the Biological Technologies Office. First of all, thank you for your interest in the Generative Optogenetics, or GO, program. Over the next few minutes here, I'm going to describe DARPA's goals for this program. In addition, I will provide some information that's going to be very important if you're going to respond to the program solicitation, including an understanding of the overall acquisition approach and a discussion of some of the do's and don'ts as you're preparing abstracts in response to the solicitation.
+
+# Diversity of Life and Limitations of Genetic Information Transfer
+
+If we look across the various kingdoms of life on this planet, there are an enormous array of forms and functions at the cellular level. Cells assume different shapes, and they can have radically different functions. The diverse functional potential of living organisms is provided by the genetic information contained in cells.
+
+Importantly, throughout the history of life on this planet, genetic information has exclusively been transferred via mass. That is, the nucleic acids that encode this genetic information must be transmitted from parent to progeny, or they must be transmitted laterally via mechanisms like a virus or phage transmission. All synthesis of new genetic information is essentially templated.
+
+Nucleic acids, specifically DNA and RNA, are the molecules that all known life uses to encode and transmit genetic information. Nucleic acids are long, linear molecules that store information in the sequence of bases that comprise them.
+
+The genetic information that is contained in these molecules is ultimately used by cells to produce proteins, and those proteins assemble into molecular machines. Molecular machines are the basis for all the various functions that cells can perform. They serve basic functions like moving cargo around cells, secretion of molecules into the microenvironment surrounding the cell, or uptake of molecules from this environment. These molecular machines also serve essential functions related to the genetic code itself, including replicating it from a template.
+
+# Vision of the GO Program
+
+The question that the Generative Optogenetics program seeks to address is, what if we could build a molecular machine that was able to write genetic information without a template, and instead it would synthesize the desired nucleic acid sequence off an optical signal that could masslessly transfer the desired sequence information to the machine? What if we could make this molecular machine function inside of a living cell? This is the vision of the GO program.
+
+As discussed in the program solicitation, DARPA is seeking proposals to develop a novel protein complex that can be programmed with light, perhaps a sequence of light pulses at different wavelengths which could encode a nucleic acid. On illumination, this protein complex should be able to use the nucleotide monomers that cells already synthesize for their own DNA or RNA, and with these substrates, it should be able to polymerize the nucleic acid sequence transferred to it via the massless optical signal.
+
+Because the complex produces RNA or DNA, molecules that cells already use, the output of the protein complex developed on GO should insert seamlessly into the existing central dogma that governs production of proteins and cellular behavior. In short, the protein complex that GO performers will develop should be capable of precisely transducing photons into DNA or RNA molecules.
+
+# Current Challenges in Cell Engineering
+
+Part of the reason we want to do this is if we look at the process by which we have to engineer cells today, this can take some time. It's complicated and inefficient. In the design-build-test-learn process that synthetic biology operates within, the build portion of the cycle dominates.
+
+To create a new genetic construct that we use to engineer cells, we first have to synthesize it, often starting with de novo synthesis of sequences. But today, our technologies are limited. De novo synthesis of these sequences occurs in highly artificial chemical environments and results in only short sequences, oligonucleotides, that need to be assembled into the longer desired sequences.
+
+Then, those sequences need to be packaged in some sort of a vector, usually a plasmid, that can be inserted into a cell. This insertion step can occur via a number of different approaches. Only after some period of time can we observe whether we have had the desired altered function in the cell. That whole process can take on the order of 10 days to over a month to complete.
+
+In contrast to this, we want to engineer a protein complex that can be expressed in cell lines and is responsive to light. So immediately following the design step, we can program a cell line to express whatever sequence we've just designed. Then, in a fraction of a day, we can begin observing whether or not we have had the desired effect to alter the function of the cell. Thus GO could result in a thousand-fold decrease in the build portion of a DBTL iteration.
+
+# State-of-the-Art Nucleic Acid Synthesis
+
+To take another look at the state-of-the-art, we focused on the initial step in the build process where oligonucleotides are synthesized. There are two principal means: a chemical process called phosphoramidite synthesis, which has been around for about 40 years at this point, and a more recent enzymatic method, which has been developed in the past decade or so.
+
+Again, both methods are conducted in exclusively artificial environments outside of a living cell, and their methodologies are incompatible with life. Furthermore, because they often require microfluidics, you're still dealing with diffusion limitations and mass transfer, and ultimately there are some hard limitations on the performance of these technologies, including the length of sequences they can produce, synthesis rate, and error rate.
+
+In contrast, on GO, we aim to develop a purpose-built protein complex for de novo nucleic acid synthesis. Because this protein complex could function much more closely to the endogenous polymerases cells use to synthesize RNA and DNA molecules, it should be possible to achieve much better performance that allows us to subserve a variety of different use cases that are just not possible today. In biomanufacturing, space, agriculture, and medicine could benefit from an easier method to programming cells with nucleic acid sequences, and we aim to make this possible via the approach taken on the GO program.
+
+# Scope of the GO Program: What We Are and Are Not Seeking
+
+I want to talk for a moment about what we're trying to do and what we're not trying to do on GO to try to draw some sharp boundaries around the focus of research that we aim to support on this program.
+
+Again, GO is focused on integrating multiple different protein functions into a holistic complex that facilitates scalable, massless information transfer, genetic information transfer into living cells. We believe the development of this technology is enabled by three coincident capabilities.
+
+First, a large body of knowledge that has been developed over the past 20 plus years relating to optogenetic proteins.
+
+Second, a robust foundation of knowledge regarding the structure and function of nucleotide and nucleic acid polymerizing enzymes.
+
+And third, within the past several years, there have been major advances in the field of generative models for protein engineering. This offers an opportunity to integrate optogenetic domains and polymerases into something that starts to look and function like a desired protein complex that we seek to create on this program.
+
+The program is not focused on creating parallel pathways for genetic information that operate orthogonally to the central dogma of molecular biology. The protein complexes that GO performers create should ultimately produce DNA or RNA that a cell can operate on directly.
+
+This program is not focused on developing new optics devices. Optogenetics is a field that can rely on commercial off-the-shelf optics. There is no need to develop exotic systems and this is not in scope for the program.
+
+# Research Objectives
+
+The GO program will proceed along two parallel research objectives.
+
+The first research objective, or RO1, is focused on developing the protein complex that will respond to photons to synthesize the desired nucleic acid sequence, and it will ultimately create the nucleic acid sequence using monomer substrates that are synthesized by the host cell's metabolism. As this will be a completely new protein complex, we create a new term of art to describe it, and here it will be referred to as a nucleic acid compiler, or NAC.
+
+RO1 is entirely focused on development of the NAC, and all responses to the solicitation must, at a minimum, address RO1.
+
+RO2 is optional. It is focused on developing error mitigation mechanisms that layer on top of or are built into the base NAC developed on RO1. All proposal responses to this solicitation that seek to address RO2 must also address RO1, and any response that only addresses RO2 will be deemed non-compliant and will be removed from review.
+
+NACs developed on GO will synthesize nucleic acids via a template-free process, and consequently, errors in the sequence will occur at some non-zero rate. RO2 performers will create additional mechanisms that could be intrinsic to the design of the NAC itself, or add-on to it, and these mechanisms will serve to reduce the incidence of NAC-synthesized sequences that contain errors.
+
+# RO1: Developing the Nucleic Acid Compiler (NAC)
+
+Now we're going to dive a little deeper into GO's RO1, which again focuses on developing the nucleic acid compiler, or NAC. As a reminder, all proposals responding to the GO solicitation must respond to RO1 at a minimum.
+
+It is expected that any approach to developing a NAC on RO1 is going to have to solve three key challenges.
+
+The first is how to transduce an optical signal, photons at different wavelengths, into the desired, predictable molecular motion to control the rest of the protein complex. Solutions to this challenge are going to have to incorporate capabilities and knowledge emerging from the field of optogenetics. While it is expected that development of optogenetic domains is necessary to optimize their action spectra and kinetics for the purposes of GO, this program is not seeking work focused on bioprospecting or deep theoretical or mechanistic studies. However, engineering new photoisomerizable ligands or even wholly new optogenetic protein domains may be necessary to achieve adequate control via an optical signal.
+
+The second challenge relates to what happens next. There must be a means for specific binding of the nucleotide monomers and catalyzing the addition of those monomers to the growing sequence. Furthermore, performers will need to address the challenge of how to establish a stable interaction between the NAC protein complex and the elongating nucleic acid sequence. In other words, the holoenzyme must be stable. If the NAC and the nucleic acid dissociate prematurely, then you will end up with truncated sequences and/or sequences with errors. Therefore, in developing the NAC, GO performers need to incorporate mechanisms for maintaining the NAC in a bound state with nucleic acid, which could also involve reducing the incidence of secondary structures like hairpins that could interfere with this.
+
+It is expected that proposals will include plans for how a team intends to do this and justify those plans based on the large body of knowledge regarding nucleotide binding, polymerization active sites, and associated factors that maintain processivity and reduce the incidence of problematic secondary structures.
+
+The third challenge is how do we put all the pieces together? How do you take optogenetic components and wire them up in a protein complex appropriately so they interact with and control the binding domains, catalytic sites, and accessory proteins needed for stability? Also, there will be a population of NACs expressed within a living cell, not just one protein complex, so how can you integrate all the constituent domains to synchronize a population of NACs to initiate synthesis at the same time? On a related note, how can you engineer the NAC to turn it off and prevent transduction of optical stimulation into nucleic acid at times when this is not what you want it to do?
+
+We expect the integration work will necessitate substantial protein engineering capabilities on a team, and much of this work will focus on how to develop interfaces between domains. This could relate to developing specific binding interfaces between protein subunits that encapsulate certain functions. It could also relate to developing interactions between domains within the same protein. For instance, how is molecular motion induced by an optogenetic domain conveyed to a nucleotide or protein binding domain? Is this mediated by an allosteric pathway that is engineered into the protein complex or some other means?
+
+Proposals should explain the general approach and methods for achieving this integration. They should also highlight gaps in capability that need to be covered on the program, in other words, tool development, and when and how this development can be accomplished on the program.
+
+So all proposals should discuss how they will address these three core challenges to developing the NAC, but if there are other challenges specific to your approach, then please clearly describe those as well.
+
+# Approaches to NAC Design
+
+Now, I just want to mention that we are not at all prescriptive or biased in the approach that we want teams to take. Shown on the bottom of this slide is a small sample, a non-exhaustive list of what we see as a wide variety of non-mutually exclusive approaches to develop a NAC on GO.
+
+For starters, a NAC could be developed as a monolithic protein complex containing all necessary domains for its function. At the other extreme, you could envision breaking this down into different subunits that have to bind and unbind with each other over a cycle of base addition. In this case, the subunits encapsulate different functionalities necessary for the entire process. Both of these are extremes along a spectrum and it should be possible to develop approaches somewhere between them.
+
+In addition to that, you could envision approaches for synthesizing single-stranded molecules or maybe trying to combine different catalytic domains to synthesize a double-stranded nucleic acid sequence. And then there's a variety of other approaches that teams could take as well. Again, this is a non-mutually exclusive and non-exhaustive set of examples. Approaches that are completely different from what is shown here are acceptable so long as they align to the requirements discussed in the program solicitation. To that end, I encourage you to read the program solicitation carefully and I will call your attention to Appendix A which provides a convenient cheat sheet as you are preparing your proposals.
+
+# RO2: Error Mitigation Mechanisms
+
+Now we're going to pivot to a little deeper dive on Research Objective 2. Again, responding to Research Objective 2 is optional and you must also respond to RO1 if you are responding to RO2.
+
+The focus of this Research Objective is to develop additional error mitigation mechanisms that add on to or are built into the NAC developed on RO1. These could be fully integrated and non-separable from the NAC or they could be components that could be added and removed with ease. In other words, a more modular design. Please be clear about this aspect of your design in your proposal, but this is not something that we're biased about.
+
+Again, the goal is developing a means to reduce error in the population of NAC-produced sequences that are synthesized inside of a cell. How this is achieved is essentially up to you.
+
+Just like an RO1, there are a variety of different, non-mutually exclusive strategies that one could take to develop these error mitigation mechanisms. For instance, palindromic sequences that form duplexes could be used to look for mismatches in the duplex, indicating an error was present. This approach has the downside that you're synthesizing twice the length of the desired sequence to achieve error mitigation. However, it is relatively simple to implement.
+
+Alternatively, one could envision synthesizing a double strand and looking for mismatches there. This is a much more complicated mechanism, and teams would likely need to solve the challenge of synthesizing the reverse 3' to 5' direction. Proposals taking this or an analogous approach would need to include a discussion about how known polymerases that synthesize in the reverse direction would inform their strategy for developing a NAC.
+
+Alternatively, for a purely single-stranded approach, one might envision a strategy that has a more complicated NAC design incorporating a toggle switch between right and error checking modes. This toggle mechanism does not have to be limited to an optical signal, but teams proposing a strategy along these lines will need to justify their approach with prior art.
+
+Importantly, proposals should avoid including plans for bioprospecting or theoretical or mechanistic discovery work for known proteins. These are out of scope for GO. The effort on RO2 should be directed towards building an error mitigation capability without doing a lot of exploratory foundational work.
+
+Again, these approaches are non-exhaustive and non-mutually exclusive, and we will welcome ideas for how to mitigate errors in NAC sequences that haven't been discussed here. Furthermore, proposing teams can propose to layer multiple approaches. However, if multiple approaches are pursued then the proposal should include a plan to assess their individual contributions to error mitigation and provide a strategy to down select and integrate them. In other words, be sure to articulate how you identify the simplest possible path to done. Be careful about proposals whose approach is just to throw a lot of spaghetti at the wall to see what sticks. If your proposal comes across as attempting to just try all of the things without a cogent plan to rack and stack and integrate promising approaches, then that probably won't be reviewed well. At a minimum, a design of experiments to address the large combinatorial space would be required to quell concern that the research lacks clear focus and direction.
+
+# Program Phases and Milestones
+
+The GO program will proceed across two phases that span 42 months in total. Phase one is 12 months, and it will focus on supporting teams to revise their NAC designs and their strategies for development of the NAC. Specifically, phase one will support teams to conduct research aimed at developing components of the NAC and showing that these components can be integrated without taking the step to develop a fully functioning NAC.
+
+At a minimum for RO1, teams must show that they have developed at least four optogenetic domains that can be co-expressed with minimal co-activation, and these domains can be integrated to control a polymerase. What is not needed is integrating all these domains into a polymerase to create an optically defined sequence.
+
+For RO2, teams must demonstrate the error mitigation can perform with high sensitivity and specificity, but RO2 need not be integrated with RO1 during phase one.
+
+Teams should identify additional components or tools that they will need to successfully build their specific NAC design in phase two. Any work needed to de-risk these components or tools should be proposed as appropriate as part of their phase one work plan. To this end, if there are additional metrics needed to gauge success, then teams should include these in their proposal.
+
+Critically, teams will be required to meet metrics by month nine in phase one so they can brief DARPA on their results and any necessary changes to their NAC design or development plan. This briefing will occur in the context of a concept design review. This briefing will be in person, at DARPA, and it will provide a basis for making decisions about which teams to advance into phase two.
+
+Over the course of phase two, teams will be required to meet milestones related to the performance of their NAC, with each milestone becoming progressively more stringent. For teams that work on RO2 in addition to RO1, integrating the error mitigation with the NAC begins at the first milestone in phase two.
+
+By the end of phase two, teams should have NACs that can function in living cells to synthesize three to six kilobase sequences rapidly and precisely. We expect some trade-offs between improved error mitigation and synthesis rate, so there are some differences in these metrics between RO1 performers and teams working on both RO1 and RO2.
+
+Additionally, if you are masslessly transferring genetic information to living cells via optical signals, then it ought to be possible to introduce different sequences sequentially. Therefore, we have established an additional metric for the final milestone of the program, we want teams to demonstrate sequential genetic programming of cells with less than one hour downtime between delivery of the first sequence and the second sequence.
+
+# Program Security and Additional Elements
+
+In addition to this technical milestone, you will note a line item pertaining to program security. The program solicitation provides details on this, and the CUI guide that is attached to the program provides even more information. Please read both of these documents carefully.
+
+Briefly, Phase 1 is focused on fully unclassified research, but there are milestones in Phase 1 to help performers establish a security plan they will implement in Phase 2. Phase 2, while unclassified, does have an element of Controlled Unclassified Information, or CUI, specifically to protect the sequences of the NACs that teams design on the GO program. CUI affects how you can disseminate the controlled information and the types of information systems that CUI data can be stored on.
+
+For proposals, you should include named personnel who will be responsible for developing the security plan during phase one, but you do not have to include a security plan as part of your proposal. Again, please refer to the CUI guide for full details on that, and if you have any questions about it, don't hesitate to ask. Reach out to us at go@darpa.mil with any questions.
+
+Now beyond these elements that I just described, I do want to touch on four additional parts of the GO program.
+
+There are a set of three working groups that will act as program resources specific to GO. These working groups are described in the program solicitation.
+
+The first of these is the Independent Commercialization Consulting Group or ICCG. The ICCG role will be to assist performers in developing a commercial transition plan for the technology they will develop with DARPA support on the GO program. While the program itself isn't mandating performers demonstrate their technologies for any particular use case, we do want each of the teams we fund to develop a plan to commercialize their technology. The ICCG will assist with this as well as with the teams developing a pitch to potential investors, and it will help connect teams to these investors. Starting in phase two, the program will include a series of pitch events where performers will get reps on briefing their pitch to members of the ICCG, and this will provide opportunities for feedback from the ICCG members to help them refine their pitches. This feedback may also inform DARPA about phase two elements that can be adjusted to better facilitate commercial transition of technologies developed on GO.
+
+The two remaining work groups are policy oriented. The Regulatory Policy Working Group, or RPWG, will be forward-looking and will generate a knowledge product that represents a set of policy recommendations informed by technical developments observed on GO. As a fundamentally new way of programming biological systems with genetic information, technologies emerging from GO will encounter policy barriers, particularly in highly regulated spaces like health, environment, and agriculture. Clarity on appropriate regulatory pathways for GO technology will, among other things, facilitate commercialization of the technology for applications falling in these highly regulated domains.
+
+The Biosecurity Working Group, or BSWG, will likewise be focused on generating policy recommendations in the realm of thoughtful but necessary updates to biosecurity policies reflective of technical capabilities developed on the GO program.
+
+In addition to these three working groups, the fourth additional component of the program structure is a series of workshops that DARPA will host. This program is trying to create a new field within biotechnology, so the aim of these workshops is to foster a research community beyond just the teams we fund on the GO program. To this end, these workshops are intended to include both performer teams and their subs, along with researchers who are not affiliated with the program, and the events themselves will be geared to create a venue for technical exchange.
+
+This benefits the program in two important ways. First, it will help to transition the research DARPA sponsors on GO to the broader community as a tool for accelerating discovery and biotechnology writ large. And second, it benefits the GO performers because these workshops create a space to interact with researchers who may bring necessary complementary skills that can bolster a team's chances of success. This is precisely why we hold one of these workshops early in phase one.
+
+# Detailed Metrics
+
+Shown here is a slightly more detailed view of the metrics. Of note, for the first two milestones at month nine and month 19, performers developing solutions for RO2 must address both the metrics pertaining to RO2 and those pertaining to RO1. You'll see that the RO1 plus RO2 column repeats the RO1 metrics from the column next to it.
+
+However, for milestones at months 31 and 40, RO2 performers have slightly different metrics than teams performing on RO1 alone. The reason for this is that with additional error mitigation, it is expected that longer sequences can be produced. However, there will likely be some trade-off with synthesis rate to accommodate additional mechanisms for the reduction of errors.
+
+In proposals, it is important to discuss how your designs, and particularly your plans for the Phase 1, will meet metrics associated with a milestone in Month 9. These are the minimum set of required metrics to advance to Phase 2, but it is also highly encouraged for you to include any additional metrics that are important to gauge success for your particular approach. DARPA also reserves the right to add metrics that we think are appropriate and necessary to gauge success for an individual approach.
+
+# Potential Impacts of GO Technology
+
+If we're successful on GO, the fundamental technology we develop will support many use cases due to three key attributes associated with using optical signals to convey genetic information to cells masslessly.
+
+The first of those is spatial precision. It should be possible to optically program spatially distributed cells by addressing them individually based on their spatial location. With modern state-of-the-art optics, it should even be possible to program adjacent cells with different genetic instructions.
+
+The second key attribute is temporal precision. Because I can spatially address genetic instructions to a single cell or populations of cells, and because I am transferring information rapidly and masslessly, it should be possible to sequentially send different genetic instructions to the same cell. That might allow things like commands to be issued to the cell to cause it to divide or differentiate into a different type of cell.
+
+The third key attribute arises from massless transmission of information. There is no need to transfer exogenous nucleic acids into a cell with GO technology. This is purely moving information not moving matter. This attribute would enable highly novel systems for scalable dissemination of countermeasures for things like agricultural threats or potentially supporting operations that are very far away, like space operations or in contested logistics environments.
+
+# Acquisition Process
+
+Here, we have provided an overview of the overall acquisition process, the decision tree, if you will. Acquisition proceeds through three stages, each with a key decision point that I want to mention here.
+
+First, there's an abstract submission phase, which is required for this program. If you intend to respond to the solicitation, you must submit a five-page abstract that DARPA will use to make a decision about whether or not to extend an invitation for you to submit an oral presentation package, or OPP. It will take DARPA a little time to make this decision based on abstracts, and it is highly encouraged to start working on the OPP before you hear about whether or not you have been invited to submit one. While this is fundamentally your choice on how to use this time, there won't be a lot of time between OPP invitations being sent out and the deadline for submitting the OPP.
+
+The second stage is the review of OPPs. More information about what is required in the OPPs will be distributed about the time abstracts are received. All teams that submit abstracts will receive this information, but it will include a template for slides to be briefed in the oral presentation. Other materials like cost reporting spreadsheets and the model OT are included in the attachments to the program solicitation.
+
+Submission for the OPPs will precede the oral presentations by about a week, and the oral presentations will be delivered in person at DARPA in Arlington, Virginia. At a minimum, the PI should be present at the oral presentation, but they are welcome to include other members of the team, such as CUI personnel, subs, etc. The oral presentation combined with the OPP will serve as the basis for selection decisions about which teams will be awarded OTs for prototype on the Phase 1 of the program.
+
+It is very important that in the OPPs, costs are reported with the required level of detail, in other words, the same level of detail for subs as well as the prime. Awards may be delayed if insufficient information is provided by the subs.
+
+The third major decision point occurs in phase one at the concept design review, which will be held at month nine on the program. The OTs awarded following OPPs will include scope only for Phase 1, so they will need to be modified to account for scope in Phase 2. More detail will be provided to Phase 1 teams after awards are made, but the materials provided in advance of the Concept Design Review will be similar to those provided as part of the OPP.
+
+Teams will use the Phase 1 to de-risk and revise their plans for the Phase 2, and this is what they will brief in person at DARPA as part of the concept design review at month nine. DARPA will use the information provided in this briefing, which is a program deliverable, to make decisions about which teams will continue on to the phase two of GO.
+
+As noted on the flow chart, if you do not advance to the next step in the process at any of these three decision points, there are still ways to engage with the program and this is strongly encouraged. The program is purposefully designed with research community workshops to facilitate this interaction and you may find an opportunity to combine forces with a performer team on GO. So please stay attuned to the announcements about those workshops as the program moves forward.
+
+# Timeline and Final Advice
+
+In the interest of transparency we are providing this notional acquisition timeline for GO. Importantly this timeline may change at any time at DARPA sole discretion but this is currently what we aiming for.
+
+You will note that there is a relatively short period of time between the review phase for oral presentations which is early March and when we expect contracts to be awarded. We can only achieve the short contracting turnaround if you're complete in the cost materials provided as part of the OPP by both primes as well as the subs.
+
+Specifically, I want to point you towards another video by the contracting officer for GO that should serve as a resource for you to generate fully compliant cost materials and proposals. Please find this video at the Proposers Workshop Registration website, and please share it with your entire team, primes and subs, to help you submit fully compliant proposals.
+
+As always, please take time to read the solicitation in its entirety because it does go into substantial detail about the acquisition process and what we're looking for in proposals. On this latter point, I also want to draw your attention to the Appendix A, which provides a helpful checklist as you're preparing responses to the GO solicitation.
+
+Again, if you have questions, please refer to the program solicitation and send in your questions to go@darpa.mil. We will respond to your inquiry and post a de-identified response to an FAQ document.
+
+Thank you very much for your time and for your interest in the Generative Optogenetics program.
+
+# Insights
+
+- **Massless Information Transfer**: Core intuition is decoupling genetic programming from physical nucleic acid delivery (e.g., plasmids, viruses), using photons to encode sequences via wavelength/timing patterns, enabling spatial (single-cell addressing), temporal (sequential instructions), and scalable (no mass transport limits) control unattainable with templated replication.
+- **Seamless Central Dogma Integration**: NAC outputs canonical DNA/RNA using cellular NTPs/dNTPs, avoiding orthogonal pathways; exploits endogenous metabolism for polymerization, mimicking polymerases but inverting templating for de novo synthesis.
+- **Three-Challenge Framework for NAC Design**: (1) Optogenetic transduction: Engineer photoisomerizable domains/ligands for wavelength-specific motion (action spectra/kinetics optimization via engineering, not discovery). (2) Processive Polymerization: Specific monomer selection/binding, catalytic phosphodiester bond formation, holoenzyme stability to prevent dissociation/hairpins (leverage polymerase processivity factors). (3) Domain Integration: Allosteric wiring, subunit interfaces, synchronization/off-switches for NAC populations; generative AI for chimeric designs.
+- **Spectrum of Architectures**: Monolithic single-protein vs. dynamic multi-subunit assemblies; ssDNA/RNA vs. dsDNA (requiring bidirectional catalysis); non-mutually exclusive hybrids.
+- **Error Mitigation Strategies**: Post-synthesis validation (palindromic duplex mismatch detection, trading length for fidelity); bidirectional synthesis for inherent proofreading; mode-toggle NACs (optical/non-optical); modular vs. intrinsic designs; requires prior-art justification and downselection plans to avoid unfocused "spaghetti" approaches.
+- **DBTL Acceleration**: Reduces build cycle from weeks/months to hours via in-cell, light-triggered synthesis, targeting 1000x speedup.
+- **Enabling Triad**: Optogenetics (20+ years), polymerase structural biology, recent generative protein models for feasible chimeric complexes.
+- **Milestone De-Risking**: Phase 1 focuses on components (e.g., 4 orthogonal optodomains controlling polymerase) without full NAC; Phase 2 ramps fidelity/length/rate/speed.
+- **Trade-offs**: Error correction enhances length/fidelity at cost of rate; RO1/RO2 metrics reflect this.
+- **Program Safeguards**: CUI for NAC sequences; no bioprospecting/deep mechanism; flexible metrics/add-ons; community workshops for collaboration.
+
+# Transcription errors?
+
+- "Matthew Pava": Assumed correct as speaker's name; no obvious alternative.
+- "GOe performers" / "GOES-RO1": Corrected to "GO performers" / "GO's RO1" as contextually obvious typos.
+- "nucleotide of the acetylac acid polymerizing enzymes": Corrected to "nucleotide and nucleic acid polymerizing enzymes" based on context (polymerases).
+- "state we focused": Corrected to "state-of-the-art, we focused" for grammatical/semantic fit.
+- "hollow enzyme": Highly likely "holoenzyme" (complete functional enzyme complex), standard term in polymerase/processivity contexts for stable multi-subunit assemblies.
+- "COI guide": Contextually "CUI guide" (Controlled Unclassified Information), as explicitly defined earlier in transcript.
+- "OTs": Interpreted as "Other Transaction Agreements" (standard DARPA prototype acquisition mechanism).
+
+
