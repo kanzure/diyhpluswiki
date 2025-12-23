@@ -23,8 +23,8 @@
       label="Negative\nFeedback"
       style=filled
       fillcolor=lavender
-      imf [label="Human\nimmuno-\nmodulatory\nfactors"]
       mf  [label="Mucosal\nfactors"]
+      imf [label="Human\nimmuno-\nmodulatory\nfactors"]
       gf  [label="Epithelial &\nendothelial\ngrowth\nfactors"]
     }
     bbb [label="Blood-brain-\nbarrier\npermeability";style=dashed]
@@ -42,11 +42,11 @@
     }
     {
       imf
-      mf
       gf
     } -> {
       ib
       bbb
     } [arrowhead=tee;constraint=false;color=red]
+    mf -> ib [arrowhead=tee;constraint=false;color=red]
   }
 //}
