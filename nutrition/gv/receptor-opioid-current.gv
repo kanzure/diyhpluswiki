@@ -1,0 +1,71 @@
+#!/usr/bin/env -S sh -c '( printf "%s\n" "digraph SomeGraph {"; cat $0; printf "}" ) | dot -v -Tx11 # ikiwiki graphviz.pm sucks'
+//digraph Nutrients {
+  rankdir=LR
+  newrank=true
+  node [shape=box, style=filled, fillcolor=white]
+
+  subgraph cluster_input_distribution {
+  label="Current Distribution Inputs: Selection Effects"
+    subgraph cluster_receptors {
+      label="Regulatory\nsensing"
+      style=filled
+      fillcolor=lightcoral
+      node [shape=circle]
+      μ‐opioid
+    }
+    subgraph cluster_force_order {
+    rank=same
+    style=invis
+      subgraph cluster_force_cluster {
+        // i was hoping this would be at the top if i make it equal priority, but alas
+        style=invis
+        op [label="Opioid\npeptides"]
+      }
+      subgraph cluster_essential {
+        label="Essential\nNutrition"
+        style=filled
+        fillcolor=lightgrey
+        een [label="Every\nessential\nnutrient"]
+      }
+      subgraph cluster_pfeedback {
+        label="Positive\nFeedback"
+        rank=same
+        style=filled
+        fillcolor="peru"
+        amf [label="Anti-mucosal/\nanti-biofilm\nfactors"]
+        imf [label="Non-human\nimmuno-\nmodulatory\nfactors"]
+        nps [label="Novel\nprotein\nstructures"]
+        cxcr3 [label="CXCR3-ligand\npeptide"]
+      }
+    }
+    bbb [label="Blood-brain-\nbarrier\npermeability";style=dashed]
+    ib  [label="Intestinal\nbarrier\npermeability";style=dashed]
+    ib -> wheat -> {
+      amf
+      cxcr3
+      op
+    }
+
+    μ‐opioid -> bbb -> {
+      ib
+    } -> {
+      "Non-human\nbreastmilk"
+    } -> {
+      op
+      een
+      imf
+      nps
+    }
+    {
+      nps
+      imf
+      cxcr3
+    } -> {
+      ib
+      bbb
+    } [constraint=false;color=green]
+
+      amf -> ib [constraint=false;color=green]
+      ib -> bbb [constraint=false;color=green;fontcolor=green;label=endotoxin]
+  }
+//}

@@ -1,0 +1,55 @@
+#!/usr/bin/env -S sh -c '( printf "%s\n" "digraph SomeGraph {"; cat $0; printf "}" ) | dot -v -Tx11 # ikiwiki graphviz.pm sucks'
+//digraph Nutrients {
+  rankdir=LR
+  newrank=true
+  node [shape=box, style=filled, fillcolor=white]
+
+  subgraph cluster_input_distribution {
+  label="Training Distribution Inputs: Selection Effects"
+    subgraph cluster_receptors {
+      label="Regulatory\nsensing"
+      style=filled
+      fillcolor=lightcoral
+      node [shape=circle]
+      μ‐opioid
+    }
+    subgraph cluster_essential {
+      label="Essential\nNutrition"
+      style=filled
+      fillcolor=lightgrey
+      een [label="Every\nessential\nnutrient"]
+    }
+    subgraph cluster_feedback {
+      label="Negative\nFeedback"
+      style=filled
+      fillcolor=lavender
+      imf [label="Human\nimmuno-\nmodulatory\nfactors"]
+      mf  [label="Mucosal\nfactors"]
+      gf  [label="Epithelial &\nendothelial\ngrowth\nfactors"]
+    }
+
+    // Receptors
+    bbb [label="Blood-brain-\nbarrier\npermeability";style=dashed]
+    ib  [label="Intestinal\nbarrier\npermeability";style=dashed]
+    μ‐opioid -> bbb -> {
+      ib
+    } -> {
+      "Human\nbreastmilk"
+    } -> {
+      "Opioid\npeptides"
+      een
+      imf
+      mf
+      gf
+    }
+    {
+      imf
+      mf
+      gf
+    } -> {
+      ib
+      bbb
+//    } [arrowhead=tee;constraint=false;color=red;label="negative feedback";fontcolor=red]
+    } [arrowhead=tee;constraint=false;color=red;fontcolor=red]
+  }
+//}
