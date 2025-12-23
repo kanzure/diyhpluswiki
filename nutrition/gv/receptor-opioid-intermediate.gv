@@ -11,9 +11,10 @@
       style=filled
       fillcolor=lightcoral
       node [shape=circle]
-      mu-opioid
+      mor [label="mu-opioid"]
     }
     subgraph cluster_force_order {
+    label=""
     style=invis
       subgraph cluster_force_cluster {
         style=invis
@@ -43,7 +44,7 @@
     }
     bbb [label="Blood-brain-\nbarrier\npermeability";style=dashed]
     ib  [label="Intestinal\nbarrier\npermeability";style=dashed]
-    mu-opioid -> bbb -> {
+    mor -> bbb -> {
       ib
     } -> {
       "Non-human\nbreastmilk"

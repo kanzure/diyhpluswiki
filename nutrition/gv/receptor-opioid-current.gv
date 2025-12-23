@@ -11,10 +11,11 @@
       style=filled
       fillcolor=lightcoral
       node [shape=circle]
-      mu-opioid
+      mor [label="mu-opioid"]
     }
     subgraph cluster_force_order {
     rank=same
+    label=""
     style=invis
       subgraph cluster_force_cluster {
         // i was hoping this would be at the top if i make it equal priority, but alas
@@ -45,8 +46,7 @@
       cxcr3
       op
     }
-
-    mu-opioid -> bbb -> {
+    mor -> bbb -> {
       ib
     } -> {
       "Non-human\nbreastmilk"
