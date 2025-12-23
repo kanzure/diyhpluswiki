@@ -11,7 +11,7 @@
       style=filled
       fillcolor=lightcoral
       node [shape=circle]
-      μ‐opioid
+      mu‐opioid
     }
     subgraph cluster_essential {
       label="Essential\nNutrition"
@@ -27,8 +27,6 @@
       mf  [label="Mucosal\nfactors"]
       gf  [label="Epithelial &\nendothelial\ngrowth\nfactors"]
     }
-
-    // Receptors
     bbb [label="Blood-brain-\nbarrier\npermeability";style=dashed]
     ib  [label="Intestinal\nbarrier\npermeability";style=dashed]
     μ‐opioid -> bbb -> {
@@ -49,7 +47,6 @@
     } -> {
       ib
       bbb
-//    } [arrowhead=tee;constraint=false;color=red;label="negative feedback";fontcolor=red]
-    } [arrowhead=tee;constraint=false;color=red;fontcolor=red]
+    } [arrowhead=tee;constraint=false;color=red]
   }
 //}
