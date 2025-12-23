@@ -1,3 +1,11 @@
+This page compiles research notes on enzymatic DNA synthesis, focusing on alternatives to traditional chemical oligonucleotide synthesis. The main approaches explored include direct control of DNA polymerase through various mechanisms (optical control, electronic control, template manipulation, forced misincorporation), and the use of template-independent enzymes such as Terminal Deoxynucleotidyl Transferase (TdT).
+
+Optical control of DNA polymerase represents a proposed alternative approach to traditional phosphoramidite-based chemical oligonucleotide synthesis, aiming to harness the speed and fidelity of natural enzymatic DNA replication while achieving programmable sequence control. The core concept involves engineering DNA polymerases (or related enzymes like terminal deoxynucleotidyl transferase or CCA-adding enzymes) to respond to external light signals that would dictate which nucleotide to incorporate and when to proceed with synthesis. This approach leverages advances in optogenetics and protein engineering to create light-responsive conformational changes in the polymerase that could control nucleotide selection and incorporation timing, potentially enabling template-independent, de novo DNA synthesis without the wash steps, chemical modifications, or fragment assembly limitations of current methods.
+
+[[!toc levels=6]]
+
+# Basic ideas
+
 * electrical properties of DNA polymerase?
 * enzymatic synthesis of nucleic acids
 * chemoenzymatic synthesis
@@ -5,11 +13,75 @@
 * in vivo DNA synthesis
 * in vivo gene synthesis
 
-# Enzymatic DNA synthesis
+1) electronic control of polymerase
+2) nucleotide gun made out of a nanotube pointed at the finger domain
+of some DNA polymerase
+3) single-polymerase water droplet & add in a single dNTP at a time
+4) physical display of dNTP as template for current base addition
+(i.e., on a stick) (not a protein template)
+5) a protein that can undergo conformational changes that polymerase
+thinks represents the template strand
+6) pull/push a template through DNA polymerase to control which dNTP
+it should be selecting for
+7) protein-template DNA polymerase, where the polymerase itself has a
+giant protein that enzymatically encodes dNTP information (protein
+template, like in CCA-adding enzymes)
+8) mechanical pressure on polymerase
+9) some magical ultrasound method
 
-http://groups.google.com/group/enzymaticsynthesis
+Things I'd like to avoid in the best possible solution (I'd settle for
+sucky solutions though):
 
-http://github.com/kanzure/enzymaticsynthesis
+(1) Any step that involves dissociating from the growing molecule.
+Takes too long to re-associate.
+
+(2) Mistakes.
+
+(3) Wash steps. Takes too much time.
+
+(4) Parallelism. Just one polymerase/enzyme, thank you very much, no
+"law of big numbers" stuff going on here.
+
+(5) Pause/step mode. Including a step-inducing state change would be
+fantastic, but I think we can do continuous incorporation if we have
+to?
+
+(6) if possible: off-enzyme nucleotide selection. The polymerase
+should be controlled, not the nucleotides - there's too many of those
+to reliably, quickly control.
+
+(7) if possible: light. Complicates the setup, but isn't a huge deal in the end.
+
+
+davidad replies: "I take issue with (7). I think that lasers are likely to be our only hope for controlling a single molecule using electronics. Using a nanowire to flow electric current or mechanical pressure directly into an enzyme is surely *more* expensive and technically challenging than optical techniques. It's possible that other electromagnetic fields than waves (electrostatics, magnetic moments) could be helpful, but I'd definitely be thinking Maxwell's Equations if I were you, not solid-state physics. I also take issue with (2). If you want to beat conventional synthesis, we're talking about 10^5 base pairs and up. Do you really think you can get error probability below 10^-5? I think it's probably better to accept that mistakes will be made, and incorporate a strategy for error correction."
+
+nmz787 says:
+
+you didn't mention electronic control of a DNA template, or some
+substrate (silicon, helical silicon (that might not exist, but I've
+heard of metallofullerenes being helical with a very similar
+twist/rotation as DNA http://www.jenlaurltd.com/Products.html))
+If you could electronically control a "template", then you might not
+need anything special other than ddNTPs and polymerase
+
+Now that I think of it though, polymerase probably needs/wants (in
+wild-type enzymes) to "grip" the template strand... which a solid
+plane of silicon/etc wouldn't allow.
+
+
+I definitely think mistakes need to be suppressed to the point of
+natural in vivo levels... any error handling needs to be automatic and
+on-the-fly.
+
+I think optical modification of the enzyme state is, like David said,
+the best way to interface. We can easily buy lots of different colored
+lasers and they work through vacuums, etc...
+
+# Enzymatic DNA synthesis group
+
+<https://groups.google.com/group/enzymaticsynthesis>
+
+<https://github.com/kanzure/enzymaticsynthesis>
 
 Mechanisms of attack:
 
@@ -49,15 +121,17 @@ In the transfer RNA (tRNA) CCA-adding enzyme, both the tRNA backbone and the pro
 
 primer-template slippage
 
-# tdt
+# Terminal deoxynucleotidyltransferase (TdT)
+
 EC2.7.7.31 -- terminal deoxynucleotidyltransferase
+
 TDT
 
-http://en.wikipedia.org/wiki/Terminal_deoxynucleotidyl_transferase
+<http://en.wikipedia.org/wiki/Terminal_deoxynucleotidyl_transferase>
 
-http://www.rcsb.org/pdb/explore/explore.do?pdbId=1jms
+<http://www.rcsb.org/pdb/explore/explore.do?pdbId=1jms>
 
-http://www.rcsb.org/pdb/explore/explore.do?pdbId=1coe
+<http://www.rcsb.org/pdb/explore/explore.do?pdbId=1coe>
 
 author: Basu (again)
 
@@ -75,7 +149,331 @@ author: Basu (again)
     (02:47:06 PM) Cathal Garvey: So you can use two enzymes and NDPs in washes, if that prior assumption regarding the enzyme holds.
     (02:47:15 PM) Cathal Garvey: Which is, of course, a huge achilles heel.
 
-# Synthesis of compositionally unique DNA by terminal deoxynucleotidyl transferase
+# DARPA polymerase (GO) program
+
+DARPA's Generative Optogenetics (GO) program aims to engineer a novel protein complex termed the nucleic acid compiler (NAC) that enables template-independent, light-programmable de novo synthesis of DNA or RNA sequences within living cells using endogenous nucleotide monomers, thereby achieving massless, photonic transfer of genetic information that integrates seamlessly into the central dogma. RO1 mandates development of the NAC to address three core challenges—optogenetic signal transduction into molecular motion, nucleotide-specific polymerization with processive stability, and multi-domain integration for synchronized population-level control—leveraging advances in optogenetics, polymerase structure-function, and generative protein design models, while eschewing bioprospecting or novel optics. Optional RO2 focuses on error mitigation strategies, such as mismatch detection in palindromes or duplexes, toggling modes, or modular add-ons, without exploratory foundational work. The 42-month program proceeds in two phases with progressive milestones targeting 3-6 kb sequences at high fidelity and rates, sequential programming (<1 hour turnaround), supported by commercialization/policy working groups, community workshops, and CUI protections for NAC sequences, promising spatial/temporal precision and matter-free dissemination for biomanufacturing, agriculture, medicine, and space applications, contrasting inefficient extrinsic oligonucleotide assembly.
+
+See [[transcripts/darpa-generative-optogenetics-dna-synthesis]] and <https://www.darpa.mil/research/programs/go>
+
+<https://news.ycombinator.com/item?id=46268153>
+
+# Proposal: Light-dependent RNA polymerase (2011)
+
+manuscript: <http://sphere.chronosempire.org.uk/~HEx/tmp/prop.pdf>
+
+discussion: <https://groups.google.com/g/enzymaticsynthesis/c/6GZT8zFNOfo>
+
+"""
+I want to construct a light-sensitive RNA polymerase that functions in vivo, where the template for RNA synthesis is conveyed via light pulses from outside the cell. I believe such a construct would have wide-ranging applications if it could be achieved.
+
+It seems clear to me that existing chemical methods for de novo nucleic acid synthesis are incredibly suboptimal when compared with the methods used by living cells. But harnessing the optimized nucleic acid manipulation tools used by living systems is a problem, because the main way that life encodes information in nucleic acids is by copying existing nucleic acids. (Other methods, such as relying on the combination of error-prone copying and natural selection, are useful to life, but less useful as a method for creating speci␜c nucleic acid sequences. See ␜gure 1.)
+
+Thus the chicken-and-egg problem of creating nucleic acids to order without a template to copy has traditionally been solved by chemical methods, as life does not appear to o␛er a useful solution we can borrow. Such methods are slowly improving, but are nonetheless inherently messy and expensive.
+
+RNA polymerases come in two types: template-dependent, where the template is provided by an existing nucleic acid strand, typically dsDNA; and templateindependent, where the template is encoded implicitly in the structure of the enzyme. Examples of the latter include poly(A) polymerases (PAPs) that add a poly(A) tail onto mRNA, and CCA-adding enzymes (CCAEs), that add the "CCA" sequence onto the end of tRNAs. Both sets of enzymes have been extensively studied and crystal structures are known[2].  I am primarily going to consider CCA-adding enzymes as they already have the capability for adding more than one type of base, and are extremely speci␜c in their action. CCAEs are found universally (even in organisms where the terminal CCA motif is explicitly encoded in tRNA genes, such as E. coli), although some organisms the CCA-adding function is split between a CC-adding enzyme and an A-adding enyzme.  CCAEs can be divided into two classes, based upon structural motifs, class I enzymes are found in archaea and class II enzymes are found in prokaryotes and eukaryotes[10]. The most-studied class I enzyme is that from Archaeoglobus fulgidus, a thermophile[7]. Class II enzymes have been studied in Thermotoga maritima, Aquifex aeolicus and in Bacillus stearothermophilus, in addition to E. coli and Homo sapiens.  Class II enzymes have several well-de␜ned structural motifs, some of which are conserved across other polymerases including PAPs[6]. In particular, there is just a single NTP binding pocket.  Previous experiments have succeeded in modifying a class II CCAE to add other bases instead of C and A [4], and in creating a chimeric poly(CCA) polymerase from a class II CCAE and a PAP[1].  Such results indicate that class II CCAEs seem a good starting point for modi␜cation.
+
+Light-dependence. TODO: mostly questions here. Do there exist natural photoenzymes that are not optimized for energy extraction? Do we need cofactors? [5] claims that only two enzymes (protochlorophyllide oxidoreductase and DNA photolyase) are known to require light for catalysis. Photoreceptors seem common however.  Opsins[8]? Can we get them out of the membrane? (Yes: [3]) Do we need to?  How small can they be made? Can they be stuck to a CCAE?
+
+Light-dependent polymerase. The light-sensitive elements could be part of the enyzme or part of the nucleotides. I assumed the former, but the existence of the latter possibility should not be forgotten.  Getting an enzyme to reliably add just a single nucleotide of our choice will be hard. My initial idea involved four wavelengths of light, one per nucleotide, but conceivably a ␜fth wavelength could be employed as a ratchet to drive the reaction forward and prevent multiple additions. (E.g. enzyme has two states, A and B. State A: accept a pulse of light, bind the appropriate nucleotide, go to state B. State B: accept a non-information-carrying "driver" pulse, add nucleotide to RNA strand, go to state A.) For this to be useful as a practical means of RNA synthesis, yield will be critical. Even with 99% e␞ciency per step, fewer than half of the resulting RNA molecules will be correct and complete after 70 steps, and a typical small mRNA of 500nt would have a yield of only 0.6%, while the remaining incorrect 99.4% would remain in the cell to cause problems.  Initiation? Maybe a small RNA could be expressed in a conventional fashion, and the polymerase would bind speci␜cally to it. (CCAEs are extremely picky in what RNA they will bind to, for example ␕ can we change the binding to some other speci␜c RNA sequence?) Termination? Maybe existing RNA hairpin loop mechanisms could be employed to dissociate the growing RNA strand from the polymerase. But: hairpins disrupt DNA:RNA binding? Might not work.
+
+Directed evolution. Although rational design of proteins has produced some successes, it is not clear to me that it is at the level of sophistication required for such a major challenge in protein engineering. Therefore I propose using directed evolution to circumvent the time-consuming endeavour of actual understanding in lieu of a more pragmatic ␐whatever works␑ approach.  TODO: what can we usefully select for? Need a plan of action.
+"""
+
+# More light considerations
+
+<https://groups.google.com/g/enzymaticsynthesis/c/eVnfgbNCnto>
+
+I think we can divide the problems that need solving into two main
+problems that may or may not need solving independently:
+
+1. Exactly controlling when the polymerase adds precisely one
+nucleotide.
+
+2. Controlling which nucleotide is added at each step.
+
+If we can solve problem one, we can probably anchor the polymerases
+and simply wash in the next nucleotide before allowing the polymerase
+to continue. This might be a slow process, and a crude solution to
+problem two, but it should work.
+
+It doesn't seem entirely unreasonable that we should be able to create
+a polymerase that can be activated and deactivated by external
+factors, yet even if we can accomplish that, it will probably not be
+possible to reliably active the polymerase for exactly long enough to
+add precisely one nucleotide, given the stochasticity of polymerase
+activity. We need a polymerase that gets stuck in a wait-state after
+adding a single nucleotide, where it can only proceed when given a
+signal. Even then, we may get into a situation where the minimum
+reliable time for the activation signal to be 100% effective will
+sometimes allow a polymerase to activate twice and add two
+nucleotides. We may need two different signals to control the
+polymerase, or figure out some other clever way of avoiding this
+scenario. If we're lucky maybe it won't be a problem at all, but we
+should do some research on the variability of time taken for photo-
+isomerization of enzyme to predict is this will be an issue we need to
+plan for.
+
+The stochasticity of polymerases has another nasty side-effect: We
+will have to wait long enough between adding nucleotides that the
+slowest polymerase has finished adding the current nucleotide before
+proceeding to the next step. This could mean that controlled enzymatic
+synthesis will always be significantly slower than synthesis by
+natural polymerases.
+
+In order to get something like fast whole-genome synthesis, we will
+also need to solve problem two in some way that is fast and reliable.
+Modifying the nucleotides themselves to be deactivated or activated by
+pulses of light would be an interesting way of accomplishing this, if
+such a thing is possible in a reliable way.
+
+In single-molecule real-time sequencing, Pacific Biosciences uses
+nucleotides with a fluorescent molecules attached to the phosphate
+chain:
+
+<https://en.wikipedia.org/wiki/Single_molecule_real_time_sequencing>
+
+Their technique is sequencing by synthesis, and the attached
+fluorescent molecules are automatically decoupled from the nucleotide
+as the polymerase attaches it to the DNA, apparently without affecting
+synthesis.
+
+So we know that it's possible to have something linked to the
+nucleotide, and the question becomes if it's possible to attach a
+photo-isomerizable protein that will block the nucleotide from binding
+to the polymerase in one isomer and allow it in another.
+
+Maybe your protein+nucleotide complex could be reversed. Instead of
+using light to dissociate the complex, you could have light cause a
+change in the enzyme that allows it to hook up to a hacked polymerase,
+then passing on the nucleotide cargo to the polymerase, then
+dissociating. I can't think of an enzyme that does this sort of
+physical handoff of cargo, but it's probably no more crazy than all
+this other crap we're smoking.
+
+One class of enzymes that does this hand-off operation is the
+elongation factor class.
+
+"During protein synthesis, tRNAs are delivered to the ribosome by
+proteins called elongation factors (EF-Tu in bacteria, eEF-1 in
+eukaryotes), which aid in decoding the mRNA codon sequence. Once
+delivered, a tRNA already bound to the ribosome transfers the growing
+polypeptide chain from its 3’ end to ...."
+
+"This complex transiently enters the ribosome, with the tRNA anticodon
+domain associating with the mRNA codon in the ribosomal A site. If the
+codon-anticodon pairing is correct, EF-Tu hydrolyzes guanosine
+triphosphate (GTP) into guanosine diphosphate (GDP) and inorganic
+phosphate, and changes in conformation to dissociate from the tRNA
+molecule."
+
+<https://en.wikipedia.org/wiki/EF-Tu>
+
+<https://en.wikipedia.org/wiki/EEF-1>
+
+So the requirements:
+
+(1) four engineered enzymes that bind to a specific NTP whenever they
+don't have cargo
+
+(2) in their default state, these carrier enzymes do not bind to polymerase
+
+(3) when stimulated with light, a specific carrier enzyme (w/ cargo)
+changes shape to bind to polymerase. Non-cargo carrying enzymes need
+to be excluded with some additional conformational change? i.e. they
+should only bind to polymerase when they have an NTP and a signal has
+been given to change it into the "bind to polymerase" state.
+
+(4) polymerase does not bind to free NTPs (no "nucleotide pocket" at
+least as they currently exist), but rather only binds to this carrier
+enzyme
+
+(5) the carrier enzyme binds to and plugs polymerase, dissociates from
+the NTP releasing the NTP inside a pocket on polymerase
+
+(6) polymerase incorporates the NTP, waits for a step signal; if we do
+some fluorophore stuff we could theoretically detect incorporation
+
+(7) at this point, we switch all the carrier enzymes to "do not bind
+to polymerase". Maybe this step dissociates the carrier enzyme from
+the polymerase, or maybe it happens in the next step.
+
+(8) when there's a step signal, polymerase moves (and maybe
+dissociates the carrier enzyme during this step?)
+
+(9) switch the next carrier enzyme into the "bind to polymerase" state.
+
+(10) our previously dissociated carrier enzymes go and pick up some
+free nucleotides from solution somewhere
+
+Conformational states of this carrier enzyme:
+
+(1) default - unable to bind to polymerase, can bind to one type of
+nucleotide (may or may not have nucleotide)
+
+(2) bindable-inactive - unable to bind to polymerase, has nucleotide
+
+Note: "change to a state where you can bind to polymerase" signal + no
+nucleotide should /not/ allow it to bind to polymerase.
+
+(3) bindable-active - able to bind to polymerase, has nucleotide
+("able to bind to polymerase" caused by light/laser)
+
+(4) polymerase-bound -- bound to polymerase, released/releasing its nucleotide
+
+After #4, it should stay bound to polymerase until a signal switches
+it back to the "default" state. So there needs to be a way to switch
+it "on" (per type) and a way to switch all "off" regardless of whether
+or not the enzyme is already "off" (unless we want 8 wavelengths to
+deal with?).
+
+So the "bind to polymerase" state should only occur when (A) it
+already has bound to a nucleotide and (B) the bind-to-polymerase
+signal has been given. When the "bind to polymerase" signal is given
+and it has not found a free nucleotide, the carrier enzyme should be
+unable to bind to polymerase. If it's easy to do, then in this
+scenario (bind signal + no nucleotide) making it unable to bind to
+polymerase *until* it finds itself a nucleotide is okay. I don't see
+any reason to force the sequence of steps to be locked in order. But
+the real determinant of this is which way the protein design is
+easiest, of course.
+
+It is not immediately obvious to me how EF-Tu avoids binding to a
+ribosome when it has no tRNA. But there seems to be lots of good
+studies on this elongation factor :-).
+
+# Telomerase approach
+
+Juul says: "Another interesting enzyme is Telomerase, as it uses a built-in RNA template to add repeats of six nucleotides to the 3' end of DNA. Not template-independent, but the template is part of the enzyme complex."
+
+Cathal adds:
+
+Importantly, the template is hackable. I have a bunch of papers zipped
+up somewhere detailing research into this, where they messed around with
+the templating region in telomerase template RNA to see how it worked.
+Turns out that, once you account for secondary structures at the
+boundary of the template (which define the "start" and "finish" of the
+template region, in effect), everything else is exactly as you'd expect.
+If the template can bind loose 3' DNA, the rest of the template is written.
+Assuming there's no minimum length to the template, you could have a set
+of telomerases with different minimal templates, maybe 3n long; 2n for
+reading the prior two nucleotides, and 1n for templating the next
+addition. For synthesis of DNA with this system, you'd therefore need
+4^3 enzymes; 64. Think we could work with a 64-ink printer? :)
+
+Hehe. The binding may be too weak with so few nucleotides. One way to
+fix that, at least to some degree, could be to use Locked Nucleic Acid
+(unfortunately patented) instead of the normal RNA template.
+
+
+# Exploring template-independent polymerases for automated DNA synthesis
+
+<https://groups.google.com/g/enzymaticsynthesis/c/LAg2CUQAC4M>
+
+Enzyme-based DNA synthesis could lower the cost and complexity of assembling DNA code by several orders of magnitude. Enzymes that assemble DNA are called polymerases. They are present in all living cells and work to copy genetic material at a rate of about 1000 bases per second. Typically, one strand of DNA is used as a “template” for the polymerase to produce the complimentary matching strand, together forming the familiar DNA double helix.
+
+In 1997, it was reported that an archaebacterial polymerase could generate long DNA repeats (50,000 bp or more) spontaneously, even in the absence of template DNA[3]. The repeat sequences are in effect "programmed" directly into the polymerase protein structure. This was an unexpected and counter-intuitive discovery, found when control experiments lacking template DNA still produced bands on gels. Even now many biologists remain unaware that polymerases have this capability.
+
+It may be possible to harness this de novo synthetic ability and communicate to the polymerase the DNA sequences to generate. This approach would closely mimic reaction conditions in a living cell and use natural, unmodified reagents. For example, it may be possible to dictate the polymerase's synthetic activity using precise, shaped electrical perturbations. Here the goal would be to transmit information about which DNA base(s) to add as well as start-stop instructions. If successful, the enzyme would effectively become a molecular DNA "typewriter".
+
+<https://patents.google.com/patent/US12168210B2/en>
+
+[Analysis and control of untemplated DNA polymerase activity for guided synthesis of kilobase-scale DNA sequences](https://www.biorxiv.org/content/10.1101/2024.08.29.610422v1.abstract) (2024) -- "DNA polymerases are complex molecular machines able to replicate genetic material using a template-driven process. While the copying function of these enzymes is well established, their ability to perform untemplated DNA synthesis is less well characterized. Here, we explore the ability of DNA polymerases to synthesize DNA fragments in the absence of template. We use long-read nanopore sequencing and real-time PCR to observe the synthesis of pools of DNA products derived from a diverse set of natural and engineered DNA polymerases across varying temperatures and buffer compositions. We detail the features of the DNA fragments generated, enrichment of select sequence motifs, and demonstrate that the sequence composition of the synthesized DNA may be altered by modifying environmental conditions. This work provides an extensive data set to better discern the process of untemplated DNA polymerase activity and may support its potential repurposing as a technology for the guided synthesis of DNA sequences on the kilobase-scale and beyond."
+
+# Using progressively larger backbones?
+
+<https://groups.google.com/g/enzymaticsynthesis/c/E94B-CKLa78>
+
+Some of the DNA alternatives like XNA and GNA offer some interesting options. Perhaps it would be possible to find some DNA-equivalent system with significantly larger components. Unfortunately there are probably some scaling limits to the size of a polymerase enzyme. Larger "nucleotides" would be useful because they would be easier to physically manipulate and synthesis could be much easier by physically moving larger building blocks around. We'd need something on the order of 0.1 microns or something else we can physically grab.
+
+<http://gnusha.org/logs/2015-07-07.log>
+
+# DNA sequencing using electrical conductance measurements of a DNA polymerase
+
+RETRACTED
+
+<http://www.nature.com/nnano/journal/v8/n6/full/nnano.2013.71.html>
+
+<https://ir.nctu.edu.tw/bitstream/11536/22351/1/000319979400018.pdf>
+
+"""
+The development of personalized medicine—in which medical treatment is customized to an individual on the basis of genetic information—requires techniques that can sequence DNA quickly and cheaply. Single-molecule sequencing technologies, such as nanopores, can potentially be used to sequence long strands of DNA without labels or amplification, but a viable technique has yet to be established. Here, we show that single DNA molecules can be sequenced by monitoring the electrical conductance of a phi29 DNA polymerase as it incorporates unlabelled nucleotides into a template strand of DNA. The conductance of the polymerase is measured by attaching it to a protein transistor that consists of an antibody molecule (immunoglobulin G) bound to two gold nanoparticles, which are in turn connected to source and drain electrodes. The electrical conductance of the DNA polymerase exhibits well-separated plateaux that are ~3 pA in height. Each plateau corresponds to an individual base and is formed at a rate of ~22 nucleotides per second. Additional spikes appear on top of the plateaux and can be used to discriminate between the four different nucleotides. We also show that the sequencing platform works with a variety of DNA polymerases and can sequence difficult templates such as homopolymers.
+"""
+
+# Draft manuscript on enzymatic DNA synthesis
+
+2017 draft: <https://diyhpl.us/~bryan/papers2/bio/Electronic%20manipulation%20of%20polymerase%20for%20DNA%20synthesis.2017-12-04.pdf>
+
+Electronic manipulation of polymerase for DNA synthesis: "In this review, we explore the concept of modifying existing DNA polymerase enzymes such that their DNA synthesis activity could be programmed and manipulated in real-time by external control signals including optical stimulation and physical electronic interface. We review a number of concepts and techniques which could be useful for carrying out such a project."
+
+In vitro: The assumption for the most of this paper is that the artificial DNA polymerase will
+be for in vitro usage. This is expected to be an environment such as a test tube, or some
+MEMS/CMOS scaffold that interfaces with the polymerase. It is assumed that the
+polymerase will be meant to function in an aqueous environment. In vitro, polymerase could
+be attached to a flat surface (such as a CMOS semiconductor microchip) or to the surface of
+beads, or have no tethering at all and be free floating in droplets, emulsions, or other liquid
+environments.
+
+In vivo: One alternative is that a polymerase could be made that operates in vivo. There can
+also be a mix of methods where the polymerase is evolved partially outside of cells in vitro,
+and then for a second round of selection it is evolved inside of ecoli (or something similar) in
+cell culture. One proposal is to use a toxin that can be defeated by giving a trivial sequence
+to the ecoli. Then, use optical stimulation of the ecoli to send signals to the polymerase to
+construct a certain antitoxin molecule or protein.
+
+In vivo methodology has some other interesting benefits. Usually the purpose of DNA
+synthesis is to construct DNA and then express the DNA inside of another organism. If we
+are already going to be handwaving about the construction of a magical polymerase that
+conforms to our high expectations, then why not also handwave about some magic to make
+it also work in a cell by purely optical phenomena? This would allow for the construction of
+DNA at the destination where the DNA is going to be used. This has many advantages such
+as a reduced reagent cost, a self-renewing system that only requires agarose or other cell
+culture medium, and can completely skip sequencing by checking for cell survivability when
+exposed to antimicrobial selection. An interesting example of electronic control over cellular
+activities is the field of optogenetics, where real-time optical stimulation is used to control the
+action potential firing of neurons in vivo [5].
+
+Long-term performance of an electronic polymerase .... ultimately our goal should be to
+construct entire synthetic genomes in a matter of minutes. Using arrays of thousands or
+millions of polymerases, we can construct many billions of nucleotides per second of novel
+synthetic DNA. The cost of DNA synthesis should be reduced to be pennies per genome.
+Making a mistake, like not correctly writing an amino acid sequence for a custom protein,
+should not be a multi-million dollar mistake for synthetic genome engineering. The
+design-build iterative cycle needs to be shortened as much as possible
+
+# Protein synthesis without DNA or RNA
+
+<https://groups.google.com/g/enzymaticsynthesis/c/3YEEv0OULo0>
+
+Here's an idea. Since no particular progress has been made on the problem of enzymatic DNA synthesis, what about focusing on enzymatic synthesis of proteins instead?
+
+Currently, in vitro protein synthesis protocols require DNA or mRNA.... I don't think this is impossible to override, though. This would require either hacking a ribosome or hacking tRNA synthetase. Ultimately the protocol would probably end up with steps like "select one of 20 vials of tRNAs already attached to tRNA and amino acids, insert into ribosome reaction".
+
+Antibiotics already cause mistranslation in ribosomes, so those mechanisms could be studied to determine how easy or difficult it may be to cause only mistranslation in a ribosome.
+
+Additionally, some method of capping or blocking a ribosome would be necessary, so that after delivering an amino acid to the ribosome that no other tRNA synthetase could make a delivery. Next, the protocol would have to call for a wash step to remove the excess tRNA synthetase and amino acids, next decap, then proceed on to the next step. These wash/wait steps would have to be compatible with the ribosome.
+
+The advantage of this method is that unlike oligonucleotide synthesis, large proteins can be constructed. Personally I would find this most useful for the construction of DNA polymerases, which so far cannot be directly synthesized in one molecule constructed by the phosphoramidite method. by experimenting with the amino acid design of polymerases, perhaps more efficient synthesis procedures can be made. But in the mean time, an effective cell-free, in vitro protein synthesis would be available without DNA and without RNA (or rather, without special/synthesized DNA).
+
+Cathal's solution: How about this: degenerate mRNA nucleotides and orthologous tRNAs, so an arbitrary "next triplet" can be loaded with a chosen amino? To avoid repeats have two incompatible triplets staggered and two sets of 21 aminos per triplet. Feed charged tRNA stepwise, wash between. No modified ribosome required, minimal modified tRNAs.
+
+Edward Jung's solution: <https://patents.google.com/patent/US7923533/en>
+
+# Ribosome approach
+
+<https://groups.google.com/g/enzymaticsynthesis/c/Fx0WSeqFrjs/m/1ljdUcodCAAJ>
+
+<https://patents.google.com/patent/US20240166682A1/en>
+
+# More links
+
+adam marblestone's molecular nanotechnology concept page: <https://longitudinal.blog/bottleneck-analysis-positional-chemistry/>
+
+julian englert's broken "rotary ribosome" concept: <https://www.youtube.com/watch?v=5R1EQAe9vio>
+
+
+# Other notes
+
+## Synthesis of compositionally unique DNA by terminal deoxynucleotidyl transferase
 
 Studies on the composition and characterization of DNA product(s) synthesized by calf thymus terminal deoxynucleotidyl transferase were performed using homopolymeric single-stranded, calf thymus double-stranded, and native DNA resident in calf thymus chromatin preparations as priming DNA species. Synthesis was carried out using equimolar concentrations of all four deoxynucleoside triphosphates as substrates and Mg2+ or Mn2+ as an effective divalent cation. Irrespective of the nature of the priming DNA or the divalent cation, the DNA product contained 60â€“70% dGMP residues, 10â€“15% each of the two pyrimidine residues, and 5â€“10% dAMP residues. The product synthesized using chromatin DNA as initiator was predominantly single-stranded and its synthesis was resistant to actinomycin D. The predilection of terminal deoxynucleotidyl transfease to synthesize dGMP-rich products on natural or homopolymeric DNA primers suggests that such products may represent biologically important recognition signal sequences.
 
@@ -85,7 +483,8 @@ Studies on the composition and characterization of DNA product(s) synthesized by
 * Mechanisms by which human DNA primase chooses to polymerize a nucleoside triphosphate
 * Terminal deoxynucleotidyl transferase: The story of a misguided DNA polymerase
 
-# Analysis of diversity of nucleotide and amino acid distributions in the VD and DJ joining regions in Ig heavy chains
+
+## Analysis of diversity of nucleotide and amino acid distributions in the VD and DJ joining regions in Ig heavy chains
 
     preference for polar residues - more likely to encourage interaction with ligand than non-polar residues (often found in loop regions in general). 
     preference for the insertion of smaller residues versus larger residues (this aides in loop flexibility)
@@ -121,21 +520,21 @@ synthesizes 2 to 15 bp
 
 Distinct Domain Functions Regulating de Novo DNA Synthesis of Thermostable DNA Primase from Hyperthermophile Pyrococcus horikoshii
 
-# DNA structure and aspartate 276 influence nucleotide binding to human DNA polymerase Î²
+## DNA structure and aspartate 276 influence nucleotide binding to human DNA polymerase Î²
 
 Structures of DNA polymerase (pol) Î² bound to single-nucleotide gapped DNA had revealed that the lyase and pol domains form a â€œdoughnut-shapedâ€ structure altering the dNTP binding pocket in a fashion that is not observed when bound to non-gapped DNA. We have investigated dNTP binding to pol Î²-DNA complexes employing steady-state and pre-steady-state kinetics. Although pol Î² has a kinetic scheme similar to other DNA polymerases, polymerization by pol Î² is limited by at least two partially rate-limiting steps: a conformational change after dNTP ground-state binding and product release. The equilibrium binding constant,K d (dNTP), decreased and the insertion efficiency increased with a one-nucleotide gapped DNA substrate, as compared with non-gapped DNA. Valine substitution for Asp276, which interacts with the base of the incoming nucleotide, increased the binding affinity for the incoming nucleotide indicating that the negative charge contributed by Asp276 weakens binding and that an interaction between residue 276 with the incoming nucleotide occurs during ground-state binding. Since the interaction between Asp276 and the nascent base pair is observed only in the â€œclosedâ€ conformation of pol Î², the increased free energy in ground-state binding for the mutant suggests that the subsequent rate-limiting conformational change is not the â€œopenâ€ to â€œclosedâ€ structural transition, but instead is triggered in the closed pol conformation.
 
 Structure and mechanism of DNA polymerase Î²
 
-# A reexamination of the nucleotide incorporation fidelity of DNA polymerases
+## A reexamination of the nucleotide incorporation fidelity of DNA polymerases
 
 Intensive study has been devoted to understanding the kinetic and structural bases underlying the exceptionally high fidelity (low error frequencies) of the typical DNA polymerase. Commonly proposed explanations have included (i) the concept of fidelity check points, in which the correctness of a nascent base pair match is tested at multiple points along the reaction pathway, and (ii) an induced-fit fidelity enhancement mechanism based on a rate-limiting, substrate-induced conformational change. In this article, we consider the evidence and theoretical framework for the involvement of such mechanisms in fidelity enhancement. We suggest that a â€œsimplifiedâ€ model, in which fidelity is derived fundamentally from differential substrate binding at the transition state of a rate-limiting chemical step, is consistent with known data and sufficient to explain the substrate selectivity of these enzymes.
 
-# A new paradigm for DNA polymerase specificity (Austin, Texas)
+## A new paradigm for DNA polymerase specificity (Austin, Texas)
 
 We show that T7 DNA polymerase exists in three distinct structural states, as reported by a conformationally sensitive fluorophore attached to the recognition (fingers) domain. The conformational change induced by a correct nucleotide commits the substrate to the forward reaction, and the slow reversal of the conformational change eliminates the rate of the chemistry step from any contribution toward enzyme specificity. Discrimination against mismatches is enhanced by the rapid release of mismatched nucleotides from the ternary EÂ·DNAÂ·deoxynucleoside triphosphate complex and by the use of substrate-binding energy to actively misalign catalytic residues to reduce the rate of misincorporation. Our refined model for enzyme selectivity extends traditional thermodynamic formalism by including substrate-induced structural alignment or misalignment of catalytic residues as a third dimension on the free-energy profile and by including the rate of substrate dissociation as a key kinetic parameter.
 
-# Fingers-Closing and Other Rapid Conformational Changes in DNA Polymerase I (Klenow Fragment) and Their Role in Nucleotide Selectivity
+## Fingers-Closing and Other Rapid Conformational Changes in DNA Polymerase I (Klenow Fragment) and Their Role in Nucleotide Selectivity
 
 Thus, discrimination against rNTPs occurs during the transition from open to closed conformations, whereas selection against mismatched bases is initiated earlier in the pathway, in the open complex. Mismatched dNTPs accelerate DNA release from the polymerase, suggesting the existence of an early intermediate in which DNA binding is destabilized relative to the binary complex; this could correspond to a conformation that allows an incoming dNTP to preview the template base. The early kinetic checkpoints identified by this study provide an efficient mechanism for the rejection of mismatched bases and ribose sugars and thus enhance polymerase throughput.
 
@@ -150,60 +549,60 @@ Thus, discrimination against rNTPs occurs during the transition from open to clo
     ".. the ternary complex is destabilize by the presence of incorrect dNTP"
     By analysis of the relative magnitudes of chemistry and reverse "opening" in the presence of both matched and mismatched matched ternary complexes, this work further validates that, for Pol Î², fidelity is dictated by the differences in free energy required to reach the highest energy transition state of the chemical step.
 
-# N.BspD6I DNA nickase strongly stimulates template-independent synthesis of non-palindromic repetitive DNA by Bst DNA polymerase
+## N.BspD6I DNA nickase strongly stimulates template-independent synthesis of non-palindromic repetitive DNA by Bst DNA polymerase
 
 Highly efficient DNA synthesis without template and primer DNAs occurs when N.BspD6I DNA nickase is added to a reaction mixture containing deoxynucleoside triphosphates and the large fragment of Bst DNA polymerase. Over a period of 2 h, virtually all the deoxynucleoside triphosphates (dNTPs) become incorporated into DNA. Inactivation of N.BspD6I nickase by heating inhibits DNA synthesis. Optimal N.BspD6I activity is required to achieve high yields of synthesized DNA. Electron microscopy data revealed that the majority of DNA molecules have a branched structure. Cloning and sequencing of the fragments synthesized demonstrated that the DNA product mainly consists of multiple hexanucleotide non-palindromic tandem repeats containing nickase recognition sites. A possible mechanism is discussed that addresses template-independent DNA synthesis stimulated by N.BspD6I nickase.
 
-# Template-Free Primer-Independent DNA Synthesis by Bacterial DNA Polymerases I Using the DnaB Protein from Escherichia coli
+## Template-Free Primer-Independent DNA Synthesis by Bacterial DNA Polymerases I Using the DnaB Protein from Escherichia coli
 
 This is the first study to show that bacterial type I DNA polymerases (including truncted ones) can synthesize DNA in vitro in the absence of primer and template, using the product of the DnaB gene of Escherichia coli. This product is produced only when reaction mixture contains both DNA polymerase and the product of the DnaB gene. The control experiments showed that DNA synthesis is not due to the presence of oligonucleotide contaminants in reaction mixture. The reaction products may be several hundred kb in length; they are completely hydrolyzed by DNase I and partly by the nuclease S1 and contain a repetitive AT-rich sequence, in which approximately 15% of the nucleotides in which are cytosine and guanine.
 
-# De Novo DNA Synthesis by Human DNA Polymerase Î», DNA Polymerase Î¼ and Terminal Deoxyribonucleotidyl Transferase
+## De Novo DNA Synthesis by Human DNA Polymerase Î», DNA Polymerase Î¼ and Terminal Deoxyribonucleotidyl Transferase
 
 DNA polymerases (pols) catalyse the synthesis of DNA. This reaction requires a primer-template DNA in order to grow from the 3â€²OH end of the primer along the template. On the other hand terminal deoxyribonucleotidyl transferase (TdT) catalyses the addition of nucleotides at the 3â€²OH end of a DNA strand, without the need of a template. Pol Î» and pol Î¼ are ubiquitous enzymes, possess both DNA polymerase and terminal deoxyribonucleotidyl transferase activities and belong to pol X family, together with pol Î² and TdT. Here we show that pol Î», pol Î¼ and TdT, all possess the ability to synthesise in vitro short fragments of DNA in the absence of a primer-template or even a primer or a template in the reaction. The DNA synthesised de novo by pol Î», pol Î¼ and TdT appears to have an unusual structure. Furthermore we found that the amino acid Phe506 of pol Î» is essential for the de novo synthesis. This novel catalytic activity might be related to the proposed functions of these three pol X family members in DNA repair and DNA recombination.
 
 The Use of Nonâ€natural Nucleotides to Probe Templateâ€Independent DNA Synthesis
 Terminal deoxynucleotidyl transferase: The story of a misguided DNA polymerase
 
-# A light-activated DNA polymerase
+## A light-activated DNA polymerase
 
 The widely applied Thermus aquaticus DNA polymerase was built by the photoactivatable amino acid ortho-Nitrobenzyltyrosin instead of a tyrosine in the active center light-activated (see picture). Since the modified enzyme active after irradiation with UV light, the polymerase activity can be regulated temporally.
 
 Die hÃ¤ufig genutzte Thermus-aquaticus-DNA-Polymerase wurde durch Einbau der photoaktivierbaren AminosÃ¤ure ortho-Nitrobenzyltyrosin anstelle eines Tyrosinrests im aktiven Zentrum lichtaktivierbar (siehe Bild). Da das modifizierte Enzym erst nach Bestrahlen mit UV-Licht aktiv ist, kann die Polymerase-AktivitÃ¤t zeitlich reguliert werden.
 
-# Restriction enzyme-free mutagenesis via the light regulation of DNA polymerization
+## Restriction enzyme-free mutagenesis via the light regulation of DNA polymerization
 
 The effects of photocaged nucleosides on the DNA polymerization reaction was investigated, finding that most polymerases are unable to recognize and read through the presence of a single caging group on the DNA template. Based on this discovery, a new method of introducing mutations into plasmid DNA via a light-mediated mutagenesis protocol was developed. This methodology is advantageous over several common approaches in that it requires the use of only two polymerase chain reaction primers, and does not require any restriction sites or use of restriction enzymes. Additionally, this approach enables not only site-directed mutations, but also the insertion of DNA strands of any length into plasmids and the deletion of entire genes from plasmids.
 
-#Light activation of transcription: photocaging of nucleotides for control over RNA polymerization
+## Light activation of transcription: photocaging of nucleotides for control over RNA polymerization
 
 We describe the use of ATP caged with [7-(diethylamino)coumarin-4-yl]methyl (DEACM) for light-controlled in vitro transcription reactions. Polymerization is blocked when DEACM is bonded to the gamma phosphate group of the ATP molecule. Controlled light irradiation releases ATP and transcription is initiated. In order to provide full control over the process, conditions involved in substrate release, nucleotide availability after release and the effect of the released coumarin in RNA polymerization were assessed in further detail. Together, our data provide the first direct evidence of control over enzymatic polymerization of nucleic acids through light. This approach may provide researchers with a unique tool for the study of biological processes at a molecular level.
 
-# Site-specific incorporation of photofunctional nonnatural amino acids into a polypeptide through in vitro protein biosynthesis
+## Site-specific incorporation of photofunctional nonnatural amino acids into a polypeptide through in vitro protein biosynthesis
 
 * azobenzene-tethered dNTPs ?
 * photocleavable dNTPs into polymerase
 * polymerase with azobenzene/switchable amino acids at important sites
 
-# A Hydrophilic Azobenzene-Bearing Amino Acid for Photochemical Control of a Restriction Enzyme BamHI
+## A Hydrophilic Azobenzene-Bearing Amino Acid for Photochemical Control of a Restriction Enzyme BamHI
 
 A novel hydrophilic and negatively charged azobenzene-bearing amino acid, 4â€˜-carboxyphenylazophenylalanine (azoAla 1), has been designed and synthesized for investigation of the photochemical regulation of the enzyme activity. The properties of photoisomerization and thermal stability of the cis-isomer were similar to those of a commonly used phenylazophenylalanine (azoAla 2). For photochemical control of the enzyme, these two azobenzene-bearing amino acids were incorporated into the specific position at the dimer interface of a restriction enzyme BamHI. These trans-azobenzene derivatives in the BamHI suppressed the enzymatic activity, and the following photoirradiation at 366 nm induced the recovery of its activity. Although the activities of both azoAla-BamHI mutants were same level after a long time irradiation, the recovery of the activity of azoAla 1-BamHI was faster than that of azoAla 2-BamHI with a short time irradiation. This result suggests that the negatively charged carboxylate group introduced into an azobenzene moiety affects the behavior of azoAla in the protein scaffold during the transâˆ’cis photoisomerization.
 
-# refs
+## refs
 
 Conformational transitions in DNA polymerase I revealed by single-molecule FRET
 
 Specific nucleotide binding and rebinding to individual DNA polymerase complexes captured on a nanopore
 
-# Single-molecule measurements of synthesis by DNA polymerase with base-pair resolution
+## Single-molecule measurements of synthesis by DNA polymerase with base-pair resolution
 
 The catalytic mechanism of DNA polymerases involves multiple steps that precede and follow the transfer of a nucleotide to the 3â€²-hydroxyl of the growing DNA chain. Here we report a single-molecule approach to monitor the movement of E. coli DNA polymerase I (Klenow fragment) on a DNA template during DNA synthesis with single base-pair resolution. As each nucleotide is incorporated, the single-molecule FÃ¶rster resonance energy transfer intensity drops in discrete steps to values consistent with single-nucleotide incorporations. Purines and pyrimidines are incorporated with comparable rates. A mismatched primer/template junction exhibits dynamics consistent with the primer moving into the exonuclease domain, which was used to determine the fraction of primer-termini bound to the exonuclease and polymerase sites. Most interestingly, we observe a structural change after the incorporation of a correctly paired nucleotide, consistent with transient movement of the polymerase past the preinsertion site or a conformational change in the polymerase. This may represent a previously unobserved step in the mechanism of DNA synthesis that could be part of the proofreading process.
 
-# Electronic control of DNA polymerase binding and unbinding to single DNA molecules
+## Electronic control of DNA polymerase binding and unbinding to single DNA molecules
 
 DNA polymerases catalyze template-dependent genome replication. The assembly of a high affinity ternary complex between these enzymes, the double strandâˆ’single strand junction of their DNA substrate, and the deoxynucleoside triphosphate (dNTP) complementary to the first template base in the polymerase active site is essential to this process. We present a single molecule method for iterative measurements of DNAâˆ’polymerase complex assembly with high temporal resolution, using active voltage control of individual DNA substrate molecules tethered noncovalently in an Î±-hemolysin nanopore. DNA binding states of the Klenow fragment of Escherichia coli DNA polymerase I (KF) were diagnosed based upon their ionic current signature, and reacted to with submillisecond precision to execute voltage changes that controlled exposure of the DNA substrate to KF and dNTP. Precise control of exposure times allowed measurements of DNAâˆ’KF complex assembly on a time scale that superimposed with the rate of KF binding. Hundreds of measurements were made with a single tethered DNA molecule within seconds, and dozens of molecules can be tethered within a single experiment. This approach allows statistically robust analysis of the assembly of complexes between DNA and RNA processing enzymes and their substrates at the single molecule level.
 
-# Synthesis of compositionally unique DNA by terminal deoxynucleotidyl transferase
+## Synthesis of compositionally unique DNA by terminal deoxynucleotidyl transferase
 
 Studies on the composition and characterization of DNA product(s) synthesized by calf thymus terminal deoxynucleotidyl transferase were performed using homopolymeric single-stranded, calf thymus double-stranded, and native DNA resident in calf thymus chromatin preparations as priming DNA species. Synthesis was carried out using equimolar concentrations of all four deoxynucleoside triphosphates as substrates and Mg2+ or Mn2+ as an effective divalent cation. Irrespective of the nature of the priming DNA or the divalent cation, the DNA product contained 60â€“70% dGMP residues, 10â€“15% each of the two pyrimidine residues, and 5â€“10% dAMP residues. The product synthesized using chromatin DNA as initiator was predominantly single-stranded and its synthesis was resistant to actinomycin D. The predilection of terminal deoxynucleotidyl transfease to synthesize dGMP-rich products on natural or homopolymeric DNA primers suggests that such products may represent biologically important recognition signal sequences.
 
@@ -212,7 +611,7 @@ Studies on the composition and characterization of DNA product(s) synthesized by
 
 Relationship Between Conformational Changes in Pol Î»'s Active Site Upon Binding Incorrect Nucleotides and Mismatch Incorporation Rates
 
-# The Conserved Active Site Motif A of Escherichia coli DNA Polymerase I Is Highly Mutable
+## The Conserved Active Site Motif A of Escherichia coli DNA Polymerase I Is Highly Mutable
 
 Akeo Shinkai, Premal H. Patel, and Lawrence A. Loeb
 
@@ -235,13 +634,13 @@ In conclusion, we reiterate that all DNA polymerases thus far examined appear to
 
 Acknowledgmentsâ€”We thank Dr. Elinor Adman for helpful discussions and Dr. Ann Blank for critical reading of the manuscript.
 
-# 5. Structure of large fragment of Escherichia coli DNA polymerase I complexed with dTMP 
+## 5. Structure of large fragment of Escherichia coli DNA polymerase I complexed with dTMP 
 
 Ollis, D. L., Brick, P., Hamlin, R., Xuong, N. G., and Steitz, T. A. (1985) Nature 313, 762â€“766
 
 blah, an image-only PDF :(
 
-# 6. Meh
+## 6. Meh
 
 Kohlstaedt, L. A., Wang, J., Friedman, J. M., Rice, P. A., and Steitz, T. A. (1992) Science 256, 1783â€“1790
 
@@ -250,7 +649,7 @@ http://www.sciencemag.org.ezproxy.lib.utexas.edu/cgi/content/abstract/256/5065/1
 A 3.5 angstrom resolution [[electron density map]] of the HIV-1 reverse transcriptase [[heterodimer]] complexed with [[nevirapine]], a drug with potential for treatment of AIDS, reveals an asymmetric dimer. The polymerase (pol) domain of the 66-kilodalton subunit has a large cleft analogous to that of the [[Klenow fragment]] of [[Escherichia coli DNA polymerase I]]. However, the 51-kilodalton subunit of identical sequence has no such cleft because the four subdomains of the pol domain occupy completely different relative positions. Two of the four pol subdomains appear to be structurally related to subdomains of the Klenow fragment, including one containing the catalytic site. The subdomain that appears likely to bind the template strand at the pol active site has a different structure in the two polymerases. '''Duplex A-form RNA-DNA hybrid can be model-built into the cleft that runs between the ribonuclease H and pol active sites.''' Nevirapine is almost completely buried in a pocket near but not overlapping with the pol active site. Residues whose mutation results in drug resistance have been approximately located.
 
 
-# 7. Crystal structure of rat DNA polymerase beta: evidence for a common polymerase mechanism 
+## 7. Crystal structure of rat DNA polymerase beta: evidence for a common polymerase mechanism 
 http://www.sciencemag.org.ezproxy.lib.utexas.edu/cgi/content/abstract/264/5167/1930
 
 Sawaya, M. R., Pelletier, H., Kumar, A., Wilson, S. H., and Kraut, T. (1994) Science 264, 1930 â€“1935
@@ -259,7 +658,7 @@ Structures of the 31-kilodalton [[catalytic domain]] of rat DNA polymerase beta 
 
 
 
-# 8. (good) Crystal Structure of a pol Family Replication DNA Polymerase from Bacteriophage RB69 
+## 8. (good) Crystal Structure of a pol Family Replication DNA Polymerase from Bacteriophage RB69 
 Wang, J., Sattar, A. K. M. A., Wang, C. C., Karam, J. D., Konigsberg, W. H., and Steitz, T. A. (1997) Cell 89, 1087â€“1089
 
 
@@ -275,7 +674,7 @@ The structure of this replication enzyme is organized into five domains that are
 
 The structures of the E. coli Klenow fragment (KF) and Thermus aquaticus DNA polymerase (Taq pol) from the pol I family ([49 and 36]) and that of the HIV reverse transcriptase (RT) ( [38]) and their DNA complexes ( [2, 28 and 22]) show a U-shaped polymerase domain geometry that has been likened to the shape of a hand with â€œthumb,â€ â€œpalm,â€ and â€œfingersâ€ subdomains ( [49 and 38]). The thumb interacts across the minor groove of product duplex DNA, while the palm contains the polymerase catalytic site; the fingers interact with the template strand and perhaps with the deoxynucleoside triphosphate. While the structure of mammalian DNA polymerase Î² (pol Î²) exhibits an analogous hand-like shape ( [17, 52 and 61]), it is not structurally homologous to pol I, RT, or T7 RNA polymerase (T7 RNAP) ( [66]) but rather belongs to another family of nucleotidyl transferases ( [26 and 73]).
 
-# 9. DNA Polymerases: Structural Diversity and Common Mechanisms 
+## 9. DNA Polymerases: Structural Diversity and Common Mechanisms 
 
 Steitz, T. A. (1999) J. Biol. Chem. 274, 17395â€“17398
 
@@ -291,7 +690,7 @@ Independent of their detailed domain structures, all polymerases whose structure
 Here the functional and structural similarities and differences among the polymerases of known structure are explored. Of particular interest are the role of editing in the '''fidelity of copying''', the [[common enzymatic mechanism of polymerases]], and the manners in which different domain structures function in the polymerase reaction in analogous ways.
 
 
-# 10. WHY DOES THIS HAVE NO NAME?
+## 10. WHY DOES THIS HAVE NO NAME?
 
 Kunkel, T. A., and Wilson, S. H. (1998) Nat. Struct. Biol. 5, 95â€“99
 
@@ -336,7 +735,7 @@ Comparison of the structure of the T7 pol ternary complex to unliganded or binar
 
 
 
-### mediawiki reference barf
+## mediawiki reference barf
 
     # Sawaya, M.R., Prasad, R., Wilson, S.H., Kraut, J. & Pelletier, H. ''Biochemistry'' '''36''', 11205âˆ’11215 (1997). | [http://dx.doi.org.ezproxy.lib.utexas.edu/10.1021%2Fbi9703812 Article] | [http://www.ncbi.nlm.nih.gov.ezproxy.lib.utexas.edu/entrez/query.fcgi?holding=npg&cmd=Retrieve&db=PubMed&list_uids=9287163&dopt=Abstract <span class="intlink">PubMed</span>] | [http://links.isiglobalnet2.com.ezproxy.lib.utexas.edu/gateway/Gateway.cgi?&GWVersion=2&SrcAuth=Nature&SrcApp=Nature&DestLinkType=FullRecord&KeyUT=A1997XW73300018&DestApp=WOS_CPL
      ISI] | [http://chemport.cas.org/cgi-bin/sdcgi?APP=ftslink&action=reflink&origin=npg&version=1.0&coi=1:CAS:528:DyaK2sXlsV2nt7o%3D&pissn=1545-9993&pyear=1998&md5=31732d723e5de51ded3cab547ab84d6f ChemPort] |
@@ -385,7 +784,7 @@ Comparison of the structure of the T7 pol ternary complex to unliganded or binar
     # Nicholls, A., Sharp, K.A. & Honing, B. ''Proteins'' '''11''', 281âˆ’296 (1991). | [http://www.ncbi.nlm.nih.gov.ezproxy.lib.utexas.edu/entrez/query.fcgi?holding=npg&cmd=Retrieve&db=PubMed&list_uids=1758883&dopt=Abstract <span class="intlink">PubMed</span>] | [http://links.isiglobalnet2.com.ezproxy.lib.utexas.edu/gateway/Gateway.cgi?&GWVersion=2&SrcAuth=Nature&SrcApp=Nature&DestLinkType=FullRecord&KeyUT=A1991GV03200006&DestApp=WOS_CPL
      ISI] | [http://chemport.cas.org/cgi-bin/sdcgi?APP=ftslink&action=reflink&origin=npg&version=1.0&coi=1:CAS:528:DyaK38XhtVWgur4%3D&pissn=1545-9993&pyear=1998&md5=18992ca40777e35036d669e8d1b8e703 ChemPort] |
 
-# 11. oink
+## 11. oink
 
 http://arjournals.annualreviews.org.ezproxy.lib.utexas.edu/doi/abs/10.1146/annurev.biochem.69.1.497
 
@@ -394,11 +793,11 @@ Kunkel, T. A., and Bebenek, K. (2000) Annu. Rev. Biochem. 69, 497â€“529
 DNA replication fidelity is a key determinant of genome stability and is central to the evolution of species and to the origins of human diseases. Here we review our current understanding of [[replication fidelity]], with emphasis on structural and biochemical studies of DNA polymerases that provide new insights into the importance of [[hydrogen bonding]], [[base pair geometry]], and [[substrate-induced conformational changes to fidelity]]. '''These studies also reveal polymerase interactions with the [[DNA minor groove]] at and upstream of the active site that influence [[nucleotide selectivity]], the [[efficiency of exonucleolytic proofreading]], and the [[rate of forming errors via strand misalignments]].''' We highlight common features that are relevant to the fidelity of any DNA synthesis reaction, and consider why fidelity varies depending on the enzymes, the error, and the local sequence environment.
 
 
-# 12. buh?
+## 12. buh?
 
 Pelletier, H., Sawaya, M. R., Kumar, A., Wilson, S. H., and Kraut, J. (1994) Science 264, 1891â€“1903
 
-# 13. Crystal structure of a bacteriophage T7 DNA replication complex at 2.2 Ã… resolution 
+## 13. Crystal structure of a bacteriophage T7 DNA replication complex at 2.2 Ã… resolution 
 
 Doublie, S., Tabor, S., Long, A. M., Richardson, C. C., and Ellenberger, T. (1998) Nature 391, 251â€“258
 
@@ -413,7 +812,7 @@ Steitz
 
 http://www.nature.com.ezproxy.lib.utexas.edu/nature/journal/v391/n6664/abs/391251a0.html
 
-# 14. Structure of a Covalently Trapped Catalytic Complex of HIV-1 Reverse Transcriptase: Implications for Drug Resistance
+## 14. Structure of a Covalently Trapped Catalytic Complex of HIV-1 Reverse Transcriptase: Implications for Drug Resistance
 
 Huang, H., Chopra, R., Verdine, G. L., and Harrison, S. C. (1998) Science 282, 1669 â€“1675
 
@@ -421,7 +820,7 @@ A combinatorial disulfide cross-linking strategy was used to prepare a stalled c
 
 http://www.sciencemag.org.ezproxy.lib.utexas.edu/cgi/content/abstract/282/5394/1669
 
-# 15. Crystal structures of open and closed forms of binary and ternary complexes of the large fragment of Thermus aquaticus DNA polymerase I: structural basis for nucleotide incorporation
+## 15. Crystal structures of open and closed forms of binary and ternary complexes of the large fragment of Thermus aquaticus DNA polymerase I: structural basis for nucleotide incorporation
 
 Li, Y., Korolev, S., and Waksman, G. (1998) EMBO J. 17, 7514 â€“7525
 The crystal structures of two ternary complexes of the large fragment of Thermus aquaticus DNA polymerase I (Klentaq1) with a primer/template DNA and dideoxycytidine triphosphate, and that of a binary complex of the same enzyme with a primer/template DNA, were determined to a resolution of 2.3, 2.3 and 2.5 Ã…, respectively. '''One ternary complex structure differs markedly from the two other structures by a large reorientation of the tip of the fingers domain.''' This structure, designated 'closed', '''represents the ternary polymerase complex caught in the act of incorporating a nucleotide.''' In the two other structures, the tip of the fingers domain is rotated outward by 46Â° ('open') in an orientation similar to that of the apo form of Klentaq1. '''These structures provide the first direct evidence in DNA polymerase I enzymes of a large conformational change responsible for assembling an active ternary complex.'''
@@ -480,7 +879,7 @@ addase activity
 
 
 * telomerase reverse transcriptase (TERT) <https://en.wikipedia.org/wiki/Telomerase_reverse_transcriptase>
-** has an RNA component that encodes the template for addition
+ * has an RNA component that encodes the template for addition
 
 # Large components
 
@@ -518,6 +917,7 @@ Five regions of similarity are found in all the polymerases of this entry. The s
 * Reverse transcriptase (RT) catalytic domain profile <http://prosite.expasy.org/PDOC50878>
 
 
+# even more things
 
 
 
