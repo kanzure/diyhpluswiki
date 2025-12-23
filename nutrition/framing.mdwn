@@ -46,10 +46,10 @@ Mesa-alignment must be conscientiously addressed.
 
 ## Examples
 
-### Physiological attractor mesa-alignment
+### Physiological affinity mesa-alignment
 
 The essential nutrient sodium is an example of a regulatory
-motivational/behavioral attractor that remains well-aligned between the
+motivational/behavioral affinity that remains well-aligned between the
 training input distribution and the current input distribution.
 
 [[!graph file="nutrition/gv/nutrient-sensing-sodium-training.gv"]]
@@ -59,7 +59,7 @@ It is well-aligned because it is as directly sensed as possible; there are no
 intermediate correlates. What is needed by the proteomic machinery is what is
 sensed by the proteomic machinery.
 
-### Pathological attractor mesa-alignment
+### Pathological affinity mesa-alignment
 
 By contrast, most of the other essential nutrients do **not** have direct
 sensing, instead relying on one particular unified correlate variable due to
@@ -79,7 +79,21 @@ This leaves a wide variety of nutrients critical to everything from reactive
 oxygen species management, to inflammation modulation, to electron transport
 chain throughput in a state of resource insufficiency.
 
-Options for re-alignment:
+### Physiological aversion mesa-alignment
+
+TODO: ammonia and waste/rotting
+
+### Pathological aversion mesa-alignment: false negative
+
+WIP
+
+[[!graph file="nutrition/gv/receptor-opioid-training.gv"]]
+[[!graph file="nutrition/gv/receptor-opioid-intermediate.gv"]]
+[[!graph file="nutrition/gv/receptor-opioid-current.gv"]]
+
+Outcomes: Inflammatory disorders, metabolic disorders
+
+### Options for re-alignment
 
 TODO: systemize these better somehow. I suspect there's a dimensional/vector
 way to compose and more efficiently search this problem space.
@@ -103,7 +117,7 @@ All of these have resource tradeoffs, many of which are completely unstudied.
 ### TODO:
 
 * full list of n essential+prudent nutrients as something like line segment
-  attractors in n-dimensional-behavior-space
+  affinities in n-dimensional-behavior-space
 * some list of antinutrients/pathogens to build obstructive manifolds in
   n-dimensional-behavior-space
 * Failures to systemize requirements correctly, either with a lack
@@ -113,6 +127,17 @@ All of these have resource tradeoffs, many of which are completely unstudied.
   peptides, cyanocobalamin,
 * examples of antinutrients/pathogen mesa-alignment, in physiological and
   pathological forms.
+  * affinity (nutrients, reg-signals, etc.)
+    * true positive (done: salt)
+    * false positive (done: glutamate)
+    * false negative (donish: sortof inplied by glutamate?)
+    * true negative (eh, not interesting unless ≃ aversion true positive)
+  * aversion (antinutrients, pathogens, etc.)
+    * true positive (ammonia? waste/rotting)
+    * false positive
+    * false negative (half done: exorphins)
+    * true negative (eh, not interesting unless ≃ affinity true positive)
+  * or frame it in terms of affinity/aversion sensitivity/specificity?
 * think hard about how to manage the anti-inductiveness of
   antinutrients/pathogens in the future
 
