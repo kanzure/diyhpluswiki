@@ -3162,6 +3162,18 @@ galapagos tortoise: DNA repair, mitochondrial homeostasis, enhanced immune pathw
 * TODO: Epigenetic aging can be decelerated by improved proteostasis (NHLRC1), dampened methylation turnover (TPMT), nutrient-sensing down-regulation (SESN1), or restrained ROS/inflammation signalling (FLOT1, NFKB1, HDGF). These all lower the rate of or presence of methylation changes. ([ref](https://www.nature.com/articles/s41467-023-37729-w)) The study has supplementary data that could be used to find mutations that provide a protective effect against epigenetic aging.
 * TODO: incorporate missing items from [fightaging.org's longevity genetics wish list](https://www.fightaging.org/archives/2016/06/a-short-list-of-potential-target-genes-for-near-future-gene-therapies-aimed-at-slowing-aging-or-compensating-for-age-related-damage-and-decline)
 
+[Overexpression of SIRT3 in cell culture](https://www.mdpi.com/2227-9059/9/11/1574) reduces oxidative stress, enhances respiration, and increases expression of beneficial regulators like FOXO3A. However, SIRT3 transgenic mice are not longer-lived but are more resilient to stress like mitochondrial acetylation challenges.
+
+overexpression of OPA1 shows extended lifespan ([ref](https://pmc.ncbi.nlm.nih.gov/articles/PMC4457891/)) and resistance to oxidative stress ([ref](https://www.sciencedirect.com/science/article/pii/S1550413115002193))
+
+The localization of polymerase theta (Polθ) to mitochondria increases with oxidative damage. Polθ may be involved in facilitating mtDNA replication under oxidative stress but this process is error prone. Can we make a version of polymerase theta that is less error prone? Can mtDNA be repaired or replicated without polymerase theta (can we safely knock it out)?
+
+[CD38 knockout](https://pmc.ncbi.nlm.nih.gov/articles/PMC4911708/) mice maintain higher tissue NAD+ levels with age compared to wild-type, with improved mitochondrial respiratory rates and preserved metabolic function during aging. Genetic deletion of Cd38 reduced ovarian aging markers, enhanced NAD+ levels in ovarian tissue, [preserved follicle reserve, and extended reproductive lifespan in mice](https://www.nature.com/articles/s43587-023-00532-9).
+
+NAMPT overexpression increases NAD+ levels, enhances SIRT1 activity, reduces p53 acetylation, and improves resistance to oxidative stress ([ref](https://pubmed.ncbi.nlm.nih.gov/17307730/))
+
+USP30 knockout for better mitophagy?
+
 [Big mice die young but large animals live longer](https://pmc.ncbi.nlm.nih.gov/articles/PMC3651517/)
 
 [human eunuchs live 14-19 years longer](https://www.sciencedirect.com/science/article/pii/S0960982212007129) especially when castrated young. [castration delays epigenetic aging](https://pmc.ncbi.nlm.nih.gov/articles/PMC8260231/) and feminizes DNA methylation patterns. [Sterilization and contraception increase lifespan across vertebrates
@@ -3642,7 +3654,7 @@ UGT1A1 hypomorphic knock-in (engineered Gilbert syndrome): hypomorphic UGT1A1 va
 
 Creatine transporter (SLC6A8) or GAMT overexpression: Transgenic overexpression of SLC6A8 (creatine transporter) in skeletal muscle, or GAMT (guanidinoacetate methyltransferase) to enhance endogenous creatine synthesis, could amplify intramuscular creatine and phosphocreatine stores. [Guanidinoacetic acid supplementation increases creatine and improves repeated-sprint ability](https://www.sciencedirect.com/science/article/pii/S2211913212006158) by boosting phosphocreatine-mediated rapid ATP regeneration. The opposite intervention ([β-GPA-induced phosphocreatine depletion](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0052879)) causes metabolic remodeling toward fatigue resistance and can [induce torpor-like states](https://cdnsciencepub.com/doi/10.1139/cjz-2024-0144), suggesting creatine metabolism transgenic modifications could be tuned for either explosive power or endurance phenotypes. GAMT is also involved in creatine by methylating GAA in the liver to create creatine.
 
-AGAT produces guanidinoacetate (GAA) from arginine + glycine. Improving the function of AGAT may also improve creatine biology and muscle physiology. SLCO1B3/SLCO1B7 are hepatic uptake transporters that among other things transport guanidinoacetate into hepatocytes to make creatine from guanidinoacetate. Tweaking SLCO1B3/SLCO1B7 might also be warranted. 
+AGAT produces guanidinoacetate (GAA) from arginine + glycine. Improving the function of AGAT may also improve creatine biology and muscle physiology. SLCO1B3/SLCO1B7 are hepatic uptake transporters that among other things transport guanidinoacetate into hepatocytes to make creatine from guanidinoacetate. Tweaking SLCO1B3/SLCO1B7 might also be warranted.
 
 [SCAD-deficient (Acads-/-) mice](https://pubmed.ncbi.nlm.nih.gov/2919115/) accumulate ethylmalonate and short-chain acyl-CoAs; [paradoxically protected from diet-induced obesity with improved insulin sensitivity](https://faseb.onlinelibrary.wiley.com/doi/full/10.1096/fj.201901474RR) via altered mitochondrial energetics. Because ethylmalonate and the accumulated short‑chain acyl‑CoAs can serve as readily oxidizable anaplerotic fuels that boost mitochondrial respiratory capacity, enhance substrate‑level phosphorylation and stimulate AMPK‑mediated signaling for rapid energy turnover and improved muscle endurance, their elevated levels may give elite athletes a metabolic edge for high‑intensity, sustained performance.
 
@@ -4159,6 +4171,8 @@ Just saying "regeneration" is kind of ridiculous, it's like saying "let's add hi
 * TODO: cell culture studies focused on cell-level improvements. Some of these results are likely to translate into whole animal. Many of the studies referenced in this document so far are based on transgenic animal studies, which are useful but an incomplete picture of the output of the institution of academic science. Or also cell-focused [[directed evolution]] studies ([ref](https://pmc.ncbi.nlm.nih.gov/articles/PMC8063495/)).
 
 * TODO: Outline a more complete picture of different stages of life and what to systemically activate and when for stages such as neoteny, adolescence, adulthood, and senesence. It may be possible to prolong adulthood by manipulating IGF receptors while still maintaining IGFR functionality in very early life.
+
+* TODO: consensus-based DNA damage repair specific to mtDNA, including known common mtDNA problems (like those [mtDNA errors that can be fixed via restriction endonucleases in mitochondrial heteroplasmy](https://pmc.ncbi.nlm.nih.gov/articles/PMC1242285)). Implement [mtDNA editors](https://www.nature.com/articles/s12276-023-00973-7) in the mitochondrial or nuclear genome to infrequently fix known/common mtDNA errors. Maybe link mtDNA mitophagy/autophagy or apoptosis to mtDNA error detection circuitry somehow? This could be useful for longevity/anti-aging in the sense of maintaining a healthy pool of youthful mitochondria.
 
 ## Microbiome
 
