@@ -1,0 +1,22 @@
+Whisper is pretty good for speech-to-text.
+
+Groq Whisper is very fast and cheap. I think up to 8 hours per day is still free through their API?
+
+[aider](https://aider.chat/) has a `/voice` command.
+
+[voice.sh](https://gist.github.com/kanzure/27d165dcaba026600304355e02d46e97), a fork of aider's voice command made for the terminal.
+
+[youtube-text.sh](https://gist.github.com/kanzure/593da089044814bb9c189d3c369e44d4)
+
+.vimrc configuration for voice command:
+
+```
+nnoremap glv :r !voice.sh 2>&1 \|
+            \ tee /dev/tty \|
+            \ sed '/^Recording, press ENTER to send to Groq when done/d' \|
+            \ sed 's/[[:space:]]//'<CR>
+```
+
+
+Summon a terminal and just speak
+
