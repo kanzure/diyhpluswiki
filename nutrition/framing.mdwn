@@ -11,9 +11,9 @@ costly/limited substrate on predictive models of the following:
 A means of minimizing zero-sum tradeoffs in the quality of these predictive
 models that would otherwise have to compete with eachother for computational
 resources is to unify them via a system of heuristic sub-goals specific to the
-training distribution (or "mesa-objective").
+training distribution (or "mesa-objectives").
 
-[The relationship between the meta-objective and the mesa-objective becomes
+[The relationship between the meta-objective and the mesa-objectives becomes
 increasingly undefined and emergently antagonistic the further away from the
 training distribution of inputs the computational system finds itself executing
 on.][Evan Hubinger et al arXiv:1906.01820] ([video][Robert Miles
@@ -85,13 +85,75 @@ TODO: ammonia and waste/rotting
 
 ### Pathological aversion mesa-alignment: false negative
 
-WIP
+In the genomic/proteomic training distribution for mammals in the suckling
+period, the regulatory systems for immunological function and nutrient sensing,
+seeking, and absorption are undeveloped; by default, the intestinal barrier and
+the blood-brain barrier are relatively permeable, allowing for efficient
+absorption and uptake of nutrients from milk.
+
+Nutrient-seeking is aided during this period by the combination of
+milk-protein-derived [exogenous opioid peptides][Zhenze Liu et al
+10.1111-jfbc.12629] and open pathways through the blood-brain barrier and
+intestinal barrier to µ-opioid receptors in the brain, which in turn drive
+suckling motivation and behavior.
+
+µ-opioid receptors (infamously) autonormalize signals of ligand concentration
+over time, creating an incentives gradient that, if not limited in some way,
+leads all the way to [respiratory arrest][Jan-Marino Ramirez
+10.1152/jn.00017.2021]. This is mitigated across several different timeframes
+by [other components of species-matched milk][Margarita Dimitroglou et al
+10.3390/diagnostics12092208] that close off pathways through the blood-brain
+barrier and intestinal barrier.
 
 [[!graph file="nutrition/gv/receptor-opioid-training.gv"]]
+
+In species-mismatched (i.e. slightly out-of-training-distribution) milk, the
+effects are much more [mixed][Alexandra Adorno Vita et al
+10.3389/fnut.2022.962093], meaning the potentially pathological incentives
+gradient of µ-opioid receptor activation is *less* mitigated. The [varied
+immunological response][Alessandra Bordoni et al 10.1080/10408398.2014.967385]
+potentially leads to increases (relative to species-matched milk consumption)
+in [blood-brain barrier][Keith Rochfort et al 10.1042/BST20140319] and
+[intestinal barrier][Rana Al-Sadi 10.2741/3413] permeability.
+
 [[!graph file="nutrition/gv/receptor-opioid-intermediate.gv"]]
+
+What *was* a regulatory system trained to safely seek species-matched milk
+until winding down that behavior in the weaning process is now executing a
+program that maximizes *misalignment itself* to maximize opioid peptide
+trafficking.
+
+To that end, the current input distribution is optimized for the availability
+of a food ingredient that has the following features, all of them far outside
+of training distribution:
+
+1) Its own [opioid peptide][Zhenze Liu et al 10.1111-jfbc.12629]
+2) [Anti-mucosal factors][Anti-mucosal], (Ferulic acid, Alkylresorcinols,
+   Tricin, Enterolactone precursors, Beta-sitosterol)
+3) A peptide that [agonizes programmed epithelial and endothelial permeability
+   pathways via CXCR3][Karen Lammers at al 10.1053/j.gastro.2008.03.023]
+4) Anti-gliadin and anti-tissue-transglutaminase antibody targets that, in
+   susceptible individuals (based on HLA-DQ haplotype), induces autoimmune
+   destruction of intestinal barrier cells themselves
+5) [lipid ratios of 42-to-47% linoleic acid][Mara Mandrioli et al 10.3390/plants13131817]
+6) Dysbiotic [fructans][Fructans]
+7) insufficiencies or bio-un-availabilities of almost every micronutrient,
+   including electron transort chain cofactors and immunological signalling
+   molecules
+8) Overly high ratios of caloric substrates to cofactors needed to utilize them
+
 [[!graph file="nutrition/gv/receptor-opioid-current.gv"]]
 
-Outcomes: Inflammatory disorders, metabolic disorders
+The outcome of a mesa-objective that optimizes for *misalignment of as many
+other mesa-objectives as possible* is catastrophic loss of life and loss of
+quality-adjusted life years, including almost all of the top ten causes of
+death per the [US CDC][CDC Deaths] and the [EU][EU Deaths].
+
+Most genetic engineering approaches to this will fail due to the anti-inductive
+nature of playing whack-a-mole with an ecosystem of food sources that would
+maximize their replication by exploiting this system.
+
+(TODO: explore age-dependent aversion to exogenous opioids.)
 
 ### Options for re-alignment
 
@@ -103,7 +165,8 @@ way to compose and more efficiently search this problem space.
 * Broaden requirement specificity (e.g. phytase, prolase)
 * Bypass regulatory sensing by modifying inputs to better match requirements
   * [[In small degree, by selecting for inputs with oxidative safety,
-    immunological safety, nutrient sufficiency, and nutrient bioavailability|low-investment input modifications]]
+    immunological safety, nutrient sufficiency, and nutrient
+    bioavailability|low-investment input modifications]]
     (e.g. paleo/primal/ancestral/traditional/AIP/WAPF/GAPS/SCD/Wahls/Bredesen)
   * In large degree, with Parenteral nutrition (sort out linoleic acid
     excess, menatetrenone insufficiency, vitamin D insufficiency)
@@ -143,5 +206,16 @@ All of these have resource tradeoffs, many of which are completely unstudied.
 
 [Evan Hubinger et al arXiv:1906.01820]: https://arxiv.org/abs/1906.01820
 [Robert Miles youtube:bJLcIBixGj8]: https://www.youtube.com/watch?v=bJLcIBixGj8&t=4m14s
-
-
+[Zhenze Liu et al 10.1111-jfbc.12629]: https://diyhpl.us/~jrayhawk/the_metabolic_syndrome/10.1111-jfbc.12629-role_of_food-derived_opioid_peptides_in_the_central_nervous_and_gastrointestinal_systems.pdf#page=3
+[Jan-Marino Ramirez 10.1152/jn.00017.2021]: https://pmc.ncbi.nlm.nih.gov/articles/PMC8424565/
+[Margarita Dimitroglou et al 10.3390/diagnostics12092208]: https://www.mdpi.com/2075-4418/12/9/2208
+[Keith Rochfort et al 10.1042/BST20140319]: https://pubmed.ncbi.nlm.nih.gov/26551716/
+[Rana Al-Sadi 10.2741/3413]: https://pmc.ncbi.nlm.nih.gov/articles/PMC3724223/
+[Alessandra Bordoni et al 10.1080/10408398.2014.967385]: https://web.archive.org/web/20190429052411id_/https://repositorio.ipsantarem.pt/bitstream/10400.15/2345/1/PintoP_Dairy%20products%20and%20inflammation_Review2017.pdf#page=25
+[Alexandra Adorno Vita et al 10.3389/fnut.2022.962093]: https://www.frontiersin.org/journals/nutrition/articles/10.3389/fnut.2022.962093/full
+[Anti-Mucosal]: https://scholar.google.com/scholar?q=%22wheat%22+anti-biofilm
+[Karen Lammers et al 10.1053/j.gastro.2008.03.023]: https://pmc.ncbi.nlm.nih.gov/articles/PMC2653457/
+[Mara Mandrioli et al 10.3390/plants13131817]: https://www.mdpi.com/2223-7747/13/13/1817
+[Fructans]: https://scholar.google.com/scholar?q=%22fructan%22+dysbiosis
+[CDC Deaths]: https://www.cdc.gov/nchs/fastats/leading-causes-of-death.htm
+[EU Deaths]: https://ec.europa.eu/eurostat/statistics-explained/index.php?title=Causes_of_death_statistics
