@@ -46,11 +46,11 @@ Mesa-alignment must be conscientiously addressed.
 
 ## Examples
 
-### Physiological affinity mesa-alignment
+### Physiological positive selection mesa-alignment
 
 The essential nutrient sodium is an example of a regulatory
-motivational/behavioral affinity that remains well-aligned between the
-training input distribution and the current input distribution.
+motivational/behavioral positive selection that remains well-aligned between
+the training input distribution and the current input distribution.
 
 [[!graph file="nutrition/gv/nutrient-sensing-sodium-training.gv"]]
 [[!graph file="nutrition/gv/nutrient-sensing-sodium-current.gv"]]
@@ -59,7 +59,7 @@ It is well-aligned because it is as directly sensed as possible; there are no
 intermediate correlates. What is needed by the proteomic machinery is what is
 sensed by the proteomic machinery.
 
-### Pathological affinity mesa-alignment
+### Pathological positive selection mesa-alignment
 
 By contrast, most of the other essential nutrients do **not** have direct
 sensing, instead relying on one particular unified correlate variable due to
@@ -81,9 +81,39 @@ chain throughput in a state of resource insufficiency.
 
 ### Physiological aversion mesa-alignment
 
-TODO: exogenous endocrine aversion. Brain TAAR1 vs. olfactory TAAR4 and
-phenylethylamine? Or something from [Brain Evolution Through the Lens of
-Parasite Manipulation][Marco Del Giudice 10.1086/705038]
+Some chemical pathways closely tied to motivation might be vulnerable to either
+external manipulation or otherwise getting stuck in undesirable local minima if
+not otherwise defended.
+
+For example, dopamine, a [predictive confidence][10.1177/1073858420907591]
+neurotransmitter, can, if driven high enough, create states of predictive
+confidence so high that no incoming observations can override them, which
+maximal reward for individual predictive models of reward and for the more
+general objective of minimizing prediction error.
+
+While dopamine itself is too unstable to meaningfully exist in exogenous form,
+the dopamine regulation system within the central nervous system is, on its
+own, highly vulnerable to the above manipulation via phenylethylamine, which is
+normally sensed by TAAR1 as dopamine catabolism product for adjusting
+synthesis/catabolism accordingly.
+
+Here's how that regulatory selection would work in isolation:
+
+[[!graph file="nutrition/gv/receptor-taar-counterfactual.gv"]]
+
+Rather than be compelled to eat lake slime, humans have systems defending
+themselves against exogenous phenylethylamine by two systems:
+
+1. Olfactory detection and aversion via TAAR6.
+2. Compartmentalization of pathways into the brain, within which
+   phenylethylamine catabolism takes place regardless of the regulatory state
+   of the central nervous system.
+
+[[!graph file="nutrition/gv/receptor-taar-actual.gv"]]
+
+Adjacent concepts of adaptive negative selection are documented in [Brain
+Evolution Through the Lens of Parasite Manipulation][Marco Del Giudice
+10.1086/705038]
 
 ### Pathological aversion mesa-alignment: false negative
 
@@ -130,8 +160,8 @@ of a food ingredient that has the following features, all of them far outside
 of training distribution:
 
 1. Its own [opioid peptide][Zhenze Liu et al 10.1111-jfbc.12629]
-2. [Anti-mucosal factors][Anti-mucosal] (Ferulic acid, Alkylresorcinols,
-   Tricin, Enterolactone precursors, Beta-sitosterol)
+2. [Anti-mucosal factors][Anti-mucosal] (ferulic acid, alkylresorcinols,
+   tricin, enterolactone precursors, beta-sitosterol)
 3. A peptide that [agonizes programmed epithelial and endothelial permeability
    pathways via CXCR3][Karen Lammers et al 10.1053/j.gastro.2008.03.023]
 4. Anti-gliadin and anti-tissue-transglutaminase antibody targets that, in
@@ -197,12 +227,14 @@ piggybacked on?
     < jrayhawk> but i doubt those receptors are so robust to HCl
 
 Note: zonulin is not only path to permeability; enterocyte autoimmunity,
-glycoalkaloid membrane-bound sterol disruption, mechanical.
+glycoalkaloid membrane-bound sterol disruption,  mechanical.
 
-Can DPP-IV be increased so dramatically that it can overcome the proline
-dipeptide load of cheese? This would also undermine GLP-1 signalling. Does that
-matter when we're simultaneously fixing hypothalamic leptin resistance? What
-other processes rely on a limited DPP-IV? Collagen peptide uptake?
+Increase of gastrointestinal DPP-IV expression to speed up proteolysis of
+proline-rich proteins is probably non-viable due to also proteolyzing GLP-1,
+GLP-2, PYY, Substance-P, collagen peptides, and various chemokines, and also
+acting as a binding site for coronaviruses.
+
+Something more specific to the opioid motifs seen in the intestines is needed.
 
 ### Options for re-alignment
 
@@ -230,7 +262,7 @@ All of these have resource trade-offs, many of which are completely unstudied.
 ### TODO:
 
 * full list of n essential+prudent nutrients as something like line segment
-  affinities in n-dimensional-behavior-space
+  attractors in n-dimensional-behavior-space
 * some list of antinutrients/pathogens to build obstructive manifolds in
   n-dimensional-behavior-space
 * Failures to systemize requirements correctly, either with a lack
@@ -246,11 +278,11 @@ All of these have resource trade-offs, many of which are completely unstudied.
     * false negative (donish: sortof implied by glutamate?)
     * true negative (eh, not interesting unless ≃ aversion true positive)
   * aversion (antinutrients, pathogens, etc.)
-    * true positive (ammonia? waste/rotting)
+    * true positive (TAAR/PEA)
     * false positive
     * false negative (half done: exorphins)
-    * true negative (eh, not interesting unless ≃ affinity true positive)
-  * or frame it in terms of affinity/aversion sensitivity/specificity?
+    * true negative (eh, not interesting unless ≃ positive selection true positive)
+  * or frame it in terms of positive selection/aversion sensitivity/specificity?
 * think hard about how to manage the anti-inductiveness of
   antinutrients/pathogens in the future
 
@@ -273,3 +305,4 @@ All of these have resource trade-offs, many of which are completely unstudied.
 [Bishal Nepal et al 10.3390/pr7080513]: https://www.mdpi.com/2227-9717/7/8/513#processes-07-00513-f002
 [Indu Raghunath et al 10.7324/JAPS.2024.157160]: https://pdfs.semanticscholar.org/bcac/a410f1b6883180c94ab35f23ad53cc84224c.pdf#page=3
 [Marco Del Giudice 10.1086/705038]: https://slatestarcodex.com/blog_images/parasite_study.pdf
+[Kelly Diederen et al 10.1177/1073858420907591]: https://journals.sagepub.com/doi/full/10.1177/1073858420907591
