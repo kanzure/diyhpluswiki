@@ -1,0 +1,54 @@
+#!/usr/bin/env -S sh -c '( printf "%s\n" "digraph SomeGraph {"; cat $0; printf "}" ) | dot -v -Tx11 # ikiwiki graphviz.pm sucks'
+//digraph Nutrients {
+  rankdir=LR
+  newrank=true
+  node [shape=box, style=filled, fillcolor=white]
+
+  subgraph cluster_input_distribution {
+  label="Counterfactual Selection Effects"
+    subgraph cluster_receptors {
+      label="Regulatory\nsensing"
+      style=filled
+      fillcolor=lightcoral
+      node [shape=circle]
+      D1
+      D2
+      D3
+      D4
+      D5
+    }
+
+    subgraph cluster_force_order {
+      rank=same
+      label=""
+      style=invis
+      AADC [label="BH-4/\nAADC"]
+      subgraph cluster_more_receptors {
+        label="Regulatory\nsensing"
+        style=filled
+        fillcolor=lightcoral
+        node [shape=circle]
+        TAAR1
+      }
+      MAOB [label="Glial &\nNeural\nMAO-B"]
+    }
+    //bbb [label="Blood-brain-\nbarrier\npermeability";style=dashed]
+    //ib  [label="Intestinal\nbarrier\npermeability";style=dashed]
+    Dopamine [label="3,4-Dihydroxy-\nphenylethylamine\n(Dopamine)"]
+    PEACN [label="Central Nervous\nPhenylethylamine"]
+    //PEAGC [label="General Circulation\nPhenylethylamine"]
+    //PEAGI [label="Gastrointestinal\nPhenylethylamine"]
+
+    {
+      D1
+      D2
+      D3
+      D4
+      D5
+    } -> Dopamine -> TAAR1 -> PEACN -> "Dietary\nAphanizomenon\nflos-aquae\n(algae)"
+
+    TAAR1 -> AADC -> Dopamine [arrowhead=tee;constraint=false;color=green]
+    TAAR1 -> MAOB -> Dopamine [arrowhead=tee;constraint=false;color=red]
+    MAOB  -> PEACN            [arrowhead=tee;constraint=false;color=red]
+  }
+//}

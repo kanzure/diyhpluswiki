@@ -1,0 +1,86 @@
+#!/usr/bin/env -S sh -c '( printf "%s\n" "digraph SomeGraph {"; cat $0; printf "}" ) | dot -v -Tx11 # ikiwiki graphviz.pm sucks'
+//digraph Nutrients {
+  rankdir=LR
+  newrank=true
+  node [shape=box, style=filled, fillcolor=white]
+
+  subgraph cluster_input_distribution {
+  label="Actual Input Distribution: Selection Effects"
+    subgraph cluster_receptors {
+      label="Regulatory\nsensing"
+      style=filled
+      fillcolor=lightcoral
+      node [shape=circle]
+      D1
+      D2
+      D3
+      D4
+      D5
+    }
+
+    subgraph cluster_force_order {
+      rank=same
+      label=""
+      style=invis
+      AADC [label="BH-4/\nAADC"]
+      subgraph cluster_more_receptors {
+        label="Regulatory\nsensing"
+        style=filled
+        fillcolor=lightcoral
+        node [shape=circle]
+        TAAR1
+      }
+      MAOB [label="Glial &\nNeural\nMAO-B"]
+    }
+
+    subgraph cluster_force_order_oral {
+      rank=same
+      label=""
+      style=invis
+      subgraph cluster_even_more_receptors {
+        label="Aversive\nregulatory\nsensing"
+        style=filled
+        fillcolor=lightcoral
+        node [shape=circle]
+        TAAR6
+      }
+      PEAOE [label="Oral\nPEA"]
+    }
+
+    subgraph cluster_force_order_gi {
+      rank=same
+      label=""
+      style=invis
+      PEAGI [label="Gastro-\nintestinal\nPEA"]
+      MAOBGI [label="Enterocyte\nMAO-B"]
+    }
+    subgraph cluster_force_order_gc {
+      rank=same
+      label=""
+      style=invis
+      PEAGC [label="General\nCirculation\nPEA"]
+      MAOBGC [label="Liver,\nPlatelet,\n& BBB\nMAO-B"]
+    }
+    //bbb [label="Blood-brain-\nbarrier\npermeability";style=dashed]
+    //ib  [label="Intestinal\nbarrier\npermeability";style=dashed]
+    Dopamine [label="3,4-Dihydroxy-\nphenylethylamine\n(Dopamine)"]
+    PEACN [label="Central Nervous\nPhenylethylamine"]
+    algae [label="Dietary\nAphanizomenon\nflos-aquae\n(algae)"]
+
+    {
+      D1
+      D2
+      D3
+      D4
+      D5
+    } -> Dopamine -> TAAR1 -> PEACN -> PEAGC -> PEAGI -> PEAOE
+
+    PEAOE -> algae [color=red;label="aversion";fontcolor=red]
+
+    TAAR1 -> AADC ->   Dopamine          [arrowhead=tee;constraint=false;color=green]
+    TAAR1 -> MAOB -> { Dopamine, PEACN } [arrowhead=tee;constraint=false;color=red]
+    TAAR6 -> PEAOE                       [arrowhead=tee;constraint=false;color=red]
+    MAOBGI -> PEAGI                      [arrowhead=tee;constraint=false;color=red]
+    MAOBGC -> PEAGC                      [arrowhead=tee;constraint=false;color=red]
+  }
+//}
