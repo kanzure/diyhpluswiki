@@ -159,7 +159,476 @@ See also [[mitochondria longevity]] for information about [[mitochondria]] and a
 
 [Gerontology Research Group (GRG.org)](https://grg.org/)
 
+## Types of DNA damage
 
----
+### Oxidative Damage
+
+#### Reactive Oxygen Species (ROS)-Mediated Damage
+
+**Sources:** Mitochondrial electron transport chain leakage, enzymatic reactions (xanthine oxidase, NADPH oxidases), Fenton chemistry (Fe²⁺/Cu²⁺), ionizing radiation radiolysis, photosensitizer activation (singlet oxygen ¹O₂)
+
+**Chemical mechanisms:** Hydrogen atom abstraction from deoxyribose moieties, electrophilic addition to nucleobase π-systems, one-electron oxidation of guanine (lowest ionization potential)
+
+**Major lesion classes:**
+- **Oxidized purines:** 8-oxo-7,8-dihydroguanine (8-oxoG), 8-oxo-7,8-dihydroadenine, formamidopyrimidines (FapyG, FapyA), spiroiminodihydantoin, guanidinohydantoin
+- **Oxidized pyrimidines:** Thymine glycol, 5-hydroxy-5-methylhydantoin, 5-hydroxycytosine, 5-hydroxyuracil, 5-hydroxymethyluracil (from ¹O₂-mediated 5-OOH-dT collapse)
+- **Sugar oxidation products:** C1′-oxidized abasic sites, C3′-oxidized strand breaks with 3′-phosphoglycolate termini, C4′-oxidized strand breaks with 3′-phospho-α,β-unsaturated aldehyde (PUA)
+- **Clustered damage:** Multiple lesions (SSB + oxidized base) within 10 bp helical turn, refractory to base excision repair
+
+**Repair:** Base excision repair (OGG1, NEIL1/2/3 glycosylases), nucleotide excision repair for bulky oxidation products, 3′-phosphodiesterases (APE1, APE2) for blocked termini
+
+#### Reactive Nitrogen Species (RNS)-Mediated Damage
+
+**Sources:** Inducible nitric oxide synthase (iNOS) during inflammation, peroxynitrite (ONOO⁻) from diffusion-controlled •NO + O₂⁻ reaction
+
+**Chemical mechanisms:** Nitration of nucleobases at C8 position, oxidative deamination, peroxynitrous acid (ONOOH) homolysis generating •OH and •NO₂
+
+**Major lesion classes:**
+- **Nitrated bases:** 8-nitroguanine (depurinates rapidly), 8-nitro-deoxyguanosine
+- **Deamination products:** Xanthine (from guanine), hypoxanthine (from adenine)
+- **Secondary oxidation:** 8-oxoG formation via ONOO⁻ oxidation
+
+**Repair:** Base excision repair, spontaneous depurination followed by AP site processing
+
+#### Reactive Halogen Species-Mediated Damage
+
+**Sources:** Myeloperoxidase (neutrophils) producing HOCl, eosinophil peroxidase producing HOBr, thyroid peroxidase
+
+**Chemical mechanisms:** Electrophilic halogenation at C5 of pyrimidines, C8 of purines
+
+**Major lesion classes:**
+- **Chlorinated bases:** 5-chlorocytosine (deaminates to 5-chlorouracil), 8-chloroguanine, 8-chloroadenine
+- **Brominated bases:** 5-bromocytosine (deaminates to 5-bromouracil), 8-bromoguanine (adopts syn conformation, mispairs with thymine)
+
+**Repair:** Thymine DNA glycosylase (TDG) for 5-halouracils, NEIL1 for 8-halogenated purines, MBD4 for 5-bromouracil
+
+### Hydrolytic Damage
+
+#### Spontaneous Depurination/Depyrimidination
+
+**Mechanism:** N-glycosidic bond hydrolysis, accelerated by elevated temperature, low pH, and base modifications that destabilize the glycosidic linkage
+
+**Rates:** ~10,000 purines/cell/day (depurination), ~100-500 pyrimidines/cell/day (depyrimidination)
+
+**Lesion:** Apurinic/apyrimidinic (AP) sites with destabilized deoxyribose prone to β-elimination
+
+**Consequences:** Replicative polymerase stalling, translesion synthesis recruitment (Pol ζ), mutagenic bypass
+
+**Repair:** AP endonuclease (APE1) incision, base excision repair
+
+#### Spontaneous Base Deamination
+
+**Mechanism:** Hydrolytic removal of exocyclic amino groups
+
+**Major conversions:**
+- Cytosine → Uracil (100-500/cell/day)
+- 5-methylcytosine → Thymine (creates T:G mismatch, major source of CpG→TpG transitions)
+- Adenine → Hypoxanthine (pairs with cytosine, causes A:T→G:C)
+- Guanine → Xanthine (pairs ambiguously)
+
+**Repair:** Uracil-DNA glycosylase (UDG/UNG) for uracil, thymine DNA glycosylase (TDG) for T:G mismatches, AAG/MPG for hypoxanthine
+
+#### Enzymatic Deamination
+
+**Enzymes:** Activation-induced cytidine deaminase (AID), APOBEC family cytidine deaminases
+
+**Physiological role:** Somatic hypermutation, class switch recombination, retroviral restriction
+
+**Pathological consequences:** Off-target deamination causing kataegis (localized hypermutation clusters), APOBEC signature mutations in cancer
+
+### Alkylation Damage
+
+#### Direct Alkylation by Small Electrophiles
+
+**Sources:** Endogenous S-adenosylmethionine (SAM) non-enzymatic transfer, environmental alkylating agents (tobacco nitrosamines), chemotherapeutic agents (temozolomide, MMS, EMS, MNNG)
+
+**Mechanism:** SN1 (carbocation intermediate) and SN2 (direct displacement) nucleophilic substitution at nucleophilic centers
+
+**Major lesion classes by site:**
+- **N7-guanine (70-80%):** 7-methylguanine, 7-ethylguanine—destabilizes glycosidic bond, leads to depurination
+- **N3-adenine (10%):** 3-methyladenine—cytotoxic, blocks replication
+- **O6-guanine (5-10%):** O6-methylguanine—highly mutagenic, mispairs with thymine causing G:C→A:T transitions
+- **N1-adenine, N3-cytosine:** Block Watson-Crick base pairing
+- **Phosphotriester formation:** Alkylation of phosphate backbone
+
+**Repair:** Direct reversal by O6-methylguanine-DNA methyltransferase (MGMT/AGT), AlkB family dioxygenases (ALKBH2/3), base excision repair via AAG/MPG glycosylase
+
+#### Exocyclic Adducts from Bifunctional Aldehydes
+
+**Sources:** Lipid peroxidation products (malondialdehyde, 4-hydroxynonenal, 4-oxononenal, acrolein), acetaldehyde (ethanol metabolism), formaldehyde (one-carbon metabolism, histone demethylation), glyoxal/methylglyoxal (glycolysis byproducts), retinaldehyde, ketone bodies
+
+**Mechanism:** Michael addition and Schiff base formation with exocyclic amino groups, often followed by cyclization
+
+**Major lesion classes:**
+- **Etheno adducts:** 1,N⁶-etheno-dA (εdA), 3,N⁴-etheno-dC (εdC), 1,N²-etheno-dG (εdG)—from vinyl chloride metabolites and lipid peroxidation
+- **Propano adducts:** 1,N²-propano-dG from acrolein, malondialdehyde-dG (M1dG)
+- **Hydroxypropano adducts:** From 4-HNE and 4-ONE, helix-distorting
+- **Carboxyethyl adducts:** N²-carboxyethyl-dG (CEdG) from methylglyoxal
+- **Acetaldehyde adducts:** N²-ethyl-dG, N²-ethylidene-dG, interstrand crosslinks
+
+**Repair:** Base excision repair (NEIL1, AAG for some), nucleotide excision repair for bulky/helix-distorting adducts
+
+#### Glycation-Derived Adducts (Advanced Glycation End Products)
+
+**Sources:** Reducing sugars, methylglyoxal, glyoxal from glycolysis and glucose autoxidation
+
+**Mechanism:** Carbonyl condensation with nucleobase amino groups, Amadori rearrangement, oxidative fragmentation
+
+**Lesions:** Carboxymethyl-dG, carboxyethyl-dG, carboxyethyl-dA, various crosslinked structures
+
+**Repair:** NEIL1 glycosylase, nucleotide excision repair
+
+### Bulky/Helix-Distorting Adducts
+
+#### Polycyclic Aromatic Hydrocarbon (PAH) Adducts
+
+**Sources:** Tobacco smoke, combustion products, grilled/charred food, environmental pollution
+
+**Mechanism:** Cytochrome P450 (CYP1A1/1B1) epoxidation followed by epoxide hydrolase activation to diol-epoxides; electrophilic attack on purine exocyclic amino groups
+
+**Major lesions:** (+)-anti-BPDE-N²-dG (benzo[a]pyrene), bay-region diol epoxide adducts of various PAHs
+
+**Structural consequence:** Major groove protrusion, helix distortion, replication/transcription blockage
+
+**Repair:** Global genome and transcription-coupled nucleotide excision repair (XPC-RAD23B recognition, TFIIH unwinding, XPF-ERCC1/XPG dual incision)
+
+#### Aromatic Amine Adducts
+
+**Sources:** Heterocyclic aromatic amines from cooked meat (IQ, PhIP, MeIQx), occupational exposures (benzidine, 2-naphthylamine)
+
+**Mechanism:** N-hydroxylation by CYP1A2, O-acetylation by NAT1/2, formation of nitrenium ion intermediates
+
+**Major lesions:** C8-dG adducts (major), N²-dG adducts (minor)
+
+**Repair:** Nucleotide excision repair, error-prone translesion synthesis by Pol κ
+
+#### Mycotoxin and Natural Product Adducts
+
+**Sources:** Aflatoxin B1 (Aspergillus contamination), aristolochic acid (herbal remedies), pyrrolizidine alkaloids
+
+**Mechanism:** Metabolic activation to reactive epoxides or nitrenium ions
+
+**Major lesions:** AFB1-N7-dG (depurinates to AFB1-formamidopyrimidine), aristolactam-dA adducts
+
+**Mutagenic signature:** Characteristic G→T transversions (aflatoxin), A→T transversions (aristolochic acid)
+
+**Repair:** Nucleotide excision repair
+
+#### Dietary and Xenobiotic Electrophile Adducts
+
+**Sources:** Isothiocyanates (cruciferous vegetables), various plant secondary metabolites, drug metabolites
+
+**Mechanism:** Direct electrophilic attack or metabolic activation
+
+**Lesions:** Variable depending on electrophile structure; generally N²-dG, N⁶-dA, or N⁴-dC adducts
+
+### Crosslinks
+
+#### Intrastrand Crosslinks
+
+**Sources:** Ultraviolet radiation, platinum chemotherapeutics, endogenous aldehydes
+
+**UV-induced lesions:**
+- **Cyclobutane pyrimidine dimers (CPDs):** [2+2] cycloaddition between adjacent pyrimidines (TT>TC>CT>CC), 70-80% of UV lesions
+- **6-4 Photoproducts:** Non-concerted addition with oxetane/azetidine intermediate, 20-30% of UV lesions
+- **Dewar valence isomers:** UVA-induced photoisomerization of 6-4PP
+
+**Platinum-induced lesions:**
+- **1,2-d(GpG) intrastrand crosslinks (65%):** Major cisplatin adduct, 35° helix bend
+- **1,2-d(ApG) intrastrand crosslinks (25%):** Similar geometry
+- **1,3-d(GpNpG) intrastrand crosslinks:** Minor, more flexible
+
+**Repair:** Nucleotide excision repair (removes 24-32 nt oligomer), translesion synthesis for replication bypass (Pol η accurate for TT-CPD, error-prone for others)
+
+#### Interstrand Crosslinks (ICLs)
+
+**Sources:** Nitrogen mustards (cyclophosphamide, mechlorethamine), mitomycin C, psoralens + UVA, platinum agents (minor), endogenous aldehydes (acetaldehyde, formaldehyde)
+
+**Mechanism:** Bifunctional alkylation or photochemical addition linking complementary strands
+
+**Major lesion types:**
+- **N7-G to N7-G crosslinks:** Nitrogen mustards
+- **Psoralen-thymine-thymine:** Furan-side and pyrone-side monoadducts, interstrand crosslink
+- **Aldehyde-mediated:** Formaldehyde N²-dG to N²-dG, acetaldehyde crosslinks
+
+**Consequence:** Absolute block to replication fork progression and transcription bubble opening
+
+**Repair:** Fanconi anemia (FA) pathway—FANCD2-FANCI monoubiquitination, dual incisions by XPF-ERCC1/SLX4/MUS81-EME1, translesion synthesis, homologous recombination; defects cause Fanconi anemia syndrome
+
+#### DNA-Protein Crosslinks (DPCs)
+
+**Sources:** 
+- **Enzymatic:** Trapped topoisomerase I and II cleavage complexes, methyltransferase intermediates
+- **Non-enzymatic:** Formaldehyde, reactive aldehydes, ionizing radiation, chromium compounds
+- **Chromatin-associated:** Histone crosslinks via lipid peroxidation products (levuglandin-mediated)
+
+**Mechanism:** Schiff base formation (aldehydes), tyrosyl-phosphodiester bond (topoisomerases), radical coupling
+
+**Repair:** 
+- **Proteolytic pathway:** SPRTN/Spartan metalloprotease (VCP/p97-dependent) degrades protein to peptide
+- **Tyrosyl-DNA phosphodiesterases:** TDP1 (TOP1cc), TDP2 (TOP2cc)
+- **Nucleotide excision repair:** For small crosslinked peptides after proteolysis
+
+### Strand Breaks
+
+#### Single-Strand Breaks (SSBs)
+
+**Sources:** Direct ROS attack on deoxyribose, base excision repair intermediates, abortive topoisomerase I activity, ionizing radiation
+
+**Terminus chemistry (critical for repair):**
+- **Ligatable:** 3′-OH and 5′-phosphate
+- **Non-ligatable 3′ termini:** 3′-phosphate, 3′-phosphoglycolate (PG), 3′-phospho-α,β-unsaturated aldehyde (PUA), 3′-tyrosyl (TOP1cc)
+- **Non-ligatable 5′ termini:** 5′-OH, 5′-aldehyde, 5′-deoxyribose phosphate (dRP)
+
+**Processing enzymes:** Polynucleotide kinase phosphatase (PNKP), apurinic endonucleases (APE1, APE2), tyrosyl-DNA phosphodiesterase 1 (TDP1), Pol β lyase activity
+
+**Repair:** Single-strand break repair (SSBR)—XRCC1 scaffold, PARP1 detection
+
+#### Double-Strand Breaks (DSBs)
+
+**Sources:** 
+- **Direct:** Ionizing radiation (clustered damage), restriction endonucleases, RAG1/2 (V(D)J recombination), SPO11 (meiotic recombination)
+- **Indirect:** Replication fork collapse at unrepaired lesions, convergent replication forks at ICLs, processing of closely opposed SSBs, TOP2 cleavage complex trapping
+
+**Ionizing radiation specifics:**
+- Direct ionization (30-40%): 5-30 eV energy deposition breaking C-O and C-N bonds
+- Indirect (60-70%): Water radiolysis products (•OH, eaq⁻, H•) clustered within 1-2 nm
+- Complex damage sites (CDS): DSB + oxidized bases + SSBs within 10-20 bp
+- High-LET radiation (α-particles): Irreparable CDS with >15 lesions per DSB
+
+**Terminus chemistry:** Often damaged/blocked termini requiring processing before ligation
+
+**Repair pathways:**
+- **Non-homologous end joining (NHEJ):** Ku70/80 recognition, DNA-PKcs activation, processing (Artemis), ligation (XRCC4-LIG4)
+- **Homologous recombination (HR):** MRN-CtIP resection, RPA coating, RAD51 strand invasion, template-directed synthesis
+- **Alternative end joining (alt-EJ/MMEJ):** Pol θ-mediated, microhomology-dependent, highly mutagenic
+
+### Replication-Associated Damage
+
+#### Polymerase Errors
+
+**Sources:** Intrinsic polymerase infidelity, dNTP pool imbalances, damaged template bypass
+
+**Error types:**
+- **Base-base mismatches:** Wrong nucleotide insertion (Pol α error rate ~10⁻⁴, Pol δ/ε ~10⁻⁵ without proofreading)
+- **Insertion/deletion loops (IDLs):** Strand slippage in repetitive sequences (microsatellites)
+
+**Correction mechanisms:**
+- **Proofreading:** 3′→5′ exonuclease activity of replicative polymerases
+- **Mismatch repair (MMR):** MutSα (MSH2-MSH6) or MutSβ (MSH2-MSH3) recognition, MutLα (MLH1-PMS2) incision, exonuclease resection, resynthesis
+
+#### Ribonucleotide Incorporation
+
+**Source:** Cellular rNTP concentrations 30-200× higher than dNTPs; replicative polymerase discrimination imperfect (~1 rNMP per 3,000 nt by Pol ε)
+
+**Consequence:** Embedded ribonucleotides with 2′-OH sensitize backbone to alkaline hydrolysis, creating SSBs with non-ligatable 3′-phosphate and 5′-OH termini
+
+**Repair:** RNase H2 incision 5′ to ribonucleotide, strand displacement synthesis, flap cleavage (RER pathway)
+
+**Disease association:** RNase H2 mutations cause Aicardi-Goutières syndrome (autoimmune/autoinflammatory)
+
+#### Replication Fork Pathology
+
+**Triggers:** Unrepaired template lesions, nucleotide depletion, oncogene-induced replication stress, fragile sites, repetitive sequences, transcription-replication conflicts
+
+**Structures:**
+- **Stalled forks:** Polymerase uncoupled from helicase, RPA-coated ssDNA
+- **Reversed forks (chicken-foot):** Annealed nascent strands forming Holliday junction-like structure
+- **Collapsed forks:** One-ended DSB from fork breakage
+
+**Processing:** Fork reversal enzymes (SMARCAL1, ZRANB3, HLTF), fork protection (BRCA1/2, RAD51), restart via HR or repriming (PrimPol)
+
+#### R-Loop-Associated Damage
+
+**Source:** Co-transcriptional RNA:DNA hybrid formation, especially at G-rich sequences, highly transcribed genes, and sites of transcription-replication collision
+
+**Consequences:**
+- Displaced non-template ssDNA susceptible to deamination (AID/APOBEC), oxidation, and nuclease attack
+- Replication fork stalling and collapse
+- DSB formation at persistent R-loops
+
+**Resolution:** RNase H1/H2 degradation of RNA, helicases (Senataxin, Aquarius), topoisomerases
+
+### Topoisomerase-Associated Damage
+
+#### Topoisomerase I-DNA Cleavage Complexes (TOP1cc)
+
+**Normal function:** Relaxation of torsional stress via transient SSB (3′-phosphotyrosyl covalent intermediate)
+
+**Trapping agents:** Camptothecin and derivatives (topotecan, irinotecan), endogenous oxidized bases, ribonucleotides, abasic sites
+
+**Consequence:** Replication fork collision converts TOP1cc to irreversible DSB
+
+**Repair:** TDP1 hydrolyzes 3′-phosphotyrosyl bond; alternative: endonuclease cleavage (XPF-ERCC1) removes oligonucleotide with attached TOP1
+
+#### Topoisomerase II-DNA Cleavage Complexes (TOP2cc)
+
+**Normal function:** Passage of DNA duplex through transient DSB (5′-phosphotyrosyl covalent intermediates on both strands)
+
+**Trapping agents:** Etoposide, doxorubicin, mitoxantrone, teniposide
+
+**Consequence:** Persistent DSB with protein-blocked termini
+
+**Repair:** TDP2 hydrolyzes 5′-phosphotyrosyl bond; alternative: MRN-CtIP endonucleolytic processing; NHEJ or HR for DSB
+
+### Epigenetic and Modified Base Damage
+
+#### TET-Mediated Oxidation Products of 5-Methylcytosine
+
+**Pathway:** 5-methylcytosine (5mC) → 5-hydroxymethylcytosine (5hmC) → 5-formylcytosine (5fC) → 5-carboxylcytosine (5caC) via TET dioxygenase iterative oxidation
+
+**Dual nature:** Physiological intermediates in active DNA demethylation; potentially mutagenic if bypassed during replication
+
+**Mutagenicity:** 5fC read ambiguously by some polymerases (C or T incorporation)
+
+**Repair/removal:** Thymine DNA glycosylase (TDG) excises 5fC and 5caC, initiating BER and restoration of unmodified cytosine
+
+#### Aberrant Cytosine Modifications
+
+**Sources:** AID/APOBEC off-target activity, environmental mutagens, spontaneous deamination of modified bases
+
+**Lesions:** 5-chlorouracil, 5-bromouracil, 5-hydroxycytosine, 5-hydroxyuracil
+
+**Repair:** TDG, SMUG1, MBD4 glycosylases (overlapping specificities)
+
+### Nucleotide Pool Damage and Incorporation
+
+#### Oxidized Nucleotide Incorporation
+
+**Source:** Oxidation of dNTP pool (8-oxo-dGTP, 2-OH-dATP)
+
+**Mechanism:** Oxidized dNTPs escape polymerase discrimination, incorporate opposite wrong template base
+
+**Sanitization:** MTH1 (NUDT1) hydrolyzes 8-oxo-dGTP to 8-oxo-dGMP, preventing incorporation; NUDT15, NUDT5 for other damaged nucleotides
+
+**Consequence if incorporated:** G:C→T:A or A:T→C:G transversions
+
+#### Base and Nucleoside Analog Incorporation
+
+**Sources:** Chemotherapeutic agents (5-fluorouracil, gemcitabine, cytarabine, fludarabine), antiviral nucleosides, BrdU (experimental)
+
+**Mechanisms:**
+- **Chain termination:** 3′-modified sugars (araC, acyclovir) block extension
+- **Fraudulent bases:** 5-FU mispairs, causes futile BER cycling; BrdU photosensitizes, increases fragility
+- **dNTP pool disruption:** Thymidylate synthase inhibition (5-FU, methotrexate) causes dUTP accumulation and incorporation
+
+### Transposon and Mobile Element-Induced Damage
+
+#### Retrotransposon Activity (LINE-1)
+
+**Mechanism:** LINE-1 ORF2p endonuclease creates nick at target site, ORF2p reverse transcriptase synthesizes cDNA using cleaved 3′-OH as primer (target-primed reverse transcription)
+
+**Consequences:**
+- Target site DSB formation
+- Insertional mutagenesis
+- Genome instability from ectopic recombination between dispersed elements
+- Aberrant DNA structures (inversions, deletions, duplications)
+
+**Regulation:** Silenced by DNA methylation, piRNA pathway, APOBEC3 restriction; reactivated in cancer and aging
+
+#### Endogenous Retrovirus Reactivation
+
+**Source:** HERV elements derepressed by hypomethylation (cancer, aging, cellular stress)
+
+**Consequences:** Similar to LINE-1; additionally may produce viral proteins with immunogenic or oncogenic properties
+
+### Viral-Induced DNA Damage
+
+#### Integrating Virus Damage
+
+**Examples:** Retroviruses (HIV, HTLV-1), HBV (via integration of double-stranded DNA intermediate)
+
+**Mechanism:** Integrase-mediated strand transfer creates DSBs flanking provirus, repaired by host NHEJ (often with errors)
+
+**Consequences:**
+- Insertional mutagenesis (oncogene activation, tumor suppressor disruption)
+- Genomic instability from multiple integrations
+- Persistent DSB signaling
+
+#### Non-Integrating Virus Damage
+
+**Mechanisms:**
+- Viral protein-mediated replication stress (HPV E6/E7 deregulating cell cycle, increasing origin firing)
+- ROS/RNS induction (EBV LMP1, HCV)
+- Degradation of DNA damage response proteins (HPV E6-p53, E7-Rb)
+
+### Biogenic and Metabolic Adducts (Miscellaneous)
+
+#### Catecholamine and Neurotransmitter Adducts
+
+**Sources:** Oxidation of dopamine, norepinephrine, serotonin by various oxidases and transition metals
+
+**Mechanism:** Quinone formation followed by Michael addition to nucleophilic centers on nucleobases
+
+**Lesions:** N²-dG and N⁶-dA adducts of catechol quinones
+
+**Relevance:** Potential contribution to neurodegeneration, repaired by NER and AlkB dioxygenases
+
+#### Polyamine-Derived Adducts
+
+**Sources:** Spermine/spermidine oxidation by polyamine oxidases, producing aminoaldehydes
+
+**Mechanism:** Schiff base formation with dG exocyclic amino group
+
+**Lesions:** N²-(aminopropyl)-dG, N²-(aminobutyl)-dG
+
+#### Vitamin and Cofactor-Derived Adducts
+
+**Examples:** Retinaldehyde-dA adducts, biotin-dA adducts (holocarboxylase synthetase-mediated)
+
+**Significance:** Generally minor, context-dependent pathological relevance
+
+### Physical and Mechanical Damage
+
+#### Torsional Stress-Induced Damage
+
+**Source:** Replication fork progression, transcription bubble movement, chromatin remodeling
+
+**Consequences:** Positive supercoiling ahead of forks/bubbles induces topoisomerase activity; failure to resolve leads to DNA breaks, R-loop formation, and illegitimate recombination
+
+#### Mechanical Shearing
+
+**Source:** Mitotic chromosome condensation/segregation errors, nuclear envelope rupture during migration through confined spaces
+
+**Consequences:** DSBs, chromosome fragmentation, chromothripsis
+
+### Summary Table: Major Categories and Representative Lesions
+
+| Category | Subcategory | Key Lesions | Primary Repair |
+|----------|-------------|-------------|----------------|
+| Oxidative | ROS-mediated | 8-oxoG, thymine glycol, SSBs | BER (OGG1, NEIL1) |
+| Oxidative | RNS-mediated | 8-nitroG, xanthine | BER, NER |
+| Oxidative | Halogen-mediated | 5-ClC, 8-BrG | BER (TDG, NEIL1) |
+| Hydrolytic | Depurination | AP sites | BER (APE1) |
+| Hydrolytic | Deamination | Uracil, hypoxanthine | BER (UNG, AAG) |
+| Alkylation | Simple | O⁶-meG, N7-meG, N3-meA | MGMT, BER, AlkB |
+| Alkylation | Exocyclic | εdA, εdG, M1dG | BER, NER |
+| Bulky adducts | PAH | BPDE-N²-dG | NER |
+| Bulky adducts | Aromatic amines | C8-dG adducts | NER |
+| Crosslinks | Intrastrand | CPD, 6-4PP, Pt-GpG | NER |
+| Crosslinks | Interstrand | N mustard ICL, psoralen | FA pathway, HR |
+| Crosslinks | DNA-protein | TOP1cc, aldehyde-DPC | TDP1/2, SPRTN |
+| Strand breaks | SSB | Varied termini | SSBR (XRCC1) |
+| Strand breaks | DSB | Clean or complex | NHEJ, HR |
+| Replication | Mismatches | All combinations | MMR |
+| Replication | Ribonucleotides | Embedded rNMPs | RNase H2 |
+| Topoisomerase | TOP1cc | 3′-phosphotyrosyl | TDP1 |
+| Topoisomerase | TOP2cc | 5′-phosphotyrosyl | TDP2 |
+| Transposons | LINE-1 | Target site DSB | NHEJ |
+
+### DNA damage type TODO
+
+TODO: enrich this with information from GRG.
+
+## Types of protein damage
+
+* mistranslation
+* misfolding
+* unfolding
+* degradation
+* amino acid methylation errors
+* ...
+
+## See also
 
 See also [[DNA damage repair]].
