@@ -1,0 +1,532 @@
+Connectome memory decoding meetup 2025
+
+video: <https://www.youtube.com/watch?v=8gk6x7VbDXU>
+
+<https://aspirationalneuroscience.org/awards-and-prizes/>
+
+<https://preservinghope.substack.com/p/the-memory-decoding-challenge-annual>
+
+<https://braininspired.co/podcast/227/>
+
+Go [here](https://preservinghope.substack.com/p/the-memory-decoding-challenge-annual) to see an edited transcript with visualizations. However, the blog post does not include the transcript of the panel that followed.
+
+LLM-generated summary: This talk at the third annual Long-Term Memory Encoding and Connectome Decoding meetup introduces the Aspirational Neuroscience Outreach Project, which aims to bridge connectomics and engram research to enable decoding non-trivial memories from static connectomes—a foundational ambition of modern electron microscopy (EM)-based connectomics originating from Sebastian Seung's 2009 vision. Highlighting revolutions in high-throughput volume EM (e.g., MICrONS, fly, zebrafish, songbird connectomes) paired with functional imaging, and genetic tools like eGRASP for synaptic tagging in engram cells, the speaker announces a $100,000 prize for the first demonstration of decoding a learned function (e.g., songbird HVC→RA circuitry, hippocampal spatial maps, amygdala fear memories, or visual receptive fields) from synaptic connectivity alone. Four $25,000 Aspirational Neuroscience Awards are awarded to pivotal 2022–2025 papers advancing synaptic plasticity (e.g., bimodal synapse strengths suggesting binary Hebbian rules, connectome-constrained network models for fly vision, wiring rules in mouse visual cortex), emphasizing how such work tests memory theories and leverages EM constraints to infer function amid unknown dynamics.
+
+[[!toc levels=3]]
+
+# Video description
+
+On November 17 2025, Kenneth Hayworth provided an introduction to the Memory Decoding Challenge and Annual Research Awards. Memory Decoding Challenge Prize is currently $100,000. It will be offered to the first author of the team that makes this historic achievement, upon publication in a peer-reviewed scientific journal. There is no time limit for this award. Annual Research Awards are currently US $25,000 (split equally among co-awarded papers then split equally among co-first authors). Four awards are presently offered each year typically during or around the time of the Society for Neuroscience meeting in November. Papers are selected from the annual nominations. Current philanthropic commitments will hopefully allow us to offer these annual awards until 2030.
+
+# Welcome and Meetup Introduction
+
+All right, well, thank you all for coming. Thank you for joining us for our third annual Long-Term Memory Encoding and Connectome Decoding meetup. We're working on the name. In a moment, I'm going to announce the winners of this year's Aspirational Neuroscience Awards, and then we can move on to the main event, which is the panel discussion. We have some really fantastic neuroscientists that are going to discuss what would it take to decode a non-trivial memory from a connectome. I think it's going to be super interesting.
+
+# Origins of Connectomics and Memory Decoding Ambition
+
+But before I go there, I want to give kind of an overview of what we're trying to do. So a little over 15 years ago, a small set of neuroscientists were arguing that electron microscopy should be automated in order to allow for the dense mapping of neural circuits. For example, this 2009 paper from Sebastian Seung said this in the abstract: “Another method will be to find a “connectome,” a dense map of all connections in a single specimen, and infer functional properties of neurons through computational analysis. For the latter method, the most exciting prospect would be to decode the memories that are hypothesized to be stored in connectomes.”
+
+And so right from the beginning of kind of this recent round of EM connectomics was the idea that an ultimate test of connectomics would be whether you can really decode the algorithm, whether you can decode memory and learn function from the connectome.
+
+# Technological Revolutions in Connectomics and Engram Tools
+
+And the intervening years, the intervening let's say 15 years, there's been a technological revolution. Hopefully people caught the connectomics talks earlier today in the Connectomics @ Nano symposium. There's been a revolution in volume electron microscopy such that we now do have access to increasingly large and accurate connectomes across a wide range of model organisms.
+
+For example, we recently got a Drosophila central nervous system—thankfully I got a small part in that project. Other labs like Allen Institute and their collaborators have been working on have produced this wonderful MICrONS connectome spanning several visual areas and complete with calcium imaging on those neurons. Additional labs have mapped connectomes from other cortical areas and have begun to map the hippocampus. Whole zebrafish connectome is gonna come online soon, again with paired calcium imaging. And the songbird, which has long been a model organism for studying the basal ganglia, is also having its connectome map.
+
+In fact, these electron microscopy volumes are about, they're likely to be eclipsed in the next few years in terms of volume by light microscopy techniques like LICONN that use expansion microscopy and pan-protein staining that have been shown to be able to also produce connectomes.
+
+And in parallel, there's been a revolution in the genetic tools that can tag and manipulate engram cells that activate when a memory is recalled. Tools like eGRASP that allow tagging of synapses on engram cells, and even the manipulation of synapses through chromophore-assisted light inactivation (CALI) and others.
+
+# Aspirational Neuroscience Outreach Project Goals
+
+And so given all these advances, we thought these advances in connectomics and memory engram manipulation, we thought it was time to revisit the bold ambition that kicked off, that one of the bold ambitions to kick off connectomics revolution in the first place. Can we decode a non-trivial memory from a static connectome? And I think it's probably agreed that that has not occurred yet. It's not a really clearly defined goal. Maybe we can discuss that tonight. But I think it is an achievable goal.
+
+And so the Aspirational Neuroscience Outreach Project is here to, its goal is to bring together researchers in connectomics and researchers in memory engrams in order to design concrete experiments, but with the explicit goal of decoding memories from a static map of synaptic connectivity. And one of the important things to take home from that is that such an experiment would really put to the ultimate test the theories of memory. We want something that really is, for this particular system, for this particular type of memory is this decoding challenge would ultimately say whether it, whether that is a true theory or whether it is not.
+
+# Memory Decoding Challenge Prize
+
+Okay, so to that end, we have thankfully got a generous donor that is very enthusiastic about neuroscience, and we have put forward a memory decoding challenge prize with the goal to help motivate such collaborations and to spark discussion about this. It's a hundred thousand dollar prize for the first neuroscience research team who can demonstrate the decoding of a non-trivial memory or other learned function from a static connectome.
+
+Now defining exactly what it would constitute a non-trivial memory is something that I hope who we can discuss in the panel tonight. In essence, though, it should constitute a crystal clear demonstration that a neuroscience model of how memories are encoded in the structure of neural circuits is actually correct. And I want to make clear that I don't see this as some impossibly distant goal. I see many research teams at Society for Neuroscience (SfN) presenting research that are actively pursuing projects that could constitute such a demonstration.
+
+# Examples of Concrete Decoding Projects
+
+So here's some concrete examples. I wanted to throw some concrete examples in just to help people kind of understand the scale that we're talking about. So for instance one decoding project that Jörgen Kornfeld has been discussing for a while and is hotly pursuing is decoding the learned song from the connectome of the songbird HVC-to-RA nucleus.
+
+Decoding the rudiments of a spatial map in the hippocampal system would certainly constitute decoding a non-trivial memory. Decoding a set of specific fear memories in the amygdala might constitute it. Decoding receptive field properties of many visual cortical neurons or higher order cortical visual neurons and many others. And hopefully we can discuss this in the panel.
+
+# Aspirational Neuroscience Awards Overview
+
+Now, because it's likely to take many years for any team to reach that milestone of decoding a non-trivial memory, we're giving four $25,000 aspirational neuroscience awards, hopefully each year, we're trying to do this, for research that seems to be on the path toward that ultimate or is contributing to our understanding of memory in the deep way.
+
+And these are just some of the winners in past years. We also run a biweekly journal club with a large, but unfortunately not too active, email discussion group. I want to invite anybody that really wants to dig into the literature because we need help, we need experts to keep on top of the latest research. And we frankly would also like people with deep expertise in the field help with nominating the right types of papers and judging us.
+
+Okay, so let's move on to this year's Aspirational Neuroscience Awards. Our website has a list of papers that have been nominated for our Aspirational Neuroscience Awards. This is a collective thing. It's not like they were nominated this year and they didn't win so they can't win the next year. This is a collection of papers that have all been nominated. So any of these can potentially win next year.
+
+So our website has a list of papers that our team has nominated for Aspirational Neuroscience Awards. They have been sorted roughly into different categories just to give you an idea of what we're looking at. Correlation among synapses with shared history, dendritic integration and neural modeling, fear memory in the amygdala, a whole bunch of hippocampus work that you can imagine. Labeling and photo erasure of synaptic ensembles. Molecular mechanisms of learning. Synaptic structure function correlations. You know the synaptic structure function correlations is really the name of the game in decoding a memory from a static connectome. But all of this research that is really fundamental research about how what the different learning rules are, is we should be on top of if we're looking for what can be done in connectomics. Oh, I missed one, and visual receptive field.
+
+# This Year's Award Winners
+
+Okay, so without further ado, these were the 12 that were nominated this year. Again, the other ones are still in the running. I didn't decide who would win. There is... I could make arguments that each one of these is the ultimate, ultimate paper. So if anybody is here that is not winning an award here, please accept my apology. But there were... We had to choose one. And here are the winners: Ko et al., 2025; Dorkenwald et al., 2022; Lappalainen et al., 2024; and Ding et al., 2025.
+
+Again I want to say there are some absolutely earth-shattering fantastic papers that did not win, and this should not be... we had a lot of discussion about it, and it was along the lines of, yes this is earth shattering, but is it on the critical path? Yes this was earth shattering, but it was a little too many years ago. You know, things like that. It should not be, everybody on this list is just fantastic.
+
+Let me give a very brief overview about the ones that won.
+
+# Winner 1: Ko et al. (2025) on Hippocampal Engram Reorganization
+
+So the paper *Systems Consolidation Reorganizes Hippocampal Engram Circuits* by Ko et al., 2025 showed that shifts in episodic memory precision from specific to general, which is typically associated with cortical consolidation, may actually be partly explainable by synaptic reorganization in the hippocampus itself. They used a combination of engram cell tagging and eGRASP synapse labeling to track the synaptic modifications underlying this gist memory formation. So one of the things that we found very impressive was tracking the change of a memory through tracking its synaptic changes.
+
+# Winner 2: Dorkenwald et al. (2022) on Synaptic Strength Distributions
+
+Okay, another one is this paper by Dorkenwald et al., 2022. Dorkenwald will be on the panel discussion. The paper, *Binary and Analog Variation of Synapses Between Cortical Pyramidal Neurons*. They traced and proofread 1,960 synaptic connections among 334 pyramidal neurons in a TEM dataset covering layer 2/3 of mouse visual cortex. They quantified the size and thus the functional strength of each of these synapses.
+
+Plotting a histogram of the synapse sizes showed that instead of the expected log-normal distribution, a highly skewed distribution that was better fit by a mixture of two log-normal distributions was seen. Then they analyzed the subset containing 320 of these synapses from 160 matched pairs—two synapses that shared the same pre- and post-synaptic cells, such that they had the same learning history. And plotting a histogram of the geometric means of each of these pairs showed that an even clearer bimodal distribution, which the authors showed, could be modeled by assuming that each pair had a binary value, either small or large, with an uncorrelated analog variable on top.
+
+So this is evidence that Hebb-style learning rule with only two synaptic strengths, small versus large. This is kind of cutting-edge stuff. It showed the real strength of having a large, accurately traced connectome. That was one of the key things. This is kind of a result that is showing off the strength of connectomics.
+
+# Winner 3: Lappalainen et al. (2024) on Connectome-Constrained Fly Visual Models
+
+Okay, another paper, *Connectome Constrained Networks Predict Neural Activity Across the Fly Visual System* by Lappalainen et al., 2024. They showed a novel way to predict function from a static map of synaptic connectivity, even when many dynamic parameters of the neurons are not known, and synapses are not known. They generated a differentiable model of the fly visual system based on the full EM connectivity, and this allowed the unknown dynamic parameters to be tuned by gradient descent with the goal of matching a known motion selectivity of a subset of the neurons.
+
+We thought that this novel method showed how the considerable constraints of a connectome could be used to leverage even if not all the dynamics was known. And I've heard even in talks around here that people are thinking about applying this to this dataset and other datasets because this is, you always have some dynamic factors and neurons that you don't have when you have the connectome. So this shows a path forward for these.
+
+# Winner 4: Ding et al. (2025) on Visual Cortex Wiring Rules
+
+So finally, the paper *Functional Connectomics Reveals General Wiring Rule in Mouse Visual Cortex* by Ding et al., 2025. At some level, this paper had to win. It's a very... the MICrONS project is perhaps the most ambitious connectomics project to date. It acquired a cubic millimeter volume of electron microscopy data spanning multiple primary and higher order visual areas. Overlapping regions were calcium imaged in the awake behaving mouse while watching hours of specially designed video stimuli.
+
+The paper analyzed a subset of neurons having both high quality calcium recordings and proofread connectome tracings. And this allowed the authors to ask questions like, are the neurons that respond to similar visual features more likely to be synaptically connected or not?
+
+And the authors employed some really novel analysis techniques, or at least we did not see them in other papers at this level. They quantified the distance each axon travels in close proximity to a dendrite, and this allowed them to normalize the actual synaptic density between any two cells. It's kind of like they're not just saying these two cells are connected, they're asking first the question, were they close enough to be connected, and then did they have a synaptic connection? A much stronger, tighter statistical question.
+
+The authors also employed a digital twin to precisely quantify each cell's receptive field location and its feature tuning. And, intriguingly, they showed that cells with similar feature tuning have higher than expected synaptic interconnectivity, a result that other groups had seen before, but they also showed that cells with similar location tuning show lower than expected synaptic interconnectivity. And I believe that that has some serious implications for our understanding of how learning happens in the visual system and other sensory systems.
+
+# Closing and Transition to Panel
+
+So in any case, these are the papers that were awarded this year. And we should give them another round of applause.
+
+[Applause]
+
+So now we are going to go to a panel discussion that is moderated by the amazing Paul Middlebrooks and take it over.
+
+# Panel
+
+<https://braininspired.co/podcast/227/>
+
+video: <https://www.youtube.com/watch?v=VSyOcXhr22Y>
+
+Sven Dorkenwald is a research fellow at the Allen Institute, first-author on [first full Drosophila connectome paper](https://www.nature.com/articles/s41586-024-07558-y).
+
+Michał Januszewski is a research scientist (connectomics) with Google Research, automated neural tracing expert.
+
+Helene Schmidt is group leader at Ernst Strungmann Institute, hippocampus connectome & EM expert.
+
+Andrew Payne is founder of E11 Bio, expansion microscopy & viral tracing expert.
+
+Randal Koene is the founder of Carboncopies Foundation, computational neuroscientist dedicated to the problem of brain emulation.
+
+LLM-generated summary: This episode of Brain Inspired features a panel discussion chaired by Randall Koene at the Aspirational Neuroscience satellite event during the Society for Neuroscience conference, addressing the challenge of decoding non-trivial memories—such as specific learned songs in zebra finches or spatial paths in mice—from static connectomes. Experts including Mihaly Januszewski (Google Research), Sven Dorkenwald (Allen Institute), Helena Anna Schmidt (Ernst Strüngmann Institute), Andrew Payne (E11Bio), and Randall Koene (Carbon Copies Foundation) debate experimental benchmarks in model organisms, the sufficiency of synaptic connectivity versus needs for molecular annotations (e.g., neurotransmitters, receptors), glia, and temporal snapshots of plasticity; obstacles like proofreading bottlenecks, biological variability, and structure-function degeneracy; and timelines ranging from 2–5 years (optimistic, targeting songbird HVC-RA or simple T-mazes) to 30+ years (pessimistic, citing degeneracy and missing dynamics). Emphasis is placed on hypothesis-driven tests using established models (e.g., place/grid cell interactions), statistical validation across N>1 specimens, and multimodal imaging to bridge connectomics with function, underscoring that decoding advances neuroscience's structure-to-function mapping even if full emulation remains elusive.
+
+## Background
+
+Can you look at all the synaptic connections of a brain, and tell me one nontrivial memory from the organism that has that brain? If so, you shall win the $100,000 prize from the Aspirational Neuroscience group.
+
+I was recently invited for the second time to chair a panel of experts to discuss that question and all the issues around that question – how to decode a non-trivial memory from a static map of synaptic connectivity.
+
+Before I play that recording, let me set the stage a bit more.
+
+Aspirational Neuroscience is a community of neuroscientists run by Kenneth Hayworth, with the goal, from their website, to “balance aspirational thinking with respect to the long-term implications of a successful neuroscience with practical realism about our current state of ignorance and knowledge.” One of those aspirations is to decoding things – memories, learned behaviors, and so on – from static connectomes. They hold satellite events at the SfN conference, and invite experts in connectomics from academia and from industry to share their thoughts and progress that might advance that goal.
+
+In this panel discussion, we touch on multiple relevant topics. One question is what is the right experimental design or designs that would answer whether we are decoding memory – what is a benchmark in various model organisms, and for various theoretical frameworks? We discuss some of the obstacles in the way, both technologically and conceptually. Like the fact that proofreading connectome connections – manually verifying and editing them – is a giant bottleneck, or like the very definition of memory, what counts as a memory, let alone a “nontrivial” memory, and so on. And they take lots of questions from the audience as well.
+
+I apologize the audio is not crystal clear in this recording. I did my best to clean it up, and I take full blame for not setting up my audio recorder to capture the best sound. So, if you are a listener, I’d encourage you to check out the video version, which also has subtitles throughout for when the language isn’t clear.
+
+Anyway, this is a fun and smart group of people, and I look forward to another one next year I hope.
+
+The last time I did this was [episode 180](https://braininspired.co/podcast/180/), BI 180, which I link to in the show notes. Before that I had on Ken Hayworth, whom I mentioned runs Aspirational Neuroscience, and Randal Koene, who is on the panel this time. They were on to talk about the future possibility of [[uploading minds|brain uploading]] to computers based on connectomes. That was [episode 103](https://braininspired.co/podcast/103/).
+
+## Podcast Introduction and Context
+
+Even if we assume we have a whole mouse brain connectome, I would hazard a guess that we would have a problem or a challenge to read out any memories from it after a while. And I think maybe that is the frame we can think about this for one moment. Like even if we have the whole connectome, can we read out a memory from it?
+
+If you want to decode a non-trivial memory, then one of the things you want to do is to do more than just identify this animal has learned something, and here we can find what it has learned. But you want to be able to differentiate between different batteries.
+
+We have models of how these systems work. These are model organisms that have had decades of research on them. And so the very first thing that you're doing is you're saying, here is our model of the hippocampus. Here is our model of how place cells and grid cells interact with each other.
+
+Now, given that model, which could be wrong, what is the experiment that we could do to try to decode the memory based on that model?
+
+Okay, I'm going to ask the question that I think needs to be asked, which is, non-trivial is doing a lot of work here. What does non-trivial mean? And actually, I would love if some folks came up to the microphone and offered their perspective on what does non-trivial look like.
+
+This is Brain Inspired, powered by the Transmitter. Can you look at all the synaptic connections of a brain and tell me one non-trivial memory from the organism that has that brain? If so, you shall win the $100,000 prize from the Aspirational Neuroscience group.
+
+I was recently invited for a second time to chair a panel of experts to discuss that question and all the issues around that question: how to decode a non-trivial memory from a static map of synaptic connectivity.
+
+Before I play that recording let me set the stage a bit more here. Aspirational Neuroscience is a community of neuroscientists run by Kenneth Hayworth with the goal from their website to quote balance aspirational thinking with respect to the long implications of a successful neuroscience with practical realism about our current state of ignorance and knowledge, end quote.
+
+One of those aspirations is to decode things, memories, learned behaviors, and so on. Decode those things from static connectomes. Aspirational Neuroscience holds satellite events at the Society for Neuroscience Annual Conference, and they invite experts in connectomics from academia and from industry to share their thoughts and progress that might advance that goal.
+
+In this panel discussion, we touch on multiple relevant topics. One question is what the right experimental design is, or designs are, that would answer whether we are decoding memory. What is a benchmark in various model organisms and for various theoretical frameworks?
+
+We discussed some of the obstacles in the way, both technologically and conceptually, like the fact that proofreading the connections in a connectome, manually verifying and editing those connections, is a giant bottleneck. Or like the very definition of memory, what counts as a memory, let alone a quote-unquote non-trivial memory.
+
+This year there were five panelists including Mihaly Januszewski, who is a research scientist with Google Research and is an expert in automated neural tracing. Sven Dorkenwald, who is a research fellow at the Allen Institute and was very involved in the first full Drosophila connectome paper that happened recently.
+
+Helena Anna Schmidt, who's group leader at Ernst Strüngmann Institute. She's an electron microscopy expert and deals with the hippocampus connectome. Andrew Payne, who is the founder of E11Bio, which is a focused research organization. He is an expert in expansion microscopy and viral tracing.
+
+And finally, Randall Koene, who's the founder of the Carbon Copies Foundation. Randall's a computational neuroscientist dedicated to the problem of brain emulation.
+
+These people take lots of questions from the audience once I do my best trying to get the conversation going with a few questions. I do apologize that the audio is not crystal clear in this recording. I did my best to clean it up and I take full blame for not setting up my audio recorder to capture the best sound.
+
+So if you a listener I would encourage you to check out the video version, which also has subtitles throughout for when the language isn't clear. And mostly those subtitles are correct, but if you're a keen observer, you will note when they are not.
+
+Anyway, this is a fun and smart group of people and I look forward to another one next year, I hope. The last time I did this was episode 180, BI 180, which I linked to in the show notes. It was another panel discussion like the one I'm about to play for you.
+
+And before that, I had Kenneth Hayworth on, whom I mentioned runs Aspirational Neuroscience. I had Ken on with Randall Koene, who was on the panel this time. They were on at that time to talk about the future possibility of uploading minds to computers based on connectomes. So that was episode 103, which I also link to in the show notes.
+
+And those show notes are at braininspired.co slash podcast slash 227. All right. I hope you enjoy this panel discussion. As you'll see, there are plenty of issues to resolve, plenty of optimism. I'm the only pessimistic person there that voiced that opinion anyway. So that was kind of interesting, but lots of interesting discussion. Okay. I hope you enjoy it.
+
+## Panelist Introductions
+
+Hi, so I'm Randall Koene and I run a non-profit research foundation called the Carbon Copies Foundation. I used to work at a company called Voxa working on the high throughput electron microscopy pipeline doing the software side of that. They were contracted to the Allen Institute working obviously on their big project and in a previous life I used to model hippocampal entorhinal episodic memory systems and also prefrontal cortex TV learning like uh reinforcement learning uh sort of phenomena that you could find there and now my focus is on trying to validate or ground truth the uh transition from structure to function so that mapping and building an architecture deciding how to estimate your parameters and how can you tell that what you're ending up with is actually mapping towards most of what the tissue that you have data from is actually doing and cares about has some sort of meaning. So the memory decoding prize is super interesting to me for that reason.
+
+Hi everyone. I'm Mihaly Januszewski. I'm a research scientist at Google. My former background is in physics actually not neuroscience. But what keeps me busy these days is trying to build software to automate connectome mapping. So the goal is to make the data analysis an issue. It'll be great if you can acquire whatever data set of brain you want and have it basically automatically analyzed so that you can use the science with it and spend their time and money on stuff like proofreading or stitching or segmentation. So that's what we are trying to do and to do this automatically.
+
+Hey everyone, my name is Sven Dorkenwald. My work is directly adjacent to Mihaly's, trying to reconstruct connectomes and solving other problems other than the automated reconstruction. My work has contributed to the FlyWire project and the MICrONS project that you just heard about.
+
+Hi, I'm Helena Schmidt and I'm from Frankfurt, Ernst Strüngmann Institute in Germany. And my lab is working on connectomics of mammalian navigation and our aim is to acquire a large-scale 3D EM dataset of the full entorhinal cortex and hippocampus circuit.
+
+Hi everyone, I'm Andrew Payne, co-founder and CEO at E11Bio, which is a non-profit focused research organization. We are a young org that is building tools for optical connectomics to try to make that field move faster now that this technology is ready for extracting molecular information alongside the static connectome.
+
+## Defining the Challenge: Decoding Non-Trivial Memories
+
+Thanks everybody. My question for you is what would it take to decode a non-trivial memory from a static connectome? No, actually, so one way to approach this is to ask each of you, given your expertise and what you do on a day-to-day basis, if there is a specific advance or obstacle that if you solve that obstacle, would you believe increase the efficiency with which that path could be accessed to decoded non-trivial memory? When you talk about what that even means as well.
+
+Andrew, do you want to hazard an answer? Yeah. I think I'll just start by saying that there are a couple of new, I guess, pieces on the board that everyone should become familiar with. The first is that it is now possible to extract connectomic information using conventional light microscopes. And so everyone saw Tabakouli et al. 2025 on the screen that preprint, you definitely check it out. It is the first, you know, bona fide demonstration of extracting connectivity on a cheap light microscope.
+
+Why is that important? It's not just that it's easier to get the information but it means you can use multiple colors and when you have multiple colors you can start thinking about what other molecular details can you co-detect with your connectome easily in order to more precisely decode that memory for example you know there is like a whole body literature on tagging CFO cells that's easy to see if you can get the molecular information in the same assay.
+
+And so at E11, we just dropped a preprint last month, demonstrating how you can read out 24 different protein molecules in the same sample when getting this kind of morphological reconstruction of the neurons. This could be a game-changer, and I'm going to position those two pieces on the board. Maybe they'll come up again as we keep talking.
+
+I would also just encourage the panelists to argue amongst yourselves as much as possible.
+
+Well, we can argue about what the best way is to view connectomics. We may do that tonight. I think even if we assume we have a whole mouse brain connectome, I would hazard a guess that we would have a problem or a challenge to read out any memories from it after. And I think maybe that is the frame we can think about the scope one moment.
+
+Even if we have the whole connectome, can we read out a memory from it? And I think from working in the fly, one thing that we've stuck is that in the fly, a lot of connectomics work really benefits from having the sensory modalities being so close to the brain and kind of understanding what they relate to. The behavior assays that are being done and how they can be related to the connectome, that is a very, very short path to associate those.
+
+And I think that allows people to do interesting neuroscience and potentially read out memories. So I think we ultimately need to understand what it means to read out the memory. And I think that has to be related to behavior or to a function of those neurons. So we will need that information to have a chance to read that out.
+
+And I do like the songbird word. The first system I really got to work with I think the songbird song is a wonderful modality. And the hypotheses are very, very clear. And I think that is one of the lowest hanging fruits that we have to read out of memory and seeing if there is actually a chain of synapses and neurons in the HVC.
+
+I would guess there's not. And then you have to answer the question of what we do next and how we kind of go about reading that out.
+
+Well, I think before we go and can read out the memory, I think there is a step before that, so that we need to narrow down the search space. What connections are we looking at? What areas there? Just to narrow down the space, right? And then we can think about experiments.
+
+I'm going to do a yes and on what Helena and Sven are saying. I think they're both right. I think what you want to do, you want to read out a memory, is to have a learned function which maps some inputs to some outputs. Ideally, you will have the inputs and outputs quantifiable in terms of information theory. So you should be able to count bits and make the experiment scalable.
+
+But, so yes, you want to be close to some sort of sensory input or you want to be able to map your sensory input in the area that you're scanning. I don't think you need the whole brain for this. I think we know enough, you know, from existing neuroscience projects to be able to target specific brain areas like maybe, you know, the lateral amygdala for fear learning and other like HBC and RA and some grid and so on.
+
+It's going to be expensive because of the data analysis challenges, but that's getting cheaper. I think it's mostly a matter of organization and maybe some microscopy challenges, which I'm not so clear on, but we can also discuss later.
+
+## Songbird Model as Benchmark
+
+So for the songbird itself, right, what would be the right experiment? I would imagine that something that would be more impressive would be to decode different songs from different birds. Would that be the right experiment? What would be the right experiment?
+
+Just to respond directly to the question, different birds, different songs, I personally don't find that as interesting. Because if you want to decode a non-trivial memory, then one of the things you want to do is to do more than just identify this animal has learned something. And here we can find what it has learned. But you want to be able to differentiate between different values.
+
+This is where you start talking about things like how many bits of memory do we want to be able to return. And that's where it would be very interesting if you can explore and find multiple songs in one bird, for instance.
+
+So I'm not a bird neuroscientist, but if I understand correctly for these zebra finches, instance is one song per bird, right? Is it good enough for now? I mean, for us it's worth to stick to the zebra finch example. I think it actually is a good model and it would be interesting even to only, you know, for a particular bird to be able to say, oh, the song that it learned, you know, is composed of four syllables and the length of the syllables is that and that and maybe you also can get some frequency information at and bubble cells already that would be interesting as those are quantifiable in terms of bits or whatever you want to use.
+
+So I mean, I don't think it's trivial at all.
+
+This is where I get confused about the difference between a behavior and a memory, because it was an alternate proposition was if you could accurately decode the last 10 bits of behavior of an organism before the sacrificing of the organism to fix its brain. So how do you guys think about the difference between, because a song is, in some sense, a memory, because you have to have learned it, but it's also a behavior. So are those meaningful differences between a memory and a behavior? What do you think would be more tractable, the last 10 bits of behavior or a non-trivial memory to decode? Which of those two are we closer to?
+
+The risk of saying things about songbirds that I'm not aware of. So I think when you're talking about a behavior, the behavior of course is composed of a number of different steps, for instance, in that sequence of a song. So then you would say, okay, if I can differentiate between different pitches, different interval lengths, things like that, then you're decoding something significant about the behavior that requires learning. Therefore there is memory of some sort, right? Because memory in essence is anything where, you know, future is dependent on past. And yeah so to me that would be a memory as well or it could be learned memory if you decompose it into those parts of the behavior.
+
+## Role of Glia and Beyond Synapses
+
+There seems to be a rise in attention to the cognitive functions of astrocytes so that it's not just all in the neurons and the synapses. Do you guys see astrocytes as being, for example, as being important in these kinds of issues, or is the connectome enough?
+
+I think we have been a little bit reductionist when we talk about the meme as a connectome. And I think people may think first of the synapses between the neurons, but I really think it is much more. It is glia. It is all the ultrastructure that goes along with it. It's the neurotransmitters that are expressed by those synapses and all of that.
+
+And we may talk about this as an annotated connectome, but I think most of us don't think about this as a binary connectivity matrix. And I think that's very important. I think the role of glia cells is becoming more and more clear to be fundamental to how the brain works as a reason why we have so many more glia cells in human brains, I believe. So I think, yes, we should not disregard anything of glia cells.
+
+I mean, again, yes, and in the sense that, yeah, glia important. But I think, at least in some of the theories of memory that we would want to maybe verify the prediction. That's why they have memorized and stored in synaptic weights and synapses. So then ideally, they'd be able to ignore the glia. Although I guess we'll find out one of these times. Nobody knows.
+
+I think I'll bite on the temporal component. When we think about recent work, for example, from Adam Cohen and colleagues on the pulse-chase dyes, we know that we can measure in a molecular assay synapse turnover and synapse plasticity. And we can, just around the corner of fearless prediction, we'll be able to detect that information. You know, what is the T-1 connectome? What is the T0 connectome? And depending on whether we can develop more halo tag, light dyes, you know, the T plus one.
+
+So we can get a couple of different time points. And that gives you information about, you know, what neurons you could push on if you were simulating the connectome that you have observed. But the question is, what model would you use where you could actually use that information quickly and maybe spend as a thumb on that?
+
+Yeah, so the temporal aspect, right? So the goal is to decode from a static connectome. But as soon as you start talking about temporality, I mean, I guess it's still technically slices of static connectome in that sense, but you add that temporal aspect to it.
+
+Yeah. I think it still counts as a static connectome. You're reading it out in a single time point, in a single assay.
+
+## Variability and Proofreading Challenges
+
+So are there other obstacles that you face in your day-to-day work that you think would solving those obstacles?
+
+I'm sorry. I think challenges that we are facing are very clearly that our data is extremely noisy in the end. I think the work in Drosophila is showing, and the first work really to compare connectomes is very important and it's showing that there are many very many variables of variability that we are facing and one of them is technical noise and we may only be able to suppress technical noise due to errors imaging artifacts and all that to a certain degree.
+
+I think it's a question of if that is a sufficiently low degree that we can push that. I believe so um but there are other sources of variability biological variability between individuals ultimately we have to define that first before i think we can understand what is real differences and what may constitute real differences um then between world memories between different brains and um to that also belongs uh accuracy of synapse readout and i think our work may have contributed to that a little bit that maybe you only have to read out if a synapse is large or small maybe that is sufficient i think more work needs to be done but that would certainly be helpful to to known to knowing if um that is is the level of accuracy that's really needed.
+
+I think other labs have done separate work on that in hippocampus showing that you may need to read our synapses at a level of 10 or 14 bits of accuracy.
+
+So you think the variability itself, it's an open question whether the variability of stochasticity is an obstacle because it's an inherent feature of the system.
+
+Well, I see actually a difference between those two brains or if it's just like happenstance of noise that happens naturally. Like this one brain was acquired in the morning, the other one in the afternoon. Is that enough that constitutes the greatest differences? I think we have to get a handle on this first.
+
+So far connectomics has been a field of N=1. We are slowly getting to a place where we of two three four in Drosophila. I think we really need that too in the mouse to understand differences between brains.
+
+So, fine question to you. Let's say we don't have this perfect understanding of variability, and by the way, memory is a source of variability, right, between specimens. So let's say we don't have the perfect handle and understanding of everything, but you can show, but you can make predictions about the organism actually learned meaning that you look at the connectome and you make some correlations about the impulse that you know associated with whatever um some positive or negative feedback would that work in your mind you know are you saying as long as you have a model that can uh that you can show that you can read out a difference in behavior from a system is that enough yeah it's okay i'm asking you because you said you know we have to understand everything first you have to understand biological variability i'm saying but we don't understand it but you show the correlations and correlations in our statistically significant.
+
+How do you show statistical significance in this? I think that is the point, right? That you need that error bar. What is statistic?
+
+Well, okay, so you can approach it from like almost kind of statistical theory, right? And we're getting into hard experiments here, but let's say you know, you have an animal, you have some input maybe is you know tones or colors or whatever and you you learn you have each visual learn some behaviors right so maybe the vast combination like a combination of A and C is bad, A and D is bad, A and B is good B and D is good whatever like you can include some number of those things and some brain area you take the connectome and then you you know you look at the structure and make a prediction right so somebody does the analysis and and or you say ANB good, ANC bad, and so on, some of that is going to be correct, some of that is going to be incorrect.
+
+If you say, okay, but it's only N of 1, then you do more samples and more animals, and you can keep doing this. At some point, you will reach statistical significance counts, whether you want to define it. And you will not understand necessarily all the sources of variability, but you will have a statistically significant correlation.
+
+It's not good enough.
+
+## Model-Driven Experiments in Model Organisms
+
+So I think when I think about these things I think that the very first question is we have models of how these systems work. These are model organisms that have had decades of research on them. And so the very first thing that you're doing is you're saying, here is our model of the hippocampus. Here is our model of how place cells and grid cells interact with each other. Here is our model of how a place cell gets formed in a single instance.
+
+Now, given that model, which could be wrong, what is the experiment that we could do to try to decode the memory based on that model to show that it's wrong or to show that it's right.
+
+In terms of the bird song, the bird song is very concrete. This is not like, oh, yes, we could decode a bird song. I want people to understand that, right? There is a theory, like you said, that could be completely wrong, right? There is a chain of neurons in HVC that sequentially activate like a timing board, and that those chain of synaptic neuronal activations are then feeding their axons down to a motor nucleus that gives particular tweets.
+
+And the textbook model says that if that theory is correct, then this connectome will show what the bird learned. I think that this is the kind of concrete thing that I'm hoping that we can discuss. We know that there are dozens of model organisms that have decades of research, and connectomes can get those and decode memories or fail to and show that those are.
+
+So because you were talking about place cells and grid cells. Please, give us a tutorial. No, no, I would just propose an experiment, like teaching a mouse, like a parkour, like first go on the bridge then to the stairs then to whatever treadmill and have several stations like this and then whatever take 10 or 20 mice and then they have to learn each of them a different sequence and then we have a model well we need to figure out first where to look at right exactly what connections to look at and then we would try to predict then what sequence was learned.
+
+I think for the start I would start with a very simple T-maze, go left, right, and see if I can read that out of the connectome. I mean, it is not 10 bits. But I think that that would constitute for reading a lot of memories left. I think I am a mammal by hippocampal replay and that we see in sleep. I think there's evidence that there's something in the connectivity between those neurons that we should be able to read out. And that is certainly something I think that would be worth targeting.
+
+So, I mean, just going back to the structure versus function problem, is it an insurmountable problem that, for example, in artificial networks, you can freeze the weights and generate different dynamics, even with a static frozen weights within the network? And so there's this problem of multiple realizability and degeneracy and the dynamics of neural activity. Is that not a fundamental hurdle? Or is there a way, do we believe that we can, in some sense, analyzing the structure, have a measure of some capacity of possible functions, for example? Or is it a fundamental hurdle?
+
+I mean, to that point, we have, I think what we're missing is a lot of annotations in the connectome. Including biophysical but the biophysics of those neurons which I think will lead to multiple possible outcomes when you bring your model in such a circuit so yes I think we have some of those problems a connectome alone may not allow us to encode that however I think work by Philipp Schuh in the Drosophila connectome kind of showed that even with a model that is not perfect you are able to produce activity that matches measured outcomes. And I think that's very encouraging to see.
+
+I think we are being too cautious in this discussion. We are finding potential problems before we have even started our design and experiment. Like, maybe we don't know sources of variability. Maybe we don't have the biomolecular information. Maybe there's degeneracy. There's an endless source of potential problems. But why not just try? And maybe we fail, in which case, of course, you have to go back to the drawing board and start thinking about those problems. Maybe it just works in your cell phone that it actually kind of just works, right?
+
+Not the memory reading, but producing some stereotypical behavior from not fully perfect connectome and with a lot of missing information but yet it was still you know a kind of strong enough major but it was relatively easy to reproduce uh maybe a strongly encoded memory is just like that why not try.
+
+## Timelines and Predictions
+
+It'll be also to come up to the microphone to ask uh questions anyone is i can hand the microphone out or you come up to this microphone in the front as well. I have a question. Sorry. It's all right. In what year do you expect that you will see the first decoding of a non-trivial memory connectome?
+
+1987.
+
+I think this is a good hazard a guess, please, everyone. I think this would happen once we can reconstruct the whole HVC region, which is, I think, possible now. So I would say within the next five years we should be able to see that.
+
+I i would say the same uh within the next couple of years provided we actually start doing this i'm talking about it.
+
+Randall you have to guess okay i'm just agreeing i think that yes the whole point is to just get started i thought it was wonderful to just say why not try so yeah two two to five years is my guess.
+
+I'm going to be really optimistic rinda i agree with the fight i go with the fight.
+
+I mean, okay, I'm going to ask the question that I think needs to be asked, which is non-trivial is doing a lot of work here. What does non-trivial mean? And actually, I would love if some folks came up to the microphone and offered their perspective on what does non-trivial look like.
+
+For example, we know in the retinotectal system that you can sensitize that to a moving bar, and you can read out the change in the compound synaptic currents from that. And probably if you had the connectome, you could see that in that system. Have we already decoded that memory or is that too trivial? It probably is. But what is the threshold Can we get some discussion around that I in five years This by the way is like we should have this quantified in terms of information theory terms, so number of bits, and we can argue about the number of bits that's one, threshold problem.
+
+I feel like I could make a lot of money from you guys if we just place a wager about this, because my guess is I'm much more pessimistic than all of you. I mean, it's awesome. And why not try and yes, rainbows and all that great stuff. I mean, I would guess 30 plus years. Jesus! We even had a whole mouse brain connectome before then.
+
+## Nature of Memory and Substrates
+
+Yeah, well, I mean, like it was mentioned, non-trivial is doing a lot of work, and I think that I don't know semantically what that human agility needs. I would also say no rainbows needed. We, of course, do EM versus grayscale, no rainbows. Right. right it's probably just a comment um just trying to think about what a memory is is the memory indeed just written in the weights of synapses and the structure or is memory needs doesn't memory needs to be experienced like do you have to feel do you have to live through the memory i'm just talking about this thinking about astrocytes if you know astrocytes modulate the synapse So what is the substrate? So if this is true, then your synapse sizes and weights and whatnot is not enough. Then you need to have the substrate of the astrocytes and how they influence. And the question is, are we going to find the substrate of how or whether this influence is in common with the structure of the astrocyte in any way, whether they can actually see it in the structure? And is it necessary for the experience of the memory? But yeah, it's a memory experience, or is it just something that's done? That's, yeah, something to do. Anyone want to comment on the nature of memory?
+
+Yeah, so I mean, obviously, there are a lot of details you could get into about what constitutes memory, what contributes to memory, what modulates memory. But again, you could probably start by just counting synapses or looking at the size of dendritic spines or looking at postsynaptic densities because that enough to begin to look at at least some memory and to I guess identify a non set of different memories.
+
+Yeah so take for example receptive fields We know that we can identify receptive fields just by looking at synapses without taking the astrocytes into account. Then if you combine receptive fields into feature detectors, you can see that as well, just looking at synapses. So I believe there's enough there that you can decode something, even if you can't decode everything, even if later on you discover there's more you need to know.
+
+Does anyone else want to comment before we move on to another question? Okay. So I wanted to comment to understand a little bit more about what people want to focus on memories, because there are so many types of memories we have discussed. There are something memories where one can try to go and say, hey, I actually remember walking in the room or walking towards the microphone and saying something which is pretty much It might be much closer to the 30 years, but there are going to be memories which are going to be into which are fundamentally on how the system is built.
+
+And from that perspective, I wanted to bring a very long time to the procedure. So let's say that there was an element to say that if we can't forget, for example, the connectome. So let's run those in clean right now into my class. and we have the capacity to predict how the neurons are going to respond to stimuli without looking at how the neurons are responding, just looking at their connectome. And let's put a fraction of an explainable variance. What would be a fraction of explainable variance which would satisfy the equal number? 30%? 10%? Neurons are quite variable, by the way. Very concretely. What would the committee say from here? What would you not actually explain, Darius? What would quantifiably say, we're not a committee. We're just a bunch of people. In the end, we don't decide this. Maybe we should do a vote in the audience. Let's see what people think.
+
+Because here's one thing. When we do the memory readout, ultimately, this is going to be judged not by the right people here, not even by the people in the room, but by the wider audience, right? And by that means both the lay audience and other scientists and so on. And whatever we come up with, it has to be convincing the bad group of people, basically.
+
+Yeah. I just want to say that is exactly the right question. Okay That is exactly the right question And it does not make it trivial that it like oh you just trying to explain a certain amount of variance. It's like, you know, we reported from 10,000 cells calcium imaging and we have the connectome, and how much of that calcium imaging could be predicted based upon the connectome.
+
+If we are right about the theories, about how structure encodes function, then that experiment will get a high level of variance explained. If we are wrong, which we may very well be, then it won't. It tells us something that other experiments have not told us. And that's the whole key to this non-trivial. The word non-trivial is moving forward the neuroscience of how a structure gives rise to function. That's really, I don't know what the level would be. That is something for like a committee to decide. And it is something for kind of to say, you know, this is where we are. We're not going to decode a memory of a child of experience and a human.
+
+Okay. and we've already decoded to a certain extent receptive fields of single neurons, really puts our theories to the test. And that's what non-trivial means, to me at least, although I'm super curious about other people's.
+
+Just to let you know that FlyWire does a relatively simple neural network to my translator, yes, you're slightly below 40% of the explained variance. So in the type of theories we should expect what would be kind of like the standard model of artificial neural networks doesn't get you as much as what you'd expect. At least in our hands, maybe somebody could do that.
+
+## Functional Data and Representation
+
+Yeah, so I have another question for the committee and for the audience. So when I think of a natural real memory, I think of something that I experienced. And when you think about how neurons were responding in my brain, you need to think about what the neurons represent. And so when I relive that memory, like we think those neurons that were active when I was experiencing it, are sort of replaying it for me.
+
+And so when I relive that memory, like we think because neurons that were active when I was experiencing it, are sort of replaying it for me. So in that case, I'm glad we're talking about MICrONS because MICrONS is a dataset where we have function and structure. And that's like really critical to me when I think about memory, right? Because a non-trivial memory kind of requires that we know what neurons represent.
+
+And so is it cheating then to measure the function first? Because for me, I can't really see a way that we could decode from the connectome if we don't have a sense of what each neuron represents in the living animal.
+
+I 100% agree. And I think that is partly to my point from earlier, with Drosophila connectomics where you can't get away from having functional experiments because you can associate neurons much better with behavior. I think in lieu of that you need functional experiments so you can actually associate those neurons with a memory with a behavior.
+
+So I think drift reading is a readout that is certainly convincing. For me, memory is much more similar to what a hippocampal experience looks like because we know it has replay in sleep. I think that to me puts it to a point where I believe that this is actually something that constitutes much more like a convincing memory. I would tell that to my friends, they would kind of see that and think that this constitutes memory that we can decode, but a neuron responds to a moving bar that seems to be not to pass the dinner test.
+
+Hi, I'm also very interested in the topic of memory versus behavior. As you probably know, there's the recent critique on LLM and AI can't be conscious. There's an argument that because they're just predicting machines reacting to stimuli of input text and predicting output text. But then what is human but also predict machines that react on more complex inputs and produce more complex output than text. And then that sense, perhaps memory would just be behavior and parametrized.
+
+And guess another side of the question is what do you think would be the role of artificial neural network in trying to uncover the mechanism of organic memory and vice versa what would be the role of uncovering organic memory in developing better.
+
+Be brave and just try. Just try. I can comment on the experience. I have maybe a strong argument that we can think about and then you guys can tell me if this makes sense or not. Imagine the zebra finch example, right? So in the extreme, you could imagine a system which is basically what I would call EM to MP3. You input a big EM volume of the whole song pathway, but it's big enough to predict the sequence of the HVC axons. It's deep enough that you see the connections from the RA to the muscles, so you can map actual individual axons to frequencies and so on.
+
+So you literally you know input into a big computer program it runs many GPUs at the end you get an MP3 you play the MP3 same as the birds right great it works but there is no bird to experience it is that a problem probably not right we did decode the song uh so i would say you know the experience is not actually needed what is needed is the information we are extracting from the system uh.
+
+And uh i can try to tackle the AI question but you have to repeat it because unfortunately uh yeah can you say again briefly what what was the AI question because AI and brains are both neural networks and you could make a pretty big lead in assuming that there could also how AI encode memories similar to organic brains should have shoot a beat I know but could there be link in uncovering one would help the events of discovery.
+
+I guess in some sense there there is an analogy, it would believe the current series of memory, right? If you assume that the memories are encoded at the synapses between axons and dendrites, then all those correspond in some sense to the weights in the neural network. So it's changing the weights, it's kind of like changing the memory of the network. But that's a very high-level analogy. I'm not sure if that's what you're looking for.
+
+## Hippocampal Path Learning Theories
+
+So I want to try again to put you on the spot, Helena. And this is coming more from my ignorance. So whereas I understand, or at least I think I understand, the HVC to RA songbird system and it pretty straightforward And I think I understand the visual system where I say you know this the receptive field of this cell is built up by the sum of the receptive fields of the cells that come before it and with maybe some lateral connections.
+
+What I'd really love to hear is if I'm a mouse that has learned a path. Now that's a good solid memory that people can kind of get to wrap their heads around, you know, even better than a bird song. Do we have a theory of how that occurs? I would assume we have several. And given that theory is a decoding of a learned path location, T-Maze, as you were saying. Can you imagine an experiment in the next five years that could decode a path that was learned in a mouse?
+
+So I think my approach to this would be, the thing is we don't know. I think this is the answer. That's why we are going to get the whole connectome, right? To see the connections and so on. There are so many models, obviously. I wouldn't be here about to say. I mean, we don't know, but we have a bunch of models that could be right and could be wrong, or we just don't have models.
+
+No, there's a bunch of models. For example, the grid-to-place model that has precise connectivity predictions between grid and place cells that are fixed, non-random or random, and a pathway that is learned where the learning is happening, having been learning or just as a T. But we need the connectome to see if it really is the case.
+
+So, I mean, could you explain to me, and I think other people are interested in this, naively, how could learning a path, learning a spatial arrangement of this room, be encoded in synapses? I think as neuroscientists that are really deeply involved in these models, we take for granted that that's obvious. It is anything but obvious to most people including myself Is it too complicated to explain this is how this memory of a spatial path is encoded in these cells?
+
+Well, you would expect some sequences, right, of neuronal sequences that you would probably see. But to be honest, we don't know what connections to look at. Okay, CA3 and CA1. Well, my guess would be CA1, yes, but still, connectivity is really low in CA1. So, yeah.
+
+## Proofreading and Bottlenecks
+
+Yes. Wow. Hi, everyone. So I wanted to ask you about something that was requested in the beginning, which is to understand what each of you think is the biggest bottleneck in getting to the next level. And what I was surprised about is I didn't hear any of you mentioning proofreading. When I have to spend the money, it's still like a thousand dollars per neuron the last time I checked. So I'm curious on different things on that. maybe you might call uniformly saying that that's all solved problems what would the cat news i think you i'm the last person you find that would say that this is a soft problem.
+
+Um i think though it's interesting to think what if we don't have to think about proofreading for more than what we can do without that but i think you're right that manual proofreading to this day is the main bottleneck uh we have recorded over 10 million manual edits across many data sets including the fly brain The recent MICrONS dataset, Mike Wins has seen one half million manual edits. You can just imagine what the manual work that was done and it's not even we can look at the entire dataset. We are at a 2% of the entire dataset. So this is clearly the main bottleneck.
+
+But I think between me and maybe disagree a little bit how far along we are at this path. Though I still think that many of us are working towards this goal of reducing the need for proofreading and I think we are making big progress. I think the irony is right now that we have been scaling our data sets faster than even proving our methods. And the consequence of that is that we need to do more proofreading today than we have in the past, simply because our data sets are larger and require more manual labor today than we have in the past, simply because our datasets are larger and require more manual labor.
+
+I'm actually not going to disagree with it. Well, Stan said it is, of course, correct. And the problem that Anton brought up is, you know, it's a problem. Reading is costly and takes a lot of money. But what we have to keep in mind, and this is, again, to not be too pessimistic, you have to keep in mind that the datasets that you see published today is most of our datasets datasets that were acquired maybe five years ago and have been processed over that time, better technology exists today.
+
+If we do the memory reading or any other experiment today, this is most likely going to be done with better technology where the permitting cost can be towards the value of two dollars. And that's a big difference.
+
+## Simple Behaviors and Thresholds
+
+My question is sort of drilling down into what non-trivial memory is. So the simplest experiment that I could think of is in a fruit fly, you give the fly some sugar on its legs, it will typically extend its proboscis. You can punish the fly by giving the fly sugar on its leg and in fact presenting the fly with a bitter substance and it will learn no longer to extend its proboscis to sugar. This is something like four or five synapses. The sensorimotor circuit is five synapses. There's 20 defined neurons that we have genetic access to and we could do this experiment, I would guess in three months and find the structural basis of this particular behavior. So my question sort of is, would this be a non-trivial behavior? And if not, are there any non-trivial behaviors in flies at all?
+
+I think that is a great point, of course, but you can argue that any effective memory that a fly has built is already rising to that level. And we have shown we can read out a lot of that. And so maybe we already achieved that by the work in the mushroom body that has been done. I'm not sure it rises to... What is a non-trivial memory? I think it's a question.
+
+I think it comes back to the point of, is this something that can convince your friends at the dinner table? And I not sure that making this argument to those would pass that test That it I think you can totally make the point You can read it out of the connectome You can see the changes And that is certainly decoding.
+
+I have a question also about the definition of memory in a sense, but in comparison to what's the difference between a memory and learning? So memories are, like it's been pointed out earlier, can be episodic, or memories can also reflect as learned behavior, skills behavior. So just as examples, probably everyone remembers their first conference rejection or reviewer two comments specifically, they have a vivid memory of that. But it's not a learned behavior. But everyone, people who know how to ride a bike, for example, they don't think about that as a memory. So when you decode these two things from a connectome, would that be fundamentally different? How do you think about memory versus learned, skilled behaviors?
+
+I don't have a good answer to that, but I think it's an excellent point. This, I'm sorry, Dennis, I can't give you more.
+
+No, but I think, of course, in the simplest way, it's that Jennifer Aniston neuron that we can pull out, that we can point to and that relates to memory. I think for us, we can't look into the flies or the mouse's head to see what it's thinking in that moment when it sees activity. I think ultimately that is part of the problem here, that we may not know what the mouse experiences in that moment.
+
+Sorry, I'm not going to go easy on you since I have a similar question, and I think a lot of us maybe do. But it's sort of a two-part question about going back into how you maybe would define a memory as well as to hear about multiple modalities for memory and how you might explore them. But coming from a cerebellar background, I know thinking about things like vestibular reflex, which is a reflex, but you can sort of train to adapt to sort of skew that reflex. Would you consider on like more of a molecular scale, could that be considered a memory of this sort of training that needs to be done? And then my other question is, how would you maybe think about designing experiments that are not just episodic, but other kinds of procedural, like a Proustian memory and the olfactory system? Would you design experiments differently to try to move Or would you think about evaluating the data differently to decode those different types of memories These are all very good questions apparently Right I think it OK, we'll keep that one in mind. You guys crunch on those questions, and maybe you'll come to an answer.
+
+## Next Steps if Synapses Fail
+
+Go ahead. I think I'm last in line here. So going back to, so there have been several structural features, we sort of were concentrating on the readout of the non-trivial parts, but we left for a moment the structural parts. So there have been several structural parts that have been mentioned, like the synapses, the strength of them, maybe the size, the length of dendrites, other neurites, whatever. And I admire the optimist that let's just go for it and try if reading those structural features is enough. But if it isn't for mammalian scale, what would be your next bet? Like what other structural feature do you think would be the next thing that might need to be concentrated, like in case it doesn't work, for mammalian systems specifically?
+
+Yeah, I mean, just to throw something out there, I will bring us back to the expansion system with the pulse-chase dye. The reason for that is because you can figure out exactly which synapses participated in a memory formation. This work from Adam Cohen was published in Nature Neuroscience earlier this year. Definitely check it out. So there is, I think, a lot of implicit value in knowing, OK, which specific synapses participated. That doesn't decode the memory, but it gives you a way to narrow in much more quickly on which parts of the representation are important.
+
+I think trying and failing is a very important step, Hentus, to see if we can do with the synapses and the connectivity that we have right now. I am personally extremely excited by the foresight of having molecular annotated connectomes that like ones that bring us. And I think having annotations of neurotransmitters especially has been proven indispensable in fly connectomes. So I hope that adding these kinds of labels, molecular labels, will bring us closer to being able to better model connectomes in mammalian systems.
+
+Nobody here thinks that neuromodulators are an important factor I think you have no idea how to deal with them right now.
+
+I mean, I think what you're trying to get to is that there wasn't a necessity for the size of a dendritic spine synapse or the size of the PSD to be well correlated with its function. Now, people have shown this, Haller et al. showed this beautifully, that it was in this particular type, but for instance, in the mushroom body, it's not immediately clear, at least to me, that there is a structural signature of a memory, and yet we know that there's memory.
+
+But what we do know is that there is some physical mechanism that activates these neurons. And so the next level down, I think your question, and I think, Sven, you were saying this, is the molecules, the neurotransmitters, but also the receptors. If you're counting, and I think, Andrew, you were saying this, if you're counting the AMPA receptors that have been inserted into a spine, that's got to be the true functional connection because those are the things that are opening up that give the current that connects one neuron to another, even if the structural size of that synapse is uncorrelated.
+
+## Accuracy and Synapse Loss Benchmarks
+
+Another question? Yeah, so we saw in the Spires Jones presidential lecture on Alzheimer's last night, 10 minutes ago, that even with 4% synapse loss, we were seeing pretty catastrophic issues with memory and maybe near fatal pathologies, 4%. So that kind of gives us an accuracy envelope that we need to fit inside of if we assume that that's like causally linked to memory loss. Right. So do you think that we're on track now, maybe we're there now or on track now to kind of fit within that accurate plus or minus, that last 4% to get maybe catastrophic memory loss reconstructions and then marching forward to accurate reconstructions where we're maybe conserving those memories and synaptic reconstructions?
+
+I have a question about lecture, which I unfortunately did not catch. Was there any information on the synapses being, you know, the 4% missing? Was it random or the probability that those specific cells have? Probably not random. I mean, there's like this possibility that like memory is like holographic, right? And like kind of diffused across the brain. And then there's of course this notion that memory is probably not holographic and it's not like uniform distribution right and it's probably halfway between.
+
+I think 4% is an extremely low bar and I would be very much worried that we don't pass that bar right now and I think one of the problems is that we don't know if we have passed this bar like because connectomics is treated as the ground truth right now testing to itself is hard. So I am very much worried about the 4% bar.
+
+Andrew, it looks like you're... were you with that? Yes. What he said.
+
+## Place Cell Decoding Proposal
+
+Okay. I would like to venture an answer to one of Ken's questions, and I have a question to ask. It should be easy to answer for the committee, but I'll venture my answer first, okay? I'm going to propose a result that I think will will will make the decoding of the place cell memory okay let's suppose I have a animal I record a bunch of place let's say I just record 10 and I know their place field and then I do a connectome to this place cell I reconstruct all the connectivity and i think the the the test would be that if you tell if i tap if you tell me only the place field of one of those place cells and i can tell you i could predict the place field of the other nine and if those are right and i i would say that's a non-trivial decoding of the spatial just a minimally variable spatial memory because i can decode the other nine meaning that and from the relationship from in from the connectivity i can decode you know the room basically so i that's my you know my two cents to your to your question.
+
+Can i ask uh um what regions you this is a hippocampal expert in connectomics uh what regions uh of the hippocampus do you think you would have to have connectivity for to pull that off I would give a minimally viable answer and I would give a more, I don't know, more capable answer or whatever. Minimally viable, I mean, I think it's probably some part of CA3 that have enough numbers of place cells. But I actually don't think that's going to be sufficient because these neurons projected to contralateral hemisphere, who knows that this kind of place cells and the prediction that I'm calling is actually going to the other side.
+
+So it might well need the whole hippocampus. And hippocampus happens to be really big and has this weird banana shape that span pretty much the whole brain so I guess we're talking about recording a bunch of place cells and pretty much reconstruct almost half if not the whole brain but it could be done it could be done by any model I think possible.
+
+## Model Organism Predictions
+
+Okay, I have a totally unrelated question. If you have to say, you know, which model organism is going to be the first to be decoded, a non-trivial memory, and you can only give one answer, whatever your definition of non-trivial memory, what model organism, you know, you would vote for?
+
+Just to echo Sven, I mean, the mouse is going to pass the dinner table test, And maybe it's just like knowing left or right, but that I think might classify as the solution. But I would go for the Drosophila. But it's hard to do.
+
+I think the songbird is closest at this point. And I think it has the most well-established example of what we would constitute a radar.
+
+I feel like some controversy is near here, so just something. All right, and I'll add zebrafish because we shouldn't forget about the fish. And because it's so nice and easy to ground or validate what you believe that you found using calcium imaging stuff.
+
+I will go Drosophila.
+
+So I wonder if like there was a year in genetics that was kind of like where neuroscience is at you know maybe 1970 where you hadn't had a human genome project You knew there were base pairs and all that stuff. And so I wonder, the question is to really understand how brain works. Are we just going to have to decode some human brains and just have full connectomes? Because otherwise, I guess it's my question. Can you really understand how human brains work until you do that? And if so, is it inevitable that we'll have to, you know, decode some human brains so we have that? Because how else can you get this full knowledge without doing that?
+
+I think there will be, like with the genome, there will be a first whole brain. Maybe it's a complement of multiple ones that kind of leads us to anchor. And then you start comparing to that. And you will not acquire a whole new one after that. Once you understand what regions are relevant to your question, you may start just doing those regions and comparing and comparing and comparing. I think that's what we can learn from genomics.
+
+However, I think brains, if I have parallels between connectomics and genomics, there's huge differences. And I think the brain is in the genome, you know somewhat what your entities are. We start, we talk about this at the synapse, is it a size of the synapse? Does it have two states? Is it a molecular level? Like what is our fundamental level that we actually have to understand to start comparing? So I think at some point, the comparison to genomics will break down for connectomics.
+
+Yeah, and just to echo Ken, if the thing that you're interested in is testing a hypothesis around how grid and place cells encode information, we don't need to map the human brain in order to start testing that hypothesis when we have the connectome of the mouse hippocampus. Whether it's true.
+
+## Static vs. Dynamic Memories
+
+Does it matter that a memory is a process? It's not a thing that memories change. you actuate a memory, you're actually changing it. By reliving it, you do change it until the fish is bigger, et cetera. So that's not always the case. For the zebra finch, dwell on this, the song is learned once for life. Doesn't change. It's crystallized. Sorry, what is learned once? The song. The song of the zebra finch So I mean it a specific example but this one where I mean would that make it trivial then perhaps You guys told me about this the EM to MP3 example is not trivial You can literally play back to something. I think it was very hard, but in principle possible. I don't think it's trivial.
+
+Just because you asked process versus static, and it seems to me that for the decoding prize at least the process doesn't necessarily matter it's very interesting to know how learning establishes memory and how learn memory changes over time but for the decoding challenge itself that shouldn't really be an immense so maybe we're not decoding memory the way i understand memory but memory the way a decoder understands memory or something kind of a naive question that's maybe be a little different from the structural connectome, but about maybe functional connectomes. So if you have a clear zebrafish and you could do maybe holographic stimulation of every neuron, every pair of neurons, and see what lights up, is that going to be enough to code memories? And would some combination of structural and functional like that be enough to do it?
+
+I think to qualify, we need the structure. Because ultimately, I think the question is, given the structure, a snapshot of it, can you read out the memory? And so I think that is needed. But I think having all the activity for the neurons and it's certainly something that will help us, I think, get at that question. So I think, to your point, a process and a memory, I think we look at a snapshot of a brain in the end. So we look at a snapshot of memory just in the same way. The memory might have been like, your taste of spaghetti might have changed over time. But we asked the question at the point when your brain was looked at, what did you think about spaghetti? And I think that is what I think we talk about when we talk about your memory that we want to decode.
+
+Then you never actually have a memory if every memory is an instant in time, right? Memory is an instant. I would argue that memory is an instant. Memories can change. Right. Sure. Yeah. Yeah. I agree.
+
+## Simulation and Structure-to-Function
+
+So I've just been wondering about how much of the problem of decoding a memory is actually going from structure to a simulation. So for example, if you think about the songbird, if you want to go to an MP3, you have to basically simulate how these neurons interact and what sequence they're active. And then you also have to somehow ground that and how they are connected to the muscles and then simulate that.
+
+So there's a big question of do we have a good enough model to infer the function from the structure. And like if we, for example, if you find strong synaptic connections between certain neurons and you say, okay, that's my memory, but it could be that these are unrelated to the memory. Maybe there are experiments that can show that these are the synapses that change, but still, does this prove that this is storing the memory? I think you have to actually, like if you ask a human, do you remember this or that? So if you ask an animal, do you remember that, what you do is you have the animal perform some motor action, like the human response to you, okay, it was like that, or the mouse turns right, or something like that. So you need this model which infers the behavior from the structure.
+
+And let's say we assume that synaptic strength encodes the memory, and we simulate it and we find, okay, we didn't get the right answer, so then maybe our model is wrong. It's still in the synapses, but you have to have a really good model to simulate how the activity results from the connections Is that the actual problem of decoding memory
+
+I agree with you that that super important whether it's a memory representation that we were talking about memory right now or any other. Like, say, the dots of ink on a page of paper don't mean anything without a decoder. How you retrieve it determines what it means. But for a decoding experiment like this, These things, while very important, don't need to be in the same experiment. So if you have a system for which you already understand from other experiments, say functional experiments, to some degree how the decoder works, how you can interpret some aspect of what these synapses here may mean, then I believe that you can use a static snapshot to come up with a decoding experiment without having to do that for each of those memories as well would correlate, at least I hope so.
+
+There are a couple points that caught my attention. One has to do with this idea that once you've got a connectome, you can actually have a place-cell mapping. My understanding is that's non-paltry, the place-cell maps is remapped based on contexts. So given any hippocampus, that only is a connectome in contexts. So I think, so that kind of addresses this question of what kind of memory can be addressed or what can be coded without understanding the decoder language to its full And this is just happening now The other question is you know what year are we in with respect to genetics And we're not even close to the science. I think that there is one really fundamental question that is not answered, which at an information level has to do with the information parallel is we don't have a language to understand the dynamics.
+
+If there happens to be a parsed semantic of neural dynamics, just the way we have a machine code for computer science, school, we've had the podunk. We don't understand in behavioral neuroscience right now what the caller is, what genetics calls proteins. And we're beginning to get the idea that there is a DNA. We understand sequences of firings, but we don't understand the way in which those are contextualized in a separate building blocks for actually what we do in slowdown. And the remapping of the place cells is a very good example. You can have exactly the same codes coming out and then you completely get on things based on all contexts.
+
+Anyway, so for comment, you have to pick up if you would. Regarding your first question I absolutely agree So those experiments would have to be in the context and probably one would have to do well one would have to record the activity of the of a place cell like some functional recordings not just static connectome.
+
+## Closing Remarks
+
+So I'm told we are wrapping up the panel. Does anyone have any final thoughts? Has anyone changed their optimism or pessimism in any regard over the past hour?
+
+Okay, well, thanks for all the questions, and thanks to the panelists for being here.
+
+# Insights?
+
+- **Connectome as Memory Substrate**: The ultimate test of connectomics is decoding non-trivial learned functions (e.g., songs, spatial maps, fear associations) purely from static synaptic weights, falsifying memory theories if unsuccessful—intuition rooted in Seung's 2009 vision of inferring function via connectivity motifs.
+- **Bimodal Synaptic Plasticity (Dorkenwald et al.)**: Synapse sizes follow a mixture of two log-normals, sharpening to binary (small/large) states in matched pairs with shared history; mechanistic insight supports discrete Hebbian rules (potentiation/depression) overlaid with analog noise, enabling memory storage in connectivity patterns extractable from large EM datasets.
+- **Connectome Constraints for Functional Prediction (Lappelainen et al.)**: Trick of differentiable network models fit via gradient descent on partial functional data (e.g., motion selectivity) exploits EM wiring as a high-dimensional prior, bypassing unknown biophysics—pivotal for scaling to vertebrate systems like MICrONS.
+- **Normalized Wiring Statistics (Ding et al.)**: Core trick: Compute axon-dendrite proximity distances to baseline synaptic density, revealing feature-similarity promotes connectivity while spatial-overlap suppresses it; insight into learning via assortative matching for features and decorrelation for positions, testable in multi-area connectomes.
+- **Engram Synaptic Tracking (Koe et al.)**: eGRASP tags reveal intra-hippocampal reorganization drives memory generalization (specific → gist), challenging cortical consolidation dominance—mechanistic bridge for connectome decoding of dynamic memory evolution.
+- **Prize-Qualifying Benchmarks**: Non-trivial decoding requires crystal-clear model validation (e.g., HVC→RA song, hippocampal place fields), emphasizing EM scale (mm³ volumes), paired imaging, and prizes to catalyze connectomics-engram collaborations.
+
+and:
+
+- **Hypothesis-Driven Benchmarks**: Test specific theories (e.g., sequential HVC-RA chain in zebra finch songbird for syllable sequences; grid-to-place cell connectivity in hippocampus for T-maze paths) by predicting learned features (e.g., syllable lengths, frequencies, left/right turns) quantifiable in bits, using N>1 animals for statistical significance despite variability.
+- **Non-Trivial Threshold**: Beyond trivial detection of learning (e.g., proboscis extension in flies), requires differentiating multiple memories (e.g., multiple songs in one bird, 10+ bits), passing "dinner table test" (convincing lay audience), and advancing structure-function theory (e.g., predicting calcium activity variance >40% from connectome).
+- **Annotated Static Snapshots Suffice**: Focus on "EM-to-MP3" decoding from single-timepoint connectomes with ultrastructure (synapse size/PSD for strength), molecular labels (neurotransmitters, receptors, AMPA counts), and pulse-chase for plasticity timestamps; temporality via T0/T1 slices still "static."
+- **Targeted Sub-Volumes**: No whole-brain needed; prioritize sensory-motor paths (e.g., HVC-RA, CA1/CA3, mushroom body) informed by decades of physiology, leveraging short sensory-brain paths in flies/songbirds/zebrafish.
+- **Overcoming Degeneracy**: Use functional priors (e.g., MICrONS dataset) to associate neurons/behaviors; simulate with imperfect biophysics (as in FlyWire) to match activity; multiple realizability mitigated by statistical predictions across specimens.
+- **Bottlenecks and Tricks**: Proofreading (10M+ edits, ~$1000/neuron) scales with dataset size but dropping (to ~$2); suppress technical noise to <4% (Alzheimer's synapse loss bar); optical connectomics + multi-color proteins (24+ via expansion) for cheap molecular readout; automate segmentation to shift effort to science.
+- **Optimism Spectrum**: 2–5 years (songbird HVC, T-maze) vs. 30+ years (degeneracy, glia/neuromods, dynamics); "just try" mantra—failures refine (e.g., if synapses insufficient, add glia/receptors).
+- **Memory vs. Behavior/Process**: Learned function (input-output map); static snapshot like crystallized zebra finch song; experience unnecessary if behavior decodable; episodic (replay sequences) > procedural (reflex adaptation).
+
+# Transcript errors?
+
+- "eGrasp" → "eGRASP" (expanded genetically targeted reconstruction of synapses at presynaptic sites).
+- "Kali" → Best guess "Kalirin" (actin regulator implicated in synaptic manipulation; alternatives like "KalOpto" optogenetics possible but less fitting).
+- **Names/Institutions**: "Randall Coonan/Cunha" → Randall Koene (Carbon Copies); "Sudolkenwold" → Sven Dorkenwald; "Mihail Nushevsky" → Mihaly Januszewski; "Ernst Trimble" → Ernst Strüngmann; "Helene Schmidt" → Helena Anna Schmidt; "Voxa" → Voxa (confirmed EM company).
+- **Technical Terms**: "Foodfly"/"Interzofila"/"quantumics" → Drosophila/fly connectomics; "song word song" → songbird song; "HPC" → HVC (songbird); "burp"/"silver finches" → bird/zebra finches; "RA" → robust nucleus of arcopallium (RA); "clear cells"/"GSM" → glia cells/?glia-synapses-mitochondria; "Tabacoli" → Tabakouli et al. (2025 light microscopy preprint); "Epsilon pulse chase dyes" → pulse-chase dyes (Adam Cohen lab); "FITI"/"FIWARE" → FlyWire; "FETO" → grid-to-place?; "Shadyor"/"Stedt"/"Peck" → unclear panelist references (possibly Sven/Helena); "MICROS" → MICrONS.
+- **Phrases**: "Differentiate between different batteries" → ?differentiate between different memories/values; "tv learning" → RL (reinforcement learning); "spend as a thumb" → ?use as a thumb(rule); "world memories" → ?worm/Drosophila memories; "meme as a connectome" → ?memory as; "HBC" → ?HVC; "vernice villain" → variance explained; "drift readings" → ?replay readings; "EM to MP3" → clear metaphor retained; "podunk"/"caller" → ?parsed(?)/code(?); "Hentus" → ?audience name.
+
