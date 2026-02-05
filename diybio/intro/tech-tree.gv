@@ -1,0 +1,234 @@
+digraph DIYbio {
+    rankdir=TB;
+    node [shape=box, style=rounded];
+
+    // Tier 0 - Basic
+    subgraph cluster_0 {
+        label="Tier 0: Kitchen Basics";
+        style=dashed;
+        heat_source [label="Heat Source\n(stove/hotplate)"];
+        containers [label="Glass Containers\n(jars, bottles)"];
+        scale [label="Scale\n(0.01g precision)"];
+        pH_strips [label="pH Strips"];
+    }
+
+    // Tier 1 - Chemistry
+    subgraph cluster_1 {
+        label="Tier 1: Basic Chemistry";
+        style=dashed;
+        buffer_prep [label="Buffer Preparation"];
+        media_prep [label="Growth Media"];
+        pressure_cooker [label="Pressure Cooker\n(autoclave substitute)"];
+        fan_filter [label="Fan + HEPA Filter"];
+    }
+
+    // Tier 2 - Sterility & Visualization
+    subgraph cluster_2 {
+        label="Tier 2: Sterility & Viz";
+        style=dashed;
+        flow_hood [label="Laminar Flow Hood\n(DIY or commercial)"];
+        sterile_technique [label="Sterile Technique"];
+        gel_electrophoresis [label="Gel Electrophoresis"];
+        uv_transilluminator [label="UV Transilluminator"];
+        microscope [label="Basic Microscope"];
+    }
+
+    // Tier 3 - Molecular Tools
+    subgraph cluster_3 {
+        label="Tier 3: Molecular Biology";
+        style=dashed;
+        thermocycler [label="Thermocycler/PCR\n(DIY possible)"];
+        competent_cells [label="Competent Cells\n(E.coli/yeast)"];
+        centrifuge [label="Centrifuge\n(DIY dremel-based)"];
+        micropipettes [label="Micropipettes"];
+        restriction_enzymes [label="Restriction Enzymes\n(buy or extract)"];
+        ligase [label="DNA Ligase\n(T4 etc)"];
+        polymerase [label="DNA Polymerase\n(Taq/Pfu)"];
+        yeast_strains [label="Yeast Strains\n(S. cerevisiae)"];
+        gene_knockout [label="Gene Knockout\n(CRISPR/homologous recombination)"];
+        selective_media [label="Selective Media\n(-His, -Leu, -Ura etc)"];
+    }
+
+    // Tier 4 - Transformation & Selection
+    subgraph cluster_4 {
+        label="Tier 4: Transformation & Selection";
+        style=dashed;
+        chemical_transform [label="Chemical Transformation\n(LiAc/PEG for yeast)"];
+        electroporation [label="Electroporation\n(DIY possible)"];
+        selection [label="Selection/Screening"];
+        auxotrophic_yeast [label="Auxotrophic Yeast\n(custom knockout strains)"];
+    }
+
+    // Tier 5 - Advanced & Protein Production
+    subgraph cluster_5 {
+        label="Tier 5: Synthetic Biology & Protein Production";
+        style=dashed;
+        cloning [label="Cloning/Assembly"];
+        crispr [label="CRISPR Editing"];
+        directed_evolution [label="Directed Evolution"];
+        protein_expression [label="Protein Expression\n(E. coli/yeast)"];
+        cas9_grna [label="Cas9 + gRNA\n(buy or express)"];
+        
+        // DIY Enzyme Production
+        expression_plasmids [label="Expression Plasmids\n(Addgene or DIY)"];
+        chromatography [label="Chromatography Columns\n(HisTrap, SP - DIY possible)"];
+        dialysis [label="Dialysis Equipment\n(MWCO membranes)"];
+        sds_page [label="SDS-PAGE Analysis\n(purity check)"];
+        
+        // Enzyme outputs
+        diy_restriction [label="DIY Restriction Enzymes"];
+        diy_ligase [label="DIY DNA Ligase"];
+        diy_polymerase [label="DIY Polymerase"];
+        diy_cas9 [label="DIY Cas9"];
+        
+        // DIY RNA/DNA Synthesis
+        phosphoramidite_reagents [label="Phosphoramidite Reagents\n(A,C,G,T + activator)"];
+
+        // Manual synthesis equipment
+        schlenk_line [label="Schlenk Line\n(inert atmosphere)"];
+        rotary_evaporator [label="Rotary Evaporator"];
+        nmr [label="NMR Spectrometer\n(for quality control)"];
+        vacuum_pump [label="Vacuum Pump"];
+        glovebox [label="Glovebox\n(optional)"];
+        manual_solid_phase [label="Manual Solid‑Phase Synthesis\n(glass frit column)"];
+        protected_nucleosides [label="Protected Nucleosides\n(Ac, Bz, iBu groups)"];
+        phosphorus_trichloride [label="PCl3 or other P(III) source"];
+        phosphorochloridite_synth [label="Phosphorochloridite Synthesis\n(requires anhydrous conditions)"];
+        
+        inkjet_synthesizer [label="Inkjet DNA Synthesizer\n(OpenIDS2, ~$4k DIY)"];
+        inert_atmosphere [label="Inert Atmosphere\n(Ar/N2 gas supply)"];
+        oligo_purification [label="Oligo Purification\n(HPLC/ethanol precip)"];
+        
+        t7_rnap [label="T7 RNA Polymerase\n(express or buy)"];
+        in_vitro_transcription [label="In Vitro Transcription\n(NTPs + template)"];
+        rna_purification [label="RNA Purification\n(phenol-chloroform/RNeasy)"];
+        
+        // Outputs
+        diy_oligos [label="DIY Oligonucleotides\n(~30-100nt)"];
+        diy_rna [label="DIY RNA\n(mRNA, gRNA, etc)"];
+    }
+
+    // Basic dependencies
+    heat_source -> buffer_prep;
+    heat_source -> media_prep;
+    containers -> buffer_prep;
+    containers -> media_prep;
+    scale -> buffer_prep;
+    scale -> media_prep;
+    pH_strips -> buffer_prep;
+
+    pressure_cooker -> sterile_technique;
+    fan_filter -> flow_hood;
+    heat_source -> pressure_cooker;
+
+    flow_hood -> sterile_technique;
+    sterile_technique -> competent_cells;
+    sterile_technique -> chemical_transform;
+    sterile_technique -> selection;
+
+    buffer_prep -> gel_electrophoresis;
+    heat_source -> gel_electrophoresis;
+
+    gel_electrophoresis -> uv_transilluminator [style=dashed, label="visualization"];
+
+    buffer_prep -> thermocycler;
+    media_prep -> competent_cells;
+
+    thermocycler -> chemical_transform;
+    thermocycler -> electroporation;
+    competent_cells -> chemical_transform;
+    competent_cells -> electroporation;
+    micropipettes -> chemical_transform;
+    micropipettes -> electroporation;
+
+    chemical_transform -> selection;
+    electroporation -> selection;
+    centrifuge -> selection;
+    gel_electrophoresis -> selection;
+
+    selection -> cloning;
+    cloning -> crispr;
+    cloning -> directed_evolution;
+    cloning -> protein_expression;
+    thermocycler -> crispr;
+
+    // Enzyme dependencies
+    polymerase -> thermocycler;
+    restriction_enzymes -> cloning;
+    ligase -> cloning;
+    cas9_grna -> crispr;
+    protein_expression -> cas9_grna [style=dashed, label="DIY route"];
+    thermocycler -> directed_evolution;
+
+    // Cross-tier dependencies
+    microscope -> selection [style=dotted];
+    centrifuge -> competent_cells;
+
+    // DIY Enzyme Production dependencies
+    cloning -> expression_plasmids;
+    expression_plasmids -> protein_expression;
+    protein_expression -> chromatography;
+    chromatography -> dialysis;
+    dialysis -> sds_page;
+    sds_page -> diy_restriction [style=dashed];
+    sds_page -> diy_ligase [style=dashed];
+    sds_page -> diy_polymerase [style=dashed];
+    sds_page -> diy_cas9 [style=dashed];
+    
+    // Connect DIY enzymes back to main workflow
+    diy_restriction -> restriction_enzymes [style=dashed, label="replaces"];
+    diy_ligase -> ligase [style=dashed, label="replaces"];
+    diy_polymerase -> polymerase [style=dashed, label="replaces"];
+    diy_cas9 -> cas9_grna [style=dashed, label="replaces"];
+
+    // Auxotrophic yeast bootstrapping
+    media_prep -> selective_media;
+    yeast_strains -> gene_knockout;
+    crispr -> gene_knockout;
+    gene_knockout -> auxotrophic_yeast;
+    selective_media -> auxotrophic_yeast;
+    auxotrophic_yeast -> selection [label="for genetic selection"];
+    
+    // Connect auxotrophic yeast to enzyme production (yeast can express proteins too)
+    auxotrophic_yeast -> protein_expression [style=dotted, label="alternative host"];
+    
+    // DIY Synthesis dependencies
+    buffer_prep -> phosphoramidite_reagents [style=dotted];
+    protein_expression -> t7_rnap [style=dashed];
+    cloning -> in_vitro_transcription [label="template"];
+    // Manual synthesis requires anhydrous solvents, not covered by buffer_prep
+    
+    // Phosphoramidite synthesis path
+    phosphoramidite_reagents -> inkjet_synthesizer;
+    inert_atmosphere -> inkjet_synthesizer;
+    inkjet_synthesizer -> oligo_purification;
+    oligo_purification -> diy_oligos;
+    
+    // Manual synthesis alternative (phosphorochloridite route)
+    protected_nucleosides -> phosphorochloridite_synth;
+    phosphorus_trichloride -> phosphorochloridite_synth;
+    schlenk_line -> phosphorochloridite_synth;
+    vacuum_pump -> phosphorochloridite_synth;
+    rotary_evaporator -> phosphorochloridite_synth;
+    phosphorochloridite_synth -> phosphoramidite_reagents [label="synthesized amidites"];
+    
+    // Manual solid-phase synthesis
+    phosphoramidite_reagents -> manual_solid_phase;
+    schlenk_line -> manual_solid_phase [label="inert atmosphere"];
+    manual_solid_phase -> oligo_purification;
+    nmr -> oligo_purification [style=dotted, label="quality check"];
+    glovebox -> manual_solid_phase [style=dotted, label="optional"];
+    
+    // RNA synthesis path  
+    t7_rnap -> in_vitro_transcription;
+    in_vitro_transcription -> rna_purification;
+    rna_purification -> diy_rna;
+    
+    // Connect DIY oligos back to workflow
+    diy_oligos -> cloning [style=dashed, label="primer/gene synthesis"];
+    diy_oligos -> crispr [style=dashed, label="gRNA oligos"];
+    diy_rna -> crispr [style=dashed, label="gRNA transcripts"];
+    
+    // Alternative: use commercial enzymes with DIY oligos
+    polymerase -> in_vitro_transcription [style=dotted, label="T7 RNAP alt"];
+}
