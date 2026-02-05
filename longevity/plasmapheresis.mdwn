@@ -1,5 +1,7 @@
 # Plasmapheresis for longevity
 
+[[!toc levels=6]]
+
 ## Scientific overview
 
 Previously in 2016 *[A single heterochronic blood exchange reveals rapid inhibition of multiple tissues by old blood](https://doi.org/10.1038/ncomms13363)*, blood was exchanged from young mice to old, and vice-versa. Highlight is the fact that old blood appears to contain factors which actively suppress rejuvenation. One such example is the inhibition of stem cells: when muscle stem cells are cultured in old blood, almost not a single one proliferates; and when the plasma of the old blood is diluted, they regain their function (see 2019 Conboy paper mentioned below). Transfusion of old blood had this effect even in otherwise young and healthy subjects. Conversely, young blood does not contain any instrinsic factors which can effectively mitigate this suppression, or otherwise stimulate rejuvenation again, if given to already aged subjects.
@@ -11,7 +13,7 @@ In 2019 *[Undulating changes in human plasma proteome profiles across the lifesp
 
 In 2020 *[Rejuvenation of three germ layers tissues by exchanging old blood plasma with saline-albumin](https://doi.org/10.18632/aging.103418)*, Irina and Michael Conboy discovered that plasmapheresis lowered multiple biomarkers of aging. The procedure consisted of replacing one volume of blood plasma (i.e 50-60%) with a neutral solution (saline + albumin). The consequence of doing this is a significant dilution of circulating proteins in the plasma. It is hypothesised that many of those proteins play signaling roles and that the therapeutic benefit emerges from interrupting signaling feedbacks. By having to secrete new signals following the procedure, the body has an opportunity to adjust their ratios and transitions spontaneously into a different steady state. Compared to manually tweaking individual signals, this process appears to be natural and self-adaptive. A rudimentary mathematical model was also used to demonstrate how steady states can arise and how interrupting the feedback loops can trigger a state transition. A further paper by the Conboys in 2022, *[Old plasma dilution reduces human biological age: a clinical study](https://doi.org/10.1007/s11357-022-00645-w)*, showed through a small clinical trial that plasmapheresis once monthly for 6 months provided a cumulative improvement in aging biomarkers.
 
-## Practicalities 
+## Practicalities
 
 Plasmapheresis, also known as apheresis, is an old, well-established and safe procedure. It consists of blood being passed to a plasmapheresis machine, then centrifuged to separate plasma from cells and finally returned to the patient with some of the original plasma removed. The main risk, albeit rare, is that of triggering coagulation, due to blood leaving the closed-circuit of the circulatory system and making contact with the artificial surfaces of the device. [Haemonetics](https://plasma.haemonetics.com/device-solutions) is a popular supplier of low-cost, portable plasmapheresis units, which have been known to be resold occasionally on secondary market. Replacing removed plasma with a neutral saline + albumin solution appears to be optional: the Conboys demonstrated that the therapeutic benefit does not depend on the addition of exogenous, "fresh" albumin. The body is able to restore the volume of lost plasma quickly, provided sufficient hydration and dietary protein. 
 
@@ -21,3 +23,79 @@ Unfortunately, plasmapheresis is FDA-approved only for specific conditions, such
 
 - [Tissue Rejuvenation via Plasma Dilution | Irina Conboy, UC Berkeley](https://www.youtube.com/watch?v=yrgOCq1MVQc) (video ~1hr)
 - [Irina Conboy's faculty homepage](https://vcresearch.berkeley.edu/faculty/irina-conboy) with some links
+
+
+----
+
+# Plasmapheresis and Young Blood Rejuvenation for Longevity
+
+## Overview
+
+Aging is increasingly understood not as stochastic damage accumulation, but as a coordinated systemic process driven by stem cell exhaustion, altered intercellular communication, and deleterious shifts in the circulating proteome. The blood plasma serves as a central medium for systemic signaling, and its composition undergoes significant remodeling with age. [Lehallier et al. (2019)](https://doi.org/10.1038/s41591-019-0673-2) identified three major inflection points in the human plasma proteome—approximately ages 34, 60, and 78—where protein abundance shifts dramatically before stabilizing into new steady states.
+
+Heterochronic parabiosis experiments established that the aged circulatory milieu contains factors that actively suppress tissue regeneration. [Rebo et al. (2016)](https://doi.org/10.1038/ncomms13363) demonstrated that old blood inhibits satellite cell proliferation even in young hosts, while young blood fails to confer significant rejuvenation to aged tissues. This asymmetry suggests that aging factors are dominant suppressors rather than simply reflecting the absence of youth factors. One proposed mechanism is that damaged tissues produce inhibitory signals (e.g., TGF-β, CCL11) that propagate systemically, entraining other organs into a senescent phenotype.
+
+
+## Therapeutic Plasma Exchange (Plasmapheresis)
+
+### Mechanism of Action
+
+[Mehdipour et al. (2020)](https://doi.org/10.18632/aging.103418) demonstrated that a single exchange of approximately 50–60% of plasma volume with isotonic saline supplemented with 5% albumin produced significant rejuvenation across three germ layer tissues in aged mice. The intervention reduced fibrosis, improved neurogenesis, and restored myogenic capacity. Critically, the therapeutic benefit derived from *dilution* of inhibitory factors rather than addition of exogenous youth signals. A rudimentary dynamical systems model illustrated how interruption of autocrine/paracrine feedback loops can induce transition to alternative steady states.
+
+A subsequent clinical trial ([Kiprov et al., 2022](https://doi.org/10.1007/s11357-022-00645-w)) showed that monthly plasmapheresis for six months produced cumulative improvements in epigenetic age biomarkers, though the cohort was small (n=8) and further validation is required.
+
+### Key Circulating Factors
+
+| Factor | Direction with Age | Proposed Role |
+|--------|-------------------|---------------|
+| TGF-β | ↑ | Inhibits satellite cell activation; promotes fibrosis |
+| CCL11 (Eotaxin) | ↑ | Impairs neurogenesis; associated with cognitive decline ([Villeda et al., 2011](https://doi.org/10.1038/nature10357)) |
+| β2-microglobulin | ↑ | Cognitive impairment in aged mice |
+| TIMP2 | ↓ | Supports synaptic plasticity; identified by Bhattacharya/Bheda as youth factor |
+| GDF11 | Disputed | Initially reported to rejuvenate muscle/heart; subsequent studies contested efficacy |
+
+### Practical Considerations
+
+Plasmapheresis is FDA-approved for autoimmune indications (e.g., myasthenia gravis, Guillain-Barré syndrome) and remains off-label for anti-aging applications. The procedure requires venous access, a centrifugal or membrane-based apheresis device (e.g., [Haemonetics PCS2](https://plasma.haemonetics.com/device-solutions)), and trained personnel. Anticoagulation (typically citrate) is necessary to prevent clotting on artificial surfaces.
+
+Replacement fluid composition remains under investigation. The Conboys demonstrated that exogenous albumin is not strictly required if hydration and dietary protein are adequate, though albumin replacement maintains oncotic pressure and may reduce post-procedure edema. Standard plasma donation protocols are insufficient—volume limits (~500 mL) and frequency restrictions preclude achieving the 50–60% dilution factor required for therapeutic effect.
+
+- [Maxwell Clinic](https://maxwellclinic.com/) (US, high cost)
+- [Dobri Kiprov](https://dobrikiprov.com/) (consulting)
+- [Lyfspn](https://www.lyfspn.com/) (in development)
+- [IMYu](https://www.lifespan.io/organizations/imyu/) (Conboy startup, modified protocol)
+
+---
+
+## Future Directions
+
+| Intervention | Maturity | Key Challenge |
+|--------------|----------|---------------|
+| Plasma exchange (TPE) | Clinical trials | Standardization of protocol; identification of optimal exchange frequency |
+
+---
+
+## Further Reading
+
+- [Tissue Rejuvenation via Plasma Dilution | Irina Conboy, UC Berkeley](https://www.youtube.com/watch?v=yrgOCq1MVQc) (video, ~1hr)
+- [Irina Conboy faculty homepage](https://vcresearch.berkeley.edu/faculty/irina-conboy)
+- [Lifespan.io organizational profiles](https://www.lifespan.io/organizations/)
+
+---
+
+## References
+
+Kiprov, D.D., et al. (2022). Old plasma dilution reduces human biological age: a clinical study. *GeroScience*, 44, 2701–2720. [DOI: 10.1007/s11357-022-00645-w](https://doi.org/10.1007/s11357-022-00645-w)
+
+Lehallier, B., et al. (2019). Undulating changes in human plasma proteome profiles across the lifespan. *Nature Medicine*, 25, 1843–1850. [DOI: 10.1038/s41591-019-0673-2](https://doi.org/10.1038/s41591-019-0673-2)
+
+Mehdipour, M., et al. (2020). Rejuvenation of three germ layers tissues by exchanging old blood plasma with saline-albumin. *Aging*, 12(10), 8790–8819. [DOI: 10.18632/aging.103418](https://doi.org/10.18632/aging.103418)
+
+Rebo, J., et al. (2016). A single heterochronic blood exchange reveals rapid inhibition of multiple tissues by old blood. *Nature Communications*, 7, 13363. [DOI: 10.1038/ncomms13363](https://doi.org/10.1038/ncomms13363)
+
+Villeda, S.A., et al. (2011). The ageing systemic milieu negatively regulates neurogenesis and cognitive function. *Nature*, 477, 90–94. [DOI: 10.1038/nature10357](https://doi.org/10.1038/nature10357)
+
+
+
+
+
