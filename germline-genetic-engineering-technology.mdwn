@@ -1,0 +1,147 @@
+<center><h2><u>Technical Outline</u></h2></center>
+
+Human embryo editing is often considered impractical, unsafe, cost-prohibitive or unethical. None of these are true. Performing hundreds of edits to an embryo, maintaining full genomic and epigenetic integrity, is possible today. This would allow for all manner of enhancements, providing substantial benefits that would be otherwise unobtainable via adult gene therapy or other post-birth interventions.
+
+While the state of the art in human embryo editing is currently considered limited to CRISPR microinjection into a zygote, a far more capable technique is available today with none of the downsides inherent to microinjection (mosaicism, undetectable off-target mutations, limited editing).
+
+Here is an outline of the proposed technique, achievable with no new breakthroughs in biotechnology:
+
+1. Conceive an embryo in vitro using normal IVF techniques.
+2. Extract embryonic stem cells (ESCs) from the embryo at an early stage, and grow them in a dish until we have thousands available.
+3. Modify the cells with any number of available techniques (viral, CRISPR, lipid nanoparticles, integrases, etc), then allow them to recover and integrate any edits.
+4. Plate the cells out at a low density so that they form colonies of a few hundred cells, each of which is derived from a single cell.
+5. Perform genome sequencing on some cells from each colony to find ones which have been modified and contain no deleterious off-target mutations. As each colony is monoclonal, every cell in it has a genome identical to those sequenced.
+6. After finding a colony that meets our criteria, we have a few options:
+* Take a cell from it and transplant its nucleus into an enucleated egg cell. This mimics the process of somatic cell nuclear transfer (SCNT, aka cloning), with the important difference that the donor nucleus is from an early-embryonic cell and is far more compatible with the “reprogramming” that occurs in the host egg.
+* Mimicking the “Velocimouse” technique: inject several of the modified cells into another, “host” embryo which is at approximately the 8-cell stage. The host embryo forms the trophoblast (placenta), while the injected cells form the inner cell mass.
+* Wait a little longer for “synthetic embryo” technology to develop, wherein a larger number of the modified ESCs are coaxed into forming the entire embryo from scratch.
+7. Implant the resulting embryo as normal.
+
+<center><h2><u>Embryonic stem cell culture and modification</u></h2></center>
+
+Perhaps the last barrier to the successful implementation of this technique was a method to stably culture human ESCs in a “naive” state. ESCs exist in two subtypes, “naive” and “primed”. Naive cells are less differentiated than primed, possess a faster growth rate and more open chromatin, and are more epigenetically stable. By chance, mouse ESC cells have been natively cultured in a naive state from the beginning, allowing much more success in their manipulation. Human ESCs, however, had only been kept stable in a primed state.
+
+In 2020, the Serrano lab [found](https://www.nature.com/articles/s41556-020-0573-1) a simple tweak to naive human ESC culture that allowed for their stable expansion and passaging over [several](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8069959/) months, including the preservation of imprinted loci. Interestingly, all that was needed to accomplish this feat was the addition of a single small-molecule CDK inhibitor. With this research in hand, we can now extract ESCs from a human embryo at this naive cell stage, and keep them stable in culture long enough to perform extensive editing. Recent developments like the “Supersox” technique may provide an alternative or complementary approach, though more research is needed.
+
+Modification of the resulting cells can be accomplished by nearly any technique available. All the variations of CRISPR, viral transduction, lipid nanoparticles – even naked DNA added directly to the cells can be taken up and integrated into their genomes. Of course, methods with higher accuracy and efficiency are preferable. But they are not required.
+
+After extraction of cells from the embryo, we can initially grow them for 1-2 weeks, leading to thousands of cells. At this point, we apply whatever gene editing reagents are required, giving the cells a few days to recover and integrate the new DNA and/or mutations. The cells can then be diluted to a low concentration and plated on a new dish, with sufficient space between them. They then divide as normal, forming colonies which are each derived from a single cell.
+
+By extracting a few cells from each colony, we can perform genome sequencing and determine which colonies have all the desired mutations, and no dangerous off-target effects. As each colony is ‘monoclonal’, derived from a single progenitor cell, we know that their genomes will be identical. And since we can analyze hundreds of cells for each sample, the genomic data is of sufficiently reliable quality. This has been, and will continue to be, an issue with CRISPR microinjection - there, only one or two cells can be removed from the embryo for sequencing without negatively affecting its viability.
+
+The process can be repeated multiple times, by expanding the cells from a ‘good’ colony, modifying them again, and re-sequencing their genomes. While this process cannot be repeated infinitely, a few rounds (combined with the bleeding edge of CRISPR multiplex editing) should allow us to modify basically all of the SNPs and genes for which we have a high confidence of utility.
+
+Thanks to the enormity of R&D capital being poured into improvement of CRISPR and related techniques – engineered integrases, base editing, prime editing, etc. – we will benefit from any new improvements to genetic engineering technology.
+
+<center><h2><u>Embryonic stem cell nuclear transfer</u></h2></center>
+
+After we have modified an ESC line with all required edits, the nucleus of one can be transferred into an enucleated egg. This technique has been practiced for decades – albeit using somatic cells as the donor – in what is commonly described as ‘cloning’. At the time of Dolly the sheep, the success rate of using such somatic cells was approximately 0.1%, with various deformities and other conditions.
+
+It is important to note here that these low success rates and defects were due mostly to the use of a random somatic cell as the donor, but rates have improved somewhat in recent years with the rise of domestic pet and horse cloning. However, reliable numbers on the success rate are not available.
+
+From the moment a new nucleus is injected into an egg, the transcription factors floating around in the egg’s cytoplasm must fully reprogram the injected nucleus’ epigenome. To be frank, it is miraculous that this worked at all, given that a somatic cell is terminally differentiated and has only 1-2 cell divisions in which to completely reorganize its structure and take on its new fate. If this does not occur, the embryo simply dies, or if it lives, there are often misprogramming errors that only show up later (in utero, at birth, or afterwards).
+
+Beyond this, the accumulation of deleterious mutations in somatic cells predisposes them to the various deformities which often occur during cloning. Each cell type in the body is differentiated into its specific lineage by the silencing of genes specific to other tissues. For example, in a skin cell, the genes related to liver, brain, or brain cells are silenced. This mechanism is mostly mediated by methylation of the cytosines in CpG dinucleotides.
+
+This methylation, in ‘CpG islands’ in a gene’s upstream regulatory regions, is an efficient way to silence genes, as transcription factors which normally recognize an unmethylated CpG-containing motif are unable to bind to methyl-CpG and activate the gene. However, over time, the resulting methylcytosines will deaminate and mutate into thymines. This has no negative effect on the cell, since the transcription factor will also not bind to a TpG.
+
+However, if turning such a cell into an embryo, these TpG mutations can not be reverted back into an unmethylated CpG. For example, by using a skin cell as the donor, every gene not related to skin will have accumulated an enormous number of mutations in its regulatory regions. The genes then cannot be activated as effectively, leading to defects.
+
+It is important to note here that these mutations are, on a per-mutation basis, far more dangerous than the more “random” mutations that occur in every embryo. They are also the most common type of somatic mutation. Sperm stem cells express far more of the enzyme responsible for correcting this deamination mutation than any other cell type, yet even in sperm these CpG mutations are by far the most common. This isn’t to say that a single CpG mutation is lethal to an embryo, nor does it guarantee birth defects. However, when using an aged somatic cell to create an entire human embryo, the risks are far too high.
+
+Anyway, what does this mean for our technique? The use of natural embryos as the source material, instead of the reprogrammed somatic cells upon which SCNT cloning has relied, means that we do not suffer from any of the downsides. The epigenome of an ESC is far more amenable to the reprogramming performed by the host egg cell, as it is temporally separated from that native state by only a few cell divisions, rather than thousands. Its genome is also as intact as that of the naturally-derived embryo from where it was sourced.
+
+Thus the low efficiencies and risks that have plagued the nuclear transfer technique can likely be avoided.
+
+<center><h2><u>The Velocihuman and synthetic embryo alternative</u></h2></center>
+
+In the event that the above nuclear transfer technique does not succeed or meet our standards, there is another perfectly workable alternative. The [Velocimouse](https://web.archive.org/web/20190307153958id_/http://pdfs.semanticscholar.org/e285/806b1087c687ff91db97c5efd58bcca04feb.pdf) technique has been practiced for over a decade, allowing for the creation of embryos sourced from genetically modified ESCs.
+
+In brief, the modified cells (generated in a dish and sequence-verified) are injected into an early-stage ‘host’ embryo. Due to complex cell signaling mechanisms, the injected cells will naturally go on to form the inner cell mass (and eventual fetus) of the resulting chimera, while the cells of the host embryo differentiate to become the trophoblast, which forms the placenta.
+
+This is not a perfect technique, however. There remains a risk of chimerism, where cells from the host embryo contribute to the eventual fetus, which is not ideal. However, the high success rate even in the absence of genetic interventions indicates that this will be a fertile ground upon which to improve the process.
+
+By utilizing, for example, CRISPR microinjection into the host embryo at the single-cell zygote stage, we could knockdown or otherwise mutate certain genes which are critical to cell fate determination. In this case, the resulting cells would simply be unable to contribute to the inner cell mass, and will naturally ‘decide’ to only form the placenta. There are a multitude of options which should relatively easily allow us to generate embryos that are 100% derived from modified ESCs.
+
+Somewhat more speculatively, the development of “[synthetic](https://www.cell.com/cell/fulltext/S0092-8674%2822%2900981-3)” embryos derived entirely from cultured embryonic stem cells may allow us to ignore all of the above issues. This research is still in its early stages, but is actively being pursued by the Hanna and Zernicka-Goetz labs.
+
+<center><h2><u>Practical considerations</u></h2></center>
+
+Testing and optimization of these techniques can be performed with equipment and reagents commonly available in IVF clinics and embryonic stem cell labs. Perfection of the protocols and extensive testing will be required, since our highest priority is to avoid birth defects. 
+
+Nonetheless, we could develop a highly reliable process in a short timeframe with 
+relatively minimal resources. This is thanks to the wealth of well-optimized protocols that already exist for embryo manipulation, genetic screening, ESC culture, genetic modification, and nuclear transfer.
+
+Restrictions on human germline genetic modification vary around the world. In the case of the United States, the FDA will simply not review or approve any procedure involving implanting a modified embryo into a womb. However, modification of embryonic cells and the creation of modified embryos is perfectly legal (as long as no federal funding is received) and routine in many labs. The actual implantation procedure can be performed in any IVF clinic around the world.
+
+While sperm is easy to obtain, human eggs must be extracted in a laborious process. There could be a workaround where an egg/embryo banking facility is set up under the proper regulations. Women go to a local IVF clinic for egg extraction, and then request that their gametes be stored at this third-party facility. The facility then thaws the eggs and uses them to generate embryos and cells for R&D. This would eliminate the need for a full IVF clinic until we are ready to try implantation.
+
+<center><h2><u>Edits of interest</u></h2></center>
+
+Leaving aside the ongoing advances in preimplantation genetic diagnosis and embryo selection, which provide polygenically-scored embryos to parents, the ability to directly modify the human genome gives us the previously unimagined ability to bestow beneficial traits upon the next generation.
+
+Which traits are engineered in are ultimately the choice of the parents, but limited by biological practicality. Nonetheless, decades of research on the human genome and natural human variation have given us many promising candidates.
+
+I’ll start off with the hottest new gene, [DEC2](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2884988/). With a single point mutation, some natural human mutants benefit from the need for approximately 2 hours fewer of sleep per night. This has been extensively studied, and the people who already possess it (usually in isolated communities) seem no worse for wear in any other aspect of their [lives](https://www.cnn.com/2021/06/22/health/short-sleep-gene-wellness-scn/index.html). The actual effectiveness is still up for debate, however.
+
+There are a number of other beneficial alleles that already exist in a subset of the human population that could be endowed upon any child receiving germline modification. George Church maintains a [list](https://arep.med.harvard.edu/gmc/protect.html), with some highlights being: PCSK9 and APOA1, for low risk of cardiovascular disease. CCR5, for immunity to HIV. APOE and APP, for low risk of Alzheimer’s. ABCC11, for low body odor production.
+
+Also of interest would be targeting myostatin. While an intervention has been proposed to simply knock-out the myostatin gene, this can lead to side effects in connective tissue and cardiac hypertrophy. A safer and more effective approach would be to knock-in a dominant-negative ACVR2B receptor into skeletal muscle, which not only avoids the above issues but would increase baseline skeletal muscle mass by approximately 4-fold from wild-type.
+
+The “Yamanaka factors” have also been proposed as a fountain of youth, whereby a number of early-embryonic genes can be temporarily induced to rejuvenate tissue, under control of a genetic circuit. Billions of dollars are being poured into startups to replicate this via a postnatal intervention (see: Altos Labs, Retro Biosciences, NewLimit, etc). However, being able to insert the genes and regulatory circuits into the genome at the embryonic stage, i.e. the way it was done in the actual mouse studies, seems the only practical way forward.
+
+We also have the option to integrate a cassette into the genome that would contain integrase landing pads, dormant viral proteins, and decoy receptors. The purpose would be to allow “over-the-air” updates to the genome post-birth. While adult gene therapy is limited by several factors, such as an immune response to the virus, the inability to use self-replicating viruses, and limited tissue specificity and penetration of the virus, we could sidestep all these concerns.
+
+By using a universally-expressed decoy cell-surface receptor, an engineered virus targeting said receptor could be injected into the body, integrate its payload into the genomic landing pad, temporarily replicate itself in the cell, and knockout the surface receptor. The end result would be a cascade of viral transformation that travels through the body, able to infect every single cell and modifying it with a single copy of the “update”, while preventing re-infection of cells that have already been modified.
+
+There are myriad other beneficial mutations that could be made, though these must be balanced against risk. Pre-existing beneficial mutations that already exist in living humans are the safest, though some are more speculative. A mouse that lives twice as long as its wild-type counterparts, is immune to cancer, and can run ten mouse marathons in a row, is likely to translate into humans. A mouse that’s better at finding cheese in a maze, not so much.
+
+This means that intelligence enhancement is, at least initially, better served by assortative mating, polygenic scoring, and embryo selection, which can be augmented by the various enhancements described above. Within a few years, though, the actual causative mutations currently only correlated with ‘intelligence SNPs’ can be identified and actively modified.
+
+The alternative of adult gene therapy remains a perennial hope, as its perfection would theoretically eliminate the need for germline interventions, as well as delivering myriad benefits to those of us already born. However, until all the significant issues of cost, safety, delivery and effectiveness are solved, we cannot simply hope for the best and doom the next generation to join our fate.
+
+<center><h2><u>The legal landscape</u></h2></center>
+
+Currently, the FDA will not consider for approval any procedure that implants a genetically-modified embryo into a womb. However, the growth and modification of human ESCs, as well as the generation of modified embryos, is allowed and routinely practiced in labs inside the U.S. This allows us to perform R&D validation work domestically without any issues.
+
+When it comes time to implant those embryos, though, nearly every other country has similar restrictions in place. One notable exception is Ukraine, which was a hotbed of experimental IVF techniques such as the “three-parent baby” and a major destination for fertility medical tourism and surrogacy. Obviously, the current situation there is not ideal.
+
+Attitudes toward germline enhancement vary around the world, with Asia being far more amenable than the West in terms of public acceptance. Japan, South Korea, China, India and Singapore are standouts in this regard. Gulf states like Saudi Arabia, with human gene-editing clinics buried in its plans for the “Neom” future city, and the UAE, where an IVF clinic emailed Jiankui He asking if they would be able to license and perform his CRISPR microinjection procedure, are two notables.
+
+The most likely path forward is for prospective couples to conceive their embryos in their home country, at any IVF clinic, and have them shipped to a facility in one of these sovereign nations where the rest of the procedure can occur. Once modification of the cells is complete and an embryo has been generated, the mother can travel to the facility for implantation, before returning home.
+
+Ultimately, the legal landscape is complex and is the major sticking point in this endeavor. Proactively relaxing the laws in the U.S. and Europe is unlikely to happen until happy parents are giving birth to genetically-enhanced children.
+
+<center><h2><u>Embedded Pseudovirus</u></h2></center>
+
+One interesting enhancement would be to add a sequence encoding a dormant pseudovirus. Adult gene therapy has extreme limitations – safety, cost, and efficacy – but if we act at the embryonic stage, we could enable those future generations to undergo actual safe, cheap, and effective gene therapy.
+
+The embedded virus sequence does nothing in the genome, it just sits there. Well, not nothing – its genes are expressed at a low level in the thymus, preventing immune activity against the virus. This is how the body naturally prevents autoimmunity, killing off white blood cells that attack ‘self’ proteins of the body. Alongside the viral genome, we would add a small, universally-expressed receptor protein, which would be present on every cell’s surface. It also does nothing except to act as the target of the virus, allowing it to enter a cell.
+
+20 years down the line, say you want to deliver some upgrade. You simply grow a small amount of the custom virus in a lab, carrying the necessary payload, and inject it. The viruses infect a small number of cells, make the desired edits, and instruct the cell to produce a few more copies of the virus. Simultaneously, the surface receptor gene is turned off, preventing re-infection.
+
+The new viruses leave the cell and infect those nearby, repeating the process in a cascade. Eventually, all cells in the body have been upgraded, and any remaining virus has no viable targets to infect, so it is cleared through the kidneys. Depending on the knockdown method of the surface receptor protein, expression could be restored after each upgrade is complete, allowing multiple uses.
+
+This circumvents the limitations of adult gene therapy:
+
+* First, safety. Since the viral proteins are already encoded in the host’s genome, there is no immune response to the virus. Thanks to thymic expression, any immune cells that would attack the virus have been killed off. Thus there is no need for the severe immunosuppression before, during and after the gene therapy, as is normally the case. Nor is there a risk of generating immunity to the virus post facto, which would limit readministration.
+
+* Second, cost. Since the use of replication-competent viruses is normally forbidden in gene therapy for safety reasons, quadrillions of viral particles have to be produced, purified and then injected in a single procedure. This adds a severe cost, and despite the best immunosuppressants, adding so much of an antigen at one time only exacerbates the issues of immune response and poor targeting.
+
+We, however, can synthesize a self-replicating virus, which uses the body’s cells as factories to produce just a little more virus. This is what natural viruses do, albeit to the extreme – taking over the cell’s machinery and cranking out as many progeny as possible before the cell dies (or is killed off by the immune system). By limiting the fecundity of our synthetic virus, the upgrade can instead slowly travel through the body in a wave, infecting a few cells at a time.
+
+* Third, efficacy. Viruses have a limited tropism. For example, HIV binds to CD4, SARS-CoV-2 binds to ACE2, etc. While differential targeting has been engineered into gene therapy viruses, they are far from universal. By expressing the universal receptor on every cell in the body, we can ensure 100% activity of our synthetic virus in all cell types.
+
+In addition, targeting of ‘important’ cells is often limited in adult gene therapy. Stem cells and neurons, for example, are naturally well-protected from viruses due to their irreplaceability. Stem cells are protected in a ‘niche’ composed of several layers of tightly-packed cells, while the brain is protected by the blood-brain barrier. Reliably transducing stem cells ensures the durability of any upgrades. Without it, modified cells eventually die and are replaced by those produced by the (unmodified) stem cells. Transducing neurons is an extremely important goal, as preserving and enhancing brain function are perhaps the ultimate goals in longevity and human flourishing, respectively.
+
+This is only a brief outline, since the technique remains speculative. However, if developed and implemented, it would be an excellent way of “future-proofing” the genomes of designer babies to some extent.
+
+Of course, there are many details to be worked out. Research on this topic has been scant, since its only real use is for the purpose described – in human embryos, for a potential gene therapy decades in the future. Why engineer such a pseudovirus into a mouse when you can just add the desired upgrade at the embryonic stage to begin with? No one’s likely to get a grant for that.
+
+However, we can at least envision the components: plenty of viruses have tens of kilobases of “spare” genome capacity, and the lock-and-key mechanism of the universally-expressed surface receptor can be developed with standard techniques. Same for limiting the virus’ self-replication and knocking down the receptor. Of course, there would be years of development in animal models before any human use, but it’s something to strive for.
+
+Adult gene therapy might also get orders of magnitude better in the next few decades, rendering this obsolete. Billions of dollars have been dedicated to that cause, as there is a large and vocal market of people who are already born. It would be advisable, though, not to gamble on the life quality of future generations.
+
+Ideally there would also be a method of inducing adult immune tolerance. If you want to deliver the gene for a magical engineered protein that dissolves atherosclerotic plaques or prevents cancer, very likely it will be a non-human protein and thus immunogenic. By engineering some sort of “neothymus” that can be programmed to selectively uptake and present novel antigens, we could ensure that said protein will not be attacked by the immune system.
+
+The idea of a neothymus has seen a great deal of interest in traditional biomedical research, since the benefits would be incalculable even in non-engineered humans – a cure for all autoimmune disorders, for example, or the plaque-munching enzymes. Naturally, embryo editing would allow us to integrate a neothymus far more easily than trying to add one post-birth.
