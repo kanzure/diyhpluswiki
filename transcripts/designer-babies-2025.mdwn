@@ -1,0 +1,401 @@
+title: Designer Babies: What, How, Why
+
+speaker: Max Berry (Heritage Molecular)
+
+event: Reproductive Frontiers 2025
+
+video: <https://www.youtube.com/watch?v=6-R3ELtPQ5A>
+
+video description: Max Berry is a biologist with industry experience in organic synthesis. He founded [Nucleostream](https://nucleostream.com), a startup company working on DNA synthesis. He gave this talk at Reproductive Frontiers 2025 on germline gene editing: How does it work? Why germline editing? What's next for this field?.
+
+LLM-generated summary: [Max Berry](https://x.com/yashgaroth) presents a roadmap for "strong human germline engineering" via embryonic stem cell (ESC) culture to enable precise, multiplexed genome editing for human enhancement, reclaiming the term "designer babies" from polygenic embryo selection. Critiquing CRISPR microinjection's unreliability due to off-target effects, mosaicism, and knockout-only efficacy, he advocates deriving ESCs from early embryos, performing high-efficiency edits in vitro, clonal expansion with colony picking and deep sequencing for validation, and re-deriving viable blastocysts via [[somatic cell nuclear transfer (SCNT)|cloning]], VelociMouse injection, or synthetic embryo aggregation. He addresses human ESC challenges like naive/primed states and imprinting (recently advanced by Serrano lab cocktails), regulatory barriers (FDA appropriations rider, 14-day rule), [[ethical justifications|designer-baby-faq]] prioritizing child welfare over government intervention, economic feasibility (less than the cost of IVF), and offshore viability. Berry lists beneficial alleles (e.g., CCR5Δ32, PCSK9 loss, short sleep variants), contrasts germline superiority over somatic gene therapy, and proposes embedding synthetic pseudoviral machinery for lifelong, immune-tolerant updates, and emphasizes rapid industry prototyping.
+
+See also:
+
+* [[Designer baby FAQ|designer-baby-faq]]
+* [[Human embryo engineering platform overview|germline-genetic-engineering-technology]]
+* [[Human germline genetic engineering proposals|genetic-modifications]]
+
+[[!toc levels=6]]
+
+# Introduction and Reclaiming "Designer Babies"
+
+Hello, hello, dearest conference attendees. We are about to watch a presentation on strong germline engineering. Welcome, Max Berry.
+
+Thank you. Welcome everyone. All right, well, we'll just get started. You guys know basically what this is going to be about.
+
+First off, I'd like to claim the term designer babies back from all the embryo selection companies. We already lost the term biohacking to people who wear smartwatches, so I'm not letting designer babies get turned into whatever people think it has to be.
+
+# History of Embryo Selection
+
+So obviously I imagine most people here know how embryo selection first started. If you're a carrier for Tay-Sachs, so is your partner, you might have a baby with it. You can do IVF, find an embryo that's at least not a carrier and possibly just doesn't have the disease at all. Not even a carrier for it.
+
+And then it started to get used for a few more things. People can use it for sex selection. I'm not going to read that subcaption on that one.
+
+And then it moved into polygenic scores and write the 23andMe for embryos. Fun fact, I know everyone loves to talk about Gattaca in this field, but Gattaca was actually only selection. There was no editing in there. It's in the script. You can watch it again. Maybe we can do a group watch or something here.
+
+# Limitations of CRISPR Microinjection (He Jiankui Case)
+
+So for that, you can, you know, select against negative health traits that might be a problem if you're Ethan Hawke. But the interesting stuff that people want to do, right, is, you know, maybe you get a taller baby or what 99% of people, at least in this room, want to do is have a smarter baby or things along those lines. And that's all fine. You know, it's great. You should do that too. Take these embryos and do some more stuff with them. But again, not designer babies. I'm claiming the term or reclaiming it.
+
+And then there was, of course, good old JK ([[He Jiankui video transcript|transcripts/human-genome-editing-summit/2018-hong-kong/jiankui-he-human-genome-editing]]). I'm not gonna try and pronounce his name correctly, but you know, he's JK. So you guys remember him back in 2018, he micro-injected some CRISPR into three embryos and it sort of worked.
+
+And CRISPR, I'm gonna rant about this a little bit more on this slide and the next slide, but it really is not suitable for human use and there are several reasons for that. I have a couple Church quotes in here but the one I like he calls it genome vandalism and it really is only good if you want to just knock out a gene.
+
+The way CRISPR works is just cuts and cuts and cuts until the cell will just kind of gives up trying to repair and you get a mutation that hopefully knocks out the gene so it stops functioning.
+
+So he I mean maybe he does really care about HIV transmission even though the parents you know you can give them antiretrovirals they're not really going to pass on HIV to their kid anyway, but it's mostly because there's only two or three genes that you can usually just knock out. You know, you need most of your genes. They're important. They do stuff.
+
+CCR5 is one that you can knock out and you can't catch HIV. There's some other stuff that it might be involved with, cognitive things or dengue fever, but like who gives a shit? There's that one and then there's like PCSK9 for lowering cholesterol, which would also be a good one to knock down but there's like RNA interference drugs that can just do that now and you take them like once a year and it does basically the same thing.
+
+And then there's myostatin don't really want to talk about myostatin but this is not the way to get jacked or having your baby get jacked I guess.
+
+# Problems with CRISPR: Off-Targets, Mosaicism, and Editing Limitations
+
+So there's a lot of problems with this these are the main ones is you know sperm goes into the egg or just before the sperm goes in you inject a little bit of CRISPR and it hopefully does the edit that you want and then stops completely and doesn't do anything else doesn't, you know, get bored and start chopping other things up.
+
+Uh, like I say, knockouts are the only thing you can do reliably if you want to change a letter, like if you're interested in editing a bunch of SNPs for, you know, certain genes, uh, this is not really the way you want to do it.
+
+And there are unavoidable risks that you really cannot handle with either off-target mutations or mosaicism, which is, you know, only some of the cells get modified and it's, um, it's not great.
+
+# Ideal vs. Actual CRISPR Outcomes in Embryos
+
+So here's the ideal case on the left here. Right is you inject the CRISPR and it does the edits and then the cell you know one cell becomes two and then four I'm gonna be saying that a bit and all the cells are modified and they're all perfect and there's no fuck-ups and you take one or two of the cells out and you sequence them and you go okay it looks good.
+
+But the problem with this stuff is you can shoot the CRISPR in there and then one cell divides before the edits happened and only one of those cells got the edit the other one just doesn't and when you have an embryo you want to presumably turn it into a baby so you can only take a few cells out of it before it becomes non-viable.
+
+So you're taking a few out and you're just kind of, there's some statistical probability there on whether you can get a full kind of accounting of the genome. But you might get unlucky pull those out and you get some cells that are modified and it's like well I guess we're good and then only half of the cells are modified and then the kid still gets HIV or whatever else you're trying to do.
+
+And the other corollary of that is, right, it does the cutting in the cell, and then some of it in a different cell goes and cuts some essential gene or something you don't want it to cut, and again, you happen not to sequence one of those bad cells, and you're like, oh, well, I guess it's good.
+
+And you can do this, you can do it a thousand times in embryos and you can kind of destructively sequence the whole things and get statistical probabilities that it'll be okay and you know if it's 99.9 that's still not really good enough to make a human baby with so that along with the other problems on the editing capacity it's just not something you want to do for your children or other people's children.
+
+# Superior Alternative: Embryonic Stem Cell (ESC) Culture and Editing
+
+So is there a better way to do it uh yes so that previous stuff was the kind of state of the art and people are still pushing the CRISPR microinjection but uh turns out you can just grow embryonic stem cells in culture and it's called embryonic stem cell culture.
+
+So you get the embryo at an early stage, you kind of crack it open, you put the cells in a dish and then you grow them. And these cells like to divide. They divide about once every 20 hours. So you start with a few cells and in a few days or weeks you end up with thousands of them.
+
+And then at that point you have cells in a dish, which are the kind of ideal case for editing. You know, you don't have an immune system trying to fuck with you and various other things, skin and whatnot. You can just kind of sprinkle in whatever edits you want to do and that's much higher efficiency much more reliable.
+
+# Clonal Expansion and High-Quality Sequencing
+
+But importantly so I'll take you through the process you get a bunch of these cells say a few thousand just for this demonstration you hit them with some CRISPR or something you give them a few days to recover you know they'll get the edits that they're gonna get they'll get the off-targets that they might happen to get and then you kind of shake them up and you scatter them on a plate and I know this is a plate with E. coli for the biologists out there but it gets the point across this is some blue white screening which is very fun.
+
+So you know a cell lands somewhere on a dish away from other cells and then it does what cells do all the cell wants to do is become two cells so divides and divides and you end up with a little kind of colony and all these cells in this colony are derived from the same starting cell so they all have the same genome which is very important.
+
+You want to find a colony you just kind of start searching through them you scrape off half the cells and you send them off for genome sequencing and it's actually better than regular embryo sequencing. There you have to kind of pull a few cells out and you kind of inferring a lot of the genome like cribbing off of the parent reference genome when you do that which is not great but if you get just a big blob of cells you can get a fairly high quality genome out of it.
+
+And you just kind of start searching through and you look for a colony that has all the edits you wanted to make and there's no very bad stuff that you can't just brush off and from this point you have a bunch of these cells and they are embryonic stem cells with modifications and no off-targets and from there you can theoretically go back and do that again and repeat the process up to a certain point which I won't get into but at least a few rounds of this and that's pretty cool.
+
+# Re-Deriving Embryos: SCNT, VelociMouse, Synthetic Embryos
+
+So now you have a bunch of modified embryonic stem cells sitting in a dish and I'll get into more of the details on that but skipping over that you can turn them back into an embryo because you kind of fucked up the original embryo so there's a few options there.
+
+Everyone's familiar with Dolly the sheep back in the 90s and then there's been you know various pet cloning companies don't look in their garbage bins you're gonna find a lot of horrifying looking puppies but the problem with that with Dolly and with these the pet cloning and people trying to do it in humans normally is you're taking some skin cell or if you're a bit smarter about it some like you know kind of stem cell thing something is a bit less aged and you kind of shove it into an egg and you're just hoping that egg can within one cell division reprogram this entire nucleus into something that's good enough to turn into an animal or a human and I'm honestly it's a miracle it works at all doing it that way there's a lot of really weird like dolly head all kinds of fucked up organ failures and yeah it's again not something you want to be doing in humans at least if anyone's going to find out about it and I mean just in general for ethical reasons you don't want to do it.
+
+But when you're starting with an embryonic stem cell it's already 95-99% of the way to this kind of totipotent state so we expect the efficiency on this should be much higher instead of you know one percent of the cells you know becoming an embryo and being born it's a bit higher than that so you you need some eggs for this but it's not too bad we just need to see if it works no one's obviously done it in humans because then people start asking questions.
+
+The second way is a technique called VelociMouse because we mainly use it in mice you get some other embryo, it doesn't have to be yours, that part doesn't really matter, and it gets up to about the four or the eight cell stage and you take some of these embryonic stem cells from earlier and you're just gonna shoot them in there and for, I'll just say, biology reasons, the cells that are there already go oh these cells are slightly further along in the developmental process they are going to form the inner cell mass I guess that means we have to form the placenta so they just do that and then all the the baby parts not the placenta parts are formed from these embryonic stem cells that you injected with the edits.
+
+And it's not a hundred percent but people haven't really tried to optimize it in mice because you can just make more mice you don't really need to get it a hundred percent but there are ways of uh optimizing that you can just shoot them in there that's option two.
+
+Option three is the synthetic embryos from uh Jacob Hanna lab and uh I forget her name but she kind of rips off the Hanna lab that other lab Magdalena Zernicka-Goetz whatever and they spun that out into a you know no shade on her she also has interesting results but um it's mostly Hanna uh and then he kind of spun off Renewal Bio who were looking into this for absolutely not human gene editing stuff uh it's probably you know organogenesis or something but you kind of trick some of the ESCs into forming all the bits and then you kind of shove them to the bottom of a tube and it forms an embryo that's a bit further out you know give it five ish years maybe and that could be an option but like I said we have some options here.
+
+# Mouse vs. Human ESCs: Naive/Primed States and Imprinting Challenges
+
+So obviously it's not quite this simple there's a lot that goes into this this kind of stuff can routinely be done I know this meme doesn't quite match for this but I couldn't find a better one for it and you know it's still fun.
+
+So mouse embryonic stem cells I won't get into the whole naive versus primed thing there's kind of two states of embryonic stem cells they start in the body as naive and then they kind of get primed and there's different kind of morphology of them and they have different characteristics but mouse ESCs people just you know threw them in they were growing mouse ESCs and it's like oh they're naive and they're fine you can do the VelociMouse stuff very easily and whatever else you want to do with them.
+
+Humans it's taken a little bit longer but um thanks to some work from the Serrano lab and Sergey, who is, I think, talking on Thursday about super SOX. It's become a bit more promising.
+
+There's issues. I keep saying I won't get into this, and then I do get into it. But there's methylation, something called imprinting, if any of you are familiar with imprinting disorders.
+
+Most of your genes, they're either silenced by methylation. The DNA gets little methyl groups attached to it or it's not. Except in the early embryo where a few very critical genes for reasons that escape us, but I'm sure nature has a plan, you get some where the dad copy of the gene is methylated and the mom is not or vice versa.
+
+And the usual way of growing embryonic stem cells in a dish is you kind of sandblast all of the methylation off of them and then they look like embryonic stem cells but um if you tried to make a baby out of them you would have all the imprinting disorders known to us and probably a few novel ones which could be fun and that's been the problem up until very recently and made this basically impossible.
+
+But yes, the Serrano lab figured out a cocktail that has not been fully tested with this because right after they published this unrelatedly they all got hired by Altos Labs to work on [[longevity]] stuff, which I guess good for them. But no one's really picked up that research. Sergey, I think he's still looking for funding if anyone's interested in that. It's super cool stuff. He's a fun guy.
+
+But I think with this, you know, with the equivalent of a few papers worth of academic research but done in industry lab because it'll have to be industry for a reason they'll get into you could basically get it at the point where you could get this sorted out obviously there'll be a lot of testing involved and genome sequencing and verification and optimization but that's just kind of biology.
+
+# Academia vs. Industry and Regulatory Barriers
+
+So speaking of that oh good it's the next slide so yeah academia that's where most of this work has come from because obviously germline editing in humans is illegal for now we'll say and industry doesn't really want to touch stuff if there's not a chance of return on investment.
+
+So academia you know they can claim it's to understand the early stages of human development and whatnot so they kind of get up to these points where it's like oh that seems interesting but if you want to be like okay we're gonna test this out up to the point where you'd be making a edited baby yeah they have to answer to IRBs and various other people their colleagues yeah so it's not great and pretty much all of them take federal funding which thanks to was it Dickey Wickler or whatever the thank you yes that stuff I won't get into any creation or destruction of embryos you know if they're taking my tax dollars as a god-fearing Catholic then you know I won't stand for that.
+
+So yeah that's definitely limited them you kind of need not like a ton of embryos to test this out but you know a few hundred at least to get what I would consider to be lab validated so yeah industry doesn't really give a shit.
+
+It's kind of annoying to buy tons of embryos legally for now. Yeah you know even if they have like Tay-Sachs or whatever and no one wants to implant them there probably hundreds of thousands of millions of these embryos sitting there and a lot of people they just don't want to toss them out or legally they can or whatever and uh which kind of stuck with them but you know that doesn't matter we could fix the Tay-Sachs and then also do some edits to them and you know run them through this whole process make sure they're doing okay.
+
+Um so yeah like the um FDA appropriations bill whatever the hell that we're hopefully getting rid of please um there's they can't the FDA cannot consider for approval basically a process of implanting a modified embryo where they can't spend money investigating it and I doubt they work for free so um technically it would be I mean no one's ever tried so we don't know what they'd be charged with if they did try it but everything up to that point you know getting embryonic stem cells and growing them modifying them and testing out you know the nuclear transfer or the VelociMouse thing or the synthetic embryos you can do that and grow them up to I mean there's the 14 day limit which I think most people are at least heard of.
+
+Grow a little further than that and see how they look with the methylation and general development kind of stuff. You can't really grow much longer than that anyway because they need a uterus really. But it'd be pretty good, as good as we're gonna get without putting them into a uterus basically.
+
+So like I say, it's just been a matter of, you know, funding, convincing people who are interested in this that they can get a return on their investment and not be flayed alive in the media, which I think they stopped caring about that latter bit as much, and hopefully the former will be taken care of soon as well.
+
+# Pricing and Feasibility with Automation
+
+So general slide on the pricing. I'm not going to say how much the whole program might cost, but I give you an estimate privately. But generally, IVF, people worry about, like, oh, it's going to be expensive, and then this whole process adds on God knows how much, and it's just going to be billionaires doing this, and then their super babies will run around, like, spanking us with sticks or something. And it's not really the case.
+
+More and more people are doing IVF. Obviously it started for infertility and people realize you can use it for, um, making sure your kid doesn't get Tay-Sachs or whatever. Sorry, I keep relying on Tay-Sachs, but, um, it's a fun one. Um, yeah.
+
+And there's a lot that can be automated here. It's a very manual process. You get these tiny little glass micro needles and you've got to like hunt sperm down and chop their tails off so they stop running. And then you pick them up and shove them in here and you've got to like turn this egg, which is like tens of microns wide and then get just the right angle or it gets all fucked up.
+
+But you know, robots, AI, et cetera, kind of stuff. I'm sure someone here knows about AI and how it works for not killing us all but you know vision stuff. But it not really that hard to control other than that this is basically all the same process as IVF so it IVF plus you know growing cells in a dish which you can find biologists to do that we're very cheap and you can do that basically in the same you know in the clinic in the IVF clinic or somewhere else and kind of ship them around those require a decent amount of genome sequencing if you look around especially if you're getting a bulk discount you know Illumina stock price down you can probably do $200 per genome for each of those little colonies or do you know kind of SNP arrays kind of thing and then if that one looks promising do full genome on them.
+
+And like I say I mean this with a good amount of funding you know 12 to 24 months you could probably get this done you're not paying off like amortizing R&D on this kind of stuff forever and yeah people already are happy to pay for IVF to do you know a couple IQ points or that kind of stuff and if it's you know 100 grand on top of that or something you'd have quite a large market.
+
+Yeah, economies of scale with IVF. When it's not 1% of the people, it's 5 or 10%. That'll help.
+
+# Regulatory Workarounds: Offshore and Black Clinics
+
+So I cover the FDA stuff. There's a few options. Change the laws, which I always put on here as kind of a joke, but then it will apparently happen. But I'll still go through the slide, it's still fun.
+
+So the other options, or maybe that gets killed in the Senate or something, there's technically offshore, off the Greek islands for some reason a very popular spot to do this stuff you have your floating clinic there's a but Fordlandia 2 on here but that's basically robot on down in Roatan Honduras you know you have get enough infrastructure you can get liquid nitrogen out there it's not that bad.
+
+Ukraine obviously is you know so but they had basically no restrictions on this they were a hotbed of weird IVF surrogacy stuff I think that was the only place you could do that three-parent baby that mitochondrial replacement therapy up until the war and the UAE so yeah fun story with JK from before he someone got access to his emails when he was doing the designer baby stuff and there's a clinic in the UAE that emailed him like hey we'd like to license your technique so I guess they thought it was doable over there.
+
+Kingdom of Saudi Arabia they in their vision 2050 plan along with that stupid city that they have they also put you know human germline editing and I guess people just focused on the city bit for some reason which you know this is stupid but um yeah it works for us uh China they you know put some laws on the books about this stuff after JK but they have the little island down in the southwest Hainan where they set up for weird medical stuff to do maybe.
+
+Oh, sweet. Okay. Yeah. I'll maybe visit sometime. And then, yeah, various other, like, micro states, you know, a lot of them are like tax havens or whatever, but, you know, they could do a decent sideline in this, kind of have people fly out.
+
+Like, even if this remained illegal in the US it's right the illegal bit is you know implanting the embryo into the uterus so you just fly somewhere and they do that then you fly back you're basically good again no one has tried it yet to find out the other option that I think would be cool in cyberpunk is black clinics just underground you know you get some guy with a tattoo doing gene editing but that would be too stupid yeah exactly I mean theoretically if there was a basement that no one knew about um so that would kind of up the whatever i'll just read it.
+
+# Accessibility Beyond the Rich
+
+So yeah like i touched on before you know it's not just gonna be the rich probably you know the first few are going to be people who are willing to subsidize a lot of the kind of uh r d work the basis of this but after that it won't really be that bad and frankly if i could get you know the state of the art in gene editing right now or like 100 million dollars to inherit i would take the money every time you can uh yeah honestly i mean we could do a poll or something but that's just what i would do.
+
+# Ethics of Germline Editing
+
+And then uh so there's the the Church quote which kind of got cut off um we're not necessarily opposed to enhancement if everybody gets access to it simultaneously which is not really how technology works um and i understand this is a very exciting and powerful technology and you want to really hope that this would work this one time um compared to like cell phones or whatever you don't really need them but that's really not how these things work so uh you know i love george and everything uh but i think he was just well partially i think he was just saying this so he didn't get too many questions asked of him but I'll just leave it at that.
+
+So hang on let me get some water yeah the ethical stuff again this is probably not the right crowd to preach about this but yeah I might as well so obviously you know there's always a risk with this kind of stuff with every edit there's always a risk of something going wrong the more edits you do there's definitely a balance to be found there but you know as long as you're doing what is best for the child.
+
+It's, I would say, ethically justified, morally, whichever the difference is there. Children you know they don't consent to be born in like a crack house so I we don't really seem to restrict that I think this is probably better than that and you know people are free to disagree but they're wrong.
+
+And we already you know euthanize every day I think one of the earlier talks we discussed you know deaf people used to and this is apocryphal but they used to do this totally is deaf people in like 1800s or before would have a hearing child and they'd just get a screwdriver and then the kid's deaf and yeah deaf people are just capable enough to be assholes but not yeah.
+
+And we you know like I say yeah we discussed like oh we should let them do it I know I it's tough moral question whether you know if you're avoiding other regulations that would suck to let people do that and infertile people obviously if you're going in for IVF especially for male infertility which is what this allegory is based on you know more than likely I'd say probably 50% chance if they have boys the kids also gonna be infertile.
+
+There's a old biology joke being like you know is infertility hereditary and it's like ha and yeah now it is so you know these are the kind of things and obviously the kid can just you know go and get their own IVF and 20 30 40 years when they have kids but it's still it's a disability and we're you happy to give it to them it's up to the parents frankly.
+
+So an often cited argument is well why don't you just use this first to cure diseases and there's not really any benefit there if you're already getting embryos for this you can probably find one that is not a again Tay-Sachs sufferer for example you can just you know even if both parents are carriers 75% of the embryos are gonna be not actually experiencing the disease and you can just pick one of those you're done.
+
+It's very rare edge cases I think beta thalassemia is the only one where both parents can like have it this is a recessive disorder and then they are actually healthy enough to have kids and I guess they think that they should and that's where most of the research using this is the excuse has come from but all this like oh well that would be totally cool if we did do it and everyone agrees with that it's like yeah but that's really we don't need to so it's for enhancement that's basically the the summary of this and that's cool.
+
+# Superiority of Germline Over Somatic Gene Therapy
+
+And then people say well you know what about gene therapy yeah it sucks now and it's sucked for a long time but maybe magically 20 30 years from now it'll work and then you know we be cured and all these kids we don't have to like mess around with their genes they can you know consent and fill out a contract and then they can get magical gene therapy as well and this all becomes a moot point and uh that would be nice uh but gene therapy is very difficult and your body does not like having a lot of viruses shot into it um and that's a good thing but um the problem is you do that uh maybe if you're lucky you can do it once uh it's not really hitting your entire body it depends what you're trying to do with it.
+
+If you just want to hit the liver basically all liver diseases will be cured in the next five ten years probably because all these things just kind of end up in the liver really and then if you're trying to deliver a foreign protein like let's say there's some protein that dissolves arterial plaques and you know we don't have one so it's gonna be a foreign protein that you're injecting and then the body's like oh that's not me so it attacks it and destroys it whereas if you put it in at the embryonic stage it's already in your genome your body thinks it's part of yourself and you don't have to worry about that.
+
+And gene therapy continues to suck so I know there was some you know early talk about oh we can just inject genes into the brain and do stuff and even if you're replacing your entire body you're still moving the brain over and then if your brain gets Alzheimer's you know it doesn't matter if you're you know got washboard abs or whatever on the bottom you're still 110 years old up in the brain.
+
+And the brain obviously if you get an infection in the brain that's bad every other tissue in the body you know you lose 10% of it whatever to the virus and from the immune response, it doesn't really matter, you just regrow it. You lose 10% of your brain, you're kind of fucked.
+
+So you want to be very careful with that. It's also got a skull around it, it's got the blood-brain barrier, it's got the dura mater, all the other membranes I forget because I don't like neuro. But it's tricky and the cells are, neurons at least, are non-mitotic and a lot of gene therapies rely on the cells dividing to kind of dissolve the nucleus, allow stuff to sneak in there and that does not happen with neurons.
+
+So it's tricky. And then the stem cells, right, if you just shoot some of this stuff in there, right, it hits all the, most of the cells. And then the cells, you know, they have a certain half-life, as it were, and then they die and get replaced by fresh cells pumped out from the cell factory, which is these stem cells.
+
+And these stem cells are very important, as you can tell from the name and the way people talk about them. But they're not just fucking floating around out there the same as every other cell. They have a niche that they're protected in because if you lose a stem cell or a stem cell gets infected, that's much worse than any other cell getting infected. So they are protected from environmental insults.
+
+And if you don't hit those then you gotta keep doing the therapy but then you already have the immune response and it just kind of it's not great also it yeah expensive and there are reasons only like to approve gene therapies and they both cost millions of dollars so that's why I like germline therapy.
+
+# Beneficial Mutations from Human Populations
+
+So there are a few lists of cool mutations to make church you know as much as he likes to claim we have to wait for everyone to be ready for this he's already kind of ready to go with his list. This is only a partial list. And there's more other private lists. I'm surprised he still has this up. It's very hard to Google it if you're just kind of search this kind of stuff. But it's still up, so respect there.
+
+And most of these are going to be mutations that already exist in the population, subpopulations. It's like, oh, these people get less cancer, less diabetes, or their bones don't break. The ABCC11, that's a fun one. A lot of East Asians you just you sweat but you don't secrete the you know the sebaceous glands that's why they have dry earwax so it doesn't get you it's it's pretty sweet you just don't secrete fatty acids that bacteria break down and make smell bad I get some of that that'd be sweet but there's a bunch of other stuff on here some of these are more or less developed or reliable or speculative but I'll get into some of those as well.
+
+# Insights from Human Evolution and Populations
+
+So yeah where can we look obviously it helps if you're trying to if you're trying to convince I'm just saying they don't like wearing hats for some reason I don't understand it some sort of common trait but a lot of them like the short sleep stuff is originally discovered in I don't know if they were not that half no I we we split from them a while ago yeah anyway it helps convincing the general public they go oh you're playing God and it's like well these people playing god and they have babies I don't know how good an argument it is but it's it's something.
+
+So like the short sleep stuff was in I don't know if it was Amish or Mennonite or one of those fucking you know Pennsylvania types Ashkenazi we mostly have you know negative ones of these but we also have some some good stuff in there from the the old shtetl in breeding but there's plenty of other stuff if you just look at human evolution in general.
+
+The paper when they first sequenced the chimpanzee in the human genomes the organ that had the most number of changes and it was not actually the brain does anyone know which organ had the most I I don't even know if that's closer it's kind of a trick question because it's not usually considered an organ but it's the immune system survival of the fittest does not mean you know you're like slaying your enemies that's closer.
+
+It's kind of a trick question because it's not usually considered an organ, but it's the immune system. Survival of the fittest does not mean you're slaying your enemies and climbing up a mountain and harvesting grain more effectively. It means when cholera comes through your village for the fourth time this month, you've lived and some other people didn't. And that's really the competitive advantage.
+
+So we have massively overdeveloped immune systems, various other disorders that are you know help you to not shit yourself to death like cystic fibrosis which is good the obesity stuff you know if you get famines after famines same with muscle atrophy we don't really have these problems anymore and if they do come back enough to be an issue we're kind of fucked anyway so we can kind of revert a bit back to the mean you know the not quite you know paleo level because that's kind of a scam as well but a lot of these adaptations were made because they're expedient not because they're you know good for longevity or healthy living or anything like that it's again a miracle we survived at all especially through civilization so there's some options there there's some good ones.
+
+# Animal Model Insights
+
+There's also you know animal studies are good I would like to draw the line between physical traits kind of stuff there's some stuff like there's these a the PEPCK mice the mighty mice they can just you just put them on treadmill and they just don't stop really they eat lot of food but again we're not if we're running out of food we're kind of fucked anyway so that's not really a big deal.
+
+Cancer you know the saying we've you know cured cancer 100 times in mice uh it's sort of true but you know i mean there's probably something there uh quadruple muscling uh you can turn that off and on so it's not like you're just born and you're like you know doing 25 pound dumbbells or something you know but it's very simple to do that one uh just hasn't been done in humans.
+
+And the life extension obviously mice don't live nearly 50 years so that would be just in mouse years that would be a very long time and that's the kind of thing you can at least look at you can put it into monkeys you can put it into other mammals and just kind of see how it does uh the brain is trickier at least for these things obviously there are you know SNPs that we can look at in other human populations but just because a mouse is good at finding cheese or whatever i wouldn't necessarily go oh this is you know the key like we got the brains not the mice so i don't care how smart you can make a mouse that's not really going to be that relevant for us.
+
+# Future-Proofing: Embedded Pseudovirus for Lifelong Editing
+
+And then the FOMO (fear of missing out), which is probably going to lose a lot of people if I haven't already. So the kind of the promise of adult gene therapy I just calling it embedded pseudovirus but the idea is you kind of design a synthetic virus which is just you know there like the proteins that wrap around the DNA and then there one that kind of forms the little blob membrane and then there the outer bit like the COVID spike protein that interacts with receptors on cells and you make one of these you know no relation to any existing viruses out there you can just kind of design one of these.
+
+And then you stick a copy of this genome into the genome of the kid along with the other edits and the cool thing about the thymus so your immune system is trained not to attack you and usually it works the way it does that is the thymus is around and then eventually kind of shrivels up and dies it's very sad but what it does is it kind of conga lines all of your immune cells through it and if any of them would attack your self proteins they are told to kill themselves very politely and that's how you prevent autoimmune disorders.
+
+And you can just put this kind of virus genome in the genome of the human and it's you know it's not really expressed anywhere else you're not just making little viruses you know in your day-to-day life but um it just you know it means the immune system will not react to it i won't get into promiscuous gene expression but it's it's pretty cool.
+
+So you just leave this in there and then you know you wait and the kid grows up and you go oh damn here's a really cool SNP edit that we could do and um then the magic happens and this is a not the best diagram so here's the you know the virus with the genome and then there's the human who also has the genome not to scale.
+
+So you you decide what you know it's gonna make you have like the guide RNA or whatever and you you know grow a little bit this virus in the flask and then you inject it and here's your average everyday cell from this early modified person and the virus comes in attaches there's your little oh yes there's also a synthetic receptor that you add that doesn't do anything except to bind to this virus and that's just kind of a little bit is on all your cells.
+
+So the virus comes in hits that injects its stuff like viruses do and does the edits and then it kind of suppresses that receptor. So the cell, this is a light blue force field. The cell can't get reinfected. It makes a few more viruses and then it kind of stops and then they kind of process cascades.
+
+One of the major problems with gene therapy is you're using adult gene therapy. You're using non-replicating viruses because that would be bad for reasons I can go into later but you know. And that means you have to make a shit ton of virus and inject it all at once and just hope it does what it needs to.
+
+This way, it's more mimicking the natural viral process. It kind of spreads around, it goes from cell to cell. Oftentimes it doesn't even have to bud off from the cell, which kind of passes next to it like HIV does. And then eventually skipping over many of these replication cycles all of your cells have the modification and there's a bit of virus floating around and then you can do like, tet response element. You can basically reset this whole thing so the cells have the receptor again and then you can do this again if you want to.
+
+And this would need a bit of work, but less than you'd think. And this is kind of the future-proofing, right? People don't wanna, well, people don't wanna have kids now because they're worried they're not gonna have the right selection stuff or the early designer baby stuff, but no matter what, you're gonna miss out on something, and this allows you to somewhat future-proof your kids, which is probably a new phrase, but I like it.
+
+# Audience Questions on Embedded Pseudovirus
+
+Excuse me. Yeah. So the idea here, I'm just a little bit confused by that. You're basically editing the, you're giving some kind of virus to the embryo that then makes it able to be edited later much more easily.
+
+Yeah, you just put in like a little chunk of DNA that encodes the virus, but the promoters don't really express anywhere in the body. So it's just kind of silently waiting in there. Like half of our genome-ish is endogenous retroviruses. They kind of got in there and then they kind of jump around a bit and replicate and whatever. But that's most of the junk DNA. It would be most similar to that, yes. But it wouldn't be doing anything really. it's just the code for it, but not the actual virus being produced. And there's a bunch of other edits.
+
+People always ask me [[what my favorite edits are|genetic-modifications]], but, you know, whatever. That one was mine, even though it's a bit more involved than the usual kind of stuff.
+
+# Global Attitudes Toward Enhancement
+
+So I'm sure everyone's kind of seen these, especially the one on the right kind of thing cut off there. But this was over in China. For some reason, if you're not a Christian, you don't really care as much about, you know, the ethical implications about this kind of stuff. China fairly positive over here is a bunch of different countries I had to it's good thing I did zoom in on this India I'm not going to attribute this to the caste system or get involved in that debate but they are super cool with like making their babies smarter wait yes way more than anywhere else not they pulled all the countries here and you know these things are malleable but something to note yeah of course they still have laws in the book against it but yeah yes.
+
+# Q&A: Epigenetics and Emergent Traits
+
+Oh, yes. Yeah, I'm sorry if this is an ignorant question from a biologist. How does this work for epigenomic phenomenon or emergent phenomenon? Even IQ is emergent in some respects.
+
+Yeah we not really touching that I mean a lot of epigenetics is bullshit anyway but mostly it just kind of sorts itself out Epigenetics is determined mostly by genetics. Most probes are a first cause still.
+
+Yeah. What do you mean? Most probes don't actually indicate like a thing that's affected by epigenesis. They think that something is leading to a marker with the methylation around it. We can explain later. I wouldn't worry too much.
+
+The main thing is the kind of imprinting of that early stage, making sure everything's where it should be at that point. But yeah, going from one cell to 10 trillion cells is a lot of epigenetic stuff that's constantly changing. And most of it's not set in stone. Any of the histone methylation stuff doesn't really matter. Really, it's only DNA methylation. But yeah, it'd be the same as a natural baby in that sense. You just kind of trust epigenetics to sort itself out, really. I wrote a really good explainer that Luigi Mangione really enjoyed.
+
+Oh good, yeah. Maybe we can bring him to Austin when he gets out.
+
+# Closing Arguments and Call to Action
+
+So anyway, the general gist of this is, yeah, like for since, well, since the 40s really, but especially since like the 70s when they started the whole war on cancer thing, it's like, you know, oh, here's a cool gene that, you know, helps you out and would, you know, substantially reduce the risk of cancer.
+
+But actually using that to help people, you know, you can try to find some small molecule that maybe targets it and doesn't have horrible side effects and isn't too toxic or as a gene but gene therapy is basically impractical it's just like we have quite a wealth of knowledge here that we could apply and this is the best way to do it and we should do it.
+
+And I make the argument that the longer we delay doing this you know for various bioethics concerns is you know another generation of babies that are born without you know even the smallest of benefits yeah and you know the first generation stuff it's not gonna be like fucking crazy and I can be jumping off buildings I mean to like between buildings I'm not just gonna kill themselves I need to work on that metaphor but you know what I mean yeah like the longer we wait and there's a lot of people who are like oh like I mentioned you know oh well what if adult gene therapy gets good and it's like yeah what if it doesn't and then you know we're just dooming them to our same fate.
+
+So I can ramble on more about the ethical arguments but I'd prefer to be drunk before I do that so we can sort that out and we're looking on time not Not bad, okay. Yeah, pretty much we can do Q and A. Yeah, pretty much we can do Q and A. Yeah. I survived. Yeah. Okay. Yeah, Steve.
+
+# Q&A: Timeline and Challenges
+
+I think you mentioned a 12 to 24 month timeline. If it's well funded, what's the most challenging step that has to be accomplished?
+
+Challenging? You mean in terms of like amount of time or like technical?
+
+Technical yeah so the like I was saying with the the Serrano lab research and Sergei's super socks stuff so the Serrano lab like I say they did a few papers on it and then they fucked off and then Sergei I asked him about the imprinting he's like oh I want to do that maybe he's doing it right now maybe that's why he's attending virtually we just need to kind of test that and it takes time to you know wait for the cells and see how they grow do all the epigenetic sequencing that kind of stuff.
+
+From there I mean getting eggs and embryos it's probably annoying we kind of need both um yeah you can just start with regular embryos but especially for like nuclear transfer you want a bunch of eggs so uh if we have any potential donors uh you'll probably be compensated i don't know if that's legal either but it should be um.
+
+And then yeah a lot of sequencing just you know kind of stress testing it you want to do like supposedly i guess oh jay's gone but i was gonna say he uh exclaiming oh you don't even need to get approval for this if they you know strike this from the uh the appropriations bill that seems suspicious to me I'm sure the FDA will still stick their fingers in it so in terms of getting this like GMP that could be a very long time getting it good enough that I would do it you know there's probably a lower but very reasonable bar there you know just doing it hundreds thousands of embryos really and making sure it works reliably enough that's the main kind of stuff finding people willing to work on this not torpedo their careers is definitely a concern. Most of the people are academics.
+
+When you say doing, I forgot the number, hundreds or thousands of embryos, would those be monkeys? Or you're saying...
+
+What are you, a cop? Yes, yeah, of course, monkeys. I know some people want to do monkeys first, but I mean even just like human embryonic stem cell culture is much more developed than like marmoset stem cell culture. So if it becomes legal, then there's no reason not to just do humans first.
+
+So, but if we have to, you know, we can get a little breeding colony together of monkeys, mind you, and do it that way as well if you want. But I mean up until the point you're implanting them we not you know generating fucked up human babies So yeah maybe on the side depends how much money we get we can have some monkeys Yeah basically.
+
+# Q&A: Edits Selection and Risk Balancing
+
+But yeah, and oh yeah, Merrick, I'll go front to back, sorry. Yeah, I think the monkeys are definitely going to be necessary to show that it's safe. I also had a question, how do you know which edits to make? I mean besides like George Church's shortlist, which gives you a few traits, right? We heard from Steve about difficulties identifying causal variants.
+
+Activein to be receptor in the muscles and it does this in mice so it depends on the target that's I wouldn't say that's not really my department but I haven't you know I'm sure we'll get plenty of options you talk to a biologist and everyone has their kind of favorite gene mutation to make that's fairly well studied and we can collect a list of those I think but I might see something like even though you're not sure it's a causal you just do it anyway and and then like overall like your effect size, your overall effect size is at the.
+
+Again, you have to balance it with the risk. Yeah, there's always the risk that off targets with CRISPR. And even if you're doing the sequencing, if you get some sort of cascade where you're chasing your own errors, I'm sure there's a balance to be made. And that'll be part of as well as finding out how much multiplex kind of editing we can do. But yes.
+
+Well, I mean, why wouldn't you just sort of lower the risk of terrible things happening by just working on superficial things to see if they work? Like dumb things, basically, but it's not going to have much of an impact anyway. Just see if it's safe in itself.
+
+Sure, I guess. You know, that's up to... I mean, we can just... Yeah, like when we're doing the testing stuff, it'll just be like, here's a random site and change it. Most of the testing we're going to be doing is not embryos or embryonic stem cells that'll be implanted. It's just cells in a dish. It just removes the ethical consideration.
+
+Oh, just giving people graffiti upgrades to their genomes, like stick my name in there. Just stick words. It kind of a dick move to do to them Like oh we could have given you immunity to cancer but just sign my name and and you want some benefits yes the whole process while we think we can make it very good and all the epigenetics will be okay it's still a risk even if you're not changing anything um and we can you do the testing but at a certain point you know the first kids you have to be born with it and we want to give them something for their trouble really but it's up for debate really uh yes okay thank you.
+
+# Q&A: Cosmetic vs. Health Edits and Market
+
+Uh this is gonna sound very weird for scientists i guess i'm barely a scientist don't worry but when it comes to things that are popular that we already know from biobank well-knowledge that are innocuous when it comes to physical health. Wouldn't the most lucrative traits to edit be cosmetic ones? Like when it comes to lighter skin, that's very popular worldwide. And so is height or veils.
+
+Yeah, height, eye color, hair color, skin color. Like when you're like fun to edit in for like super muscles or something like that. that like when it comes to like the market like what that what muscles are useful you can lift stuff um yeah and um honestly from what i hear from muscle people it's not really for attracting mates so much as like the boys kind of thing so um but it has its own perks really i'm sure someone more jacked than me can weigh in on it but um it's just generally you know it's good for health as well having muscles there's a lot of strong very strong correlations there again like I tend to side but J on this that it's not our decision to like restrict it that you can't try and make your kid look 5% more like Brad Pitt or something yeah it depends on the people most of the you know the first round of people doing this they're probably not really gonna care about that as long as the kid is smart or just healthy in general but that's some places would like to fit into like the domiculture.
+
+Yeah, probably. Especially the skin stuff that people have gotten, you know, bleached their skin or whatever. East Asia, I think, as well. Yes, it's a major problem there. Yeah. I don't know. People are going to just do some weird shit, but we'll just roll with it. I don't know. I'm not the bioethicist, and I hate them.
+
+If you just buy a phony skin, that causes them to get cancer. Yeah exactly And again there is always a risk Like if you going to go through the effort of like changing the eye color I never noticed what someone eye color is I guess some people do But is it really worth it when you could have changed a couple more intelligent SNPs or something instead? It's who the fuck knows.
+
+# Q&A: Map Source and Offshore Options
+
+Yes, Antoli. What's the source of the map? What map? Oh, that was from some paper. I made this thing together like four years ago, so I don't know if it's still up to date. I want to see if South Africa is still... Or if they were originally read yeah, because that's great That's where I so I did there's America where we can change the laws there's Roatan there's Ukraine. There's Gulf states hide on.
+
+Yes, yes on biology but also on the eye in particular. Good, yeah. Just sort of some general practice like that. Yeah, I think there's a lot more emphasis on general being smart, academic performance kind of stuff there. Like I said, they don't have the Judeo-Christian, although I guess it's just Christian if the rabbis are cool with this. Concerns about this, which are not really founded on anything themselves. Funnily, Italy, super Catholic country, is yellow on this, but that probably means basically the same as red. Belgium yeah yes yeah sure yeah it would be so cool though right you know oh yes.
+
+# Q&A: Clarifying Embedded Pseudovirus
+
+Sorry if I'm being slow on the uptake here, but I just want to make sure I'm understanding the embedded pseudovirus thing. So like the idea is this pseudovirus doesn't itself do anything, but it's given to the embryo. And then the idea is you want to make all these changes for the adult. And then you get the adult the gene therapy, and then it works with all these problems that it normally has. But like, why wouldn't it have all these problems?
+
+Like yes I can go back to that slide I know I was considering not putting it in there because it takes me a while even explain to biologists on this stuff but I promise you it's cool so the the sequence that you're putting into the the baby's genome here it doesn't do anything it's just there to tell the immune system that it's cool if you see some of this don't you know go apeshit on it and then the virus it kind of slowly spreads cell to cell or something gets into the bloodstream and, you know, viruses want to stick to their matching receptor.
+
+And we have this kind of artificial lock and key thing we could do very easily. And, you know, virus sticks to a cell, injects its genome in there, and that floats around and does what it normally does, either editing or making more viruses. and then it just kind of slowly cycles through.
+
+This is, I mean, it's still quite a bit different from regular gene therapy. Like I say, with that, you're just injecting a massive bolus of virus and you have them on heavy immunosuppressants for like months before and after and that's where most of the problems come from. It's, trust me, it would probably work. Basically, sorry, if I had like a whiteboard, maybe we could do a bit better with it. It's like having a backdoor to your body.
+
+Yes, basically. Yeah, it helps a lot. It's not going to be super amazing perfect, but this I think is a nice early idea for how to go about it.
+
+# Q&A: Pseudovirus Mechanics and Brain Delivery
+
+Yes? How long is the time between when you express the sgRNA or whatever for the receptor to when it actually gets knocked down How long do these receptors last in the membrane I mean you could make it so so they very short and they just constantly being popped out there and as soon as you knock down the rna within like an hour they basically gone uh so it might get reinfected but you know the cell you know might have five viruses slam into it instead of one and uh with this kind of stuff you're already encoding for example you could already have like Cas9 the the CRISPR protein already in these genomes as well because you can get immune reactions to the CRISPR protein and you can get rid of that, which by itself would be pretty cool.
+
+This is just adding the whole delivery mechanism on alongside it. So yeah, there's some tweaking to be done there, definitely. We can test it out in a dish or mice or whatever and mess around with that. This is not going to be in the first generation, sadly. So they are not getting future-proofed, which is doubly ironic for the first few of these kids. But, you know, within a decade, I think this would be a good thing to do. Yeah, but we'll see.
+
+# Q&A: Security Risks of Pseudovirus
+
+Yes. What about someone adversarially designing a virus to hurt you?
+
+You're only like the fifth person to ask me that. So there's a few options there. These are all kind of synthetic. Like the receptor, like the spike protein and the receptor are, it's like lock and key. You can design a binder, like two proteins that stick together from nothing basically using AI kind of stuff. So you can give everyone their own one if you want to. It probably annoying logistically to make everyone their custom gene therapy when you look this up You can do a bunch of those.
+
+You can also have so you get to this stage where the all the cells been infected you get your first gene therapy and you basically just don't reset the receptor so that they are functionally immune to this virus until you give them the doxycycline and reset it so there's a number of methods if someone really wants to kill you they'll just shoot you in the face just all the engineer bioweapon stuff is of the AI 2027 timeline, which was like a latent-
+
+I'm not really on LessWrong, so you'll have to fill me in on what that means. Like a latent virus that infiltrates the entire populace and then later on is triggered.
+
+Yeah, I mean, I'd be more worried about like prions. Frankly, you could have some doomsday scenarios there, but I don't want to scare people.
+
+Yes? I totally, there's so many easier ways to kill people. Yeah, I mean, if Luigi showed us anything, Yeah.
+
+So I just wanted to clarify. Sorry, I'm pretty sure I get it. The idea is that if you are able to put the genetic material into the embryo at the beginning so that the body is essentially like, oh, this is one of us, then the body doesn't attack, and then later you can extract or build the virus, right? That is that exact genetic sequence, which the body won't reject, and you can use it for whatever you want.
+
+Yeah exactly So you just proselytize the body Yeah basically yeah it pretty cool yes in the back yeah the brains probably tough you might have to do a separate injection just into the brain and then it'll you know it's passing through not just neurons because they're gonna be kind of annoying but all the microglia and astrocytes that are floating around they're normally dividing they will provide a fertile host for the the virus to kind of do its thing so yeah you probably still need to shove needle into your brain we can get really tricky with it but that's you know probably probably easiest way yeah there are ways yeah there's probably I mean like it's like theoretically the blood brain barriers made up of cells and they are you know they take it in on the blood side and then a few of these viruses are getting excreted on the brain side of it and you can get some pass through that way yeah there's a number of ways there but yes the brain will be definitely an important one.
+
+# Q&A Closing
+
+So we want to make sure we get that this is the first time I've done this talk where I put the embedded pseudovirus and I'm glad everyone likes it but yeah cool all right is that it for questions any last minute I mean you can just find me I'll be around so Thank you.
+
+# Insights?
+
+- **Clonal Expansion for Validation**: Key trick is deriving ESCs from blastocysts, editing en masse, then single-cell plating for clonal colonies; deep sequencing of colony aliquots ensures isogenic, edit-complete lines without mosaicism, superior to embryo biopsy inference.
+- **Re-Derivation Pathways**: SCNT efficiency boosted by ESC totipotency (95-99% reprogrammed vs. somatic ~1%); VelociMouse leverages host embryo's trophoblast bias; synthetic blastoids (Hanna/Zernicka-Goetz) bypass gametes entirely.
+- **Imprinting Fix**: Naive human ESCs via Serrano cocktails preserve parent-specific methylation, averting disorders; contrasts mouse ESCs' natural naivety.
+- **Pseudovirus Future-Proofing**: Embed silent synthetic viral genome + ubiquitous synthetic receptor under thymus-specific promoter; central tolerance immunizes against it. Adult activation: matching virus spreads cell-to-cell (replicating but self-limiting via sgRNA knockdown), enabling multiplex CRISPR without bolus dosing/immunosuppression. Mechanistic insight: thymic negative selection + artificial lock-key + Tet-On reset mimics endogenous retroviruses.
+- **Germline > Somatic**: Avoids immune rejection of novel proteins, non-dividing neuron/niche stem cell inaccessibility, repeat dosing limits; leverages developmental self-integration.
+- **Risk-Efficacy Balance**: Prioritize population-validated loss/gain-of-function alleles (CCR5Δ32 HIV resistance, PCSK9lo cholesterol, ABCC11no body odor); multiplex iteratively via ESC rounds; test via dish/colony/human surplus embryos to 14+ days.
+- **Economics/Regs**: IVF automation + bulk sequencing (~$200/genome) keeps premium low; FDA rider blocks approval only post-implantation; offshore (Hainan, UAE, Roatan) viable for transfer.
+
+# Transcription errors?
+
+- "Hannah lab... Magdalena whatever": Jacob Hanna (Weizmann, synthetic embryos); Magdalena Zernicka-Goetz (blastoids).
+- "Velocimouse": VelociMouse (ESC injection tech).
+- "Active in to be receptor": Likely "activin receptor" (TGFβ pathway in muscle/ESCs).
+- "Dickie wiki": Dickey-Wicker Amendment (federal embryo funding ban).
+
+# See also
+
+* [[Designer baby FAQ|designer-baby-faq]]
+* [[Human embryo engineering platform overview|germline-genetic-engineering-technology]]
+* [[Human germline genetic engineering proposals|genetic-modifications]]
+* [[gene editing|gene-editing]]
+* [[gene therapy|gene-therapy]]
+* [[cell therapy|cell_therapy]]
+
+
