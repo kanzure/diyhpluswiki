@@ -479,6 +479,21 @@ A modification to the rotary ribosome protein printer idea could be to add prote
 
 <https://patents.google.com/patent/US20240166682A1/en>
 
+# Enzymatic sequential nanopore approach
+
+DNA sequencing using protein nanopores with a voltage differential applied between the two sides of the membrane and current measurements is well established and can be combined with enzymes that will edit the strand as it passes through the nanopore. Use step timing using the changes in the current and control of the enzyme either through light activation of the enzyme attached to the pores or through change of the dwell time per nt or a combination of both.
+Three step system:
+1) Nanopore I - Start from a poly(dU) first nanopore is attached to a UNG, removes the Uracil at the specified locations and leaves abasic sites
+2) Primer extension with a standard polymerase + Rev1 then produces the complementary strand: A opposite intact U, C opposite abasic sites (Rev1 dCTP transferase)
+3) Nanopore II - TadA-8e and APOBEC3A deaminates A->G C->T
+
+| Pore 1 (U→abasic) | Primer extension | Pore 2 (on complement) | Result |
+|---|---|---|---|
+| skip | U → **A** (Watson-Crick) | skip | **A** |
+| fire | abasic → **C** (Rev1 dCTP transferase) | skip | **C** |
+| skip | U → **A** (Watson-Crick) | fire | **G** (TadA-8e: A→I/G) |
+| fire | abasic → **C** (Rev1 dCTP transferase) | fire | **T** (APOBEC3A: C→T) |
+
 # More links
 
 adam marblestone's molecular nanotechnology concept page: <https://longitudinal.blog/bottleneck-analysis-positional-chemistry/>
