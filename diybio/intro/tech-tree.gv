@@ -1,6 +1,17 @@
 digraph DIYbio {
-    rankdir=TB;
-    node [shape=box, style=rounded];
+    graph [
+        rankdir=TB,
+        newrank=true,
+        compound=true,
+        nodesep=0.15,
+        ranksep=0.28,
+        pad=0.08,
+        splines=polyline,
+        outputorder=edgesfirst
+    ];
+    node [shape=box, style=rounded, fontsize=10,
+          margin="0.08,0.05"];
+    edge [fontsize=8];
 
     // Tier 0 - Basic
     subgraph cluster_0 {
@@ -108,6 +119,74 @@ digraph DIYbio {
         diy_rna [label="DIY RNA\n(mRNA, gRNA, etc)"];
     }
 
+    // Layout-only rows and tier spine.
+    edge [style=invis, arrowhead=none,
+          constraint=true, weight=100];
+
+    // Tier 0
+    { rank=same; heat_source; containers }
+    { rank=same; scale; pH_strips }
+    heat_source -> scale;
+
+    // Tier 1
+    { rank=same; buffer_prep; media_prep }
+    { rank=same; pressure_cooker; fan_filter }
+    buffer_prep -> pressure_cooker;
+
+    // Tier 2
+    { rank=same; flow_hood; sterile_technique }
+    { rank=same; gel_electrophoresis; uv_transilluminator }
+    { rank=same; microscope }
+    flow_hood -> gel_electrophoresis -> microscope;
+
+    // Tier 3
+    { rank=same; polymerase; yeast_strains }
+    { rank=same; thermocycler; centrifuge }
+    { rank=same; competent_cells; micropipettes }
+    { rank=same; restriction_enzymes; ligase }
+    { rank=same; gene_knockout; selective_media }
+    polymerase -> thermocycler -> competent_cells -> restriction_enzymes -> gene_knockout;
+
+    // Tier 4
+    { rank=same; chemical_transform; electroporation }
+    { rank=same; auxotrophic_yeast }
+    { rank=same; selection }
+    chemical_transform -> auxotrophic_yeast -> selection;
+
+    // Tier 5 is one stack of short rows rather than several
+    // horizontal tracks.
+    { rank=same; cloning }
+    { rank=same; expression_plasmids; directed_evolution }
+    { rank=same; protein_expression }
+    { rank=same; chromatography; cas9_grna; t7_rnap }
+    { rank=same; dialysis; crispr; in_vitro_transcription }
+    { rank=same; sds_page; rna_purification }
+    { rank=same; diy_restriction; diy_ligase; diy_rna }
+    { rank=same; diy_polymerase; diy_cas9 }
+
+    { rank=same; protected_nucleosides; phosphorus_trichloride }
+    { rank=same; schlenk_line; vacuum_pump }
+    { rank=same; rotary_evaporator; glovebox }
+    { rank=same; phosphorochloridite_synth; nmr; inert_atmosphere }
+    { rank=same; phosphoramidite_reagents }
+    { rank=same; inkjet_synthesizer; manual_solid_phase }
+    { rank=same; oligo_purification }
+    { rank=same; diy_oligos }
+
+    cloning -> expression_plasmids -> protein_expression -> chromatography -> dialysis -> sds_page -> diy_restriction -> diy_polymerase -> protected_nucleosides -> schlenk_line -> rotary_evaporator -> phosphorochloridite_synth -> phosphoramidite_reagents -> inkjet_synthesizer -> oligo_purification -> diy_oligos;
+
+    // The only edges responsible for ordering whole tiers.
+    // minlen=2 leaves enough room for both cluster borders and labels.
+    scale           -> buffer_prep       [minlen=2];
+    pressure_cooker -> flow_hood         [minlen=2];
+    microscope      -> polymerase        [minlen=2];
+    gene_knockout   -> chemical_transform [minlen=2];
+    selection       -> cloning           [minlen=2];
+
+    // Restore defaults for the visible dependency graph.
+    edge [style=solid, arrowhead=normal,
+          constraint=true, weight=1];
+
     // Basic dependencies
     heat_source -> buffer_prep;
     heat_source -> media_prep;
@@ -175,16 +254,16 @@ digraph DIYbio {
     sds_page -> diy_polymerase [style=dashed];
     sds_page -> diy_cas9 [style=dashed];
     
-    // Connect DIY enzymes back to main workflow
-    diy_restriction -> restriction_enzymes [style=dashed, label="replaces"];
-    diy_ligase -> ligase [style=dashed, label="replaces"];
-    diy_polymerase -> polymerase [style=dashed, label="replaces"];
-    diy_cas9 -> cas9_grna [style=dashed, label="replaces"];
+    // Connect DIY enzymes back to main workflow with constraint=false to avoid pulling tiers together
+    diy_restriction -> restriction_enzymes [style=dashed, label="replaces", constraint=false];
+    diy_ligase -> ligase [style=dashed, label="replaces", constraint=false];
+    diy_polymerase -> polymerase [style=dashed, label="replaces", constraint=false];
+    diy_cas9 -> cas9_grna [style=dashed, label="replaces", constraint=false];
 
     // Auxotrophic yeast bootstrapping
     media_prep -> selective_media;
     yeast_strains -> gene_knockout;
-    crispr -> gene_knockout;
+    crispr -> gene_knockout [constraint=false];
     gene_knockout -> auxotrophic_yeast;
     selective_media -> auxotrophic_yeast;
     auxotrophic_yeast -> selection [label="for genetic selection"];
@@ -196,7 +275,6 @@ digraph DIYbio {
     buffer_prep -> phosphoramidite_reagents [style=dotted];
     protein_expression -> t7_rnap [style=dashed];
     cloning -> in_vitro_transcription [label="template"];
-    // Manual synthesis requires anhydrous solvents, not covered by buffer_prep
     
     // Phosphoramidite synthesis path
     phosphoramidite_reagents -> inkjet_synthesizer;
@@ -224,10 +302,10 @@ digraph DIYbio {
     in_vitro_transcription -> rna_purification;
     rna_purification -> diy_rna;
     
-    // Connect DIY oligos back to workflow
-    diy_oligos -> cloning [style=dashed, label="primer/gene synthesis"];
-    diy_oligos -> crispr [style=dashed, label="gRNA oligos"];
-    diy_rna -> crispr [style=dashed, label="gRNA transcripts"];
+    // Connect DIY oligos back to workflow with constraint=false to prevent upward ranking pull
+    diy_oligos -> cloning [style=dashed, label="primer/gene synthesis", constraint=false];
+    diy_oligos -> crispr [style=dashed, label="gRNA oligos", constraint=false];
+    diy_rna -> crispr [style=dashed, label="gRNA transcripts", constraint=false];
     
     // Alternative: use commercial enzymes with DIY oligos
     polymerase -> in_vitro_transcription [style=dotted, label="T7 RNAP alt"];
