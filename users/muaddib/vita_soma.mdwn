@@ -1,0 +1,67 @@
+3409a3410,3475
+## Actuarial genetics of mouse lifespan: Vita and Soma loci
+
+[Dynamics of genetic and somatic trade-offs in ageing and mortality](https://www.nature.com/articles/s41586-026-10407-9) (Arends et al., Nature 2026; preprint <https://doi.org/10.1101/2025.04.27.649857>) -- the largest genetic dissection of mammalian lifespan to date: 6,438 UM-HET3 mice from the NIA Interventions Testing Program (ITP) across three sites, genotyped and mapped with an "actuarial" method. Instead of mapping lifespan once, they map mean lifespan of 72 nested survivorships, truncating the cohort in 15-day steps from T 42 (puberty) to T 1,100 (the oldest 559 mice, 8.7%), which is roughly equivalent to a human range of 12 to 94 years. UM-HET3 mice are one giant sibship segregating 11 million variants from four progenitor haplotypes: C (BALB/cByJ), B (C57BL/6J), H (C3H/HeJ) and D (DBA/2J), so every locus resolves to four two-letter genotype classes (CD, CH, BD, BH).
+
+Result: 59 loci, of two conceptually different types.
+
+* 29 **Vita** loci -- modulate life expectancy and age-specific mortality directly. Mean effect 36 ± 12 days; peak variance explained per locus only 2.5 ± 0.9% (females) and 3.2 ± 0.5% (males); LOD 4.1 (Vita5a) to 9.0 (Vita4a in males) and 8.1 (Vita2c in females); confidence intervals 35 ± 19 Mb, smallest two under 10 Mb. Mean age window of action is 349 ± 229 days.
+* 30 **Soma** loci -- do not affect lifespan per se, they modulate the *correlation* between body mass and remaining life expectancy. These are nearly disjoint from the 28 body-mass (Mass) loci mapped in the same animals, i.e. "how much your size costs you" is genetically separate from "how big you are". Effects run 2 to 29 days per gram of body mass. 19 loci tune the negative mass-lifespan correlation at 42 and 185 days; 11 tune the positive correlation in the post-reproductive phase. The sign flip is real: body mass measured at 730 days correlates *positively* with remaining expectancy in both sexes.
+
+### Why this matters for germline engineering
+
+Most of this document assumes an allele is good or bad. This paper is the strongest mammalian evidence that a large fraction of longevity alleles have effects whose *polarity reverses with age*:
+
+* 12 of 29 Vita loci reverse the direction of their genotype effect across survivorships. Vita4a shows biphasic fluctuation in males between T 500 and T 710 caused by offset mortality waves (a D-haplotype wave starting at 400 days, then C and H waves at 600 days). At Vita1a, the D haplotype raises early mortality while H raises late mortality.
+* Only 5 loci have durable effects from T 42 out to T 750, and 7 have nearly age-independent hazard ratios over at least 500 days -- these are the honest "rate of ageing modulators" (RAMs) and the only ones for which a constitutive germline edit is straightforwardly the right tool. Vita14b is an example of an effect that steadily fades from T 305 to T 1,100.
+* Early-acting loci (before T 500) are three times more common in males than females; 5 loci act only after T 860.
+
+Engineering implication: for reversal-type loci, a constitutive edit buys you an early-life advantage and pays for it later (or vice versa). These are targets for **age-gated or inducible expression** (tet-off, degron/destabilization domain, senescence- or damage-responsive promoters), not for a fixed germline allele. See also the discussion of adult-onset inducible IGF1R downregulation and inducible Cisd2 elsewhere in this document -- this paper says that pattern is the general case rather than the exception.
+
+Second implication: **sex-specific architecture is not a nuisance parameter**. 13 loci are strongest in males, 4 in females, 12 only when sexes are pooled. Epistatic networks are almost entirely disjoint by sex: 41 significant Vita-Vita interactions at T 42 alone, 59 male and 43 female Vita-Vita interactions overall, 57 versus 35 Soma-Soma, and 197 Vita-Soma (113 male, 84 female), yet only 2 of 61 possible interactions are shared between sexes at the most lenient threshold. Loci with nearly identical main effects in both sexes still have completely different partners: in females Vita1a pairs with Vita6b, Vita9a and Vita11a at LOD 5.5, 4.6 and 4.7, while male LODs for the same pairs are 1.5, 3.2 and 3.5. Epistatic variance (Vg×g) is twice as high in females as in males (12% versus 6%) over the whole reproductive lifespan. Any multiplex longevity edit set is therefore likely to need sex-conditional content.
+
+### Candidate genes
+
+**Vita1a** (chr 1, compact, only 14 protein-coding genes) -- the most tractable locus:
+
+* **Atp6v1h** (5.1 Mb) -- V-ATPase subunit H, lysosomal acidification and mTOR signalling. Variants in this gene extend lifespan in Drosophila and C. elegans and modulate insulin secretion and type-2 diabetes risk in humans. Top-ranked candidate.
+* **Rb1cc1** (6.2 Mb, FIP200) -- autophagy initiation complex, nutrient sensing.
+* **Mrpl15** (4.8 Mb) -- mitoribosome, mitochondrial function.
+* Human orthologue Mendelian randomization at this locus was negative for LYPLA1, MRPL15, PCMTD1 and TCEA1, so the mouse effect may not be conserved or the tested proxies are wrong.
+* Epistatic partners as functional constraint: if Atp6v1h is the Vita1a effector, biochemical partners in the interacting loci are Pex5, Phb2, Foxm1 and Etfrf1 (Vita6a); Keap1 and Sesn3 (Vita9a); and Inpp5j, Gck, Ogdh, Igfbp3 and Pex13 (Vita11a). These fall into two networks -- lysosomal stress/autophagy/mitophagy (Atp6v1h, Foxm1, Inpp5j, Phb2) and beta-oxidation/metabolic stress (Etfrf1, Gck, Igfbp3, Ogdh, Pex5, Pex13, Keap1, Sesn3). 8 of these 11 genes are already in GenAge. Keap1 partial loss of function (Nrf2 hormesis) is already listed elsewhere in this document; this locus set is an argument for *combining* it with autophagy-side edits rather than testing it alone.
+
+**Vita9b** (chr 9, replicated from an earlier UM-HET3 cohort, 127 protein-coding genes with moderate/high-impact missense variants) -- validated by C. elegans RNAi screen of 15 orthologues:
+
+* **Acad11** (worm acds-10) -- knockdown *increased* motility from 18 to 27 days, comparable to the daf-2 (Igf1r) positive control. In mice Acad11 is trans-activated by p53, enhances fatty acid beta-oxidation, and its expression rises with age. Highest-ranked candidate at this locus. Germline reading: hypomorphic or late-life inducible knockdown of ACAD11, i.e. an anti-target rather than an overexpression target. Note this is the opposite direction from most "boost mitochondrial fat oxidation" longevity intuitions.
+* **Apeh** (acylaminoacyl-peptide hydrolase, worm dpf-5) -- knockdown *reduced* motility. Human variants associate with parental longevity (BH -log P 3.7 for paternal age at death) and with survival into the top 10% age group, and higher APEH expression in human blood associates positively with male longevity. Germline reading: APEH overexpression candidate (proteostasis/N-acetylated peptide turnover), with the caveat that the human association is male-biased.
+* Acp3 (pho-6) and Pcbp4 (pes-4) knockdowns also reduced motility, so both are weak "do not lose function" genes.
+* Other screened orthologues without motility effects: Hyal1-3, Col6a6, Lrrc2, Ip6k2, Trim71, Poc1a, Stt3b, Frmpd1, plus Slc22a13, Zfp445 and Csrnp1 just distal to the locus.
+
+Intractable for now: **Vita17a** runs from the centromere to 74 Mb and swallows the MHC (linked to lifespan variation since the 1970s), and **VitaXa** covers the proximal 70 Mb of chromosome X as an oligogenic male-specific locus.
+
+### Soma loci and the body-mass trade-off
+
+* 15 Soma loci are male-only, 4 female-only. The mass-lifespan coupling is far stronger in males, especially young.
+* Soma3b: males with the CD genotype lose 17.9 days per gram, CH only 8.4 days per gram; in females the same contrast is noise (-2.9 versus -3.4 days per gram). Soma11a is the strongest female locus and is still modest.
+* Soma1a shares top markers with Vita1a in both sexes and is driven by the same H and D haplotypes, but its effects *oppose* Vita1a: H lengthens life by 12 days as a Vita effect yet costs -4 days per gram as a Soma effect, while D shortens life by 22 days yet gives +1 day per gram. A single haplotype can therefore be simultaneously pro-longevity and pro-trade-off, which is a warning about picking alleles from lifespan GWAS peaks alone.
+* Authors' conclusion: interventions that blunt mass-lifespan coupling have to be applied early in life; geriatric-onset interventions face a different and more diffuse set of drivers. Compare "Big mice die young but large animals live longer" elsewhere in this document.
+
+### Heritability is not a constant
+
+* Summed variance explained by all 29 Vita loci (Vg) in males starts near 40%, drops to 30% by T 500 (the wave of early male mortality), then climbs to 50% in the oldest survivorships.
+* In females Vg is almost exactly 27% out to T 620, falls to 20% by T 890, then recovers. Consonant with the age-dependent increase in heritability of lifespan seen in Scandinavian twin cohorts.
+* Practical caution for interpreting the ITP itself: variance attributable to *site* reaches 43% in males and 24% in females despite standardized protocols, and nominally ineffective control supplements still shifted lifespan by +40.2 ± 8.3 (males) and +37 ± 6.7 (females) days at T 42, turning negative by T 890/T 1,040. Of 62 drugs tested by the ITP about 25% had positive effects, with a strong male bias; rapamycin is the notable both-sexes exception.
+
+### Fit to evolutionary theories (useful as a design taxonomy)
+
+* Mutation accumulation (late-acting variants that escape selection): Vita1a and Vita11b in females, Vita5a and Vita10a in males. These are the "free lunch" class -- editing them should have little early-life fitness cost, and they are what human centenarian cohorts are mostly finding.
+* Disposable soma / longevity assurance: all early-acting Soma loci, read as bioenergetic compromises between peak-reproduction body mass and subsequent lifespan.
+* Antagonistic pleiotropy: Vita2a, Vita2b, Vita2c and Vita9b, where genotype effects on mortality invert with age. These are the loci that demand inducible control, and where a naive edit is a Faustian bargain.
+
+### TODO from this paper
+
+* mine Supplementary Tables 1, 13, 14, 15 and 16 for the per-locus lists of predicted-impact missense variants and the GO/KEGG/Reactome enrichments, and pull specific allele choices into this document
+* the 28 Mass loci (Extended Data Fig. 7) are unmined here and relevant to the Height and Muscle sections
+* check whether the RAM-class loci (durable, near-constant hazard ratio) overlap any pathway already in this document (mTOR, autophagy, beta-oxidation) -- Vita1a/Atp6v1h/Rb1cc1 suggests they do
+* Vita9c and the other four post-T 860 loci have no candidate genes assigned yet
+
