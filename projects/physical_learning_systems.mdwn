@@ -1,5 +1,6 @@
 This page describes a project pertaining to [[physical learning systems]], [[artificial intelligence]], [[biocomputing]] and [[intelligence]].
 
+[[!toc levels=5]]
 
 # Summary
 
@@ -14,5 +15,47 @@ Modern AI scales with the number of adaptive degrees of freedom. The human brain
 # Contract project: Machine learning expertise
 
 2) Looking for an [[ML|machine learning]] researcher/engineer to assess the feasibility and directions for training a black box physical learning system consisting of a high-dimensional analog substrate driven and read only at its electrodes. Deliverables include: general feasability analysis, brainstorming, hypothesizing, basic research/literature review, high-level sketches of GPU-based simulations if feasible. Ideal backgrounds: machine learning, reinforcement learning, evolutionary optimization, physical reservoir computing, energy-based/predictive-coding methods, hybrid analog-digital pipelines, and practical experience optimizing noisy non-differentiable systems.
+
+---
+
+# Silver nanoparticle device proposal
+
+Here is a more specific proposal, although it is not the only plausible design.
+
+**Summary**: This project will develop an adaptive physical learning system comprising a stationary, percolating network of silver-core/silver-sulfide-shell (Ag/Ag₂S) nanoparticles contacted by 16 independently addressable microelectrodes, combining materials engineering with hardware-in-the-loop machine learning to test whether task-beneficial transient changes in distributed conductive pathways can be selectively consolidated into persistent computational improvements.
+
+**Device fabrication**: The initial device will use nominally 40–60 nm particles deposited on an insulating substrate with Pt-based electrodes defining an approximately 30 µm active region; particle loading, shell chemistry, contact morphology, and electrode geometry will be optimized for heterogeneous, junction-dominated conduction, reproducible nonlinear dynamics, and incremental plasticity rather than maximum conductivity. Silver-ion redistribution and conductive-bridge formation/dissolution are the candidate mechanisms for transient computational memory and retained adaptive state; voltage, pulse duration, repetition, polarity, and current compliance will be calibrated to distinguish computation, exploratory modification, consolidation, and recovery regimes. Electrical and electrochemical characterization will quantify relaxation spectra, stochastic switching, signal-to-noise ratio, drift, read disturbance, retention, reversibility, thermal loading, and endurance, with hardware-enforced current, charge, and energy limits.
+
+**Machine learning**: On the ML side, the substrate will be treated as a partially observed, stochastic, nonstationary dynamical system whose latent state is accessible only through electrode excitation and terminal measurements, not as an array of individually addressable weights. Initial reservoir-computing baselines will use regularized linear readouts trained by ridge regression or recursive least squares; subsequent substrate adaptation will optimize a low-dimensional action space of electrode assignments, waveform-basis coefficients, pulse sequences, timing, and consolidation parameters. A state-aware black-box controller will infer compact latent-state representations from stimulation–response histories and select programming actions using contextual Bayesian optimization or Thompson-sampling bandits for short-horizon interventions, progressing to uncertainty-aware model-based reinforcement learning when action history, delayed rewards, and irreversible state changes require sequential credit assignment; SPSA and evolutionary strategies will provide derivative-free optimization baselines. Ensemble recurrent state-space surrogates will support system identification, predictive uncertainty estimation, and sample-efficient candidate selection within experimentally characterized operating limits, without assuming that a fitted terminal model uniquely identifies microscopic states. Rewards will combine task-loss reduction with penalties for programming energy, persistent drift, conductance saturation, and loss of useful response diversity; explicit stimulation budgets and interleaved reference probes will constrain exploration and detect nonstationarity.
+
+The central learning hypothesis is that a weak programming intervention producing improved task performance can predict a corresponding retained improvement when its stimulation pattern is replayed under calibrated consolidation conditions, while unsuccessful interventions predominantly relax; exact reset, polarity-based reversibility, and autonomous junction-level policy gradients will not be assumed. Definitive internal-learning experiments will freeze input encoding, feature extraction, sampling, normalization, and readout weights, isolating material adaptation from digital decoder learning.
+
+Benchmarks will include delayed parity, nonlinear temporal prediction, and adaptation to distribution shifts, evaluated on untouched test sequences across independent devices and sessions, with frozen-network, readout-only, shuffled-reward, energy-matched random-programming, and matched digital temporal-model controls.
+
+**Simulation**: Supporting GPU-based simulations will couple stochastic electrical-network dynamics, ionic/filamentary state evolution, thermal feedback, parasitics, and acquisition models to compare learning algorithms and quantify sensitivity to device variability and model mismatch.
+
+**Deliverables** will include reproducible fabrication protocols, an instrumented prototype, calibrated physical and terminal-level surrogate models, a hardware-in-the-loop training pipeline, and a controlled demonstration or falsification of retained task-directed adaptation, reporting generalization, sample efficiency, forgetting, retention, training and inference latency, system energy, and lifetime.
+
+**Outcome**: The intended outcome is a reusable hybrid temporal learner in which the material supplies nonlinear computation, distributed memory, and persistent adaptation while an external controller supplies credit assignment and stability management, requiring coordinated expertise in nanoparticle/electrochemical materials, analog instrumentation, nonlinear system identification, reinforcement learning, Bayesian optimization, and noisy black-box control.
+
+---
+
+hypothesis: In an Ag/Ag₂S nanoparticle network, a weak electrode-induced modification that improves a task can predict a corresponding retained improvement after carefully increased stimulation of the same programming pattern. I would use chemically prepared Ag/Ag₂S core-shell nanoparticles deposited as a dry, interconnected film on an insulating substrate. The particles remain approximately stationary. Adaptation occurs primarily through changes at their contacts. Use fixed particles with mobile interfacial silver, and not freely moving particles in a colloid.
+
+| Component       | Proposed first implementation                                                                                      |
+| --------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Active material | Ag/Ag₂S core-shell nanoparticles                                                                                   |
+| Particle scale  | Approximately 40–60 nm nominal diameter; characterize the actual distribution and interfacial chemistry            |
+| Substrate       | Oxidized silicon or equivalent insulating surface                                                                  |
+| Contacts        | Sixteen Pt-based microelectrodes                                                                                   |
+| Geometry        | Approximately 30 µm central active region, with neighboring contact gaps around 4–5 µm                             |
+| Network         | Deposited, stationary particulate film; loading selected for reproducible, junction-dominated conduction           |
+| Environment     | Controlled temperature and humidity; no liquid bath or intentionally mobile bulk particles                         |
+| Electronics     | Programmable voltage waveforms, fast current compliance, simultaneous terminal acquisition, and a small controller |
+
+hypothesis: Ag/Ag₂S networks can be organized into recurrent modules whose task-relevant state and retained plasticity remain controllable as the architecture grows, allowing token-level prediction errors to train increasingly expressive physical sequence representations.
+
+
+something something mamba
 
 
