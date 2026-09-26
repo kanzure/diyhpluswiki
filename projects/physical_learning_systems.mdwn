@@ -111,7 +111,408 @@ hypothesis: Ag/Ag₂S networks can be organized into recurrent modules whose tas
 
 something something mamba
 
-# other public source code
+# Arbortrons
+
+Hubler lecture and demonstration <https://www.youtube.com/watch?v=dgbooumJ4Tg&t=1410s> and [[transcript|transcripts/alfred_hubler_arbortron]].
+
+Physically Evolving Networks (PENs) were first proposed by Alan Turing in his 1948 paper
+“Intelligent Machines” [1]. PENs capture some important features of the information processing
+of biological neural systems, such as mimicking animal and human error patterns, and implement
+massively parallel, non-algorithmic processes, where the sequence and concurrency of operations
+is determined at run time. PENs simulations on conventional digital computers have been
+successfully used for speech recognition, image analysis, and adaptive control. But PEN
+implementations on computers with von Neumann architecture are slow compared to other
+algorithms which are optimized for the sequential processing of explicit instructions. In the
+following we discuss hardware implementations of PENs. Would it be possible to fabricate a
+PEN of the size of a human brain with a billion times more neurons? And if so, how could such a
+PEN be programmed or trained?
+Metal particles in oil are a potential PEN hardware implementation. The metal particles form
+wires if a voltage is applied and a current starts to flow [2]. Figure 1 shows that these wire
+networks often form ramified structures like the branches of a tree. Therefore they are called
+arbortrons [3].
+Arbortrons are not perfect conductors, because there tend to be small gaps between the particles,
+but if they are used as electrical conductors their conductivity increases [4]. This behavior is
+similar to the neural plasticity of human neurons introduced by Donald Hebb [5] Human neurons 
+strengthen and become more conductive if they are used frequently and weaken or decay if they
+are unused. Unused arbortrons are decaying as well, i.e. their particles separate and drift away.
+Unused arbortrons repair only if the applied current exceeds a threshold, because of static
+friction and gravity. For that reason they tend to have a high resistance for small current and
+become good conductors if the current exceeds a threshold. Therefore, arbortrons are nonlinear
+conductors with a threshold.
+Neural plasticity and conductance with thresholds are the key features of PENs. Therefore
+arbortrons may be considered hardware implementations of PENs.
+Hardware implementations of PENs may have some features which exceed biological neural
+nets. Human axons and dendrites in the central nervous systems system are about one
+micrometer thick, whereas nanoparticle arbortrons have a diameter of a few nanometers. Because
+nanoparticle arbortrons are a factor of one thousand thinner, 1000 x 1000 x 1000 = 1 billion
+nanoparticle arbortrons occupy the same volume as one human neuron. A PEN hardware
+implementation of the size of a human head with nanoparticle arbortrons could theoretically have
+a billion times more neurons than the human brain. The power consumption of such a large PEN
+is probably less than the power consumption of human brain (~ 20 Watts), because nanoparticle
+arbortrons are better conductors than human neurons.
+Training a large PEN would be a challenge. It takes about 20 years to train human brains before
+they become productive. Therefore one might conclude that it might take 20 billion years to train
+a large PEN with a billion times more neurons. However on human neurons pulses travel with a
+speed of 1m/s – 100m/s, whereas electrical pulses travel along arbortrons at the speed of light (
+0.3 billion m/s). Because the pulse speed is roughly a factor of a billion larger it might be
+possible to train a large PEN within a couple of dozen years.
+But how can a large PEN be trained? How could it learn to recognize speech or act like a word
+processor? Experiments with small arbortron PENs suggest that they form patterns which
+minimize their resistance, i.e. learn to extract energy from complex environments. For instance
+the system depicted in Fig. 1 forms wires to the electrodes. If the location of the electrodes is
+changed then the wires disintegrate and new wires form and connect the electrode at the new
+location. If an electrode is never charged no wires connect to it. Recent experiments suggest that
+arbortron PENs can learn to play simple computer games, such as Tetris.
+Initially the arbortron PEN is random. The current configuration of the game activates the
+corresponding input electrode. In response to the activated input electrode, the arbortron output
+electrodes trigger a move in the game. If the move is “incorrect” the input electrode is turned off
+immediately. If the move is “correct” then the input current continues for a certain period of
+time, which strengthens the arbortron branch which produced the “correct” move. The extra
+current can be considered as an energy reward for the arbortron network.
+This experiment offers some insights into how a large PEN could be trained by a human or a
+complex environment: with energy rewards. If the PEN hardware implementation responds
+“correctly”, it is rewarded a small amount of energy. In summary, training a large PEN is not like 
+programming a digital computer, it is more like training a pet: If its behavior matches the
+expectations it is rewarded with a treat. The treat is energy.
+
+# Candidate materials
+
+#### Metallic Sn percolating nanoparticle networks
+
+Ramified conducting clusters coupled by nanoscale tunnel gaps; field-driven
+junction evolution and stochastic atomic rearrangement produce nonlinear
+history dependence and correlated switching.
+
+[Mallinson et al. 2024](https://doi.org/10.1002/adma.202402319) report a mean
+characteristic response time of **42.5 µs** (bi-exponential fits), explore input
+durations of 1–100 µs, and use eight electrode voltages plus current, with **ten
+sequential electrode configurations** emulating 90 features.
+
+*Limitation:* the strongest benchmark is planar and externally decoded.
+Oxidation, humidity and preparation affect stability; neither the percolation
+threshold nor the fitted kinetics transfers automatically to a 3D wet mixture.
+
+*Modelling implication:* start with heterogeneous nonlinear tunnel junctions
+plus one or more relaxation states. Introduce explicit filament events only
+where measured switching requires them. Distinguish reversible operating
+dynamics from conditioning and breakdown. Supporting physics:
+[avalanches and atomic-scale dynamics](https://doi.org/10.1021/acs.nanolett.0c01096),
+[criticality](https://www.science.org/doi/10.1126/sciadv.aaw8438),
+[synaptic dynamics](https://ar5iv.labs.arxiv.org/html/1812.09865),
+[stability/oxidation](https://ar5iv.labs.arxiv.org/html/1712.09497).
+
+## Ag/Ag₂S core–shell nanoparticle atomic-switch networks
+
+Ag redistribution and filament formation within Ag₂S can provide volatile and
+longer-lived conductance changes; shell chemistry, junction geometry and current
+compliance all matter.
+
+[Srikimkaew et al. 2024a](https://doi.org/10.1002/aelm.202300709) demonstrate
+volatile vs. nonvolatile regimes at ≈**1 µA** and ≈**100 µA** compliance.
+[Srikimkaew et al. 2024b](https://doi.org/10.1002/aelm.202400360) report a
+**4.06 s** exponential relaxation after ten pulses and ≈**40 min** retention
+after 100 pulses.
+
+*Limitation:* device-specific plasticity observations, not task-directed
+learning. The filament interpretation is *inferred electrically*, not resolved
+microscopically in these devices. Do not import their voltage, compliance or
+retention numbers as hydrogel operating specifications.
+
+## Packed 3D Ag₂S particles
+
+[Ohno & Hasegawa 2024](https://doi.org/10.1587/nolta.15.861) intentionally
+exploit **Ag-ion redistribution inside particles** rather than inter-particle
+metallic filaments — a different model family from Ag/Ag₂S atomic switches.
+Particles fill a 2 mm-diameter cylindrical cavity with **1 mm** vertical
+electrode separation; a **146 µs** decay is measured in the 2D
+characterisation, with peak short-term-memory performance near **200 µs** input
+pulses.
+
+> **Caution:** the 146 µs value is neither a directly measured local junction
+> constant nor a separate decay measurement of the complete 3D device.
+
+[Ohno 2025](https://doi.org/10.35848/1347-4065/adb759) adds a volumetric
+*optical* input channel — useful, but outside a strict electrode-only-input
+constraint.
+
+## Ag/PVP and Ag₂Se nanowire networks
+
+[Zhu et al. 2023](https://doi.org/10.1038/s41467-023-42470-5) use an Ag₂Se
+network on a 16-electrode device for online classification and sequence
+reconstruction (external RLS readout).
+[Milano et al. 2022](https://doi.org/10.1038/s41563-021-01099-9) couple an
+Ag/PVP reservoir to a TaOₓ memristive readout.
+[Moisture-enhanced Ag/PVP](https://doi.org/10.1021/acsami.3c17438) shows that
+absorbed water changes plasticity — an essential environmental control.
+A [two-junction model](https://arxiv.org/html/2409.01318) usefully separates
+robust metallic connections from switchable filamentary junctions.
+
+*Limitation:* neither a fitted readout nor pulse-induced pathway strengthening
+establishes general recurrent credit assignment.
+
+## Ag-in-oxide diffusive memristors
+
+[Wang et al. 2017](https://doi.org/10.1038/nmat4756) combine experiment,
+in-situ HRTEM and particle-dynamics modelling to link field-driven Ag
+redistribution and spontaneous regrouping with conductance relaxation.
+[Midya et al. 2019](https://onlinelibrary.wiley.com/doi/10.1002/aisy.201900084)
+build an Ag-based diffusive reservoir with an **in-situ physically trained
+drift-memristor readout**, reporting **83%** MNIST test accuracy — the reservoir
+itself remains untrained.
+[Drift/diffusion numerical modelling](https://doi.org/10.1109/ted.2019.2928890)
+supplies a model hierarchy, though its parameters are stack-specific.
+
+## PVA/water/Ag/Ag₂S hydrogel with inert microspheres
+
+Freeze/thaw PVA literature ([Adelnia et al. 2022](https://doi.org/10.1016/j.eurpolymj.2021.110974))
+supports a tunable aqueous mechanical chassis but does **not** validate the
+proposed computational formulation. No retrieved study validates this exact
+PVA/Ag/Ag₂S/bead blend.
+
+Chemistry:
+
+
+* [El Badawy et al. 2010](https://doi.org/10.1021/es902240k) — AgNP aggregation
+  depends strongly on pH, ionic strength, electrolyte identity, and coating
+  (citrate/electrostatic vs. PVP/steric).
+* [Babel et al. 2020](https://www.mdpi.com/2624-8549/2/1/12) — MOPS is
+  *comparatively weakly* Ag(I)-coordinating over pH 6.5–7.9; **not inert**.
+  Tris interacts much more strongly.
+* [Buffer effects on freeze/thaw polymer networks](https://www.jstage.jst.go.jp/article/silk/26/0/26_21/_article)
+  — peripheral warning that buffer choice can change the matrix itself.
+
+*Principal risk:* a conductive gel may be dominated by an **ionic shunt** or an
+**electrode reaction** rather than the intended adaptive particle network.
+
+## Alternatives
+
+Alternative soft media: Ag-doped [ion gels](https://doi.org/10.1021/acsomega.5c08106) (nonaqueous, not
+PVA), [Ag/PEG nanofluids](https://doi.org/10.1002/advs.202505103) (solvent-
+sensitive conductive-bridge reorganisation), and
+[ionic polyacrylamide hydrogels in closed-loop Pong](https://doi.org/10.1016/j.xcrp.2024.102151)
+(history-dependent behaviour, but **no** demonstrated task-error-driven local
+rule).
+
+Volumetric alternatives:
+
+* [3D interconnected Ag nanowires](https://pmc.ncbi.nlm.nih.gov/articles/PMC9948158/)
+  — a genuinely interconnected volumetric conductor with tunnelling and
+  switching, but no trained computation.
+* [3D WS₂ nanotube clusters](https://doi.org/10.1038/s41467-025-68229-8)
+  — large physical connectivity ≠ large trainable or accessible state dimension.
+* [Iontronic conical channels](https://arxiv.org/abs/2511.04209)
+  — more explicitly parameterised, but learning uses an external
+  finite-difference controller.
+
+## Peptides, proteins and designed DNA as junction modifiers
+
+[Silver-binding peptide AG3](https://www.sciencedirect.com/science/article/abs/pii/S0162013405001595)
+affects silver crystallisation on PET; [C–Ag–C base pairing](https://doi.org/10.1039/b808686a)
+gives selective Ag⁺ binding in DNA duplexes. These are **surface/chemical
+handles**, not established learning mechanisms.
+
+> **Maximum silver affinity need not maximise trainability.** Select modifiers
+> against measured switching thresholds, relaxation distributions, reversibility
+> and task performance — i.e. against a *material phenotype*. Start with a small
+> coating panel (citrate, PVP, BSA, gelatin, casein, lysozyme) before any
+> sequence-space search. Higher-level design strategies:
+> [directed evolution in dimerization networks](https://arxiv.org/html/2506.14006v2),
+> [supervised learning in DNA neural networks](https://www.nature.com/articles/s41586-025-09479-w).
+
+# Learning algorithms
+
+### 4.1 Equilibrium propagation and contrastive local learning
+
+*Use: first choice for an engineered nonlinear learning head; conditional for
+material snapshots.*
+
+**Local rule.** For an ohmic trainable edge with `E_e = g_e(ΔV_e)²/2` and nudged
+objective `E + βC`, the small-nudge gradient estimate is
+
+    Δg_e = −η [ (ΔV_e,nudged)² − (ΔV_e,free)² ] / (2β)
+
+Other constitutive laws require the derivative of *their own* energy function.
+
+**Required physics.** An appropriate scalar energy or circuit pseudo-power;
+stable free and nudged states; controllable output nudging; learning parameters
+slow or frozen during state measurement.
+
+> Circuit pseudo-power is **not** automatically thermodynamic free energy.
+
+**Physical burden.** Every adapting edge must obtain a *signed contrast* and
+implement a persistent increase **or** decrease. Two matched networks are one
+demonstrated solution, not a theorem-level necessity; sequential operation
+requires local state comparison or another memory mechanism.
+
+**Temporal scope.** Learns equilibrium input→output maps. It does *not*
+automatically compute the gradient of an arbitrary recurrent trajectory. Purely
+linear resistor networks also do not acquire nonlinear XOR merely by training
+conductances.
+
+Key references: [Scellier & Bengio 2017](https://www.frontiersin.org/journals/computational-neuroscience/articles/10.3389/fncom.2017.00024/full),
+[end-to-end analog EP](https://ar5iv.labs.arxiv.org/html/2006.01981),
+[decentralized physics-driven learning](https://arxiv.org/html/2108.00275),
+[emergent learning in a nonlinear analog network](https://doi.org/10.1073/pnas.2319718121),
+[fast nonlinear-resistive solver](https://proceedings.mlr.press/v235/scellier24a.html),
+[memristor-crossbar EP circuits](https://www.mdpi.com/2072-666X/14/7/1367),
+[sequence learning with EP](https://www.ijcai.org/proceedings/2023/329),
+[EP on an Ising machine](https://doi.org/10.1038/s41467-024-46879-4).
+
+### 4.2 Temporal contrastive learning via implicit non-equilibrium memory
+
+*Use: most directly relevant alternative to matched physical copies.*
+
+[Falk et al. 2025](https://doi.org/10.1038/s41467-025-57043-x) filter local
+activity as `u_e(t) = ∫ K(t−t′) s_e(t′) dt′` and apply a thresholded signed
+response. The useful kernel has **positive and negative lobes** with
+approximately zero integrated response; **asymmetric** free→nudged and return
+ramps separate useful contrast from cancellation.
+
+Regime: kernel memory ≪ fast ramp ≪ slow return, with quasistatic state
+following and slow learning.
+
+> Ordinary **monotonic** conductance relaxation is insufficient. Measure the
+> local impulse/history response before claiming this rule; control against a
+> monotonic-kernel variant, a symmetric protocol, and ideal explicit-contrast
+> learning.
+
+"Temporal" here describes *how two training conditions are compared* — it is
+**not** evidence of credit assignment for delayed sequence targets in Ag or Sn.
+
+Code: [ContrastiveMemory-Exp](https://github.com/falkma/ContrastiveMemory-Exp),
+[synapse analysis](https://github.com/atstrupp/ContrastiveMemory-SynapseAnalysis).
+
+### 4.3 Eligibility traces with feedback or reward (e-prop-inspired)
+
+*Use: priority family for the stronger goal of training temporal dynamics.*
+
+Generic three-factor structure: `Δθ ∝ (local eligibility trace) × (learning
+signal)`. The trace must be **derived from the chosen junction dynamics**;
+e-prop learning signals are generally output-derived and need **not** be one
+identical global scalar at every junction
+([Bellec et al. 2020](https://www.nature.com/articles/s41467-020-17236-y);
+[event-driven implementation](https://arxiv.org/abs/2511.21674)).
+
+> A trace is not simply *any* slowly decaying conductance.
+
+Relevant intermediate experimental evidence:
+[neuromorphic learning, working memory and metaplasticity in nanowire networks](https://doi.org/10.1126/sciadv.adg3289)
+— feedback-conditioned pathways, but not a demonstrated general local temporal-
+credit algorithm.
+
+### 4.4 Rate-sensitive autoregulation and engineered chemical learning
+
+*Use: conceptual route to a history→parameter transducer; secondary to an
+electrical proof of principle.*
+
+[Trainable computation in molecular networks](https://doi.org/10.64898/2025.12.28.696421)
+trains dense reversible interaction networks by local **rate-sensitive
+autoregulation**: each hidden species adjusts its own total concentration from a
+high-pass filter of its own recent monomer history — no backpropagation, no
+separate trained readout. Demonstrated *in simulation* on Pavlovian
+conditioning, regression, Iris (~89%/~90%), and stochastic-switch occupancy
+matching; robust to unmodelled species and wide `K_ij` disorder.
+
+> The authors state plainly that the rule "was limited to static input–output
+> tasks." Do **not** treat this as evidence for or against temporal-memory
+> claims.
+
+Related engineered chemistry:
+[autonomous learning with CRN ensembles](https://doi.org/10.48550/arxiv.2311.00975),
+[Neural CRNs](https://doi.org/10.1021/acssynbio.5c00099),
+[chemical reservoir computation in a formose network](https://doi.org/10.1038/s41586-024-07567-x),
+[supervised learning in DNA neural networks](https://www.nature.com/articles/s41586-025-09479-w)
+(genuine wet-lab molecular parameter learning, but 24 h class exposures,
+hours-long testing, and use-once operation).
+
+### 4.5 Other algorithm families
+
+| Family | Use | Principal caveat |
+|---|---|---|
+| [Physics-aware training](https://www.nature.com/articles/s41586-021-04223-6) / differentiable simulation | Engineering benchmark, calibration, attainable-performance upper bound | Hidden states cannot be made *physically* trainable merely by being differentiable in software |
+| [Perturbation with global feedback](https://arxiv.org/pdf/2405.08967); [stochastic MTJ noise-based learning](https://doi.org/10.1103/PhysRevApplied.23.054035) | Low-information-access baseline; controller-assisted material learning | Repeated evaluations, drift compensation and controller cost may dominate; variance grows with size |
+| [Frequency propagation](https://doi.org/10.1162/neco_a_01648); [generalized EP / analytical adjoint](https://arxiv.org/abs/2602.03546) | Alternatives when matched replicas are undesirable | Still require local sensing, demodulation, parameter storage and bidirectional writes; adjoint method assumes a tunable *linear* steady-state network |
+| [Thermodynamic gradient descent](https://www.pnas.org/doi/10.1073/pnas.2528413123); [generative thermodynamic computing](https://pubmed.ncbi.nlm.nih.gov/41651481/); [Restricted Kirchhoff Machine](https://doi.org/10.1073/pnas.2525792123) | Alternative role if stochastic sampling is more natural than deterministic prediction | Do not assume measured ionic noise obeys equilibrium FDT, that hidden couplings are writable, or that microscopic dissipation equals system energy cost |
+| [Meta-learned memristive reservoirs](https://arxiv.org/abs/2306.12676); [thresholded updates for task retention](https://arxiv.org/abs/2512.03799); [catastrophic forgetting in resistor networks](https://arxiv.org/html/2605.01383) | Outer-loop material/formulation search; continual-learning constraints | Searching formulations or hyperparameters is **not** online native learning |
+| [Hamiltonian echo backpropagation](https://link.aps.org/doi/10.1103/PhysRevX.13.031020) | Conceptual completeness | Poor default match to dissipative, stochastic ionic matter |
+
+# further proposals
+
+## Calibrated disordered dynamical reservoir
+
+Drive a small electrode set with temporal inputs; measure accessible
+currents/voltages; fit a common ridge or RLS readout. Compare microscopic models
+only through held-out electrical and temporal behaviour.
+
+* **Systems:** Sn nanoparticle networks and Ag/PVP or Ag₂Se nanowires as
+  *separate* model families; packed Ag₂S as the direct 3D comparator.
+* **Learning location:** readout and externally selected operating conditions;
+  reservoir fixed or slowly conditioning.
+
+## Reservoir plus trainable nonlinear equilibrium-learning head
+
+Sample or buffer reservoir features while the head executes free and weakly
+nudged relaxation phases; train physically represented head parameters by local
+contrasts. Account explicitly for buffering, interface conversion and
+supervisory timing.
+
+* **Rationale:** separates temporal feature generation from the reciprocity,
+  convergence and compare-and-write requirements of equilibrium learning.
+  Failure of a hydrogel junction need not block testing the architecture.
+* **Precedents:** [Midya 2019](https://onlinelibrary.wiley.com/doi/10.1002/aisy.201900084)
+  and [Milano 2022](https://doi.org/10.1038/s41563-021-01099-9) for hybrid
+  reservoir/readout; [Dillavou 2024](https://doi.org/10.1073/pnas.2319718121)
+  for the stronger local-learning positive control.
+* **Limitation:** an EP-trained head does not train reservoir memory or
+  recurrent couplings. It must beat — or offer a real implementation advantage
+  over — an equally resourced digital readout.
+
+## Internally adaptive recurrent material with local history→update transduction
+
+A disordered network with measurable fast dynamics and a separately
+identifiable, sufficiently persistent adaptation variable at selected junctions.
+Learning location: selected junction barriers, conductances, local ionic
+availability, or other experimentally writable persistent states.
+
+Order of testing: temporal-contrastive or rate-sensitive local updates on
+stationary tasks → eligibility-plus-feedback rules on delayed targets → only
+then combine useful task memory with internal parameter adaptation.
+
+* **Limitation:** no retrieved evidence establishes the necessary signed local
+  update mechanism in Ag/PVA or Sn. A simulation with digitally accessible
+  every-edge updates is only an upper bound; success must survive
+  electrode-limited access and a realistic local transducer.
+
+# Prior art on OCR-like and speech benchmarks
+
+For orientation, the published in-materio benchmark landscape. **In every case
+below, the labels are learned outside the material.**
+
+| Work | Task | Substrate | Result | Where learning occurs |
+|---|---|---|---|---|
+| [Zhu 2023](https://doi.org/10.1038/s41467-023-42470-5) | MNIST | Ag₂Se NWN, 16 electrodes | 93.4% (5 readout channels) | External online RLS |
+| [Milano 2022](https://doi.org/10.1038/s41563-021-01099-9) | MNIST + spatiotemporal patterns | Ag/PVP NWN + TaOₓ readout | ≈90.4% | Scaled MNIST used an *extended simulated* network; readout mapped to memristive hardware |
+| [Midya 2019](https://onlinelibrary.wiley.com/doi/10.1002/aisy.201900084) | MNIST | Ag-doped SiOₓ diffusive reservoir + 1T1R | 83% (10k test images) | Readout weights trained **physically**; reservoir untrained |
+| Du 2017 | MNIST | Dynamic memristor array | 88.1% (88 devices) | Logistic-regression readout |
+| [Lilak 2021](https://www.frontiersin.org/articles/10.3389/fnano.2021.675792) | Spoken digits (FSDD) | Ag NWN atomic switches, AgI junctions | high; ~95% reported later | MFCC features → linear regression; only 12 unique input streams |
+| [Usami 2021](https://doi.org/10.1002/aelm.202100178) | Spoken digits | Sulfonated polyaniline network | ~70%; all-speaker ≈60% | Ridge regression; memory capacity depends strongly on **humidity** |
+| [Mallinson 2024](https://doi.org/10.1002/adma.202402319) | FSDD, TI-46 | Sn percolating NP network | 3.5% WER (FSDD, best parallel config); 0.2% WER (TI-46) | External ridge regression |
+
+**Reading.** Zhu gives the cleanest experimental MNIST result from a disordered
+Ag-containing network; Lilak directly demonstrates spoken-digit processing in an
+Ag atomic-switch network; Mallinson shows unusually strong spoken-digit
+performance in a *self-assembled nanoparticle* network (tin, not silver).
+
+MNIST and FSDD are therefore excellent benchmarks — but run them in **two
+stages**: first reproduce the published fixed-reservoir + trained-readout
+regime, then remove or severely constrain the external readout and ask whether
+training the *material* recovers performance. That second experiment is where
+this project departs from the literature.
+
+
+
+
+# public source code
 
 - [Ideal nonlinear-resistor and EP simulator](https://github.com/rain-neuromorphics/energy-based-learning)
 - [Ag nanowire reservoir implementation](https://github.com/MilanoGianluca/Nanowire_Network_Reservoir_Computing)
@@ -126,7 +527,26 @@ something something mamba
 * [Thermodynamic gradient-descent simulation](https://github.com/swhitelam/thermo_gd)
 * [Sequence learning with equilibrium propagation](https://github.com/NeuroCompLab-psu/EqProp-SeqLearning)
 * [Nanowire tomography data archive](https://doi.org/10.5281/zenodo.8208380)
+
+| Resource | Use | Limit |
+|---|---|---|
+| [energy-based-learning](https://github.com/rain-neuromorphics/energy-based-learning) | Ideal nonlinear-resistor + EP solver; equilibrium-head positive controls | Ideal circuit solver, not ionic dynamics |
+| [Nanowire_Network_Reservoir_Computing](https://github.com/MilanoGianluca/Nanowire_Network_Reservoir_Computing) | Ag nanowire reservoir replication | Preserve the Ag/PVP material assumptions |
+| [RC Implementation Strategies](https://github.com/MilanoGianluca/Reservoir_Computing_Implementation_Strategies_Memristive_Nanonetworks) | Electrode and encoding strategy comparison | More samples ≠ more independent hardware |
+| [Zenodo 7662886](https://doi.org/10.5281/zenodo.7662886) | Zhu sequence-memory data + analysis | Preserve continuous state and subsequent-digit-only prediction |
+| [dynamicRC_NWN](https://github.com/xvyh/dynamicRC_NWN) | Dynamic network dynamics + prediction routines | Output weights remain external |
+| [ContrastiveMemory-Exp](https://github.com/falkma/ContrastiveMemory-Exp) / [SynapseAnalysis](https://github.com/atstrupp/ContrastiveMemory-SynapseAnalysis) | Temporal contrastive learning; kernel/update requirements | Simulation only; no fabricated material |
+| [Physics-Aware-Training](https://github.com/mcmahon-lab/Physics-Aware-Training) | Physical-forward / digital-backward training | Requires accessible control parameters |
+| [thermo_gd](https://github.com/swhitelam/thermo_gd) | Thermodynamic gradient descent | Not a validated simulator of the proposed mixture |
+| [EqProp-SeqLearning](https://github.com/NeuroCompLab-psu/EqProp-SeqLearning) | Sequence learning with EP | Attention/convergence architecture, not generic transient recurrence |
+| [Zenodo 8208380](https://doi.org/10.5281/zenodo.8208380) | Nanowire tomography data | No complete reproducible tomography-code package established |
+
+
 * <https://github.com/ZhangWS/arbortron> see <https://www.youtube.com/watch?v=pYGAB6vaT08>
+
+# other links
+
+* <https://knowm.org/how-to-build-the-ex-machina-wetware/>
 
 # manuscript review
 
@@ -667,73 +1087,5 @@ Physical inference with an externally fitted readout; externally optimized hardw
 **Proposal consequence.** Reproduce temporal image reconstruction with a trained readout and continuous material state, then compare schedules that also train the material. Keep task success and material-learning attribution separate.
 
 **Identifier:** `10.1038/s41467-023-42470-5`.
-
-# Arbortrons
-
-Hubler lecture and demonstration <https://www.youtube.com/watch?v=dgbooumJ4Tg&t=1410s> and [[transcript|transcripts/alfred_hubler_arbortron]].
-
-Physically Evolving Networks (PENs) were first proposed by Alan Turing in his 1948 paper
-“Intelligent Machines” [1]. PENs capture some important features of the information processing
-of biological neural systems, such as mimicking animal and human error patterns, and implement
-massively parallel, non-algorithmic processes, where the sequence and concurrency of operations
-is determined at run time. PENs simulations on conventional digital computers have been
-successfully used for speech recognition, image analysis, and adaptive control. But PEN
-implementations on computers with von Neumann architecture are slow compared to other
-algorithms which are optimized for the sequential processing of explicit instructions. In the
-following we discuss hardware implementations of PENs. Would it be possible to fabricate a
-PEN of the size of a human brain with a billion times more neurons? And if so, how could such a
-PEN be programmed or trained?
-Metal particles in oil are a potential PEN hardware implementation. The metal particles form
-wires if a voltage is applied and a current starts to flow [2]. Figure 1 shows that these wire
-networks often form ramified structures like the branches of a tree. Therefore they are called
-arbortrons [3].
-Arbortrons are not perfect conductors, because there tend to be small gaps between the particles,
-but if they are used as electrical conductors their conductivity increases [4]. This behavior is
-similar to the neural plasticity of human neurons introduced by Donald Hebb [5] Human neurons 
-strengthen and become more conductive if they are used frequently and weaken or decay if they
-are unused. Unused arbortrons are decaying as well, i.e. their particles separate and drift away.
-Unused arbortrons repair only if the applied current exceeds a threshold, because of static
-friction and gravity. For that reason they tend to have a high resistance for small current and
-become good conductors if the current exceeds a threshold. Therefore, arbortrons are nonlinear
-conductors with a threshold.
-Neural plasticity and conductance with thresholds are the key features of PENs. Therefore
-arbortrons may be considered hardware implementations of PENs.
-Hardware implementations of PENs may have some features which exceed biological neural
-nets. Human axons and dendrites in the central nervous systems system are about one
-micrometer thick, whereas nanoparticle arbortrons have a diameter of a few nanometers. Because
-nanoparticle arbortrons are a factor of one thousand thinner, 1000 x 1000 x 1000 = 1 billion
-nanoparticle arbortrons occupy the same volume as one human neuron. A PEN hardware
-implementation of the size of a human head with nanoparticle arbortrons could theoretically have
-a billion times more neurons than the human brain. The power consumption of such a large PEN
-is probably less than the power consumption of human brain (~ 20 Watts), because nanoparticle
-arbortrons are better conductors than human neurons.
-Training a large PEN would be a challenge. It takes about 20 years to train human brains before
-they become productive. Therefore one might conclude that it might take 20 billion years to train
-a large PEN with a billion times more neurons. However on human neurons pulses travel with a
-speed of 1m/s – 100m/s, whereas electrical pulses travel along arbortrons at the speed of light (
-0.3 billion m/s). Because the pulse speed is roughly a factor of a billion larger it might be
-possible to train a large PEN within a couple of dozen years.
-But how can a large PEN be trained? How could it learn to recognize speech or act like a word
-processor? Experiments with small arbortron PENs suggest that they form patterns which
-minimize their resistance, i.e. learn to extract energy from complex environments. For instance
-the system depicted in Fig. 1 forms wires to the electrodes. If the location of the electrodes is
-changed then the wires disintegrate and new wires form and connect the electrode at the new
-location. If an electrode is never charged no wires connect to it. Recent experiments suggest that
-arbortron PENs can learn to play simple computer games, such as Tetris.
-Initially the arbortron PEN is random. The current configuration of the game activates the
-corresponding input electrode. In response to the activated input electrode, the arbortron output
-electrodes trigger a move in the game. If the move is “incorrect” the input electrode is turned off
-immediately. If the move is “correct” then the input current continues for a certain period of
-time, which strengthens the arbortron branch which produced the “correct” move. The extra
-current can be considered as an energy reward for the arbortron network.
-This experiment offers some insights into how a large PEN could be trained by a human or a
-complex environment: with energy rewards. If the PEN hardware implementation responds
-“correctly”, it is rewarded a small amount of energy. In summary, training a large PEN is not like 
-programming a digital computer, it is more like training a pet: If its behavior matches the
-expectations it is rewarded with a treat. The treat is energy.
-
-# other links
-
-* <https://knowm.org/how-to-build-the-ex-machina-wetware/>
 
 
