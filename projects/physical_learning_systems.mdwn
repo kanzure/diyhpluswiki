@@ -18,6 +18,59 @@ Modern AI scales with the number of adaptive degrees of freedom. The human brain
 
 ---
 
+# another summary
+
+The objective of this project is to develop a **three-dimensional physical material that can be trained to perform machine-learning computations through changes occurring within the material itself**. Rather than representing a neural network explicitly in silicon or software, the material would exploit a large disordered network of nonlinear, history-dependent electrical junctions whose conductances, relaxation times, and internal states evolve in response to electrical stimulation and eventually to training or reward signals. Silver-based atomic-switch and diffusive-memristor systems are particularly relevant because Ag/Ag₂S and related Ag-in-insulator systems exhibit volatile switching, persistent switching, short-term memory, and transitions toward longer-lived states; nanoparticle and nanowire networks have separately demonstrated reservoir-computing, temporal-memory, classification, and sequence-processing tasks. The stronger goal of this project is to move beyond using such a material merely as a fixed reservoir with a digitally trained readout and determine whether the physical network itself can acquire useful internal organization through local, physically realizable training mechanisms.
+
+The proposed baseline material is a **3D PVA/water hydrogel containing Ag/Ag₂S nanoparticles, commodity polymer or silica microspheres, and a controlled aqueous electrolyte**, with glycerol optionally added to modify solvent dynamics. PVA is attractive as the structural chassis because it is inexpensive, widely available, water-compatible, electrically insulating, capable of incorporating particles and nanoparticles, and highly tunable through polymer concentration, molecular weight, hydrolysis state, and freeze/thaw processing. The Ag/Ag₂S particles provide the primary nonlinear and adaptive electrical junctions, while micron-scale polystyrene, silica, glass, agarose, or functionalized molecular-biology beads provide an independent means of controlling three-dimensional packing, excluded volume, local particle concentration, pore structure, and chemical microenvironments. A subset of beads could carry proteins, peptides, enzymes, or nucleic acids, allowing the mechanical scaffold, active electrical network, mesoscale geometry, and molecular surface chemistry to be varied semi-independently. Agarose would be maintained as a parallel, biologically gentle host for experiments in which preservation of fragile biomolecular activity is more important than the larger mechanical design space offered by PVA.
+
+The resulting system has a deliberately large experimental design space. Physical variables include Ag/Ag₂S concentration relative to percolation, particle size and shell properties, PVA concentration and crosslinking history, microsphere diameter and loading, mixtures of bead sizes, glycerol content, temperature, water activity, and electrical conductivity. Chemical variables include pH, ionic strength, electrolyte identity, and buffer identity; MOPS is a useful near-neutral starting buffer because it interacts comparatively weakly with Ag(I), whereas Tris, chloride, phosphate, Ca²⁺ and related species should be regarded as active experimental perturbations because they can alter Ag⁺ complexation, precipitation, aggregation, or particle surface charge. Silver surface chemistry can be varied using citrate, PVP, proteins, peptides, or oligonucleotides; citrate- and PVP-coated Ag particles, for example, respond quite differently to pH and ionic-strength changes. Broader screens could test BSA, gelatin, casein, lysozyme, simple peptides, and functionalized beads before moving to directed selection. Silver-binding peptides can be isolated by phage display, providing a route to evolve surface modifiers for a desired *material phenotype* rather than simply maximum Ag affinity. Aptamers and designed DNA provide another large sequence space because Ag⁺ can participate in highly specific metal-mediated nucleic-acid interactions such as C–Ag–C base pairs, potentially allowing nucleic acids to control local Ag⁺ availability, particle association, or junction kinetics.
+
+simulation: A corresponding simulator should initially reproduce the computationally important degrees of freedom rather than every molecular detail. A tractable model would generate a three-dimensional random distribution of Ag/Ag₂S particles and microspheres, construct the electrically accessible particle network, and represent each nearby Ag junction with a small stochastic state model containing variables such as conductance, filament state, switching barrier, local ionic availability, and one or more relaxation processes. Kirchhoff equations would determine instantaneous voltages and currents throughout the network, while junction states evolve forward in time according to voltage-, temperature-, and history-dependent kinetics; microspheres would modify geometry and excluded volume, while buffer, coatings, proteins, peptides, or aptamers would initially enter as experimentally calibrated changes to switching rates, ion availability, aggregation propensity, barrier distributions, or relaxation times. This modeling strategy is consistent with prior work showing that Ag diffusion and regrouping can generate useful synaptic dynamics and with experiments demonstrating that disordered nanoparticle and nanowire networks can support temporal computation. The first purpose of the simulator would therefore not be to predict the exact chemistry of a formulation, but to ask whether plausible ranges of these physical parameters produce a material **susceptible to useful training**: delayed-memory tasks, nonlinear temporal transformations, sequence classification, delayed XOR, or similar benchmarks could be used to determine which combinations of connectivity, nonlinear switching, transient memory, persistent state, and local adaptation justify fabrication and measurement in the laboratory.
+
+# relevant manuscripts
+
+1. **Srikimkaew, O. et al. (2024). “Volatile and Nonvolatile Dual-Mode Switching Operations in an Ag–Ag₂S Core-Shell Nanoparticle Atomic Switch Network.” Advanced Electronic Materials 10, 2300709.** Demonstrates controllable volatile/nonvolatile operation in Ag/Ag₂S nanoparticle networks and attributes switching to Ag filament formation within Ag₂S.
+
+2. **Srikimkaew, O. et al. (2024). “Short-Term and Long-Term Memory Functionality of a Brain-Like Device Built from Nanoparticle Atomic Switch Networks.” Advanced Electronic Materials.** Shows spontaneous relaxation, paired-pulse effects, and repeated-stimulation transition toward longer-lived potentiation in Ag/Ag₂S nanoparticle networks.
+
+3. **Wang, Z. et al. (2017). “Memristors with Diffusive Dynamics as Synaptic Emulators for Neuromorphic Computing.” Nature Materials 16, 101–108. DOI 10.1038/nmat4756.** Combines experiments, in-situ microscopy, and particle-dynamics simulation to connect Ag redistribution and spontaneous relaxation with short- and long-term synaptic dynamics.
+
+4. **Mallinson, J. B. et al. (2024). “Experimental Demonstration of Reservoir Computing with Self-Assembled Percolating Networks of Nanoparticles.” Advanced Materials 36, 2402319.** Demonstrates memory, nonlinear computation, time-series processing, and spoken-digit recognition using physical percolating nanoparticle networks.
+
+5. **Zhu, R. et al. (2023). “Online Dynamical Learning and Sequence Memory with Neuromorphic Nanowire Networks.” Nature Communications 14, 6697.** Demonstrates online learning from physical-network dynamics and sequence-memory behavior, providing an important computational benchmark even though training remains associated with the readout rather than purely local material learning.
+
+6. **Lilak, S. et al. (2021). “Spoken Digit Classification by In-Materio Reservoir Computing With Neuromorphic Atomic Switch Networks.” Frontiers in Nanotechnology 3, 675792.** Demonstrates temporal audio classification using the intrinsic dynamics of silver-based atomic-switch networks.
+
+7. **Hassan, C. M. et al./review literature summarized in “Freeze/Thawed Polyvinyl Alcohol Hydrogels: Present, Past and Future” (2022), European Polymer Journal 164, 110974.** Reviews freeze/thaw PVA hydrogels, including control of mechanical and physicochemical properties through polymer characteristics and processing and their incorporation of nanoparticles and additional components.
+
+8. **El Badawy, A. M. et al. (2010). “Impact of Environmental Conditions (pH, Ionic Strength, and Electrolyte Type) on the Surface Charge and Aggregation of Silver Nanoparticle Suspensions.” Environmental Science & Technology 44, 1260–1266.** Establishes strong effects of pH, ionic strength, Ca²⁺, coating chemistry, and electrolyte environment on AgNP aggregation, including the contrast between citrate/electrostatically stabilized and PVP/sterically stabilized particles.
+
+9. **Babel, L. et al. (2020). “Appropriate Buffers for Studying the Bioinorganic Chemistry of Silver(I).” Chemistry 2, 193–202.** Quantifies Ag(I) interactions with common biological buffers and identifies MOPS as comparatively weakly coordinating near neutral pH, while Tris interacts much more strongly.
+
+10. **Li et al. / silver-binding peptide literature; e.g. “Biomimetic Synthesis Silver Crystallite by Peptide AYSSGAPPMPPF Immobilized on PET Film in Vitro” (2005), Journal of Inorganic Biochemistry 99, 1692–1697.** Demonstrates a peptide identified through phage-display-based silver affinity that can control interactions with silver surfaces, supporting peptide evolution as a surface-engineering strategy.
+
+11. **Ono, A. et al. (2008). “Specific Interactions Between Silver(I) Ions and Cytosine–Cytosine Pairs in DNA Duplexes.” Chemical Communications, 4825–4827; and subsequent structural work.** Establishes specific C–Ag–C interactions, providing a mechanistic basis for using designed DNA or evolved aptamers as local Ag⁺-binding and surface-chemistry modifiers.
+
+12. **Nam, J. et al. (2026). “Overcoming Volatility in Ion Gel via Ag Doping for Nonvolatile Memristive Switching.” ACS Omega 11, 5306–5314.** Demonstrates that embedding Ag nanoparticles in an ion-containing polymer matrix can strongly modify retention and synaptic-like dynamics, supporting the broader idea that the surrounding ionic/polymeric medium is an active design variable rather than a passive scaffold.
+
+for MNIST OCR digit recognition task:
+
+| Paper | Task | Physical substrate | Reported result | Where learning occurs |
+|---|---|---|---|---|
+| **Zhu et al., 2023 — “Online dynamical learning and sequence memory with neuromorphic nanowire networks”** | **MNIST handwritten digits** | Physical **Ag₂Se nanowire network**, 16-electrode device | **93.4%** with five physical readout channels | Material supplies nonlinear/history-dependent features; external digital **recursive least-squares** classifier is trained online. This is probably the cleanest experimental “OCR-like” network example for our purposes. |
+| **Milano et al., 2022 — “In materia reservoir computing with a fully memristive architecture based on self-organizing nanowire networks”** | **MNIST handwritten digits** plus simpler spatiotemporal patterns | Self-organized **Ag nanowires with insulating polymer shells**, coupled to a memristive readout | ≈**90.4% MNIST** in the scaled implementation | Important qualification: the complete MNIST result used an **extended simulated NW network**, whereas physical network experiments established the underlying dynamics and smaller pattern tasks; the readout was implemented/mapped to memristive hardware. |
+| **Midya et al., 2019 — “Reservoir Computing Using Diffusive Memristors”** | **MNIST handwritten digits** | Physical **Ag-doped SiOₓ diffusive memristor** reservoir + drift-memristor 1T1R readout | **83%** on 10,000 MNIST test images | Especially interesting because the reservoir is Ag-based and the **readout weights themselves are trained physically in memristors**. The reservoir itself remains untrained. |
+| **Du et al., 2017 — “Reservoir computing using dynamic memristors for temporal information processing”** | **MNIST handwritten digits** | Array of physical dynamic memristors | **88.1%** experimentally with 88 reservoir devices | Physical reservoir; trained logistic-regression readout. Input images are converted into temporal pulse sequences. |
+| **Ferrarese Lupi et al., 2025 — “Neuromorphic Light-Responsive Organic Matter for in Materia Reservoir Computing”** | **MNIST handwritten digits** | Commercial **PAZO azopolymer**, stimulated optically | ≈**91.4%** | Experimental responses to the 16 possible four-bit temporal sequences were measured and then used to construct MNIST reservoir representations; a software 196×10 ANN readout was trained. So it is physical-material RC, but not 70,000 complete images individually passed through the material. |
+| **Lilak et al., 2021 — “Spoken Digit Classification by In-Materio Reservoir Computing With Neuromorphic Atomic Switch Networks”** | **Spoken digits, FSDD** | Physical **Ag nanowire atomic-switch network with AgI junctions** | High spoken-digit accuracy; later thesis description reports about **95%** | MFCC audio features are physically transformed by the AgI network; an external linear-regression readout is fitted. The original paper also notes that only 12 unique input streams were used in that experiment, so it is a smaller benchmark than the later Mallinson study. |
+| **Usami et al., 2021 — “In-Materio Reservoir Computing in a Sulfonated Polyaniline Network”** | **Spoken digits, FSDD** | Physical **sulfonated-polyaniline organic electrochemical random network** | Up to about **70%**; all-speaker confusion matrix ≈**60%** | Physical electrochemical dynamics generate the reservoir state; software ridge regression performs classification. Particularly relevant to our hydrogel idea because memory capacity changed strongly with **humidity/ionic transport**. |
+| **Mallinson et al., 2024 — “Experimental Demonstration of Reservoir Computing with Self-Assembled Percolating Networks of Nanoparticles”** | **Spoken digits, FSDD and TI-46** | Physical **Sn nanoparticle percolation network** near the percolation threshold | Entire FSDD: **3.5% WER = 96.5% accuracy** in the best parallel-reservoir configuration; TI-46 as low as **0.2% WER** with standard preprocessing | Physical nanoparticle network supplies the computation; **ridge-regression output weights are trained externally**. This is probably the closest existing nanoparticle-network analogue to what we are proposing. |
+
+Zhu gives a very clean experimental MNIST result from a disordered Ag-containing network; Lilak directly demonstrates spoken-digit processing in an Ag atomic-switch network; and Mallinson demonstrates good spoken-digit performance in a self-assembled nanoparticle network, albeit with tin rather than silver.
+
+In essentially all of these reservoir-computing examples, the material performs the nonlinear temporal transformation and provides memory, but a separate linear/ANN/readout layer learns the labels. Zhu trains RLS weights outside the material; Mallinson fits ridge-regression weights; Lilak uses offline regression; Usami uses ridge regression. Midya uses readout weights that are physically trained memristors, but the diffusive reservoir itself is still not trained.
+
 # Silver nanoparticle device proposal
 
 Here is a more specific proposal, although it is not the only plausible design.
@@ -57,5 +110,561 @@ hypothesis: Ag/Ag₂S networks can be organized into recurrent modules whose tas
 
 
 something something mamba
+
+# other public source code
+
+- [Ideal nonlinear-resistor and EP simulator](https://github.com/rain-neuromorphics/energy-based-learning)
+- [Ag nanowire reservoir implementation](https://github.com/MilanoGianluca/Nanowire_Network_Reservoir_Computing)
+* [Ideal nonlinear-resistor and EP simulator](https://github.com/rain-neuromorphics/energy-based-learning)
+* [Ag nanowire reservoir implementation](https://github.com/MilanoGianluca/Nanowire_Network_Reservoir_Computing)
+* [Electrode and encoding strategies](https://github.com/MilanoGianluca/Reservoir_Computing_Implementation_Strategies_Memristive_Nanonetworks)
+* [Zhu sequence-memory data and analysis archive](https://doi.org/10.5281/zenodo.7662886)
+* [Dynamic neuromorphic network reservoir code](https://github.com/xvyh/dynamicRC_NWN)
+* [Temporal contrastive learning experiments in simulation](https://github.com/falkma/ContrastiveMemory-Exp)
+* [Temporal contrastive synapse analysis](https://github.com/atstrupp/ContrastiveMemory-SynapseAnalysis)
+* [Physics-aware training](https://github.com/mcmahon-lab/Physics-Aware-Training)
+* [Thermodynamic gradient-descent simulation](https://github.com/swhitelam/thermo_gd)
+* [Sequence learning with equilibrium propagation](https://github.com/NeuroCompLab-psu/EqProp-SeqLearning)
+* [Nanowire tomography data archive](https://doi.org/10.5281/zenodo.8208380)
+
+# manuscript review
+
+## Evidence distinctions
+
+Physical inference with an externally fitted readout; externally optimized hardware controls; task-dependent material adaptation; and a demonstrated native learning rule are separate categories. A review, perspective, simulation, or hardware proposal is not counted as an additional experimental demonstration.
+
+## Paper-by-paper audit
+
+### P01 — A distributed nanocluster based multi-agent evolutionary network - 2022
+
+**Evidence:** Experiment + simulation. **Review:** Focused.
+
+**Finding.** Ag nanoclusters embedded in a polymer electrolyte reorganize through ion migration and electrochemical reactions. Electrode geometry and voltage encode graph costs; demonstrated applications include path selection and obstacle avoidance.
+
+**Qualification.** The task is deliberately represented in device geometry and fields. This is not evidence that arbitrary reward trains a general black box. Formation traces are on seconds-scale axes, rather than a demonstrated microsecond learning loop.
+
+**Proposal consequence.** Add a specialized graph-optimization mechanism reference. Require an explicit mapping from the computational objective to fields, geometry, and material evolution.
+
+**Identifier:** `10.1038/s41467-022-32497-5`.
+
+### P02 — A fast algorithm to simulate nonlinear resistive networks - 2024
+
+**Evidence:** Theory + simulation. **Review:** Focused.
+
+**Finding.** Scellier formulates ideal nonlinear resistive networks as a convex quadratic program with linear inequalities and an exact coordinate-descent solver. Structured network updates support efficient GPU simulation.
+
+**Qualification.** The reported speedup is against specified SPICE implementations and ideal components. It does not automatically apply to stochastic, ionic, thermal, dynamically reconnecting networks.
+
+**Proposal consequence.** Use as the fast ideal reference model; keep the calibrated stochastic material simulator separate.
+
+**Identifier:** `10.48550/arXiv.2402.11674`.
+
+### P03 — A solution to the learning dilemma for recurrent networks of spiking neurons - e-prop - 2020
+
+**Evidence:** Theory + simulation. **Review:** Focused.
+
+**Finding.** e-prop decomposes learning in recurrent spiking networks into local eligibility traces and learning signals, providing a concrete way to discuss temporal credit assignment.
+
+**Qualification.** The neuron dynamics and learning-signal structure are specified. A global scalar reward multiplied by generic junction activity is not automatically an implementation.
+
+**Proposal consequence.** Treat eligibility retention and the reward/learning-signal coupling as physical functions that must be demonstrated.
+
+**Identifier:** `10.1038/s41467-020-17236-y`.
+
+### P04 — All-optical machine learning using diffractive deep neural networks - 2018
+
+**Evidence:** Physical inference + digital training. **Review:** Screened.
+
+**Finding.** Diffractive optical layers implement inference through propagation after digital optimization of their structure.
+
+**Qualification.** Fixed fabricated optical layers and digital training do not demonstrate ongoing learning in an electrode-accessed random medium.
+
+**Proposal consequence.** Retain as a system-boundary and inference/training distinction, not a lead substrate.
+
+**Identifier:** `10.1126/science.aat8084`.
+
+### P05 — Attention-enhanced reservoir computing - 2024
+
+**Evidence:** Simulation. **Review:** Screened.
+
+**Finding.** An attention-enhanced readout improves the use of reservoir states in modeled reservoir-computing tasks.
+
+**Qualification.** A more capable trained decoder can account for gains that would otherwise be attributed to the reservoir. The added decoder has computational cost.
+
+**Proposal consequence.** Use attention only as a later baseline, with the same decoder applied to raw-input and digital-reservoir controls.
+
+### P06 — Autonomous learning of generative models with chemical reaction network ensembles - 2024
+
+**Evidence:** Theory + simulation. **Review:** Focused.
+
+**Finding.** Chemical reaction-network ensembles implement a relative-entropy learning construction using potential clamping and feedback; the work includes thermodynamic tradeoffs.
+
+**Qualification.** This is an explicit modeled chemical architecture, not a wet-lab demonstration that an arbitrary mixture learns autonomously. The filename says 2024; the journal article was published in January 2025.
+
+**Proposal consequence.** Add an autonomous-chemical-learning reference model and insist that energy/fuel and feedback species appear explicitly.
+
+**Identifier:** `10.1098/rsif.2024.0373`.
+
+### P07 — Biological neurons act as generalization filters in reservoir computing - 2022
+
+**Evidence:** Biological experiment. **Review:** Screened.
+
+**Finding.** Biological neuronal networks are used as reservoirs; network organization is relevant to generalization.
+
+**Qualification.** Living cells already contain complex plasticity machinery. Optical stimulation/imaging and biological maintenance do not transfer directly to an electrode-only abiotic substrate.
+
+**Proposal consequence.** Treat modularity and generalization as design hypotheses to test, not inherited numerical performance.
+
+### P08 — Brain-inspired computing with self-assembled networks of nano-objects - 2024
+
+**Evidence:** Review. **Review:** Screened.
+
+**Finding.** The review surveys self-assembled nano-object networks and their potential roles in brain-inspired computing.
+
+**Qualification.** It synthesizes mechanisms and demonstrations with different interfaces and training locations; it is not one integrated platform demonstration.
+
+**Proposal consequence.** Use to structure the mechanism taxonomy and fabrication risks, while grounding performance claims in primary experiments.
+
+### P09 — Continual learning of multiple memories in mechanical networks - Murugan - 2020
+
+**Evidence:** Theory + simulation. **Review:** Focused.
+
+**Finding.** Nonlinear mechanical networks can localize information associated with different memories and reduce interference compared with more nearly linear networks.
+
+**Qualification.** The result depends on a specified elastic-energy form. Electrical nonlinearity alone does not establish equivalent continual-learning behavior.
+
+**Proposal consequence.** Add memory interference, task reversal, and sparse/localized plasticity to the evaluation plan.
+
+**Identifier:** `10.1103/PhysRevX.10.031044`.
+
+### P10 — Deep physical neural networks trained with backpropagation - 2022
+
+**Evidence:** Physical experiments + hybrid training. **Review:** Focused.
+
+**Finding.** Physics-aware training uses physical forward evaluation and digital surrogate gradients to train physical neural systems.
+
+**Qualification.** It requires suitable controllable parameters and a useful backward model; it is not native material learning, and digital training cost remains.
+
+**Proposal consequence.** Promote surrogate-assisted training of accessible electrode controls after simple readout training.
+
+**Identifier:** `10.1038/s41586-021-04223-6`.
+
+### P11 — Directed evolution effectively selects for DNA based physical reservoir computing networks capable of multiple tasks - 2025
+
+**Evidence:** Simulation. **Review:** Screened.
+
+**Finding.** Directed evolution optimizes modeled DNA-linked bead networks for reservoir tasks using a nonlinear mechanical model.
+
+**Qualification.** The described work is a simulation study, not experimental evolution of a wet-lab DNA reservoir. Fitness evaluation and selection are external.
+
+**Proposal consequence.** Use topology evolution as an offline model-design experiment, not evidence for present autonomous molecular learning.
+
+### P12 — Dissociated neuronal cultures as model systems for self-organized prediction - review - 2025
+
+**Evidence:** Review. **Review:** Screened.
+
+**Finding.** The review discusses prediction, plasticity, and self-organization in dissociated neuronal cultures.
+
+**Qualification.** Biological prediction mechanisms and culture-specific protocols do not by themselves specify an abiotic update rule.
+
+**Proposal consequence.** Borrow experimental controls and temporal-prediction tasks rather than biological density/speed extrapolations.
+
+**Identifier:** `10.3389/fncir.2025.1568652`.
+
+### P13 — Electro-active polymer hydrogels exhibit emergent memory when embodied in a simulated game environment - 2024
+
+**Evidence:** Closed-loop hydrogel experiment. **Review:** Focused.
+
+**Finding.** A polyacrylamide hydrogel is embedded in simulated Pong through electrical stimulation and current-based paddle decoding. The authors report improving performance and memory-related dynamics.
+
+**Qualification.** No active reward/punishment mechanism is used. Improvement occurs over roughly 10^3 seconds and electrolysis limits useful runs. Supplement Note S1 specifies 0.5 seconds per loop; the converted main caption contains a conflicting millisecond-style unit.
+
+**Proposal consequence.** Use as an embodied-adaptation reference. Require fixed-decoder, yoked-input, task-reversal, and reward-assignment controls before claiming reinforcement learning.
+
+**Identifier:** `10.1016/j.xcrp.2024.102151`.
+
+### P14 — Electroactive polymer gels as probabilistic reservoir automata for computation - 2022
+
+**Evidence:** Hydrogel experiment. **Review:** Focused.
+
+**Finding.** Electroactive gel deformation provides history-dependent physical responses used to define a probabilistic automaton.
+
+**Qualification.** The protocol uses camera readout, approximately 90-second stimulation intervals and fresh gels for sequences; it is not electrode-only microsecond learning.
+
+**Proposal consequence.** Keep as a slow memory/mechanics reference, not the lead ultrafast substrate.
+
+### P15 — Evolution of a designless nanoparticle network into reconfigurable Boolean logic - 2015
+
+**Evidence:** Nanoparticle experiment + external evolution. **Review:** Focused.
+
+**Finding.** External evolution finds terminal voltages that configure a disordered nanoparticle network for Boolean functions.
+
+**Qualification.** The reported device uses cryogenic Coulomb-blockade physics, with principal measurements at 0.3 K and strong temperature dependence. Search is over accessible control voltages, not individually trained hidden junctions.
+
+**Proposal consequence.** Use as a proof of electrode-only configurability, not a room-temperature speed or microscopic-capacity demonstration.
+
+**Identifier:** `10.1038/nnano.2015.207`.
+
+### P16 — Evolution of electronic circuits using carbon nanotube composites - 2016
+
+**Evidence:** Composite experiment + external evolution. **Review:** Focused.
+
+**Finding.** Carbon-nanotube/liquid-crystal composites perform externally optimized classification, with stimulus-associated morphology changes.
+
+**Qualification.** Morphological histories extend across minutes to hours, and some changes are not simply resettable. The classification/controller does not establish local reward-gradient physics.
+
+**Proposal consequence.** Add as a slow structural-adaptation comparator; separate rapid electrical readout from morphology learning.
+
+### P17 — Experimental demonstration of reservoir computing with self-assembled percolating networks of nanoparticles - 2024
+
+**Evidence:** Particulate reservoir experiment. **Review:** Focused.
+
+**Finding.** Self-assembled Sn nanoparticle networks perform temporal reservoir tasks. NARMA-2 and NARMA-10 minima occur near 20 and 4 microseconds per input step, respectively; mean characteristic relaxation is approximately 42.5 microseconds.
+
+**Qualification.** Training is an external ridge readout. Nine measured features become 90 by sequentially replaying ten electrode orientations. Speech uses MFCC preprocessing; 13 x 74 symbols at 5 microseconds require 4.81 ms per pass. Fabrication/environment control and low-bias operating conditions matter.
+
+**Proposal consequence.** Promote to the fast experimental reference and recognize demonstrated transient computation without full settling.
+
+**Identifier:** `10.1002/adma.202402319`.
+
+### P18 — Fabrication and programming of large physically evolving networks - Hubler - 2011
+
+**Evidence:** Short hypothesis/commentary with apparatus illustration. **Review:** Focused.
+
+**Finding.** Huebler proposes physically evolving arbortron networks and illustrates conducting-particle structures in oil.
+
+**Qualification.** The billion-fold density and low-power extrapolations are not accompanied by a quantified learning/energy benchmark. The short Tetris narrative lacks the protocol, controls, and statistics needed for replication.
+
+**Proposal consequence.** Retain the adaptive-topology hypothesis; remove these extrapolations from the project justification.
+
+**Identifier:** `10.1002/cplx.20378`.
+
+### P19 — From neurons to computation: Biological reservoir computing for pattern recognition - 2025
+
+**Evidence:** Biological reservoir experiment. **Review:** Screened.
+
+**Finding.** Neuronal cultures coupled to a multielectrode interface are investigated for pattern recognition.
+
+**Qualification.** Biological learning mechanisms, culture variability, and external decoding must be distinguished from substrate-independent computation claims.
+
+**Proposal consequence.** Use as an interface/evaluation comparison, not as evidence that metallic contacts behave like independently trainable synapses.
+
+### P20 — Hubler - ICMT slides - 2011
+
+**Evidence:** Research presentation. **Review:** Focused.
+
+**Finding.** The Huebler slides contain concrete oil/particle and nanotube reorganization apparatus examples.
+
+**Qualification.** Examples include high voltages and evolution over seconds to tens of minutes; they do not demonstrate the proposed nanoscale microsecond learner. Slide-level parameter descriptions are not complete reproducible protocols.
+
+**Proposal consequence.** Deprioritize freely moving high-voltage suspensions for the first build; retain a separate slow morphology branch only with a specific objective.
+
+### P21 — In-materio reservoir computing in a sulfonated polyaniline network - 2021
+
+**Evidence:** Polymer reservoir experiment. **Review:** Focused.
+
+**Finding.** A sulfonated-polyaniline network provides nonlinear temporal response in a multiterminal reservoir architecture.
+
+**Qualification.** Humidity changes the balance of electronic/ionic response. Environmental state can be both a computational variable and a confound.
+
+**Proposal consequence.** Include controlled humidity and carrier-only/electrode-only controls; avoid treating ambient drift as training.
+
+### P22 — Inferring neural activity before plasticity as a foundation for learning beyond backpropagation - 2024
+
+**Evidence:** Computational learning theory + simulations. **Review:** Focused.
+
+**Finding.** Prospective configuration separates activity inference from subsequent plasticity and provides an alternative conceptual organization of learning.
+
+**Qualification.** An activity-inference principle does not provide the required error signals, local memory, or update physics in a random conductor.
+
+**Proposal consequence.** Use to guide staged fast-state/slow-state simulations, with each required signal mapped to a realizable physical variable.
+
+**Identifier:** `10.1038/s41593-023-01514-1`.
+
+### P23 — KirchhoffNet: A scalable ultra fast analog neural network - 2023
+
+**Evidence:** Circuit-model simulation and hardware proposal. **Review:** Focused.
+
+**Finding.** KirchhoffNet represents trainable neural dynamics through circuit equations, node capacitances, and parameterized currents.
+
+**Qualification.** Capacitance/time rescaling in an ideal model is not demonstrated arbitrarily fast hardware. Parasitics, precision, active current functions, parameter programming, and acquisition remain.
+
+**Proposal consequence.** Use as a structured neural-ODE reference, not as evidence for picosecond learning in an opaque particle network.
+
+**Identifier:** `10.48550/arXiv.2310.15872`.
+
+### P24 — KirchhoffNet: What is KirchhoffNet
+
+**Evidence:** Project FAQ/explanatory page. **Review:** Screened.
+
+**Finding.** The page explains the intended KirchhoffNet circuit-computation vision.
+
+**Qualification.** Idealized speed aspirations and proposed prototypes are not independently measured end-to-end results.
+
+**Proposal consequence.** Keep separate from the experimental evidence table; cite the technical model for any formal claim.
+
+### P25 — Laboratory demonstration of decentralized physics-driven learning - 2021
+
+**Evidence:** Engineered physical-learning experiment. **Review:** Focused.
+
+**Finding.** Coupled free and clamped electrical networks, with local update circuitry, demonstrate decentralized physical learning.
+
+**Qualification.** The local comparison and update functions are deliberately engineered. A generic two-terminal junction does not automatically provide them. The archive filename uses the preprint year 2021; publication was 2022.
+
+**Proposal consequence.** Use a small engineered learning circuit as a positive control for any proposed native-learning protocol.
+
+**Identifier:** `10.1103/PhysRevApplied.18.014040`.
+
+### P26 — Learning without neurons in physical systems - 2023
+
+**Evidence:** Review. **Review:** Screened.
+
+**Finding.** The review organizes learning in physical systems beyond neural implementations.
+
+**Qualification.** Review-level analogies do not remove substrate-specific assumptions about controls, updates, objectives, or observability.
+
+**Proposal consequence.** Use as a conceptual map, with separate claims for passive response, adaptation, and task-directed learning.
+
+**Identifier:** `10.1146/annurev-conmatphys-040821-113439`.
+
+### P27 — Memory elements in potato tubers - 2015
+
+**Evidence:** Electrical characterization experiment. **Review:** Screened.
+
+**Finding.** Potato tissue exhibits history-dependent electrical behavior and memristor-like hysteresis under the reported protocol.
+
+**Qualification.** Hysteresis and acquisition sample rate are not demonstrations of trainable computational capacity or learning speed.
+
+**Proposal consequence.** Use only as a reminder that stateful conduction is widespread; require a computational benchmark and null controls.
+
+**Identifier:** `10.1080/15592324.2015.1071750`.
+
+### P28 — Natural induction: Spontaneous adaptive organization without natural selection - 2024
+
+**Evidence:** Theory + simulation. **Review:** Focused.
+
+**Finding.** Natural induction couples fast relaxation, slow viscoelastic accommodation, and repeated state perturbations. In constructed problems, history improves the quality of subsequently reached solutions.
+
+**Qualification.** The demonstrated mechanism needs timescale separation and an appropriate landscape. Fixed problem springs distinguish improvement on the original objective from merely relaxing or erasing the constraints.
+
+**Proposal consequence.** Add a self-conditioning optimization work package without an external reward signal; benchmark against frozen plasticity, randomized drift, repeated restarts, and matched annealing.
+
+**Identifier:** `10.3390/e26090765`.
+
+### P29 — Pattern recognition in a bucket of water - 2003
+
+**Evidence:** Macroscopic reservoir experiment. **Review:** Screened.
+
+**Finding.** Water-wave dynamics supply features for a trained readout in pattern-recognition demonstrations.
+
+**Qualification.** Mechanical actuation, optical observation, and externally trained readout do not demonstrate intrinsic learning or electrode-only access.
+
+**Proposal consequence.** Keep as a clear baseline example of useful computation without internal weight training.
+
+### P30 — Physical neural networks with self-learning capabilities - 2024
+
+**Evidence:** Review. **Review:** Screened.
+
+**Finding.** The review surveys physical systems with self-learning capabilities and discusses local learning mechanisms.
+
+**Qualification.** The reviewed architectures require different forms of feedback, state separation, and normalization; there is no universal passive-material update rule.
+
+**Proposal consequence.** Use the mechanism inventory to identify missing device functions rather than assume the substrate already implements them.
+
+### P31 — Recent advances in physical reservoir computing: A review - 2019
+
+**Evidence:** Review. **Review:** Screened.
+
+**Finding.** The review catalogs physical reservoir computing across material and dynamical platforms.
+
+**Qualification.** Reservoir performance and its external learning rule must be distinguished from autonomous substrate learning.
+
+**Proposal consequence.** Use standard memory/nonlinearity benchmarks and matched readouts as the first experimental stage.
+
+### P32 — Recognition of optical patterns directly irradiated to a three-dimensional silver sulfide physical reservoir - Ohno - 2025
+
+**Evidence:** Optically driven particulate reservoir experiment. **Review:** Focused.
+
+**Finding.** Optical patterns are directly incident on a three-dimensional silver-sulfide reservoir with electrical readout; the work reports pattern discrimination and a measured transient response.
+
+**Qualification.** Distributed optical input is outside the strict electrode-only-input constraint. It must not be used to imply equal input accessibility with boundary electrodes alone.
+
+**Proposal consequence.** Add native optical sensing as an optional application branch only if the interface constraint is explicitly relaxed.
+
+**Identifier:** `10.35848/1347-4065/adb759`.
+
+### P33 — Simulating biological intelligence: Active inference with experiment-informed generative model - BJ Kagan - 2025
+
+**Evidence:** Experiment-informed simulation. **Review:** Screened.
+
+**Finding.** An active-inference model is constructed using biological-experiment-informed assumptions.
+
+**Qualification.** The generative model and inference machinery are specified in software; this is not an implemented abiotic material learning rule.
+
+**Proposal consequence.** Use only as a candidate controller/model baseline, with model computation included in system costs.
+
+**Identifier:** `10.48550/arXiv.2508.06980`.
+
+### P34 — Solving the compute crisis with physics-based ASICs - 2025
+
+**Evidence:** Perspective. **Review:** Screened.
+
+**Finding.** The article argues for physics-based application-specific accelerators and workload-aware design.
+
+**Qualification.** The general accelerator argument is not a measurement of this proposal's capacity, energy, latency, or training advantage.
+
+**Proposal consequence.** Focus the first application on temporal signal processing or native sensing, not broad AI replacement.
+
+### P35 — Speech recognition with cochlea-inspired spiral resonator with in-sensor in-materia physical reservoir computing - 2025
+
+**Evidence:** In-sensor physical reservoir experiment. **Review:** Screened.
+
+**Finding.** A cochlea-inspired mechanical resonator provides physical feature extraction for speech-related classification.
+
+**Qualification.** Performance relies on native mechanical sensing and external decoding; it does not establish internal reward-driven adaptation.
+
+**Proposal consequence.** Favor applications that avoid expensive digital encoding of an already-digital input.
+
+### P36 — Spoken digit classification by in-materio reservoir computing with neuromorphic atomic switch networks - 2021
+
+**Evidence:** Atomic-switch reservoir experiment. **Review:** Focused.
+
+**Finding.** Atomic-switch networks are used for spoken-digit reservoir computing with measured nonlinear temporal responses.
+
+**Qualification.** Input preprocessing, readout fitting, feature count, and dataset partition determine the appropriate comparison; substrate dynamics alone are not a trained deep model.
+
+**Proposal consequence.** Use as a speech benchmark reference after simpler tasks establish the contribution of the material.
+
+### P37 — Starting a synthetic biological intelligence lab from scratch - BJ Kagan - 2025
+
+**Evidence:** Laboratory tutorial. **Review:** Screened.
+
+**Finding.** The tutorial details infrastructure and experimental practice for a synthetic biological intelligence laboratory.
+
+**Qualification.** Biological maintenance requirements and multielectrode instrumentation are not an abiotic fabrication recipe.
+
+**Proposal consequence.** Borrow acquisition, reproducibility, and closed-loop experimental discipline, not a biological performance extrapolation.
+
+**Identifier:** `10.1016/j.patter.2025.101232`.
+
+### P38 — Statistical physics of liquid brains - 2019
+
+**Evidence:** Review/conceptual synthesis. **Review:** Screened.
+
+**Finding.** Liquid-brain examples discuss distributed information processing by mobile interacting agents.
+
+**Qualification.** Agent mobility is not the only computational ingredient: sensing, internal states, communication, and selection of responses matter.
+
+**Proposal consequence.** Avoid arguing that freely mobile conductive particles automatically supply the functional repertoire of ants or immune cells.
+
+**Identifier:** `10.1098/rstb.2018.0376`.
+
+### P39 — Supervised learning in DNA neural networks - 2025
+
+**Evidence:** Native molecular-learning experiment. **Review:** Focused.
+
+**Finding.** Engineered DNA circuits perform supervised learning in vitro: labeled molecular examples change concentration memories used in subsequent classification. The work includes two 100-bit memories and multiple digit-pair tasks.
+
+**Qualification.** Training includes 24-hour class exposures and inhibition steps; testing takes hours. Training patterns and representative tests are selected, and the system remains use-once rather than a continuously reusable learner. It is not electrode-only or an RL demonstration.
+
+**Proposal consequence.** Strengthen the feasibility of native abiotic learning in principle; transfer the separation of memory writing, storage, and computation, not its timescale or interface.
+
+**Identifier:** `10.1038/s41586-025-09479-w`.
+
+### P40 — Three dimensional physical reservoir made of silver sulfide particles - Ohno - 2024
+
+**Evidence:** Three-dimensional particulate reservoir experiment. **Review:** Focused.
+
+**Finding.** Ag2S particles fill a millimeter-scale cavity contacted on top and bottom. Cation redistribution gives nonlinear temporal response; experiments compare two- and three-dimensional reservoirs and 7 versus 15 output electrodes.
+
+**Qualification.** The compared geometries and feature budgets are not identical in every respect. Two hundred temporal samples per output electrode enter the readout. Extra electrodes do not improve every metric. The conversion contradicts itself about acrylic thickness; its explicit electrode separation is 1 mm.
+
+**Proposal consequence.** Promote to the first accessible packed-bed prototype. Replicate the result with fixed I/O, matched geometry, sampling budget, regularization, and independent time-stream testing.
+
+**Identifier:** `10.1587/nolta.15.861`.
+
+### P41 — Tomography of memory engrams in self-organizing nanowire connectomes - 2023
+
+**Evidence:** Experiment + inverse modeling. **Review:** Focused.
+
+**Finding.** Electrical resistance tomography tracks distributed memory patterns in 16-terminal nanowire networks and observes transient-to-longer-lived consolidation.
+
+**Qualification.** The reconstruction is regularized and non-unique. A map uses 208 configurations and roughly 40 seconds, not a microsecond microscope of individual junction states.
+
+**Proposal consequence.** Add slow between-block conductivity diagnostics; use the consolidation result as a material-memory precedent, not proof of reward credit assignment.
+
+**Identifier:** `10.1038/s41467-023-40939-x`.
+
+### P42 — Two roads diverged: Pathways toward harnessing intelligence in neural cell cultures - BJ Kagan - 2025
+
+**Evidence:** Perspective. **Review:** Screened.
+
+**Finding.** The article contrasts development paths for computation with neural cultures.
+
+**Qualification.** It is a strategic perspective rather than a quantitative demonstration of this abiotic architecture.
+
+**Proposal consequence.** Use an application-first approach and avoid reproducing biological complexity without a measured task benefit.
+
+**Identifier:** `10.1016/j.celbio.2025.100156`.
+
+### P43 — Whitelam - Generative thermodynamic computing - 2025
+
+**Evidence:** Theory + digital simulation. **Review:** Focused.
+
+**Finding.** Generative thermodynamic computing trains finite-time stochastic dynamics to generate desired distributions.
+
+**Qualification.** The work is a model-based computational demonstration, not an electrode-only particle hardware benchmark. The supplied filename is 2025; the journal version is Physical Review Letters 136, 037101 (2026).
+
+**Proposal consequence.** Include transient stochastic computation; do not require complete equilibration for all useful physical inference.
+
+**Identifier:** `10.1103/kwyy-1xln`.
+
+### P44 — Whitelam - Training thermodynamic computers by gradient descent - 2025
+
+**Evidence:** Theory + digital simulation + energy estimate. **Review:** Focused.
+
+**Finding.** Teacher-student training shapes finite-time Langevin trajectories through digital gradient descent. The paper estimates a large energy advantage for a hypothetical hardware realization.
+
+**Qualification.** The estimated advantage is not a measured complete system including programming, acquisition, control, reset, and precision costs. Its couplings are known/programmable model parameters, unlike arbitrary hidden contacts.
+
+**Proposal consequence.** Use a structured thermodynamic reference and surrogate-assisted transfer; keep the estimate separate from a hardware efficiency claim. Journal publication is 2026.
+
+**Identifier:** `10.1073/pnas.2528413123`.
+
+### P45 — polycomputing
+
+**Evidence:** Conceptual perspective. **Review:** Screened.
+
+**Finding.** Polycomputing emphasizes that one physical system can support several computational interpretations or functions.
+
+**Qualification.** Multiple interpretations or readouts do not create independent trainable degrees of freedom without additional cost or interference.
+
+**Proposal consequence.** Test multi-task reuse directly, including shared-feature benefits and interference, instead of multiplying a capacity estimate by the number of interpretations.
+
+**Identifier:** `10.3390/biomimetics8010110`.
+
+### P46 — Trainable computation in molecular networks - Arvind Murugan - 2025
+
+**Evidence:** Theory + simulation. **Review:** Focused.
+
+**Finding.** Dense, reversible molecular interaction networks (dimerization/trimerization) with fixed binding affinities `K_ij` can be trained by a local, rate-sensitive autoregulatory rule: each "hidden" species adjusts its own total concentration based on a high-pass filter of its own monomer concentration's recent history, with no backpropagation and no separate trained readout. Demonstrated (all in simulation) on Pavlovian conditioning, quantitative and multidimensional input-output regression, Iris classification (~89% train / ~90% test accuracy, 12-species network), and training a noisy bistable switch's stochastic occupancy to match an environmental frequency distribution. Also shows the rule is model-agnostic (works identically for dimerization- and trimerization-based networks), robust to unmodeled interfering species, and lets a population of differently-disordered simulated networks (varying `K_ij` across orders of magnitude) converge to the same target output via different learned parameters.
+
+**Qualification.** Entirely theory/simulation of idealized reversible reaction networks; no wet-lab or hardware demonstration. The output is read directly off a designated species' own concentration (no separate trained decoder layer), which is a stronger "no external readout" claim than most reservoir-computing hardware papers in this audit, but the tasks are static/associative — the authors state plainly that the rule "was limited to static input-output tasks" and that "complex temporal sequence processing... fall[s] outside the present analysis." The local sensitivity mechanism (rate-sensitive high-pass filtering) is grounded in named, well-studied biological motifs (integral feedback, incoherent feedforward loops, fold-change detection, receptor desensitization) but has not been built as an actual synthetic molecular circuit for any of the demonstrated tasks.
+
+**Proposal consequence.** Add rate-sensitive autoregulation (sensing a local variable's own high-pass-filtered history) as a candidate local-sensitivity/eligibility mechanism, distinct from and better physically precedented than a matched-twin comparator; add the paper's robustness protocols (unmodeled interactions, wide device-to-device disorder, population convergence via different learned parameters) as templates for sensitivity studies not yet run on this project's own materials. Do not treat this paper as evidence for or against any temporal-memory claim, since it explicitly excludes that task class.
+
+**Identifier:** PMC12773021 (https://pmc.ncbi.nlm.nih.gov/articles/PMC12773021/; source URL in the local markdown copy, which carries no DOI).
+
+### P47 — Online dynamical learning and sequence memory with neuromorphic nanowire networks - Zhu - 2023
+
+**Evidence:** Physical reservoir experiment with trained digital readout. **Review:** Focused, including published analysis code and supplementary information (25 September 2026).
+
+**Finding.** The sequence-reconstruction result is a direct project benchmark.
+
+**Qualification.** The illustrative simulated topology does not establish a numerical reproduction of the experimental sequence score. The published feature builder uses subsequent digits only, correcting an initial interpretation of the figure caption.
+
+**Proposal consequence.** Reproduce temporal image reconstruction with a trained readout and continuous material state, then compare schedules that also train the material. Keep task success and material-learning attribution separate.
+
+**Identifier:** `10.1038/s41467-023-42470-5`.
 
 
