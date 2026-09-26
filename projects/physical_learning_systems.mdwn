@@ -104,6 +104,9 @@ Zhu gives a very clean experimental MNIST result from a disordered Ag-containing
 
 In essentially all of these reservoir-computing examples, the material performs the nonlinear temporal transformation and provides memory, but a separate linear/ANN/readout layer learns the labels. Zhu trains RLS weights outside the material; Mallinson fits ridge-regression weights; Lilak uses offline regression; Usami uses ridge regression. Midya uses readout weights that are physically trained memristors, but the diffusive reservoir itself is still not trained.
 
+[Trainable computation in molecular networks](https://www.biorxiv.org/content/10.64898/2025.12.28.696421v2.full) -- "... in reversible molecular networks in which each species interacts with many others. In such densely interacting networks, the total concentrations of a small set of ‘hidden’ mediator species can serve as trainable variables that are readily modulated by regulation without requiring mutations [28, 30–33]. Moreover, adapting training ideas from Boltzmann machines [34, 35] to the molecular domain, we show that simple rate-sensitive autoregulation of these hidden species yields a general training rule that tunes their concentrations toward values consistent with environmental correlations experienced during training; see Fig.1b. Across different environmental contexts, this rate-sensitive autoregulatory rule enables a wide class of reversible molecular networks to undergo Pavlovian conditioning, learn quantitative input–output relationships, perform supervised classification, and learn generative behaviors relevant for bet hedging. We argue that the required molecular ingredients, dense interaction networks, autoregulation, and rate sensitivity, are widespread in biology. Our findings therefore suggest a broadly applicable, model-free mechanism by which molecular systems can reprogram their function on physiological timescales without requiring genetic change."
+
+
 # Silver nanoparticle device proposal
 
 Here is a more specific proposal, although it is not the only plausible design.
@@ -143,6 +146,21 @@ hypothesis: Ag/Ag₂S networks can be organized into recurrent modules whose tas
 
 
 something something mamba
+
+# Simulations
+
+A simulation project has demonstrated several internally learning simulated systems, including adaptive electrical circuits, silver-switch-inspired temporal networks, and local chemical reaction learners.
+
+Static electrical adaptation: a small circuit learns by changing its internal conductances. This is a circuit with ten adaptive contacts, two data inputs, two bias electrodes, and two outputs. Each contact has a transient state and a retained variable interpreted as the amount of conducting filament or bridge. This is a simplified filament-inspired electrical model. During training, the inputs are held while the teacher gently pushes the outputs toward the desired answer. A shared signal switches contacts between growth and dissolution phases. Each contact responds only to its own voltage drop and that shared signal. Comparing the network’s free and teacher-influenced responses produces useful conductance changes. The circuit learned a small static two-input classification problem. Its output decoder remained fixed, so useful adaptation occurred inside the circuit.
+
+SCORE-AG: silver-switch-inspired contacts learn to use temporal information. This simultes a network representing silver particles connected by Ag/Ag₂S switching contacts. The simulation has 32 modeled particles and 64 contacts. Electrical network equations determine local voltages; voltage-dependent stochastic events form or rupture conducting bridges.  Eight outputs are measured, although sixteen output loads are present. The particle connectivity is an abstract ring-plus-extra-connections graph. Here, internal adaptation improves a temporal task and uses remembered information. Each contact is assumed to have a matched neighboring reporter, a local record of contact-versus-reporter events, and a reward-gated mechanism that changes its barrier. To assign credit, each contact has an assumed neighboring reporter that experiences similar conditions, a local tally of the difference between contact and reporter events, and a reward-gated accumulator. A later global reward can therefore reinforce or discourage earlier local switching tendencies. This is a substantive proposed learning mechanism, but it requires more device functions than an ordinary two-terminal silver switch.
+
+M4 OCR: an engineered spring-and-resonator system learns digit classification. The simulated substrate is a damped mechanical network with attached resonators: masses and springs whose vibrations retain information about earlier stimulation. It is not a silver-particle or chemical-reaction model. The OCR configuration has 518 mechanical coordinates, with position and velocity for each. An 8×8 digit is presented row by row through 64 input channels; ten boundary sensor/actuator pairs provide the output interface. Training changes stiffness and damping parameters. The complete learning apparatus includes recording and reverse replay of boundary signals, banks of resonant modes that retain trajectory information, an ideal mode-energy readout, and per-parameter Adam optimizer state.
+
+(There's severla hundred more simulations that I haven't written down here.)
+
+TODO: add simulation next steps.
+
 
 # Arbortrons
 
