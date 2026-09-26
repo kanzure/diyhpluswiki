@@ -8,25 +8,25 @@ This project proposes a thermodynamic physical learning system in which computat
 
 Modern AI scales with the number of adaptive degrees of freedom. The human brain sets today's benchmark with ~8x10^10 neurons and ~10^14 synapses, operating on millisecond timescales with synaptic plasticity spanning milliseconds to minutes. A particle-based analog substrate can, in principle, dwarf this capacity: a dense liquid material of ~100 nm nano-objects (although smaller and larger objects could be used instead) easily reaches 10^10 conductive particles per cm^2; because each particle potentially forms multiple junctions, different (initially random) electrical circuits can form via inter-particle contacts. These systems can trivially scale to million- to billion-fold more adaptive micro-interactions than a neurobiological system of similar footprint. These physical junctions respond at native material timescales: electronic relaxation in picoseconds to nanoseconds, capacitive/RC dynamics in nanoseconds to microseconds, and controlled ionic/structural plasticity in microseconds to milliseconds, thus enabling inference and learning bursts on microsecond or faster horizons. This combination of astronomical state dimensionality plus ultrafast local dynamics provides a new scaling frontier where compute can grow outside the semiconductor supply chain. These substrates compute by relaxing system energy, and if harnessed with hardware-in-the-loop training (black-box RL/evolution, reward-gated consolidation), such substrates could deliver orders-of-magnitude higher model capacity per cm^2, millisecond-to-microsecond training episodes, and exceptional energy efficiency, opening a path to compact, self-organizing learners that outscale digital architectures in both density and latency. Well, it may be able to do that, but only after the following feasibility assessments are completed...
 
-# Contract project: Analog electronics and physics
-
-1) Seeking a hands-on physicist/EE/materials scientist to assess the feasibility of different thermodynamic physical learning system concepts. You'll evaluate device physics and instrumentation: junction/nonlinear conduction mechanisms, limits, bandwidth, noise/SNR, thermal noise effects, stability/drift, thermal budget, heating/cooling, and device lifetime under various stimulation or energy assumptions. Deliverables include: general feasibility analysis, brainstorming, hypothesizing, basic research/literature review, high-level sketches of simulations if feasible. Ideal backgrounds: physics, analog electronics, electrochemistry, materials science, emulsions or colloids, high-frequency signal generation/processing/ADC, high voltage electronics. This is a short-term contract or project that could turn potentially into an experimental phase. We are separately also pursuing a short-term contract for the ML side of this project.
-
-# Contract project: Machine learning expertise
-
-2) Looking for an [[ML|machine learning]] researcher/engineer to assess the feasibility and directions for training a black box physical learning system consisting of a high-dimensional analog substrate driven and read only at its electrodes. Deliverables include: general feasability analysis, brainstorming, hypothesizing, basic research/literature review, high-level sketches of GPU-based simulations if feasible. Ideal backgrounds: machine learning, reinforcement learning, evolutionary optimization, physical reservoir computing, energy-based/predictive-coding methods, hybrid analog-digital pipelines, and practical experience optimizing noisy non-differentiable systems.
-
----
-
 # another summary
 
 The objective of this project is to develop a **three-dimensional physical material that can be trained to perform machine-learning computations through changes occurring within the material itself**. Rather than representing a neural network explicitly in silicon or software, the material would exploit a large disordered network of nonlinear, history-dependent electrical junctions whose conductances, relaxation times, and internal states evolve in response to electrical stimulation and eventually to training or reward signals. Silver-based atomic-switch and diffusive-memristor systems are particularly relevant because Ag/Ag₂S and related Ag-in-insulator systems exhibit volatile switching, persistent switching, short-term memory, and transitions toward longer-lived states; nanoparticle and nanowire networks have separately demonstrated reservoir-computing, temporal-memory, classification, and sequence-processing tasks. The stronger goal of this project is to move beyond using such a material merely as a fixed reservoir with a digitally trained readout and determine whether the physical network itself can acquire useful internal organization through local, physically realizable training mechanisms.
 
-The proposed baseline material is a **3D PVA/water hydrogel containing Ag/Ag₂S nanoparticles, commodity polymer or silica microspheres, and a controlled aqueous electrolyte**, with glycerol optionally added to modify solvent dynamics. PVA is attractive as the structural chassis because it is inexpensive, widely available, water-compatible, electrically insulating, capable of incorporating particles and nanoparticles, and highly tunable through polymer concentration, molecular weight, hydrolysis state, and freeze/thaw processing. The Ag/Ag₂S particles provide the primary nonlinear and adaptive electrical junctions, while micron-scale polystyrene, silica, glass, agarose, or functionalized molecular-biology beads provide an independent means of controlling three-dimensional packing, excluded volume, local particle concentration, pore structure, and chemical microenvironments. A subset of beads could carry proteins, peptides, enzymes, or nucleic acids, allowing the mechanical scaffold, active electrical network, mesoscale geometry, and molecular surface chemistry to be varied semi-independently. Agarose would be maintained as a parallel, biologically gentle host for experiments in which preservation of fragile biomolecular activity is more important than the larger mechanical design space offered by PVA.
+One proposed baseline material is a **3D PVA/water hydrogel containing Ag/Ag₂S nanoparticles, commodity polymer or silica microspheres, and a controlled aqueous electrolyte**, with glycerol optionally added to modify solvent dynamics. PVA is attractive as the structural chassis because it is inexpensive, widely available, water-compatible, electrically insulating, capable of incorporating particles and nanoparticles, and highly tunable through polymer concentration, molecular weight, hydrolysis state, and freeze/thaw processing. The Ag/Ag₂S particles provide the primary nonlinear and adaptive electrical junctions, while micron-scale polystyrene, silica, glass, agarose, or functionalized molecular-biology beads provide an independent means of controlling three-dimensional packing, excluded volume, local particle concentration, pore structure, and chemical microenvironments. A subset of beads could carry proteins, peptides, enzymes, or nucleic acids, allowing the mechanical scaffold, active electrical network, mesoscale geometry, and molecular surface chemistry to be varied semi-independently. Agarose would be maintained as a parallel, biologically gentle host for experiments in which preservation of fragile biomolecular activity is more important than the larger mechanical design space offered by PVA.
 
 The resulting system has a deliberately large experimental design space. Physical variables include Ag/Ag₂S concentration relative to percolation, particle size and shell properties, PVA concentration and crosslinking history, microsphere diameter and loading, mixtures of bead sizes, glycerol content, temperature, water activity, and electrical conductivity. Chemical variables include pH, ionic strength, electrolyte identity, and buffer identity; MOPS is a useful near-neutral starting buffer because it interacts comparatively weakly with Ag(I), whereas Tris, chloride, phosphate, Ca²⁺ and related species should be regarded as active experimental perturbations because they can alter Ag⁺ complexation, precipitation, aggregation, or particle surface charge. Silver surface chemistry can be varied using citrate, PVP, proteins, peptides, or oligonucleotides; citrate- and PVP-coated Ag particles, for example, respond quite differently to pH and ionic-strength changes. Broader screens could test BSA, gelatin, casein, lysozyme, simple peptides, and functionalized beads before moving to directed selection. Silver-binding peptides can be isolated by phage display, providing a route to evolve surface modifiers for a desired *material phenotype* rather than simply maximum Ag affinity. Aptamers and designed DNA provide another large sequence space because Ag⁺ can participate in highly specific metal-mediated nucleic-acid interactions such as C–Ag–C base pairs, potentially allowing nucleic acids to control local Ag⁺ availability, particle association, or junction kinetics.
 
-simulation: A corresponding simulator should initially reproduce the computationally important degrees of freedom rather than every molecular detail. A tractable model would generate a three-dimensional random distribution of Ag/Ag₂S particles and microspheres, construct the electrically accessible particle network, and represent each nearby Ag junction with a small stochastic state model containing variables such as conductance, filament state, switching barrier, local ionic availability, and one or more relaxation processes. Kirchhoff equations would determine instantaneous voltages and currents throughout the network, while junction states evolve forward in time according to voltage-, temperature-, and history-dependent kinetics; microspheres would modify geometry and excluded volume, while buffer, coatings, proteins, peptides, or aptamers would initially enter as experimentally calibrated changes to switching rates, ion availability, aggregation propensity, barrier distributions, or relaxation times. This modeling strategy is consistent with prior work showing that Ag diffusion and regrouping can generate useful synaptic dynamics and with experiments demonstrating that disordered nanoparticle and nanowire networks can support temporal computation. The first purpose of the simulator would therefore not be to predict the exact chemistry of a formulation, but to ask whether plausible ranges of these physical parameters produce a material **susceptible to useful training**: delayed-memory tasks, nonlinear temporal transformations, sequence classification, delayed XOR, or similar benchmarks could be used to determine which combinations of connectivity, nonlinear switching, transient memory, persistent state, and local adaptation justify fabrication and measurement in the laboratory.
+simulation: A corresponding simulator should initially reproduce the computationally important degrees of freedom rather than every molecular detail. A tractable model would generate a three-dimensional random distribution of Ag/Ag₂S particles and microspheres, construct the electrically accessible particle network, and represent each nearby Ag junction with a small stochastic state model containing variables such as conductance, filament state, switching barrier, local ionic availability, and one or more relaxation processes. Kirchhoff equations would determine instantaneous voltages and currents throughout the network, while junction states evolve forward in time according to voltage-, temperature-, and history-dependent kinetics; microspheres would modify geometry and excluded volume, while buffer, coatings, proteins, peptides, or aptamers would initially enter as experimentally calibrated changes to switching rates, ion availability, aggregation propensity, barrier distributions, or relaxation times. This modeling strategy is consistent with prior work showing that Ag diffusion and regrouping can generate useful synaptic dynamics and with experiments demonstrating that disordered nanoparticle and nanowire networks can support temporal computation. The first purpose of the simulator would therefore not be to predict the exact chemistry of a formulation, but to ask whether plausible ranges of these physical parameters produce a material susceptible to useful ML training: delayed-memory tasks, nonlinear temporal transformations, sequence classification, delayed XOR, or similar benchmarks could be used to determine which combinations of connectivity, nonlinear switching, transient memory, persistent state, and local adaptation justify fabrication and measurement in the laboratory.
+
+# Contracting projects
+
+## Contract project: Analog electronics and physics
+
+1) Seeking a hands-on physicist/EE/materials scientist to assess the feasibility of different thermodynamic physical learning system concepts. You'll evaluate device physics and instrumentation: junction/nonlinear conduction mechanisms, limits, bandwidth, noise/SNR, thermal noise effects, stability/drift, thermal budget, heating/cooling, and device lifetime under various stimulation or energy assumptions. Deliverables include: general feasibility analysis, brainstorming, hypothesizing, basic research/literature review, high-level sketches of simulations if feasible. Ideal backgrounds: physics, analog electronics, electrochemistry, materials science, emulsions or colloids, high-frequency signal generation/processing/ADC, high voltage electronics. This is a short-term contract or project that could turn potentially into an experimental phase. We are separately also pursuing a short-term contract for the ML side of this project.
+
+## Contract project: Machine learning expertise
+
+2) Looking for an [[ML|machine learning]] researcher/engineer to assess the feasibility and directions for training a black box physical learning system consisting of a high-dimensional analog substrate driven and read only at its electrodes. Deliverables include: general feasability analysis, brainstorming, hypothesizing, basic research/literature review, high-level sketches of GPU-based simulations if feasible. Ideal backgrounds: machine learning, reinforcement learning, evolutionary optimization, physical reservoir computing, energy-based/predictive-coding methods, hybrid analog-digital pipelines, and practical experience optimizing noisy non-differentiable systems.
 
 # relevant manuscripts
 
@@ -36,7 +36,7 @@ simulation: A corresponding simulator should initially reproduce the computation
 
 3. **Wang, Z. et al. (2017). “Memristors with Diffusive Dynamics as Synaptic Emulators for Neuromorphic Computing.” Nature Materials 16, 101–108. DOI 10.1038/nmat4756.** Combines experiments, in-situ microscopy, and particle-dynamics simulation to connect Ag redistribution and spontaneous relaxation with short- and long-term synaptic dynamics.
 
-4. **Mallinson, J. B. et al. (2024). “Experimental Demonstration of Reservoir Computing with Self-Assembled Percolating Networks of Nanoparticles.” Advanced Materials 36, 2402319.** Demonstrates memory, nonlinear computation, time-series processing, and spoken-digit recognition using physical percolating nanoparticle networks.
+4. **Mallinson, J. B. et al. (2024). “[Experimental Demonstration of Reservoir Computing with Self-Assembled Percolating Networks of Nanoparticles](https://advanced.onlinelibrary.wiley.com/doi/10.1002/adma.202402319).” Advanced Materials 36, 2402319.** Demonstrates memory, nonlinear computation, time-series processing, and spoken-digit recognition using physical percolating nanoparticle networks.
 
 5. **Zhu, R. et al. (2023). “Online Dynamical Learning and Sequence Memory with Neuromorphic Nanowire Networks.” Nature Communications 14, 6697.** Demonstrates online learning from physical-network dynamics and sequence-memory behavior, providing an important computational benchmark even though training remains associated with the readout rather than purely local material learning.
 
@@ -126,6 +126,7 @@ something something mamba
 * [Thermodynamic gradient-descent simulation](https://github.com/swhitelam/thermo_gd)
 * [Sequence learning with equilibrium propagation](https://github.com/NeuroCompLab-psu/EqProp-SeqLearning)
 * [Nanowire tomography data archive](https://doi.org/10.5281/zenodo.8208380)
+* <https://github.com/ZhangWS/arbortron> see <https://www.youtube.com/watch?v=pYGAB6vaT08>
 
 # manuscript review
 
@@ -666,5 +667,73 @@ Physical inference with an externally fitted readout; externally optimized hardw
 **Proposal consequence.** Reproduce temporal image reconstruction with a trained readout and continuous material state, then compare schedules that also train the material. Keep task success and material-learning attribution separate.
 
 **Identifier:** `10.1038/s41467-023-42470-5`.
+
+# Arbortrons
+
+Hubler lecture and demonstration <https://www.youtube.com/watch?v=dgbooumJ4Tg&t=1410s> and [[transcript|transcripts/alfred_hubler_arbortron]].
+
+Physically Evolving Networks (PENs) were first proposed by Alan Turing in his 1948 paper
+“Intelligent Machines” [1]. PENs capture some important features of the information processing
+of biological neural systems, such as mimicking animal and human error patterns, and implement
+massively parallel, non-algorithmic processes, where the sequence and concurrency of operations
+is determined at run time. PENs simulations on conventional digital computers have been
+successfully used for speech recognition, image analysis, and adaptive control. But PEN
+implementations on computers with von Neumann architecture are slow compared to other
+algorithms which are optimized for the sequential processing of explicit instructions. In the
+following we discuss hardware implementations of PENs. Would it be possible to fabricate a
+PEN of the size of a human brain with a billion times more neurons? And if so, how could such a
+PEN be programmed or trained?
+Metal particles in oil are a potential PEN hardware implementation. The metal particles form
+wires if a voltage is applied and a current starts to flow [2]. Figure 1 shows that these wire
+networks often form ramified structures like the branches of a tree. Therefore they are called
+arbortrons [3].
+Arbortrons are not perfect conductors, because there tend to be small gaps between the particles,
+but if they are used as electrical conductors their conductivity increases [4]. This behavior is
+similar to the neural plasticity of human neurons introduced by Donald Hebb [5] Human neurons 
+strengthen and become more conductive if they are used frequently and weaken or decay if they
+are unused. Unused arbortrons are decaying as well, i.e. their particles separate and drift away.
+Unused arbortrons repair only if the applied current exceeds a threshold, because of static
+friction and gravity. For that reason they tend to have a high resistance for small current and
+become good conductors if the current exceeds a threshold. Therefore, arbortrons are nonlinear
+conductors with a threshold.
+Neural plasticity and conductance with thresholds are the key features of PENs. Therefore
+arbortrons may be considered hardware implementations of PENs.
+Hardware implementations of PENs may have some features which exceed biological neural
+nets. Human axons and dendrites in the central nervous systems system are about one
+micrometer thick, whereas nanoparticle arbortrons have a diameter of a few nanometers. Because
+nanoparticle arbortrons are a factor of one thousand thinner, 1000 x 1000 x 1000 = 1 billion
+nanoparticle arbortrons occupy the same volume as one human neuron. A PEN hardware
+implementation of the size of a human head with nanoparticle arbortrons could theoretically have
+a billion times more neurons than the human brain. The power consumption of such a large PEN
+is probably less than the power consumption of human brain (~ 20 Watts), because nanoparticle
+arbortrons are better conductors than human neurons.
+Training a large PEN would be a challenge. It takes about 20 years to train human brains before
+they become productive. Therefore one might conclude that it might take 20 billion years to train
+a large PEN with a billion times more neurons. However on human neurons pulses travel with a
+speed of 1m/s – 100m/s, whereas electrical pulses travel along arbortrons at the speed of light (
+0.3 billion m/s). Because the pulse speed is roughly a factor of a billion larger it might be
+possible to train a large PEN within a couple of dozen years.
+But how can a large PEN be trained? How could it learn to recognize speech or act like a word
+processor? Experiments with small arbortron PENs suggest that they form patterns which
+minimize their resistance, i.e. learn to extract energy from complex environments. For instance
+the system depicted in Fig. 1 forms wires to the electrodes. If the location of the electrodes is
+changed then the wires disintegrate and new wires form and connect the electrode at the new
+location. If an electrode is never charged no wires connect to it. Recent experiments suggest that
+arbortron PENs can learn to play simple computer games, such as Tetris.
+Initially the arbortron PEN is random. The current configuration of the game activates the
+corresponding input electrode. In response to the activated input electrode, the arbortron output
+electrodes trigger a move in the game. If the move is “incorrect” the input electrode is turned off
+immediately. If the move is “correct” then the input current continues for a certain period of
+time, which strengthens the arbortron branch which produced the “correct” move. The extra
+current can be considered as an energy reward for the arbortron network.
+This experiment offers some insights into how a large PEN could be trained by a human or a
+complex environment: with energy rewards. If the PEN hardware implementation responds
+“correctly”, it is rewarded a small amount of energy. In summary, training a large PEN is not like 
+programming a digital computer, it is more like training a pet: If its behavior matches the
+expectations it is rewarded with a treat. The treat is energy.
+
+# other links
+
+* <https://knowm.org/how-to-build-the-ex-machina-wetware/>
 
 
