@@ -161,10 +161,238 @@ M4 OCR: an engineered spring-and-resonator system learns digit classification. T
 
 TODO: add simulation next steps.
 
+# Physics
+
+## Physical phenomena potentially relevant to the PEN / Ag nanoparticle learning material
+
+Evidence-status shorthand retained from the original list: **[A]** directly established in closely relevant Ag/Ag₂S, Ag-filament, nanoparticle/nanowire-network, or PEN experiments; **[B]** well-established physics that is conditionally present if the corresponding interface/material exists; **[C]** plausible secondary mechanism worth testing or simulating; **[D]** proposed use as a learning primitive, where the underlying physics is real but the ML function remains substantially theoretical.
+
+Depending on composition and fabrication, its internal state could live simultaneously in electronic conduction paths, Ag/Ag⁺ distributions, atomic filament geometry, temperature fields, mechanical contact geometry, particle positions, ligand conformations, ionic double layers, and slowly evolving chemistry.
+
+Direct imaging of Ag/Ag₂S atomic switches has shown field-driven formation and rupture of Ag conductive channels; Ag₂S devices exhibit pulse-history-dependent short- and long-term plasticity; and disordered Ag networks exhibit collective switching, reservoir dynamics, avalanches, and heterosynaptic effects.
+
+Metallic conduction through completed Ag pathways. Once an Ag filament, neck, nanoparticle contact, or chain spans two conductive regions, electrons travel through an essentially metallic path. The conductance can jump by orders of magnitude when a previously insulating gap closes. This is the most straightforward fast state of the network: electrical equilibration is rapid while the geometry that determines the conductance evolves much more slowly. Direct atomic-scale observations exist for Ag₂S switches. ([ref](https://pubs.acs.org/ancac3/article-abstract/4/5/2515/1260920/Real-Time-In-Situ-HRTEM-Resolved-Resistance?redirectedFrom=fulltext))
+
+Atomic-scale conductance quantization. If the narrowest part of an Ag bridge approaches one or a few atoms, its conductance can change in discrete units rather than continuously. Terabe's Ag₂S atomic switch demonstrated exactly this behavior. In a disordered material it would appear as discrete microscopic conductance steps buried inside a much larger analog network response. ([ref](https://www.nature.com/articles/nature03190))
+
+Constriction and contact resistance. Even nominally touching metallic particles can have most of their resistance concentrated in a very small asperity or neck. Tiny changes in contact area therefore produce large conductance changes. This provides a purely geometrical form of plasticity distinct from electrochemical filament growth.
+
+Electron tunneling through nanometre and sub-nanometre gaps. Before two particles physically or electrochemically connect, electrons can tunnel through thin Ag₂S, oxide, polymer, ligand, or vacuum-like gaps. Because tunneling resistance depends approximately exponentially on barrier thickness, an angstrom-scale displacement, ligand conformational change, or partial filament can generate a very large electrical change. Tunneling has been implicated alongside memristive behavior in three-dimensional Ag nanowire structures. ([ref](https://pubs.acs.org/acsodf/article/8/7/6663/408115/Memristive-and-Tunneling-Effects-in-3D))
+
+Trap-assisted tunneling, hopping and defect-mediated conduction. In thicker organic, sulfide, oxide, or polymer shells, transport may proceed through localized defect states rather than direct tunneling. The density and occupancy of those traps can themselves be history-dependent, providing additional nonlinear state variables.
+
+Schottky/contact-barrier modulation. Metal/semiconductor and metal/organic interfaces can behave as nonlinear barriers whose current changes strongly with electric field, temperature, local ion concentration, surface dipoles, and adsorption. Such interfaces can therefore act as nonlinear activation elements even without formation of a complete filament.
+
+Space-charge-limited transport. In poorly conducting shells or polymers containing mobile/trapped charge, injected carriers can generate their own internal electric field. This can produce strongly nonlinear \(I(V)\) characteristics and hysteresis.
+
+Mixed ionic-electronic conduction in Ag₂S. Ag₂S is not simply an insulator containing mobile Ag⁺. It is a mixed ionic-electronic conductor: ionic redistribution alters stoichiometry and electronic carrier concentration, so Ag motion can continuously change local electronic conductivity even before a metallic bridge exists. ([ref](https://www.sciencedirect.com/science/article/abs/pii/S0167273802001820))
+
+Electrochemical oxidation of silver. At sufficiently positive electrochemical potential, Ag atoms can oxidize, \(\mathrm{Ag}\rightarrow\mathrm{Ag^+}+e^-\). This supplies the mobile metal ions from which bridges are subsequently built.
+
+Electric-field-driven Ag⁺ drift. Mobile Ag⁺ is driven through Ag₂S or another ion-conducting dielectric by the local electric field. In continuum form this is one component of the Nernst–Planck flux,
+\[
+J_{\rm Ag^+}\sim-D\nabla c+\mu cE.
+\]. This is one of the basic state-update mechanisms of electrochemical-metallization memories. ([ref](https://pubs.acs.org/jpclcd/article-abstract/1/3/604/98326/Rate-Limiting-Processes-Determining-the-Switching?redirectedFrom=fulltext))
+
+Diffusive Ag⁺ relaxation. Concentration gradients simultaneously drive ions back toward equilibrium. After voltage removal, diffusion can undo the spatial segregation created by the field. Competition between drift and diffusion provides a natural mechanism for volatile memory and was directly implicated in recent Ag filament threshold-dynamics measurements. ([ref](https://pubs.acs.org/aaembp/article-abstract/8/13/5478/5166996/Threshold-Dynamics-of-Silver-Filament-Formation?redirectedFrom=fulltext))
+
+Concentration polarization. Sustained current can create Ag-rich and Ag-depleted regions. Consequently, the response to a pulse depends on previous pulses because the next pulse encounters a different local ion inventory. This is one of the most attractive candidates for a fast "eligibility trace".
+
+Finite local Ag reservoirs. A junction does not possess an infinite source of Ag. Repeated switching can exhaust nearby mobile silver and require diffusion from farther away before another large event occurs. That gives saturation, refractoriness and spontaneous recovery.
+
+Electrochemical reduction and deposition. At an electron-supplying surface, Ag⁺ can be reduced back to Ag⁰. This causes metallic clusters to grow and eventually form a conducting bridge.
+
+Nucleation thresholds. Formation of the first stable Ag nucleus is not continuous; a small cluster must exceed a thermodynamic critical size. The resulting activation barrier gives a sharply field- and temperature-dependent switching probability. Direct atomic-scale work has identified critical Ag nucleation as a rate-limiting process. ([ref](https://www.nature.com/articles/nmat3307))
+
+Stochastic nucleation and stochastic switching delay. Because nucleation is a thermally activated rare event involving very few atoms, nominally identical pulses produce different switching times. Ag diffusive memristors have deliberately exploited this stochasticity as a physical random source. ([ref](https://www.nature.com/articles/s41467-017-00869-x)) This could possibly give the material intrinsic exploration and probabilistic update behavior.
+
+Filament elongation. Once a nucleus exists, field concentration near its tip accelerates deposition there. The filament therefore tends to grow toward the opposite electrode, creating positive geometrical feedback.
+
+Electric-field focusing. A partially developed metallic protrusion intensifies the field at its tip. That field attracts additional ionic flux and lowers further switching barriers. This generates strong spatial winner-take-more dynamics.
+
+Conductive-filament dissolution. Reversing the field, altering electrochemical potential, or removing the stabilizing current can oxidize or redistribute the filament, reopening the gap.
+
+Volatile threshold switching. Very thin Ag filaments can be metastable: they appear above a threshold and spontaneously disappear once the bias is removed. This gives a transient internal state without requiring explicit capacitors. ([ref](https://www.nature.com/articles/nmat3054))
+
+Nonvolatile filament stabilization. Greater deposited mass, repeated stimulation, different compliance, or different chemistry can generate thicker bridges that remain after stimulation ends. This provides a long-lived physical weight. Ag₂S devices have experimentally demonstrated transitions from short-term to long-term conductance changes under repeated stimulation. ([ref](https://www.nature.com/articles/nmat3054))
+
+Short-term-to-long-term consolidation. Pulse frequency matters because repeated pulses can arrive before a volatile structure has relaxed. Successive increments then accumulate until the filament becomes sufficiently stable to survive for much longer. ([ref](https://www.nature.com/articles/nmat3054))
+
+Curvature-driven filament instability/Gibbs–Thomson physics. Very thin metal structures have high chemical potential because of surface curvature. Atoms therefore diffuse away from highly curved necks, tending to break weak filaments or coarsen clusters. Ag network experiments explicitly identify this mechanism as relevant to switching stability. ([ref](https://pubs.acs.org/aamick/article-abstract/16/5/6057/133524/Self-Assembled-Monolayer-and-Nanoparticles?redirectedFrom=fulltext))
+
+Rayleigh-like breakup of nanoscale metallic filaments. **[B]** A narrow metal filament can lower its surface energy by breaking into droplets or clusters. Rayleigh-instability models have been used to explain relaxation in volatile metallic-filament devices. ([ref](https://pubs.acs.org/doi/10.1021/acsaelm.9b00446))
+
+Ostwald ripening. **[A/B]** Smaller Ag clusters have higher chemical potential and can dissolve while larger clusters grow. Over long periods this changes the entire distribution of junction geometries. Surface monolayers have experimentally been used to suppress this process in Ag-network memristors. ([ref](https://pubs.acs.org/doi/10.1021/acsami.3c15351))
+
+Electrochemical self-doping. **[B]** Spatial redistribution of Ag within Ag₂S alters local stoichiometry, such as \(\mathrm{Ag}_{2+\delta}\mathrm{S}\), and therefore local electronic carrier density. A junction can consequently retain a conductivity change even without a sharply defined metallic filament. ([ref](https://www.nature.com/articles/srep30775))
+
+Polarity-dependent switching. **[A/B]** Electrode geometry, active/inert electrode identity, and initial filament asymmetry make SET and RESET processes direction-dependent. This could in principle encode signed updates, although obtaining reliably symmetric potentiation and depression would require intentional device design.
+
+Faradaic overpotential and reaction-rate nonlinearities. **[B]** Electron-transfer rates at Ag/electrolyte or Pt/electrolyte interfaces depend strongly and nonlinearly on electrochemical overpotential. These interfaces can therefore create threshold-like behavior independent of ionic drift itself.
+
+Current-compliance-controlled morphology. **[A]** Restricting current limits how much metal can deposit and how hot the filament becomes. Low current compliance tends to preserve finer, more volatile structures, whereas greater injected charge can drive the junction toward stronger and more persistent states. This is an important experimental control parameter.
+
+Capacitive charging of dielectric gaps. **[B]** Every pair of nearby conductive particles has some capacitance. Even when no ions move, the graph therefore contains a large distributed RC network that produces fast fading memory and frequency-dependent signal propagation.
+
+Electrical-double-layer capacitance. **[B]** In a liquid electrolyte or hydrated ion-conducting polymer, charge accumulates at metal/electrolyte interfaces. This can generate effective capacitances much larger and slower than simple geometric capacitance.
+
+Warburg and diffusion impedance. **[B]** If ions must diffuse toward or away from an interface, the impedance becomes frequency-dependent with the characteristic response of diffusion-limited electrochemistry. Such behavior has long been measured at silver-halide and Ag₂S interfaces. ([ref](https://www.sciencedirect.com/science/article/pii/0368187485855015))
+
+Maxwell-Wagner interfacial polarization. **[B]** A composite containing metal particles, insulating shells, polymers, and electrolytes has strong conductivity and permittivity contrasts. Applied AC fields therefore accumulate charge at heterogeneous interfaces on different timescales, creating an additional tunable spectrum of electrical relaxation times.
+
+Joule heating. **[A/B]** Electrical power is concentrated where \(P=I^2R\) is largest, often at high-resistance bottlenecks carrying substantial current. Consequently, the junctions most likely to switch are often also the junctions most strongly heated. Joule heating is directly implicated in Ag-nanowire junction evolution. ([ref](https://pubs.acs.org/doi/10.1021/nn4065567))
+
+Thermal memory. **[B]** Local temperature does not vanish instantaneously when a pulse ends. During its thermal relaxation time, the next electrical pulse encounters a junction with altered ionic mobility, reaction rates, resistance, and mechanical state. Temperature therefore acts as another short-lived analog state variable.
+
+Arrhenius acceleration of ionic motion and redox. **[A]** Ag₂S switching times vary strongly with temperature; measured activation energies indicate that ion diffusion and electrochemical reduction can separately rate-limit switching. Temperature can therefore behave as a coincidence detector because closely spaced pulses produce stronger modification than the same pulses widely separated in time. ([ref](https://pubs.acs.org/doi/10.1021/jz900375a))
+
+Current-induced junction welding and neck growth. **[A/B]** A resistive nanoparticle or nanowire contact can heat selectively, remove or reorganize surface ligands, and form a thicker metallic neck. This creates a persistent conductance change mechanically distinct from reversible electrochemical filamentation. ([ref](https://pubs.acs.org/doi/10.1021/nn4065567))
+
+Electromigration. **[B]** High electron current density transfers momentum to metal atoms and can bias Ag mass transport. Depending on geometry, it may reinforce or erode a conducting connection, with Joule heating greatly increasing the rate.
+
+Thermophoresis and Soret transport. **[C]** Strong temperature gradients can bias ionic, molecular, or particle motion. This is probably secondary in a compact solid Ag₂S device but could become important in a fluid, gel, or soft-polymer architecture.
+
+Thermoelectric potentials. **[C]** Spatially nonuniform temperatures in heterogeneous Ag/Ag₂S/Pt structures can generate Seebeck voltages. These are unlikely to be a primary learning mechanism but may perturb low-voltage measurements or provide weak internal biases.
+
+Thermal expansion and thermomechanical stress. **[B]** Heating changes particle spacing, contact pressure, polymer dimensions, and filament stress. Because tunneling currents depend exponentially on separation, even very small thermomechanical displacements can create large electrical changes.
+
+van der Waals attraction. **[B]** Once particles approach within nanometres, dispersion forces can pull them together. In a mobile or weakly constrained material, this can stabilize newly formed conductive chains or contacts.
+
+Electrostatic double-layer repulsion and DLVO aggregation. **[B]** In electrolyte suspensions, the balance between van der Waals attraction and electrostatic double-layer repulsion determines whether particles remain dispersed or aggregate. Ionic strength compresses the electrical double layer and can dramatically change Ag-nanoparticle aggregation. ([ref](https://pubs.acs.org/doi/10.1021/es902240k))
+
+Steric stabilization. **[B]** PVP, peptides, proteins, or polymer brushes can mechanically inhibit close particle approach even when electrostatic repulsion is screened. This can be used to set a minimum particle gap and thereby control tunneling and filament-formation thresholds. ([ref](https://pubs.acs.org/doi/10.1021/es902240k))
+
+Brownian rearrangement. **[B]** If particles remain mobile, thermal agitation continually perturbs interparticle gaps and contact geometry. At the 40–60 nm scale, Brownian motion can be substantially more important than in the original millimetre-scale arbortron experiments.
+
+Sedimentation and buoyancy. **[B]** In a truly three-dimensional liquid suspension, particle-density mismatch slowly biases particle concentration vertically. Microparticles are affected much more strongly than nanoparticles. This creates slow topology drift unless counteracted by viscosity, gelation, or density matching.
+
+Static friction and stiction thresholds. **[A for fluid PENs]** In the original arbortron experiments, macroscopic particles physically moved and contacts persisted until electrical forces exceeded frictional and gravitational thresholds. That mechanism is experimentally established for those systems but does not automatically transfer to immobilized 40–60 nm Ag particles. ([ref](https://onlinelibrary.wiley.com/doi/10.1002/cplx.20378/full))
+
+Contact elasticity and deformation. **[B]** Particles touching through soft coatings can compress, increasing their true contact area and lowering resistance. Repeated mechanical loading can leave hysteretic changes in junction geometry.
+
+Polymer viscoelasticity and creep. **[B/C]** In a soft binder, junction spacing can relax over milliseconds to hours. A filament, electrostatic attraction, or thermal pulse can deform the local matrix and leave a delayed structural trace after the electrical stimulus ends. This is a plausible additional slow state variable.
+
+Field-induced dipoles and dielectrophoresis. **[B]** Conducting particles polarize strongly in nonuniform electric fields and experience forces toward or away from high-field regions. Metallic nanoparticles can therefore assemble into chains aligned with field lines. Dielectrophoretic assembly of conductive nanoparticle wires has been demonstrated experimentally. ([ref](https://pubs.acs.org/doi/10.1021/la402060g))
+
+Electrorheological chaining. **[B]** In suspensions, polarized particles mutually attract along the field direction and repel transversely, forming chains or columns that can span electrodes. This can transform a fluid into a mechanically stiff and more conductive field-dependent structure. ([ref](https://www.sciencedirect.com/science/article/pii/S0927775798004683))
+
+Electrophoresis. **[B]** If particles carry net charge, a DC field exerts a translational force on them. Motion of metal particles under electric fields in insulating oils has been observed experimentally. ([ref](https://www.sciencedirect.com/science/article/pii/S0894177722001893))
+
+Electro-osmosis and induced-charge electro-osmosis. **[B]** Electric fields acting on interfacial double layers can move the surrounding liquid. Conductive particles can also generate induced-charge electroosmotic vortices. These flows may deliver additional nanoparticles toward a growing chain or remove them from it. ([ref](https://pubs.acs.org/doi/10.1021/la402060g))
+
+Electrothermal flow. **[B]** Spatially nonuniform Joule heating alters fluid conductivity and permittivity; the electric field then exerts a body force on the fluid. This can create convection near electrodes and conducting chains and has been explicitly included in nanoparticle-assembly models. ([ref](https://pubs.acs.org/doi/10.1021/la402060g))
+
+Mechanical network rewiring. **[B/C]** In a mobile material, dielectrophoresis, electrophoresis, fluid flow, Brownian motion, adhesion, and contact forces can physically create or destroy entire graph edges. This represents a stronger form of adaptation than merely changing the conductance of an existing edge.
+
+Surface diffusion of Ag. **[A/B]** Silver atoms can migrate along nanoparticle and nanowire surfaces, particularly when heated. This can smooth sharp structures, thicken necks, destroy narrow features, or transfer material between nearby junctions. ([ref](https://pubs.acs.org/doi/10.1021/nn4065567))
+
+Stress-driven diffusion. **[B]** Mechanical stress changes atomic chemical potential. Compressive or tensile stresses generated by filament growth, polymer confinement, contact deformation, or thermal cycling can therefore bias Ag redistribution.
+
+pH-dependent surface charging. **[B]** Protonation and deprotonation of surface coatings change zeta potential, colloidal stability, and the local electrostatic environment. Ag-nanoparticle aggregation has experimentally shown strong pH dependence. ([ref](https://pubs.acs.org/doi/10.1021/es902240k))
+
+Ionic-strength control of screening. **[B]** Debye length and interparticle electrostatic repulsion depend strongly on total ionic strength. Changing salt concentration can therefore simultaneously alter particle aggregation, interfacial capacitance, and ion-transport behavior.
+
+Specific-ion chemistry. **[B]** Chloride, sulfide, phosphate, and other ions are not interchangeable passive salts. Ag⁺ can precipitate into phases such as AgCl, surface layers can form, and free Ag⁺ concentration can change substantially. Ag-nanoparticle dissolution and aggregation studies directly show such electrolyte-specific behavior. ([ref](https://pubs.acs.org/doi/10.1021/la101768n))
+
+Ag⁺ complexation. **[B]** Thiols, amines, peptides, proteins, and designed chelators can bind Ag⁺ and reduce its free concentration. This changes diffusion, electrodeposition potential, nucleation kinetics, and the effective amount of electrochemically available silver.
+
+Ligand adsorption and ligand exchange. **[A/B]** Molecules adsorbed on Ag alter surface energy, tunneling barriers, ion-transfer rates, dissolution, and particle aggregation. Cysteine, for example, changes Ag-nanoparticle surface chemistry, dissolution, and aggregation through Ag-thiol interactions. ([ref](https://pubs.acs.org/doi/10.1021/es3001757))
+
+Protein-corona formation. **[B]** Proteins can coat nanoparticles and alter their effective charge, hydrodynamic diameter, aggregation behavior, and accessibility to Ag ions. Protein coronas have been observed to stabilize Ag nanoparticles under conditions that otherwise promote aggregation. ([ref](https://www.sciencedirect.com/org/science/article/pii/S2190428621000472))
+
+Peptide or aptamer conformational gating. **[B/C]** A tethered molecule whose conformation changes with voltage, pH, ligand binding, or ion concentration can alter gap width, local dielectric constant, surface charge, or Ag binding. The molecular mechanisms are established; using them deliberately as trainable junction-state variables in a PEN remains an engineering hypothesis.
+
+Enzymatic local chemistry. **[B/C]** An immobilized enzyme could locally generate or consume protons, redox molecules, or complexing species in response to a substrate. Those products could in turn modulate a nearby memristive junction. The chemistry is routine; useful coupling into machine-learning training is speculative.
+
+Water activity and solvent viscosity. **[B]** Water content strongly affects ionic mobility, while viscosity controls particle and molecular diffusion. Glycerol/water ratio, polymer hydration, or related solvent parameters can therefore shift the system's hierarchy of timescales without changing its gross topology.
+
+Swelling and osmotic deformation. **[B]** Hydrogels and ionomers change volume as solvent or ions enter and leave. Swelling changes nanoparticle separation and contact pressure, creating simultaneous chemical, mechanical, and electrical control of connectivity.
+
+Parasitic electrolysis and local pH gradients. **[B]** In aqueous systems, sufficiently large electrode potentials drive water electrolysis and other Faradaic reactions. The resulting \(\mathrm{H^+}\), \(\mathrm{OH^-}\), gas bubbles, and redox products may substantially alter switching. Usually this is parasitic, but it could also become a slow chemical state variable.
+
+Oxidation, sulfidation, and tarnishing. **[B]** Exposure to oxygen, sulfur-containing species, and moisture continuously changes Ag surface chemistry. Depending on conditions, this may generate useful ion-conducting shells or produce uncontrolled aging and drift.
+
+Random telegraph fluctuations. **[A]** A nanoscale junction can jump between discrete conductance states because of electron trapping or atomic and ionic rearrangements. Stimulated ionic telegraph noise has been directly observed in filamentary memristors and can potentially be used as a stochastic computational primitive rather than merely suppressed. ([ref](https://www.nature.com/articles/s41598-019-41497-3))
+
+Johnson, shot, and \(1/f\) noise. **[B]** Ordinary thermal noise, discrete-charge noise, and broad distributions of microscopic fluctuators provide stochastic excitation. Near switching thresholds, even weak fluctuations can determine which microscopic junction updates first.
+
+Noise-assisted threshold crossing and stochastic resonance. **[B/C]** A subthreshold stimulus can switch more reliably when an appropriate amount of noise is present. A physical learner could therefore deliberately operate close to a nucleation threshold rather than attempting to remove all stochasticity.
+
+Kirchhoff-mediated nonlocal coupling. **[A]** Every local conductance change immediately redistributes voltages and currents across the connected graph. A junction can therefore change the future update probabilities of many other junctions without explicit communication. This is one of the most important sources of collective computation in a disordered electrical network.
+
+Current crowding and hotspot selection. **[A]** Near a percolation threshold, current is highly heterogeneous: a small number of bottlenecks carry disproportionately high current and electric field. Those bottlenecks preferentially heat, switch, and restructure, providing intrinsic activity-dependent selection.
+
+Percolation transitions. **[A]** When the density or conductance of connections crosses a critical regime, system-scale conduction can emerge abruptly. Operating close to this transition creates very large sensitivity to small junction changes. Experiments on nanoparticle networks explicitly exploit the percolating regime. ([ref](https://www.sciencedirect.com/org/science/article/pii/S2516023023019019))
+
+Switching avalanches. **[A]** One microscopic switching event can redistribute voltage strongly enough to trigger others, producing cascades spanning many spatial scales. Ag nanoparticle networks have exhibited avalanche dynamics associated with atomic restructuring. ([ref](https://pubs.acs.org/doi/10.1021/acs.nanolett.0c01096))
+
+Long-range temporal correlations and critical dynamics. **[A]** Percolating Ag nanoparticle networks can display temporally correlated conductance fluctuations rather than statistically independent switching events. Such correlations enlarge the temporal receptive field of the material. ([ref](https://www.sciencedirect.com/org/science/article/pii/S2516023023019019))
+
+Broad distributions of relaxation times. **[A]** Different gaps, filament radii, ion reservoirs, thermal masses, and mechanical constraints relax at different rates. The material therefore naturally implements a bank of fading-memory kernels rather than a single decay constant. Ag/Ag₂S nanoparticle reservoirs exploit this heterogeneous dynamics. ([ref](https://pubs.acs.org/doi/10.1021/acsaelm.3c01046))
+
+Hysteresis and multistability. **[A/B]** Multiple microscopic configurations can correspond to the same applied voltage but different conductances depending on prior history. This path dependence allows the instantaneous electrical response to encode previous stimuli.
+
+Relaxation oscillations and spiking. **[B/C]** A volatile filament combined with capacitance and an appropriate electrical load can repeatedly charge, switch on, discharge, and rupture. The resulting device behaves like an integrate-and-fire or relaxation oscillator. The surrounding circuit is usually important, so one should not assume that an isolated junction spontaneously oscillates.
+
+Synchronization through shared supply constraints. **[C]** Multiple switching regions connected to the same voltage source, series resistance, or current limit compete for electrical resources. Switching one region can suppress or facilitate switching elsewhere, potentially producing synchronized or anticorrelated dynamics.
+
+Heterosynaptic plasticity. **[A]** A solid-state PEN based on electrically reorganizing Ag nanoclusters demonstrated that stimulation at multiple terminals could make the state of one connection depend on activity elsewhere—an explicit material analogue of heterosynaptic plasticity. ([ref](https://pubmed.ncbi.nlm.nih.gov/26484746/))
+
+Path competition. **[A/B]** Once one route becomes slightly more conductive, it carries more current; that can strengthen it further through ion motion or welding. Neighboring routes may simultaneously be deprived of current. This creates a physical winner-take-more mechanism.
+
+Resource-mediated lateral inhibition. **[C]** Neighboring junctions drawing Ag⁺ from the same finite reservoir can compete chemically as well as electrically. Strengthening one junction could deplete ions required by another, providing a possible physical mechanism for normalization or anti-Hebbian competition.
+
+Shared-temperature coupling. **[B/C]** Heat diffusing from one active junction can temporarily lower switching thresholds in neighboring junctions. A local event therefore creates a short-range spatial eligibility field.
+
+Shared chemical-bath coupling. **[B/C]** Nearby junctions in a common electrolyte experience partially shared Ag⁺ concentration, pH, and complexant fields. This creates slow nonlocal coupling in addition to ordinary Kirchhoff interactions.
+
+Network-wide nonlinear feature transformation. **[A]** A heterogeneous atomic-switch network maps a low-dimensional electrode stimulus into many differently phased and distorted internal and output signals. This is why such devices can operate as physical reservoirs for waveform prediction and temporal classification. ([ref](https://pubs.acs.org/doi/10.1021/acsaelm.3c01046))
+
+Analog matrix/vector physics. **[A/B]** For a fixed instantaneous set of junction conductances, Kirchhoff's equations are linear algebra: nodal voltages satisfy a graph-Laplacian system \(L(G)V=I\), and multi-electrode currents are linear combinations of applied voltages. The material therefore performs a distributed analog linear transformation, while nonlinear junction dynamics make that transformation state-dependent.
+
+Use-dependent or Hebbian-like reinforcement. **[A for phenomenology]** Repeated current through a connection can increase its future conductivity in both classical arbortron experiments and Ag memristive systems. The analogy to Hebbian learning is phenomenological rather than evidence that the device implements the biological Hebbian rule. The historical particle-in-oil systems explicitly demonstrated conductance reinforcement through repeated use. ([ref](https://onlinelibrary.wiley.com/doi/10.1002/cplx.20378/full))
+
+Spontaneous forgetting. **[A]** Thin filaments dissolve, ion gradients diffuse, temperature relaxes, and mobile particle contacts can separate. Unused state can therefore decay naturally without an explicit erase instruction.
+
+Metaplasticity. **[B/C]** Slow variables such as Ag reservoir size, local stoichiometry, ligand coverage, mechanical compression, or filament-remnant geometry can alter the future learning rate without directly representing the present output. This is physically plausible and potentially useful for controlling plasticity.
+
+Physical eligibility traces. **[D, high priority]** A recent event could leave a short-lived local tag in Ag⁺ concentration, temperature, a metastable filament, interfacial charge, or mechanical strain. A later global event could then transform only tagged locations into persistent changes. The individual microscopic ingredients are real; their use as a complete local credit-assignment mechanism remains to be demonstrated.
+
+Reward-gated consolidation. **[D, high priority]** The energy-reward concept becomes more precise if reward is implemented as a global pulse that is insufficient to alter an untagged junction but converts a recently active or metastable junction into a persistent state. The critical experiment is whether the interaction between local tag and global reward produces a strongly superlinear local update.
+
+Free-phase/nudged-phase contrastive learning. **[D]** Theory and experiments on trainable physical networks show that local conductances can approximate gradient-based learning when updates depend on differences between local quantities measured in a free state and a weakly output-constrained state. ([ref](https://journals.aps.org/prx/abstract/10.1103/PhysRevX.11.021045)) Whether an Ag junction can autonomously store and compare those two phases is an open materials question.
+
+Temporal contrastive learning through internal relaxation. **[D]** Explicit digital storage of free and nudged states is not fundamentally necessary if each trainable element contains a nonequilibrium internal memory or feedback variable. Sequential free and nudged phases can then produce a local update proportional to their contrast. An Ag concentration field, metastable filament, or viscoelastic displacement is a plausible candidate implementation. ([ref](https://www.nature.com/articles/s41467-025-57043-x))
+
+Common-mode chemical or electrical broadcast. **[D]** A third electrode, shared electrolyte potential, temperature pulse, pH shift, optical pulse, or common chemical reagent could act as a global reward or consolidation signal while local junction states determine which regions respond. This is physically plausible but would need to be engineered and validated.
+
+Locally stored fractional information. **[D]** There is no requirement that one microscopic junction encode one machine-learning weight. A learned parameter could instead be represented statistically across many microscopic changes, such as shifts in filament probabilities, cluster-size distributions, ion concentrations, or switching thresholds.
+
+Self-normalization and homeostasis from negative physical feedback. **[C/D]** Ag depletion, filament overheating, volatile rupture, current competition, and finite current compliance can prevent unlimited strengthening of dominant paths. Those individual mechanisms are real, but whether their combination produces a useful normalization rule for learning is not established.
+
+Structural memory. **[A/B]** In a mobile-particle PEN, topology itself can store history because field-induced chains remain geometrically closer or more connected than they were initially. In a solid Ag network, analogous topology memory can occur through persistent nanoclusters and filaments.
+
+Read disturbance. **[A/B]** Reading is not necessarily passive. Even low voltages can gradually redistribute ions or alter atomic-scale junctions after repeated measurements. A simulator should therefore distinguish ideally nondestructive observation from state-changing inference.
+
+Fatigue and endurance degradation. **[A/B]** Repeated electrochemical cycling can permanently redistribute Ag, roughen electrodes, change reservoir composition, or create irreversible conductive pathways. These processes are engineering limitations but can also act as extremely slow internal state variables.
+
+Irreversible welding and coalescence. **[A/B]** Excessive current can convert a tunable junction into a permanent metallic short. This defines an upper boundary of the useful learning regime.
+
+Ion-reservoir depletion and electrode erosion. **[A/B]** Long-term training with net polarity can physically transport silver from one region to another. Without balanced stimulation protocols, the material can slowly consume or restructure its active electrode.
+
+Chemical aging. **[B]** Adsorbates, oxygen, sulfur species, moisture, ligand decomposition, and contamination can change junction kinetics over days or months. A practical learning material will either need to control these processes or model them as very slow state variables.
+
+Thermal runaway. **[B]** Because a conductance increase can raise current and heating depending on source impedance, positive electrothermal feedback can destroy a junction. Current compliance or sufficiently large series resistance can instead turn this feedback into a stable operating regime.
+
+Load-line and self-organization effects in classical arbortrons. **[A, architecture-dependent]** The historical PEN experiments used large external series resistances. Under a fixed supply voltage, the power dissipated in a variable resistance \(R\) is \(P=V^2R/(R+R_s)^2\), which peaks at \(R=R_s\). Observations that arbortrons evolved toward particular resistances can therefore arise from coupled network and load-line physics; they should not be generalized into a universal rule that the material always minimizes resistance or maximizes entropy production. ([ref](https://onlinelibrary.wiley.com/doi/10.1002/cplx.20378/full))
+
+
 
 # Arbortrons
 
 Hubler lecture and demonstration <https://www.youtube.com/watch?v=dgbooumJ4Tg&t=1410s> and [[transcript|transcripts/alfred-hubler-arbortron]].
+
+## Physically evolving networks
 
 Physically Evolving Networks (PENs) were first proposed by Alan Turing in his 1948 paper
 “Intelligent Machines” [1]. PENs capture some important features of the information processing
