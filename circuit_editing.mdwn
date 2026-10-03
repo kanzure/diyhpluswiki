@@ -1,0 +1,151 @@
+# Circuit editing
+
+Writing to an already-wired brain at the level of individual connections, instead of
+blanket stimulation (DBS, optogenetic drive of a whole cell type) or lesioning. Three
+families so far: designer electrical synapses, synthetic synaptic organizers, and
+activity-gated (immediate-early-gene) tagging that restricts any of the above to the
+cells or spines that were recently active.
+
+[[!toc levels=5]]
+
+# LinCx: designer electrical synapses
+
+"Long-term Integration of Circuits using connexins" (LinCx), from Kafui Dzirasa's lab
+at Duke. Two connexins from white perch, Cx34.7 and Cx35, carry mutated docking motifs
+so that the hemichannels pair only with each other and not with host connexins. Express
+Cx34.7(M1) in the presynaptic population and Cx35(M1) in the postsynaptic population and
+you get a tethered electrical synapse that forms only where those two cell populations
+already touch.
+
+[Long-term editing of brain circuits using an engineered electrical synapse](https://www.nature.com/articles/s41586-026-10501-y)
+(2026), open version: <https://pmc.ncbi.nlm.nih.gov/articles/PMC13372691/>
+
+Specificity comes from two independent sources stacked together, not just the promoter:
+
+* cell-type/promoter specificity of each AAV (CaMKII, hSyn-DIO plus a Cre driver line), and
+* the anatomical projection/contact pattern itself.
+
+Worked example from that paper: AAV-CaMKII-Cx34.7(M1) into orbitofrontal cortex, so
+excitatory OFC projection neurons express one hemichannel, and AAV-hSyn-DIO-Cx35(M1) into
+striatum of PV-Cre mice, restricting the other hemichannel to striatal PV+ interneurons.
+OFC axon terminals carrying Cx34.7(M1) encounter Cx35(M1)-expressing PV cells in striatum,
+so electrical coupling is added at that projection-defined and cell-type-defined interface
+only.
+
+## LinCx applications so far
+
+[Precision editing of an aggression-encoding network relay suppresses violent action in mice](https://www.biorxiv.org/content/10.1101/2022.12.07.519272v5)
+-- "an aggressive internal state in mice is encoded by a widespread brain network ...
+organized by prominent and synchronized electrical oscillations that relay through the
+medial prefrontal cortex ... Finally, we applied 'Long-term Integration of Circuits using
+connexins' (LinCx) to selectively edit a key circuit within the network from the medial
+prefrontal cortex to the nucleus accumbens. Editing this circuit durably suppressed violent
+action while leaving non-aggressive social behavior intact."
+
+[Synaptic editing of frontostriatal circuitry prevents excessive grooming in SAPAP3-deficient mice](https://pmc.ncbi.nlm.nih.gov/articles/PMC11974874/)
+(2025) -- LinCx used to "deploy a designer electrical synapse to edit a single class of
+chemical synapses in a genetic mouse model of obsessive-compulsive disorder (OCD). Editing
+these synapses in juvenile mice normalized circuit function and prevented the emergence of
+pathological repetitive behavior in adulthood". Note the window: juvenile prophylaxis, not
+adult reversal.
+
+## Caveats of electrical coupling as an engineering primitive
+
+* It cannot grow a connection where there is no apposition. Connexins do not extend an axon
+  across a gap or a lesion; LinCx edits circuits that already exist.
+* No gain. A gap junction is a resistive divider, so coupling does not amplify; a single
+  junction will not drive a postsynaptic cell to threshold.
+* Low-pass filtering: fast spike waveforms are attenuated far more than slow depolarizations.
+* Non-rectifying junctions are bidirectional and synchronizing, which in a motor pool is a
+  recipe for spasticity/clonus rather than useful control.
+* Conductance is fixed at expression time, not a tunable knob, and not activity-dependent
+  unless you make it so (see IEG section below).
+
+For [[paralysis|neurosurgery]] this means LinCx is plausible only where spared relays exist
+(incomplete injury, propriospinal or interneuron detours), not after complete transection,
+and probably needs many contacts rather than one bridge.
+
+# Synthetic synaptic organizers
+
+[A synthetic synaptic organizer protein restores glutamatergic neuronal circuits](https://pmc.ncbi.nlm.nih.gov/articles/PMC7116145/)
+(2021) -- "we designed and characterized CPTX, a synthetic synaptic organizer combining
+structural elements from cerebellin-1 and neuronal pentraxin-1. CPTX can interact with
+presynaptic neurexins and postsynaptic AMPA-type ionotropic glutamate receptors and induced
+the formation of excitatory synapses both in vitro and in vivo. CPTX restored synaptic
+functions, motor coordination, spatial and contextual memories, and locomotion in mouse
+models for cerebellar ataxia, Alzheimer's disease and spinal cord injury, respectively.
+Thus, CPTX represents a prototype for structure-guided biologics that can efficiently repair
+or remodel neuronal circuits."
+
+Complementary to LinCx: CPTX builds a real chemical synapse (with gain and plasticity) but
+its specificity is whatever the injected protein diffuses to, whereas LinCx has genetic and
+projection specificity but no gain.
+
+# Activity-dependent (immediate-early-gene) targeting of synapses
+
+The missing combination: use Arc/Fos regulatory elements so the circuit-editing payload only
+lands on recently active neurons or recently potentiated spines.
+
+[Activity-dependent expression of Channelrhodopsin at neuronal synapses](https://www.nature.com/articles/s41467-017-01699-7)
+(2017) -- SynActive. "a hybrid RNA/protein approach to regulate the expression of a
+light-sensitive membrane channel at activated synapses, enabling selective tagging of
+potentiated spines following the encoding of a novel context in the hippocampus. This
+approach can be used to map potentiated synapses in the brain and will make it possible to
+re-activate the neuron only at previously activated synapses". Gobbo et al. used regulatory
+sequences from Arc mRNA plus postsynaptic targeting sequences.
+
+[Labelling and optical erasure of synaptic memory traces in the motor cortex](https://www.nature.com/articles/nature15257)
+(2015) -- AS-PaRac1 (activated synapse targeting photoactivatable Rac1) "can label recently
+potentiated spines specifically, and induce the selective shrinkage of AS-PaRac1-containing
+spines ... The acquired motor learning was disrupted by the optical shrinkage of the
+potentiated spines." Exploits Arc-related dendritic targeting / local translation plus PSD
+targeting.
+
+[Interregional synaptic maps among engram cells underlie memory formation](https://www.science.org/doi/10.1126/science.aas9204)
+(Choi et al. 2018) -- Fos-rtTA driving dual-eGRASP to label engram-to-engram synapses. Same
+split-protein-across-the-cleft, two-population logic as LinCx, but the payload is a
+fluorophore instead of a conductance.
+
+## TODO / open experiment
+
+Nobody appears to have published IEG-gated LinCx: the Nature 2026 work used CaMKII, hSyn and
+Ef1a-DIO plus Cre, no activity-dependent promoter. The obvious build is Cx34.7(M1) under
+Fos-tTA/TetTag, TRAP2 (Fos-CreERT2) or E-SARE, with Cx35(M1) delivered by projection/cell-type
+targeting, i.e. swap eGRASP for the connexin pair. Two known problems:
+
+* timescale mismatch: IEG tagging windows are hours, while functional electrical coupling
+  needs days of expression to accumulate;
+* if both sides are IEG-tagged you are betting that the two populations are co-active *and*
+  physically apposed, which Fos alone does not guarantee. Better to tag one side and use
+  anatomy for the other.
+
+See also the constitutive-overexpression trap: Arc/Egr1/Fos effectors expressed constitutively
+degrade memory by destroying ensemble sparseness, so the activity-gated promoter is not an
+optional nicety.
+
+# Enhancement ideas (speculative)
+
+Circuit editing as a cognitive intervention means increasing the efficiency of signal
+propagation along a connection that already exists, rather than adding new projections (which
+is what you would actually want, for dimensionality).
+
+Candidate target: frontoparietal structural connectivity between left rostrolateral prefrontal
+cortex (RLPFC) and left inferior parietal cortex, via superior longitudinal fasciculus, where
+childhood structural connectivity longitudinally predicts later reasoning ability:
+[Frontoparietal structural connectivity in childhood predicts development of functional connectivity and reasoning ability](https://pubmed.ncbi.nlm.nih.gov/28821657/)
+(Wendelken et al., J Neurosci 2017, <https://doi.org/10.1523/JNEUROSCI.3726-16.2017>), with
+predecessors [Ferrer et al. 2013](https://pmc.ncbi.nlm.nih.gov/articles/PMC3801426/) and
+[Wendelken et al. 2016](https://pmc.ncbi.nlm.nih.gov/articles/PMC4816790/). Caution: that
+evidence is developmental, longitudinal and correlational, so "add coupling between RLPFC and
+IPC in an adult" is an extrapolation, and electrical coupling adds synchrony, not bandwidth.
+
+A failed idea worth recording: editing cortico-striato-thalamo-cortical (CSTC) fibers passing
+through the anterior limb of the internal capsule (ALIC) to *increase* OCD-like tendency. The
+neuroanatomy does not support it in that form; what is actually established there is
+disruption of that circuit by capsulotomy/DBS, not a known gain-of-function write. The
+SAPAP3 frontostriatal paper above is the version that is actually demonstrated.
+
+# See also
+
+[[neurosurgery]], [[neuroanatomy]], [[optogenetics]], [[nootropics]], [[cell-specific expression|cell-specific_expression]],
+[[neuroscience]], [[nerve graft|nerve_graft]]
